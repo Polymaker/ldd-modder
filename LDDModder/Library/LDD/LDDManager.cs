@@ -1,5 +1,9 @@
-﻿using System;
+﻿using ICSharpCode.SharpZipLib.Zip;
+using LDDModder.LDD.Files;
+using LDDModder.Utilities;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -20,6 +24,8 @@ namespace LDDModder.LDD
         public const string LIF_DB_NAME = "db";
         public const string LIF_ASSET_FILENAME = LIF_ASSET_NAME + LIF_EXT;
         public const string LIF_DB_FILENAME = LIF_DB_NAME + LIF_EXT;
+
+        public static LifDiscardMethod DefaultDiscardMethod = LifDiscardMethod.Compress;
 
         /// <summary>
         /// Gets the LDD installation directory.
@@ -163,5 +169,96 @@ namespace LDDModder.LDD
         }
 
         #endregion
+
+        #region Lifs extraction verification
+
+        public static bool IsLifExtracted(LifInstance lif)
+        {
+            string lifDir = GetLifDirectory(lif);
+            if (!Directory.Exists(lifDir))
+                return false;
+
+            return Directory.EnumerateFileSystemEntries(lifDir).Any();
+        }
+
+        public static void ExtractLif(LifInstance lif)
+        {
+            ExtractLif(lif, DefaultDiscardMethod);
+        }
+
+        public static void ExtractLif(LifInstance lif, LifDiscardMethod discardMethod)
+        {
+            if (IsLifExtracted(lif))
+                return;
+
+            /* UNCOMMENT WHEN LIFEXTRACTOR IS COMPLETED/WORKING
+            //LifInstance.Assets and LifInstance.AssetsDatabase are located in the ProgramFiles directory
+            //and will generally require Admin privilege to create directories and files
+            if (lif != LifInstance.Database && !General.IsUserAdministrator)
+            {
+                Process.Start(new ProcessStartInfo()
+                {
+                    FileName = "LifExtractor.exe",
+                    WorkingDirectory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location),
+                    Arguments = string.Format("-i {0} -m {1}", (int)lif, (int)discardMethod),
+                    Verb = "runas"
+                });
+                return;
+            }
+            */
+            string lifDir = GetLifDirectory(lif);
+
+            Directory.CreateDirectory(lifDir);
+
+            using (var lifFile = OpenLif(lif))
+                lifFile.Extract(lifDir);
+
+            if (discardMethod == LifDiscardMethod.Compress)
+                CompressLif(GetLifPath(lif));
+            else// if(discardMethod == LifDiscardMethod.Rename)
+                RenameLif(GetLifPath(lif));
+        }
+
+        static void RenameLif(string lifFilePath)
+        {
+            string newName = Path.Combine(Path.GetDirectoryName(lifFilePath), "_" + Path.GetFileName(lifFilePath));
+            File.Move(lifFilePath, newName);
+        }
+
+        static void CompressLif(string lifFilePath)
+        {
+            string zippedLifPath = Path.ChangeExtension(lifFilePath, "zip");
+            using (ZipOutputStream zipStream = new ZipOutputStream(File.Create(zippedLifPath)))
+            {
+                var zipEntry = new ZipEntry(Path.GetFileName(lifFilePath));
+                zipStream.PutNextEntry(zipEntry);
+                using (var fs = File.OpenRead(lifFilePath))
+                {
+                    byte[] buffer = new byte[4096];
+                    int sourceBytes;
+                    do
+                    {
+                        sourceBytes = fs.Read(buffer, 0, buffer.Length);
+                        zipStream.Write(buffer, 0, sourceBytes);
+                    }
+                    while (sourceBytes > 0);
+                }
+                zipStream.Finish();
+                zipStream.Close();
+            }
+        }
+
+        public static LifFile OpenLif(LifInstance source)
+        {
+            return LifFile.Open(GetLifPath(source));
+        }
+
+        #endregion
+
+        public enum LifDiscardMethod
+        {
+            Rename,
+            Compress
+        }
     }
 }
