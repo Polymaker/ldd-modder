@@ -1,0 +1,13 @@
+﻿
+custom file to install ldd bricks (registered file extension)
+
+header (brick info):
+	id
+	(display)name
+	version
+	decorations
+compressed file
+	Decorations\ (images)
+	Primitives\ (xml files)
+	Primitives\LOD0\ (g files)
+
