@@ -194,7 +194,7 @@ namespace LDDModder.LDD
             /* UNCOMMENT WHEN LIFEXTRACTOR IS COMPLETED/WORKING
             //LifInstance.Assets and LifInstance.AssetsDatabase are located in the ProgramFiles directory
             //and will generally require Admin privilege to create directories and files
-            if (lif != LifInstance.Database && !General.IsUserAdministrator)
+            if (lif != LifInstance.Database && !SecurityHelper.IsUserAdministrator)
             {
                 Process.Start(new ProcessStartInfo()
                 {

@@ -45,13 +45,28 @@
   <ItemGroup>
     <Compile Include="IO\BinaryReaderEx.cs" />
     <Compile Include="IO\StreamPortion.cs" />
-    <Compile Include="LDD\DecorationMapping.cs" />
+    <Compile Include="LDD\General\DecorationMapping.cs" />
     <Compile Include="LDD\Files\LifFile.cs" />
     <Compile Include="LDD\Files\LocalizationFile.cs" />
+    <Compile Include="LDD\General\MainGroup.cs" />
+    <Compile Include="LDD\General\Material.cs" />
+    <Compile Include="LDD\General\MaterialType.cs" />
+    <Compile Include="LDD\General\Platform.cs" />
+    <Compile Include="LDD\General\VersionInfo.cs" />
     <Compile Include="LDD\LDDManager.cs" />
     <Compile Include="LDD\LifInstance.cs" />
+    <Compile Include="LDD\Primitives\BoundingBox.cs" />
+    <Compile Include="LDD\Primitives\Collision.cs" />
+    <Compile Include="LDD\Primitives\CollisionBox.cs" />
+    <Compile Include="LDD\Primitives\CollisionSphere.cs" />
+    <Compile Include="LDD\Primitives\Connectivity.cs" />
+    <Compile Include="LDD\Primitives\Orientation.cs" />
+    <Compile Include="LDD\Primitives\PhysicsAttributes.cs" />
+    <Compile Include="LDD\Primitives\Primitive.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utilities\General.cs" />
+    <Compile Include="Utilities\SecurityHelper.cs" />
+    <Compile Include="Utilities\XSerializable.cs" />
+    <Compile Include="Utilities\XSerializationHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

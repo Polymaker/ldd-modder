@@ -5,7 +5,7 @@ using System.Text;
 using System.Security.Principal;
 namespace LDDModder.Utilities
 {
-    public static class General
+    public static class SecurityHelper
     {
         private static int adminStatus = -1;
 
