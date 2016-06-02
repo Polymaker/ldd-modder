@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="IO\BinaryReaderEx.cs" />
     <Compile Include="IO\StreamPortion.cs" />
+    <Compile Include="LDD\General\Brand.cs" />
     <Compile Include="LDD\General\DecorationMapping.cs" />
     <Compile Include="LDD\Files\LifFile.cs" />
     <Compile Include="LDD\Files\LocalizationFile.cs" />
@@ -55,6 +56,13 @@
     <Compile Include="LDD\General\VersionInfo.cs" />
     <Compile Include="LDD\LDDManager.cs" />
     <Compile Include="LDD\LifInstance.cs" />
+    <Compile Include="LDD\Palettes\Assembly.cs" />
+    <Compile Include="LDD\Palettes\Bag.cs" />
+    <Compile Include="LDD\Palettes\Brick.cs" />
+    <Compile Include="LDD\Palettes\Palette.cs" />
+    <Compile Include="LDD\Palettes\PaletteManager.cs" />
+    <Compile Include="LDD\Palettes\Part.cs" />
+    <Compile Include="LDD\Palettes\SubMaterial.cs" />
     <Compile Include="LDD\Primitives\BoundingBox.cs" />
     <Compile Include="LDD\Primitives\Collision.cs" />
     <Compile Include="LDD\Primitives\CollisionBox.cs" />

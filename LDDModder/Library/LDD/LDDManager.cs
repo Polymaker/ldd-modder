@@ -255,6 +255,35 @@ namespace LDDModder.LDD
 
         #endregion
 
+        #region GetDirectory
+
+        private static string GetDirectoryName(DbDirectories directory)
+        {
+            string dirName = directory.ToString();
+            if (directory == DbDirectories.LOD0)
+                dirName = Path.Combine(DbDirectories.Primitives.ToString(), dirName);
+            return dirName;
+        }
+
+        /// <summary>
+        /// Get the full path for the specified directory
+        /// </summary>
+        /// <param name="directory"></param>
+        /// <param name="fromAssets">Specify if the directory from AppData or from de DB.LIF in the Assets</param>
+        /// <returns></returns>
+        public static string GetDirectory(DbDirectories directory, bool fromAssets = false)//on-disk location (extracted)
+        {
+            return Path.Combine(GetLifDirectory(fromAssets ? LifInstance.AssetsDatabase : LifInstance.Database), GetDirectoryName(directory));
+        }
+
+        public static string GetDirectory(AssetDirectories directory)
+        {
+            return Path.Combine(GetLifDirectory(LifInstance.Assets), directory.ToString());
+        }
+
+        #endregion
+
+
         public enum LifDiscardMethod
         {
             Rename,
