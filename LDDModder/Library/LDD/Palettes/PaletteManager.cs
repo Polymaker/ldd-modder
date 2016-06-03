@@ -53,33 +53,6 @@ namespace LDDModder.LDD.Palettes
             return cleanName;
         }
 
-        public static void CreatePaletteDirectory(string paletteName)
-        {
-            //if (!LDDManager.IsLifExtracted(LifInstance.Database))
-            //    return;
-            
-            var dirName = Path.Combine(LDDManager.ApplicationDataPath, "Palettes", paletteName);
-            Directory.CreateDirectory(dirName);
-
-            //using (var fs = File.Create(Path.Combine(dirName, "new file.txt")))
-            //{
-            //    using (var sw = new StreamWriter(fs))
-            //        sw.WriteLine("Hello");
-            //}
-
-            var dInfo = new DirectoryInfo(dirName);
-            var ntAccountName = WindowsIdentity.GetCurrent().Name;
-            var dSecurity = dInfo.GetAccessControl();
-            
-            dSecurity.AddAccessRule(new FileSystemAccessRule(ntAccountName, 
-                FileSystemRights.Delete | FileSystemRights.DeleteSubdirectoriesAndFiles, 
-                InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit, 
-                PropagationFlags.None, AccessControlType.Deny));
-
-            dInfo.SetAccessControl(dSecurity);
-            
-        }
-
         public static void DenyDeleteDirectory(string directoryPath)
         {
             var dInfo = new DirectoryInfo(directoryPath);

@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library", "Library\Library.csproj", "{4BE42546-C8CF-4115-8EA3-6985999E3E8D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LifExtractor", "LifExtractor\LifExtractor.csproj", "{8A612E5D-37DF-41DF-A9B3-2A991D27C375}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "Application\LDDModder.csproj", "{F23DA248-73FB-4D64-95F9-F7BC32B56C00}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LDDModder", "Application\LDDModder.csproj", "{F23DA248-73FB-4D64-95F9-F7BC32B56C00}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaletteMaker", "PaletteMaker\PaletteMaker.csproj", "{6FD59A49-86CD-4DC8-977F-DB68922AF893}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{F23DA248-73FB-4D64-95F9-F7BC32B56C00}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F23DA248-73FB-4D64-95F9-F7BC32B56C00}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F23DA248-73FB-4D64-95F9-F7BC32B56C00}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6FD59A49-86CD-4DC8-977F-DB68922AF893}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FD59A49-86CD-4DC8-977F-DB68922AF893}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FD59A49-86CD-4DC8-977F-DB68922AF893}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FD59A49-86CD-4DC8-977F-DB68922AF893}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
