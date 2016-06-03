@@ -16,5 +16,19 @@ namespace LDDModder.LDD.Palettes
 
         [XmlAttribute("ItemNos")]
         public string ElementID { get; set; }
+
+        public PaletteItem()
+        {
+            DesignID = 0;
+            Quantity = 0;
+            ElementID = String.Empty;
+        }
+
+        public PaletteItem(int designID, int quantity, string elementID)
+        {
+            DesignID = designID;
+            Quantity = quantity;
+            ElementID = elementID;
+        }
     }
 }

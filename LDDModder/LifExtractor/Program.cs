@@ -23,8 +23,6 @@ namespace LifExtractor
         
         static void Main(string[] args)
         {
-            //PaletteManager.CreatePaletteDirectory("Custom-2");
-
             if (args == null || args.Length == 0)
                 return;
 

@@ -5,6 +5,8 @@ using System.Linq;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Text;
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace LDDModder.LDD.Palettes
 {
@@ -12,17 +14,43 @@ namespace LDDModder.LDD.Palettes
     {
         public static void CreateCustomPalette(Bag info, Palette content)
         {
-            //if (!LDDManager.IsLifExtracted(LifInstance.Database))
-            //    return;
+    
+            var paletteName = GetShortPaletteName(info);
+            var paletteDirectory = string.Format("{0}-{1}", paletteName, info.PaletteVersion);
+            paletteDirectory = Path.Combine(LDDManager.ApplicationDataPath, "Palettes", paletteDirectory);
 
-            var dirName = string.Format("{0}-{1}", info.Name, info.PaletteVersion);
-            dirName = Path.Combine(LDDManager.ApplicationDataPath, "Palettes", dirName);
-            Directory.CreateDirectory(dirName);
-            var dInfo = new DirectoryInfo(dirName);
-            var ntAccountName = WindowsIdentity.GetCurrent().Name;
-            var dSecurity = dInfo.GetAccessControl(AccessControlSections.All);
-            var rules = dSecurity.GetAccessRules(true, true, typeof(NTAccount));
-            dSecurity.AddAccessRule(new FileSystemAccessRule(ntAccountName, FileSystemRights.Delete | FileSystemRights.DeleteSubdirectoriesAndFiles, AccessControlType.Deny));
+            if (Directory.Exists(paletteDirectory))
+                AllowDeleteDirectory(paletteDirectory);
+            else
+                Directory.CreateDirectory(paletteDirectory);
+
+            var xmlSerSettings = new XmlWriterSettings() { Encoding = Encoding.UTF8, Indent = true, NewLineChars = Environment.NewLine };
+
+            using (var fs = File.Create(Path.Combine(paletteDirectory, "Info.baxml")))
+            {
+                var xmlSer = new XmlSerializer(typeof(Bag));
+                var xmlWriter = XmlTextWriter.Create(fs, xmlSerSettings);
+                xmlSer.Serialize(xmlWriter, info);
+            }
+
+            using (var fs = File.Create(Path.Combine(paletteDirectory, paletteName + ".paxml")))
+            {
+                var xmlSer = new XmlSerializer(typeof(Palette));
+                var xmlWriter = XmlTextWriter.Create(fs, xmlSerSettings);
+                xmlSer.Serialize(xmlWriter, content);
+            }
+
+            DenyDeleteDirectory(paletteDirectory);
+        }
+
+        private static string GetShortPaletteName(Bag info)
+        {
+            string cleanName = info.Name.Replace(" ", string.Empty);
+
+            foreach (var invalidChar in Path.GetInvalidFileNameChars())
+                cleanName = cleanName.Replace(invalidChar.ToString(), string.Empty);
+             
+            return cleanName;
         }
 
         public static void CreatePaletteDirectory(string paletteName)
@@ -33,11 +61,11 @@ namespace LDDModder.LDD.Palettes
             var dirName = Path.Combine(LDDManager.ApplicationDataPath, "Palettes", paletteName);
             Directory.CreateDirectory(dirName);
 
-            using (var fs = File.Create(Path.Combine(dirName, "new file.txt")))
-            {
-                using (var sw = new StreamWriter(fs))
-                    sw.WriteLine("Hello");
-            }
+            //using (var fs = File.Create(Path.Combine(dirName, "new file.txt")))
+            //{
+            //    using (var sw = new StreamWriter(fs))
+            //        sw.WriteLine("Hello");
+            //}
 
             var dInfo = new DirectoryInfo(dirName);
             var ntAccountName = WindowsIdentity.GetCurrent().Name;
@@ -52,9 +80,11 @@ namespace LDDModder.LDD.Palettes
             
         }
 
-        private static void DenyDeleteDirectory(string directoryPath)
+        public static void DenyDeleteDirectory(string directoryPath)
         {
             var dInfo = new DirectoryInfo(directoryPath);
+            if (!dInfo.Exists)
+                dInfo.Create();
             var ntAccountName = WindowsIdentity.GetCurrent().Name;
             var dSecurity = dInfo.GetAccessControl();
 
@@ -66,9 +96,11 @@ namespace LDDModder.LDD.Palettes
             dInfo.SetAccessControl(dSecurity);
         }
 
-        private static void AllowDeleteDirectory(string directoryPath)
+        public static void AllowDeleteDirectory(string directoryPath)
         {
             var dInfo = new DirectoryInfo(directoryPath);
+            if (!dInfo.Exists)
+                return;
             var ntAccountName = WindowsIdentity.GetCurrent().Name;
             var dSecurity = dInfo.GetAccessControl();
 

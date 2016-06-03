@@ -29,7 +29,15 @@ namespace LDDModder.Utilities
 
         void IXmlSerializable.WriteXml(XmlWriter writer)
         {
-            SerializeToXElement().WriteTo(writer);
+            var rootElement = SerializeToXElement();
+
+            //writer has already written StartDocument (root node)
+            //so we write each element manually
+            foreach (var attr in rootElement.Attributes())
+                writer.WriteAttributeString(attr.Name.LocalName, attr.Name.Namespace.NamespaceName, attr.Value);
+
+            foreach (var child in rootElement.Elements())
+                child.WriteTo(writer);
         }
 
         //public static T Deserialize<T>(Stream

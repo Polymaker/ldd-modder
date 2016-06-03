@@ -12,13 +12,25 @@ namespace LDDModder
     {
         static void Main(string[] args)
         {
-            string palettePath = @"C:\Users\james\AppData\Roaming\LEGO Company\LEGO Digital Designer\Palettes\LDD-10\LDD.PAXML";
-            Palette lddPalette = null;
-            using (var fs = File.OpenRead(palettePath))
-            {
-                var xmlSer = new XmlSerializer(typeof(Palette));
-                lddPalette = (Palette)xmlSer.Deserialize(fs);
-            }
+            //PaletteManager.AllowDeleteDirectory(@"C:\Users\james\AppData\Roaming\LEGO Company\LEGO Digital Designer\Palettes\Custom-1");
+            //PaletteManager.AllowDeleteDirectory(@"C:\Users\james\AppData\Roaming\LEGO Company\LEGO Digital Designer\Palettes\LDDExtended-1");
+
+            //var pInfo = new Bag("LDD Extended", false);
+            //var pItems = new Palette() { FileVersion = new LDD.General.VersionInfo(1, 0) };
+            //pItems.Items.Add(new Brick(3004, "6022083", 226, 0));
+            //pItems.Items.Add(new Brick(3004, "4245570", 141, 0));
+            //pItems.Items.Add(new Brick(3004, "4153377", 151, 0));
+            //PaletteManager.CreateCustomPalette(pInfo, pItems);
+
+            //PaletteManager.CreatePaletteDirectory("Custom-1");
+
+            //string palettePath = @"C:\Users\james\AppData\Roaming\LEGO Company\LEGO Digital Designer\Palettes\LDD-10\LDD.PAXML";
+            //Palette lddPalette = null;
+            //using (var fs = File.OpenRead(palettePath))
+            //{
+            //    var xmlSer = new XmlSerializer(typeof(Palette));
+            //    lddPalette = (Palette)xmlSer.Deserialize(fs);
+            //}
         }
     }
 }

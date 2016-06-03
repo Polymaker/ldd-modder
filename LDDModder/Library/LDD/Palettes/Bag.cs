@@ -30,6 +30,28 @@ namespace LDDModder.LDD.Palettes
 
         public bool? BrandFilter { get; set; }
 
+        public Bag()
+        {
+            Name = String.Empty;
+            PaletteVersion = 0;
+            Countable = false;
+            ParentBrand = Brand.LDD;
+            FileVersion = new VersionInfo();
+            Buyable = null;
+            BrandFilter = null;
+        }
+
+        public Bag(string name, bool countable)
+        {
+            Name = name;
+            Countable = countable;
+            PaletteVersion = 1;
+            ParentBrand = Brand.LDD;
+            FileVersion = new VersionInfo(1, 0);
+            Buyable = null;
+            BrandFilter = null;
+        }
+
         protected override void DeserializeFromXElement(XElement element)
         {
             if (element.Attribute("versionMajor") != null)
@@ -62,7 +84,30 @@ namespace LDDModder.LDD.Palettes
 
         protected override XElement SerializeToXElement()
         {
-            var rootElem = new XElement(RootElementName, new XElement("Bag"));
+            var rootElem = new XElement(RootElementName, 
+                new XElement("Bag",
+                    new XAttribute("name", Name),
+                    new XAttribute("version", PaletteVersion),
+                    new XAttribute("countable", Countable ? "true" : "false"),
+                    new XAttribute("brand", ParentBrand.ToString())
+                    )
+                );
+
+            if (FileVersion != null)
+            {
+                rootElem.Add(new XAttribute("versionMajor", FileVersion.Major),
+                             new XAttribute("versionMinor", FileVersion.Minor));
+            }
+
+            var bagElem = rootElem.Element("Bag");
+
+            if (Buyable.HasValue)
+                bagElem.Add(new XAttribute("buyable", Buyable.Value ? "true" : "false"));
+
+            if (BrandFilter.HasValue)
+                bagElem.Add(new XAttribute("brandFilter", BrandFilter.Value ? "true" : "false"));
+
+
             return rootElem;
         }
     }

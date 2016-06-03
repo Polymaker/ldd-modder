@@ -37,8 +37,8 @@ namespace LDDModder.Utilities
         internal static string GetTypeXmlRootName(Type xmlObjType)
         {
             var xmlRootAttr = (XmlRootAttribute[])xmlObjType.GetCustomAttributes(typeof(XmlRootAttribute), false);
-            if (xmlRootAttr.Length > 0)
-                return xmlRootAttr[0].Namespace;
+            if (xmlRootAttr != null && xmlRootAttr.Length > 0)
+                return xmlRootAttr[0].ElementName;
             return xmlObjType.Name;
         }
 
@@ -58,21 +58,22 @@ namespace LDDModder.Utilities
             return element.Attribute(attributeName) != null;
         }
 
-        public static XElement Serialize<T>(T obj)
+        public static XElement Serialize(object obj)
         {
             var doc = new XDocument();
-            var ser = new XmlSerializer(typeof(T));
-            ser.Serialize(doc.CreateWriter(), obj);
-            var rootElem = doc.Root;
-            rootElem.Name = GetTypeXmlRootName(typeof(T));
-            return rootElem;
+            var objType = obj.GetType();
+            return Serialize(obj, GetTypeXmlRootName(objType));
         }
 
         public static XElement Serialize(object obj, string rootName)
         {
             var doc = new XDocument();
             var ser = new XmlSerializer(obj.GetType());
-            ser.Serialize(doc.CreateWriter(), obj);
+            var ns = new XmlSerializerNamespaces();
+            ns.Add("", "");
+            var docWriter = doc.CreateWriter();
+            ser.Serialize(docWriter, obj, ns);
+            docWriter.Close();
             var rootElem = doc.Root;
             rootElem.Name = rootName;
             return rootElem;
