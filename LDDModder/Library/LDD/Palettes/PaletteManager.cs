@@ -72,15 +72,6 @@ namespace LDDModder.LDD.Palettes
             var ntAccountName = WindowsIdentity.GetCurrent().Name;
             var dSecurity = dInfo.GetAccessControl();
 
-            //var rules = dSecurity.GetAccessRules(true, true, typeof(NTAccount));
-
-            //foreach (var rule in rules.OfType<FileSystemAccessRule>())
-            //{
-            //    if (!rule.IdentityReference.Value.Equals(ntAccountName, StringComparison.CurrentCultureIgnoreCase))
-            //        continue;
-
-                
-            //}
             dSecurity.RemoveAccessRule(new FileSystemAccessRule(ntAccountName,
                 FileSystemRights.Delete | FileSystemRights.DeleteSubdirectoriesAndFiles,
                 InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit,

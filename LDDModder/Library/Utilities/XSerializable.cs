@@ -8,6 +8,11 @@ namespace LDDModder.Utilities
     public abstract class XSerializable : IXmlSerializable
     {
 
+        public string RootElementName
+        {
+            get { return XSerializationHelper.GetTypeXmlRootName(GetType()); }
+        }
+
         protected abstract XElement SerializeToXElement();
 
         protected abstract void DeserializeFromXElement(XElement element);

@@ -59,7 +59,9 @@
     <Compile Include="LDD\Palettes\Assembly.cs" />
     <Compile Include="LDD\Palettes\Bag.cs" />
     <Compile Include="LDD\Palettes\Brick.cs" />
+    <Compile Include="LDD\Palettes\Decoration.cs" />
     <Compile Include="LDD\Palettes\Palette.cs" />
+    <Compile Include="LDD\Palettes\PaletteItem.cs" />
     <Compile Include="LDD\Palettes\PaletteManager.cs" />
     <Compile Include="LDD\Palettes\Part.cs" />
     <Compile Include="LDD\Palettes\SubMaterial.cs" />

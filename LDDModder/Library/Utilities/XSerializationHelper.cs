@@ -34,7 +34,7 @@ namespace LDDModder.Utilities
             }
         }
 
-        private static string GetTypeXmlRootName(Type xmlObjType)
+        internal static string GetTypeXmlRootName(Type xmlObjType)
         {
             var xmlRootAttr = (XmlRootAttribute[])xmlObjType.GetCustomAttributes(typeof(XmlRootAttribute), false);
             if (xmlRootAttr.Length > 0)
@@ -51,6 +51,11 @@ namespace LDDModder.Utilities
         public static bool ContainsElement(this XElement element, XName childElementName)
         {
             return element.Element(childElementName) != null;
+        }
+
+        public static bool ContainsAttribute(this XElement element, XName attributeName)
+        {
+            return element.Attribute(attributeName) != null;
         }
 
         public static XElement Serialize<T>(T obj)

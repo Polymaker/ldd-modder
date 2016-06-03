@@ -44,6 +44,7 @@ namespace LDDModder.LDD.Primitives
             Attributes = type, angle, ax, ay, az, tx, ty, tz
         Rail
             Attributes = type, angle, ax, ay, az, tx, ty, tz, length
+
         */
     }
 }

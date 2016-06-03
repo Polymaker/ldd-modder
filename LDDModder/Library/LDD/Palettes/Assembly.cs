@@ -6,7 +6,7 @@ using System.Xml.Serialization;
 
 namespace LDDModder.LDD.Palettes
 {
-    public class Assembly : Brick
+    public class Assembly : PaletteItem
     {
         [XmlElement("Part")]
         public List<Part> Parts { get; set; }
