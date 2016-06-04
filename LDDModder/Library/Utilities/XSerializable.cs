@@ -1,4 +1,5 @@
-﻿using System.Xml;
+﻿using System.IO;
+using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
 using System.Xml.Serialization;
@@ -38,6 +39,30 @@ namespace LDDModder.Utilities
 
             foreach (var child in rootElement.Elements())
                 child.WriteTo(writer);
+        }
+
+        public static T LoadFrom<T>(string filepath) where T : XSerializable
+        {
+            using (var fs = File.OpenRead(filepath))
+                return LoadFrom<T>(fs);
+        }
+
+        public static T LoadFrom<T>(Stream stream) where T : XSerializable
+        {
+            var xmlSer = new XmlSerializer(typeof(T));
+            return (T)xmlSer.Deserialize(stream);
+        }
+
+        public static void Save<T>(T xObject, string filepath) where T : XSerializable
+        {
+            using (var fs = File.Create(filepath))
+                Save<T>(xObject, fs);
+        }
+
+        public static void Save<T>(T xObject, Stream stream) where T : XSerializable
+        {
+            var xmlSer = new XmlSerializer(typeof(T));
+            xmlSer.Serialize(stream, xObject);
         }
 
         //public static T Deserialize<T>(Stream

@@ -31,5 +31,10 @@ namespace LDDModder.LDD.Palettes
         {
             Parts = new List<Part>(parts);
         }
+
+        public override object Clone()
+        {
+            return new Assembly(DesignID, ElementID, Quantity, Parts.Clone());
+        }
     }
 }

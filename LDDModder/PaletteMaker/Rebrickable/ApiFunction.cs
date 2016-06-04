@@ -32,7 +32,7 @@ namespace LDDModder.PaletteMaker.Rebrickable
         public R Execute(P funcParam)
         {
             var funcUrl = string.Format("{0}{1}?{2}", RebrickableAPI.API_URL, FunctionName, funcParam.GetParamsUrl());
-            var resultData = RebrickableAPI.WC.DownloadData(funcUrl);
+            var resultData = RebrickableAPI.DownloadWebPage(funcUrl);
 
             if (resultData == null || resultData.Length == 0)
                 return default(R);

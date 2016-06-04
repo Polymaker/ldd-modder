@@ -49,7 +49,15 @@ namespace LDDModder.LDD.Palettes
 
             foreach (var invalidChar in Path.GetInvalidFileNameChars())
                 cleanName = cleanName.Replace(invalidChar.ToString(), string.Empty);
-             
+
+            int firstLetter = 0;
+            for (; firstLetter < cleanName.Length; firstLetter++)
+                if (char.IsLetter(cleanName[firstLetter]))
+                    break;
+
+            if (firstLetter > 0)
+                cleanName = cleanName.Substring(firstLetter);
+
             return cleanName;
         }
 

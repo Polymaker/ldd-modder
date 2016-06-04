@@ -42,5 +42,9 @@ namespace LDDModder.LDD.Palettes
             Decorations = new List<Decoration>(decorations);
         }
 
+        public override object Clone()
+        {
+            return new Brick(DesignID, ElementID, MaterialID, Quantity, SubMaterials.Clone(), Decorations.Clone());
+        }
     }
 }

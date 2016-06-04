@@ -28,6 +28,7 @@ namespace LDDModder.LDD.Palettes
         public Palette()
         {
             _Items = new List<PaletteItem>();
+            FileVersion = new VersionInfo(1, 0);
         }
 
         protected override void DeserializeFromXElement(XElement element)

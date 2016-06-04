@@ -9,9 +9,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>LDDModder.PaletteMaker</RootNamespace>
     <AssemblyName>PaletteMaker</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -62,6 +63,7 @@
     <Compile Include="Rebrickable\ApiFunctionParameters.cs" />
     <Compile Include="Rebrickable\ApiParameterAttribute.cs" />
     <Compile Include="Rebrickable\ASyncApiFunctionDelegate.cs" />
+    <Compile Include="Rebrickable\Part.cs" />
     <Compile Include="Rebrickable\RebrickableAPI.cs" />
     <Compile Include="Rebrickable\SetParts.cs" />
     <EmbeddedResource Include="Form1.resx">

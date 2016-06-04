@@ -6,7 +6,7 @@ using System.Xml.Serialization;
 
 namespace LDDModder.LDD.Palettes
 {
-    public abstract class PaletteItem
+    public abstract class PaletteItem : ICloneable
     {
         [XmlAttribute("designID")]
         public int DesignID { get; set; }
@@ -30,5 +30,10 @@ namespace LDDModder.LDD.Palettes
             Quantity = quantity;
             ElementID = elementID;
         }
+
+        //public abstract PaletteItem Clone();
+
+        public abstract object Clone();
+
     }
 }

@@ -34,12 +34,11 @@ namespace LDDModder.PaletteMaker.Rebrickable
                 }
             }
             return paramValList;
-
         }
 
         private string GetParamValue(PropertyInfo propInfo)
         {
-            object propVal = propInfo.GetValue(this);
+            object propVal = propInfo.GetValue(this, null);
             if (propInfo.PropertyType == typeof(bool))
                 return (((bool)propVal == true) ? 1 : 0).ToString();
             return propVal.ToString();

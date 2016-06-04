@@ -1,4 +1,5 @@
 ﻿using LDDModder.LDD.Palettes;
+using LDDModder.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,11 +8,28 @@ using System.Threading.Tasks;
 
 namespace LDDModder.PaletteMaker
 {
-    class PaletteBuilder
+    public static class PaletteBuilder
     {
+        private static bool _Initialized;
+        static Palette LddPalette;
+
+        public static bool Initialized
+        {
+            get { return _Initialized; }
+        }
+
+        public static void Initialize()
+        {
+            if (Initialized)
+                return;
+            LddPalette = XSerializable.LoadFrom<Palette>("LDD.PAXML");
+            _Initialized = true;
+        }
 
         static PaletteItem GetPaletteItem(int designId, int lddColor, string elementId, int quantity)
         {
+            if (!Initialized)
+                Initialize();
             /*
              * if elementId exists in base LDD palette
              *      return LDD palette items[elementId]
@@ -35,5 +53,7 @@ namespace LDDModder.PaletteMaker
             */
             return null;
         }
+
+
     }
 }
