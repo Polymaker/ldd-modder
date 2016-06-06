@@ -1,11 +1,13 @@
 ﻿using LDDModder.LDD;
 using LDDModder.LDD.Palettes;
 using LDDModder.LDD.Primitives;
+using LDDModder.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Xml.Linq;
 using System.Xml.Serialization;
 
 namespace LDDModder
@@ -14,8 +16,17 @@ namespace LDDModder
     {
         static void Main(string[] args)
         {
-            var lddBrick = Primitive.LoadFrom<Primitive>(Path.Combine(LDDManager.GetDirectory(LDDManager.DbDirectories.Primitives), "99386" + ".xml"));
-            lddBrick.Save("99386.xml");
+
+            var testElem = new XElement("Root",
+                new XAttribute("aassdd", "123"),
+                new XAttribute("ab", "123"),
+                new XAttribute("helo", "123"));
+            testElem.SortAttributes(a => a.Name.LocalName.Length);
+            int primitiveID = 58135;
+
+            var lddBrick = Primitive.LoadFrom<Primitive>(Path.Combine(LDDManager.GetDirectory(LDDManager.DbDirectories.Primitives), primitiveID + ".xml"));
+            //lddBrick.Save(primitiveID + ".xml");
+
             //PaletteManager.AllowDeleteDirectory(@"C:\Users\james\AppData\Roaming\LEGO Company\LEGO Digital Designer\Palettes\Custom-1");
             //PaletteManager.AllowDeleteDirectory(@"C:\Users\james\AppData\Roaming\LEGO Company\LEGO Digital Designer\Palettes\LDDExtended-1");
 
@@ -25,7 +36,7 @@ namespace LDDModder
             //pItems.Items.Add(new Brick(3004, "4245570", 141, 0));
             //pItems.Items.Add(new Brick(3004, "4153377", 151, 0));
             //PaletteManager.CreateCustomPalette(pInfo, pItems);
-
+            
             //PaletteManager.CreatePaletteDirectory("Custom-1");
 
             //string palettePath = @"C:\Users\james\AppData\Roaming\LEGO Company\LEGO Digital Designer\Palettes\LDD-10\LDD.PAXML";

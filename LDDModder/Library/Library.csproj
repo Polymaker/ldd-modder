@@ -74,6 +74,7 @@
     <Compile Include="LDD\Primitives\Connectivity.cs" />
     <Compile Include="LDD\Primitives\ConnectivityHinge.cs" />
     <Compile Include="LDD\Primitives\ConnectivitySlider.cs" />
+    <Compile Include="LDD\Primitives\Decoration.cs" />
     <Compile Include="LDD\Primitives\Orientation.cs" />
     <Compile Include="LDD\Primitives\PhysicsAttributes.cs" />
     <Compile Include="LDD\Primitives\Primitive.cs" />

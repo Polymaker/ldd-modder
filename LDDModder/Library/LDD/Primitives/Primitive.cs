@@ -38,6 +38,8 @@ namespace LDDModder.LDD.Primitives
 
         public int? DesignVersion { get; set; }
 
+        public Decoration DecorationInfo { get; set; }
+
         public List<int> Aliases
         {
             get { return _Aliases; }
@@ -105,7 +107,11 @@ namespace LDDModder.LDD.Primitives
             var physAttrElem = element.Element("PhysicsAttributes");
             if (physAttrElem != null)
                 PhysicsAttributes = XSerializationHelper.DefaultDeserialize<PhysicsAttributes>(physAttrElem);
-           
+
+            var decorationElem = element.Element("Decoration");
+            if (decorationElem != null)
+                DecorationInfo = XSerializationHelper.DefaultDeserialize<Decoration>(decorationElem);//.First() or .Single() ??
+
             var defaultOrientationElem = element.Element("DefaultOrientation");
             if (defaultOrientationElem != null)
                 DefaultOrientation = XSerializationHelper.DefaultDeserialize<Orientation>(defaultOrientationElem);
@@ -203,6 +209,9 @@ namespace LDDModder.LDD.Primitives
             //Other simple elements
             if (PhysicsAttributes != null)
                 root.Add(XSerializationHelper.Serialize(PhysicsAttributes, "PhysicsAttributes"));
+
+            if (DecorationInfo != null)
+                root.Add(XSerializationHelper.Serialize(DecorationInfo, "Decoration"));
 
             if (Bounding != null)
                 root.Add(new XElement("Bounding", XSerializationHelper.Serialize(Bounding, "AABB")));
