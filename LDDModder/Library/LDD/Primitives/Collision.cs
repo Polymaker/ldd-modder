@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LDDModder.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -41,33 +42,34 @@ namespace LDDModder.LDD.Primitives
             switch (node.Name.LocalName)
             {
                 case "Box":
-                    return Deserialize<CollisionBox>(node);
+                    return XSerializationHelper.DefaultDeserialize<CollisionBox>(node);
                 case "Sphere":
-                    return Deserialize<CollisionSphere>(node);
+                    return XSerializationHelper.DefaultDeserialize<CollisionSphere>(node);
             }
             return null;
         }
 
-        public static T Deserialize<T>(XElement node)
-        {
-            var xmlSer = new XmlSerializer(typeof(T));
-            return (T)xmlSer.Deserialize(node.CreateReader());
-        }
+        //public static T Deserialize<T>(XElement node)
+        //{
+        //    var xmlSer = new XmlSerializer(typeof(T));
+        //    return (T)xmlSer.Deserialize(node.CreateReader());
+        //}
 
-        public static XElement Serialize(Collision collision)
-        {
-            var xmlSer = new XmlSerializer(collision.GetType());
-            XDocument d = new XDocument();
-            using (XmlWriter xw = d.CreateWriter())
-                xmlSer.Serialize(xw, collision);
-            return d.Root;
-        }
+        //public static XElement Serialize(Collision collision)
+        //{
+        //    //XSerializationHelper.Serialize(
+        //    var xmlSer = new XmlSerializer(collision.GetType());
+        //    XDocument d = new XDocument();
+        //    using (XmlWriter xw = d.CreateWriter())
+        //        xmlSer.Serialize(xw, collision);
+        //    return d.Root;
+        //}
 
         public static IEnumerable<XElement> Serialize(IEnumerable<Collision> collisions)
         {
-            foreach (var col in collisions)
+            foreach (var colObj in collisions)
             {
-                var result = Serialize(col);
+                var result = XSerializationHelper.Serialize(colObj);
                 if (result != null)
                     yield return result;
             }

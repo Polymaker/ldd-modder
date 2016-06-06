@@ -1,12 +1,15 @@
-﻿using System;
+﻿using LDDModder.Utilities;
+using System;
+using System.Collections.Generic;
 using System.Xml;
+using System.Xml.Linq;
 using System.Xml.Serialization;
 
 
 namespace LDDModder.LDD.Primitives
 {
     [Serializable]
-    public class Connectivity
+    public abstract class Connectivity
     {
         [XmlAttribute("type")]
         public int Type { get; set; }
@@ -46,5 +49,42 @@ namespace LDDModder.LDD.Primitives
             Attributes = type, angle, ax, ay, az, tx, ty, tz, length
 
         */
+
+        public static IEnumerable<Connectivity> Deserialize(IEnumerable<XElement> nodes)
+        {
+            foreach (var node in nodes)
+            {
+                var result = Deserialize(node);
+                if (result != null)
+                    yield return result;
+            }
+        }
+
+        public static IEnumerable<XElement> Serialize(IEnumerable<Connectivity> collisions)
+        {
+            foreach (var conObj in collisions)
+            {
+                var result = XSerializationHelper.Serialize(conObj);
+                if (result != null)
+                    yield return result;
+            }
+        }
+
+        public static Connectivity Deserialize(XElement node)
+        {
+            switch (node.Name.LocalName)
+            {
+                case "Custom2DField":
+                    return XSerializationHelper.DefaultDeserialize<ConnectivityCustom2DField>(node);
+                case "Hinge":
+                    return XSerializationHelper.DefaultDeserialize<ConnectivityHinge>(node);
+                case "Axel":
+                    return XSerializationHelper.DefaultDeserialize<ConnectivityAxel>(node);
+                case "Slider":
+                    return XSerializationHelper.DefaultDeserialize<ConnectivitySlider>(node);
+            }
+            return null;
+        }
+
     }
 }

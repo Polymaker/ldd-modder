@@ -1,4 +1,6 @@
-﻿using LDDModder.LDD.Palettes;
+﻿using LDDModder.LDD;
+using LDDModder.LDD.Palettes;
+using LDDModder.LDD.Primitives;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,6 +14,8 @@ namespace LDDModder
     {
         static void Main(string[] args)
         {
+            var lddBrick = Primitive.LoadFrom<Primitive>(Path.Combine(LDDManager.GetDirectory(LDDManager.DbDirectories.Primitives), "99386" + ".xml"));
+            lddBrick.Save("99386.xml");
             //PaletteManager.AllowDeleteDirectory(@"C:\Users\james\AppData\Roaming\LEGO Company\LEGO Digital Designer\Palettes\Custom-1");
             //PaletteManager.AllowDeleteDirectory(@"C:\Users\james\AppData\Roaming\LEGO Company\LEGO Digital Designer\Palettes\LDDExtended-1");
 

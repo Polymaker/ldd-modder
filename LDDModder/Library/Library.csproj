@@ -69,7 +69,11 @@
     <Compile Include="LDD\Primitives\Collision.cs" />
     <Compile Include="LDD\Primitives\CollisionBox.cs" />
     <Compile Include="LDD\Primitives\CollisionSphere.cs" />
+    <Compile Include="LDD\Primitives\ConnectivityAxel.cs" />
+    <Compile Include="LDD\Primitives\ConnectivityCustom2DField.cs" />
     <Compile Include="LDD\Primitives\Connectivity.cs" />
+    <Compile Include="LDD\Primitives\ConnectivityHinge.cs" />
+    <Compile Include="LDD\Primitives\ConnectivitySlider.cs" />
     <Compile Include="LDD\Primitives\Orientation.cs" />
     <Compile Include="LDD\Primitives\PhysicsAttributes.cs" />
     <Compile Include="LDD\Primitives\Primitive.cs" />

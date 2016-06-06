@@ -63,7 +63,7 @@
     <Compile Include="Rebrickable\ApiFunctionParameters.cs" />
     <Compile Include="Rebrickable\ApiParameterAttribute.cs" />
     <Compile Include="Rebrickable\ASyncApiFunctionDelegate.cs" />
-    <Compile Include="Rebrickable\Part.cs" />
+    <Compile Include="Rebrickable\PartInfo.cs" />
     <Compile Include="Rebrickable\RebrickableAPI.cs" />
     <Compile Include="Rebrickable\SetParts.cs" />
     <EmbeddedResource Include="Form1.resx">

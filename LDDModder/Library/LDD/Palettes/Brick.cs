@@ -46,5 +46,21 @@ namespace LDDModder.LDD.Palettes
         {
             return new Brick(DesignID, ElementID, MaterialID, Quantity, SubMaterials.Clone(), Decorations.Clone());
         }
+
+        public Brick Clone(string elementID = null, int? materialID = null, int? quantity = null)
+        {
+            var newBrick = (Brick)((ICloneable)this).Clone();
+
+            if (!string.IsNullOrEmpty(elementID))
+                newBrick.ElementID = elementID;
+
+            if (materialID.HasValue)
+                newBrick.MaterialID = materialID.Value;
+
+            if (quantity.HasValue)
+                newBrick.Quantity = quantity.Value;
+
+            return newBrick;
+        }
     }
 }

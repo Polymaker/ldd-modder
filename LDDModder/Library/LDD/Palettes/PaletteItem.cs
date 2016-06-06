@@ -31,9 +31,13 @@ namespace LDDModder.LDD.Palettes
             ElementID = elementID;
         }
 
-        //public abstract PaletteItem Clone();
-
         public abstract object Clone();
 
+        public PaletteItem Clone(int quantity)
+        {
+            var item = (PaletteItem)Clone();
+            item.Quantity = quantity;
+            return item;
+        }
     }
 }

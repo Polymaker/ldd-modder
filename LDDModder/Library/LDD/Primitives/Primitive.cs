@@ -5,6 +5,9 @@ using System;
 using System.Linq;
 using System.Xml.Linq;
 using System.Xml.Serialization;
+using System.IO;
+using System.Xml;
+using System.Text;
 
 namespace LDDModder.LDD.Primitives
 {
@@ -86,6 +89,10 @@ namespace LDDModder.LDD.Primitives
             var collisionsElem = element.Element("Collision");
             if (collisionsElem != null)
                 _Collisions.AddRange(Collision.Deserialize(collisionsElem.Elements()));
+
+            var conectivityElem = element.Element("Connectivity");
+            if (conectivityElem != null)
+                _Connections.AddRange(Connectivity.Deserialize(conectivityElem.Elements()));
 
             var boundingElem = element.Element("Bounding");
             if (boundingElem != null && boundingElem.HasElements)
@@ -186,6 +193,12 @@ namespace LDDModder.LDD.Primitives
             }
 
             //Connectivity
+            if (Connections.Count > 0)
+            {
+                var connElem = new XElement("Connectivity");
+                root.Add(connElem);
+                connElem.Add(Connectivity.Serialize(Connections).ToArray());
+            }
 
             //Other simple elements
             if (PhysicsAttributes != null)
@@ -211,6 +224,23 @@ namespace LDDModder.LDD.Primitives
 
         #endregion
 
+        public void Save(string filepath)
+        {
+            using (var fs = File.Create(filepath))
+                Save(fs);
+        }
 
+        public void Save(Stream stream)
+        {
+            var tmpDoc = new XmlDocument();
+            var xmlSerSettings = new XmlWriterSettings() { Encoding = Encoding.UTF8, Indent = true, NewLineChars = Environment.NewLine, OmitXmlDeclaration = true };
+            var ns = new XmlSerializerNamespaces();
+            ns.Add("", "");
+            var xmlSer = new XmlSerializer(typeof(Primitive));
+            var xmlWriter = XmlTextWriter.Create(stream, xmlSerSettings);
+            xmlWriter.WriteRaw("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\r\n");
+            xmlSer.Serialize(xmlWriter, this, ns);
+
+        }
     }
 }

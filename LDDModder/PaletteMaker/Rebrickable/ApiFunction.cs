@@ -34,7 +34,7 @@ namespace LDDModder.PaletteMaker.Rebrickable
             var funcUrl = string.Format("{0}{1}?{2}", RebrickableAPI.API_URL, FunctionName, funcParam.GetParamsUrl());
             var resultData = RebrickableAPI.DownloadWebPage(funcUrl);
 
-            if (resultData == null || resultData.Length == 0)
+            if (resultData == null || resultData.Length <= 20)
                 return default(R);
 
             using (var ms = new MemoryStream(resultData))

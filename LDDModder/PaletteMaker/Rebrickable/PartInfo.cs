@@ -7,7 +7,7 @@ using System.Xml.Serialization;
 namespace LDDModder.PaletteMaker.Rebrickable
 {
     [XmlRoot("root"), Serializable]
-    public class Part
+    public class PartInfo
     {
         [XmlElement("part_id")]
         public string PartId { get; set; }
@@ -118,7 +118,7 @@ namespace LDDModder.PaletteMaker.Rebrickable
             }
         }
 
-        public Part()
+        public PartInfo()
         {
             PartId = String.Empty;
             Name = String.Empty;
@@ -127,6 +127,8 @@ namespace LDDModder.PaletteMaker.Rebrickable
             Category = String.Empty;
             PartTypeId = String.Empty;
             RebrickablePartIds = new string[0];
+            ExternalParts = new ExternalPartInfo();
+            RelatedParts = new RelatedPart[0];
         }
     }
 
