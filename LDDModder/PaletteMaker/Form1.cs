@@ -38,9 +38,13 @@ namespace LDDModder.PaletteMaker
                 return;
             }
 
-            label1.Text = setPartsInfo.Description;
+            label1.Text = string.Format("{0} : {1}",setPartsInfo.SetId, setPartsInfo.Description);
 
-            var paletteInfo = new Bag(setNumber + " " + setPartsInfo.Description, true);
+            Application.DoEvents();
+
+            var shortSetNumber = setNumber.Substring(0, setNumber.IndexOf('-'));
+            var paletteInfo = new Bag(shortSetNumber + " " + setPartsInfo.Description, true);
+            
             var setPalette = new Palette();
 
             PartNotFound.Clear();
