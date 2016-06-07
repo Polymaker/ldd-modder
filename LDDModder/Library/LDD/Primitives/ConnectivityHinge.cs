@@ -11,12 +11,14 @@ namespace LDDModder.LDD.Primitives
     [XmlRoot("Hinge")]
     public class ConnectivityHinge : Connectivity
     {
+        internal static string[] AttributeOrder = new string[] { "type", "oriented", "tag", "angle", "ax", "ay", "az", "tx", "ty", "tz", "LimMin", "LimMax", "FlipLimMin", "FlipLimMax" };
+
         [XmlIgnore]
         public bool Oriented { get; set; }
 
         [XmlAttribute("oriented"), EditorBrowsable(EditorBrowsableState.Never)]
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        protected int OrientedInt
+        public int OrientedInt
         {
             get { return Convert.ToInt32(Oriented); }
             set { Oriented = Convert.ToBoolean(value); }
@@ -38,6 +40,12 @@ namespace LDDModder.LDD.Primitives
         public string Tag { get; set; }
 
         #region ShouldSerialize
+
+        //[EditorBrowsable(EditorBrowsableState.Advanced)]
+        //public bool ShouldSerializeOrientedInt()
+        //{
+        //    return Oriented;
+        //}
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
         public bool ShouldSerializeLimitMin()

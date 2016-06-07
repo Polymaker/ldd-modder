@@ -11,6 +11,8 @@ namespace LDDModder.LDD.Primitives
     [XmlRoot("Axel")]
     public class ConnectivityAxel : Connectivity
     {
+        internal static string[] AttributeOrder = new string[] { "type", "length", "grabbing", "requireGrabbing", "startCapped", "endCapped", "angle", "ax", "ay", "az", "tx", "ty", "tz" };
+
         [XmlAttribute("length")]
         public float Length { get; set; }
         [XmlIgnore]

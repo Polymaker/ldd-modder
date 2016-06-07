@@ -241,7 +241,6 @@ namespace LDDModder.LDD.Primitives
 
         public void Save(Stream stream)
         {
-            var tmpDoc = new XmlDocument();
             var xmlSerSettings = new XmlWriterSettings() { Encoding = Encoding.UTF8, Indent = true, NewLineChars = Environment.NewLine, OmitXmlDeclaration = true };
             var ns = new XmlSerializerNamespaces();
             ns.Add("", "");
@@ -249,7 +248,6 @@ namespace LDDModder.LDD.Primitives
             var xmlWriter = XmlTextWriter.Create(stream, xmlSerSettings);
             xmlWriter.WriteRaw("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\r\n");
             xmlSer.Serialize(xmlWriter, this, ns);
-
         }
     }
 }

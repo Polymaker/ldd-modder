@@ -2,8 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 
@@ -12,6 +10,8 @@ namespace LDDModder.LDD.Primitives
     [Serializable]
     public abstract class Collision
     {
+        internal static string[] AttributeOrder = new string[] { "angle", "ax", "ay", "az", "tx", "ty", "tz" };
+
         [XmlAttribute("angle")]
         public float Angle { get; set; }
         [XmlAttribute("ax")]
@@ -71,7 +71,10 @@ namespace LDDModder.LDD.Primitives
             {
                 var result = XSerializationHelper.Serialize(colObj);
                 if (result != null)
+                {
+                    result.SortAttributes(a => Array.IndexOf(AttributeOrder, a.Name.LocalName));
                     yield return result;
+                }
             }
         }
     }

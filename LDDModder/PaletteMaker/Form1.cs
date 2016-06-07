@@ -1,17 +1,9 @@
-﻿using LDDModder.LDD;
-using LDDModder.LDD.Palettes;
+﻿using LDDModder.LDD.Palettes;
 using LDDModder.PaletteMaker.Rebrickable;
-using LDDModder.Utilities;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
-using System.Drawing;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace LDDModder.PaletteMaker

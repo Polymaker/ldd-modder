@@ -1,7 +1,7 @@
 ﻿using LDDModder.Utilities;
 using System;
+using System.Linq;
 using System.Collections.Generic;
-using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 
@@ -66,8 +66,33 @@ namespace LDDModder.LDD.Primitives
             {
                 var result = XSerializationHelper.Serialize(conObj);
                 if (result != null)
+                {
+                    OrderAttributes(result);
                     yield return result;
+                }
             }
+        }
+
+        private static void OrderAttributes(XElement elem)
+        {
+            string[] attributeNamesOrdered = null;
+            switch (elem.Name.LocalName)
+            {
+                case "Custom2DField":
+                    attributeNamesOrdered = ConnectivityCustom2DField.AttributeOrder;
+                    break;
+                case "Hinge":
+                    attributeNamesOrdered = ConnectivityHinge.AttributeOrder;
+                    break;
+                case "Axel":
+                    attributeNamesOrdered = ConnectivityAxel.AttributeOrder;
+                    break;
+                case "Slider":
+                    attributeNamesOrdered = ConnectivitySlider.AttributeOrder;
+                    break;
+            }
+            if (attributeNamesOrdered != null)
+                elem.SortAttributes(a => Array.IndexOf(attributeNamesOrdered, a.Name.LocalName));
         }
 
         public static Connectivity Deserialize(XElement node)

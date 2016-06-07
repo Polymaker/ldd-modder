@@ -11,6 +11,8 @@ namespace LDDModder.LDD.Primitives
     [XmlRoot("Slider")]
     public class ConnectivitySlider : Connectivity
     {
+        internal static string[] AttributeOrder = new string[] { "type", "length", "cylindrical", "tag", "startCapped", "endCapped", "spring", "angle", "ax", "ay", "az", "tx", "ty", "tz" };
+
         [XmlAttribute("length")]
         public float Length { get; set; }
         [XmlIgnore]
