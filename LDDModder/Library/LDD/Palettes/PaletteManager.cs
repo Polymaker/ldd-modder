@@ -19,11 +19,17 @@ namespace LDDModder.LDD.Palettes
             var paletteDirectory = string.Format("{0}-{1}", paletteName, info.PaletteVersion);
             paletteDirectory = Path.Combine(LDDManager.ApplicationDataPath, "Palettes", paletteDirectory);
 
-            if (Directory.Exists(paletteDirectory))
-                AllowDeleteDirectory(paletteDirectory);
-            else
-                Directory.CreateDirectory(paletteDirectory);
+            //TODO: denying delete on the directory is no longer required, the setting DoServerCall=0 will prevent LDD from ovewriting/deleting our stuff
+            //(preference.ini in ProgramFiles folder)
 
+            //if (Directory.Exists(paletteDirectory))
+            //    AllowDeleteDirectory(paletteDirectory);
+            //else
+            //    Directory.CreateDirectory(paletteDirectory);
+
+            Directory.CreateDirectory(paletteDirectory);
+
+            //DoServerCall
             var xmlSerSettings = new XmlWriterSettings() { Encoding = Encoding.UTF8, Indent = true, NewLineChars = Environment.NewLine };
 
             using (var fs = File.Create(Path.Combine(paletteDirectory, "Info.baxml")))
@@ -40,7 +46,7 @@ namespace LDDModder.LDD.Palettes
                 xmlSer.Serialize(xmlWriter, content);
             }
 
-            DenyDeleteDirectory(paletteDirectory);
+            //DenyDeleteDirectory(paletteDirectory);
         }
 
         private static string GetShortPaletteName(Bag info)

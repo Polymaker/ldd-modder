@@ -30,7 +30,8 @@ namespace LDDModder.LDD.Palettes
 
         public object Clone()
         {
-            return new Decoration(SurfaceID, DecorationID);
+            return MemberwiseClone();
+            //return new Decoration(SurfaceID, DecorationID);
         }
     }
 }

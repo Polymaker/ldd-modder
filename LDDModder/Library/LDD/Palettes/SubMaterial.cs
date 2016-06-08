@@ -29,7 +29,8 @@ namespace LDDModder.LDD.Palettes
 
         public object Clone()
         {
-            return new SubMaterial(SurfaceID, MaterialID);
+            return MemberwiseClone();
+            //return new SubMaterial(SurfaceID, MaterialID);
         }
     }
 }
