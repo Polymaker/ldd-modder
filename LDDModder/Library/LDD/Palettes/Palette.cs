@@ -69,10 +69,28 @@ namespace LDDModder.LDD.Palettes
                 rootElem.Add(new XAttribute("versionMajor", FileVersion.Major),
                              new XAttribute("versionMinor", FileVersion.Minor));
             }
+
             var bagElem = rootElem.Element("Bag");
+
             foreach (var item in Items)
-                bagElem.Add(XSerializationHelper.Serialize(item));
+            {
+                var itemElem = XSerializationHelper.Serialize(item);
+                SortPaletteItemAttrs(itemElem);
+
+                if (itemElem.HasElements)
+                {
+                    foreach (var subElem in itemElem.Elements())
+                        SortPaletteItemAttrs(subElem);
+                }
+
+                bagElem.Add(itemElem);
+            }
             return rootElem;
+        }
+
+        private static void SortPaletteItemAttrs(XElement elem)
+        {
+            elem.SortAttributes(a => Array.IndexOf(PaletteItem.AttributeOrder, a.Name.LocalName));
         }
     }
 }

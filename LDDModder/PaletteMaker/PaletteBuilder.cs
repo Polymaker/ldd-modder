@@ -202,6 +202,8 @@ namespace LDDModder.PaletteMaker
             if (!Initialized)
                 Initialize();
 
+            int origCount = LddPalette.Items.Count;
+
             if (LddPalette.Items.Any(i => i.ElementID == rbSetPart.ElementId))
                 return (PaletteItem)LddPalette.Items.First(i => i.ElementID == rbSetPart.ElementId).Clone(rbSetPart.Quantity);
 
@@ -229,7 +231,11 @@ namespace LDDModder.PaletteMaker
             //    //Trace.WriteLine("Warning. Assembly found in LDD, but 
             //    return new Assembly(designId, rbSetPart.ElementId, rbSetPart.Quantity);
             //}
-
+            if (LddPalette.Items.Count > origCount)
+            {
+                Trace.WriteLine("Items added to palette. Saving updated file.");
+                XSerializable.Save(LddPalette, "LDD.PAXML");
+            }
             return paletteItem;
         }
 
@@ -310,13 +316,20 @@ namespace LDDModder.PaletteMaker
             {
                 pItem = (PaletteItem)LddPalette.Items.First(i => i.ElementID == elementId).Clone(quantity);
             }
+            else if (LddPalette.Items.OfType<Brick>().Any(b => b.DesignID == designId && b.MaterialID == lddColor))
+            {
+                pItem = LddPalette.Items.OfType<Brick>().First(b => b.DesignID == designId).Clone(elementId, lddColor, quantity);
+                //LddPalette.Items.Add(pItem.Clone(0));
+            }
             else if (LddPalette.Items.OfType<Brick>().Any(b => b.DesignID == designId))
             {
                 pItem = LddPalette.Items.OfType<Brick>().First(b => b.DesignID == designId).Clone(elementId, lddColor, quantity);
+                LddPalette.Items.Add(pItem.Clone(0));
             }
             else if (LddBricks.Contains(designId.ToString()))
             {
                 pItem = new Brick(designId, elementId, lddColor, quantity);
+                LddPalette.Items.Add(pItem.Clone(0));
             }
             else if (LddPalette.Items.OfType<Assembly>().Any(a => a.DesignID == designId))
             {

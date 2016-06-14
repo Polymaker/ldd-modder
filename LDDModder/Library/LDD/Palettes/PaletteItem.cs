@@ -8,6 +8,8 @@ namespace LDDModder.LDD.Palettes
 {
     public abstract class PaletteItem : ICloneable
     {
+        internal static string[] AttributeOrder = new string[] { "ItemNos", "designID", "materialID", "quantity", "decorationID", "surfaceID" };
+
         [XmlAttribute("designID")]
         public int DesignID { get; set; }
 
