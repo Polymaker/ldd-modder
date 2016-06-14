@@ -18,6 +18,11 @@ namespace LDDModder.LDD.Palettes
         [XmlElement("Decoration")]
         public List<Decoration> Decorations { get; set; }
 
+        public override bool HasDecorations
+        {
+            get { return Decorations.Count > 0; }
+        }
+
         public Brick()
             : base()
         {

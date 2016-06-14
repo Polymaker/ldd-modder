@@ -11,6 +11,14 @@ namespace LDDModder.LDD.Palettes
         [XmlElement("Part")]
         public List<Part> Parts { get; set; }
 
+        public override bool HasDecorations
+        {
+            get
+            {
+                return Parts.Any(p => p.Decorations.Count > 0);
+            }
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Assembly"/> class.
         /// </summary>

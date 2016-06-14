@@ -19,6 +19,9 @@ namespace LDDModder.LDD.Palettes
         [XmlAttribute("ItemNos")]
         public string ElementID { get; set; }
 
+        [XmlIgnore]
+        public abstract bool HasDecorations { get; }
+
         public PaletteItem()
         {
             DesignID = 0;
