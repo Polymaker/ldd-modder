@@ -9,6 +9,7 @@ namespace LDDModder.LDD.General
     {
         LDD,
         Mindstorms,
-        LDDExtended
+        LDDExtended,
+        Factory
     }
 }

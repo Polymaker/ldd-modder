@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
 using System.Xml.Linq;
+using System.IO;
 
 namespace LDDModder.LDD.Palettes
 {
@@ -30,6 +31,13 @@ namespace LDDModder.LDD.Palettes
             _Items = new List<PaletteItem>();
             FileVersion = new VersionInfo(1, 0);
         }
+
+        public Palette(IEnumerable<PaletteItem> items)
+        {
+            _Items = new List<PaletteItem>(items);
+            FileVersion = new VersionInfo(1, 0);
+        }
+
 
         protected override void DeserializeFromXElement(XElement element)
         {
@@ -91,6 +99,26 @@ namespace LDDModder.LDD.Palettes
         private static void SortPaletteItemAttrs(XElement elem)
         {
             elem.SortAttributes(a => Array.IndexOf(PaletteItem.AttributeOrder, a.Name.LocalName));
+        }
+
+        public static Palette Load(string filepath)
+        {
+            return XSerializable.LoadFrom<Palette>(filepath);
+        }
+
+        public static Palette Load(Stream stream)
+        {
+            return XSerializable.LoadFrom<Palette>(stream);
+        }
+
+        public void Save(string filepath)
+        {
+            XSerializable.Save<Palette>(this, filepath);
+        }
+
+        public void Save(Stream stream)
+        {
+            XSerializable.Save<Palette>(this, stream);
         }
     }
 }

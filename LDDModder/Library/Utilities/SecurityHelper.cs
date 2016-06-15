@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Security.Principal;
+using System.IO;
+using System.Security.AccessControl;
+
 namespace LDDModder.Utilities
 {
     public static class SecurityHelper
@@ -38,6 +41,38 @@ namespace LDDModder.Utilities
                     return Convert.ToBoolean(adminStatus);
                 }
             }
+        }
+
+        public static void DenyDeleteDirectory(string directoryPath)
+        {
+            var dInfo = new DirectoryInfo(directoryPath);
+            if (!dInfo.Exists)
+                dInfo.Create();
+            var ntAccountName = WindowsIdentity.GetCurrent().Name;
+            var dSecurity = dInfo.GetAccessControl();
+
+            dSecurity.AddAccessRule(new FileSystemAccessRule(ntAccountName,
+                FileSystemRights.Delete | FileSystemRights.DeleteSubdirectoriesAndFiles,
+                InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit,
+                PropagationFlags.None, AccessControlType.Deny));
+
+            dInfo.SetAccessControl(dSecurity);
+        }
+
+        public static void AllowDeleteDirectory(string directoryPath)
+        {
+            var dInfo = new DirectoryInfo(directoryPath);
+            if (!dInfo.Exists)
+                return;
+            var ntAccountName = WindowsIdentity.GetCurrent().Name;
+            var dSecurity = dInfo.GetAccessControl();
+
+            dSecurity.RemoveAccessRule(new FileSystemAccessRule(ntAccountName,
+                FileSystemRights.Delete | FileSystemRights.DeleteSubdirectoriesAndFiles,
+                InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit,
+                PropagationFlags.None, AccessControlType.Deny));
+
+            dInfo.SetAccessControl(dSecurity);
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
@@ -13,6 +15,9 @@ namespace LDDModder.Utilities
         {
             get { return XSerializationHelper.GetTypeXmlRootName(GetType()); }
         }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public string OriginFileName;
 
         protected abstract XElement SerializeToXElement();
 
@@ -50,7 +55,10 @@ namespace LDDModder.Utilities
         public static T LoadFrom<T>(Stream stream) where T : XSerializable
         {
             var xmlSer = new XmlSerializer(typeof(T));
-            return (T)xmlSer.Deserialize(stream);
+            T result = (T)xmlSer.Deserialize(stream);
+            if (stream is FileStream)
+                result.OriginFileName = ((FileStream)stream).Name;
+            return result;
         }
 
         public static void Save<T>(T xObject, string filepath) where T : XSerializable

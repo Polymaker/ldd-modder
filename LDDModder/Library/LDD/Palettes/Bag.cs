@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
 using System.Xml.Linq;
+using System.IO;
 
 namespace LDDModder.LDD.Palettes
 {
@@ -15,6 +16,7 @@ namespace LDDModder.LDD.Palettes
     [XmlRoot("BAXML")]
     public class Bag : XSerializable
     {
+        public const string FileName = "Info.baxml";
 
         public string Name { get; set; }
 
@@ -68,7 +70,7 @@ namespace LDDModder.LDD.Palettes
 
             Name = bagElem.Attribute("name").Value;
             PaletteVersion = bagElem.GetIntAttribute("version");
-            Countable = bagElem.Attribute("countable").Value == "true";
+            Countable = bagElem.ContainsAttribute("countable") ? bagElem.Attribute("countable").Value == "true" : false;
             ParentBrand = (Brand)Enum.Parse(typeof(Brand), bagElem.Attribute("brand").Value);
 
             if (bagElem.ContainsAttribute("buyable"))
@@ -109,6 +111,26 @@ namespace LDDModder.LDD.Palettes
 
 
             return rootElem;
+        }
+
+        public static Bag Load(string filepath)
+        {
+            return XSerializable.LoadFrom<Bag>(filepath);
+        }
+
+        public static Bag Load(Stream stream)
+        {
+            return XSerializable.LoadFrom<Bag>(stream);
+        }
+
+        public void Save(string filepath)
+        {
+            XSerializable.Save<Bag>(this, filepath);
+        }
+
+        public void Save(Stream stream)
+        {
+            XSerializable.Save<Bag>(this, stream);
         }
     }
 }

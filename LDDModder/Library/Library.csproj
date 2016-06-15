@@ -54,6 +54,7 @@
     <Compile Include="LDD\General\MaterialType.cs" />
     <Compile Include="LDD\General\Platform.cs" />
     <Compile Include="LDD\General\VersionInfo.cs" />
+    <Compile Include="LDD\LDDLocation.cs" />
     <Compile Include="LDD\LDDManager.cs" />
     <Compile Include="LDD\LifInstance.cs" />
     <Compile Include="LDD\Palettes\Assembly.cs" />
@@ -61,8 +62,10 @@
     <Compile Include="LDD\Palettes\Brick.cs" />
     <Compile Include="LDD\Palettes\Decoration.cs" />
     <Compile Include="LDD\Palettes\Palette.cs" />
+    <Compile Include="LDD\Palettes\PaletteFile.cs" />
     <Compile Include="LDD\Palettes\PaletteItem.cs" />
     <Compile Include="LDD\Palettes\PaletteManager.cs" />
+    <Compile Include="LDD\Palettes\PaletteType.cs" />
     <Compile Include="LDD\Palettes\Part.cs" />
     <Compile Include="LDD\Palettes\SubMaterial.cs" />
     <Compile Include="LDD\Primitives\BoundingBox.cs" />

@@ -19,6 +19,8 @@ namespace LDDModder.LDD
         public const string APP_DIR = "LEGO Company\\LEGO Digital Designer";
         public const string USER_MODELS_DIR = "LEGO Creations\\Models";
 
+        public const string LDD_SETTINGS_FILENAME = "preferences.ini";
+
         public const string LIF_EXT = ".lif";
         public const string LIF_ASSET_NAME = "Assets";
         public const string LIF_DB_NAME = "db";
@@ -257,6 +259,11 @@ namespace LDDModder.LDD
 
         #region GetDirectory
 
+        public static string GetDirectory(LDDLocation directory)
+        {
+            return directory == LDDLocation.ProgramFiles ? ApplicationPath : ApplicationDataPath;
+        }
+
         private static string GetDirectoryName(DbDirectories directory)
         {
             string dirName = directory.ToString();
@@ -283,6 +290,64 @@ namespace LDDModder.LDD
 
         #endregion
 
+        #region LDD Settings (preferences.ini)
+
+        private static string GetSettingsFilePath(LDDLocation source)
+        {
+            switch (source)
+            {
+                case LDDLocation.ProgramFiles:
+                    return Path.Combine(ApplicationPath, LDD_SETTINGS_FILENAME);
+                default:
+                case LDDLocation.AppData:
+                    return Path.Combine(ApplicationDataPath, LDD_SETTINGS_FILENAME);
+            }
+        }
+
+        public static string GetSettingValue(string key, LDDLocation source)
+        {
+            string settingValue;
+            GetSettingValue(key, source, out settingValue);
+            return settingValue;
+        }
+
+        public static bool GetSettingValue(string key, LDDLocation source, out string value)
+        {
+            value = string.Empty;
+            using (var fs = File.OpenRead(GetSettingsFilePath(source)))
+            {
+                using (var sr = new StreamReader(fs))
+                {
+                    string line = null;
+                    while ((line = sr.ReadLine()) != null)
+                    {
+                        if (!line.Contains('='))
+                            continue;
+
+                        string keyName = line.Substring(0, line.IndexOf('='));
+
+                        if (keyName.Equals(key, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            value = line.Substring(line.IndexOf('=') + 1);
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            return !string.IsNullOrEmpty(value);
+        }
+
+        public static void SetSetting(string key, string value, LDDLocation source)
+        {
+            
+            //using (var fs = File.Open(GetSettingsFilePath(source), FileMode.OpenOrCreate))
+            //{
+
+            //}
+        }
+
+        #endregion
 
         public enum LifDiscardMethod
         {
