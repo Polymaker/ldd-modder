@@ -340,11 +340,21 @@ namespace LDDModder.LDD
 
         public static void SetSetting(string key, string value, LDDLocation source)
         {
-            
-            //using (var fs = File.Open(GetSettingsFilePath(source), FileMode.OpenOrCreate))
-            //{
+            var settingsLines = File.ReadAllLines(GetSettingsFilePath(source)).ToList();
+            settingsLines.RemoveAll(s => 
+            string.IsNullOrWhiteSpace(s) ||
+            s.StartsWith(key + "=", StringComparison.InvariantCultureIgnoreCase));
 
-            //}
+            settingsLines.Add(key + "=" + value);
+
+            using (var fs = File.Create(GetSettingsFilePath(source)))
+            {
+                using (var sw = new StreamWriter(fs))
+                {
+                    foreach (var line in settingsLines)
+                        sw.WriteLine(line);
+                }
+            }
         }
 
         #endregion

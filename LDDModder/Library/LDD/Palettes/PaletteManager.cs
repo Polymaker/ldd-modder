@@ -189,6 +189,7 @@ namespace LDDModder.LDD.Palettes
 
             if (palette.Type == PaletteType.LDD)
             {
+                //Extract lif as it can have other files (eg: LDDExtended palette has an xml file for overwriting the available colors in the material chooser)
                 //File.Delete(palette.PalettePath);
                 palette.OverwritedLDD(Path.Combine(LDDPalettesDirectory, Path.GetFileNameWithoutExtension(palette.PalettePath)));
             }

@@ -53,6 +53,7 @@
     <Compile Include="LDD\General\Material.cs" />
     <Compile Include="LDD\General\MaterialType.cs" />
     <Compile Include="LDD\General\Platform.cs" />
+    <Compile Include="LDD\General\PreferencesSettings.cs" />
     <Compile Include="LDD\General\VersionInfo.cs" />
     <Compile Include="LDD\LDDLocation.cs" />
     <Compile Include="LDD\LDDManager.cs" />
