@@ -17,6 +17,7 @@ namespace LDDModder
     {
         public new event EventHandler TextChanged;
         public event EventHandler ButtonClicked;
+        private bool _UseReadOnlyAppearance = true;
         private bool _ReadOnly;
         private string TmpBtnText = "Button";
         
@@ -63,9 +64,24 @@ namespace LDDModder
             get { return _ReadOnly; }
             set
             {
+                if (_ReadOnly == value)
+                    return;
                 _ReadOnly = value;
-                if (textBox1 != null && textBox1.IsHandleCreated)
-                    textBox1.ReadOnly = value;
+                OnReadOnlyChanged();
+            }
+        }
+
+        [DefaultValue(true)]
+        public bool UseReadOnlyAppearance
+        {
+            get { return _UseReadOnlyAppearance; }
+            set
+            {
+                if (_UseReadOnlyAppearance == value)
+                    return;
+                _UseReadOnlyAppearance = value;
+                OnUseReadOnlyAppearanceChanged();
+                
             }
         }
         
@@ -93,8 +109,10 @@ namespace LDDModder
             textBox1.TextChanged += TextChanged;
             button1.Click += Button1_Click;
             button1.TextChanged += Button1_TextChanged;
-            
+            SetTextboxBackColor();
         }
+
+        
 
         private void Button1_TextChanged(object sender, EventArgs e)
         {
@@ -111,6 +129,37 @@ namespace LDDModder
             textBox1.Width = button1.Left - textBox1.Left - 2;
         }
 
+        protected override void OnResize(EventArgs e)
+        {
+            base.OnResize(e);
+            textBox1.Width = button1.Left - textBox1.Left - 2;
+        }
+
+        protected void OnUseReadOnlyAppearanceChanged()
+        {
+            if (IsHandleCreated && ReadOnly)
+            {
+                Invalidate();
+                SetTextboxBackColor();
+            }
+        }
+
+        protected void OnReadOnlyChanged()
+        {
+            if (textBox1 == null || !textBox1.IsHandleCreated)
+                return;
+            textBox1.ReadOnly = ReadOnly;
+            SetTextboxBackColor();
+        }
+
+        private void SetTextboxBackColor()
+        {
+            if (ReadOnly && !UseReadOnlyAppearance)
+                textBox1.BackColor = SystemColors.Window;
+            else
+                textBox1.ResetBackColor();
+        }
+
         protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified)
         {
             if (specified.HasFlag(BoundsSpecified.Height))
@@ -120,27 +169,10 @@ namespace LDDModder
             base.SetBoundsCore(x, y, width, height, specified);
         }
 
-        protected override void OnHandleCreated(EventArgs e)
-        {
-            base.OnHandleCreated(e);
-            //if (Application.RenderWithVisualStyles)
-            //{
-            //    SetWindowTheme(Handle, "EXPLORER", null);
-            //}
-        }
 
         protected override void OnPaintBackground(PaintEventArgs e)
         {
-            //base.OnPaintBackground(e);
-            //ControlPaint.DrawBorder3D(e.Graphics, ClientRectangle);
 
-            //if (Application.RenderWithVisualStyles &&
-            //    VisualStyleRenderer.IsElementDefined(VisualStyleElement.TextBox.TextEdit.Selected))
-            //{
-            //    //var renderer = new VisualStyleRenderer(VisualStyleElement.TextBox.TextEdit.Selected);
-            //    //renderer.DrawBackground(e.Graphics, this.ClientRectangle);
-            //    DrawWindowBackground(Handle, e.Graphics, ClientRectangle, "EDIT", 1, 8);
-            //}
 
             if (TextBoxRenderer.IsSupported)
             {
@@ -157,131 +189,7 @@ namespace LDDModder
 
         }
 
-        /*
-        [DllImport("uxtheme.dll", ExactSpelling = true, CharSet = CharSet.Unicode)]
-        public static extern int SetWindowTheme(IntPtr hWnd, String pszSubAppName, String pszSubIdList);
-
-        [DllImport("uxtheme.dll", ExactSpelling = true, CharSet = CharSet.Unicode, SetLastError = true)]
-        private extern static int DrawThemeBackground(IntPtr hTheme, IntPtr hdc, int iPartId, int iStateId, ref RECT pRect, IntPtr pClipRect);
-
-        [DllImport("uxtheme.dll", ExactSpelling = true, CharSet = CharSet.Unicode)]
-        public static extern IntPtr OpenThemeData(IntPtr hWnd, String classList);
-
-        [DllImport("uxtheme.dll", ExactSpelling = true)]
-        public extern static Int32 CloseThemeData(IntPtr hTheme);
-
-        const int EP_BACKGROUNDWITHBORDER = 5;
-        const int EBWBS_NORMAL = 1;
-
-        public static void DrawWindowBackground(IntPtr hWnd, Graphics g, Rectangle bounds, string className, int elementId, int state = 0)
-        {
-            IntPtr theme = OpenThemeData(hWnd, className);
-            if (theme != IntPtr.Zero)
-            {
-                IntPtr hdc = g.GetHdc();
-                RECT area = new RECT(bounds);
-                DrawThemeBackground(theme, hdc, elementId, state, ref area, IntPtr.Zero);
-                g.ReleaseHdc();
-                CloseThemeData(theme);
-            }
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct RECT
-        {
-            public int Left, Top, Right, Bottom;
-
-            public RECT(int left, int top, int right, int bottom)
-            {
-                Left = left;
-                Top = top;
-                Right = right;
-                Bottom = bottom;
-            }
-
-            public RECT(System.Drawing.Rectangle r) : this(r.Left, r.Top, r.Right, r.Bottom) { }
-
-            public int X
-            {
-                get { return Left; }
-                set { Right -= (Left - value); Left = value; }
-            }
-
-            public int Y
-            {
-                get { return Top; }
-                set { Bottom -= (Top - value); Top = value; }
-            }
-
-            public int Height
-            {
-                get { return Bottom - Top; }
-                set { Bottom = value + Top; }
-            }
-
-            public int Width
-            {
-                get { return Right - Left; }
-                set { Right = value + Left; }
-            }
-
-            public System.Drawing.Point Location
-            {
-                get { return new System.Drawing.Point(Left, Top); }
-                set { X = value.X; Y = value.Y; }
-            }
-
-            public System.Drawing.Size Size
-            {
-                get { return new System.Drawing.Size(Width, Height); }
-                set { Width = value.Width; Height = value.Height; }
-            }
-
-            public static implicit operator System.Drawing.Rectangle(RECT r)
-            {
-                return new System.Drawing.Rectangle(r.Left, r.Top, r.Width, r.Height);
-            }
-
-            public static implicit operator RECT(System.Drawing.Rectangle r)
-            {
-                return new RECT(r);
-            }
-
-            public static bool operator ==(RECT r1, RECT r2)
-            {
-                return r1.Equals(r2);
-            }
-
-            public static bool operator !=(RECT r1, RECT r2)
-            {
-                return !r1.Equals(r2);
-            }
-
-            public bool Equals(RECT r)
-            {
-                return r.Left == Left && r.Top == Top && r.Right == Right && r.Bottom == Bottom;
-            }
-
-            public override bool Equals(object obj)
-            {
-                if (obj is RECT)
-                    return Equals((RECT)obj);
-                else if (obj is System.Drawing.Rectangle)
-                    return Equals(new RECT((System.Drawing.Rectangle)obj));
-                return false;
-            }
-
-            public override int GetHashCode()
-            {
-                return ((System.Drawing.Rectangle)this).GetHashCode();
-            }
-
-            public override string ToString()
-            {
-                return string.Format(System.Globalization.CultureInfo.CurrentCulture, "{{Left={0},Top={1},Right={2},Bottom={3}}}", Left, Top, Right, Bottom);
-            }
-        }
-        */
+       
     }
 
     internal class ButtonEditDesigner : ControlDesigner

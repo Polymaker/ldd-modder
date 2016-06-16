@@ -78,6 +78,8 @@
     <Compile Include="FrmLDDAdvancedSettings.Designer.cs">
       <DependentUpon>FrmLDDAdvancedSettings.cs</DependentUpon>
     </Compile>
+    <Compile Include="NativeHelper.cs" />
+    <Compile Include="PreferenceEntry.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestProgram.cs" />
@@ -95,6 +97,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -112,6 +115,9 @@
       <Project>{4be42546-c8cf-4115-8ea3-6985999e3e8d}</Project>
       <Name>Library</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\uac_icon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

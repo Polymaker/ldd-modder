@@ -292,7 +292,7 @@ namespace LDDModder.LDD
 
         #region LDD Settings (preferences.ini)
 
-        private static string GetSettingsFilePath(LDDLocation source)
+        public static string GetSettingsFilePath(LDDLocation source)
         {
             switch (source)
             {
@@ -341,11 +341,28 @@ namespace LDDModder.LDD
         public static void SetSetting(string key, string value, LDDLocation source)
         {
             var settingsLines = File.ReadAllLines(GetSettingsFilePath(source)).ToList();
-            settingsLines.RemoveAll(s => 
-            string.IsNullOrWhiteSpace(s) ||
-            s.StartsWith(key + "=", StringComparison.InvariantCultureIgnoreCase));
 
-            settingsLines.Add(key + "=" + value);
+            settingsLines.RemoveAll(s => string.IsNullOrWhiteSpace(s));
+
+            bool keyFound = false;
+
+            for (int i = 0; i < settingsLines.Count; i++)
+            {
+                if (settingsLines[i].StartsWith(key + "=", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    settingsLines[i] = key + "=" + value;
+                    keyFound = true;
+                    break;
+                }
+            }
+
+            if (!keyFound)
+            {
+                settingsLines.Add(key + "=" + value);
+            }
+
+            //LDD always add two blank lines
+            settingsLines.Add(String.Empty); settingsLines.Add(String.Empty);
 
             using (var fs = File.Create(GetSettingsFilePath(source)))
             {

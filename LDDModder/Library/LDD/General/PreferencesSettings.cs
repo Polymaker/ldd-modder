@@ -9,7 +9,7 @@ namespace LDDModder.LDD.General
     {
         /// <summary>
         /// Purpose: Set the logging level (log output located at %AppData%\LEGO Company\DCLTrace.txt)
-        /// Known values: 0 (none|off), 1 (on|info?)
+        /// Known values: 0 (no), 1 (yes)
         /// </summary>
         public const string Verbose = "verbose";//ProgramFiles preferences.ini
         /// <summary>
@@ -19,12 +19,17 @@ namespace LDDModder.LDD.General
         public const string DoServerCall = "DoServerCall";//ProgramFiles preferences.ini
         /// <summary>
         /// Purpose: Set LDD in developer mode
-        /// Known values: 0 (no), 1 (yes)
+        /// Known values: 0|no, 1|yes (both numeric and text works)
         /// </summary>
         public const string DeveloperMode = "DeveloperMode";//AppData preferences.ini
         /// <summary>
+        /// Purpose: Allow to show brick tooltip
+        /// Known values: no, yes
+        /// </summary>
+        public const string ShowToolTip = "SHOWTOOLTIPS";//AppData preferences.ini
+        /// <summary>
         /// Purpose: Allow to show extended info in brick tooltip (id, element id, subparts colors)
-        /// Known values: 0 (no), 1 (yes)
+        /// Known values: no, yes
         /// </summary>
         public const string ShowExtendedBrickToolTip = "ShowExtendedBrickToolTip";//AppData preferences.ini
         /// <summary>
