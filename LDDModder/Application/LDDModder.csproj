@@ -78,6 +78,12 @@
     <Compile Include="FrmLDDAdvancedSettings.Designer.cs">
       <DependentUpon>FrmLDDAdvancedSettings.cs</DependentUpon>
     </Compile>
+    <Compile Include="LabelEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="LabelEx.Designer.cs">
+      <DependentUpon>LabelEx.cs</DependentUpon>
+    </Compile>
     <Compile Include="NativeHelper.cs" />
     <Compile Include="PreferenceEntry.cs" />
     <Compile Include="Program.cs" />
@@ -85,6 +91,9 @@
     <Compile Include="TestProgram.cs" />
     <EmbeddedResource Include="ButtonEdit.resx">
       <DependentUpon>ButtonEdit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form1.resx">
+      <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FrmLDDAdvancedSettings.resx">
       <DependentUpon>FrmLDDAdvancedSettings.cs</DependentUpon>

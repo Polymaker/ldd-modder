@@ -31,8 +31,13 @@ namespace LDDModder
             base.OnLoad(e);
 
             CheckProgramFilesRights();
-
             LoadSettings();
+
+            var layoutMinSize = tableLayoutPanel1.GetPreferredSize(Size).Height;
+            var topFrameHeight =Height - ClientSize.Height;
+            MinimumSize = new Size(DefaultMinimumSize.Width, layoutMinSize + topFrameHeight + Padding.Vertical);
+            MaximumSize = new Size(900, MinimumSize.Height);
+            
         }
 
 
@@ -54,32 +59,13 @@ namespace LDDModder
                 AdminRightsNeeded = false;
             else
                 AdminRightsNeeded = !SecurityHelper.HasWritePermission(LDDManager.GetSettingsFilePath(LDDLocation.ProgramFiles));
-
+            
             if (AdminRightsNeeded)
             {
                 UacShieldBmp = NativeHelper.GetUacShieldIcon();
-                pictureBox1.Image = UacShieldBmp;
-                pictureBox2.Image = UacShieldBmp;
+                lblDoServerCall.Image = UacShieldBmp;
+                lblVerbose.Image = UacShieldBmp;
             }
-            else
-            {
-                pictureBox1.Visible = pictureBox2.Visible = false;
-                foreach (Control ctrl in tableLayoutPanel1.Controls)
-                {
-                    var ctrlCell = tableLayoutPanel1.GetCellPosition(ctrl);
-                    if (ctrlCell.Column == 1)
-                    {
-                        var cSpan = tableLayoutPanel1.GetColumnSpan(ctrl);
-                        tableLayoutPanel1.SetColumnSpan(ctrl, cSpan == 1 ? cSpan : cSpan - 1);
-                        tableLayoutPanel1.SetColumn(ctrl, 2);
-                    }
-                }
-                chkDoServerCall.Margin = new Padding(3);
-                chkDoServerCall.Padding = new Padding(4, 0, 30, 0);
-                chkVerbose.Margin = new Padding(3);
-                chkVerbose.Padding = new Padding(4, 0, 30, 0);
-            }
-            
         }
 
         private void DeveloperModeLabel_ClickRedirect(object sender, EventArgs e)
@@ -94,7 +80,8 @@ namespace LDDModder
 
         private void ExtendedTooltipLabel_ClickRedirect(object sender, EventArgs e)
         {
-            chkExtendedTooltip.Checked = !chkExtendedTooltip.Checked;
+            if(chkExtendedTooltip.Enabled)
+                chkExtendedTooltip.Checked = !chkExtendedTooltip.Checked;
         }
 
         private static string DecodeSettingPath(string pathValue)
@@ -129,13 +116,16 @@ namespace LDDModder
             if (!AdminRightsNeeded)
             {
                 LDDManager.SetSetting(PreferencesSettings.DoServerCall, !chkDoServerCall.Checked ? "yes" : "no", LDDLocation.ProgramFiles);
-                //LDDManager.SetSetting(PreferencesSettings.Verbose, !chkDoServerCall.Checked ? "yes" : "no", LDDLocation.ProgramFiles);
+                LDDManager.SetSetting(PreferencesSettings.Verbose, chkVerbose.Checked ? "yes" : "no", LDDLocation.ProgramFiles);
             }
             else
             {
                 var changedSettings = new List<PreferenceEntry>();
                 if (!GetSettingBoolean(PreferencesSettings.DoServerCall, LDDLocation.ProgramFiles) != chkDoServerCall.Checked)
                     changedSettings.Add(new PreferenceEntry() { Key = PreferencesSettings.DoServerCall, Value = (!chkDoServerCall.Checked ? "yes" : "no"), Location = LDDLocation.ProgramFiles });
+
+                if (GetSettingBoolean(PreferencesSettings.Verbose, LDDLocation.ProgramFiles) != chkVerbose.Checked)
+                    changedSettings.Add(new PreferenceEntry() { Key = PreferencesSettings.Verbose, Value = (chkVerbose.Checked ? "yes" : "no"), Location = LDDLocation.ProgramFiles });
 
                 if (changedSettings.Count > 0)
                 {
@@ -148,23 +138,6 @@ namespace LDDModder
                     Process.Start(processInfo);
                 }
             }
-
-            //var currentVal = !GetSettingBoolean(PreferencesSettings.DoServerCall, LDDLocation.ProgramFiles);
-            //if (currentVal != chkDoServerCall.Checked)
-            //{
-            //    if (SecurityHelper.IsUserAdministrator)
-            //        LDDManager.SetSetting(PreferencesSettings.DoServerCall, !chkDoServerCall.Checked ? "yes" : "no", LDDLocation.ProgramFiles);
-            //    else
-            //    {
-            //        var processInfo = new ProcessStartInfo() 
-            //        {
-            //            Verb = "runas", 
-            //            Arguments = "set " + PreferencesSettings.DoServerCall + " " + (!chkDoServerCall.Checked ? "yes" : "no"),
-            //            FileName = Application.ExecutablePath 
-            //        };
-            //        Process.Start(processInfo);
-            //    }
-            //}
         }
 
         private void chkShowTooltip_CheckedChanged(object sender, EventArgs e)

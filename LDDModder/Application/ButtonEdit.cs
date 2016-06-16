@@ -20,7 +20,22 @@ namespace LDDModder
         private bool _UseReadOnlyAppearance = true;
         private bool _ReadOnly;
         private string TmpBtnText = "Button";
-        
+
+
+        public override Color BackColor
+        {
+            get
+            {
+
+                return textBox1.BackColor;
+            }
+
+            set
+            {
+                base.BackColor = value;
+            }
+        }
+
 
         [Browsable(true)]
         public override string Text
@@ -84,11 +99,11 @@ namespace LDDModder
                 
             }
         }
-        
 
         public ButtonEdit()
         {
             InitializeComponent();
+            SetStyle(ControlStyles.Selectable, true);
         }
 
         private void Button1_Click(object sender, EventArgs e)
@@ -112,8 +127,6 @@ namespace LDDModder
             SetTextboxBackColor();
         }
 
-        
-
         private void Button1_TextChanged(object sender, EventArgs e)
         {
             PerformControlsLayout();
@@ -121,18 +134,17 @@ namespace LDDModder
 
         private void PerformControlsLayout()
         {
-            textBox1.Location = new Point(2, (Height - textBox1.Height) / 2);
+            //textBox1.Location = new Point(3, (Height - textBox1.Height) / 2);
             button1.MaximumSize = new Size(200, Height - 2);
             button1.Location = new Point(Width - button1.Width - 1, 1);
             button1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-
-            textBox1.Width = button1.Left - textBox1.Left - 2;
+            SetTextboxMargin(button1.Width + 2);
+            //textBox1.Width = button1.Left - textBox1.Left - 2;
         }
 
-        protected override void OnResize(EventArgs e)
+        private void SetTextboxMargin(int value)
         {
-            base.OnResize(e);
-            textBox1.Width = button1.Left - textBox1.Left - 2;
+            NativeHelper.SendMessage(textBox1.Handle, 211, (uint)2, (uint)(value << 16));
         }
 
         protected void OnUseReadOnlyAppearanceChanged()
@@ -164,32 +176,11 @@ namespace LDDModder
         {
             if (specified.HasFlag(BoundsSpecified.Height))
             {
-                height = textBox1.Height + 8;
+                height = textBox1.Height;
             }
             base.SetBoundsCore(x, y, width, height, specified);
         }
 
-
-        protected override void OnPaintBackground(PaintEventArgs e)
-        {
-
-
-            if (TextBoxRenderer.IsSupported)
-            {
-                if(ReadOnly)
-                    TextBoxRenderer.DrawTextBox(e.Graphics, ClientRectangle, TextBoxState.Readonly);
-                else if(!Enabled)
-                    TextBoxRenderer.DrawTextBox(e.Graphics, ClientRectangle, TextBoxState.Disabled);
-                else
-                    TextBoxRenderer.DrawTextBox(e.Graphics, ClientRectangle, TextBoxState.Normal);
-
-            }
-            else
-                base.OnPaintBackground(e);
-
-        }
-
-       
     }
 
     internal class ButtonEditDesigner : ControlDesigner
