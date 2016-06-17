@@ -130,7 +130,8 @@ namespace LDDModder.PaletteMaker
 
         private void btnSearchSet_Click(object sender, EventArgs e)
         {
-            FindSet(txtSearchSetID.Text);
+            //FindSet(txtSearchSetID.Text);
+            SearchSet(txtSearchSetID.Text);
         }
 
         private void FindSet(string setNumber)
@@ -153,6 +154,11 @@ namespace LDDModder.PaletteMaker
                 });
             }
 
+        }
+
+        private void SearchSet(string query)
+        {
+            var result = Rebrickable.RebrickableAPI.Search.Execute(new Rebrickable.SearchParameters(query, Rebrickable.SearchType.Set));
         }
 
         class BrickMappingItem

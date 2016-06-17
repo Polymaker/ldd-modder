@@ -68,11 +68,38 @@
     <Compile Include="Rebrickable\ApiFunctionParameters.cs" />
     <Compile Include="Rebrickable\ApiParameterAttribute.cs" />
     <Compile Include="Rebrickable\ASyncApiFunctionDelegate.cs" />
+    <Compile Include="Rebrickable\GetUserHashParameters.cs" />
     <Compile Include="Rebrickable\PartInfo.cs" />
     <Compile Include="Rebrickable\PartType.cs" />
     <Compile Include="Rebrickable\RebrickableAPI.cs" />
+    <Compile Include="Rebrickable\SearchResult.cs" />
     <Compile Include="Rebrickable\SetInfo.cs" />
     <Compile Include="Rebrickable\SetParts.cs" />
+    <Compile Include="Rebrickable\WebMethod.cs" />
+    <Compile Include="Views\ImportRebrickableView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\ImportRebrickableView.Designer.cs">
+      <DependentUpon>ImportRebrickableView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ImportSetPaletteView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\ImportSetPaletteView.Designer.cs">
+      <DependentUpon>ImportSetPaletteView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PaletteDetailView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\PaletteDetailView.Designer.cs">
+      <DependentUpon>PaletteDetailView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\UserPaletteManagementView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\UserPaletteManagementView.Designer.cs">
+      <DependentUpon>UserPaletteManagementView.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -89,6 +116,12 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="Views\ImportSetPaletteView.resx">
+      <DependentUpon>ImportSetPaletteView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\UserPaletteManagementView.resx">
+      <DependentUpon>UserPaletteManagementView.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -108,7 +141,9 @@
       <Name>Library</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Forms\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

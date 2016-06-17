@@ -15,29 +15,59 @@ namespace LDDModder.PaletteMaker.Rebrickable
         // Fields...
         private string _FunctionName;
         private XmlSerializer ResultParser;
-        internal bool SkipRoot = false;
+        private bool SkipRoot = false;
+        private WebMethod Method = WebMethod.GET;
+
         public string FunctionName
         {
             get { return _FunctionName; }
         }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ApiFunction"/> class.
-        /// </summary>
-        /// <param name="functionName"></param>
+ 
         internal ApiFunction(string functionName)
         {
             _FunctionName = functionName;
             ResultParser = new XmlSerializer(typeof(R));
         }
 
+        public ApiFunction(string functionName, bool skipRoot)
+            :this(functionName)
+        {
+            SkipRoot = skipRoot;
+        }
+
+        public ApiFunction(string functionName, WebMethod method)
+            : this(functionName)
+        {
+            Method = method;
+        }
+
+        public ApiFunction(string functionName, bool skipRoot, WebMethod method)
+            : this(functionName)
+        {
+            SkipRoot = skipRoot;
+            Method = method;
+        }
+
         public R Execute(P funcParam)
         {
-            var funcUrl = string.Format("{0}{1}?{2}", RebrickableAPI.API_URL, FunctionName, funcParam.GetParamsUrl());
-            var resultData = RebrickableAPI.DownloadWebPage(funcUrl);
+            byte[] resultData = null;
+            string funcUrl = string.Format("{0}{1}", RebrickableAPI.API_URL, FunctionName);
+
+            if (Method == WebMethod.GET)
+            {
+                funcUrl += string.Format("?{0}", funcParam.GetParamsUrl());
+                resultData = RebrickableAPI.DownloadWebPage(funcUrl);
+            }
+            else
+            {
+                resultData = RebrickableAPI.DownloadWebPage(funcUrl, funcParam.GetPostParams());
+            }
 
             if (resultData == null || resultData.Length <= 20)
                 return default(R);
+
+            if (typeof(R) == typeof(string))
+                return (R)((object)Encoding.UTF8.GetString(resultData));
 
             using (var ms = new MemoryStream(resultData))
             {
@@ -57,7 +87,7 @@ namespace LDDModder.PaletteMaker.Rebrickable
         // Fields...
         private string _FunctionName;
         private XmlSerializer ResultParser;
-        internal bool SkipRoot = false;
+        private bool SkipRoot = false;
         public string FunctionName
         {
             get { return _FunctionName; }
@@ -71,6 +101,12 @@ namespace LDDModder.PaletteMaker.Rebrickable
         {
             _FunctionName = functionName;
             ResultParser = new XmlSerializer(typeof(R));
+        }
+
+        public ApiFunction(string functionName, bool skipRoot)
+            : this(functionName)
+        {
+            SkipRoot = skipRoot;
         }
 
         public R Execute()

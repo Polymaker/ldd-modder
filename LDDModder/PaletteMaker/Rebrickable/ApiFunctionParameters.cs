@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
+using System.Collections.Specialized;
+
 namespace LDDModder.PaletteMaker.Rebrickable
 {
     public class ApiFunctionParameters
@@ -36,8 +38,16 @@ namespace LDDModder.PaletteMaker.Rebrickable
             return paramValList;
         }
 
+        protected virtual string GetParamValue(string paramName)
+        {
+            return string.Empty;
+        }
+
         private string GetParamValue(PropertyInfo propInfo)
         {
+            var overidedVal = GetParamValue(propInfo.Name);
+            if (!string.IsNullOrEmpty(overidedVal))
+                return overidedVal;
             object propVal = propInfo.GetValue(this, null);
             if (propInfo.PropertyType == typeof(bool))
                 return (((bool)propVal == true) ? 1 : 0).ToString();
@@ -55,6 +65,15 @@ namespace LDDModder.PaletteMaker.Rebrickable
                     getUrl += "&";
             }
             return getUrl;
+        }
+
+        public NameValueCollection GetPostParams()
+        {
+            var post = new NameValueCollection();
+            var paramList = GetParameters();
+            for (int i = 0; i < paramList.Count; i++)
+                post[paramList[i].Item1] = paramList[i].Item2;
+            return post;
         }
     }
 }
