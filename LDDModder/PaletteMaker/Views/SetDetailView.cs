@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
 using System.Collections;
+using LDDModder.Rebrickable.Data;
 
 namespace LDDModder.PaletteMaker.Views
 {
@@ -76,7 +77,7 @@ namespace LDDModder.PaletteMaker.Views
             base.SetBoundsCore(x, y, width, height, specified);
         }
 
-        public void FillSetDetails(Rebrickable.SetInfo setInfo)
+        public void FillSetDetails(GetSetResult setInfo)
         {
             if (setInfo == null)
             {

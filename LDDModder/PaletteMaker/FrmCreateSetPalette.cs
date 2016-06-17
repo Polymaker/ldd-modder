@@ -1,4 +1,6 @@
 ﻿using LDDModder.LDD.Palettes;
+using LDDModder.Rebrickable;
+using LDDModder.Rebrickable.Data;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -39,7 +41,7 @@ namespace LDDModder.PaletteMaker
 
         private void LoadRBPartTypes()
         {
-            var partTypes = Rebrickable.RebrickableAPI.GetPartTypes.Execute();
+            var partTypes = RebrickableAPI.GetPartTypes.Execute();
             foreach (var partTypeElem in partTypes.PartTypes)
             {
                 RBPartTypes.Add(partTypeElem.TypeID, partTypeElem.Description);
@@ -68,7 +70,7 @@ namespace LDDModder.PaletteMaker
 
         }
 
-        private void FillSetDetails(Rebrickable.SetInfo setInfo)
+        private void FillSetDetails(GetSetResult setInfo)
         {
             if (setInfo == null)
             {
@@ -87,7 +89,7 @@ namespace LDDModder.PaletteMaker
             }
         }
 
-        private void FillPartGrid(Rebrickable.SetParts partsInfo)
+        private void FillPartGrid(GetSetPartsResult partsInfo)
         {
             if (partsInfo == null)
             {
@@ -130,8 +132,8 @@ namespace LDDModder.PaletteMaker
 
         private void btnSearchSet_Click(object sender, EventArgs e)
         {
-            //FindSet(txtSearchSetID.Text);
-            SearchSet(txtSearchSetID.Text);
+            FindSet(txtSearchSetID.Text);
+            //SearchSet(txtSearchSetID.Text);
         }
 
         private void FindSet(string setNumber)
@@ -141,7 +143,7 @@ namespace LDDModder.PaletteMaker
                 setNumber += "-1";
 
             FillPartGrid(null);
-            var setInfo = Rebrickable.RebrickableAPI.GetSet.Execute(setNumber);
+            var setInfo = RebrickableAPI.GetSet.Execute(setNumber);
 
             FillSetDetails(setInfo);
 
@@ -149,8 +151,8 @@ namespace LDDModder.PaletteMaker
             {
                 Task.Factory.StartNew(() =>
                 {
-                    var partsInfo = Rebrickable.RebrickableAPI.GetSetParts.Execute(setNumber);
-                    BeginInvoke(new Action<Rebrickable.SetParts>(FillPartGrid), partsInfo);
+                    var partsInfo = RebrickableAPI.GetSetParts.Execute(setNumber);
+                    BeginInvoke(new Action<GetSetPartsResult>(FillPartGrid), partsInfo);
                 });
             }
 
@@ -158,12 +160,12 @@ namespace LDDModder.PaletteMaker
 
         private void SearchSet(string query)
         {
-            var result = Rebrickable.RebrickableAPI.Search.Execute(new Rebrickable.SearchParameters(query, Rebrickable.SearchType.Set));
+            var result = Rebrickable.RebrickableAPI.Search.Execute(new SearchParameters(SearchType.Set, query));
         }
 
         class BrickMappingItem
         {
-            public Rebrickable.SetParts.Part RBPart { get; set; }
+            public GetSetPartsResult.Part RBPart { get; set; }
             public string PartID { get { return RBPart.PartId; } }
             public string PartType { get; set; }
             public string Name { get { return RBPart.Name; } }
@@ -172,7 +174,7 @@ namespace LDDModder.PaletteMaker
             public int Quantity { get { return RBPart.Quantity; } }
             public string LDD { get; set; }
 
-            public BrickMappingItem(Rebrickable.SetParts.Part rBPart)
+            public BrickMappingItem(GetSetPartsResult.Part rBPart)
             {
                 RBPart = rBPart;
                 PartType = RBPartTypes[rBPart.PartTypeId];

@@ -1,7 +1,8 @@
 ﻿using LDDModder.LDD;
 using LDDModder.LDD.Files;
 using LDDModder.LDD.Palettes;
-using LDDModder.PaletteMaker.Rebrickable;
+using LDDModder.Rebrickable;
+using LDDModder.Rebrickable.Data;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,19 +14,17 @@ namespace LDDModder.PaletteMaker
 {
     public partial class Form1 : Form
     {
-        private List<SetParts.Part> PartNotFound;
+        private List<GetSetPartsResult.Part> PartNotFound;
 
         public Form1()
         {
             InitializeComponent();
-            PartNotFound = new List<SetParts.Part>();
+            PartNotFound = new List<GetSetPartsResult.Part>();
         }
         private void button1_Click(object sender, EventArgs e)
         {
             //CreateCustomPalette();
-            PaletteManager.LoadPalettes();
-            var lddExtendedPalette = PaletteManager.Palettes.First(p => p.Info.Name.Contains("Extended"));
-            PaletteManager.SavePalette(lddExtendedPalette);
+
             //var palettes = GetLddPalettes();
         }
 

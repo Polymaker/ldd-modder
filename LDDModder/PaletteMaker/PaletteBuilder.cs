@@ -1,7 +1,9 @@
 ﻿using LDDModder.LDD;
 using LDDModder.LDD.Files;
 using LDDModder.LDD.Palettes;
-using LDDModder.PaletteMaker.Rebrickable;
+using LDDModder.Rebrickable;
+using LDDModder.Rebrickable.Data;
+//using LDDModder.PaletteMaker.Rebrickable;
 using LDDModder.Utilities;
 using System;
 using System.Collections.Generic;
@@ -197,7 +199,7 @@ namespace LDDModder.PaletteMaker
             RbColorToLDD.Add(1007, 218);
         }
 
-        public static PaletteItem GetPaletteItem(SetParts.Part rbSetPart)
+        public static PaletteItem GetPaletteItem(GetSetPartsResult.Part rbSetPart)
         {
             if (!Initialized)
                 Initialize();
@@ -267,16 +269,16 @@ namespace LDDModder.PaletteMaker
             return null;
         }
 
-        static PaletteItem GetItemFromPartInfo(PartInfo rbPartInfo, int lddColorId, string elementId, int quantity, bool nested = false)
+        static PaletteItem GetItemFromPartInfo(GetPartResult rbPartInfo, int lddColorId, string elementId, int quantity, bool nested = false)
         {
             PaletteItem paletteItem = null;
             int designId = 0;
 
             if (rbPartInfo.ExternalParts != null &&
                rbPartInfo.ExternalParts.LegoDesignIds != null &&
-               rbPartInfo.ExternalParts.LegoDesignIds.Length > 0)
+               rbPartInfo.ExternalParts.LegoDesignIds.Count > 0)
             {
-                for (int i = 0; i < rbPartInfo.ExternalParts.LegoDesignIds.Length; i++)
+                for (int i = 0; i < rbPartInfo.ExternalParts.LegoDesignIds.Count; i++)
                 {
                     if (int.TryParse(rbPartInfo.ExternalParts.LegoDesignIds[i], out designId))
                     {
@@ -288,9 +290,9 @@ namespace LDDModder.PaletteMaker
 
             if (!nested && 
                 rbPartInfo.RelatedParts != null &&
-                rbPartInfo.RelatedParts.Length > 0)
+                rbPartInfo.RelatedParts.Count > 0)
             {
-                for (int i = 0; i < rbPartInfo.RelatedParts.Length; i++)
+                for (int i = 0; i < rbPartInfo.RelatedParts.Count; i++)
                 {
                     if (rbPartInfo.RelatedParts[i].Type == "MOLD")
                     {

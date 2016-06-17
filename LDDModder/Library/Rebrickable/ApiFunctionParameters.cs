@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Reflection;
 using System.Collections.Specialized;
+using System.Linq;
+using System.Reflection;
+using System.Text;
 
-namespace LDDModder.PaletteMaker.Rebrickable
+namespace LDDModder.Rebrickable
 {
     public class ApiFunctionParameters
     {
@@ -30,24 +29,22 @@ namespace LDDModder.PaletteMaker.Rebrickable
             foreach (var propInfo in GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
             {
                 var attrs = (ApiParameterAttribute[])propInfo.GetCustomAttributes(typeof(ApiParameterAttribute), true);
+                if (attrs.Length == 0)
+                    continue;
+
                 if (attrs.Length == 1)
                 {
-                    paramValList.Add(new Tuple<string, string>(attrs[0].ParamName, GetParamValue(propInfo)));
+                    string paramValue = GetParamValue(propInfo);
+                    if (string.IsNullOrEmpty(paramValue) && !attrs[0].Optional)
+                        throw new ArgumentNullException(attrs[0].ParamName);
+                    paramValList.Add(new Tuple<string, string>(attrs[0].ParamName, paramValue));
                 }
             }
             return paramValList;
         }
 
-        protected virtual string GetParamValue(string paramName)
-        {
-            return string.Empty;
-        }
-
         private string GetParamValue(PropertyInfo propInfo)
         {
-            var overidedVal = GetParamValue(propInfo.Name);
-            if (!string.IsNullOrEmpty(overidedVal))
-                return overidedVal;
             object propVal = propInfo.GetValue(this, null);
             if (propInfo.PropertyType == typeof(bool))
                 return (((bool)propVal == true) ? 1 : 0).ToString();
@@ -75,5 +72,6 @@ namespace LDDModder.PaletteMaker.Rebrickable
                 post[paramList[i].Item1] = paramList[i].Item2;
             return post;
         }
+
     }
 }

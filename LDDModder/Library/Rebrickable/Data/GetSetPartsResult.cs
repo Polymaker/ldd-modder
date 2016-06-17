@@ -2,27 +2,35 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace LDDModder.PaletteMaker.Rebrickable
+namespace LDDModder.Rebrickable.Data
 {
-    [XmlRoot("set"), Serializable]
-    public class SetParts
+    [XmlRoot("set")]
+    public class GetSetPartsResult
     {
+        /// <summary>
+        /// Set ID.
+        /// </summary>
         [XmlElement("set_id")]
         public string SetId { get; set; }
-
+        /// <summary>
+        /// Set description.
+        /// </summary>
         [XmlElement("descr")]
         public string Description { get; set; }
-
+        /// <summary>
+        /// Set image URL.
+        /// </summary>
         [XmlElement("set_img_url")]
         public string ImageUrl { get; set; }
-
+        /// <summary>
+        /// List of parts in the set.
+        /// </summary>
         [XmlArray("parts"), XmlArrayItem("part")]
-        public SetParts.Part[] Parts { get; set; }
+        public List<Part> Parts { get; set; }
 
-        [Serializable]
+        [XmlRoot("part")]
         public class Part
         {
             [XmlElement("part_id")]
@@ -48,21 +56,13 @@ namespace LDDModder.PaletteMaker.Rebrickable
             [XmlElement("part_type_id")]
             public int PartTypeId { get; set; }
         }
-    }
 
-    public class GetSetPartsParameters : ApiFunctionParameters
-    {
-        [ApiParameter("set")]
-        public string SetId { get; set; }
-
-        public GetSetPartsParameters(string setId)
+        public GetSetPartsResult()
         {
-            SetId = setId;
-        }
-
-        public static implicit operator GetSetPartsParameters(string setId)
-        {
-            return new GetSetPartsParameters(setId);
+            SetId = String.Empty;
+            Description = String.Empty;
+            ImageUrl = String.Empty;
+            Parts = new List<Part>();
         }
     }
 }

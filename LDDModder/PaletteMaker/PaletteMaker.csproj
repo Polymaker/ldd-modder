@@ -65,18 +65,6 @@
     <Compile Include="PaletteBuilder.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Rebrickable\ApiFunction.cs" />
-    <Compile Include="Rebrickable\ApiFunctionParameters.cs" />
-    <Compile Include="Rebrickable\ApiParameterAttribute.cs" />
-    <Compile Include="Rebrickable\ASyncApiFunctionDelegate.cs" />
-    <Compile Include="Rebrickable\GetUserHashParameters.cs" />
-    <Compile Include="Rebrickable\PartInfo.cs" />
-    <Compile Include="Rebrickable\PartType.cs" />
-    <Compile Include="Rebrickable\RebrickableAPI.cs" />
-    <Compile Include="Rebrickable\SearchResult.cs" />
-    <Compile Include="Rebrickable\SetInfo.cs" />
-    <Compile Include="Rebrickable\SetParts.cs" />
-    <Compile Include="Rebrickable\WebMethod.cs" />
     <Compile Include="Views\ImportRebrickableView.cs">
       <SubType>UserControl</SubType>
     </Compile>
