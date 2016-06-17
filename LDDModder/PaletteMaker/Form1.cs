@@ -24,6 +24,8 @@ namespace LDDModder.PaletteMaker
         {
             //CreateCustomPalette();
             PaletteManager.LoadPalettes();
+            var lddExtendedPalette = PaletteManager.Palettes.First(p => p.Info.Name.Contains("Extended"));
+            PaletteManager.SavePalette(lddExtendedPalette);
             //var palettes = GetLddPalettes();
         }
 
@@ -59,8 +61,7 @@ namespace LDDModder.PaletteMaker
                 else
                     PartNotFound.Add(rbPart);
             }
-
-            PaletteManager.CreateCustomPalette(paletteInfo, setPalette);
+            PaletteManager.SavePalette(new PaletteFile(paletteInfo, setPalette));
 
             foreach (var notFound in PartNotFound)
                 Trace.WriteLine(string.Format("Part not found \"{3}\"\r\n\tID:{0} ElementID:{1} Color:{2}\r\nQuantity:{4}\r\n", notFound.PartId, notFound.ElementId, notFound.ColorName, notFound.Name, notFound.Quantity));

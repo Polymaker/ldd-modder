@@ -215,19 +215,29 @@ namespace LDDModder.LDD
             using (var lifFile = OpenLif(lif))
                 lifFile.Extract(lifDir);
 
-            if (discardMethod == LifDiscardMethod.Compress)
-                CompressLif(GetLifPath(lif));
-            else// if(discardMethod == LifDiscardMethod.Rename)
-                RenameLif(GetLifPath(lif));
+            DiscardOfLif(discardMethod, GetLifPath(lif));
         }
 
-        static void RenameLif(string lifFilePath)
+        internal static void DiscardOfLif(string lifFilePath)
+        {
+            DiscardOfLif(DefaultDiscardMethod, lifFilePath);
+        }
+
+        internal static void DiscardOfLif(LifDiscardMethod discardMethod, string lifFilePath)
+        {
+            if (discardMethod == LifDiscardMethod.Compress)
+                CompressLif(lifFilePath);
+            else// if(discardMethod == LifDiscardMethod.Rename)
+                RenameLif(lifFilePath);
+        }
+
+        internal static void RenameLif(string lifFilePath)
         {
             string newName = Path.Combine(Path.GetDirectoryName(lifFilePath), "_" + Path.GetFileName(lifFilePath));
             File.Move(lifFilePath, newName);
         }
 
-        static void CompressLif(string lifFilePath)
+        internal static void CompressLif(string lifFilePath)
         {
             string zippedLifPath = Path.ChangeExtension(lifFilePath, "zip");
             using (ZipOutputStream zipStream = new ZipOutputStream(File.Create(zippedLifPath)))
@@ -309,6 +319,15 @@ namespace LDDModder.LDD
             string settingValue;
             GetSettingValue(key, source, out settingValue);
             return settingValue;
+        }
+
+        public static bool GetSettingBoolean(string key, LDDLocation source, bool defaultValue = false)
+        {
+            string settingValue;
+            if (!GetSettingValue(key, source, out settingValue) || 
+                string.IsNullOrEmpty(settingValue))
+                return defaultValue;
+            return settingValue == "1" || settingValue == "yes";
         }
 
         public static bool GetSettingValue(string key, LDDLocation source, out string value)

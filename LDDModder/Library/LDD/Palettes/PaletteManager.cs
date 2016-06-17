@@ -59,10 +59,12 @@ namespace LDDModder.LDD.Palettes
                 else
                     _UserPalettesDirectory = Path.Combine(LDDManager.ApplicationDataPath, "UserPalettes");
 
+                if(!Directory.Exists(UserPalettesDirectory))
+                    Directory.CreateDirectory(UserPalettesDirectory);
                 //if DoServerCall is not turned off, LDD will delete custom directories and redownload missing (replaced?) lifs.
                 //We can however prevent LDD from deleting a custom palette directory, but it is not desirable for an overwrited LDD palette because the entry will be doubled.
                 //And a custom palette can be placed in the UserPalette directory, saving the trouble of removing delete rights, so the 'base' Palette directory will only be used to extend base palettes.
-                _CanExtendLddPalettes = LDDManager.GetSettingValue("DoServerCall", LDDLocation.ProgramFiles) == "0";
+                _CanExtendLddPalettes = !LDDManager.GetSettingBoolean("DoServerCall", LDDLocation.ProgramFiles, true);
 
             }
             else
@@ -189,9 +191,14 @@ namespace LDDModder.LDD.Palettes
 
             if (palette.Type == PaletteType.LDD)
             {
+                var paletteDir = Path.Combine(LDDPalettesDirectory, Path.GetFileNameWithoutExtension(palette.PalettePath));
+                Directory.CreateDirectory(paletteDir);
                 //Extract lif as it can have other files (eg: LDDExtended palette has an xml file for overwriting the available colors in the material chooser)
-                //File.Delete(palette.PalettePath);
-                palette.OverwritedLDD(Path.Combine(LDDPalettesDirectory, Path.GetFileNameWithoutExtension(palette.PalettePath)));
+                using(var lifFile = LifFile.Open(palette.PalettePath))
+                    lifFile.Extract(paletteDir);
+                LDDManager.CompressLif(palette.PalettePath);
+                File.Delete(palette.PalettePath);
+                palette.OverwritedLDD(paletteDir);
             }
 
             Directory.CreateDirectory(palette.PalettePath);

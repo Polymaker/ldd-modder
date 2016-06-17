@@ -55,6 +55,12 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="FrmCreateSetPalette.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmCreateSetPalette.Designer.cs">
+      <DependentUpon>FrmCreateSetPalette.cs</DependentUpon>
+    </Compile>
     <Compile Include="PaletteBuilder.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -63,10 +69,15 @@
     <Compile Include="Rebrickable\ApiParameterAttribute.cs" />
     <Compile Include="Rebrickable\ASyncApiFunctionDelegate.cs" />
     <Compile Include="Rebrickable\PartInfo.cs" />
+    <Compile Include="Rebrickable\PartType.cs" />
     <Compile Include="Rebrickable\RebrickableAPI.cs" />
+    <Compile Include="Rebrickable\SetInfo.cs" />
     <Compile Include="Rebrickable\SetParts.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmCreateSetPalette.resx">
+      <DependentUpon>FrmCreateSetPalette.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

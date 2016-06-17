@@ -311,6 +311,8 @@ namespace LDDModder.PaletteMaker
 
         static bool GetLddPaletteItem(int designId, int lddColor, string elementId, int quantity, out PaletteItem pItem)
         {
+            if (designId == 88585)
+                designId = 76382;
             pItem = null;
             if (!string.IsNullOrEmpty(elementId) && LddPalette.Items.Any(i => i.ElementID == elementId))
             {
