@@ -120,7 +120,7 @@
             this.tlpSetDetails.Controls.Add(this.txtSetTheme, 1, 2);
             this.tlpSetDetails.Controls.Add(this.txtSetYear, 1, 3);
             this.tlpSetDetails.Controls.Add(this.txtSetPieces, 1, 4);
-            this.tlpSetDetails.Location = new System.Drawing.Point(6, 42);
+            this.tlpSetDetails.Location = new System.Drawing.Point(6, 44);
             this.tlpSetDetails.Name = "tlpSetDetails";
             this.tlpSetDetails.RowCount = 5;
             this.tlpSetDetails.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 19F));

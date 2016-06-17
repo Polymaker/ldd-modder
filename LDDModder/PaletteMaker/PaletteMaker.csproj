@@ -39,6 +39,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Design" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -94,6 +95,12 @@
     <Compile Include="Views\PaletteDetailView.Designer.cs">
       <DependentUpon>PaletteDetailView.cs</DependentUpon>
     </Compile>
+    <Compile Include="Views\SetDetailView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\SetDetailView.Designer.cs">
+      <DependentUpon>SetDetailView.cs</DependentUpon>
+    </Compile>
     <Compile Include="Views\UserPaletteManagementView.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -118,6 +125,9 @@
     </Compile>
     <EmbeddedResource Include="Views\ImportSetPaletteView.resx">
       <DependentUpon>ImportSetPaletteView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\SetDetailView.resx">
+      <DependentUpon>SetDetailView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\UserPaletteManagementView.resx">
       <DependentUpon>UserPaletteManagementView.cs</DependentUpon>
