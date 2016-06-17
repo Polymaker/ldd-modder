@@ -59,8 +59,6 @@ namespace LDDModder.LDD.Palettes
                 else
                     _UserPalettesDirectory = Path.Combine(LDDManager.ApplicationDataPath, "UserPalettes");
 
-                if(!Directory.Exists(UserPalettesDirectory))
-                    Directory.CreateDirectory(UserPalettesDirectory);
                 //if DoServerCall is not turned off, LDD will delete custom directories and redownload missing (replaced?) lifs.
                 //We can however prevent LDD from deleting a custom palette directory, but it is not desirable for an overwrited LDD palette because the entry will be doubled.
                 //And a custom palette can be placed in the UserPalette directory, saving the trouble of removing delete rights, so the 'base' Palette directory will only be used to extend base palettes.
@@ -100,12 +98,14 @@ namespace LDDModder.LDD.Palettes
                 if (palette != null)
                     Palettes.Add(palette);
             }
-
-            foreach (var paletteDir in Directory.GetDirectories(UserPalettesDirectory))
+            if (Directory.Exists(UserPalettesDirectory))
             {
-                var palette = LoadFromDirectory(paletteDir, PaletteType.User);
-                if (palette != null)
-                    Palettes.Add(palette);
+                foreach (var paletteDir in Directory.GetDirectories(UserPalettesDirectory))
+                {
+                    var palette = LoadFromDirectory(paletteDir, PaletteType.User);
+                    if (palette != null)
+                        Palettes.Add(palette);
+                }
             }
         }
 
@@ -188,6 +188,9 @@ namespace LDDModder.LDD.Palettes
                     GetPaletteDirectory(palette.Type), 
                     string.Format("{0}-{1}", paletteName, palette.Info.PaletteVersion));
             }
+
+            if (palette.Type == PaletteType.User && !Directory.Exists(UserPalettesDirectory))
+                Directory.CreateDirectory(UserPalettesDirectory);
 
             if (palette.Type == PaletteType.LDD)
             {
