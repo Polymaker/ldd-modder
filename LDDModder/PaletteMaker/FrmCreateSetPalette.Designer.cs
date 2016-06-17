@@ -259,7 +259,7 @@
             this.dataGridView1.Location = new System.Drawing.Point(3, 162);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowHeadersVisible = false;
-            this.dataGridView1.Size = new System.Drawing.Size(621, 229);
+            this.dataGridView1.Size = new System.Drawing.Size(621, 304);
             this.dataGridView1.TabIndex = 7;
             this.dataGridView1.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_ColumnHeaderMouseClick);
             // 
@@ -336,7 +336,7 @@
             this.tableLayoutPanel1.RowCount = 2;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(627, 394);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(627, 469);
             this.tableLayoutPanel1.TabIndex = 8;
             // 
             // listView1
@@ -360,7 +360,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(633, 400);
+            this.ClientSize = new System.Drawing.Size(633, 475);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "FrmCreateSetPalette";
             this.Padding = new System.Windows.Forms.Padding(3);

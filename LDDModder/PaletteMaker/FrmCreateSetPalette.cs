@@ -15,7 +15,7 @@ namespace LDDModder.PaletteMaker
 {
     public partial class FrmCreateSetPalette : Form
     {
-        private Dictionary<int, string> RBPartTypes;
+        private static Dictionary<int, string> RBPartTypes;
         private BindingList<BrickMappingItem> PartList;
 
         public FrmCreateSetPalette()
@@ -23,6 +23,7 @@ namespace LDDModder.PaletteMaker
             InitializeComponent();
             RBPartTypes = new Dictionary<int, string>();
             PartList = new BindingList<BrickMappingItem>();
+            dataGridView1.AutoGenerateColumns = false;
         }
 
         protected override void OnLoad(EventArgs e)
@@ -97,19 +98,11 @@ namespace LDDModder.PaletteMaker
                 PartList.Clear();
                 foreach (var setPart in partsInfo.Parts)
                 {
-                    PartList.Add(new BrickMappingItem()
-                    {
-                        PartID = setPart.PartId,
-                        PartType = RBPartTypes[setPart.PartTypeId],
-                        Name = setPart.Name,
-                        Color = setPart.ColorName,
-                        ElementID = setPart.ElementId,
-                        Quantity = setPart.Quantity,
-                        LDD = string.Empty
-                    });
+                    PartList.Add(new BrickMappingItem(setPart));
                 }
 
                 dataGridView1.DataSource = PartList;
+                Task.Factory.StartNew(() => MatchLddParts());
             }
         }
 
@@ -120,6 +113,18 @@ namespace LDDModder.PaletteMaker
             foreach (var palette in PaletteManager.Palettes.Where(p => p.Type == PaletteType.User))
             {
                 listView1.Items.Add(palette.Info.Name);
+            }
+        }
+
+        private void MatchLddParts()
+        {
+            foreach (var part in PartList)
+            {
+                var lddPart = PaletteBuilder.GetPaletteItem(part.RBPart);
+                if (lddPart != null)
+                {
+                    part.LDD = lddPart.DesignID.ToString();
+                }
             }
         }
 
@@ -152,13 +157,21 @@ namespace LDDModder.PaletteMaker
 
         class BrickMappingItem
         {
-            public string PartID { get; set; }
+            public Rebrickable.SetParts.Part RBPart { get; set; }
+            public string PartID { get { return RBPart.PartId; } }
             public string PartType { get; set; }
-            public string Name { get; set; }
-            public string Color { get; set; }
-            public string ElementID { get; set; }
-            public int Quantity { get; set; }
+            public string Name { get { return RBPart.Name; } }
+            public string Color { get { return RBPart.ColorName; } }
+            public string ElementID { get { return RBPart.ElementId; } }
+            public int Quantity { get { return RBPart.Quantity; } }
             public string LDD { get; set; }
+
+            public BrickMappingItem(Rebrickable.SetParts.Part rBPart)
+            {
+                RBPart = rBPart;
+                PartType = RBPartTypes[rBPart.PartTypeId];
+                LDD = String.Empty;
+            }
         }
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
