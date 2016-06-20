@@ -28,9 +28,9 @@ namespace LDDModder.LDD.Palettes
 
         public VersionInfo FileVersion { get; set; }
 
-        public bool? Buyable { get; set; }
+        public bool Buyable { get; set; }
 
-        public bool? BrandFilter { get; set; }
+        public bool BrandFilter { get; set; }
 
         public Bag()
         {
@@ -39,8 +39,8 @@ namespace LDDModder.LDD.Palettes
             Countable = false;
             ParentBrand = Brand.LDD;
             FileVersion = new VersionInfo();
-            Buyable = null;
-            BrandFilter = null;
+            Buyable = false;
+            BrandFilter = false;
         }
 
         public Bag(string name, bool countable)
@@ -50,8 +50,8 @@ namespace LDDModder.LDD.Palettes
             PaletteVersion = 1;
             ParentBrand = Brand.LDD;
             FileVersion = new VersionInfo(1, 0);
-            Buyable = null;
-            BrandFilter = null;
+            Buyable = false;
+            BrandFilter = false;
         }
 
         protected override void DeserializeFromXElement(XElement element)
@@ -76,12 +76,12 @@ namespace LDDModder.LDD.Palettes
             if (bagElem.ContainsAttribute("buyable"))
                 Buyable = bagElem.Attribute("buyable").Value == "true";
             else
-                Buyable = null;
+                Buyable = false;
 
             if (bagElem.ContainsAttribute("brandFilter"))
                 BrandFilter = bagElem.Attribute("brandFilter").Value == "true";
             else
-                BrandFilter = null;
+                BrandFilter = false;
         }
 
         protected override XElement SerializeToXElement()
@@ -103,11 +103,11 @@ namespace LDDModder.LDD.Palettes
 
             var bagElem = rootElem.Element("Bag");
 
-            if (Buyable.HasValue)
-                bagElem.Add(new XAttribute("buyable", Buyable.Value ? "true" : "false"));
+            if (Buyable)
+                bagElem.Add(new XAttribute("buyable", Buyable ? "true" : "false"));
 
-            if (BrandFilter.HasValue)
-                bagElem.Add(new XAttribute("brandFilter", BrandFilter.Value ? "true" : "false"));
+            if (BrandFilter)
+                bagElem.Add(new XAttribute("brandFilter", BrandFilter ? "true" : "false"));
 
 
             return rootElem;
