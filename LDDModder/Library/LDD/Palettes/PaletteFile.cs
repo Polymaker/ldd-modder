@@ -24,6 +24,11 @@ namespace LDDModder.LDD.Palettes
             internal set { _PalettePath = value; }
         }
 
+        public string Name
+        {
+            get { return Info.Name; }
+        }
+
         public Bag Info
         {
             get { return _Info; }

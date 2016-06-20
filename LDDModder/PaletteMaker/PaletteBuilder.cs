@@ -88,7 +88,7 @@ namespace LDDModder.PaletteMaker
             RbColorToLDD.Add(10, 37);
             RbColorToLDD.Add(11, 116);
             RbColorToLDD.Add(12, 4);
-            RbColorToLDD.Add(13, 1007);
+            RbColorToLDD.Add(13, 16);
             RbColorToLDD.Add(14, 24);
             RbColorToLDD.Add(15, 1);
             RbColorToLDD.Add(17, 6);
@@ -130,9 +130,9 @@ namespace LDDModder.PaletteMaker
             RbColorToLDD.Add(77, 223);
             RbColorToLDD.Add(78, 283);
             RbColorToLDD.Add(79, 20);
-            RbColorToLDD.Add(80, 1002);
+            RbColorToLDD.Add(80, 298);
             RbColorToLDD.Add(81, 200);
-            RbColorToLDD.Add(82, 1004);
+            RbColorToLDD.Add(82, 299);
             RbColorToLDD.Add(84, 312);
             RbColorToLDD.Add(85, 268);
             RbColorToLDD.Add(86, 86);
@@ -155,8 +155,8 @@ namespace LDDModder.PaletteMaker
             RbColorToLDD.Add(143, 143);
             RbColorToLDD.Add(148, 316);
             RbColorToLDD.Add(151, 208);
-            RbColorToLDD.Add(158, 1000);
-            RbColorToLDD.Add(178, 1001);
+            RbColorToLDD.Add(158, 326);
+            RbColorToLDD.Add(178, 187);
             RbColorToLDD.Add(179, 315);
             RbColorToLDD.Add(182, 182);
             RbColorToLDD.Add(183, 183);
@@ -190,10 +190,10 @@ namespace LDDModder.PaletteMaker
             RbColorToLDD.Add(462, 105);
             RbColorToLDD.Add(484, 38);
             RbColorToLDD.Add(503, 103);
-            RbColorToLDD.Add(1000, 1005);
-            RbColorToLDD.Add(1002, 1013);
-            RbColorToLDD.Add(1003, 1014);
-            RbColorToLDD.Add(1004, 1017);
+            RbColorToLDD.Add(1000, 329);
+            RbColorToLDD.Add(1002, 339);
+            RbColorToLDD.Add(1003, 302);
+            RbColorToLDD.Add(1004, 231);
             RbColorToLDD.Add(1005, 234);
             RbColorToLDD.Add(1006, 293);
             RbColorToLDD.Add(1007, 218);

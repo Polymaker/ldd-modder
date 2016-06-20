@@ -38,7 +38,6 @@ namespace LDDModder.LDD.Palettes
             FileVersion = new VersionInfo(1, 0);
         }
 
-
         protected override void DeserializeFromXElement(XElement element)
         {
             if (element.Attribute("versionMajor") != null)

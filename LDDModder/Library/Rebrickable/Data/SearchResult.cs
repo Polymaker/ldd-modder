@@ -6,7 +6,7 @@ using System.Xml.Serialization;
 
 namespace LDDModder.Rebrickable.Data
 {
-    [XmlRoot("sets")]
+    [XmlRoot("results")]
     public class SearchResult
     {
         [XmlElement("set")]
@@ -19,7 +19,7 @@ namespace LDDModder.Rebrickable.Data
         public class Set
         {
             [XmlElement("set_id")]
-            public string SetID { get; set; }
+            public string SetId { get; set; }
             [XmlElement("year")]
             public string Year { get; set; }
             [XmlElement("pieces")]
@@ -48,7 +48,7 @@ namespace LDDModder.Rebrickable.Data
             [XmlIgnore]
             public bool IsMOC
             {
-                get { return SetID.StartsWith("MOC"); }
+                get { return SetId.StartsWith("MOC"); }
             }
         }
 

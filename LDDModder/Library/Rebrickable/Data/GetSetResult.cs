@@ -23,7 +23,7 @@ namespace LDDModder.Rebrickable.Data
         /// Number of parts in the set.
         /// </summary>
         [XmlElement("pieces")]
-        public string Pieces { get; set; }
+        public int Pieces { get; set; }
         /// <summary>
         /// Set description.
         /// </summary>

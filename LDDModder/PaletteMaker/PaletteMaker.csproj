@@ -37,6 +37,10 @@
     <StartupObject>LDDModder.PaletteMaker.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ObjectListView, Version=2.9.1.1072, Culture=neutral, PublicKeyToken=b1c5bf581481bcd4, processorArchitecture=MSIL">
+      <HintPath>..\packages\ObjectListView.Official.2.9.1\lib\net20\ObjectListView.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Design" />
@@ -50,6 +54,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\VersionEdit.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\VersionEdit.Designer.cs">
+      <DependentUpon>VersionEdit.cs</DependentUpon>
+    </Compile>
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -95,6 +105,9 @@
     <Compile Include="Views\UserPaletteManagementView.Designer.cs">
       <DependentUpon>UserPaletteManagementView.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Controls\VersionEdit.resx">
+      <DependentUpon>VersionEdit.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -114,12 +127,19 @@
     <EmbeddedResource Include="Views\ImportSetPaletteView.resx">
       <DependentUpon>ImportSetPaletteView.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Views\PaletteDetailView.resx">
+      <DependentUpon>PaletteDetailView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\SetDetailView.fr.resx">
+      <DependentUpon>SetDetailView.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Views\SetDetailView.resx">
       <DependentUpon>SetDetailView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\UserPaletteManagementView.resx">
       <DependentUpon>UserPaletteManagementView.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

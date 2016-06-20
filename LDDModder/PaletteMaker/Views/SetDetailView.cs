@@ -90,7 +90,7 @@ namespace LDDModder.PaletteMaker.Views
                 txtSetName.Text = setInfo.Description;
                 txtSetTheme.Text = setInfo.Theme;
                 txtSetYear.Text = setInfo.Year;
-                txtSetPieces.Text = setInfo.Pieces;
+                txtSetPieces.Text = setInfo.Pieces.ToString();
                 pbxSetPicture.ImageLocation = setInfo.ImageUrlSmall;
             }
         }

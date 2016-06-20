@@ -10,6 +10,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -32,7 +33,7 @@ namespace LDDModder.PaletteMaker
         {
             base.OnLoad(e);
             FixSetDetailLayout();
-            SendMessage(txtSearchSetID.Handle, 0x1501, 0, "Enter Set ID");
+            SendMessage(txtSearchSetID.Handle, 0x1501, 0, "Enter Set ID or name");
             pbxSetPicture.Select();
             Task.Factory.StartNew(() => LoadRBPartTypes());
             PaletteManager.LoadPalettes();
@@ -70,13 +71,18 @@ namespace LDDModder.PaletteMaker
 
         }
 
+        private void ClearSetDetails()
+        {
+            txtSetID.Text = "NO SET FOUND";
+            txtSetName.Text = txtSetTheme.Text = txtSetYear.Text = txtSetPieces.Text = string.Empty;
+            pbxSetPicture.Image = null;
+        }
+
         private void FillSetDetails(GetSetResult setInfo)
         {
             if (setInfo == null)
             {
-                txtSetID.Text = "NO SET FOUND";
-                txtSetName.Text = txtSetTheme.Text = txtSetYear.Text = txtSetPieces.Text = string.Empty;
-                pbxSetPicture.Image = null;
+                ClearSetDetails();
             }
             else
             {
@@ -84,7 +90,24 @@ namespace LDDModder.PaletteMaker
                 txtSetName.Text = setInfo.Description;
                 txtSetTheme.Text = setInfo.Theme;
                 txtSetYear.Text = setInfo.Year;
-                txtSetPieces.Text = setInfo.Pieces;
+                txtSetPieces.Text = setInfo.Pieces.ToString();
+                pbxSetPicture.ImageLocation = setInfo.ImageUrlSmall;
+            }
+        }
+
+        private void FillSetDetails(SearchResult.Set setInfo)
+        {
+            if (setInfo == null)
+            {
+                ClearSetDetails();
+            }
+            else
+            {
+                txtSetID.Text = setInfo.SetId;
+                txtSetName.Text = setInfo.Description;
+                txtSetTheme.Text = setInfo.Theme1;
+                txtSetYear.Text = setInfo.Year;
+                txtSetPieces.Text = setInfo.Pieces.ToString();
                 pbxSetPicture.ImageLocation = setInfo.ImageUrlSmall;
             }
         }
@@ -107,7 +130,6 @@ namespace LDDModder.PaletteMaker
                 Task.Factory.StartNew(() => MatchLddParts());
             }
         }
-
 
         private void FillUserPaletteList()
         {
@@ -132,8 +154,12 @@ namespace LDDModder.PaletteMaker
 
         private void btnSearchSet_Click(object sender, EventArgs e)
         {
-            FindSet(txtSearchSetID.Text);
-            //SearchSet(txtSearchSetID.Text);
+            if (Regex.IsMatch(txtSearchSetID.Text, "\\d+(\\-\\d+)?"))
+                FindSet(txtSearchSetID.Text);
+            else if (!string.IsNullOrEmpty(txtSearchSetID.Text))
+                SearchSet(txtSearchSetID.Text);
+            else
+                ClearSetDetails();
         }
 
         private void FindSet(string setNumber)
@@ -161,6 +187,10 @@ namespace LDDModder.PaletteMaker
         private void SearchSet(string query)
         {
             var result = Rebrickable.RebrickableAPI.Search.Execute(new SearchParameters(SearchType.Set, query));
+            if (result.SetsAndMOCs.Count > 0)
+            {
+                FillSetDetails(result.SetsAndMOCs[0]);
+            }
         }
 
         class BrickMappingItem

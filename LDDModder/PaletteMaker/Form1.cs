@@ -23,9 +23,11 @@ namespace LDDModder.PaletteMaker
         }
         private void button1_Click(object sender, EventArgs e)
         {
-            //CreateCustomPalette();
+            CreateCustomPalette();
 
-            //var palettes = GetLddPalettes();
+            //PaletteManager.LoadPalettes();
+            //var heroPal = PaletteManager.Palettes.First(p => p.Name.Contains("Hero"));
+            //PaletteManager.SavePalette(heroPal);
         }
 
         private void CreateCustomPalette()
