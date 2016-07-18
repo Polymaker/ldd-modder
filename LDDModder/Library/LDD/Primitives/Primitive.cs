@@ -17,6 +17,7 @@ namespace LDDModder.LDD.Primitives
         private List<Connectivity> _Connections;
         private List<Collision> _Collisions;
         private List<int> _Aliases;
+        private List<FlexBone> _Bones;
 
         public int Id { get; set; }
 
@@ -29,6 +30,8 @@ namespace LDDModder.LDD.Primitives
         public BoundingBox GeometryBounding { get; set; }
 
         public Orientation DefaultOrientation { get; set; }
+
+        public Camera DefaultCamera { get; set; }
 
         public MainGroup Group { get; set; }
 
@@ -55,10 +58,16 @@ namespace LDDModder.LDD.Primitives
             get { return _Connections; }
         }
 
+        public List<FlexBone> Bones
+        {
+            get { return _Bones; }
+        }
+
         public Primitive()
         {
             _Connections = new List<Connectivity>();
             _Collisions = new List<Collision>();
+            _Bones = new List<FlexBone>();
             _Aliases = new List<int>();
             Id = 0;
             Name = string.Empty;
@@ -88,6 +97,10 @@ namespace LDDModder.LDD.Primitives
             if (Aliases.Count > 0)
                 Id = Aliases.First();
 
+            var flexElem = element.Element("Flex");
+            if (flexElem != null)
+                _Bones.AddRange(flexElem.Elements().Select(e => XSerializationHelper.DefaultDeserialize<FlexBone>(e)));
+
             var collisionsElem = element.Element("Collision");
             if (collisionsElem != null)
                 _Collisions.AddRange(Collision.Deserialize(collisionsElem.Elements()));
@@ -115,6 +128,10 @@ namespace LDDModder.LDD.Primitives
             var defaultOrientationElem = element.Element("DefaultOrientation");
             if (defaultOrientationElem != null)
                 DefaultOrientation = XSerializationHelper.DefaultDeserialize<Orientation>(defaultOrientationElem);
+
+            var defaultCameraElem = element.Element("DefaultCamera");
+            if (defaultCameraElem != null)
+                DefaultCamera = XSerializationHelper.DefaultDeserialize<Camera>(defaultCameraElem);
 
         }
 
@@ -190,6 +207,13 @@ namespace LDDModder.LDD.Primitives
             if (DesignVersion.HasValue)
                 annotElem.Add(SerializeAnnotation("version", DesignVersion.Value));
 
+            if (Bones.Count > 0)
+            {
+                var flexElem = new XElement("Flex");
+                root.Add(flexElem);
+                flexElem.Add(Bones.Select(b => XSerializationHelper.Serialize(b)).ToArray());
+            }
+
             //Collisions
             if (Collisions.Count > 0)
             {
@@ -222,6 +246,8 @@ namespace LDDModder.LDD.Primitives
             if (DefaultOrientation != null)
                 root.Add(XSerializationHelper.Serialize(DefaultOrientation, "DefaultOrientation"));
 
+            if (DefaultCamera != null)
+                root.Add(XSerializationHelper.Serialize(DefaultCamera, "DefaultCamera"));
 
             return root;
         }

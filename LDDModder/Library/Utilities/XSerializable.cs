@@ -37,13 +37,22 @@ namespace LDDModder.Utilities
         {
             var rootElement = SerializeToXElement();
 
-            //writer has already written StartDocument (root node)
-            //so we write each element manually
-            foreach (var attr in rootElement.Attributes())
-                writer.WriteAttributeString(attr.Name.LocalName, attr.Name.Namespace.NamespaceName, attr.Value);
+            //SerializeToXElement returned root element
+            if (rootElement.Name.LocalName == RootElementName)
+            {
+                //writer has already written StartDocument (root node)
+                //so we write each element manually
+                foreach (var attr in rootElement.Attributes())
+                    writer.WriteAttributeString(attr.Name.LocalName, attr.Name.Namespace.NamespaceName, attr.Value);
 
-            foreach (var child in rootElement.Elements())
-                child.WriteTo(writer);
+                foreach (var child in rootElement.Elements())
+                    child.WriteTo(writer);
+            }
+            else
+            {
+                rootElement.WriteTo(writer);
+            }
+            
         }
 
         public static T LoadFrom<T>(string filepath) where T : XSerializable

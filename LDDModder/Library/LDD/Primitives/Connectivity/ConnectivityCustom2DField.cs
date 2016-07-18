@@ -18,6 +18,7 @@ namespace LDDModder.LDD.Primitives
         [XmlAttribute("height")]
         public int Height { get; set; }
 
+        //TODO: change type for class to parse custom data
         [XmlText]
         public string ConnectivityData { get; set; }
 

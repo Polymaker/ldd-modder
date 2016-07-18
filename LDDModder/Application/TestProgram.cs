@@ -25,8 +25,8 @@ namespace LDDModder
             //    new XAttribute("helo", "123"));
             //testElem.SortAttributes(a => a.Name.LocalName.Length);
 
-            //int primitiveID = 58135;
 
+            /*
             var derocationsIds = new List<string>();
 
             foreach(var filepath in Directory.GetFiles(LDDManager.GetDirectory(LDDManager.DbDirectories.Decorations),"*.png"))
@@ -60,12 +60,13 @@ namespace LDDModder
 
             Trace.WriteLine("\r\nDecorations usage:");
             foreach (var keyval in decoUsageInfo.Where(x => x.Value > 0))
-                Trace.WriteLine(string.Format("  {0}{1}", keyval.Key.PadRight(7), keyval.Value));
+                Trace.WriteLine(string.Format("  {0}{1}", keyval.Key.PadRight(7), keyval.Value));*/
 
             //var decorationMappingDoc = XDocument.Load()
 
-            //var lddBrick = Primitive.LoadFrom<Primitive>(Path.Combine(LDDManager.GetDirectory(LDDManager.DbDirectories.Primitives), primitiveID + ".xml"));
-            //lddBrick.Save(primitiveID + ".xml");
+            int primitiveID = 43675;
+            var lddBrick = Primitive.LoadFrom<Primitive>(Path.Combine(LDDManager.GetDirectory(LDDManager.DbDirectories.Primitives), primitiveID + ".xml"));
+            lddBrick.Save(primitiveID + ".xml");
 
             //PaletteManager.AllowDeleteDirectory(@"C:\Users\james\AppData\Roaming\LEGO Company\LEGO Digital Designer\Palettes\Custom-1");
             //PaletteManager.AllowDeleteDirectory(@"C:\Users\james\AppData\Roaming\LEGO Company\LEGO Digital Designer\Palettes\LDDExtended-1");

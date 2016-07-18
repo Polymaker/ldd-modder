@@ -13,7 +13,9 @@ namespace LDDModder.Utilities
         {
             if (elem == null)
                 return default(T);
+
             var realElemName = elem.Name;
+
             //XmlSerializer throws an exception if the root element name does not match the type name or the specified XmlRoot attribute.
             //so we fix this by changing the element's name
             elem.Name = GetTypeXmlRootName(typeof(T));
@@ -26,6 +28,33 @@ namespace LDDModder.Utilities
                 {
                     var ser = new XmlSerializer(typeof(T));
                     return (T)ser.Deserialize(xReader);
+                }
+            }
+            finally
+            {
+                elem.Name = realElemName;
+            }
+        }
+
+        public static object DefaultDeserialize(XElement elem, Type objType)
+        {
+            if (elem == null)
+                return null;
+
+            var realElemName = elem.Name;
+
+            //XmlSerializer throws an exception if the root element name does not match the type name or the specified XmlRoot attribute.
+            //so we fix this by changing the element's name
+            elem.Name = GetTypeXmlRootName(objType);
+
+            try
+            {
+                var doc = new XDocument(elem);
+
+                using (var xReader = doc.CreateReader())
+                {
+                    var ser = new XmlSerializer(objType);
+                    return ser.Deserialize(xReader);
                 }
             }
             finally

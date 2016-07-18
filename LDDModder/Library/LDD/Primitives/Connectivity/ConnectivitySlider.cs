@@ -23,6 +23,7 @@ namespace LDDModder.LDD.Primitives
         public bool Cylindrical { get; set; }
         [XmlAttribute("tag")]
         public string Tag { get; set; }
+        //TODO: change type for class/struct to represent 3D point/vector (string value = 3 float separated by commas)
         [XmlAttribute("spring")]
         public string SpringStr { get; set; }
         //spring="0,1,0.10000000000000001"
