@@ -48,7 +48,7 @@ Variant Geometry Data
  |->indices/triangle list 2 => [Index Count] * 12
  |->indices/triangle list => [Index Count] * 12 (references outline shader data) 
  
- # STUDS INFO #
+ # STUDS INFO # (for culling studs)
 Header
  |-> Chunk Size => 44 00 00 00
  |-> Chunk Type? => 01 00 00 00

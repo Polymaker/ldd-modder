@@ -66,13 +66,7 @@ namespace LDDModder
 
             int primitiveID = 3004;
             var lddBrick = Primitive.LoadFrom<Primitive>(Path.Combine(LDDManager.GetDirectory(LDDManager.DbDirectories.Primitives), primitiveID + ".xml"));
-            //lddBrick.Connections.ForEach(c =>
-            //{
-            //    if (c is ConnectivityCustom2DField)
-            //    {
-            //        //(c as ConnectivityCustom2DField).Trim();
-            //    }
-            //});
+
             lddBrick.Save(primitiveID + ".xml");
 
             //PaletteManager.AllowDeleteDirectory(@"C:\Users\james\AppData\Roaming\LEGO Company\LEGO Digital Designer\Palettes\Custom-1");
