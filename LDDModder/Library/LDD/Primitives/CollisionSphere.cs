@@ -10,6 +10,6 @@ namespace LDDModder.LDD.Primitives
     public class CollisionSphere : Collision
     {
         [XmlAttribute("radius")]
-        public float Radius { get; set; }
+        public double Radius { get; set; }
     }
 }

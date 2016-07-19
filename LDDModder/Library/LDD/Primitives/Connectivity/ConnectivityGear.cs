@@ -15,6 +15,6 @@ namespace LDDModder.LDD.Primitives
         public int ToothCount { get; set; }
 
         [XmlAttribute("radius")]
-        public float Radius { get; set; }
+        public double Radius { get; set; }
     }
 }

@@ -25,16 +25,16 @@ namespace LDDModder.LDD.Primitives
         }
 
         [XmlAttribute("LimMin")]
-        public float LimitMin { get; set; }
+        public double LimitMin { get; set; }
 
         [XmlAttribute("LimMax")]
-        public float LimitMax { get; set; }
+        public double LimitMax { get; set; }
 
         [XmlAttribute("FlipLimMin")]
-        public float FlipLimitMin { get; set; }
+        public double FlipLimitMin { get; set; }
 
         [XmlAttribute("FlipLimMax")]
-        public float FlipLimitMax { get; set; }
+        public double FlipLimitMax { get; set; }
         
         [XmlAttribute("tag")]
         public string Tag { get; set; }

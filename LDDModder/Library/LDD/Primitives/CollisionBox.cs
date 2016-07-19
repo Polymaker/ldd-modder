@@ -10,10 +10,10 @@ namespace LDDModder.LDD.Primitives
     public class CollisionBox : Collision
     {
         [XmlAttribute("sX")]
-        public float Sx { get; set; }
+        public double Sx { get; set; }
         [XmlAttribute("sY")]
-        public float Sy { get; set; }
+        public double Sy { get; set; }
         [XmlAttribute("sZ")]
-        public float Sz { get; set; }
+        public double Sz { get; set; }
     }
 }

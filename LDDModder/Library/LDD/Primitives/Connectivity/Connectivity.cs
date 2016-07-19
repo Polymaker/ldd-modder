@@ -14,19 +14,18 @@ namespace LDDModder.LDD.Primitives
         [XmlAttribute("type")]
         public int Type { get; set; }
         [XmlAttribute("angle")]
-        public float Angle { get; set; }
+        public double Angle { get; set; }
         [XmlAttribute("ax")]
-        public float Ax { get; set; }
+        public double Ax { get; set; }
         [XmlAttribute("ay")]
-        public float Ay { get; set; }
+        public double Ay { get; set; }
         [XmlAttribute("az")]
-        public float Az { get; set; }
+        public double Az { get; set; }
         [XmlAttribute("tx")]
-        public float Tx { get; set; }
+        public double Tx { get; set; }
         [XmlAttribute("ty")]
-        public float Ty { get; set; }
+        public double Ty { get; set; }
         [XmlAttribute("tz")]
-        public float Tz { get; set; }
 
         /*
         Connectivity sub-types:
@@ -49,6 +48,7 @@ namespace LDDModder.LDD.Primitives
             Attributes = type, angle, ax, ay, az, tx, ty, tz, length
 
         */
+        public double Tz { get; set; }
 
         public static IEnumerable<Connectivity> Deserialize(IEnumerable<XElement> nodes)
         {

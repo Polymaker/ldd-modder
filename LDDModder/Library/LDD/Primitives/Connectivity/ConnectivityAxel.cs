@@ -14,7 +14,7 @@ namespace LDDModder.LDD.Primitives
         internal static string[] AttributeOrder = new string[] { "type", "length", "grabbing", "requireGrabbing", "startCapped", "endCapped", "angle", "ax", "ay", "az", "tx", "ty", "tz" };
 
         [XmlAttribute("length")]
-        public float Length { get; set; }
+        public double Length { get; set; }
         [XmlIgnore]
         public bool RequireGrabbing { get; set; }
         [XmlIgnore]

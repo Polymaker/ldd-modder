@@ -10,24 +10,24 @@ namespace LDDModder.LDD.Primitives
     public class BoundingBox
     {
         [XmlAttribute("minX")]
-        public float MinX { get; set; }
+        public double MinX { get; set; }
         [XmlAttribute("minY")]
-        public float MinY { get; set; }
+        public double MinY { get; set; }
         [XmlAttribute("minZ")]
-        public float MinZ { get; set; }
+        public double MinZ { get; set; }
         [XmlAttribute("maxX")]
-        public float MaxX { get; set; }
+        public double MaxX { get; set; }
         [XmlAttribute("maxY")]
-        public float MaxY { get; set; }
+        public double MaxY { get; set; }
         [XmlAttribute("maxZ")]
-        public float MaxZ { get; set; }
+        public double MaxZ { get; set; }
 
         [XmlIgnore]
-        public Tuple<float,float,float> Center
+        public Tuple<double, double, double> Center
         {
             get
             {
-                return new Tuple<float, float, float>((MaxX + MinX) / 2f, (MaxY + MinY) / 2f, (MaxZ + MinZ) / 2f);
+                return new Tuple<double, double, double>((MaxX + MinX) / 2d, (MaxY + MinY) / 2d, (MaxZ + MinZ) / 2d);
             }
         }
     }
