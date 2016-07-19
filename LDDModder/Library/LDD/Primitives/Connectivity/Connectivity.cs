@@ -26,29 +26,12 @@ namespace LDDModder.LDD.Primitives
         [XmlAttribute("ty")]
         public double Ty { get; set; }
         [XmlAttribute("tz")]
-
-        /*
-        Connectivity sub-types:
-
-        Custom2DField (stud connection)
-            Attributes = type, width, height, angle, ax, ay, az, tx, ty, tz
-        Hinge
-            Attributes = type, oriented, angle, ax, ay, az, tx, ty, tz, LimMin, LimMax, FlipLimMin, FlipLimMax, tag
-        Axel
-            Attributes = type, length, requireGrabbing, startCapped, endCapped, angle, ax, ay, az, tx, ty, tz, grabbing
-        Fixed
-            Attributes = type, axes, angle, ax, ay, az, tx, ty, tz, tag
-        Gear
-            Attributes = type, toothCount, radius, angle, ax, ay, az, tx, ty, tz
-        Slider
-            Attributes = type, length, startCapped, endCapped, angle, ax, ay, az, tx, ty, tz, cylindrical, spring, tag
-        Ball
-            Attributes = type, angle, ax, ay, az, tx, ty, tz
-        Rail
-            Attributes = type, angle, ax, ay, az, tx, ty, tz, length
-
-        */
         public double Tz { get; set; }
+
+        protected virtual void OnDeserialized()
+        {
+
+        }
 
         public static IEnumerable<Connectivity> Deserialize(IEnumerable<XElement> nodes)
         {
@@ -140,8 +123,12 @@ namespace LDDModder.LDD.Primitives
         {
             var connectivityType = GetConnectivityType(node.Name.LocalName);
             if (connectivityType != null)
-                return (Connectivity)XSerializationHelper.DefaultDeserialize(node, connectivityType);
-
+            {
+                var connectivityObject = (Connectivity)XSerializationHelper.DefaultDeserialize(node, connectivityType);
+                if (connectivityObject != null)
+                    connectivityObject.OnDeserialized();
+                return connectivityObject;
+            }
             //switch (node.Name.LocalName)
             //{
             //    case "Custom2DField":

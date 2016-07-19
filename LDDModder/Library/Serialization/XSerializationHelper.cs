@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 
@@ -89,7 +91,7 @@ namespace LDDModder.Utilities
 
         public static XElement Serialize(object obj)
         {
-            var doc = new XDocument();
+            //var doc = new XDocument();
             var objType = obj.GetType();
             return Serialize(obj, GetTypeXmlRootName(objType));
         }
@@ -98,6 +100,7 @@ namespace LDDModder.Utilities
         {
             var doc = new XDocument();
             var ser = new XmlSerializer(obj.GetType());
+
             var ns = new XmlSerializerNamespaces();
             ns.Add("", "");
             var docWriter = doc.CreateWriter();
@@ -116,5 +119,6 @@ namespace LDDModder.Utilities
             element.Add(elemAttrs);
             return element;
         }
+
     }
 }

@@ -22,11 +22,79 @@ namespace LDDModder.LDD.Primitives
         [XmlText]
         public string ConnectivityData { get; set; }
 
-        //public class ConnectionItem
-        //{
-        //    public int Type { get; set; }
-        //    public int SubType { get; set; }
+        public void ParseData()
+        {
+            var itemArray = new ConnectionItem[Width + 1, Height + 1];
 
-        //}
+            var cleanedString = ConnectivityData
+                .Replace("\n", string.Empty)
+                .Replace(" ", string.Empty);
+
+            var itemsStr = cleanedString.Split(',');
+            int i = 0;
+            for (int y = 0; y <= Height; y++)
+            {
+                for (int x = 0; x <= Width; x++)
+                {
+                    itemArray[x, y] = ParseItem(itemsStr[i++]);
+                }
+            }
+        }
+
+        protected override void OnDeserialized()
+        {
+            base.OnDeserialized();
+            Trim();
+            ParseData();
+        }
+
+        public void Trim()
+        {
+            ConnectivityData = ConnectivityData.Split(new string[] { "\n" }, StringSplitOptions.None).Select(s => s.TrimStart()).Aggregate((i, j) => i + "\n" + j);
+            ConnectivityData = ConnectivityData.Trim();
+        }
+
+        private static ConnectionItem ParseItem(string value)
+        {
+            var numbers = value.Split(':');
+            if (numbers.Length == 3)
+                return new ConnectionItem(int.Parse(numbers[0]), int.Parse(numbers[1]), int.Parse(numbers[2]));
+            else if (numbers.Length == 2)
+                return new ConnectionItem(int.Parse(numbers[0]), int.Parse(numbers[1]));
+            return null;
+        }
+
+        public class ConnectionItem
+        {
+            public int Value1 { get; set; }
+            public int Value2 { get; set; }
+            public int Value3 { get; set; }
+
+            public ConnectionItem(int value1, int value2, int value3)
+            {
+                Value1 = value1;
+                Value2 = value2;
+                Value3 = value3;
+            }
+
+            public ConnectionItem(int value1, int value2)
+            {
+                Value1 = value1;
+                Value2 = value2;
+                Value3 = 0;
+            }
+
+            public ConnectionItem()
+            {
+                Value1 = 0;
+                Value2 = 0;
+                Value3 = 0;
+            }
+
+            public override string ToString()
+            {
+                return string.Format("{0}:{1}:{2}", Value1, Value2, Value3);
+            }
+        }
     }
 }

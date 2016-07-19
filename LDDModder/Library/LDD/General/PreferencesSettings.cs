@@ -60,7 +60,7 @@ namespace LDDModder.LDD.General
         /// </summary>
         public const string LoadMostRecentModel = "LoadMostRecentModel";//should be ProgramFiles preferences.ini
         /// <summary>
-        /// Purpose: Unknown (TESTED)
+        /// Purpose: Prevent loading assemblies. All hidden (sub)parts will appear in the palette (TESTED)
         /// Known values: [0,1] ?
         /// </summary>
         public const string LoadAssemblies = "LoadAssemblies";//ProgramFiles preferences.ini

@@ -8,6 +8,7 @@ using System.Xml.Serialization;
 using System.IO;
 using System.Xml;
 using System.Text;
+using LDDModder.Serialization;
 
 namespace LDDModder.LDD.Primitives
 {
@@ -270,9 +271,13 @@ namespace LDDModder.LDD.Primitives
             var xmlSerSettings = new XmlWriterSettings() { Encoding = Encoding.UTF8, Indent = true, NewLineChars = Environment.NewLine, OmitXmlDeclaration = true };
             var ns = new XmlSerializerNamespaces();
             ns.Add("", "");
+
             var xmlSer = new XmlSerializer(typeof(Primitive));
-            var xmlWriter = XmlTextWriter.Create(stream, xmlSerSettings);
-            xmlWriter.WriteRaw("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\r\n");
+            var xmlWriter = new XmlTextWriterEx(stream, xmlSerSettings);
+            //var xmlWriter = XmlTextWriter.Create(stream, xmlSerSettings);
+
+            //var xmlWriter = new XmlTextWriterEx(
+            xmlWriter.WriteRaw("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?>");
             xmlSer.Serialize(xmlWriter, this, ns);
         }
     }

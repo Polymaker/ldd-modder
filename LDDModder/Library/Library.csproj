@@ -109,10 +109,12 @@
     <Compile Include="Rebrickable\Data\SearchType.cs" />
     <Compile Include="Rebrickable\RebrickableAPI.cs" />
     <Compile Include="Rebrickable\RequestMethod.cs" />
+    <Compile Include="Serialization\XmlTextWriterEx.cs" />
     <Compile Include="Utilities\ExtensionMethods\ListExtensions.cs" />
+    <Compile Include="Utilities\ExtensionMethods\StringExtensions.cs" />
     <Compile Include="Utilities\SecurityHelper.cs" />
-    <Compile Include="Utilities\XSerializable.cs" />
-    <Compile Include="Utilities\XSerializationHelper.cs" />
+    <Compile Include="Serialization\XSerializable.cs" />
+    <Compile Include="Serialization\XSerializationHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
