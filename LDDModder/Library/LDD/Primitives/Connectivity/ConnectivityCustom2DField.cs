@@ -12,9 +12,17 @@ namespace LDDModder.LDD.Primitives
     {
         internal static string[] AttributeOrder = new string[] { "type", "width", "height", "angle", "ax", "ay", "az", "tx", "ty", "tz" };
 
+        private ConnectionItem[,] _Mapping;
+
+        /// <summary>
+        /// Width = S * 2, where S: Stud length
+        /// </summary>
         [XmlAttribute("width")]
         public int Width { get; set; }
 
+        /// <summary>
+        /// Height = S * 2, where S: Stud length
+        /// </summary>
         [XmlAttribute("height")]
         public int Height { get; set; }
 
@@ -22,9 +30,45 @@ namespace LDDModder.LDD.Primitives
         [XmlText]
         public string ConnectivityData { get; set; }
 
+        [XmlIgnore]
+        public bool IsMaleConnection { get { return Type == 23; } }
+
+        [XmlIgnore]
+        public bool IsFemaleConnection { get { return Type == 22; } }
+
+        /// <summary>
+        /// For some (still unknown) reasons, the width and heigth of the array is +1 from the specified value (Width/Height properties)
+        /// </summary>
+        [XmlIgnore]
+        public ConnectionItem[,] Mapping
+        {
+            get { return _Mapping; }
+        }
+
+        public ConnectivityCustom2DField()
+        {
+            _Mapping = null;
+            Width = 0;
+            Height = 0;
+            ConnectivityData = String.Empty;
+        }
+
+        protected override void OnDeserialized()
+        {
+            base.OnDeserialized();
+            TrimText();
+            ParseData();
+        }
+
+        private void TrimText()
+        {
+            ConnectivityData = ConnectivityData.Split(new string[] { "\n" }, StringSplitOptions.None).Select(s => s.TrimStart()).Aggregate((i, j) => i + "\n" + j);
+            ConnectivityData = ConnectivityData.Trim();
+        }
+
         public void ParseData()
         {
-            var itemArray = new ConnectionItem[Width + 1, Height + 1];
+            _Mapping = new ConnectionItem[Width + 1, Height + 1];
 
             var cleanedString = ConnectivityData
                 .Replace("\n", string.Empty)
@@ -36,22 +80,9 @@ namespace LDDModder.LDD.Primitives
             {
                 for (int x = 0; x <= Width; x++)
                 {
-                    itemArray[x, y] = ParseItem(itemsStr[i++]);
+                    _Mapping[x, y] = ParseItem(itemsStr[i++].Trim());
                 }
             }
-        }
-
-        protected override void OnDeserialized()
-        {
-            base.OnDeserialized();
-            Trim();
-            ParseData();
-        }
-
-        public void Trim()
-        {
-            ConnectivityData = ConnectivityData.Split(new string[] { "\n" }, StringSplitOptions.None).Select(s => s.TrimStart()).Aggregate((i, j) => i + "\n" + j);
-            ConnectivityData = ConnectivityData.Trim();
         }
 
         private static ConnectionItem ParseItem(string value)
@@ -68,7 +99,7 @@ namespace LDDModder.LDD.Primitives
         {
             public int Value1 { get; set; }
             public int Value2 { get; set; }
-            public int Value3 { get; set; }
+            public int Value3 { get; set; }//almost always 1
 
             public ConnectionItem(int value1, int value2, int value3)
             {

@@ -14,7 +14,7 @@ namespace LDDModder.LDD.Palettes
     /// AKA Palette content
     /// </summary>
     [XmlRoot("PAXML")]
-    public class Palette : XSerializable
+    public class Palette : LDDModder.Serialization.XSerializable
     {
         // Fields...
         private List<PaletteItem> _Items;
@@ -62,9 +62,9 @@ namespace LDDModder.LDD.Palettes
                 default:
                     return null;
                 case "Brick":
-                    return XSerializationHelper.DefaultDeserialize<Brick>(element);
+                    return LDDModder.Serialization.XSerializationHelper.DefaultDeserialize<Brick>(element);
                 case "Assembly":
-                    return XSerializationHelper.DefaultDeserialize<Assembly>(element);
+                    return LDDModder.Serialization.XSerializationHelper.DefaultDeserialize<Assembly>(element);
             }
         }
 
@@ -81,7 +81,7 @@ namespace LDDModder.LDD.Palettes
 
             foreach (var item in Items)
             {
-                var itemElem = XSerializationHelper.Serialize(item);
+                var itemElem = LDDModder.Serialization.XSerializationHelper.Serialize(item);
                 SortPaletteItemAttrs(itemElem);
 
                 if (itemElem.HasElements)
@@ -102,22 +102,22 @@ namespace LDDModder.LDD.Palettes
 
         public static Palette Load(string filepath)
         {
-            return XSerializable.LoadFrom<Palette>(filepath);
+            return LDDModder.Serialization.XSerializable.LoadFrom<Palette>(filepath);
         }
 
         public static Palette Load(Stream stream)
         {
-            return XSerializable.LoadFrom<Palette>(stream);
+            return LDDModder.Serialization.XSerializable.LoadFrom<Palette>(stream);
         }
 
         public void Save(string filepath)
         {
-            XSerializable.Save<Palette>(this, filepath);
+            LDDModder.Serialization.XSerializable.Save<Palette>(this, filepath);
         }
 
         public void Save(Stream stream)
         {
-            XSerializable.Save<Palette>(this, stream);
+            LDDModder.Serialization.XSerializable.Save<Palette>(this, stream);
         }
     }
 }

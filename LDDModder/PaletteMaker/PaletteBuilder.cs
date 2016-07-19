@@ -3,16 +3,11 @@ using LDDModder.LDD.Files;
 using LDDModder.LDD.Palettes;
 using LDDModder.Rebrickable;
 using LDDModder.Rebrickable.Data;
-//using LDDModder.PaletteMaker.Rebrickable;
-using LDDModder.Utilities;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 
 namespace LDDModder.PaletteMaker
@@ -66,7 +61,7 @@ namespace LDDModder.PaletteMaker
                 lddPalette.Palettes[0].Save(LDD_PALETTE_NAME);
             }
 
-            LddPalette = XSerializable.LoadFrom<Palette>(LDD_PALETTE_NAME);
+            LddPalette = LDDModder.Serialization.XSerializable.LoadFrom<Palette>(LDD_PALETTE_NAME);
         }
 
         private static void GetBricksAndAssemblies()
@@ -278,7 +273,7 @@ namespace LDDModder.PaletteMaker
             if (LddPalette.Items.Count > origCount)
             {
                 Trace.WriteLine("Items added to palette. Saving updated file.");
-                XSerializable.Save(LddPalette, LDD_PALETTE_NAME);
+                LDDModder.Serialization.XSerializable.Save(LddPalette, LDD_PALETTE_NAME);
             }
             return paletteItem;
         }

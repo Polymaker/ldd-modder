@@ -7,7 +7,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 
-namespace LDDModder.Utilities
+namespace LDDModder.Serialization
 {
     public static class XSerializationHelper
     {
@@ -109,15 +109,6 @@ namespace LDDModder.Utilities
             var rootElem = doc.Root;
             rootElem.Name = rootName;
             return rootElem;
-        }
-
-        public static XElement SortAttributes(this XElement element, Func<XAttribute, int> predicate)
-        {
-            var elemAttrs = element.Attributes().ToArray();
-            element.RemoveAttributes();
-            elemAttrs = elemAttrs.OrderBy(x => predicate(x)).ToArray();
-            element.Add(elemAttrs);
-            return element;
         }
 
     }

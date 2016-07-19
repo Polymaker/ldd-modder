@@ -42,9 +42,9 @@ namespace LDDModder.LDD.Primitives
             switch (node.Name.LocalName)
             {
                 case "Box":
-                    return XSerializationHelper.DefaultDeserialize<CollisionBox>(node);
+                    return LDDModder.Serialization.XSerializationHelper.DefaultDeserialize<CollisionBox>(node);
                 case "Sphere":
-                    return XSerializationHelper.DefaultDeserialize<CollisionSphere>(node);
+                    return LDDModder.Serialization.XSerializationHelper.DefaultDeserialize<CollisionSphere>(node);
             }
             return null;
         }
@@ -69,7 +69,7 @@ namespace LDDModder.LDD.Primitives
         {
             foreach (var colObj in collisions)
             {
-                var result = XSerializationHelper.Serialize(colObj);
+                var result = LDDModder.Serialization.XSerializationHelper.Serialize(colObj);
                 if (result != null)
                 {
                     result.SortAttributes(a => Array.IndexOf(AttributeOrder, a.Name.LocalName));

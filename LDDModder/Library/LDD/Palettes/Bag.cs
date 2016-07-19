@@ -14,7 +14,7 @@ namespace LDDModder.LDD.Palettes
     /// AKA Palette Info
     /// </summary>
     [XmlRoot("BAXML")]
-    public class Bag : XSerializable
+    public class Bag : LDDModder.Serialization.XSerializable
     {
         public const string FileName = "Info.baxml";
 
@@ -115,22 +115,22 @@ namespace LDDModder.LDD.Palettes
 
         public static Bag Load(string filepath)
         {
-            return XSerializable.LoadFrom<Bag>(filepath);
+            return LDDModder.Serialization.XSerializable.LoadFrom<Bag>(filepath);
         }
 
         public static Bag Load(Stream stream)
         {
-            return XSerializable.LoadFrom<Bag>(stream);
+            return LDDModder.Serialization.XSerializable.LoadFrom<Bag>(stream);
         }
 
         public void Save(string filepath)
         {
-            XSerializable.Save<Bag>(this, filepath);
+            LDDModder.Serialization.XSerializable.Save<Bag>(this, filepath);
         }
 
         public void Save(Stream stream)
         {
-            XSerializable.Save<Bag>(this, stream);
+            LDDModder.Serialization.XSerializable.Save<Bag>(this, stream);
         }
     }
 }

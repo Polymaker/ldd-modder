@@ -9,7 +9,7 @@ using System.Xml.Linq;
 namespace LDDModder.LDD.Primitives
 {
     [XmlRoot("Bone")]
-    public class FlexBone : XSerializable
+    public class FlexBone : LDDModder.Serialization.XSerializable
     {
         private List<Connectivity> _Connections;
         private List<Collision> _Collisions;
@@ -68,7 +68,7 @@ namespace LDDModder.LDD.Primitives
             if(!string.IsNullOrEmpty(FlexCheckConnection))
                 root.Add(new XAttribute("flexCheckConnection", FlexCheckConnection));
 
-            var orientationElem = XSerializationHelper.Serialize(Orientation);
+            var orientationElem = LDDModder.Serialization.XSerializationHelper.Serialize(Orientation);
             foreach (var orientAttr in orientationElem.Attributes())
                 root.Add(orientAttr);
 
@@ -90,10 +90,10 @@ namespace LDDModder.LDD.Primitives
 
             //Other simple elements
             if (PhysicsAttributes != null)
-                root.Add(XSerializationHelper.Serialize(PhysicsAttributes, "PhysicsAttributes"));
+                root.Add(LDDModder.Serialization.XSerializationHelper.Serialize(PhysicsAttributes, "PhysicsAttributes"));
 
             if (Bounding != null)
-                root.Add(new XElement("Bounding", XSerializationHelper.Serialize(Bounding, "AABB")));
+                root.Add(new XElement("Bounding", LDDModder.Serialization.XSerializationHelper.Serialize(Bounding, "AABB")));
 
             return root;
         }
@@ -115,13 +115,13 @@ namespace LDDModder.LDD.Primitives
 
             var boundingElem = element.Element("Bounding");
             if (boundingElem != null && boundingElem.HasElements)
-                Bounding = XSerializationHelper.DefaultDeserialize<BoundingBox>(boundingElem.Elements().Single());//.First() or .Single() ??
+                Bounding = LDDModder.Serialization.XSerializationHelper.DefaultDeserialize<BoundingBox>(boundingElem.Elements().Single());//.First() or .Single() ??
 
             var physAttrElem = element.Element("PhysicsAttributes");
             if (physAttrElem != null)
-                PhysicsAttributes = XSerializationHelper.DefaultDeserialize<PhysicsAttributes>(physAttrElem);
+                PhysicsAttributes = LDDModder.Serialization.XSerializationHelper.DefaultDeserialize<PhysicsAttributes>(physAttrElem);
 
-            Orientation = XSerializationHelper.DefaultDeserialize<Orientation>(element);
+            Orientation = LDDModder.Serialization.XSerializationHelper.DefaultDeserialize<Orientation>(element);
             
         }
     }

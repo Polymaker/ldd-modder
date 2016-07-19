@@ -87,7 +87,7 @@ namespace LDDModder.Rebrickable
                 }
 
                 var xDoc = XDocument.Parse(resultText);
-                string rootName = XSerializationHelper.GetTypeXmlRootName(typeof(R));
+                string rootName = LDDModder.Serialization.XSerializationHelper.GetTypeXmlRootName(typeof(R));
                 var resultElem = xDoc.Root;
 
                 if (resultElem.Name.LocalName != rootName)
@@ -99,7 +99,7 @@ namespace LDDModder.Rebrickable
                     throw new BreakException();
                 }
 
-                result = XSerializationHelper.DefaultDeserialize<R>(resultElem);
+                result = LDDModder.Serialization.XSerializationHelper.DefaultDeserialize<R>(resultElem);
                 return true;
 
             }

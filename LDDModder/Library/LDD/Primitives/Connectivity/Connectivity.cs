@@ -47,7 +47,7 @@ namespace LDDModder.LDD.Primitives
         {
             foreach (var conObj in collisions)
             {
-                var result = XSerializationHelper.Serialize(conObj);
+                var result = LDDModder.Serialization.XSerializationHelper.Serialize(conObj);
                 if (result != null)
                 {
                     OrderAttributes(result);
@@ -66,7 +66,7 @@ namespace LDDModder.LDD.Primitives
             foreach (Type subType in myAssembly.GetTypes()
                 .Where(t => t.IsClass && !t.IsAbstract && t.IsSubclassOf(typeof(Connectivity))))
             {
-                if (XSerializationHelper.GetTypeXmlRootName(subType).Equals(name))
+                if (LDDModder.Serialization.XSerializationHelper.GetTypeXmlRootName(subType).Equals(name))
                     return subType;
             }
             return null;
@@ -124,7 +124,7 @@ namespace LDDModder.LDD.Primitives
             var connectivityType = GetConnectivityType(node.Name.LocalName);
             if (connectivityType != null)
             {
-                var connectivityObject = (Connectivity)XSerializationHelper.DefaultDeserialize(node, connectivityType);
+                var connectivityObject = (Connectivity)LDDModder.Serialization.XSerializationHelper.DefaultDeserialize(node, connectivityType);
                 if (connectivityObject != null)
                     connectivityObject.OnDeserialized();
                 return connectivityObject;

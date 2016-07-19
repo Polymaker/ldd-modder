@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>LDDModder</RootNamespace>
-    <AssemblyName>LDDModderLibrary</AssemblyName>
+    <AssemblyName>LDDModder.Library</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -110,6 +110,7 @@
     <Compile Include="Rebrickable\RebrickableAPI.cs" />
     <Compile Include="Rebrickable\RequestMethod.cs" />
     <Compile Include="Serialization\XmlTextWriterEx.cs" />
+    <Compile Include="Utilities\ExtensionMethods\XmlLinqExtensions.cs" />
     <Compile Include="Utilities\ExtensionMethods\ListExtensions.cs" />
     <Compile Include="Utilities\ExtensionMethods\StringExtensions.cs" />
     <Compile Include="Utilities\SecurityHelper.cs" />
