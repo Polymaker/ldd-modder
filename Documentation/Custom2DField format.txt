@@ -1,0 +1,25 @@
+#Custom2DField data specification
+
+Female studs = Custom2DField type 22
+Male studs = Custom2DField type 23
+
+ 0:4:1 = stud connection (normal, male)
+ 
+ 3:4:[1|36|?] = stud connection (hole, male)
+ 
+ 5:4:[32|96|?] = stud connection (hole, female)
+ 
+ 7:4:[1|2|?] = stud connection (cylinder, female) (last number is mostly 1, have seen 2)
+
+ 9:4:1 = under peg/cylinder
+ 
+15:4:1 = stud connection (normal, female)
+
+18:4:1 = space between (center) 4 studs
+
+22:1:1 = corner border/wall
+22:2:1 = border/wall
+
+23:4:1 = space between 2 studs
+
+29:0[:1] = no connections

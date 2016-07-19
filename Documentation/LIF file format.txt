@@ -1,0 +1,47 @@
+HEADER = 18 bytes
+LIFF (4) + spacing (4) + file size (4) + 0x0001 (2) + spacing (4)
+
+structure entry type 1 (20 bytes)
+0x0001 (2) + 0x0001 (2) + spacing (4) + entry content size (4) + spacing (4) + spacing (4)
+
+structure entry type 2 (x bytes defined in entry)
+0x0001 (2) + 0x0002 (2) + spacing (4) + entry size (4) + unknown data (entry size - 12 bytes)
+
+structure entry type 3 (20 bytes) directory definition (entry content size = total entries size + struct header size)
+0x0001 (2) + 0x0003 (2) + spacing (4) + entry content size (4) + spacing (4) + spacing (4)
+
+structure entry type 4 (20 bytes) file content definition (entry content size = data size + struct header size)
+0x0001 (2) + 0x0004 (2) + spacing (4) + entry content size (4) + spacing (4) + spacing (4)
+
+header
+	struct type 1
+		struct type 2
+		rootdir = struct type 3
+			folder A = struct type 3
+				file AB = struct type 4
+					file AB content
+				file AC = struct type 4
+					file AC content
+			file RA = struct type 4
+				file RA content
+		struct type 5
+			entries (see entries structure)
+	
+# entries structure #
+uint16 entry type (1 directory, 2 = file)
+
+#for directory (total ~40 bytes)
+uint16 => entry type (=1)
+uint32 => value 7 (?name header?)
+variable unicode string (ending x\00) => Entry name
+uint32 => value 0 (?spacing?)
+uint32 => value 14 (?number of elements header?)
+uint32 => number of elements
+
+#for file (total ~62 bytes)
+uint16 => entry type (=2)
+uint32 => value 7 (?name header?)
+variable unicode string (ending x\00) => Entry name
+uint32 => value 0 (?spacing?)
+uint32 => File size
+24 bytes unknown

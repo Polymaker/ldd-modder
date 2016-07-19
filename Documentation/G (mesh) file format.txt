@@ -1,0 +1,55 @@
+Header => 4 Bytes (31 30 47 42 = 10GB)
+Vertex Count => 4 Bytes (Integer)
+Index Count => 4 Bytes (Integer)
+Surface type header => 4 Bytes (3A for base model, 3B for textured surface)
+
+# VERTEX DATA LOOP #
+Vertex 3D Point => 12 Bytes (3 x Floats)
+Normal 3D Point => 12 Bytes (3 x Floats)
+
+Texture 2D Point => 8 Bytes (2 x Floats) (only for textured model)
+
+# INDEXES DATA LOOP (TRIANGLE LIST)#
+Indice => 4 Bytes (Integer)
+
+# OUTLINE SHADER INFO # (total size = 4 + [Data Size] * 4 + [Index Count] * 4)
+Data Size => 4 Bytes
+Unclear Data => [Data Size] * 4 Bytes (always referenced by steps of 12 (0x0C) but jumps by 16 every ??)
+Indices => [Index Count] * 4 Bytes
+
+# UNKNOWN DATA 1 (JUNK?!)# (total size = 4 + [Data Size] * 12 + [Index Count] * 4)
+Data Size(Count) => 4 Bytes
+Unknown Data => [Data Size] * 12 Bytes (implies vertex or normals, but not both as number never divide by two (if we exclude the header))
+ |-> Kind of Header => 12 bytes (00 00 A6 42 00 00 00 00 00 00 00 00)
+ |-> Vertices or Normals => ([Data Size] - 1) * 12 Bytes
+Junk/Unknown Data => [Index Count] * 4 Bytes (same size as index/triangle list??, seems never used and sometimes contains primitives xml)
+
+# UNCLEAR DATA (MESH VARIATION WHEN CONNECTED TO OTHER BRICKS) #
+Number of variants/elements => 4 Bytes (1 for each stud + 1 for each stud connection "zone" + 1 for base)???
+
+# UNCLEAR DATA 2.2 #
+Data Size => 4 Bytes (literal value, offset to EOF)
+Unknown Data => 20 bytes (header 20 00 00 00 02 00 00 00 then unknown data)
+
+# UNCLEAR DATA 2.3 #
+Header
+ |-> Chunk Size => 4 Bytes
+ |-> Chunk Type? => 04 00 00 00
+ 
+Unknown Data => ?? bytes
+
+? number of Chunks of 28 bytes starting by 0x1C (28)
+
+Variant Geometry Data 
+ |->Vertex Count => 4 Bytes (Integer)
+ |->Index Count => 4 Bytes (Integer)
+ |->vertices => [Vertex Count] * 12
+ |->indices/triangle list => [Index Count] * 12
+ |->indices/triangle list 2 => [Index Count] * 12
+ |->indices/triangle list => [Index Count] * 12 (references outline shader data) 
+ 
+ # STUDS INFO #
+Header
+ |-> Chunk Size => 44 00 00 00
+ |-> Chunk Type? => 01 00 00 00
+Data 
