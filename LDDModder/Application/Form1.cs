@@ -1,8 +1,11 @@
-﻿using System;
+﻿using LDDModder.LDD;
+using LDDModder.LDD.Primitives;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -14,19 +17,30 @@ namespace LDDModder
     {
         public Form1()
         {
-            //EM_SETMARGINS = 211;
-            //EC_RIGHTMARGIN = 2;
             InitializeComponent();
 
         }
 
-        protected override void OnLoad(EventArgs e)
+        private void buttonEdit1_ButtonClicked(object sender, EventArgs e)
         {
-            base.OnLoad(e);
-            SendMessage(textBox1.Handle, 211, (IntPtr)2, (IntPtr)(20<<16));
+            using (var dlg = new OpenFileDialog())
+            {
+                dlg.InitialDirectory = LDDManager.GetDirectory(LDDManager.DbDirectories.Primitives);
+                if (dlg.ShowDialog() == DialogResult.OK)
+                {
+                    buttonEdit1.Text = Path.GetFileName(dlg.FileName);
+                    var primitiveInfo = Primitive.LoadFrom<Primitive>(dlg.FileName);
+
+                    if (primitiveInfo.Connections.OfType<ConnectivityCustom2DField>().Any())
+                    {
+                        custom2dFieldEditor1.EditValue = primitiveInfo.Connections.OfType<ConnectivityCustom2DField>().First();
+                    }
+                    
+                }
+            }
         }
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        static extern IntPtr SendMessage(IntPtr hWnd, UInt32 Msg, IntPtr wParam, IntPtr lParam);
+        //[DllImport("user32.dll", CharSet = CharSet.Auto)]
+        //static extern IntPtr SendMessage(IntPtr hWnd, UInt32 Msg, IntPtr wParam, IntPtr lParam);
     }
 }

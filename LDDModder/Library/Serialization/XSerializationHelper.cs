@@ -73,21 +73,6 @@ namespace LDDModder.Serialization
             return xmlObjType.Name;
         }
 
-        public static int GetIntAttribute(this XElement element, XName attributeName)
-        {
-            var attribute = element.Attribute(attributeName);
-            return int.Parse(attribute.Value);
-        }
-
-        public static bool ContainsElement(this XElement element, XName childElementName)
-        {
-            return element.Element(childElementName) != null;
-        }
-
-        public static bool ContainsAttribute(this XElement element, XName attributeName)
-        {
-            return element.Attribute(attributeName) != null;
-        }
 
         public static XElement Serialize(object obj)
         {

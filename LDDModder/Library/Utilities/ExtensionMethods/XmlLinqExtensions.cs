@@ -16,5 +16,21 @@ namespace System.Xml.Linq
             element.Add(elemAttrs);
             return element;
         }
+
+        public static int GetIntAttribute(this XElement element, XName attributeName)
+        {
+            var attribute = element.Attribute(attributeName);
+            return int.Parse(attribute.Value);
+        }
+
+        public static bool ContainsElement(this XElement element, XName childElementName)
+        {
+            return element.Element(childElementName) != null;
+        }
+
+        public static bool ContainsAttribute(this XElement element, XName attributeName)
+        {
+            return element.Attribute(attributeName) != null;
+        }
     }
 }

@@ -13,19 +13,19 @@ namespace LDDModder
         [STAThread]
         static void Main(string[] args)
         {
-            if (args.Length > 0 && args[0].Equals("set", StringComparison.InvariantCultureIgnoreCase))
-            {
-                for (int i = 1; i < args.Length; i++)
-                {
-                    var prefEntry = PreferenceEntry.Deserialize(args[i]);
-                    LDDModder.LDD.LDDManager.SetSetting(prefEntry.Key, prefEntry.Value, prefEntry.Location);
-                }
+            //if (args.Length > 0 && args[0].Equals("set", StringComparison.InvariantCultureIgnoreCase))
+            //{
+            //    for (int i = 1; i < args.Length; i++)
+            //    {
+            //        var prefEntry = PreferenceEntry.Deserialize(args[i]);
+            //        LDDModder.LDD.LDDManager.SetSetting(prefEntry.Key, prefEntry.Value, prefEntry.Location);
+            //    }
                 
-                return;
-            }
+            //    return;
+            //}
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new FrmLDDAdvancedSettings());
+            Application.Run(new Form1());
         }
     }
 }

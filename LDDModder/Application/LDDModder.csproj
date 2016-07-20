@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{F23DA248-73FB-4D64-95F9-F7BC32B56C00}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>LDDModder</RootNamespace>
     <AssemblyName>LDD Modder</AssemblyName>
@@ -32,7 +32,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>LDDModder.TestProgram</StartupObject>
+    <StartupObject>LDDModder.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ObjectListView, Version=2.9.1.1072, Culture=neutral, PublicKeyToken=b1c5bf581481bcd4, processorArchitecture=MSIL">
@@ -120,6 +120,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Library.Display\Library.Display.csproj">
+      <Project>{64918e10-1411-4e5f-bcbd-0aeb2c458c5d}</Project>
+      <Name>Library.Display</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Library\Library.csproj">
       <Project>{4be42546-c8cf-4115-8ea3-6985999e3e8d}</Project>
       <Name>Library</Name>
