@@ -252,7 +252,7 @@ namespace LDDModder.PaletteMaker
 
             if (!RbColorToLDD.ContainsKey(rbSetPart.RbColorId))
             {
-                Trace.WriteLine("Could not match Rebrickable color to LDD.");
+                Trace.WriteLine(string.Format("Could not match Rebrickable color to LDD. (Color ID: {0})", rbSetPart.RbColorId));
                 return null;
             }
 
@@ -360,7 +360,8 @@ namespace LDDModder.PaletteMaker
             else if (LddPalette.Items.OfType<Brick>().Any(b => b.DesignID == designId && b.MaterialID == lddColor))
             {
                 pItem = LddPalette.Items.OfType<Brick>().First(b => b.DesignID == designId && b.MaterialID == lddColor).Clone(elementId, lddColor, quantity);
-                Trace.WriteLine("The palette already contains a brick with the same color but a different ElementID.\r\nPossible mold variation or different decal/print.");
+                Trace.WriteLine(string.Format("Matching part ID:{0} Element:{1} Color:{2}", designId, elementId, lddColor));
+                Trace.WriteLine("   The palette already contains a brick with the same color but a different ElementID.\r\n   Possible mold variation or different decal/print.");
                 //LddPalette.Items.Add(pItem.Clone(0));
             }
             else if (LddPalette.Items.OfType<Brick>().Any(b => b.DesignID == designId))
@@ -377,17 +378,21 @@ namespace LDDModder.PaletteMaker
             else if (LddPalette.Items.OfType<Assembly>().Any(a => a.DesignID == designId))
             {
                 var assemblyItem = (Assembly)LddPalette.Items.OfType<Assembly>().First(a => a.DesignID == designId).Clone(quantity);
-                if (assemblyItem.Parts.Select(p => p.MaterialID).Distinct().Count() == 1)
-                {
-                    assemblyItem.ElementID = elementId;
-                    assemblyItem.Parts.ForEach(p => p.MaterialID = lddColor);
-                    pItem = assemblyItem;
-                    return true;
-                }
+                //if (assemblyItem.Parts.Select(p => p.MaterialID).Distinct().Count() == 1)
+                //{
+                //    assemblyItem.ElementID = elementId;
+                //    assemblyItem.Parts.ForEach(p => p.MaterialID = lddColor);
+                //    pItem = assemblyItem;
+                //    return true;
+                //}
+                assemblyItem.ElementID = elementId;
+                assemblyItem.Parts.ForEach(p => p.MaterialID = lddColor);
+                pItem = assemblyItem;
             }
             else if (LddAssemblies.Contains(designId.ToString()))
             {
-                Trace.WriteLine("Warning. Found assembly for part in LDD, but none was defined for the specified ElementID. All sub-parts will be the same color (red).");
+                Trace.WriteLine(string.Format("Matching part ID:{0} Element:{1} Color:{2}", designId, elementId, lddColor));
+                Trace.WriteLine("   Warning. Found assembly for part in LDD, but none was defined for the specified ElementID. All sub-parts will be the same color (red).");
                 pItem = new Assembly(designId, elementId, quantity);
             }
             return pItem != null;

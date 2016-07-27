@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
@@ -20,13 +21,17 @@ namespace LDDModder.PaletteMaker
     {
         private static Dictionary<int, string> RBPartTypes;
         private BindingList<BrickMappingItem> PartList;
+        private List<PaletteItem> PaletteItems;
+        private GetSetResult CurrentSetInfo;
 
         public FrmCreateSetPalette()
         {
             InitializeComponent();
             RBPartTypes = new Dictionary<int, string>();
             PartList = new BindingList<BrickMappingItem>();
+            PaletteItems = new List<PaletteItem>();
             dataGridView1.AutoGenerateColumns = false;
+            CurrentSetInfo = null;
         }
 
         protected override void OnLoad(EventArgs e)
@@ -76,6 +81,7 @@ namespace LDDModder.PaletteMaker
             txtSetID.Text = "NO SET FOUND";
             txtSetName.Text = txtSetTheme.Text = txtSetYear.Text = txtSetPieces.Text = string.Empty;
             pbxSetPicture.Image = null;
+            CurrentSetInfo = null;
         }
 
         private void FillSetDetails(GetSetResult setInfo)
@@ -92,6 +98,7 @@ namespace LDDModder.PaletteMaker
                 txtSetYear.Text = setInfo.Year;
                 txtSetPieces.Text = setInfo.Pieces.ToString();
                 pbxSetPicture.ImageLocation = setInfo.ImageUrlSmall;
+                CurrentSetInfo = setInfo;
             }
         }
 
@@ -109,6 +116,15 @@ namespace LDDModder.PaletteMaker
                 txtSetYear.Text = setInfo.Year;
                 txtSetPieces.Text = setInfo.Pieces.ToString();
                 pbxSetPicture.ImageLocation = setInfo.ImageUrlSmall;
+                CurrentSetInfo = new GetSetResult()
+                {
+                    SetId = setInfo.SetId,
+                    Description = setInfo.Description,
+                    Theme = setInfo.Theme1,
+                    Year = setInfo.Year,
+                    Pieces = setInfo.Pieces,
+                    ImageUrlSmall = setInfo.ImageUrlSmall,
+                };
             }
         }
 
@@ -121,6 +137,7 @@ namespace LDDModder.PaletteMaker
             else
             {
                 PartList.Clear();
+                PaletteItems.Clear();
                 foreach (var setPart in partsInfo.Parts)
                 {
                     PartList.Add(new BrickMappingItem(setPart));
@@ -142,14 +159,18 @@ namespace LDDModder.PaletteMaker
 
         private void MatchLddParts()
         {
+            PaletteItems.Clear();
             foreach (var part in PartList)
             {
                 var lddPart = PaletteBuilder.GetPaletteItem(part.RBPart);
+                
                 if (lddPart != null)
                 {
+                    PaletteItems.Add(lddPart);
                     part.LDD = lddPart.DesignID.ToString();
                 }
             }
+            BeginInvoke((Action)(() => dataGridView1.Update()));
         }
 
         private void btnSearchSet_Click(object sender, EventArgs e)
@@ -298,6 +319,19 @@ namespace LDDModder.PaletteMaker
                     return (memberInfo as FieldInfo).GetValue(obj);
                 return null;
             }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (PaletteItems.Count == 0)
+                return;
+
+            var shortSetNumber = CurrentSetInfo.SetId.Substring(0, CurrentSetInfo.SetId.IndexOf('-'));
+            var paletteInfo = new Bag(shortSetNumber + " " + CurrentSetInfo.Description, true);
+
+            var setPalette = new Palette();
+            setPalette.Items.AddRange(PaletteItems);
+            PaletteManager.SavePalette(new PaletteFile(paletteInfo, setPalette));
         }
     }
 }
