@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LDDModder.Views;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
@@ -25,7 +26,7 @@ namespace LDDModder
             //}
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            Application.Run(new ModelViewer());
         }
     }
 }

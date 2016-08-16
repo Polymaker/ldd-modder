@@ -1,6 +1,7 @@
 ﻿using LDDModder.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
@@ -61,7 +62,8 @@ namespace LDDModder.Rebrickable
             try
             {
                 byte[] resultData = null;
-
+                var timer = new Stopwatch();
+                timer.Start();
                 if (Method == RequestMethod.GET)
                 {
                     resultData = RebrickableAPI.DownloadWebPage(string.Format("{0}?{1}", FunctionUrl, funcParam.GetParamsUrl()));
@@ -70,6 +72,9 @@ namespace LDDModder.Rebrickable
                 {
                     resultData = RebrickableAPI.DownloadWebPage(FunctionUrl, funcParam.GetPostParams());
                 }
+
+                timer.Stop();
+                Trace.WriteLine("Executed and received Rebrickable API function result in " + timer.Elapsed);
 
                 string resultText = Encoding.UTF8.GetString(resultData);
 
@@ -85,7 +90,7 @@ namespace LDDModder.Rebrickable
                     result = (R)((object)resultText);
                     return true;
                 }
-
+                timer.Restart();
                 var xDoc = XDocument.Parse(resultText);
                 string rootName = LDDModder.Serialization.XSerializationHelper.GetTypeXmlRootName(typeof(R));
                 var resultElem = xDoc.Root;
@@ -100,6 +105,9 @@ namespace LDDModder.Rebrickable
                 }
 
                 result = LDDModder.Serialization.XSerializationHelper.DefaultDeserialize<R>(resultElem);
+                timer.Stop();
+                Trace.WriteLine("Parsed Rebrickable API function result in " + timer.Elapsed);
+
                 return true;
 
             }
