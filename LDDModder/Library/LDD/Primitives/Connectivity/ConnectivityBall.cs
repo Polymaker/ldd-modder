@@ -11,6 +11,11 @@ namespace LDDModder.LDD.Primitives
     {
         internal static string[] AttributeOrder = new string[] { "type", "flexAttributes", "angle", "ax", "ay", "az", "tx", "ty", "tz" };
 
+        public override ConnectivityType Type
+        {
+            get { return ConnectivityType.Ball; }
+        }
+
         /// <summary>
         /// Only used when the node is a descendant of Flex
         /// </summary>

@@ -13,6 +13,11 @@ namespace LDDModder.LDD.Primitives
     {
         internal static string[] AttributeOrder = new string[] { "type", "length", "cylindrical", "tag", "startCapped", "endCapped", "spring", "angle", "ax", "ay", "az", "tx", "ty", "tz" };
 
+        public override ConnectivityType Type
+        {
+            get { return ConnectivityType.Slider; }
+        }
+
         [XmlAttribute("length")]
         public double Length { get; set; }
         [XmlIgnore]

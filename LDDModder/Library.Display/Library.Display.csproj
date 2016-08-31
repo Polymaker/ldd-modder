@@ -51,8 +51,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\CollisionModel.cs" />
-    <Compile Include="Models\ConnectivityModel.cs" />
+    <Compile Include="Controls\Custom2dFieldEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\Custom2dFieldEditor.Designer.cs">
+      <DependentUpon>Custom2dFieldEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\PrimitiveMeshBuilder.cs" />
+    <Compile Include="Models\ExtensionMethods.cs" />
+    <Compile Include="Models\LddMeshLoader.cs" />
+    <Compile Include="Models\PartModel.cs" />
     <Compile Include="Models\PrimitiveModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -61,6 +69,35 @@
       <Project>{4be42546-c8cf-4115-8ea3-6985999e3e8d}</Project>
       <Name>Library</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Controls\Custom2dFieldEditor.resx">
+      <DependentUpon>Custom2dFieldEditor.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Models\Pin2.obj" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Models\Cross2.obj" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Models\Ball.obj" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Models\Cross1.obj" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Models\Cube.obj" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Models\Sphere.obj" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Models\Pin1.obj" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Models\Pole1.obj" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

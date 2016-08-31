@@ -14,6 +14,11 @@ namespace LDDModder.LDD.Primitives
 
         private ConnectionItem[,] _Mapping;
 
+        public override ConnectivityType Type
+        {
+            get { return ConnectivityType.Custom2DField; }
+        }
+
         /// <summary>
         /// Width = S * 2, where S: Stud length
         /// </summary>
@@ -31,10 +36,10 @@ namespace LDDModder.LDD.Primitives
         public string ConnectivityData { get; set; }
 
         [XmlIgnore]
-        public bool IsMaleConnection { get { return Type == 23; } }
+        public bool IsMaleConnection { get { return SubType == 23; } }
 
         [XmlIgnore]
-        public bool IsFemaleConnection { get { return Type == 22; } }
+        public bool IsFemaleConnection { get { return SubType == 22; } }
 
         /// <summary>
         /// For some (still unknown) reasons, the width and heigth of the array is +1 from the specified value (Width/Height properties)

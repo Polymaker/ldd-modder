@@ -11,8 +11,10 @@ namespace LDDModder.LDD.Primitives
     [Serializable]
     public abstract class Connectivity
     {
+        [XmlIgnore]
+        public abstract ConnectivityType Type { get; }
         [XmlAttribute("type")]
-        public int Type { get; set; }
+        public int SubType { get; set; }
         [XmlAttribute("angle")]
         public double Angle { get; set; }
         [XmlAttribute("ax")]
@@ -86,7 +88,6 @@ namespace LDDModder.LDD.Primitives
 
         private static void OrderAttributes(XElement elem)
         {
-            //string[] attributeNamesOrdered = null;
 
             var connectivityType = GetConnectivityType(elem.Name.LocalName);
             if (connectivityType == null)
@@ -94,27 +95,6 @@ namespace LDDModder.LDD.Primitives
 
             string[] attributeNamesOrdered = GetAttributesOrder(connectivityType);
 
-            //switch (elem.Name.LocalName)
-            //{
-            //    case "Custom2DField":
-            //        attributeNamesOrdered = ConnectivityCustom2DField.AttributeOrder;
-            //        break;
-            //    case "Hinge":
-            //        attributeNamesOrdered = ConnectivityHinge.AttributeOrder;
-            //        break;
-            //    case "Axel":
-            //        attributeNamesOrdered = ConnectivityAxel.AttributeOrder;
-            //        break;
-            //    case "Slider":
-            //        attributeNamesOrdered = ConnectivitySlider.AttributeOrder;
-            //        break;
-            //    case "Gear":
-            //        attributeNamesOrdered = ConnectivityGear.AttributeOrder;
-            //        break;
-            //    case "Fixed":
-            //        attributeNamesOrdered = ConnectivityFixed.AttributeOrder;
-            //        break;
-            //}
             if (attributeNamesOrdered != null && attributeNamesOrdered.Length > 0)
                 elem.SortAttributes(a => Array.IndexOf(attributeNamesOrdered, a.Name.LocalName));
         }
@@ -129,21 +109,7 @@ namespace LDDModder.LDD.Primitives
                     connectivityObject.OnDeserialized();
                 return connectivityObject;
             }
-            //switch (node.Name.LocalName)
-            //{
-            //    case "Custom2DField":
-            //        return XSerializationHelper.DefaultDeserialize<ConnectivityCustom2DField>(node);
-            //    case "Hinge":
-            //        return XSerializationHelper.DefaultDeserialize<ConnectivityHinge>(node);
-            //    case "Axel":
-            //        return XSerializationHelper.DefaultDeserialize<ConnectivityAxel>(node);
-            //    case "Slider":
-            //        return XSerializationHelper.DefaultDeserialize<ConnectivitySlider>(node);
-            //    case "Gear":
-            //        return XSerializationHelper.DefaultDeserialize<ConnectivityGear>(node);
-            //    case "Fixed":
-            //        return XSerializationHelper.DefaultDeserialize<ConnectivityFixed>(node);
-            //}
+
             return null;
         }
 
