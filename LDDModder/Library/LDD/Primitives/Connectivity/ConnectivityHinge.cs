@@ -13,6 +13,11 @@ namespace LDDModder.LDD.Primitives
     {
         internal static string[] AttributeOrder = new string[] { "type", "oriented", "tag", "angle", "ax", "ay", "az", "tx", "ty", "tz", "LimMin", "LimMax", "FlipLimMin", "FlipLimMax" };
 
+        public override ConnectivityType Type
+        {
+            get { return ConnectivityType.Hinge; }
+        }
+
         [XmlIgnore]
         public bool Oriented { get; set; }
 

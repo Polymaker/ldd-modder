@@ -84,6 +84,7 @@
     <Compile Include="LDD\Primitives\Connectivity\ConnectivityHinge.cs" />
     <Compile Include="LDD\Primitives\Connectivity\ConnectivityRail.cs" />
     <Compile Include="LDD\Primitives\Connectivity\ConnectivitySlider.cs" />
+    <Compile Include="LDD\Primitives\Connectivity\ConnectivityType.cs" />
     <Compile Include="LDD\Primitives\Decoration.cs" />
     <Compile Include="LDD\Primitives\FlexBone.cs" />
     <Compile Include="LDD\Primitives\Orientation.cs" />
@@ -113,6 +114,7 @@
     <Compile Include="Utilities\ExtensionMethods\XmlLinqExtensions.cs" />
     <Compile Include="Utilities\ExtensionMethods\ListExtensions.cs" />
     <Compile Include="Utilities\ExtensionMethods\StringExtensions.cs" />
+    <Compile Include="Utilities\ResourcesHelper.cs" />
     <Compile Include="Utilities\SecurityHelper.cs" />
     <Compile Include="Serialization\XSerializable.cs" />
     <Compile Include="Serialization\XSerializationHelper.cs" />

@@ -11,6 +11,11 @@ namespace LDDModder.LDD.Primitives
     {
         internal static string[] AttributeOrder = new string[] { "type", "toothCount", "radius", "angle", "ax", "ay", "az", "tx", "ty", "tz" };
 
+        public override ConnectivityType Type
+        {
+            get { return ConnectivityType.Gear; }
+        }
+
         [XmlAttribute("toothCount")]
         public int ToothCount { get; set; }
 

@@ -11,6 +11,11 @@ namespace LDDModder.LDD.Primitives
     {
         internal static string[] AttributeOrder = new string[] { "type", "length", "angle", "ax", "ay", "az", "tx", "ty", "tz" };
 
+        public override ConnectivityType Type
+        {
+            get { return ConnectivityType.Rail; }
+        }
+
         [XmlAttribute("length")]
         public double Length { get; set; }
 

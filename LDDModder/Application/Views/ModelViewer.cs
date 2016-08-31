@@ -1,10 +1,12 @@
 ﻿using LDDModder.Display.Models;
 using LDDModder.LDD;
+using LDDModder.LDD.Primitives;
 using Poly3D.Engine;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -39,10 +41,36 @@ namespace LDDModder.Views
                 MyObjects.ForEach(so => so.Destroy());
                 MyObjects.Clear();
             }
+            var primitiveInfoPath = Path.Combine(LDDManager.GetDirectory(LDDManager.DbDirectories.Primitives), brickId + ".xml");
+            var primitiveInfo = Primitive.LoadFrom<Primitive>(primitiveInfoPath);
+            
             var brickMeshesPath = Directory.GetFiles(LDDManager.GetDirectory(LDDManager.DbDirectories.LOD0), brickId + ".g*");
+
             foreach (var modelPath in brickMeshesPath)
             {
                 CreateMeshObjectForBrick(modelPath);
+            }
+
+            foreach (var collision in primitiveInfo.Collisions)
+            {
+                var collObj = PrimitiveMeshBuilder.CreateCollisionObject(MyScene, collision);
+                if (collObj != null)
+                {
+                    MyObjects.Add(collObj);
+                    collObj.Material.Color = Color.FromArgb(120,255,0,0);
+                    collObj.RenderLayer = 1;
+                }
+            }
+
+            foreach (var connection in primitiveInfo.Connections)
+            {
+                var connObj = PrimitiveMeshBuilder.CreateConnectivityObject(MyScene, connection);
+                if (connObj != null)
+                {
+                    MyObjects.Add(connObj);
+                    connObj.Material.Color = Color.FromArgb(80, 0, 0, 255);
+                    connObj.RenderLayer = 1;
+                }
             }
         }
 
@@ -51,8 +79,20 @@ namespace LDDModder.Views
             var brickMesh = LddMeshLoader.LoadLddMesh(brickModelPath);
             var brickSceneObj = MyScene.AddObject<ObjectMesh>();
             brickSceneObj.Mesh = brickMesh;
+            brickSceneObj.Material.Color = Color.DarkGray;
+            brickSceneObj.Material.Outlined = true;
             MyObjects.Add(brickSceneObj);
         }
+
+
+        //private void CreateMeshObjectForBrick(string brickModelPath)
+        //{
+        //    var brickMesh = LddMeshLoader.LoadLddMesh(brickModelPath);
+        //    var brickSceneObj = MyScene.AddObject<ObjectMesh>();
+        //    brickSceneObj.Mesh = brickMesh;
+        //    brickSceneObj.Material.Color = Color.MediumSlateBlue;
+        //    MyObjects.Add(brickSceneObj);
+        //}
 
         protected override void OnClosing(CancelEventArgs e)
         {
@@ -65,7 +105,7 @@ namespace LDDModder.Views
 
         private void button1_Click(object sender, EventArgs e)
         {
-            LoadBrick(10089);
+            LoadBrick(2780);
         }
     }
 }
