@@ -73,15 +73,15 @@ namespace LDDModder.Display.Models
 
         #region Collisions
 
-        public static ObjectMesh CreateCollisionObject(Scene scene, Collision collision)
+        public static SceneObject CreateCollisionObject(Scene scene, Collision collision)
         {
             var mesh = CreateCollisionMesh(collision);
             if (mesh == null)
                 return null;
 
-            var meshObject = scene.AddObject<ObjectMesh>();
-            meshObject.Mesh = mesh;
-            meshObject.Transform.Translate(collision.GetTranslation(), Space.Parent);
+            var meshObject = scene.AddObject<SceneObject>();
+            meshObject.AddComponent<MeshRenderer>().Mesh = mesh;
+            meshObject.Transform.Translate(collision.GetTranslation(), RelativeSpace.Parent);
             meshObject.Transform.Rotation = collision.GetRotation();
             return meshObject;
         }
@@ -113,15 +113,15 @@ namespace LDDModder.Display.Models
 
         #region Connections
 
-        public static ObjectMesh CreateConnectivityObject(Scene scene, Connectivity connection)
+        public static SceneObject CreateConnectivityObject(Scene scene, Connectivity connection)
         {
             var mesh = CreateConnectivityMesh(connection);
             if (mesh == null)
                 return null;
 
-            var meshObject = scene.AddObject<ObjectMesh>();
-            meshObject.Mesh = mesh;
-            meshObject.Transform.Translate(connection.GetTranslation(), Space.Parent);
+            var meshObject = scene.AddObject<SceneObject>();
+            meshObject.AddComponent<MeshRenderer>().Mesh = mesh;
+            meshObject.Transform.Translate(connection.GetTranslation(), RelativeSpace.Parent);
             meshObject.Transform.Rotation = connection.GetRotation();
 
             if (connection.Type == ConnectivityType.Axel)
@@ -130,7 +130,7 @@ namespace LDDModder.Display.Models
                 if ((axel.SubType == 2 || axel.SubType == 4) && axel.Length <= 1.6)
                 {
                     if (axel.StartCapped)
-                        meshObject.Transform.Translate(new Vector3(0, 0.8f, 0), Space.Self);
+                        meshObject.Transform.Translate(new Vector3(0, 0.8f, 0), RelativeSpace.Self);
                 }
             }
             

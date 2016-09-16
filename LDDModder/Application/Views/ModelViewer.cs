@@ -57,8 +57,10 @@ namespace LDDModder.Views
                 if (collObj != null)
                 {
                     MyObjects.Add(collObj);
-                    collObj.Material.Color = Color.FromArgb(120,255,0,0);
-                    collObj.RenderLayer = 1;
+                    var renderer = collObj.GetComponent<MeshRenderer>();
+                    renderer.Materials[0].DiffuseColor = Color.FromArgb(120,255,0,0);
+                    //renderer.Mode = RenderMode.Transparent;
+                    //collObj.RenderLayer = 1;
                 }
             }
 
@@ -68,8 +70,10 @@ namespace LDDModder.Views
                 if (connObj != null)
                 {
                     MyObjects.Add(connObj);
-                    connObj.Material.Color = Color.FromArgb(80, 0, 0, 255);
-                    connObj.RenderLayer = 1;
+                    var renderer = connObj.GetComponent<MeshRenderer>();
+                    renderer.Materials[0].DiffuseColor = Color.FromArgb(80, 0, 0, 255);
+                    //renderer.Mode = RenderMode.Transparent;
+                    //connObj.RenderLayer = 1;
                 }
             }
         }
@@ -77,10 +81,12 @@ namespace LDDModder.Views
         private void CreateMeshObjectForBrick(string brickModelPath)
         {
             var brickMesh = LddMeshLoader.LoadLddMesh(brickModelPath);
-            var brickSceneObj = MyScene.AddObject<ObjectMesh>();
-            brickSceneObj.Mesh = brickMesh;
-            brickSceneObj.Material.Color = Color.DarkGray;
-            brickSceneObj.Material.Outlined = true;
+            var brickSceneObj = MyScene.AddObject<SceneObject>();
+            var brickRenderer = brickSceneObj.AddComponent<MeshRenderer>();
+            brickRenderer.Mesh = brickMesh;
+            brickRenderer.Materials[0].DiffuseColor = Color.FromArgb(160, Color.DarkGray);
+            brickRenderer.Mode = RenderMode.Transparent;
+            brickRenderer.Outlined = true;
             MyObjects.Add(brickSceneObj);
         }
 

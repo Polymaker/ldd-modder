@@ -74,6 +74,8 @@ namespace LDDModder.Utilities
             if (resNames.Length == 0)
                 return assembly.GetName().Name;
             var resPaths = resNames.Where(n => n.Contains("Resource")).Select(n=> RES_PATH_SUBSTR_REGX.Match(n).Value).ToList();
+            if (resPaths.Count == 0)
+                return string.Empty;
             var commonPath = resPaths.GroupBy(n => n).OrderByDescending(g => g.Count()).First().Key;
 
             AssemResInfo.Add(assembly, commonPath);
