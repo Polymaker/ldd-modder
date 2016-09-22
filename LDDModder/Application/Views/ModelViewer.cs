@@ -111,7 +111,7 @@ namespace LDDModder.Views
 
         private void button1_Click(object sender, EventArgs e)
         {
-            LoadBrick(2780);
+            LoadBrick(10130);
         }
     }
 }

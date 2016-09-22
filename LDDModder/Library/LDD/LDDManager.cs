@@ -14,7 +14,8 @@ namespace LDDModder.LDD
     {
         private static string _ApplicationDataPath;
         private static string _ApplicationPath;
-
+        private static bool _IsInstalled;
+        private static bool _IsLibraryDownloaded;
         public const string EXE_NAME = "LDD.exe";
         public const string APP_DIR = "LEGO Company\\LEGO Digital Designer";
         public const string USER_MODELS_DIR = "LEGO Creations\\Models";
@@ -50,12 +51,7 @@ namespace LDDModder.LDD
         /// </summary>
         public static bool IsInstalled
         {
-            get
-            {
-                if (!string.IsNullOrEmpty(ApplicationPath))
-                    return File.Exists(Path.Combine(ApplicationPath, EXE_NAME));//TODO: maybe convert to private field to prevent always accessing the disk.
-                return false;
-            }
+            get { return _IsInstalled; }
         }
 
         /// <summary>
@@ -63,14 +59,7 @@ namespace LDDModder.LDD
         /// </summary>
         public static bool IsLibraryDownloaded
         {
-            get
-            {
-                if (!IsInstalled)
-                    return false;
-                if (!string.IsNullOrEmpty(ApplicationDataPath))
-                    return Directory.GetFiles(ApplicationDataPath, "*.lif").Length > 0;
-                return false;
-            }
+            get { return _IsLibraryDownloaded; }
         }
 
         /// <summary>
@@ -86,12 +75,39 @@ namespace LDDModder.LDD
 
         static LDDManager()
         {
-            _ApplicationPath = FindApplicationPath();
-            _ApplicationDataPath = GetLocalAppDataPath();
+            InitializeDirectories();
+        }
+
+        public static void InitializeDirectories()
+        {
+            _IsInstalled = false;
+            _IsLibraryDownloaded = false;
+
+            if(string.IsNullOrEmpty(_ApplicationPath))
+                _ApplicationPath = FindApplicationPath();
+
+            if (string.IsNullOrEmpty(_ApplicationDataPath))
+                _ApplicationDataPath = GetLocalAppDataPath();
+
+            if (!string.IsNullOrEmpty(ApplicationPath))
+                _IsInstalled = File.Exists(Path.Combine(ApplicationPath, EXE_NAME));
+
+            if (IsInstalled && !string.IsNullOrEmpty(ApplicationDataPath))
+                _IsLibraryDownloaded = Directory.GetFiles(ApplicationDataPath, "*.lif").Length > 0;
+        }
+
+        public static void SetApplicationPath(string filepath)
+        {
+            if (!string.IsNullOrEmpty(filepath) && File.Exists(Path.Combine(filepath, EXE_NAME)))
+            {
+                _ApplicationPath = filepath;
+                InitializeDirectories();
+            }
         }
 
         static string FindApplicationPath()
         {
+            //TODO: save to config file
             string programFilesPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
             programFilesPath = programFilesPath.Split(Path.VolumeSeparatorChar)[1].Substring(1);
             foreach (string volume in Environment.GetLogicalDrives())

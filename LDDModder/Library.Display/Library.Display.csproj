@@ -42,6 +42,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
@@ -63,6 +64,19 @@
     <Compile Include="Models\PartModel.cs" />
     <Compile Include="Models\PrimitiveModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utilities\LocalizableStrings.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Utilities\LocalizableStrings.Designer.cs">
+      <DependentUpon>LocalizableStrings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Utilities\LocalizableStringsDesigner.cs" />
+    <Compile Include="Utilities\StringEntry.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Utilities\StringEntry.Designer.cs">
+      <DependentUpon>StringEntry.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Library\Library.csproj">

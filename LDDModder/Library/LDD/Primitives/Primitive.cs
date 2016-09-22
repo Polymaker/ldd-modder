@@ -280,5 +280,15 @@ namespace LDDModder.LDD.Primitives
             xmlWriter.WriteRaw("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?>");
             xmlSer.Serialize(xmlWriter, this, ns);
         }
+
+        public static Primitive Load(string filepath)
+        {
+            return LoadFrom<Primitive>(filepath);
+        }
+
+        public static Primitive Load(Stream stream)
+        {
+            return LoadFrom<Primitive>(stream);
+        }
     }
 }

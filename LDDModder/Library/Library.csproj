@@ -36,6 +36,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -43,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppSettings.cs" />
     <Compile Include="IO\BinaryReaderEx.cs" />
     <Compile Include="IO\StreamPortion.cs" />
     <Compile Include="LDD\General\Brand.cs" />
@@ -90,6 +92,8 @@
     <Compile Include="LDD\Primitives\Orientation.cs" />
     <Compile Include="LDD\Primitives\PhysicsAttributes.cs" />
     <Compile Include="LDD\Primitives\Primitive.cs" />
+    <Compile Include="Modding\BrickPackage.cs" />
+    <Compile Include="Modding\PackageInstaller.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rebrickable\ApiError.cs" />
     <Compile Include="Rebrickable\ApiFunction.cs" />
@@ -125,9 +129,7 @@
   <ItemGroup>
     <Content Include="Custom brick installation method.txt" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="LDD\Modding\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

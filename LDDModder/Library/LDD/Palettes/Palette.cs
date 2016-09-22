@@ -16,7 +16,7 @@ namespace LDDModder.LDD.Palettes
     [XmlRoot("PAXML")]
     public class Palette : LDDModder.Serialization.XSerializable
     {
-        // Fields...
+
         private List<PaletteItem> _Items;
 
         public List<PaletteItem> Items
@@ -102,22 +102,22 @@ namespace LDDModder.LDD.Palettes
 
         public static Palette Load(string filepath)
         {
-            return LDDModder.Serialization.XSerializable.LoadFrom<Palette>(filepath);
+            return LoadFrom<Palette>(filepath);
         }
 
         public static Palette Load(Stream stream)
         {
-            return LDDModder.Serialization.XSerializable.LoadFrom<Palette>(stream);
+            return LoadFrom<Palette>(stream);
         }
 
         public void Save(string filepath)
         {
-            LDDModder.Serialization.XSerializable.Save<Palette>(this, filepath);
+            Save<Palette>(this, filepath);
         }
 
         public void Save(Stream stream)
         {
-            LDDModder.Serialization.XSerializable.Save<Palette>(this, stream);
+            Save<Palette>(this, stream);
         }
     }
 }

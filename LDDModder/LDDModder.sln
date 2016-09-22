@@ -17,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.Display", "Library.Display\Library.Display.csproj", "{64918E10-1411-4E5F-BCBD-0AEB2C458C5D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrickInstaller", "BrickInstaller\BrickInstaller.csproj", "{7CAD3409-D4AC-4F37-A004-285F815032FB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +45,10 @@ Global
 		{64918E10-1411-4E5F-BCBD-0AEB2C458C5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{64918E10-1411-4E5F-BCBD-0AEB2C458C5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{64918E10-1411-4E5F-BCBD-0AEB2C458C5D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7CAD3409-D4AC-4F37-A004-285F815032FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7CAD3409-D4AC-4F37-A004-285F815032FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7CAD3409-D4AC-4F37-A004-285F815032FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7CAD3409-D4AC-4F37-A004-285F815032FB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -53,5 +59,6 @@ Global
 		{F23DA248-73FB-4D64-95F9-F7BC32B56C00} = {68EBA5D8-BFCD-4AE6-9C21-B419E3D8AA07}
 		{6FD59A49-86CD-4DC8-977F-DB68922AF893} = {68EBA5D8-BFCD-4AE6-9C21-B419E3D8AA07}
 		{64918E10-1411-4E5F-BCBD-0AEB2C458C5D} = {970EA8DF-EFD1-4773-88BC-FDE5942FC1E0}
+		{7CAD3409-D4AC-4F37-A004-285F815032FB} = {68EBA5D8-BFCD-4AE6-9C21-B419E3D8AA07}
 	EndGlobalSection
 EndGlobal

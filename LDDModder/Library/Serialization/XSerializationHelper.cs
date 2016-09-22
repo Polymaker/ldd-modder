@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
@@ -96,5 +97,13 @@ namespace LDDModder.Serialization
             return rootElem;
         }
 
+        public static void SerializeToStream(object obj, Stream stream)
+        {
+            var ser = new XmlSerializer(obj.GetType());
+            var ns = new XmlSerializerNamespaces();
+            ns.Add("", "");
+            ser.Serialize(stream, obj, ns);
+
+        }
     }
 }
