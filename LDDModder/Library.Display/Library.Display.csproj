@@ -64,6 +64,7 @@
     <Compile Include="Models\PartModel.cs" />
     <Compile Include="Models\PrimitiveModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utilities\ExtensionMethods\FormExtensions.cs" />
     <Compile Include="Utilities\LocalizableStrings.cs">
       <SubType>Component</SubType>
     </Compile>

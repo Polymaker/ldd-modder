@@ -117,4 +117,46 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="LogWarning" xml:space="preserve">
+    <value>[WARNING]</value>
+  </data>
+  <data name="LogInfo" xml:space="preserve">
+    <value>[INFO]</value>
+  </data>
+  <data name="LogError" xml:space="preserve">
+    <value>[ERROR]</value>
+  </data>
+  <data name="StepValidateLDD" xml:space="preserve">
+    <value>Validating LDD install state</value>
+  </data>
+  <data name="StepFindLDD" xml:space="preserve">
+    <value>Searching LDD install location...</value>
+  </data>
+  <data name="LogInstallNotFound" xml:space="preserve">
+    <value>LDD install location not found.</value>
+  </data>
+  <data name="LogLifExtracted" xml:space="preserve">
+    <value>LDD content file '{0}' is extracted.</value>
+  </data>
+  <data name="LogLifNotExtracted" xml:space="preserve">
+    <value>LDD content file '{0}' is not extracted.</value>
+  </data>
+  <data name="LogInstallFound" xml:space="preserve">
+    <value>LDD install location found at '{0}'</value>
+  </data>
+  <data name="StepCheckLif" xml:space="preserve">
+    <value>Verifying state of LDD content files</value>
+  </data>
+  <data name="LogAppDataNotFound" xml:space="preserve">
+    <value>LDD content folder not found.</value>
+  </data>
+  <data name="DiagExtractDbLifText" xml:space="preserve">
+    <value>The 'db.lif' file must be extracted in order to install custom bricks. Do you want to extract it now?</value>
+  </data>
+  <data name="DiagExtractDbLifTitle" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="DiagFindFolder" xml:space="preserve">
+    <value>If you are certain that you have LDD installed, please manually search for the directory.</value>
+  </data>
 </root>

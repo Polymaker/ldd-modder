@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -121,9 +121,33 @@
     <value>Installateur de composants LDD</value>
   </data>
   <data name="LOC_ValidateLDD.Text" xml:space="preserve">
-    <value>Validation de l'installation de LDD</value>
+    <value>Validation de l'installation de LDD...</value>
   </data>
   <data name="lblOperationInfo.Text" xml:space="preserve">
     <value>État d'opérations</value>
+  </data>
+  <data name="LOC_HideDetails.Text" xml:space="preserve">
+    <value>Cacher les détails</value>
+  </data>
+  <data name="LOC_ShowDetails.Text" xml:space="preserve">
+    <value>Afficher les détails</value>
+  </data>
+  <data name="LOC_Exit.Text" xml:space="preserve">
+    <value>Quitter</value>
+  </data>
+  <data name="LOC_Cancel.Text" xml:space="preserve">
+    <value>Annuler</value>
+  </data>
+  <data name="btnShowDetails.Text" xml:space="preserve">
+    <value>Afficher les détails</value>
+  </data>
+  <data name="LOC_LogError.Text" xml:space="preserve">
+    <value>[ERREUR]</value>
+  </data>
+  <data name="LOC_LogWarning.Text" xml:space="preserve">
+    <value>[ATTENTION]</value>
+  </data>
+  <data name="LOC_LogInfo.Text" xml:space="preserve">
+    <value>[INFO]</value>
   </data>
 </root>

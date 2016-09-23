@@ -12,6 +12,7 @@ namespace LDDModder.LDD
 {
     public static class LDDManager
     {
+        private static bool _InstallChecked;
         private static string _ApplicationDataPath;
         private static string _ApplicationPath;
         private static bool _IsInstalled;
@@ -62,6 +63,11 @@ namespace LDDModder.LDD
             get { return _IsLibraryDownloaded; }
         }
 
+        public static bool InstallChecked
+        {
+            get { return _InstallChecked; }
+        }
+
         /// <summary>
         /// Gets the directory for the current user models.
         /// </summary>
@@ -75,13 +81,14 @@ namespace LDDModder.LDD
 
         static LDDManager()
         {
-            InitializeDirectories();
+            //InitializeDirectories();
         }
 
         public static void InitializeDirectories()
         {
             _IsInstalled = false;
             _IsLibraryDownloaded = false;
+            _InstallChecked = false;
 
             if(string.IsNullOrEmpty(_ApplicationPath))
                 _ApplicationPath = FindApplicationPath();
@@ -94,6 +101,8 @@ namespace LDDModder.LDD
 
             if (IsInstalled && !string.IsNullOrEmpty(ApplicationDataPath))
                 _IsLibraryDownloaded = Directory.GetFiles(ApplicationDataPath, "*.lif").Length > 0;
+
+            _InstallChecked = true;
         }
 
         public static void SetApplicationPath(string filepath)
@@ -231,6 +240,16 @@ namespace LDDModder.LDD
             using (var lifFile = OpenLif(lif))
                 lifFile.Extract(lifDir);
 
+            DiscardOfLif(discardMethod, GetLifPath(lif));
+        }
+
+        public static void DiscardOfLif(LifInstance lif)
+        {
+            DiscardOfLif(DefaultDiscardMethod, GetLifPath(lif));
+        }
+
+        public static void DiscardOfLif(LifInstance lif, LifDiscardMethod discardMethod)
+        {
             DiscardOfLif(discardMethod, GetLifPath(lif));
         }
 

@@ -47,7 +47,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Common.cs" />
+    <Compile Include="LocalizedStrings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>LocalizedStrings.resx</DependentUpon>
+    </Compile>
+    <Compile Include="PackageInstaller.cs" />
     <Compile Include="FrmPackageBrowser.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -60,13 +65,20 @@
     <Compile Include="FrmPackageInstaller.Designer.cs">
       <DependentUpon>FrmPackageInstaller.cs</DependentUpon>
     </Compile>
+    <Compile Include="IProgressLogOutput.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="ProgressLogger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="FrmPackageInstaller.fr.resx">
       <DependentUpon>FrmPackageInstaller.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FrmPackageInstaller.resx">
       <DependentUpon>FrmPackageInstaller.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LocalizedStrings.fr.resx" />
+    <EmbeddedResource Include="LocalizedStrings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>LocalizedStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

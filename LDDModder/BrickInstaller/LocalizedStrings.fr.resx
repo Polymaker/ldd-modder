@@ -117,4 +117,43 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="LogError" xml:space="preserve">
+    <value>[ERREUR]</value>
+  </data>
+  <data name="LogInfo" xml:space="preserve">
+    <value>[INFO]</value>
+  </data>
+  <data name="LogWarning" xml:space="preserve">
+    <value>[ATTENTION]</value>
+  </data>
+  <data name="StepValidateLDD" xml:space="preserve">
+    <value>Validation de l'installation de LDD</value>
+  </data>
+  <data name="StepFindLDD" xml:space="preserve">
+    <value>Recherche de l'emplacement d'installation de LDD...</value>
+  </data>
+  <data name="LogInstallNotFound" xml:space="preserve">
+    <value>L'emplacement d'installation de LDD n'a pas été trouvé.</value>
+  </data>
+  <data name="LogLifExtracted" xml:space="preserve">
+    <value>Le fichier de contenu LDD '{0}' est extrait.</value>
+  </data>
+  <data name="LogLifNotExtracted" xml:space="preserve">
+    <value>Le fichier de contenu LDD '{0}' n'est pas extrait.</value>
+  </data>
+  <data name="LogInstallFound" xml:space="preserve">
+    <value>L'emplacement d'installation de LDD a été trouvé à '{0}'</value>
+  </data>
+  <data name="StepCheckLif" xml:space="preserve">
+    <value>Vérification de l'état des fichiers de contenu de LDD</value>
+  </data>
+  <data name="LogAppDataNotFound" xml:space="preserve">
+    <value>Le répertoire de contenu de LDD n'a pas été trouvé.</value>
+  </data>
+  <data name="DiagExtractDbLifText" xml:space="preserve">
+    <value>Le fichier 'db.tif' doit être extrait afin de pouvoir installer des briques personnalisés. Voulez-vous l'extraire maintenant?</value>
+  </data>
+  <data name="DiagFindFolder" xml:space="preserve">
+    <value>Si vous êtes certain que vous avez installé LDD, veuillez rechercher manuellement le répertoire.</value>
+  </data>
 </root>

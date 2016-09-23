@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -21,8 +22,9 @@ namespace LDDModder.Display.Utilities
         public StringEntry(IContainer container)
         {
             container.Add(this);
-
+            
             InitializeComponent();
+            
         }
 
         public static implicit operator string(StringEntry message)
