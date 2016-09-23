@@ -167,6 +167,8 @@ namespace LDDModder.LDD.Files
 
         public static LifFile Open(string filename)
         {
+            if (!File.Exists(filename))
+                return null;
             return Open(File.OpenRead(filename));
         }
 

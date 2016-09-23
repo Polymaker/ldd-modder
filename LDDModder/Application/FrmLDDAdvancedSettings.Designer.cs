@@ -36,11 +36,11 @@
             this.btnSave = new System.Windows.Forms.Button();
             this.lblShowTooltip = new System.Windows.Forms.Label();
             this.toolTipController = new System.Windows.Forms.ToolTip(this.components);
-            this.lblVerbose = new LDDModder.LabelEx();
-            this.lblDoServerCall = new LDDModder.LabelEx();
+            this.lblVerbose = new LDDModder.Display.Controls.LabelEx();
+            this.lblDoServerCall = new LDDModder.Display.Controls.LabelEx();
             this.chkVerbose = new System.Windows.Forms.CheckBox();
             this.chkDoServerCall = new System.Windows.Forms.CheckBox();
-            this.btnTxtUserModelDir = new LDDModder.ButtonEdit();
+            this.btnTxtUserModelDir = new LDDModder.Display.Controls.ButtonEdit();
             this.chkDeveloperMode = new System.Windows.Forms.CheckBox();
             this.chkExtendedTooltip = new System.Windows.Forms.CheckBox();
             this.chkShowTooltip = new System.Windows.Forms.CheckBox();
@@ -261,13 +261,13 @@
         private System.Windows.Forms.Label lblUserModelDir;
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.Label lblShowTooltip;
-        private LDDModder.LabelEx lblDoServerCall;
-        private LDDModder.LabelEx lblVerbose;
+        private LDDModder.Display.Controls.LabelEx lblDoServerCall;
+        private LDDModder.Display.Controls.LabelEx lblVerbose;
         private System.Windows.Forms.ToolTip toolTipController;
         private System.Windows.Forms.CheckBox chkShowTooltip;
         private System.Windows.Forms.CheckBox chkExtendedTooltip;
         private System.Windows.Forms.CheckBox chkDeveloperMode;
-        private ButtonEdit btnTxtUserModelDir;
+        private LDDModder.Display.Controls.ButtonEdit btnTxtUserModelDir;
         private System.Windows.Forms.CheckBox chkDoServerCall;
         private System.Windows.Forms.CheckBox chkVerbose;
     }

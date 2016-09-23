@@ -39,7 +39,7 @@ namespace LDDModder.BrickInstaller
             Task.Factory.StartNew(() =>
             {
                 Thread.Sleep(250);
-                if (!PackageInstaller.ValidateLddInstall())
+                if (!InstallHelper.ValidateLddInstall())
                     Invoke(new MethodInvoker(ValidationFailed));
             });
             //FormExtensions.DelayInvoke(this, 250, () => PackageInstaller.ValidateLddInstall());

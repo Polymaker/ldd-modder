@@ -50,7 +50,7 @@ namespace LDDModder.LDD.General
         /// </summary>
         public const string PalettePath = "PalettePath";
         /// <summary>
-        /// Purpose: Unknown (~TESTED)
+        /// Purpose: Unknown (+/-TESTED)
         /// Known values: [0,1] ?
         /// </summary>
         public const string QAMode = "QAMode";//tested ProgramFiles and AppData preferences.ini
@@ -64,6 +64,23 @@ namespace LDDModder.LDD.General
         /// Known values: [0,1] ?
         /// </summary>
         public const string LoadAssemblies = "LoadAssemblies";//ProgramFiles preferences.ini
+
+        public static string DecodePath(string pathStr)
+        {
+            if (string.IsNullOrEmpty(pathStr) || !pathStr.StartsWith("file/"))
+                return pathStr;
+
+            pathStr = pathStr.Substring(5).Replace('/', '\\');
+            pathStr = pathStr.Insert(1, ":");
+            return pathStr;
+        }
+
+        public static string EncodePath(string pathStr)
+        {
+            if (string.IsNullOrEmpty(pathStr))
+                return pathStr;
+            return "file/" + pathStr.Replace('\\', '/').Replace(":", string.Empty);
+        }
 
     }
 }

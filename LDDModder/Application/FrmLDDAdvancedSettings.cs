@@ -129,13 +129,13 @@ namespace LDDModder
 
                 if (changedSettings.Count > 0)
                 {
-                    var processInfo = new ProcessStartInfo()
-                    {
-                        Verb = "runas",
-                        Arguments = "set " + changedSettings.Select(x=>x.Serialize()).Aggregate((a,b)=> a + " " + b),
-                        FileName = Application.ExecutablePath
-                    };
-                    Process.Start(processInfo);
+                    //var processInfo = new ProcessStartInfo()
+                    //{
+                    //    Verb = "runas",
+                    //    Arguments = "set " + changedSettings.Select(x=>x.Serialize()).Aggregate((a,b)=> a + " " + b),
+                    //    FileName = Application.ExecutablePath
+                    //};
+                    //Process.Start(processInfo);
                 }
             }
         }

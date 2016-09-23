@@ -7,7 +7,7 @@ using System.Text;
 
 namespace LDDModder
 {
-    static class NativeHelper
+    public static class NativeHelper
     {
 
         #region Structs

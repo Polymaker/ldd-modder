@@ -52,11 +52,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\ButtonEdit.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ButtonEdit.Designer.cs">
+      <DependentUpon>ButtonEdit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ButtonEditDesigner.cs" />
     <Compile Include="Controls\Custom2dFieldEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\Custom2dFieldEditor.Designer.cs">
       <DependentUpon>Custom2dFieldEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\LabelEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\LabelEx.Designer.cs">
+      <DependentUpon>LabelEx.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\PrimitiveMeshBuilder.cs" />
     <Compile Include="Models\ExtensionMethods.cs" />
@@ -72,6 +85,7 @@
       <DependentUpon>LocalizableStrings.cs</DependentUpon>
     </Compile>
     <Compile Include="Utilities\LocalizableStringsDesigner.cs" />
+    <Compile Include="Utilities\NativeHelper.cs" />
     <Compile Include="Utilities\StringEntry.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -86,6 +100,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Controls\ButtonEdit.resx">
+      <DependentUpon>ButtonEdit.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\Custom2dFieldEditor.resx">
       <DependentUpon>Custom2dFieldEditor.cs</DependentUpon>
     </EmbeddedResource>

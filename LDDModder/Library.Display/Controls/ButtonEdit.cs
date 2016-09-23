@@ -10,7 +10,7 @@ using System.Windows.Forms.VisualStyles;
 using System.Runtime.InteropServices;
 using System.Windows.Forms.Design;
 
-namespace LDDModder
+namespace LDDModder.Display.Controls
 {
     [Designer(typeof(ButtonEditDesigner)), DefaultEvent("ButtonClicked")]
     public partial class ButtonEdit : UserControl
@@ -20,7 +20,6 @@ namespace LDDModder
         private bool _UseReadOnlyAppearance = true;
         private bool _ReadOnly;
         private string TmpBtnText = "Button";
-
 
         public override Color BackColor
         {
@@ -56,7 +55,7 @@ namespace LDDModder
             }
         }
 
-        [DefaultValue("Button")]
+        [DefaultValue("Button"), Localizable(true)]
         public string ButtonText
         {
             get
@@ -127,6 +126,12 @@ namespace LDDModder
             SetTextboxBackColor();
         }
 
+        protected override void OnFontChanged(EventArgs e)
+        {
+            base.OnFontChanged(e);
+            PerformControlsLayout();
+        }
+
         private void Button1_TextChanged(object sender, EventArgs e)
         {
             PerformControlsLayout();
@@ -134,12 +139,11 @@ namespace LDDModder
 
         private void PerformControlsLayout()
         {
-            //textBox1.Location = new Point(3, (Height - textBox1.Height) / 2);
+            Height = textBox1.Height;
             button1.MaximumSize = new Size(200, Height - 2);
             button1.Location = new Point(Width - button1.Width - 1, 1);
             button1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             SetTextboxMargin(button1.Width + 2);
-            //textBox1.Width = button1.Left - textBox1.Left - 2;
         }
 
         private void SetTextboxMargin(int value)
@@ -181,16 +185,10 @@ namespace LDDModder
             base.SetBoundsCore(x, y, width, height, specified);
         }
 
-    }
-
-    internal class ButtonEditDesigner : ControlDesigner
-    {
-        public override SelectionRules SelectionRules
+        protected override void OnSizeChanged(EventArgs e)
         {
-            get
-            {
-                return base.SelectionRules ^ SelectionRules.TopSizeable ^ SelectionRules.BottomSizeable;
-            }
+            base.OnSizeChanged(e);
+            PerformControlsLayout();
         }
     }
 }

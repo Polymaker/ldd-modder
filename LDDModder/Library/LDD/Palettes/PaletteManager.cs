@@ -1,4 +1,6 @@
-﻿using LDDModder.LDD.Files;
+﻿using LDDModder.Configuration;
+using LDDModder.LDD.Files;
+using LDDModder.LDD.General;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -14,32 +16,52 @@ namespace LDDModder.LDD.Palettes
 {
     public static class PaletteManager
     {
+        private static bool _HasInitialized;
         private static bool _IsLddPaletteExtended;
+        private static bool isInitializing;
         private static List<PaletteFile> _Palettes;
         private static bool _CanExtendLddPalettes;
-        private static string _UserPalettesDirectory;
-        private static string _LDDPalettesDirectory;
-        private static XmlSerializer BAXML_SERIALIZER;
-        private static XmlSerializer PAXML_SERIALIZER;
+        private readonly static XmlSerializer BAXML_SERIALIZER;
+        private readonly static XmlSerializer PAXML_SERIALIZER;
 
-        public static string LDDPalettesDirectory
+        public static string LddPalettesDirectory
         {
-            get { return _LDDPalettesDirectory; }
+            get
+            {
+                if (!HasInitialized)
+                    Initialize();
+                return SettingsManager.LddPalettesDirectory;
+            }
         }
 
         public static string UserPalettesDirectory
         {
-            get { return _UserPalettesDirectory; }
+            get
+            {
+                if (!HasInitialized)
+                    Initialize();
+                return SettingsManager.UserPalettesDirectory;
+            }
         }
 
         public static bool CanExtendLddPalettes
         {
-            get { return _CanExtendLddPalettes; }
+            get
+            {
+                if (!HasInitialized)
+                    Initialize();
+                return _CanExtendLddPalettes;
+            }
         }
 
         public static bool IsLddPaletteExtended
         {
-            get { return _IsLddPaletteExtended; }
+            get
+            {
+                if (!HasInitialized)
+                    Initialize();
+                return _IsLddPaletteExtended;
+            }
         }
 
         public static List<PaletteFile> Palettes
@@ -47,30 +69,49 @@ namespace LDDModder.LDD.Palettes
             get { return _Palettes; }
         }
 
+        public static bool HasInitialized
+        {
+            get { return _HasInitialized; }
+        }
+
         static PaletteManager()
         {
             _Palettes = new List<PaletteFile>();
             BAXML_SERIALIZER = new XmlSerializer(typeof(Bag));
             PAXML_SERIALIZER = new XmlSerializer(typeof(Palette));
-
-            IntializeDirectories();
         }
 
-        public static void IntializeDirectories()
+        public static void Initialize()
         {
+            if (isInitializing)
+                return;
+
+            isInitializing = true;
+
+            if (!SettingsManager.HasLoadedOnce)
+                SettingsManager.Load();
+
             _IsLddPaletteExtended = false;
 
             if (LDDManager.IsInstalled)
             {
-                _LDDPalettesDirectory = Path.Combine(LDDManager.ApplicationDataPath, "Palettes");
+
+                if (string.IsNullOrEmpty(SettingsManager.LddPalettesDirectory) || 
+                    !ValidateLddPalettesDirectory(SettingsManager.LddPalettesDirectory))
+                {
+                    string currentPath = Path.Combine(LDDManager.ApplicationDataPath, "Palettes");
+                    if (ValidateLddPalettesDirectory(currentPath))
+                        SettingsManager.LddPalettesDirectory.Value = currentPath;
+                }
+                
                 string customUserPalettesDir;
-                if (LDDManager.GetSettingValue("UserPalettes", LDDLocation.ProgramFiles, out customUserPalettesDir) ||
+                if (LDDManager.GetSettingValue(PreferencesSettings.UserPalettes, LDDLocation.ProgramFiles, out customUserPalettesDir) ||
                     LDDManager.GetSettingValue("UserPalettes", LDDLocation.AppData, out customUserPalettesDir))
                 {
-                    _UserPalettesDirectory = customUserPalettesDir;
+                    SettingsManager.UserPalettesDirectory.Value = customUserPalettesDir;
                 }
                 else
-                    _UserPalettesDirectory = Path.Combine(LDDManager.ApplicationDataPath, "UserPalettes");
+                    SettingsManager.UserPalettesDirectory.Value = Path.Combine(LDDManager.ApplicationDataPath, "UserPalettes");
 
                 //if DoServerCall is not turned off, LDD will delete custom directories and redownload missing (replaced?) lifs.
                 //We can however prevent LDD from deleting a custom palette directory, but it is not desirable for an overwrited LDD palette because the entry will be doubled.
@@ -81,12 +122,13 @@ namespace LDDModder.LDD.Palettes
             else
             {
                 _CanExtendLddPalettes = false;
-                _UserPalettesDirectory = _LDDPalettesDirectory = string.Empty;
+                SettingsManager.LddPalettesDirectory.Value = string.Empty;
+                SettingsManager.UserPalettesDirectory.Value = string.Empty;
             }
 
             if (CanExtendLddPalettes)
             {
-                foreach (var paletteDir in Directory.GetDirectories(LDDPalettesDirectory))
+                foreach (var paletteDir in Directory.GetDirectories(LddPalettesDirectory))
                 {
                     if (paletteDir.StartsWith("LDD-"))
                     {
@@ -96,12 +138,48 @@ namespace LDDModder.LDD.Palettes
                     }
                 }
             }
+
+            if (SettingsManager.HasChanges)
+                SettingsManager.Save();
+
+            isInitializing = false;
+            _HasInitialized = true;
         }
+
+        
 
         public static string GetPaletteDirectory(PaletteType directory)
         {
-            return directory == PaletteType.User ? UserPalettesDirectory : LDDPalettesDirectory;
+            return directory == PaletteType.User ? UserPalettesDirectory : LddPalettesDirectory;
         }
+
+        #region Validating Palettes directories
+
+        private static bool ValidateLddPalettesDirectory(string directoryPath)
+        {
+            if (!Directory.Exists(directoryPath))
+                return false;
+            if (Directory.EnumerateFileSystemEntries(directoryPath, "*.lif").Any())
+                return true;
+
+            return Directory.EnumerateFileSystemEntries(directoryPath, "*.paxml", SearchOption.AllDirectories).Any();
+        }
+
+        //private static readonly string[] UserPalettesExt = new string[] { ".lxfml", ".lxf"/*, "paxml", "lif"*/ };
+
+        private static bool ValidateUserPalettesDirectory(string directoryPath)
+        {
+            return Directory.Exists(directoryPath);//for user palettes we only check if the directory exists, and will mostly be empty
+            //if (!Directory.Exists(directoryPath))
+            //    return false;
+
+            ////if (Directory.EnumerateFileSystemEntries(directoryPath).Any(file=> UserPalettesExt.Contains(Path.GetExtension(file))))
+            ////    return true;
+
+            //return false;
+        }
+
+        #endregion
 
         #region Palette loading
 
@@ -111,14 +189,14 @@ namespace LDDModder.LDD.Palettes
                 return;
             Palettes.Clear();
             _IsLddPaletteExtended = false;
-            foreach (var lifPath in Directory.GetFiles(LDDPalettesDirectory, "*.lif"))
+            foreach (var lifPath in Directory.GetFiles(LddPalettesDirectory, "*.lif"))
             {
                 var palette = LoadFromLif(lifPath);
                 if (palette != null)
                     Palettes.Add(palette);
             }
 
-            foreach (var paletteDir in Directory.GetDirectories(LDDPalettesDirectory))
+            foreach (var paletteDir in Directory.GetDirectories(LddPalettesDirectory))
             {
                 var palette = LoadFromDirectory(paletteDir, PaletteType.ExtendedLDD);
                 if (palette != null)
@@ -224,7 +302,7 @@ namespace LDDModder.LDD.Palettes
 
             if (palette.Type == PaletteType.LDD)
             {
-                var paletteDir = Path.Combine(LDDPalettesDirectory, Path.GetFileNameWithoutExtension(palette.PalettePath));
+                var paletteDir = Path.Combine(LddPalettesDirectory, Path.GetFileNameWithoutExtension(palette.PalettePath));
                 Directory.CreateDirectory(paletteDir);
                 //Extract lif as it can have other files (eg: LDDExtended palette has an xml file for overwriting the available colors in the material chooser)
                 using(var lifFile = LifFile.Open(palette.PalettePath))
@@ -267,7 +345,7 @@ namespace LDDModder.LDD.Palettes
     
             var paletteName = GetShortPaletteName(info);
             var paletteDirectory = string.Format("{0}-{1}", paletteName, info.PaletteVersion);
-            paletteDirectory = Path.Combine(LDDPalettesDirectory, paletteDirectory);
+            paletteDirectory = Path.Combine(LddPalettesDirectory, paletteDirectory);
 
             //TODO: denying delete on the directory is no longer required, the setting DoServerCall=0 will prevent LDD from overwriting/deleting our stuff
             //(preference.ini in ProgramFiles folder)

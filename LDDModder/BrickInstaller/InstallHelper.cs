@@ -1,29 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using LDDModder.LDD;
-using LDDModder.Modding;
-using System.Threading;
-using System.IO;
+﻿using LDDModder.LDD;
 using LDDModder.LDD.Files;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Windows.Forms;
+
 namespace LDDModder.BrickInstaller
 {
-    internal static class PackageInstaller
+    internal static class InstallHelper
     {
 
         public static bool ValidateLddInstall()
         {
             ProgressLogger.UpdateStatus(LocalizedStrings.StepValidateLDD);
             
-            if (!LDDManager.InstallChecked)
+            if (!LDDManager.HasInitialized)
             {
                 ProgressLogger.SetProgress(0, 0);
                 ProgressLogger.LogProgress(LocalizedStrings.StepFindLDD);
-                LDDManager.InitializeDirectories();
+                LDDManager.Initialize();
             }
 
             if (!LDDManager.IsInstalled)
@@ -79,7 +76,6 @@ namespace LDDModder.BrickInstaller
             ProgressLogger.SetProgress(-1, -1);
             return false;
         }
-
 
         internal static void LogLifExtract(LifInstance lif)
         {

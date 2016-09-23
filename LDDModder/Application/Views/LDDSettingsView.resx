@@ -1,0 +1,561 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="tlpLayout.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="tlpLayout.AutoSizeMode" type="System.Windows.Forms.AutoSizeMode, System.Windows.Forms">
+    <value>GrowAndShrink</value>
+  </data>
+  <data name="tlpLayout.ColumnCount" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="lblVerbose.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Right</value>
+  </data>
+  <data name="lblVerbose.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="lblVerbose.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 110</value>
+  </data>
+  <data name="lblVerbose.Size" type="System.Drawing.Size, System.Drawing">
+    <value>114, 13</value>
+  </data>
+  <data name="lblVerbose.TabIndex" type="System.Int32, mscorlib">
+    <value>11</value>
+  </data>
+  <data name="lblVerbose.Text" xml:space="preserve">
+    <value>Enable verbose output</value>
+  </data>
+  <data name="&gt;&gt;lblVerbose.Name" xml:space="preserve">
+    <value>lblVerbose</value>
+  </data>
+  <data name="&gt;&gt;lblVerbose.Type" xml:space="preserve">
+    <value>LDDModder.Display.Controls.LabelEx, Library.Display, Version=1.0.0.18814, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblVerbose.Parent" xml:space="preserve">
+    <value>tlpLayout</value>
+  </data>
+  <data name="&gt;&gt;lblVerbose.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="lblDoServerCall.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Right</value>
+  </data>
+  <data name="lblDoServerCall.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="lblDoServerCall.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 89</value>
+  </data>
+  <data name="lblDoServerCall.Size" type="System.Drawing.Size, System.Drawing">
+    <value>108, 13</value>
+  </data>
+  <data name="lblDoServerCall.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
+  <data name="lblDoServerCall.Text" xml:space="preserve">
+    <value>Enable LDD modding</value>
+  </data>
+  <data name="&gt;&gt;lblDoServerCall.Name" xml:space="preserve">
+    <value>lblDoServerCall</value>
+  </data>
+  <data name="&gt;&gt;lblDoServerCall.Type" xml:space="preserve">
+    <value>LDDModder.Display.Controls.LabelEx, Library.Display, Version=1.0.0.18814, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblDoServerCall.Parent" xml:space="preserve">
+    <value>tlpLayout</value>
+  </data>
+  <data name="&gt;&gt;lblDoServerCall.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="chkShowTooltip.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="chkShowTooltip.Location" type="System.Drawing.Point, System.Drawing">
+    <value>123, 23</value>
+  </data>
+  <data name="chkShowTooltip.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 30, 0</value>
+  </data>
+  <data name="chkShowTooltip.Size" type="System.Drawing.Size, System.Drawing">
+    <value>49, 14</value>
+  </data>
+  <data name="chkShowTooltip.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="&gt;&gt;chkShowTooltip.Name" xml:space="preserve">
+    <value>chkShowTooltip</value>
+  </data>
+  <data name="&gt;&gt;chkShowTooltip.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;chkShowTooltip.Parent" xml:space="preserve">
+    <value>tlpLayout</value>
+  </data>
+  <data name="&gt;&gt;chkShowTooltip.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="chkExtendedTooltip.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="chkExtendedTooltip.Location" type="System.Drawing.Point, System.Drawing">
+    <value>123, 43</value>
+  </data>
+  <data name="chkExtendedTooltip.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 30, 0</value>
+  </data>
+  <data name="chkExtendedTooltip.Size" type="System.Drawing.Size, System.Drawing">
+    <value>49, 14</value>
+  </data>
+  <data name="chkExtendedTooltip.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;chkExtendedTooltip.Name" xml:space="preserve">
+    <value>chkExtendedTooltip</value>
+  </data>
+  <data name="&gt;&gt;chkExtendedTooltip.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;chkExtendedTooltip.Parent" xml:space="preserve">
+    <value>tlpLayout</value>
+  </data>
+  <data name="&gt;&gt;chkExtendedTooltip.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="lblDeveloperMode.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Right</value>
+  </data>
+  <data name="lblDeveloperMode.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="lblDeveloperMode.Location" type="System.Drawing.Point, System.Drawing">
+    <value>32, 3</value>
+  </data>
+  <data name="lblDeveloperMode.Size" type="System.Drawing.Size, System.Drawing">
+    <value>85, 13</value>
+  </data>
+  <data name="lblDeveloperMode.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="lblDeveloperMode.Text" xml:space="preserve">
+    <value>Developer mode</value>
+  </data>
+  <data name="&gt;&gt;lblDeveloperMode.Name" xml:space="preserve">
+    <value>lblDeveloperMode</value>
+  </data>
+  <data name="&gt;&gt;lblDeveloperMode.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblDeveloperMode.Parent" xml:space="preserve">
+    <value>tlpLayout</value>
+  </data>
+  <data name="&gt;&gt;lblDeveloperMode.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="chkDeveloperMode.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="chkDeveloperMode.Location" type="System.Drawing.Point, System.Drawing">
+    <value>123, 3</value>
+  </data>
+  <data name="chkDeveloperMode.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 30, 0</value>
+  </data>
+  <data name="chkDeveloperMode.Size" type="System.Drawing.Size, System.Drawing">
+    <value>49, 14</value>
+  </data>
+  <data name="chkDeveloperMode.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;chkDeveloperMode.Name" xml:space="preserve">
+    <value>chkDeveloperMode</value>
+  </data>
+  <data name="&gt;&gt;chkDeveloperMode.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;chkDeveloperMode.Parent" xml:space="preserve">
+    <value>tlpLayout</value>
+  </data>
+  <data name="&gt;&gt;chkDeveloperMode.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="lblExtendedTooltip.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Right</value>
+  </data>
+  <data name="lblExtendedTooltip.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="lblExtendedTooltip.Location" type="System.Drawing.Point, System.Drawing">
+    <value>14, 43</value>
+  </data>
+  <data name="lblExtendedTooltip.Size" type="System.Drawing.Size, System.Drawing">
+    <value>103, 13</value>
+  </data>
+  <data name="lblExtendedTooltip.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="lblExtendedTooltip.Text" xml:space="preserve">
+    <value>Extended tooltip info</value>
+  </data>
+  <data name="&gt;&gt;lblExtendedTooltip.Name" xml:space="preserve">
+    <value>lblExtendedTooltip</value>
+  </data>
+  <data name="&gt;&gt;lblExtendedTooltip.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblExtendedTooltip.Parent" xml:space="preserve">
+    <value>tlpLayout</value>
+  </data>
+  <data name="&gt;&gt;lblExtendedTooltip.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="lblUserModelDir.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Right</value>
+  </data>
+  <data name="lblUserModelDir.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="lblUserModelDir.Location" type="System.Drawing.Point, System.Drawing">
+    <value>12, 65</value>
+  </data>
+  <data name="lblUserModelDir.Size" type="System.Drawing.Size, System.Drawing">
+    <value>105, 13</value>
+  </data>
+  <data name="lblUserModelDir.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="lblUserModelDir.Text" xml:space="preserve">
+    <value>User model Directory</value>
+  </data>
+  <data name="&gt;&gt;lblUserModelDir.Name" xml:space="preserve">
+    <value>lblUserModelDir</value>
+  </data>
+  <data name="&gt;&gt;lblUserModelDir.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblUserModelDir.Parent" xml:space="preserve">
+    <value>tlpLayout</value>
+  </data>
+  <data name="&gt;&gt;lblUserModelDir.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="btnTxtUserModelDir.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Left, Right</value>
+  </data>
+  <data name="btnTxtUserModelDir.ButtonText" xml:space="preserve">
+    <value>…</value>
+  </data>
+  <data name="btnTxtUserModelDir.Location" type="System.Drawing.Point, System.Drawing">
+    <value>127, 62</value>
+  </data>
+  <data name="btnTxtUserModelDir.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>7, 2, 3, 2</value>
+  </data>
+  <data name="btnTxtUserModelDir.Size" type="System.Drawing.Size, System.Drawing">
+    <value>315, 20</value>
+  </data>
+  <data name="btnTxtUserModelDir.TabIndex" type="System.Int32, mscorlib">
+    <value>5</value>
+  </data>
+  <data name="&gt;&gt;btnTxtUserModelDir.Name" xml:space="preserve">
+    <value>btnTxtUserModelDir</value>
+  </data>
+  <data name="&gt;&gt;btnTxtUserModelDir.Type" xml:space="preserve">
+    <value>LDDModder.Display.Controls.ButtonEdit, Library.Display, Version=1.0.0.18814, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;btnTxtUserModelDir.Parent" xml:space="preserve">
+    <value>tlpLayout</value>
+  </data>
+  <data name="&gt;&gt;btnTxtUserModelDir.ZOrder" xml:space="preserve">
+    <value>8</value>
+  </data>
+  <data name="btnSave.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top</value>
+  </data>
+  <data name="btnSave.Location" type="System.Drawing.Point, System.Drawing">
+    <value>185, 130</value>
+  </data>
+  <data name="btnSave.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 23</value>
+  </data>
+  <data name="btnSave.TabIndex" type="System.Int32, mscorlib">
+    <value>6</value>
+  </data>
+  <data name="btnSave.Text" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="&gt;&gt;btnSave.Name" xml:space="preserve">
+    <value>btnSave</value>
+  </data>
+  <data name="&gt;&gt;btnSave.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnSave.Parent" xml:space="preserve">
+    <value>tlpLayout</value>
+  </data>
+  <data name="&gt;&gt;btnSave.ZOrder" xml:space="preserve">
+    <value>9</value>
+  </data>
+  <data name="lblShowTooltip.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Right</value>
+  </data>
+  <data name="lblShowTooltip.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="lblShowTooltip.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 23</value>
+  </data>
+  <data name="lblShowTooltip.Size" type="System.Drawing.Size, System.Drawing">
+    <value>111, 13</value>
+  </data>
+  <data name="lblShowTooltip.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="lblShowTooltip.Text" xml:space="preserve">
+    <value>Show tooltip on bricks</value>
+  </data>
+  <data name="&gt;&gt;lblShowTooltip.Name" xml:space="preserve">
+    <value>lblShowTooltip</value>
+  </data>
+  <data name="&gt;&gt;lblShowTooltip.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblShowTooltip.Parent" xml:space="preserve">
+    <value>tlpLayout</value>
+  </data>
+  <data name="&gt;&gt;lblShowTooltip.ZOrder" xml:space="preserve">
+    <value>10</value>
+  </data>
+  <data name="chkDoServerCall.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Left</value>
+  </data>
+  <data name="chkDoServerCall.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="chkDoServerCall.Location" type="System.Drawing.Point, System.Drawing">
+    <value>123, 87</value>
+  </data>
+  <data name="chkDoServerCall.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 0, 0</value>
+  </data>
+  <data name="chkDoServerCall.Size" type="System.Drawing.Size, System.Drawing">
+    <value>132, 17</value>
+  </data>
+  <data name="chkDoServerCall.TabIndex" type="System.Int32, mscorlib">
+    <value>10</value>
+  </data>
+  <data name="chkDoServerCall.Text" xml:space="preserve">
+    <value>(Disables server calls)</value>
+  </data>
+  <data name="&gt;&gt;chkDoServerCall.Name" xml:space="preserve">
+    <value>chkDoServerCall</value>
+  </data>
+  <data name="&gt;&gt;chkDoServerCall.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;chkDoServerCall.Parent" xml:space="preserve">
+    <value>tlpLayout</value>
+  </data>
+  <data name="&gt;&gt;chkDoServerCall.ZOrder" xml:space="preserve">
+    <value>11</value>
+  </data>
+  <data name="chkVerbose.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Left</value>
+  </data>
+  <data name="chkVerbose.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="chkVerbose.Location" type="System.Drawing.Point, System.Drawing">
+    <value>123, 110</value>
+  </data>
+  <data name="chkVerbose.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 30, 0</value>
+  </data>
+  <data name="chkVerbose.Size" type="System.Drawing.Size, System.Drawing">
+    <value>49, 14</value>
+  </data>
+  <data name="chkVerbose.TabIndex" type="System.Int32, mscorlib">
+    <value>12</value>
+  </data>
+  <data name="chkVerbose.TextImageRelation" type="System.Windows.Forms.TextImageRelation, System.Windows.Forms">
+    <value>ImageBeforeText</value>
+  </data>
+  <data name="&gt;&gt;chkVerbose.Name" xml:space="preserve">
+    <value>chkVerbose</value>
+  </data>
+  <data name="&gt;&gt;chkVerbose.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;chkVerbose.Parent" xml:space="preserve">
+    <value>tlpLayout</value>
+  </data>
+  <data name="&gt;&gt;chkVerbose.ZOrder" xml:space="preserve">
+    <value>12</value>
+  </data>
+  <data name="tlpLayout.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="tlpLayout.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="tlpLayout.RowCount" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
+  <data name="tlpLayout.Size" type="System.Drawing.Size, System.Drawing">
+    <value>445, 180</value>
+  </data>
+  <data name="tlpLayout.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;tlpLayout.Name" xml:space="preserve">
+    <value>tlpLayout</value>
+  </data>
+  <data name="&gt;&gt;tlpLayout.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tlpLayout.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;tlpLayout.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="tlpLayout.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="lblVerbose" Row="6" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="lblDoServerCall" Row="5" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="chkShowTooltip" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="chkExtendedTooltip" Row="2" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="lblDeveloperMode" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="chkDeveloperMode" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="lblExtendedTooltip" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="lblUserModelDir" Row="3" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="btnTxtUserModelDir" Row="3" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="btnSave" Row="7" RowSpan="1" Column="0" ColumnSpan="2" /&gt;&lt;Control Name="lblShowTooltip" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="chkDoServerCall" Row="5" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="chkVerbose" Row="6" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="AutoSize,0,Percent,100" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,Percent,50" /&gt;&lt;/TableLayoutSettings&gt;</value>
+  </data>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+    <value>6, 13</value>
+  </data>
+  <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
+    <value>445, 180</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+    <value>LDDSettingsView</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+    <value>System.Windows.Forms.UserControl, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+</root>

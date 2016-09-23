@@ -1,4 +1,4 @@
-﻿namespace LDDModder
+﻿namespace LDDModder.Display.Controls
 {
     partial class LabelEx
     {

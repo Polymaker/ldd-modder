@@ -1,22 +1,21 @@
 ﻿using ICSharpCode.SharpZipLib.Zip;
+using LDDModder.Configuration;
 using LDDModder.LDD.Files;
-using LDDModder.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace LDDModder.LDD
 {
     public static class LDDManager
     {
-        private static bool _InstallChecked;
-        private static string _ApplicationDataPath;
-        private static string _ApplicationPath;
+        private static bool _HasInitialized;
         private static bool _IsInstalled;
         private static bool _IsLibraryDownloaded;
+        private static bool isInitializing;
+
         public const string EXE_NAME = "LDD.exe";
         public const string APP_DIR = "LEGO Company\\LEGO Digital Designer";
         public const string USER_MODELS_DIR = "LEGO Creations\\Models";
@@ -36,15 +35,25 @@ namespace LDDModder.LDD
         /// </summary>
         public static string ApplicationPath
         {
-            get { return _ApplicationPath; }
+            get
+            {
+                if (!HasInitialized)
+                    Initialize();
+                return SettingsManager.LddInstallDirectory;
+            }
         }
 
         /// <summary>
-        /// Gets the user LDD AppData directory.
+        /// Gets the user LDD AppData (roaming) directory.
         /// </summary>
         public static string ApplicationDataPath
         {
-            get { return _ApplicationDataPath; }
+            get
+            {
+                if (!HasInitialized)
+                    Initialize();
+                return SettingsManager.LddAppDataDirectory;
+            }
         }
 
         /// <summary>
@@ -52,7 +61,12 @@ namespace LDDModder.LDD
         /// </summary>
         public static bool IsInstalled
         {
-            get { return _IsInstalled; }
+            get
+            {
+                if (!HasInitialized)
+                    Initialize();
+                return _IsInstalled;
+            }
         }
 
         /// <summary>
@@ -63,9 +77,9 @@ namespace LDDModder.LDD
             get { return _IsLibraryDownloaded; }
         }
 
-        public static bool InstallChecked
+        public static bool HasInitialized
         {
-            get { return _InstallChecked; }
+            get { return _HasInitialized; }
         }
 
         /// <summary>
@@ -79,64 +93,89 @@ namespace LDDModder.LDD
             }
         }
 
-        static LDDManager()
+        public static void Initialize()
         {
-            //InitializeDirectories();
-        }
+            if (isInitializing)
+                return;
 
-        public static void InitializeDirectories()
-        {
+            isInitializing = true;
             _IsInstalled = false;
+
             _IsLibraryDownloaded = false;
-            _InstallChecked = false;
 
-            if(string.IsNullOrEmpty(_ApplicationPath))
-                _ApplicationPath = FindApplicationPath();
+            if (!SettingsManager.HasLoadedOnce)
+                SettingsManager.Load();
 
-            if (string.IsNullOrEmpty(_ApplicationDataPath))
-                _ApplicationDataPath = GetLocalAppDataPath();
+            _IsInstalled = FindInstallPath();
 
-            if (!string.IsNullOrEmpty(ApplicationPath))
-                _IsInstalled = File.Exists(Path.Combine(ApplicationPath, EXE_NAME));
-
-            if (IsInstalled && !string.IsNullOrEmpty(ApplicationDataPath))
+            if (_IsInstalled && FindAppDataPath())
                 _IsLibraryDownloaded = Directory.GetFiles(ApplicationDataPath, "*.lif").Length > 0;
 
-            _InstallChecked = true;
+
+
+            if (SettingsManager.HasChanges)
+                SettingsManager.Save();
+
+            isInitializing = false;
+            _HasInitialized = true;
         }
 
-        public static void SetApplicationPath(string filepath)
+        private static bool FindInstallPath()
         {
-            if (!string.IsNullOrEmpty(filepath) && File.Exists(Path.Combine(filepath, EXE_NAME)))
-            {
-                _ApplicationPath = filepath;
-                InitializeDirectories();
-            }
-        }
-
-        static string FindApplicationPath()
-        {
-            //TODO: save to config file
+            if (!string.IsNullOrEmpty(SettingsManager.LddInstallDirectory) &&
+                ValidateInstallDirectory(SettingsManager.LddInstallDirectory))
+                return true;
+            
             string programFilesPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
             programFilesPath = programFilesPath.Split(Path.VolumeSeparatorChar)[1].Substring(1);
+
             foreach (string volume in Environment.GetLogicalDrives())
             {
                 string installPath = Path.Combine(volume + programFilesPath, APP_DIR);
 
-                if (Directory.Exists(installPath))
-                    return installPath;
+                if (ValidateInstallDirectory(installPath))
+                {
+                    SettingsManager.LddInstallDirectory.Value = installPath;
+                    return true;
+                }
             }
-            //TODO: maybe search registry
-            return string.Empty;
+
+            SettingsManager.LddInstallDirectory.Value = string.Empty;
+            return false;
         }
 
-        static string GetLocalAppDataPath()
+        public static void SetApplicationPath(string filepath)
         {
+            if (ValidateInstallDirectory(filepath))
+            {
+                SettingsManager.LddInstallDirectory.Value = filepath;
+            }
+        }
+
+        public static bool ValidateInstallDirectory(string directory)
+        {
+            if (string.IsNullOrWhiteSpace(directory) || !Directory.Exists(directory))
+                return false;
+            return File.Exists(Path.Combine(directory, EXE_NAME));
+        }
+
+        private static bool FindAppDataPath()
+        {
+            if (!string.IsNullOrEmpty(SettingsManager.LddAppDataDirectory) &&
+                Directory.Exists(SettingsManager.LddAppDataDirectory))
+                return true;
+
             string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             localAppData = Path.Combine(localAppData, APP_DIR);
+
             if (Directory.Exists(localAppData))
-                return localAppData;
-            return string.Empty;
+            {
+                SettingsManager.LddAppDataDirectory.Value = localAppData;
+                return true;
+            }
+
+            SettingsManager.LddAppDataDirectory.Value = string.Empty;
+            return false;
         }
 
         #region Lifs SubDirectories enum
@@ -268,12 +307,16 @@ namespace LDDModder.LDD
 
         internal static void RenameLif(string lifFilePath)
         {
+            if (!File.Exists(lifFilePath))
+                return;
             string newName = Path.Combine(Path.GetDirectoryName(lifFilePath), "_" + Path.GetFileName(lifFilePath));
             File.Move(lifFilePath, newName);
         }
 
         internal static void CompressLif(string lifFilePath)
         {
+            if (!File.Exists(lifFilePath))
+                return;
             string zippedLifPath = Path.ChangeExtension(lifFilePath, "zip");
             using (ZipOutputStream zipStream = new ZipOutputStream(File.Create(zippedLifPath)))
             {
@@ -303,6 +346,7 @@ namespace LDDModder.LDD
         #endregion
 
         #region GetDirectory
+
 
         public static string GetDirectory(LDDLocation directory)
         {
@@ -362,31 +406,48 @@ namespace LDDModder.LDD
             if (!GetSettingValue(key, source, out settingValue) || 
                 string.IsNullOrEmpty(settingValue))
                 return defaultValue;
-            return settingValue == "1" || settingValue == "yes";
+            settingValue = settingValue.Trim().ToLower();
+            return settingValue == "1" || settingValue == "yes" || settingValue == "true";
         }
 
         public static bool GetSettingValue(string key, LDDLocation source, out string value)
         {
             value = string.Empty;
-            using (var fs = File.OpenRead(GetSettingsFilePath(source)))
+
+            string settingsPath = GetSettingsFilePath(source);
+
+            if (!File.Exists(settingsPath))
             {
-                using (var sr = new StreamReader(fs))
+                Trace.WriteLine("Warning! LDD preference.ini file not found.");
+                return false;
+            }
+
+            try
+            {
+                using (var fs = File.OpenRead(settingsPath))
                 {
-                    string line = null;
-                    while ((line = sr.ReadLine()) != null)
+                    using (var sr = new StreamReader(fs))
                     {
-                        if (!line.Contains('='))
-                            continue;
-
-                        string keyName = line.Substring(0, line.IndexOf('='));
-
-                        if (keyName.Equals(key, StringComparison.InvariantCultureIgnoreCase))
+                        string line = null;
+                        while ((line = sr.ReadLine()) != null)
                         {
-                            value = line.Substring(line.IndexOf('=') + 1);
-                            break;
+                            if (!line.Contains('='))
+                                continue;
+
+                            string keyName = line.Substring(0, line.IndexOf('='));
+
+                            if (keyName.Equals(key, StringComparison.InvariantCultureIgnoreCase))
+                            {
+                                value = line.Substring(line.IndexOf('=') + 1);
+                                break;
+                            }
                         }
                     }
                 }
+            }
+            catch (Exception ex)
+	        {
+                Trace.WriteLine("Warning! Exception while reading LDD preferences.ini" + Environment.NewLine + ex.ToString());
             }
             
             return !string.IsNullOrEmpty(value);
@@ -394,7 +455,25 @@ namespace LDDModder.LDD
 
         public static void SetSetting(string key, string value, LDDLocation source)
         {
-            var settingsLines = File.ReadAllLines(GetSettingsFilePath(source)).ToList();
+            string settingsPath = GetSettingsFilePath(source);
+
+            if (!File.Exists(settingsPath))
+            {
+                Trace.WriteLine("Warning! LDD preference.ini file not found.");
+                return;
+            }
+
+            List<string> settingsLines;
+
+            try
+            {
+                settingsLines = File.ReadAllLines(settingsPath).ToList();
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine("Warning! Exception while reading LDD preferences.ini" + Environment.NewLine + ex.ToString());
+                return;
+            }
 
             settingsLines.RemoveAll(s => string.IsNullOrWhiteSpace(s));
 
@@ -417,14 +496,20 @@ namespace LDDModder.LDD
 
             //LDD always add two blank lines
             settingsLines.Add(String.Empty); settingsLines.Add(String.Empty);
-
-            using (var fs = File.Create(GetSettingsFilePath(source)))
+            try
             {
-                using (var sw = new StreamWriter(fs))
+                using (var fs = File.Create(settingsPath))
                 {
-                    foreach (var line in settingsLines)
-                        sw.WriteLine(line);
+                    using (var sw = new StreamWriter(fs))
+                    {
+                        foreach (var line in settingsLines)
+                            sw.WriteLine(line);
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine("Warning! Exception while writing LDD preferences.ini"+ Environment.NewLine + ex.ToString());
             }
         }
 

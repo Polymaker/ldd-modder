@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace LDDModder
+namespace LDDModder.Configuration
 {
-    static class AppSettings
+    public enum SettingType
     {
-
+        Application,
+        User
     }
 }

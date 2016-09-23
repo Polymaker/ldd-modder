@@ -44,7 +44,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AppSettings.cs" />
+    <Compile Include="Configuration\SettingEntry.cs" />
+    <Compile Include="Configuration\SettingsManager.cs" />
+    <Compile Include="Configuration\SettingSource.cs" />
+    <Compile Include="Configuration\SettingType.cs" />
     <Compile Include="IO\BinaryReaderEx.cs" />
     <Compile Include="IO\StreamPortion.cs" />
     <Compile Include="LDD\General\Brand.cs" />

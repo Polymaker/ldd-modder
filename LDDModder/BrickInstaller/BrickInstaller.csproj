@@ -42,7 +42,6 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -52,7 +51,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>LocalizedStrings.resx</DependentUpon>
     </Compile>
-    <Compile Include="PackageInstaller.cs" />
+    <Compile Include="InstallHelper.cs" />
     <Compile Include="FrmPackageBrowser.cs">
       <SubType>Form</SubType>
     </Compile>

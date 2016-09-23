@@ -8,7 +8,7 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 
-namespace LDDModder
+namespace LDDModder.Display.Controls
 {
     public partial class LabelEx : Label
     {

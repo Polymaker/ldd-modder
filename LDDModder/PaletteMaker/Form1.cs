@@ -72,7 +72,7 @@ namespace LDDModder.PaletteMaker
         {
             var paletteList = new List<LddPalette>();
 
-            foreach (string plifPath in Directory.GetFiles(PaletteManager.LDDPalettesDirectory, "*.lif"))
+            foreach (string plifPath in Directory.GetFiles(PaletteManager.LddPalettesDirectory, "*.lif"))
             {
                 using (var lifStream = LifFile.Open(plifPath))
                 {
@@ -96,7 +96,7 @@ namespace LDDModder.PaletteMaker
                 }
             }
 
-            foreach (string subDirPath in Directory.GetDirectories(PaletteManager.LDDPalettesDirectory))
+            foreach (string subDirPath in Directory.GetDirectories(PaletteManager.LddPalettesDirectory))
             {
                 if (!File.Exists(Path.Combine(subDirPath, Bag.FileName)))
                     continue;
