@@ -71,5 +71,16 @@ namespace LDDModder.LDD.Primitives
             return Grabbing;
         }
 
+        public enum SubTypes : uint
+        {
+            PinFemale = 2,
+            PinMale = 3,//thick, can't fit a bar inside
+            PinMale2 = 19,//thin, can fit a bar inside
+            CrossAxleFemale = 4,
+            CrossAxleMale = 5,
+            BarFemale = 6,
+            BarMale = 7,
+            Hole = 8
+        }
     }
 }

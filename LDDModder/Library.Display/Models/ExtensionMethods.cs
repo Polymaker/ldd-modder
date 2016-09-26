@@ -10,34 +10,45 @@ namespace LDDModder.Display.Models
 {
     public static class ExtensionMethods
     {
-        public static Vector3 GetTranslation(this Collision collision)
+
+        public static Vector3 GetTranslation(this Transform transform)
         {
-            return new Vector3((float)collision.Tx, (float)collision.Ty, (float)collision.Tz);
+            return new Vector3((float)transform.Tx, (float)transform.Ty, (float)transform.Tz);
         }
 
-        public static Vector3 GetTranslation(this Connectivity connection)
+        public static Vector3 GetRotationAxis(this Transform transform)
         {
-            return new Vector3((float)connection.Tx, (float)connection.Ty, (float)connection.Tz);
+            return new Vector3((float)transform.Ax, (float)transform.Ay, (float)transform.Az);
         }
 
-        public static Vector3 GetRotationAxis(this Collision collision)
+        public static Rotation GetRotation(this Transform transform)
         {
-            return new Vector3((float)collision.Ax, (float)collision.Ay, (float)collision.Az);
+            return Rotation.FromAxisAngle(transform.GetRotationAxis(), Angle.FromDegrees((float)transform.Angle));
         }
 
-        public static Vector3 GetRotationAxis(this Connectivity connection)
+        public static ComplexTransform Get3dTransform(this Transform transform)
         {
-            return new Vector3((float)connection.Ax, (float)connection.Ay, (float)connection.Az);
+            return new ComplexTransform(GetTranslation(transform), GetRotation(transform));
         }
 
-        public static Rotation GetRotation(this Collision collision)
+        public static ComplexTransform Get3dTransform(this Connectivity connection)
         {
-            return Rotation.FromAxisAngle(collision.GetRotationAxis(), Angle.FromDegrees((float)collision.Angle));
+            return Get3dTransform(connection.Transform);
         }
 
-        public static Rotation GetRotation(this Connectivity connection)
+        public static ComplexTransform Get3dTransform(this Collision collision)
         {
-            return Rotation.FromAxisAngle(connection.GetRotationAxis(), Angle.FromDegrees((float)connection.Angle));
+            return Get3dTransform(collision.Transform);
         }
+
+        public static Transform ToLddTransform(this Poly3D.Engine.Transform transform)
+        {
+            var trans = transform.WorldPosition;
+            Vector3 rotAxis;
+            float rotAngle;
+            transform.WorldRotation.Quaternion.ToAxisAngle(out rotAxis, out rotAngle);
+            return new Transform(rotAngle, rotAxis.X, rotAxis.Y, rotAxis.Z, trans.X, trans.Y, trans.Z);
+        }
+
     }
 }

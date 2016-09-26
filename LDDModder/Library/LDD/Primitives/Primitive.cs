@@ -30,7 +30,7 @@ namespace LDDModder.LDD.Primitives
 
         public BoundingBox GeometryBounding { get; set; }
 
-        public Orientation DefaultOrientation { get; set; }
+        public Transform DefaultOrientation { get; set; }
 
         public Camera DefaultCamera { get; set; }
 
@@ -128,7 +128,7 @@ namespace LDDModder.LDD.Primitives
 
             var defaultOrientationElem = element.Element("DefaultOrientation");
             if (defaultOrientationElem != null)
-                DefaultOrientation = XSerializationHelper.DefaultDeserialize<Orientation>(defaultOrientationElem);
+                DefaultOrientation = XSerializationHelper.DefaultDeserialize<Transform>(defaultOrientationElem);
 
             var defaultCameraElem = element.Element("DefaultCamera");
             if (defaultCameraElem != null)

@@ -57,7 +57,7 @@ namespace LDDModder.Views
                 if (collObj != null)
                 {
                     MyObjects.Add(collObj);
-                    var renderer = collObj.GetComponent<MeshRenderer>();
+                    var renderer = collObj.GetComponentDownward<MeshRenderer>();
                     renderer.Materials[0].DiffuseColor = Color.FromArgb(120,255,0,0);
                     //renderer.Mode = RenderMode.Transparent;
                     //collObj.RenderLayer = 1;
@@ -70,7 +70,7 @@ namespace LDDModder.Views
                 if (connObj != null)
                 {
                     MyObjects.Add(connObj);
-                    var renderer = connObj.GetComponent<MeshRenderer>();
+                    var renderer = connObj.GetComponentDownward<MeshRenderer>();
                     renderer.Materials[0].DiffuseColor = Color.FromArgb(80, 0, 0, 255);
                     //renderer.Mode = RenderMode.Transparent;
                     //connObj.RenderLayer = 1;
@@ -111,7 +111,7 @@ namespace LDDModder.Views
 
         private void button1_Click(object sender, EventArgs e)
         {
-            LoadBrick(10130);
+            LoadBrick(10089);
         }
     }
 }

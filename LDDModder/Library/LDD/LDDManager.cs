@@ -37,8 +37,7 @@ namespace LDDModder.LDD
         {
             get
             {
-                if (!HasInitialized)
-                    Initialize();
+                InitializeOnce();
                 return SettingsManager.LddInstallDirectory;
             }
         }
@@ -50,8 +49,7 @@ namespace LDDModder.LDD
         {
             get
             {
-                if (!HasInitialized)
-                    Initialize();
+                InitializeOnce();
                 return SettingsManager.LddAppDataDirectory;
             }
         }
@@ -63,8 +61,7 @@ namespace LDDModder.LDD
         {
             get
             {
-                if (!HasInitialized)
-                    Initialize();
+                InitializeOnce();
                 return _IsInstalled;
             }
         }
@@ -74,7 +71,11 @@ namespace LDDModder.LDD
         /// </summary>
         public static bool IsLibraryDownloaded
         {
-            get { return _IsLibraryDownloaded; }
+            get
+            {
+                InitializeOnce();
+                return _IsLibraryDownloaded;
+            }
         }
 
         public static bool HasInitialized
@@ -91,6 +92,12 @@ namespace LDDModder.LDD
             {
                 return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), USER_MODELS_DIR);
             }
+        }
+
+        private static void InitializeOnce()
+        {
+            if (!HasInitialized && !isInitializing)
+                Initialize();
         }
 
         public static void Initialize()
@@ -346,7 +353,6 @@ namespace LDDModder.LDD
         #endregion
 
         #region GetDirectory
-
 
         public static string GetDirectory(LDDLocation directory)
         {

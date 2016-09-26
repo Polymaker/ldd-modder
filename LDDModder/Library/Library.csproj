@@ -80,6 +80,7 @@
     <Compile Include="LDD\Primitives\Collision.cs" />
     <Compile Include="LDD\Primitives\CollisionBox.cs" />
     <Compile Include="LDD\Primitives\CollisionSphere.cs" />
+    <Compile Include="LDD\Primitives\Connectivity\ConnectorInfo.cs" />
     <Compile Include="LDD\Primitives\Connectivity\ConnectivityAxel.cs" />
     <Compile Include="LDD\Primitives\Connectivity\ConnectivityBall.cs" />
     <Compile Include="LDD\Primitives\Connectivity\ConnectivityCustom2DField.cs" />
@@ -92,7 +93,7 @@
     <Compile Include="LDD\Primitives\Connectivity\ConnectivityType.cs" />
     <Compile Include="LDD\Primitives\Decoration.cs" />
     <Compile Include="LDD\Primitives\FlexBone.cs" />
-    <Compile Include="LDD\Primitives\Orientation.cs" />
+    <Compile Include="LDD\Primitives\Transform.cs" />
     <Compile Include="LDD\Primitives\PhysicsAttributes.cs" />
     <Compile Include="LDD\Primitives\Primitive.cs" />
     <Compile Include="Modding\BrickPackage.cs" />
@@ -118,6 +119,7 @@
     <Compile Include="Rebrickable\RebrickableAPI.cs" />
     <Compile Include="Rebrickable\RequestMethod.cs" />
     <Compile Include="Serialization\XmlTextWriterEx.cs" />
+    <Compile Include="Utilities\ExtensionMethods\NumberExtensions.cs" />
     <Compile Include="Utilities\ExtensionMethods\XmlLinqExtensions.cs" />
     <Compile Include="Utilities\ExtensionMethods\ListExtensions.cs" />
     <Compile Include="Utilities\ExtensionMethods\StringExtensions.cs" />

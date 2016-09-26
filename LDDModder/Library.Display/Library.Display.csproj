@@ -114,7 +114,7 @@
     <EmbeddedResource Include="Resources\Models\Cross2.obj" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Models\Ball.obj" />
+    <EmbeddedResource Include="Resources\Models\TowBall.obj" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Models\Cross1.obj" />
@@ -126,10 +126,16 @@
     <EmbeddedResource Include="Resources\Models\Sphere.obj" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Models\Pin1.obj" />
+    <EmbeddedResource Include="Resources\Models\BarFemale.obj" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Models\Pole1.obj" />
+    <EmbeddedResource Include="Resources\Models\BarMale.obj" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Models\Pin1Male.obj" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Models\Pin1Female.obj" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

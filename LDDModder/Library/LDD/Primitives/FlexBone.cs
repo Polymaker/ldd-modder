@@ -21,21 +21,6 @@ namespace LDDModder.LDD.Primitives
         [XmlAttribute("flexCheckConnection")]
         public string FlexCheckConnection { get; set; }
 
-        //[XmlAttribute("angle")]
-        //public float Angle { get; set; }
-        //[XmlAttribute("ax")]
-        //public float Ax { get; set; }
-        //[XmlAttribute("ay")]
-        //public float Ay { get; set; }
-        //[XmlAttribute("az")]
-        //public float Az { get; set; }
-        //[XmlAttribute("tx")]
-        //public float Tx { get; set; }
-        //[XmlAttribute("ty")]
-        //public float Ty { get; set; }
-        //[XmlAttribute("tz")]
-        //public float Tz { get; set; }
-
         public List<Collision> Collisions
         {
             get { return _Collisions; }
@@ -46,7 +31,7 @@ namespace LDDModder.LDD.Primitives
             get { return _Connections; }
         }
 
-        public Orientation Orientation { get; set; }
+        public Transform Transform { get; set; }
 
         public PhysicsAttributes PhysicsAttributes { get; set; }
 
@@ -68,9 +53,9 @@ namespace LDDModder.LDD.Primitives
             if(!string.IsNullOrEmpty(FlexCheckConnection))
                 root.Add(new XAttribute("flexCheckConnection", FlexCheckConnection));
 
-            var orientationElem = LDDModder.Serialization.XSerializationHelper.Serialize(Orientation);
-            foreach (var orientAttr in orientationElem.Attributes())
-                root.Add(orientAttr);
+            var tranformElem = LDDModder.Serialization.XSerializationHelper.Serialize(Transform);
+            foreach (var transformAttr in tranformElem.Attributes())
+                root.Add(transformAttr);
 
             //Collisions
             if (Collisions.Count > 0)
@@ -121,7 +106,7 @@ namespace LDDModder.LDD.Primitives
             if (physAttrElem != null)
                 PhysicsAttributes = LDDModder.Serialization.XSerializationHelper.DefaultDeserialize<PhysicsAttributes>(physAttrElem);
 
-            Orientation = LDDModder.Serialization.XSerializationHelper.DefaultDeserialize<Orientation>(element);
+            Transform = LDDModder.Serialization.XSerializationHelper.DefaultDeserialize<Transform>(element);
             
         }
     }

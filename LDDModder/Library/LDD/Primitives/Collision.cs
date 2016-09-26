@@ -12,20 +12,23 @@ namespace LDDModder.LDD.Primitives
     {
         internal static string[] AttributeOrder = new string[] { "angle", "ax", "ay", "az", "tx", "ty", "tz" };
 
-        [XmlAttribute("angle")]
-        public double Angle { get; set; }
-        [XmlAttribute("ax")]
-        public double Ax { get; set; }
-        [XmlAttribute("ay")]
-        public double Ay { get; set; }
-        [XmlAttribute("az")]
-        public double Az { get; set; }
-        [XmlAttribute("tx")]
-        public double Tx { get; set; }
-        [XmlAttribute("ty")]
-        public double Ty { get; set; }
-        [XmlAttribute("tz")]
-        public double Tz { get; set; }
+        //[XmlAttribute("angle")]
+        //public double Angle { get; set; }
+        //[XmlAttribute("ax")]
+        //public double Ax { get; set; }
+        //[XmlAttribute("ay")]
+        //public double Ay { get; set; }
+        //[XmlAttribute("az")]
+        //public double Az { get; set; }
+        //[XmlAttribute("tx")]
+        //public double Tx { get; set; }
+        //[XmlAttribute("ty")]
+        //public double Ty { get; set; }
+        //[XmlAttribute("tz")]
+        //public double Tz { get; set; }
+
+        [XmlIgnore]
+        public Transform Transform { get; set; }
 
         public static IEnumerable<Collision> Deserialize(IEnumerable<XElement> nodes)
         {
@@ -33,7 +36,11 @@ namespace LDDModder.LDD.Primitives
             {
                 var result = Deserialize(node);
                 if (result != null)
+                {
+                    var transfo = LDDModder.Serialization.XSerializationHelper.DefaultDeserialize<Transform>(node);
+                    result.Transform = transfo;
                     yield return result;
+                }
             }
         }
 
@@ -72,6 +79,9 @@ namespace LDDModder.LDD.Primitives
                 var result = LDDModder.Serialization.XSerializationHelper.Serialize(colObj);
                 if (result != null)
                 {
+                    var tranformElem = LDDModder.Serialization.XSerializationHelper.Serialize(colObj.Transform);
+                    foreach (var transformAttr in tranformElem.Attributes())
+                        result.Add(transformAttr);
                     result.SortAttributes(a => Array.IndexOf(AttributeOrder, a.Name.LocalName));
                     yield return result;
                 }

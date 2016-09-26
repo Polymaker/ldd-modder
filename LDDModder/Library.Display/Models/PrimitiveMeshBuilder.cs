@@ -6,6 +6,8 @@ using Poly3D.Engine.Data;
 using Poly3D.Engine.Meshes;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -81,8 +83,7 @@ namespace LDDModder.Display.Models
 
             var meshObject = scene.AddObject<SceneObject>();
             meshObject.AddComponent<MeshRenderer>().Mesh = mesh;
-            meshObject.Transform.Translate(collision.GetTranslation(), RelativeSpace.Parent);
-            meshObject.Transform.Rotation = collision.GetRotation();
+            meshObject.Transform.SetTransform(collision.Get3dTransform(), SceneSpace.World);
             return meshObject;
         }
 
@@ -119,71 +120,145 @@ namespace LDDModder.Display.Models
             if (mesh == null)
                 return null;
 
-            var meshObject = scene.AddObject<SceneObject>();
+            var connectionObject = scene.AddObject<SceneObject>();
+            
+            connectionObject.Transform.SetTransform(connection.Get3dTransform(), SceneSpace.World);
+
+            //the mesh is in a separate object to keep the ldd transform and the mesh transform separated
+            var meshObject = connectionObject.AddObject();
             meshObject.AddComponent<MeshRenderer>().Mesh = mesh;
-            meshObject.Transform.Translate(connection.GetTranslation(), RelativeSpace.Parent);
-            meshObject.Transform.Rotation = connection.GetRotation();
 
             if (connection.Type == ConnectivityType.Axel)
             {
                 var axel = (ConnectivityAxel)connection;
-                if ((axel.SubType == 2 || axel.SubType == 4) && axel.Length <= 1.6)
+                if ((axel.SubType == 2 || axel.SubType == 4) && (axel.StartCapped || axel.EndCapped))
                 {
                     if (axel.StartCapped)
                         meshObject.Transform.Translate(new Vector3(0, 0.8f, 0), RelativeSpace.Self);
                 }
+                if ((axel.SubType == 3 || axel.SubType == 19) && axel.Length.IsCloseTo(0.8, 0.05))//male pin (model orientation is important)
+                {
+                    if (axel.EndCapped)//if the end is capped, flip (180) the model and reposition (the origin is not at center)
+                    {
+                        meshObject.Transform.Rotate(new Vector3(180, 0, 0), RelativeSpace.Parent);
+                        meshObject.Transform.Translate(Vector3.UnitY * (float)-axel.Length, RelativeSpace.Self);
+                    }
+                }
             }
             
-            return meshObject;
+            return connectionObject;
         }
 
         public static Mesh CreateConnectivityMesh(Connectivity connection)
         {
-            if (connection is ConnectivityAxel)
-            {
-                var axleConn = (ConnectivityAxel)connection;
-                if (axleConn.SubType == 2 || axleConn.SubType == 6)//Pin connector
-                {
-                    if (axleConn.SubType == 2 && axleConn.Length <= 1.6)//SubType 2 = Pin connector (Female)
-                        return WavefrontMeshLoader.LoadWavefrontObj(ResourcesHelper.GetResource("Models.Pin2.obj"));
-                    else//SubType 6 = Pin connector (Male)
-                    {
-                        var pinMesh = WavefrontMeshLoader.LoadWavefrontObj(ResourcesHelper.GetResource("Models.Pin1.obj"));
-                        ScaleMesh(pinMesh, new Vector3(1f, (float)axleConn.Length / 0.8f, 1f));
-                        return pinMesh;
-                    }
-                }
-                else if (axleConn.SubType == 4 || axleConn.SubType == 5)//Cross axle connector
-                {
-                    if (axleConn.SubType == 4 && axleConn.Length <= 1.6)//SubType 4 = Cross axle connector (Female)
-                        return WavefrontMeshLoader.LoadWavefrontObj(ResourcesHelper.GetResource("Models.Cross2.obj"));
-                    else//SubType 5 = Cross axle connector (Male)
-                    {
-                        var axleMesh = WavefrontMeshLoader.LoadWavefrontObj(ResourcesHelper.GetResource("Models.Cross1.obj"));
-                        ScaleMesh(axleMesh, new Vector3(1f, (float)axleConn.Length / 0.8f, 1f));
-                        return axleMesh;
-                    }
-                }
-                else if (axleConn.SubType == 19)//SubType 19 = Pole (Male)
-                {
-                    var poleMesh = WavefrontMeshLoader.LoadWavefrontObj(ResourcesHelper.GetResource("Models.Pole1.obj"));
-                    var adjustedLength = (float)axleConn.Length + (!axleConn.StartCapped ? 0.4f : 0) + (!axleConn.EndCapped ? 0.4f : 0);
-                    ScaleMesh(poleMesh, new Vector3(1f, adjustedLength / 0.8f, 1f));
+            if (connection.Type == ConnectivityType.Custom2DField)
+                return null;
 
-                    if ((!axleConn.StartCapped || !axleConn.EndCapped) && axleConn.StartCapped != axleConn.EndCapped)
-                    {
-                        TranslateMesh(poleMesh, new Vector3(0, axleConn.StartCapped ? 0.2f : -0.2f, 0));
-                    }
-                    return poleMesh;
-                }
+            if (connection.Type == ConnectivityType.Axel)
+            {
+                return GetAxelMesh((ConnectivityAxel)connection);
             }
-            else if (connection is ConnectivityBall)
-                return WavefrontMeshLoader.LoadWavefrontObj(ResourcesHelper.GetResource("Models.Ball.obj"));
+            else if (connection.Type == ConnectivityType.Ball)
+            {
+                if(connection.SubType == 2 || connection.SubType == 3)//towball (3 = male, 2 = female)
+                    return WavefrontMeshLoader.LoadWavefrontObj(ResourcesHelper.GetResource("Models.TowBall.obj"));
+            }
+
+            //var sphereMesh = WavefrontMeshLoader.LoadWavefrontObj(ResourcesHelper.GetResource("Models.Sphere.obj"));
+            //ScaleMesh(sphereMesh, new Vector3(0.4f));
+            //return sphereMesh;
+            return null;
+        }
+
+        private static Mesh GetAxelMesh(ConnectivityAxel axleConn)
+        {
+            //***** TECHNIC PINS ******
+            if (axleConn.SubType == (int)ConnectivityAxel.SubTypes.PinFemale)
+            {
+                float adjustedLength = (float)axleConn.Length;
+
+                //if either end is capped, use a male pin model to show connection direction
+                if (axleConn.StartCapped || axleConn.EndCapped)
+                {
+                    if (axleConn.Length.IsCloseTo(0.8, 0.05))
+                        return LoadResourceMesh("Models.Pin2.obj");
+                    adjustedLength += 0.8f;//add one base unit to protrude
+                }
+
+                if (axleConn.Length.IsCloseTo(0.8, 0.05))
+                    return LoadResourceMesh("Models.Pin1Female.obj");
+
+                if (!(axleConn.StartCapped || axleConn.EndCapped))
+                    Trace.WriteLine("Weird sized Pin connector!");
+
+                var pinMesh = LoadResourceMesh("Models.BarFemale.obj");
+                ScaleMesh(pinMesh, new Vector3(1f, adjustedLength / 0.8f, 1f));
+                return pinMesh;
+            }
+            else if (axleConn.SubType == (int)ConnectivityAxel.SubTypes.PinMale || 
+                     axleConn.SubType == (int)ConnectivityAxel.SubTypes.PinMale2)
+            {
+                if (axleConn.Length.IsCloseTo(0.8, 0.05))
+                    return LoadResourceMesh("Models.Pin1Male.obj");
+
+                var pinMesh = LoadResourceMesh("Models.BarFemale.obj");
+                ScaleMesh(pinMesh, new Vector3(1f, (float)axleConn.Length / 0.8f, 1f));
+                return pinMesh;
+            }
+
+            //***** TECHNIC CROSS AXLE ******
+            if (axleConn.SubType == (int)ConnectivityAxel.SubTypes.CrossAxleFemale)
+            {
+                float adjustedLength = (float)axleConn.Length;
+
+                //if either end is capped, use a male cross axle model to show connection direction
+                if (axleConn.StartCapped || axleConn.EndCapped)
+                {
+                    if(axleConn.Length.IsCloseTo(0.8, 0.05))
+                        return LoadResourceMesh("Models.Cross2.obj");//cross axle 2m with notches
+                    adjustedLength += 0.8f;//add one base unit to protrude
+                }
+
+                //if (axleConn.Length.IsCloseTo(1.6, 0.05))
+                //    return LoadResourceMesh("Models.Cross2.obj");
+
+                var axleMesh = WavefrontMeshLoader.LoadWavefrontObj(ResourcesHelper.GetResource("Models.Cross1.obj"));
+                ScaleMesh(axleMesh, new Vector3(1f, adjustedLength / 0.8f, 1f));
+                return axleMesh;
+            }
+            else if (axleConn.SubType == (int)ConnectivityAxel.SubTypes.CrossAxleMale)
+            {
+                var axleMesh = WavefrontMeshLoader.LoadWavefrontObj(ResourcesHelper.GetResource("Models.Cross1.obj"));
+                ScaleMesh(axleMesh, new Vector3(1f, (float)axleConn.Length / 0.8f, 1f));
+                return axleMesh;
+            }
 
             return null;
         }
 
         #endregion
+
+        private static Mesh LoadResourceMesh(string resourceName)
+        {
+
+            Stream resourceStream = null;
+            try
+            {
+                resourceStream = ResourcesHelper.GetResource(resourceName);
+                if (resourceStream == null)
+                    return null;
+                return WavefrontMeshLoader.LoadWavefrontObj(resourceStream);
+            }
+            catch
+            {
+                return null;
+            }
+            finally
+            {
+                if (resourceStream != null)
+                    resourceStream.Dispose();
+            }
+        }
 
         private static void ScaleMesh(Mesh mesh, Vector3 scaleFactor)
         {

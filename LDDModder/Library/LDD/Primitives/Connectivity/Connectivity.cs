@@ -11,24 +11,50 @@ namespace LDDModder.LDD.Primitives
     [Serializable]
     public abstract class Connectivity
     {
+        private int _SubType;
+        private ConnectorInfo _Info;
+
         [XmlIgnore]
         public abstract ConnectivityType Type { get; }
         [XmlAttribute("type")]
-        public int SubType { get; set; }
-        [XmlAttribute("angle")]
-        public double Angle { get; set; }
-        [XmlAttribute("ax")]
-        public double Ax { get; set; }
-        [XmlAttribute("ay")]
-        public double Ay { get; set; }
-        [XmlAttribute("az")]
-        public double Az { get; set; }
-        [XmlAttribute("tx")]
-        public double Tx { get; set; }
-        [XmlAttribute("ty")]
-        public double Ty { get; set; }
-        [XmlAttribute("tz")]
-        public double Tz { get; set; }
+        public int SubType
+        {
+            get { return _SubType; }
+            set
+            {
+                _SubType = value;
+                _Info = null;
+            }
+        }
+        
+        [XmlIgnore]
+        public Transform Transform { get; set; }
+
+        //[XmlAttribute("angle")]
+        //public double Angle { get; set; }
+        //[XmlAttribute("ax")]
+        //public double Ax { get; set; }
+        //[XmlAttribute("ay")]
+        //public double Ay { get; set; }
+        //[XmlAttribute("az")]
+        //public double Az { get; set; }
+        //[XmlAttribute("tx")]
+        //public double Tx { get; set; }
+        //[XmlAttribute("ty")]
+        //public double Ty { get; set; }
+        //[XmlAttribute("tz")]
+        //public double Tz { get; set; }
+
+        [XmlIgnore]
+        public ConnectorInfo Info
+        {
+            get
+            {
+                if (_Info == null)
+                    _Info = ConnectorInfo.Connectors.FirstOrDefault(c => c.Type == Type && c.SubType == SubType);
+                return _Info;
+            }
+        }
 
         protected virtual void OnDeserialized()
         {
@@ -45,13 +71,17 @@ namespace LDDModder.LDD.Primitives
             }
         }
 
-        public static IEnumerable<XElement> Serialize(IEnumerable<Connectivity> collisions)
+        public static IEnumerable<XElement> Serialize(IEnumerable<Connectivity> connections)
         {
-            foreach (var conObj in collisions)
+            foreach (var conObj in connections)
             {
                 var result = LDDModder.Serialization.XSerializationHelper.Serialize(conObj);
+
                 if (result != null)
                 {
+                    var tranformElem = LDDModder.Serialization.XSerializationHelper.Serialize(conObj.Transform);
+                    foreach (var transformAttr in tranformElem.Attributes())
+                        result.Add(transformAttr);
                     OrderAttributes(result);
                     yield return result;
                 }
@@ -104,7 +134,9 @@ namespace LDDModder.LDD.Primitives
             var connectivityType = GetConnectivityType(node.Name.LocalName);
             if (connectivityType != null)
             {
+                var transfo = LDDModder.Serialization.XSerializationHelper.DefaultDeserialize<Transform>(node);
                 var connectivityObject = (Connectivity)LDDModder.Serialization.XSerializationHelper.DefaultDeserialize(node, connectivityType);
+                connectivityObject.Transform = transfo;
                 if (connectivityObject != null)
                     connectivityObject.OnDeserialized();
                 return connectivityObject;
@@ -113,5 +145,19 @@ namespace LDDModder.LDD.Primitives
             return null;
         }
 
+
+        public bool ConnectsTo(Connectivity other)
+        {
+            //TODO: create a dictionnary/list/table/whatever that contains possibles connections (some connectors can fit with other than it's male/female counterpart)
+
+            var myConnector = Info;
+            var otherConnector = other.Info;
+            if (myConnector == null || otherConnector == null)
+                return false;
+
+            return myConnector.Type == otherConnector.Type && 
+                myConnector.Name == otherConnector.Name && 
+                myConnector.IsMale != otherConnector.IsMale;
+        }
     }
 }
