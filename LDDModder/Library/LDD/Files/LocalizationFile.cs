@@ -9,33 +9,33 @@ namespace LDDModder.LDD.Files
 {
     public class LocalizationFile : IDisposable
     {
-        private Dictionary<string, string> _Localizations;
+        private Dictionary<string, string> _Entries;
         private Stream FileStream;
 
         public string this[string keyName]
         {
             get
             {
-                return Localizations[keyName];
+                return Entries[keyName];
             }
             set
             {
-                if (!Localizations.ContainsKey(keyName))
-                    Localizations.Add(keyName, value);
+                if (!Entries.ContainsKey(keyName))
+                    Entries.Add(keyName, value);
                 else
-                    Localizations[keyName] = value;
+                    Entries[keyName] = value;
             }
         }
 
-        public Dictionary<string, string> Localizations
+        public Dictionary<string, string> Entries
         {
-            get { return _Localizations; }
+            get { return _Entries; }
         }
 
         public LocalizationFile(Stream fileStream)
         {
             FileStream = fileStream;
-            _Localizations = new Dictionary<string, string>();
+            _Entries = new Dictionary<string, string>();
             if (fileStream.Length > 0)
                 Read();
         }
@@ -66,7 +66,7 @@ namespace LDDModder.LDD.Files
 
         private void Read()
         {
-            _Localizations.Clear();
+            _Entries.Clear();
             //var encoding = Encoding.GetEncoding(1252);
 
             using (var reader = new BinaryReaderEx(FileStream, Encoding.UTF8))
@@ -88,7 +88,7 @@ namespace LDDModder.LDD.Files
                         }
                         else
                         {
-                            _Localizations.Add(lastKey, sb.ToString());
+                            _Entries.Add(lastKey, sb.ToString());
                             sb.Clear();
                             lastKey = string.Empty;
                         }
@@ -127,12 +127,23 @@ namespace LDDModder.LDD.Files
             {
                 //var encoding = Encoding.GetEncoding(1252);
                 writer.Write((byte)0x32); writer.Write((byte)0x00);
-                foreach (var pair in Localizations)
+                foreach (var pair in Entries)
                 {
                     writer.Write(Encoding.UTF8.GetBytes(pair.Key)); writer.Write((byte)0x00);
                     writer.Write(Encoding.UTF8.GetBytes(pair.Value)); writer.Write((byte)0x00);
                 }
             }
+        }
+
+
+        public static string GetLocFilename(LocalizationFileKind file, string languageKey)
+        {
+            if(file == LocalizationFileKind.AvailableLanguages)
+                return Path.Combine(LDDManager.GetLifDirectory(LifInstance.Assets), "Languages.loc");
+            else if(file == LocalizationFileKind.ApplicationStrings)
+                return Path.Combine(LDDManager.GetLifDirectory(LifInstance.Assets), languageKey, "localizedStrings.loc");
+            else// if (file == LocalizationFileKind.MaterialNames)
+                return Path.Combine(LDDManager.GetDirectory(LDDManager.DbDirectories.MaterialNames), languageKey, "localizedStrings.loc");
         }
     }
 }

@@ -50,6 +50,7 @@
     <Compile Include="Configuration\SettingType.cs" />
     <Compile Include="IO\BinaryReaderEx.cs" />
     <Compile Include="IO\StreamPortion.cs" />
+    <Compile Include="LDD\Files\LocalizationFileKind.cs" />
     <Compile Include="LDD\General\Brand.cs" />
     <Compile Include="LDD\General\DecorationMapping.cs" />
     <Compile Include="LDD\Files\LifFile.cs" />
@@ -123,6 +124,8 @@
     <Compile Include="Utilities\ExtensionMethods\XmlLinqExtensions.cs" />
     <Compile Include="Utilities\ExtensionMethods\ListExtensions.cs" />
     <Compile Include="Utilities\ExtensionMethods\StringExtensions.cs" />
+    <Compile Include="Utilities\Logging\IOperationLogger.cs" />
+    <Compile Include="Utilities\Logging\LogType.cs" />
     <Compile Include="Utilities\ResourcesHelper.cs" />
     <Compile Include="Utilities\SecurityHelper.cs" />
     <Compile Include="Serialization\XSerializable.cs" />

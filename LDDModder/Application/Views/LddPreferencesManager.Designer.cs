@@ -1,6 +1,6 @@
 ﻿namespace LDDModder.Views
 {
-    partial class LDDSettingsView
+    partial class LddPreferencesManager
     {
         /// <summary> 
         /// Required designer variable.
@@ -36,7 +36,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LDDSettingsView));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LddPreferencesManager));
             this.tlpLayout = new System.Windows.Forms.TableLayoutPanel();
             this.chkShowTooltip = new System.Windows.Forms.CheckBox();
             this.chkExtendedTooltip = new System.Windows.Forms.CheckBox();

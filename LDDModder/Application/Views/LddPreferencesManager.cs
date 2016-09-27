@@ -13,7 +13,7 @@ using System.IO;
 
 namespace LDDModder.Views
 {
-    public partial class LDDSettingsView : UserControl
+    public partial class LddPreferencesManager : UserControl
     {
         #region Fields
 
@@ -22,7 +22,7 @@ namespace LDDModder.Views
 
         #endregion
 
-        public LDDSettingsView()
+        public LddPreferencesManager()
         {
             InitializeComponent();
         }

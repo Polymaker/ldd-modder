@@ -118,8 +118,6 @@ namespace LDDModder.LDD
             if (_IsInstalled && FindAppDataPath())
                 _IsLibraryDownloaded = Directory.GetFiles(ApplicationDataPath, "*.lif").Length > 0;
 
-
-
             if (SettingsManager.HasChanges)
                 SettingsManager.Save();
 
@@ -386,6 +384,7 @@ namespace LDDModder.LDD
         #endregion
 
         #region LDD Settings (preferences.ini)
+        //TODO: move to a separate class
 
         public static string GetSettingsFilePath(LDDLocation source)
         {
