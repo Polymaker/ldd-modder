@@ -145,6 +145,8 @@ namespace LDDModder.Configuration
 
             foreach (var entry in entries)
             {
+                if (entry.Value == null)
+                    continue;
                 var entryNode = entry.Type == SettingType.Application ? appNode : userNode;
                 entryNode.Add(new XElement("Key", 
                     new XAttribute("name", entry.Key), 

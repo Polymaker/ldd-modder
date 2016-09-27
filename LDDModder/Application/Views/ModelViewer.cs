@@ -36,11 +36,8 @@ namespace LDDModder.Views
 
         public void LoadBrick(int brickId)
         {
-            if (MyObjects.Count > 0)
-            {
-                MyObjects.ForEach(so => so.Destroy());
-                MyObjects.Clear();
-            }
+            ClearScene();
+
             var primitiveInfoPath = Path.Combine(LDDManager.GetDirectory(LDDManager.DbDirectories.Primitives), brickId + ".xml");
             var primitiveInfo = Primitive.LoadFrom<Primitive>(primitiveInfoPath);
             
@@ -90,7 +87,14 @@ namespace LDDModder.Views
             MyObjects.Add(brickSceneObj);
         }
 
-
+        private void ClearScene()
+        {
+            if (MyObjects.Count > 0)
+            {
+                MyObjects.ForEach(so => so.Destroy());
+                MyObjects.Clear();
+            }
+        }
         //private void CreateMeshObjectForBrick(string brickModelPath)
         //{
         //    var brickMesh = LddMeshLoader.LoadLddMesh(brickModelPath);
@@ -112,6 +116,11 @@ namespace LDDModder.Views
         private void button1_Click(object sender, EventArgs e)
         {
             LoadBrick(10089);
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            ClearScene();
         }
     }
 }
