@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
 using System.Runtime.Serialization;
+
 namespace LDDModder.LDD.Primitives
 {
     [Serializable]

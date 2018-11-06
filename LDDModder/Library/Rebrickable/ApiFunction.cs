@@ -26,7 +26,7 @@ namespace LDDModder.Rebrickable
 
         public string FunctionUrl
         {
-            get { return RebrickableAPI.API_URL + FunctionName; }
+            get { return RebrickableAPIv2.API_URL + FunctionName; }
         }
 
         public ApiFunction(string functionName)
@@ -51,14 +51,14 @@ namespace LDDModder.Rebrickable
         class BreakException : Exception { }
 
         /// <summary>
-        /// Returns true if the function succeeded. If the function failed, see <see cref="RebrickableAPI.GetLastError()"/>
+        /// Returns true if the function succeeded. If the function failed, see <see cref="RebrickableAPIv2.GetLastError()"/>
         /// </summary>
         /// <param name="funcParam"></param>
         /// <param name="result"></param>
-        /// <returns>Returns true if the function succeeded. If the function failed, see <see cref="RebrickableAPI.GetLastError()"/></returns>
+        /// <returns>Returns true if the function succeeded. If the function failed, see <see cref="RebrickableAPIv2.GetLastError()"/></returns>
         public bool Execute(P funcParam, out R result)
         {
-            RebrickableAPI.LastError = null;
+            RebrickableAPIv2.LastError = null;
             try
             {
                 byte[] resultData = null;
@@ -66,11 +66,11 @@ namespace LDDModder.Rebrickable
                 timer.Start();
                 if (Method == RequestMethod.GET)
                 {
-                    resultData = RebrickableAPI.DownloadWebPage(string.Format("{0}?{1}", FunctionUrl, funcParam.GetParamsUrl()));
+                    resultData = RebrickableAPIv2.DownloadWebPage(string.Format("{0}?{1}", FunctionUrl, funcParam.GetParamsUrl()));
                 }
                 else
                 {
-                    resultData = RebrickableAPI.DownloadWebPage(FunctionUrl, funcParam.GetPostParams());
+                    resultData = RebrickableAPIv2.DownloadWebPage(FunctionUrl, funcParam.GetPostParams());
                 }
 
                 timer.Stop();
@@ -80,8 +80,8 @@ namespace LDDModder.Rebrickable
 
                 if (resultText.Length < 10)
                 {
-                    RebrickableAPI.LastError = ApiError.FindError(resultText);
-                    if (RebrickableAPI.LastError != null)
+                    RebrickableAPIv2.LastError = ApiError.FindError(resultText);
+                    if (RebrickableAPIv2.LastError != null)
                         throw new BreakException();
                 }
 
@@ -100,7 +100,7 @@ namespace LDDModder.Rebrickable
 
                 if (resultElem == null)
                 {
-                    RebrickableAPI.LastError = new ApiError(string.Empty, "Error parsing xml");
+                    RebrickableAPIv2.LastError = new ApiError(string.Empty, "Error parsing xml");
                     throw new BreakException();
                 }
 
@@ -114,16 +114,16 @@ namespace LDDModder.Rebrickable
             catch (BreakException ex)
             {
                 result = default(R);
-                return RebrickableAPI.LastError == null;
+                return RebrickableAPIv2.LastError == null;
             }
             catch (Exception ex)
             {
-                RebrickableAPI.LastError = new ApiError(ex.GetType().Name, ex.Message);
+                RebrickableAPIv2.LastError = new ApiError(ex.GetType().Name, ex.Message);
             }
 
             result = default(R);
 
-            return RebrickableAPI.LastError == null;
+            return RebrickableAPIv2.LastError == null;
         }
     }
 

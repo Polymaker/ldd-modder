@@ -7,7 +7,7 @@ using System.Net;
 
 namespace LDDModder.Rebrickable
 {
-    public static class RebrickableAPI
+    public static class RebrickableAPIv2
     {
         internal const string API_KEY = "aU49o5xulf";
         internal const string API_URL = "https://rebrickable.com/api/";
@@ -31,7 +31,7 @@ namespace LDDModder.Rebrickable
         /// <summary>
         /// Use this service to get details about a part, such as its name, number of sets it appears in, which colors it appears in, etc. 
         /// Relationships provide a list of printed parts, different molds etc. 
-        /// External IDs provide a list of the part ids for other systems where they are different to Rebrickable, such as Bricklink, Peeron, LDraw or LEGO element IDs. 
+        /// External IDs provide a list of the part ids for other systems where they are different to Rebrickable, such as Bricklink, Peeron, LDraw ora LEGO element IDs. 
         /// If the field rebrickable_part_id exists, that means this part is not used in any Rebrickable inventories and you should use the specified part instead.
         /// </summary>
         public static readonly ApiFunction<GetPartParameters, GetPartResult> GetPart;
@@ -48,7 +48,7 @@ namespace LDDModder.Rebrickable
         /// </summary>
         public static readonly ApiFunction<SearchParameters, SearchResult> Search;
 
-        static RebrickableAPI()
+        static RebrickableAPIv2()
         {
             WC = new WebClient() { Proxy = null };
 

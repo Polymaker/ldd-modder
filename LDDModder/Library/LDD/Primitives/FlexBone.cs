@@ -9,7 +9,7 @@ using System.Xml.Linq;
 namespace LDDModder.LDD.Primitives
 {
     [XmlRoot("Bone")]
-    public class FlexBone : LDDModder.Serialization.XSerializable
+    public class FlexBone : Serialization.XSerializable
     {
         private List<Connectivity> _Connections;
         private List<Collision> _Collisions;

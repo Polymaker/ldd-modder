@@ -19,7 +19,8 @@ namespace LDDModder.Views
     {
         private Scene MyScene;
         private List<SceneObject> MyObjects;
-
+        private int currentIndex;
+        private List<int> _BrickIDs;
         public ModelViewer()
         {
             InitializeComponent();
@@ -32,6 +33,18 @@ namespace LDDModder.Views
             MyScene = Scene.CreateDefault();
             polyEngineView.LoadScene(MyScene);
             MyScene.Start();
+            //currentIndex = 10089;
+            
+            _BrickIDs = new List<int>();
+            var primitivesXmlFiles = Directory.GetFiles(LDDManager.GetDirectory(LDDManager.DbDirectories.Primitives), "*.xml");
+
+            foreach(var path in primitivesXmlFiles)
+            {
+                if(int.TryParse(Path.GetFileNameWithoutExtension(path), out int brickID))
+                    _BrickIDs.Add(brickID);
+            }
+            currentIndex = _BrickIDs.IndexOf(32496);
+            LoadBrick(_BrickIDs[currentIndex]);
         }
 
         public void LoadBrick(int brickId)
@@ -39,6 +52,9 @@ namespace LDDModder.Views
             ClearScene();
 
             var primitiveInfoPath = Path.Combine(LDDManager.GetDirectory(LDDManager.DbDirectories.Primitives), brickId + ".xml");
+            if (!File.Exists(primitiveInfoPath))
+                return;
+
             var primitiveInfo = Primitive.LoadFrom<Primitive>(primitiveInfoPath);
             
             var brickMeshesPath = Directory.GetFiles(LDDManager.GetDirectory(LDDManager.DbDirectories.LOD0), brickId + ".g*");
@@ -48,31 +64,31 @@ namespace LDDModder.Views
                 CreateMeshObjectForBrick(modelPath);
             }
 
-            foreach (var collision in primitiveInfo.Collisions)
-            {
-                var collObj = PrimitiveMeshBuilder.CreateCollisionObject(MyScene, collision);
-                if (collObj != null)
-                {
-                    MyObjects.Add(collObj);
-                    var renderer = collObj.GetComponentDownward<MeshRenderer>();
-                    renderer.Materials[0].DiffuseColor = Color.FromArgb(120,255,0,0);
-                    //renderer.Mode = RenderMode.Transparent;
-                    //collObj.RenderLayer = 1;
-                }
-            }
+            //foreach (var collision in primitiveInfo.Collisions)
+            //{
+            //    var collObj = PrimitiveMeshBuilder.CreateCollisionObject(MyScene, collision);
+            //    if (collObj != null)
+            //    {
+            //        MyObjects.Add(collObj);
+            //        var renderer = collObj.GetComponentDownward<MeshRenderer>();
+            //        renderer.Materials[0].DiffuseColor = Color.FromArgb(120,255,0,0);
+            //        //renderer.Mode = RenderMode.Transparent;
+            //        //collObj.RenderLayer = 1;
+            //    }
+            //}
 
-            foreach (var connection in primitiveInfo.Connections)
-            {
-                var connObj = PrimitiveMeshBuilder.CreateConnectivityObject(MyScene, connection);
-                if (connObj != null)
-                {
-                    MyObjects.Add(connObj);
-                    var renderer = connObj.GetComponentDownward<MeshRenderer>();
-                    renderer.Materials[0].DiffuseColor = Color.FromArgb(80, 0, 0, 255);
-                    //renderer.Mode = RenderMode.Transparent;
-                    //connObj.RenderLayer = 1;
-                }
-            }
+            //foreach (var connection in primitiveInfo.Connections)
+            //{
+            //    var connObj = PrimitiveMeshBuilder.CreateConnectivityObject(MyScene, connection);
+            //    if (connObj != null)
+            //    {
+            //        MyObjects.Add(connObj);
+            //        var renderer = connObj.GetComponentDownward<MeshRenderer>();
+            //        renderer.Materials[0].DiffuseColor = Color.FromArgb(80, 0, 0, 255);
+            //        //renderer.Mode = RenderMode.Transparent;
+            //        //connObj.RenderLayer = 1;
+            //    }
+            //}
         }
 
         private void CreateMeshObjectForBrick(string brickModelPath)
@@ -81,7 +97,7 @@ namespace LDDModder.Views
             var brickSceneObj = MyScene.AddObject<SceneObject>();
             var brickRenderer = brickSceneObj.AddComponent<MeshRenderer>();
             brickRenderer.Mesh = brickMesh;
-            brickRenderer.Materials[0].DiffuseColor = Color.FromArgb(160, Color.DarkGray);
+            brickRenderer.Materials[0].DiffuseColor = Color.FromArgb(255, Color.DarkGray);
             brickRenderer.Mode = RenderMode.Transparent;
             brickRenderer.Outlined = true;
             MyObjects.Add(brickSceneObj);
@@ -115,12 +131,21 @@ namespace LDDModder.Views
 
         private void button1_Click(object sender, EventArgs e)
         {
-            LoadBrick(10089);
+            if(currentIndex>0)
+            {
+                currentIndex--;
+                LoadBrick(_BrickIDs[currentIndex]);
+            }
+            
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            ClearScene();
+            if(currentIndex < _BrickIDs.Count - 1)
+            {
+                currentIndex++;
+                LoadBrick(_BrickIDs[currentIndex]);
+            }
         }
     }
 }

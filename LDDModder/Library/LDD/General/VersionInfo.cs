@@ -51,6 +51,9 @@ namespace LDDModder.LDD.General
 
         public static bool operator ==(VersionInfo v1, VersionInfo v2)
         {
+            if (ReferenceEquals(v1, null) || ReferenceEquals(v2, null))
+                return ReferenceEquals(v1, null) == ReferenceEquals(v2, null);
+
             return v1.Major == v2.Major && v1.Minor == v2.Minor;
         }
 

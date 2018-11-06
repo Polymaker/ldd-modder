@@ -14,7 +14,7 @@ namespace LDDModder.Rebrickable
         [ApiParameter("key")]
         protected string Key
         {
-            get { return RebrickableAPI.API_KEY; }
+            get { return RebrickableAPIv2.API_KEY; }
         }
 
         [ApiParameter("format")]

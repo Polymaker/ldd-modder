@@ -130,7 +130,7 @@ namespace LDDModder.LDD.Palettes
             {
                 foreach (var paletteDir in Directory.GetDirectories(LddPalettesDirectory))
                 {
-                    if (paletteDir.StartsWith("LDD-"))
+                    if (paletteDir.StartsWith("LDD"))
                     {
                         if (Directory.EnumerateFiles(paletteDir).Any())
                             _IsLddPaletteExtended = true;
@@ -217,7 +217,7 @@ namespace LDDModder.LDD.Palettes
             }
         }
 
-        private static PaletteFile LoadFromLif(string filePath)
+        public static PaletteFile LoadFromLif(string filePath)
         {
             LifFile lifFile = null;
             try

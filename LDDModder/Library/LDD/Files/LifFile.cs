@@ -256,14 +256,27 @@ namespace LDDModder.LDD.Files
             return Encoding.Unicode.GetString(bytes.ToArray());
         }
 
-        public void Extract(string extractToPath)
+        public void Extract(string extractToPath, int verboseLevel = 0)
         {
             if (!string.IsNullOrEmpty(extractToPath) && !Directory.Exists(extractToPath))
                 Directory.CreateDirectory(extractToPath);
 
-            foreach (var fileEntry in Entries.Where(x => !x.IsDirectory))
+            string currentDirectory = string.Empty;
+
+            foreach (var fileEntry in Entries.Where(x => !x.IsDirectory).OrderBy(f => f.FullPath))
             {
                 var targetPath = Path.Combine(extractToPath, fileEntry.FullPath);
+                var fileDir = Path.GetDirectoryName(fileEntry.FullPath);
+
+                if(verboseLevel >= 1 && fileDir != currentDirectory)
+                {
+                    Console.WriteLine($"Extracting directory {fileEntry.FullPath}...");
+                    currentDirectory = fileDir;
+                }
+
+                if (verboseLevel == 2)
+                    Console.WriteLine($"Extracting file {fileEntry.FullPath}...");
+
                 if (!Directory.Exists(Path.GetDirectoryName(targetPath)))
                     Directory.CreateDirectory(Path.GetDirectoryName(targetPath));
                 ((FileEntry)fileEntry).Extract(targetPath);

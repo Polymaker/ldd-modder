@@ -19,17 +19,19 @@ namespace LDDModder.PaletteMaker
 {
     public partial class FrmCreateSetPalette : Form
     {
-        private static Dictionary<int, string> RBPartTypes;
         private BindingList<BrickMappingItem> PartList;
         private List<PaletteItem> PaletteItems;
-        private GetSetResult CurrentSetInfo;
+        public static Dictionary<int, Rebrickable.Models.Theme> Themes;
+        private static Dictionary<int, string> PartCategories;
+        private Rebrickable.Models.Set CurrentSetInfo;
 
         public FrmCreateSetPalette()
         {
             InitializeComponent();
-            RBPartTypes = new Dictionary<int, string>();
             PartList = new BindingList<BrickMappingItem>();
             PaletteItems = new List<PaletteItem>();
+            Themes = new Dictionary<int, Rebrickable.Models.Theme>();
+            PartCategories = new Dictionary<int, string>();
             dataGridView1.AutoGenerateColumns = false;
             CurrentSetInfo = null;
         }
@@ -40,18 +42,20 @@ namespace LDDModder.PaletteMaker
             FixSetDetailLayout();
             SendMessage(txtSearchSetID.Handle, 0x1501, 0, "Enter Set ID or name");
             pbxSetPicture.Select();
-            Task.Factory.StartNew(() => LoadRBPartTypes());
+            Task.Factory.StartNew(() => LoadGeneralData());
             PaletteManager.LoadPalettes();
             FillUserPaletteList();
         }
 
-        private void LoadRBPartTypes()
+        private void LoadGeneralData()
         {
-            var partTypes = RebrickableAPI.GetPartTypes.Execute();
-            foreach (var partTypeElem in partTypes.PartTypes)
-            {
-                RBPartTypes.Add(partTypeElem.TypeID, partTypeElem.Description);
-            }
+            var partTypes = RebrickableAPIv3.PartCategories.GetCategories();
+            foreach (var partTypeElem in partTypes.Results)
+                PartCategories.Add(partTypeElem.ID, partTypeElem.Name);
+
+            var setThemes = RebrickableAPIv3.Themes.GetAllThemes();
+            foreach (var theme in setThemes.Results)
+                Themes.Add(theme.Id, theme);
         }
 
         private void FixSetDetailLayout()
@@ -84,7 +88,7 @@ namespace LDDModder.PaletteMaker
             CurrentSetInfo = null;
         }
 
-        private void FillSetDetails(GetSetResult setInfo)
+        private void FillSetDetails(Rebrickable.Models.Set setInfo)
         {
             if (setInfo == null)
             {
@@ -92,43 +96,22 @@ namespace LDDModder.PaletteMaker
             }
             else
             {
-                txtSetID.Text = setInfo.SetId;
-                txtSetName.Text = setInfo.Description;
-                txtSetTheme.Text = setInfo.Theme;
-                txtSetYear.Text = setInfo.Year;
-                txtSetPieces.Text = setInfo.Pieces.ToString();
-                pbxSetPicture.ImageLocation = setInfo.ImageUrlSmall;
+                var setTheme = Themes.ContainsKey(setInfo.ThemeID) ? Themes[setInfo.ThemeID] : null;
+                var parentTheme = setTheme != null && setTheme.ParentId.HasValue && Themes.ContainsKey(setTheme.ParentId.Value) ? Themes[setTheme.ParentId.Value] : null;
+                var themeName = setTheme?.Name ?? "Unknown";
+                if (parentTheme != null)
+                    themeName = parentTheme.Name + " - " + themeName;
+
+                txtSetID.Text = setInfo.SetNumber;
+                txtSetName.Text = setInfo.Name;
+                txtSetTheme.Text = themeName;
+                txtSetYear.Text = setInfo.Year.ToString();
+                txtSetPieces.Text = setInfo.PartCount.ToString();
+                pbxSetPicture.ImageLocation = setInfo.SetImageUrl;
                 CurrentSetInfo = setInfo;
             }
         }
-
-        private void FillSetDetails(SearchResult.Set setInfo)
-        {
-            if (setInfo == null)
-            {
-                ClearSetDetails();
-            }
-            else
-            {
-                txtSetID.Text = setInfo.SetId;
-                txtSetName.Text = setInfo.Description;
-                txtSetTheme.Text = setInfo.Theme1;
-                txtSetYear.Text = setInfo.Year;
-                txtSetPieces.Text = setInfo.Pieces.ToString();
-                pbxSetPicture.ImageLocation = setInfo.ImageUrlSmall;
-                CurrentSetInfo = new GetSetResult()
-                {
-                    SetId = setInfo.SetId,
-                    Description = setInfo.Description,
-                    Theme = setInfo.Theme1,
-                    Year = setInfo.Year,
-                    Pieces = setInfo.Pieces,
-                    ImageUrlSmall = setInfo.ImageUrlSmall,
-                };
-            }
-        }
-
-        private void FillPartGrid(GetSetPartsResult partsInfo)
+        private void FillPartGrid(Rebrickable.Models.ListResult<Rebrickable.Models.SetPart> partsInfo)
         {
             if (partsInfo == null)
             {
@@ -138,7 +121,7 @@ namespace LDDModder.PaletteMaker
             {
                 PartList.Clear();
                 PaletteItems.Clear();
-                foreach (var setPart in partsInfo.Parts)
+                foreach (var setPart in partsInfo.Results)
                 {
                     PartList.Add(new BrickMappingItem(setPart));
                 }
@@ -147,6 +130,25 @@ namespace LDDModder.PaletteMaker
                 Task.Factory.StartNew(() => MatchLddParts());
             }
         }
+        //private void FillPartGrid(GetSetPartsResult partsInfo)
+        //{
+        //    if (partsInfo == null)
+        //    {
+        //        dataGridView1.DataSource = null;
+        //    }
+        //    else
+        //    {
+        //        PartList.Clear();
+        //        PaletteItems.Clear();
+        //        foreach (var setPart in partsInfo.Parts)
+        //        {
+        //            PartList.Add(new BrickMappingItem(setPart));
+        //        }
+
+        //        dataGridView1.DataSource = PartList;
+        //        Task.Factory.StartNew(() => MatchLddParts());
+        //    }
+        //}
 
         private void FillUserPaletteList()
         {
@@ -190,7 +192,7 @@ namespace LDDModder.PaletteMaker
                 setNumber += "-1";
 
             FillPartGrid(null);
-            var setInfo = RebrickableAPI.GetSet.Execute(setNumber);
+            var setInfo = RebrickableAPIv3.Sets.GetSet(setNumber);
 
             FillSetDetails(setInfo);
 
@@ -198,8 +200,8 @@ namespace LDDModder.PaletteMaker
             {
                 Task.Factory.StartNew(() =>
                 {
-                    var partsInfo = RebrickableAPI.GetSetParts.Execute(setNumber);
-                    BeginInvoke(new Action<GetSetPartsResult>(FillPartGrid), partsInfo);
+                    var partsInfo = RebrickableAPIv3.Sets.GetAllSetParts(setNumber);
+                    BeginInvoke(new Action<Rebrickable.Models.ListResult<Rebrickable.Models.SetPart>>(FillPartGrid), partsInfo);
                 });
             }
 
@@ -207,28 +209,35 @@ namespace LDDModder.PaletteMaker
 
         private void SearchSet(string query)
         {
-            var result = Rebrickable.RebrickableAPI.Search.Execute(new SearchParameters(SearchType.Set, query));
-            if (result.SetsAndMOCs.Count > 0)
+            var result = Rebrickable.RebrickableAPIv3.Sets.GetSets(search: query);
+            if (result.Results.Count > 0)
             {
-                FillSetDetails(result.SetsAndMOCs[0]);
+                FillSetDetails(result.Results[0]);
             }
         }
 
         class BrickMappingItem
         {
-            public GetSetPartsResult.Part RBPart { get; set; }
-            public string PartID { get { return RBPart.PartId; } }
+            public Rebrickable.Models.SetPart RBPart { get; set; }
+            public int PartID { get { return RBPart.Id; } }
             public string PartType { get; set; }
-            public string Name { get { return RBPart.Name; } }
-            public string Color { get { return RBPart.ColorName; } }
-            public string ElementID { get { return RBPart.ElementId; } }
+            public string Name { get { return RBPart.Part.Name; } }
+            public string Color { get { return RBPart.Color.Name; } }
+            public string ElementID { get { return RBPart.ElementId.ToString(); } }
             public int Quantity { get { return RBPart.Quantity; } }
             public string LDD { get; set; }
 
-            public BrickMappingItem(GetSetPartsResult.Part rBPart)
+            //public BrickMappingItem(GetSetPartsResult.Part rBPart)
+            //{
+            //    RBPart = rBPart;
+            //    PartType = PartCategories[rBPart.PartTypeId];
+            //    LDD = String.Empty;
+            //}
+
+            public BrickMappingItem(Rebrickable.Models.SetPart rBPart)
             {
                 RBPart = rBPart;
-                PartType = RBPartTypes[rBPart.PartTypeId];
+                PartType = PartCategories[rBPart.Part.PartCatId];
                 LDD = String.Empty;
             }
         }
@@ -326,8 +335,8 @@ namespace LDDModder.PaletteMaker
             if (PaletteItems.Count == 0)
                 return;
 
-            var shortSetNumber = CurrentSetInfo.SetId.Substring(0, CurrentSetInfo.SetId.IndexOf('-'));
-            var paletteInfo = new Bag(shortSetNumber + " " + CurrentSetInfo.Description, true);
+            var shortSetNumber = CurrentSetInfo.SetNumber.Substring(0, CurrentSetInfo.SetNumber.IndexOf('-'));
+            var paletteInfo = new Bag(shortSetNumber + " " + CurrentSetInfo.Name, true);
 
             var setPalette = new Palette();
             setPalette.Items.AddRange(PaletteItems);

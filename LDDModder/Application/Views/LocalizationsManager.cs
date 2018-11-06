@@ -101,15 +101,15 @@ namespace LDDModder.Views
             if (language == null)
                 return;
 
-            //chkActive.Checked = language.IsActive;
-            //tabCtrlFiles.SelectedTab = tabPageApp;
-            //lvwLocalizations.Enabled = language.AppStringExist;
+            chkActive.Checked = language.IsActive;
+            tabCtrlFiles.SelectedTab = tabPageApp;
+            lvwLocalizations.Enabled = language.AppStringExist;
 
-            //if (language.AppStringExist)
-            //{
-            //    var locKeyVals = ReadLocFile(language.AppStringFilename);
-            //    lvwLocalizations.SetObjects(locKeyVals);
-            //}
+            if (language.AppStringExist)
+            {
+                var locKeyVals = ReadLocFile(language.AppStringFilename);
+                lvwLocalizations.SetObjects(locKeyVals);
+            }
 
         }
 

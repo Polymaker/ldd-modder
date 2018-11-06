@@ -36,7 +36,7 @@ namespace LDDModder.PaletteMaker
             if (!setNumber.Contains('-'))
                 setNumber += "-1";
 
-            var setPartsInfo = RebrickableAPI.GetSetParts.Execute(setNumber);
+            var setPartsInfo = RebrickableAPIv2.GetSetParts.Execute(setNumber);
             if (setPartsInfo == null)
             {
                 label1.Text = "Set not found!";
@@ -53,15 +53,15 @@ namespace LDDModder.PaletteMaker
             var setPalette = new Palette();
 
             PartNotFound.Clear();
-            foreach (var rbPart in setPartsInfo.Parts)
-            {
-                //var lddPart = GetItemForRBPart(rbPart);
-                var lddPart = PaletteBuilder.GetPaletteItem(rbPart);
-                if (lddPart != null)
-                    setPalette.Items.Add(lddPart);
-                else
-                    PartNotFound.Add(rbPart);
-            }
+            //foreach (var rbPart in setPartsInfo.Parts)
+            //{
+            //    //var lddPart = GetItemForRBPart(rbPart);
+            //    var lddPart = PaletteBuilder.GetPaletteItem(rbPart);
+            //    if (lddPart != null)
+            //        setPalette.Items.Add(lddPart);
+            //    else
+            //        PartNotFound.Add(rbPart);
+            //}
             PaletteManager.SavePalette(new PaletteFile(paletteInfo, setPalette));
 
             foreach (var notFound in PartNotFound)

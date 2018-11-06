@@ -66,14 +66,14 @@
             // 
             this.txtSearchSetID.Location = new System.Drawing.Point(6, 18);
             this.txtSearchSetID.Name = "txtSearchSetID";
-            this.txtSearchSetID.Size = new System.Drawing.Size(132, 20);
+            this.txtSearchSetID.Size = new System.Drawing.Size(201, 20);
             this.txtSearchSetID.TabIndex = 0;
             this.txtSearchSetID.KeyUp += new System.Windows.Forms.KeyEventHandler(this.txtSearchSetID_KeyUp);
             // 
             // btnSearchSet
             // 
             this.btnSearchSet.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnSearchSet.Location = new System.Drawing.Point(140, 17);
+            this.btnSearchSet.Location = new System.Drawing.Point(210, 17);
             this.btnSearchSet.Name = "btnSearchSet";
             this.btnSearchSet.Size = new System.Drawing.Size(52, 22);
             this.btnSearchSet.TabIndex = 1;
@@ -85,7 +85,7 @@
             // 
             this.pbxSetPicture.BackColor = System.Drawing.SystemColors.Window;
             this.pbxSetPicture.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pbxSetPicture.Location = new System.Drawing.Point(194, 19);
+            this.pbxSetPicture.Location = new System.Drawing.Point(263, 18);
             this.pbxSetPicture.Name = "pbxSetPicture";
             this.pbxSetPicture.Size = new System.Drawing.Size(128, 128);
             this.pbxSetPicture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -121,7 +121,7 @@
             this.tlpSetDetails.Controls.Add(this.txtSetTheme, 1, 2);
             this.tlpSetDetails.Controls.Add(this.txtSetYear, 1, 3);
             this.tlpSetDetails.Controls.Add(this.txtSetPieces, 1, 4);
-            this.tlpSetDetails.Location = new System.Drawing.Point(6, 44);
+            this.tlpSetDetails.Location = new System.Drawing.Point(6, 45);
             this.tlpSetDetails.Name = "tlpSetDetails";
             this.tlpSetDetails.RowCount = 5;
             this.tlpSetDetails.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 19F));
@@ -129,7 +129,7 @@
             this.tlpSetDetails.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 19F));
             this.tlpSetDetails.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 19F));
             this.tlpSetDetails.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 19F));
-            this.tlpSetDetails.Size = new System.Drawing.Size(185, 101);
+            this.tlpSetDetails.Size = new System.Drawing.Size(255, 101);
             this.tlpSetDetails.TabIndex = 5;
             // 
             // txtSetName
@@ -139,7 +139,7 @@
             this.txtSetName.Location = new System.Drawing.Point(51, 24);
             this.txtSetName.Name = "txtSetName";
             this.txtSetName.ReadOnly = true;
-            this.txtSetName.Size = new System.Drawing.Size(130, 13);
+            this.txtSetName.Size = new System.Drawing.Size(200, 13);
             this.txtSetName.TabIndex = 11;
             // 
             // label2
@@ -192,7 +192,7 @@
             this.txtSetID.Location = new System.Drawing.Point(51, 4);
             this.txtSetID.Name = "txtSetID";
             this.txtSetID.ReadOnly = true;
-            this.txtSetID.Size = new System.Drawing.Size(130, 13);
+            this.txtSetID.Size = new System.Drawing.Size(200, 13);
             this.txtSetID.TabIndex = 10;
             // 
             // txtSetTheme
@@ -202,7 +202,7 @@
             this.txtSetTheme.Location = new System.Drawing.Point(51, 44);
             this.txtSetTheme.Name = "txtSetTheme";
             this.txtSetTheme.ReadOnly = true;
-            this.txtSetTheme.Size = new System.Drawing.Size(130, 13);
+            this.txtSetTheme.Size = new System.Drawing.Size(200, 13);
             this.txtSetTheme.TabIndex = 12;
             // 
             // txtSetYear
@@ -212,7 +212,7 @@
             this.txtSetYear.Location = new System.Drawing.Point(51, 64);
             this.txtSetYear.Name = "txtSetYear";
             this.txtSetYear.ReadOnly = true;
-            this.txtSetYear.Size = new System.Drawing.Size(130, 13);
+            this.txtSetYear.Size = new System.Drawing.Size(200, 13);
             this.txtSetYear.TabIndex = 13;
             // 
             // txtSetPieces
@@ -222,7 +222,7 @@
             this.txtSetPieces.Location = new System.Drawing.Point(51, 84);
             this.txtSetPieces.Name = "txtSetPieces";
             this.txtSetPieces.ReadOnly = true;
-            this.txtSetPieces.Size = new System.Drawing.Size(130, 13);
+            this.txtSetPieces.Size = new System.Drawing.Size(200, 13);
             this.txtSetPieces.TabIndex = 14;
             // 
             // groupBox1
@@ -234,7 +234,7 @@
             this.groupBox1.Location = new System.Drawing.Point(3, 3);
             this.groupBox1.Margin = new System.Windows.Forms.Padding(3, 3, 0, 2);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(328, 154);
+            this.groupBox1.Size = new System.Drawing.Size(397, 154);
             this.groupBox1.TabIndex = 6;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Search LEGO set";
@@ -260,7 +260,7 @@
             this.dataGridView1.Location = new System.Drawing.Point(3, 162);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowHeadersVisible = false;
-            this.dataGridView1.Size = new System.Drawing.Size(621, 275);
+            this.dataGridView1.Size = new System.Drawing.Size(832, 275);
             this.dataGridView1.TabIndex = 7;
             this.dataGridView1.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_ColumnHeaderMouseClick);
             // 
@@ -339,7 +339,7 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(627, 469);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(838, 469);
             this.tableLayoutPanel1.TabIndex = 8;
             // 
             // listView1
@@ -347,9 +347,9 @@
             this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.lvColPaletteName});
             this.listView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listView1.Location = new System.Drawing.Point(334, 3);
+            this.listView1.Location = new System.Drawing.Point(403, 3);
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(290, 153);
+            this.listView1.Size = new System.Drawing.Size(432, 153);
             this.listView1.TabIndex = 8;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
@@ -361,7 +361,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(334, 443);
+            this.button1.Location = new System.Drawing.Point(403, 443);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 9;
@@ -373,7 +373,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(633, 475);
+            this.ClientSize = new System.Drawing.Size(844, 475);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "FrmCreateSetPalette";
             this.Padding = new System.Windows.Forms.Padding(3);

@@ -26,13 +26,26 @@ namespace LifExtractor
             if (args == null || args.Length == 0)
                 return;
 
+            if (args.Any(a => a.ToLower().Contains("-help")))
+            {
+                Console.WriteLine("usage: LifExtractor [path] ([destination])");
+                return;
+            }
+
             if (File.Exists(args[0]) && Path.GetExtension(args[0]).ToLower().Contains("lif"))
             {
-                var dirPath = Path.GetDirectoryName(args[0]);
-                dirPath = Path.Combine(dirPath, Path.GetFileNameWithoutExtension(args[0]));
+                var destDir = Path.GetDirectoryName(Application.ExecutablePath);
+
+                if (args.Length > 1)
+                    destDir = args[1];
+
+                if (!Directory.Exists(destDir))
+                    Directory.CreateDirectory(destDir);
+
+                var destinationPath = Path.Combine(destDir, Path.GetFileNameWithoutExtension(args[0]));
                 //Directory.CreateDirectory(dirPath);
                 using (var lifFile = LifFile.Open(args[0]))
-                    lifFile.Extract(dirPath);
+                    lifFile.Extract(destinationPath);
             }
         }
     }

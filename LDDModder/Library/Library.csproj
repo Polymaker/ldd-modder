@@ -34,6 +34,9 @@
       <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -65,6 +68,13 @@
     <Compile Include="LDD\LDDLocation.cs" />
     <Compile Include="LDD\LDDManager.cs" />
     <Compile Include="LDD\LifInstance.cs" />
+    <Compile Include="LDD\Models\Assembly.cs" />
+    <Compile Include="LDD\Models\Bone.cs" />
+    <Compile Include="LDD\Models\Brick.cs" />
+    <Compile Include="LDD\Models\Meta.cs" />
+    <Compile Include="LDD\Models\ModelFile.cs" />
+    <Compile Include="LDD\Models\Part.cs" />
+    <Compile Include="LDD\Models\PartMap.cs" />
     <Compile Include="LDD\Palettes\Assembly.cs" />
     <Compile Include="LDD\Palettes\Bag.cs" />
     <Compile Include="LDD\Palettes\Brick.cs" />
@@ -117,7 +127,23 @@
     <Compile Include="Rebrickable\Data\SearchParameters.cs" />
     <Compile Include="Rebrickable\Data\SearchResult.cs" />
     <Compile Include="Rebrickable\Data\SearchType.cs" />
-    <Compile Include="Rebrickable\RebrickableAPI.cs" />
+    <Compile Include="Rebrickable\Models\Color.cs" />
+    <Compile Include="Rebrickable\Models\ExternalColorIDs.cs" />
+    <Compile Include="Rebrickable\Models\ExternalPartIDs.cs" />
+    <Compile Include="Rebrickable\Models\ListResult.cs" />
+    <Compile Include="Rebrickable\Models\Part.cs" />
+    <Compile Include="Rebrickable\Models\PartCategory.cs" />
+    <Compile Include="Rebrickable\Models\Set.cs" />
+    <Compile Include="Rebrickable\Models\SetPart.cs" />
+    <Compile Include="Rebrickable\Models\Theme.cs" />
+    <Compile Include="Rebrickable\Modules\ApiModule.cs" />
+    <Compile Include="Rebrickable\Modules\Colors.cs" />
+    <Compile Include="Rebrickable\Modules\PartCategories.cs" />
+    <Compile Include="Rebrickable\Modules\Parts.cs" />
+    <Compile Include="Rebrickable\Modules\Sets.cs" />
+    <Compile Include="Rebrickable\Modules\Themes.cs" />
+    <Compile Include="Rebrickable\RebrickableAPIv2.cs" />
+    <Compile Include="Rebrickable\RebrickableAPIv3.cs" />
     <Compile Include="Rebrickable\RequestMethod.cs" />
     <Compile Include="Serialization\XmlTextWriterEx.cs" />
     <Compile Include="Utilities\ExtensionMethods\NumberExtensions.cs" />

@@ -15,11 +15,6 @@ namespace LDDModder.LDD.Primitives
     [Serializable, XmlRoot("LEGOPrimitive")]
     public class Primitive : XSerializable
     {
-        private List<Connectivity> _Connections;
-        private List<Collision> _Collisions;
-        private List<int> _Aliases;
-        private List<FlexBone> _Bones;
-
         public int Id { get; set; }
 
         public string Name { get; set; }
@@ -44,32 +39,20 @@ namespace LDDModder.LDD.Primitives
 
         public Decoration DecorationInfo { get; set; }
 
-        public List<int> Aliases
-        {
-            get { return _Aliases; }
-        }
+        public List<int> Aliases { get; }
 
-        public List<Collision> Collisions
-        {
-            get { return _Collisions; }
-        }
+        public List<Collision> Collisions { get; }
 
-        public List<Connectivity> Connections
-        {
-            get { return _Connections; }
-        }
+        public List<Connectivity> Connections { get; }
 
-        public List<FlexBone> Bones
-        {
-            get { return _Bones; }
-        }
+        public List<FlexBone> Bones { get; }
 
         public Primitive()
         {
-            _Connections = new List<Connectivity>();
-            _Collisions = new List<Collision>();
-            _Bones = new List<FlexBone>();
-            _Aliases = new List<int>();
+            Connections = new List<Connectivity>();
+            Collisions = new List<Collision>();
+            Bones = new List<FlexBone>();
+            Aliases = new List<int>();
             Id = 0;
             Name = string.Empty;
             Group = null;
@@ -100,15 +83,15 @@ namespace LDDModder.LDD.Primitives
 
             var flexElem = element.Element("Flex");
             if (flexElem != null)
-                _Bones.AddRange(flexElem.Elements().Select(e => XSerializationHelper.DefaultDeserialize<FlexBone>(e)));
+                Bones.AddRange(flexElem.Elements().Select(e => XSerializationHelper.DefaultDeserialize<FlexBone>(e)));
 
             var collisionsElem = element.Element("Collision");
             if (collisionsElem != null)
-                _Collisions.AddRange(Collision.Deserialize(collisionsElem.Elements()));
+                Collisions.AddRange(Collision.Deserialize(collisionsElem.Elements()));
 
             var conectivityElem = element.Element("Connectivity");
             if (conectivityElem != null)
-                _Connections.AddRange(Connectivity.Deserialize(conectivityElem.Elements()));
+                Connections.AddRange(Connectivity.Deserialize(conectivityElem.Elements()));
 
             var boundingElem = element.Element("Bounding");
             if (boundingElem != null && boundingElem.HasElements)
@@ -139,7 +122,7 @@ namespace LDDModder.LDD.Primitives
         private void DeserializeAnnotation(XElement annotation)
         {
             var annotAttr = annotation.FirstAttribute;
-            switch (annotAttr.Name.LocalName)
+            switch (annotAttr.Name.LocalName.ToLower())
             {
                 case "aliases":
                     var aliases = annotAttr.Value.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
@@ -147,7 +130,7 @@ namespace LDDModder.LDD.Primitives
                     {
                         int aliasId = 0;
                         if (int.TryParse(aliases[i], out aliasId))
-                            _Aliases.Add(aliasId);
+                            Aliases.Add(aliasId);
                     }
                     break;
                 case "designname":
@@ -283,7 +266,12 @@ namespace LDDModder.LDD.Primitives
 
         public static Primitive Load(string filepath)
         {
-            return LoadFrom<Primitive>(filepath);
+            var primitive = LoadFrom<Primitive>(filepath);
+            if(/*primitive.Id == 0 && !primitive.Aliases.Any() && */int.TryParse(Path.GetFileNameWithoutExtension(filepath), out int brickID))
+            {
+                primitive.Id = brickID;
+            }
+            return primitive;
         }
 
         public static Primitive Load(Stream stream)

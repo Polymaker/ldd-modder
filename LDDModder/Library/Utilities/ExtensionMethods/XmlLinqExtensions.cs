@@ -17,6 +17,14 @@ namespace System.Xml.Linq
             return element;
         }
 
+        public static int GetDepth(this XElement element)
+        {
+            int depth = 0;
+            while((element = element.Parent) != null)
+                depth++;
+            return depth;
+        }
+
         public static int GetIntAttribute(this XElement element, XName attributeName)
         {
             var attribute = element.Attribute(attributeName);
