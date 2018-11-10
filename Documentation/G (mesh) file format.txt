@@ -1,55 +1,82 @@
-Header => 4 Bytes (31 30 47 42 = 10GB)
-Vertex Count => 4 Bytes (Integer)
-Index Count => 4 Bytes (Integer)
-Surface type header => 4 Bytes (3A for base model, 3B for textured surface)
+### FILE START ###
+Header 			=> 4 Bytes (always 31 30 47 42 ASCII = 10GB)
+Vertex Count 	=> 4 Bytes (Integer)
+Index Count 	=> 4 Bytes (Integer)
+Mesh Type		=> 4 Bytes 
+	- 3A standard mesh 
+	- 3B textured mesh (surface)
+	- 3E flexible mesh
+	- 3F textured flexible mesh (surface)
 
-# VERTEX DATA LOOP #
-Vertex 3D Point => 12 Bytes (3 x Floats)
-Normal 3D Point => 12 Bytes (3 x Floats)
+### 3D DATA ###
+# FOR 0 TO [Vertex Count] 
+	Vertex 3D Point (X, Y, Z) => 12 Bytes (3 x Floats)
+# FOR 0 TO [Vertex Count] 
+	Normal 3D Point (X, Y, Z) => 12 Bytes (3 x Floats)
 
-Texture 2D Point => 8 Bytes (2 x Floats) (only for textured model)
+# IF Mesh Type == 3B OR Mesh Type == 3F
+	# FOR 0 TO [Vertex Count] 
+		Texture 2D Point => 8 Bytes (2 x Floats) (only for textured model)
 
-# INDEXES DATA LOOP (TRIANGLE LIST)#
-Indice => 4 Bytes (Integer)
+### INDICES (TRIANGLES) ###
+# FOR 0 TO [Index Count] / 3
+	Triangle Index 1 => 4 Bytes (Integer)
+	Triangle Index 2 => 4 Bytes (Integer)
+	Triangle Index 3 => 4 Bytes (Integer)
+	
+### OUTLINE SHADER INFO ### 
+Data Length 	=> 4 Bytes
+Shader Data		=> [Data Length] * 4 Bytes (always referenced by steps of 12 (0x0C) but jumps by 16 every ??)
+# Link shader data to indices (triangles)?
+Indices 		=> [Index Count] * 4 Bytes
 
-# OUTLINE SHADER INFO # (total size = 4 + [Data Size] * 4 + [Index Count] * 4)
-Data Size => 4 Bytes
-Unclear Data => [Data Size] * 4 Bytes (always referenced by steps of 12 (0x0C) but jumps by 16 every ??)
-Indices => [Index Count] * 4 Bytes
+### UNKNOWN DATA 1 (JUNK?) ###
+Data Length 		=> 4 Bytes
+Unknown Data		=> [Data Length] * 12 Bytes
+	|-> Header ?	=> 12 bytes (always 00 00 A6 42 00 00 00 00 00 00 00 00)
+	|-> 3D point ?	=> ([Data Size] - 1) * 12 Bytes 
+	
+# Link data to indices (triangles)?
+Indices	=> [Index Count] * 4 Bytes (seems never used and sometimes contains xml chunks from the primitives file and not necessarily its own)
 
-# UNKNOWN DATA 1 (JUNK?!)# (total size = 4 + [Data Size] * 12 + [Index Count] * 4)
-Data Size(Count) => 4 Bytes
-Unknown Data => [Data Size] * 12 Bytes (implies vertex or normals, but not both as number never divide by two (if we exclude the header))
- |-> Kind of Header => 12 bytes (00 00 A6 42 00 00 00 00 00 00 00 00)
- |-> Vertices or Normals => ([Data Size] - 1) * 12 Bytes
-Junk/Unknown Data => [Index Count] * 4 Bytes (same size as index/triangle list??, seems never used and sometimes contains primitives xml)
 
-# UNCLEAR DATA (MESH VARIATION WHEN CONNECTED TO OTHER BRICKS) #
-Number of variants/elements => 4 Bytes (1 for each stud + 1 for each stud connection "zone" + 1 for base)???
+### FLEX DATA ##
+# IF [Mesh Type] == 3E OR [Mesh Type] == 3F 
+	[Data Length] => 4 bytes
+	# FOR 0 TO [Vertex Count] 
+		Number of pairs	=> 4 bytes
+		# FOR 0 TO [Number of pairs]
+			Index/Ref ? => 4 bytes (int)
+			Data/Value 	=> 4 bytes (float)
+			
+	Unknown data => [Vertex Count] * 4 bytes
 
-# UNCLEAR DATA 2.2 #
-Data Size => 4 Bytes (literal value, offset to EOF)
-Unknown Data => 20 bytes (header 20 00 00 00 02 00 00 00 then unknown data)
-
-# UNCLEAR DATA 2.3 #
-Header
- |-> Chunk Size => 4 Bytes
- |-> Chunk Type? => 04 00 00 00
- 
-Unknown Data => ?? bytes
+# MESH VARIATION WHEN CONNECTED TO OTHER BRICKS #
+Number of variants => 4 Bytes (1 by default (base model), 1 for each stud + 1 for each stud connection "zone". not yet confirmed)
+Data Length => 4 Bytes (equals offset to end of file)
+# FOR 0 TO [Number of variants]
+	Block size		=> 4 bytes (inclusive)
+	Variant type	=> 4 bytes
+		- Type 1: Stud Culling. Part of the mesh related to a stud is removed when under another brick (for performance maybe)
+				  Seems to always be 44 bytes ([Block size])
+		- Type 2: Not sure, seems to represent the default variant
+			Spacing	=> 4 bytes
+			Value 1 => 4 bytes (when only 1 variant, equals to [Vertex Count])
+			Spacing	=> 4 bytes
+			Value 2 => 4 bytes (when only 1 variant, equals to [Index Count])
+			Spacing	=> 8 bytes
+		- Type 4: 
+		
 
 ? number of Chunks of 28 bytes starting by 0x1C (28)
 
-Variant Geometry Data 
+Variant Geometry Data # OPTIONAL ??
  |->Vertex Count => 4 Bytes (Integer)
  |->Index Count => 4 Bytes (Integer)
  |->vertices => [Vertex Count] * 12
  |->indices/triangle list => [Index Count] * 12
  |->indices/triangle list 2 => [Index Count] * 12
  |->indices/triangle list => [Index Count] * 12 (references outline shader data) 
- 
- # STUDS INFO # (for culling studs)
-Header
- |-> Chunk Size => 44 00 00 00
- |-> Chunk Type? => 01 00 00 00
-Data 
+
+
+-- END OF FILE ---
