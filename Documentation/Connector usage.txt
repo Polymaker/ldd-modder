@@ -1,0 +1,1767 @@
+Axel connector subtype 2
+   Used by 33763 - CORRUGATED PIPE 208MM
+   Used by 43675 - CORRUGATED PIPE 152MM
+   Used by 71917 - CORRUGATED PIPE 72MM
+   Used by 71923 - CORRUGATED PIPE 112MM
+   Used by 71944 - CORRUGATED PIPE 48MM
+   Used by 71984 - CORRUGATED PIPE 32MM
+   Used by 71985 - CORRUGATED PIPE 56MM
+   Used by 71986 - CORRUGATED PIPE 88MM
+   Used by 72039 - CORRUGATED PIPE 144MM
+   Used by 15744 - CARRIAGE WHEEL Ø 43,2
+Axel connector subtype 3
+   Used by 32199 - FLEX ROD 11M
+   Used by 32200 - FLEX ROD 12M
+   Used by 32580 - FLEX ROD 7M
+   Used by 20867 - ANIMAL NO.23 HAND SHOT 1
+   Used by 24375 - RUBBER ATTACHMENT FOR TRACK NO.2
+   Used by 40386 - FLIPPER 5X2X1 1/3 W. BUSH
+   Used by 62577 - FORELEG RIGHT, ASSAMBLED
+   Used by 62578 - FORELEG, LEFT, ASSEMBLED
+   Used by 89669 - L CLIP MONST. MIDI. ARM ASS. 2
+   Used by 89670 - H.KLIP.MONST.MIDI.ARM.MONT.2
+Axel connector subtype 4
+   Used by 11302 - FLAME 3X10X1 W/ CROSS HOLE
+   Used by 15093 - TOP SHELL NO. 8
+   Used by 15094 - TOP SHELL NO.7
+   Used by 15095 - TOP SHELL NO. 12
+   Used by 15096 - TOP SHELL NO. 9
+   Used by 15370 - WING 6x8 WITH CROSSHOLE
+   Used by 19050 - HEAD TRIGGER W. CROSSHOLE
+   Used by 2723 - DISK Ø24
+   Used by 27938 - WORM GEAR, 1 MODULE FOR ANGLED GEAR
+   Used by 2907 - GYRO-BALL
+Axel connector subtype 5
+   Used by 11276 - HELMET NO.3, 2013
+   Used by 11277 - HELMET NO.4, 2013
+   Used by 11278 - HELMET NO.5, 2013
+   Used by 11279 - HELMET NO.6, 2013
+   Used by 11280 - HELMET NO.7, 2013
+   Used by 11281 - HELMET NO.8, 2013
+   Used by 11287 - MASK NO.3, 2013
+   Used by 11288 - MASK NO.4, 2013
+   Used by 11294 - MASK NO.5, 2013
+   Used by 11296 - MASK NO.6, 2013
+Axel connector subtype 6
+   Used by 60169 - CHAIN 16 M
+   Used by 92338 - CHAIN 6 M
+   Used by 98567 - TOOL BELT - 17M
+   Used by 11597 - MINI WING W. HOLDER
+   Used by 15210 - FOUR-SIDED SIGN WITH SNAP
+   Used by 16770 - Ø3.2 HOLDER W. CLAW
+   Used by 20252 - CLAW 4M W. GRIP
+   Used by 20691 - ANIMAL NO.22 HEAD
+   Used by 24084 - MACE NO. 1
+   Used by 24085 - MOP HEAD NO. 1
+Axel connector subtype 7
+   Used by 14301 - FLEX TUBE 12 M
+   Used by 27328 - FLEX HOSE 10 MODULE W/3.2 SHAFT
+   Used by 32199 - FLEX ROD 11M
+   Used by 32200 - FLEX ROD 12M
+   Used by 32580 - FLEX ROD 7M
+   Used by 55668 - OUTER CABLE 64MM, VIRTUEL
+   Used by 55676 - OUTER CABLE 160MM, VIRTUEL
+   Used by 57274 - OUTER CABLE 256MM
+   Used by 57539 - FLEX HOSE 19M W/3. 18 STICK
+   Used by 58856 - OUTER CABLE 24MM
+Axel connector subtype 8
+   Used by 4022 - BUFFER/CLUTCH
+   Used by 18859 - DISH Ø64X9.6 TR.
+   Used by 19725 - DISH Ø80X9.6 TR.
+   Used by 21599 - SATELLITE DISH 6X6 TR.
+   Used by 2584 - DRUM HOLDER 2X2
+   Used by 3961 - ROUND PLATE Ø64X9.6
+   Used by 4285 - PARABOLIC REFLECTOR Ø48
+   Used by 44375 - PARABOLA 6X6
+   Used by 50990 - DISC Ø80
+   Used by 64415 - BUFFER 1
+Axel connector subtype 12
+   Used by 43675 - CORRUGATED PIPE 152MM
+   Used by 71917 - CORRUGATED PIPE 72MM
+   Used by 71923 - CORRUGATED PIPE 112MM
+   Used by 71944 - CORRUGATED PIPE 48MM
+   Used by 71984 - CORRUGATED PIPE 32MM
+   Used by 71985 - CORRUGATED PIPE 56MM
+   Used by 71986 - CORRUGATED PIPE 88MM
+   Used by 72039 - CORRUGATED PIPE 144MM
+   Used by 2498 - BRUSH Ø24X18.2
+   Used by 10067 - RING Ø.7.5
+Axel connector subtype 13
+   Used by 32199 - FLEX ROD 11M
+   Used by 32200 - FLEX ROD 12M
+   Used by 2497 - AXLE Ø4.9, BRUSH
+   Used by 92906 - CARBAN CUP WITH CROSS AXLE 2M
+   Used by 99008 - KRYDSAKSEL M/STOP 4M
+   Used by 32201 - FLEX ROD 14M
+   Used by 32202 - FLEX ROD 16M
+   Used by 32235 - FLEX ROD 19M
+   Used by 40390 - CARNOSAUR HEAD 3X6X3
+Axel connector subtype 14
+   Used by 600815 - MINI FIGURE , VEIL, FOLD
+   Used by 11303 - FIGUR HEAD CLOTHING NO 6
+   Used by 11575 - DOG, POODLE
+   Used by 11602 - CAT
+   Used by 11603 - TURTLE
+   Used by 11605 - WIG, PLAIT NO. 1
+   Used by 11609 - STAR SYMBOL STAR W/TUBE AND HOLE ø1.5
+   Used by 13393 - BAMBI W/HOLE Ø 1.5
+   Used by 13664 - MINI WIG NO 52
+   Used by 13750 - MINI FIGURE WIG NO. 55
+Axel connector subtype 15
+   Used by 11618 - BOW NO. 1
+   Used by 12886 - PLUMES HELMET W. 1,5 SHAFT
+   Used by 13665 - BIRD WITH Ø1,5 SHAFT
+   Used by 13746 - HAT NO. 8
+   Used by 14045 - HEADSET W. SHAFT Ø1.5
+   Used by 18853 - FLOWER W. 1,5 CONNECTOR
+   Used by 18854 - SUNGLASSES W. 1,5 CONNECTOR
+   Used by 24131 - HAT W/ 1.5 SHAFT
+   Used by 24634 - HEADGEAR ACCESSORIES, NO. 1, W/ 1.5
+   Used by 24635 - HEADGEAR ACCESSORIES 2 W/ 1.5 SHAFT
+Axel connector subtype 17
+   Used by 15462 - CROSS AXLE 5M WITH END STOP
+   Used by 24316 - CROSS AXLE 3M W/END STOP
+   Used by 55013 - CROSS AXLE 8M WITH END STOP
+   Used by 59426 - CROSS AXLE 5,5  WITH STOP 1M.
+   Used by 87083 - CROSS AXLE 4M WITH END STOP
+   Used by 2736 - BALL W. CROSS AXLE
+   Used by 6587 - CROSSAXLE 3M WITH KNOB
+   Used by 95228 - BOTTLE 1X1X2 M
+   Used by 57563 - WEAPON 1 2007
+   Used by 57564 - WEAPON 2(SQUID ARM)  2007
+Axel connector subtype 19
+   Used by 14149 - RUBBER ATTACHMENT FOR TRACK ELEMENT
+   Used by 43122 - ROTOR BLADES Ø24 W. SNAP, CROM
+   Used by 18651 - Cross axle 2m w. snap w. fric.
+   Used by 2460 - PLATE 2X2 W. VERTICAL SNAP
+   Used by 2476 - PLATE 2X2 INVERTED W. SNAP
+   Used by 32002 - 1 1/2 M CONNECTING BUSH
+   Used by 40378 - NECK - TAIL LINK, Ø7.84-Ø6,47,
+   Used by 4274 - CONNECTOR PEG W. KNOB
+   Used by 43093 - CONN.BUSH W.FRIC./CROSSALE
+   Used by 6047 - LINK W. SNAP, FEMALE
+Axel connector subtype 21
+   Used by 22667 - CHERRY,
+   Used by 33051 - APPLE WITH LEAF
+   Used by 33175 - ROSETTE
+   Used by 87688 - LADY BIRD
+   Used by 87689 - BUTTERFLY
+   Used by 87690 - LOOP
+   Used by 87691 - FLOWER
+   Used by 95829 - M3
+   Used by 95831 - M4
+   Used by 95832 - M5
+Ball connector subtype 2
+   Used by 32005 - TRACK ROD 6M,
+   Used by 32293 - LT STEERING GEAR
+   Used by 14418 - PLATE 1X2 BALL CUP / FRICTION END
+   Used by 14704 - PLATE 1X2 BALL CUP / FRICTION MIDDLE
+   Used by 3183 - PLATE 1X4 W. BALL CUP
+   Used by 3730 - PLATE 2X2 W. BALL SOCKET
+   Used by 6075 - SURFBOARD 10M
+   Used by 98263 - PLATE 1X4 W. BALL SOCKET
+   Used by 14419 - PLATE 1X2 BALL Ø5.9/CUP/FRICTION
+   Used by 2578 - SHIELD BOX
+Ball connector subtype 3
+   Used by 6253 - PARASOL BASE
+   Used by 14417 - PLATE 1X2 BALL Ø5.9 MIDDLE
+   Used by 22484 - 3.2 SHAFT W/5.9 BALL
+   Used by 22890 - PLATE 1X2 W/5.9 BALL END
+   Used by 2736 - BALL W. CROSS AXLE
+   Used by 2852 - PLASTIC MOTOR, MAIN ROD
+   Used by 3490 - HOLDER FOR BUCKET
+   Used by 6574 - RACK W. BALL
+   Used by 6628 - BALL WITH FRICTION SNAP
+   Used by 14419 - PLATE 1X2 BALL Ø5.9/CUP/FRICTION
+Ball connector subtype 4
+   Used by 15373 - HEAD NO. 2, 2014
+   Used by 15375 - HEAD NO. 4, 2014
+   Used by 21561 - CHEST, NO. 4, W/ BALL SNAP
+   Used by 21921 - HEAD NO. 2, 2015 ASS.
+   Used by 22371 - HELMET, NO. 1
+   Used by 22375 - FACE, PART 1
+   Used by 24251 - FACE, NO. 1, PART 1
+   Used by 24253 - LEFT, HELMET, NO. 1, 2016
+   Used by 24256 - HELMET, PART 2
+   Used by 24899 - HEAD NO.4,2016
+Ball connector subtype 5
+   Used by 20474 - BEAM W/DESIGN 5 M. W/10,2 BALL/ CUP
+   Used by 53585 - Fric. element, ball Ø 10.2
+   Used by 29592 - SPORT EQUIPMENT NO. 1, PART 1
+   Used by 32474 - VOODOO BALL Ø10,2
+   Used by 47300 - LINK 2X2M 90D. W. 2 B. Ø10,2
+   Used by 50923 - Beam 2M w. ball ø 10.2
+   Used by 64276 - Beam 2 with ball Ø 10.2
+   Used by 90611 - BEAM A 4M BALL/CUP Ø10.2
+   Used by 90612 - BEAM A 3M BALL/CUP Ø 10.2
+   Used by 57908 - BRICK 2X2 W. 2 BALLS Ø 10,2
+Ball connector subtype 6
+   Used by 6265 - SKELETON, ARM
+Ball connector subtype 7
+   Used by 6260 - SKELETON, BODY
+Ball connector subtype 8
+   Used by 2563 - PALM BASE
+   Used by 6135 - PALM TRUNK W. CROSS
+Ball connector subtype 9
+   Used by 6135 - PALM TRUNK W. CROSS
+Ball connector subtype 10
+   Used by 20582 - WRECKING BALL
+   Used by 2376 - ROUND PLATE 2X2 W/EYE
+   Used by 74698 - ROUND PLATE 2X2 W/EYE
+Ball connector subtype 11
+   Used by 30395 - HOOK W. BALL 1X3
+Ball connector subtype 12
+   Used by 98562 - HANDCUFFS W. Ø4.85 HOLE
+   Used by 53551 - CHAIN LINK 1X3X1/3
+Ball connector subtype 13
+   Used by 98562 - HANDCUFFS W. Ø4.85 HOLE
+   Used by 53551 - CHAIN LINK 1X3X1/3
+Ball connector subtype 14
+   Used by 92911 - POWER JOINT
+Ball connector subtype 15
+   Used by 99948 - STEEL BALL
+   Used by 92910 - POWER JOINT BALLPART
+Ball connector subtype 16
+   Used by 98564 - SHOOTER ARM-2012
+   Used by 64275 - SHOOTER ARM 8 M. 09
+   Used by 98593 - SHELL W. DOUBL.STICK 3.2, 2012
+   Used by 54271 - SHOOTER
+Ball connector subtype 17
+   Used by 54821 - BALL  Ø16,5
+   Used by 85582 - BALL Ø 16.5 WITH STUDS
+Ball connector subtype 18
+   Used by 44358 - SAUCER FOR BALL 3M
+Ball connector subtype 19
+   Used by 44359 - BALL 3M, 1/2
+Ball connector subtype 999000
+   Used by 14301 - FLEX TUBE 12 M
+   Used by 27328 - FLEX HOSE 10 MODULE W/3.2 SHAFT
+   Used by 32199 - FLEX ROD 11M
+   Used by 32200 - FLEX ROD 12M
+   Used by 32580 - FLEX ROD 7M
+   Used by 33763 - CORRUGATED PIPE 208MM
+   Used by 43675 - CORRUGATED PIPE 152MM
+   Used by 55668 - OUTER CABLE 64MM, VIRTUEL
+   Used by 55676 - OUTER CABLE 160MM, VIRTUEL
+   Used by 57274 - OUTER CABLE 256MM
+Ball connector subtype 999001
+   Used by 14301 - FLEX TUBE 12 M
+   Used by 27328 - FLEX HOSE 10 MODULE W/3.2 SHAFT
+   Used by 32199 - FLEX ROD 11M
+   Used by 32200 - FLEX ROD 12M
+   Used by 32580 - FLEX ROD 7M
+   Used by 43675 - CORRUGATED PIPE 152MM
+   Used by 55668 - OUTER CABLE 64MM, VIRTUEL
+   Used by 55676 - OUTER CABLE 160MM, VIRTUEL
+   Used by 57274 - OUTER CABLE 256MM
+   Used by 57539 - FLEX HOSE 19M W/3. 18 STICK
+Ball connector subtype 999002
+   Used by 14301 - FLEX TUBE 12 M
+   Used by 27328 - FLEX HOSE 10 MODULE W/3.2 SHAFT
+   Used by 32199 - FLEX ROD 11M
+   Used by 32200 - FLEX ROD 12M
+   Used by 32580 - FLEX ROD 7M
+   Used by 43675 - CORRUGATED PIPE 152MM
+   Used by 55668 - OUTER CABLE 64MM, VIRTUEL
+   Used by 55676 - OUTER CABLE 160MM, VIRTUEL
+   Used by 57274 - OUTER CABLE 256MM
+   Used by 57539 - FLEX HOSE 19M W/3. 18 STICK
+Ball connector subtype 999003
+   Used by 14301 - FLEX TUBE 12 M
+   Used by 27328 - FLEX HOSE 10 MODULE W/3.2 SHAFT
+   Used by 32199 - FLEX ROD 11M
+   Used by 32200 - FLEX ROD 12M
+   Used by 32580 - FLEX ROD 7M
+   Used by 33763 - CORRUGATED PIPE 208MM
+   Used by 43675 - CORRUGATED PIPE 152MM
+   Used by 55668 - OUTER CABLE 64MM, VIRTUEL
+   Used by 55676 - OUTER CABLE 160MM, VIRTUEL
+   Used by 57274 - OUTER CABLE 256MM
+Custom2DField connector subtype 22
+   Used by 14301 - FLEX TUBE 12 M
+   Used by 27328 - FLEX HOSE 10 MODULE W/3.2 SHAFT
+   Used by 32199 - FLEX ROD 11M
+   Used by 32200 - FLEX ROD 12M
+   Used by 32580 - FLEX ROD 7M
+   Used by 55668 - OUTER CABLE 64MM, VIRTUEL
+   Used by 55676 - OUTER CABLE 160MM, VIRTUEL
+   Used by 57274 - OUTER CABLE 256MM
+   Used by 57539 - FLEX HOSE 19M W/3. 18 STICK
+   Used by 58856 - OUTER CABLE 24MM
+Custom2DField connector subtype 23
+   Used by 60169 - CHAIN 16 M
+   Used by 63141 - STRING W. COUPL. POINTS 20M
+   Used by 92338 - CHAIN 6 M
+   Used by 11203 - FLAT TILE 2X2 INV.
+   Used by 15621 - BLADE 3M W. CORED KNOB
+   Used by 18663 - SUPER JUMPER
+   Used by 18868 - FUNC. CIRKLE BRICK 4X4X2/3 NO.1
+   Used by 19981 - FUNC. CIRKLE BRICK 4X4X2/3 NO.2
+   Used by 25375 - TASSEL
+   Used by 2654 - SLIDE SHOE ROUND 2X2
+Fixed connector subtype 2
+   Used by 56890 - TYRE BALLOON WIDE Ø 24x12
+   Used by 6015 - TYRE NORMAL WIDE Ø21 X 12
+   Used by 87697 - TYRE NORMAL WIDE Ø21 X 12
+Fixed connector subtype 3
+   Used by 30190 - RIM FOR MOTOR CYCLE
+   Used by 6014 - RIM WIDE W. HOLE Ø11
+Fixed connector subtype 4
+   Used by 15504 - TAIL 14x24x16 MM
+   Used by 24087 - MINI CLOTHING NO. 1
+   Used by 24779 - MINI TAIL NO.2
+   Used by 600880 - MINI FIGURE, KILT, FOLD
+   Used by 601607 - MINI FIG. FAIRY SKIRT, FOLD
+   Used by 94984 - MINI FIGURE, SKIRT, FOLD
+   Used by 95749 - MINI FIGURE, SKIRT 2, FOLD 3
+   Used by 18277 - ANIMAL TAIL
+   Used by 18832 - MINI TAIL NO. 1
+   Used by 24782 - MINI CLOTHING NO.3
+Fixed connector subtype 5
+   Used by 51345 - MERMAID TAIL
+   Used by 95351 - MINI MERMAID TAIL NO.2
+   Used by 19859 - MINI GHOST LOWER PART
+   Used by 28374 - MINI, LEG PART, NO. 1
+   Used by 98376 - MINI GENIE LOWER PART
+   Used by 99778 - SNAKE LOWER PART, HARD
+   Used by 16706 - MINI LEGS, INNER PART
+   Used by 41879 - MINI LEG
+   Used by 24068 - MINI SKIRT NO. 1
+   Used by 13249 - MINIFIGURE HIP ELEMENT W. Ø3.2 SHAFT
+Fixed connector subtype 6
+   Used by 28327 - WALL 4X4X6, DEG. 45., NO. 1
+   Used by 57894 - FRAME 1X4X6 TRIPARTITE
+   Used by 60596 - FRAME 1X4X6
+   Used by 30179 - FRAME 1X4X6 FOR DOOR
+Fixed connector subtype 7
+   Used by 57895 - GLAS FOR FRAME 1X4X6
+   Used by 60803 - GLAS FOR FRAME 1X4X6
+   Used by 92589 - LATTICE FOR FRAME 4X6
+Fixed connector subtype 8
+   Used by 2696 - TYRE 13 X 43.2
+Fixed connector subtype 9
+   Used by 2695 - HUB 13XØ24/Ø30
+Fixed connector subtype 10
+   Used by 2815 - TYRE FOR WEDGE-BELT WHEEL
+Fixed connector subtype 11
+   Used by 4185 - WEDGE-BELT WHEEL Ø24
+Fixed connector subtype 12
+   Used by 2902 - TYRE Ø81.6 X 15
+Fixed connector subtype 13
+   Used by 2903 - RIM Ø61.6 X 13.6
+Fixed connector subtype 14
+   Used by 18450 - TYRE WIDE Ø81,6x44
+   Used by 41897 - TYRE LOW WIDE Ø56 X 28
+   Used by 45982 - TYRE BALOON WIDE Ø 81,6 X 38
+   Used by 61480 - TYRE BALOON WIDE Ø68,7 X 34
+Fixed connector subtype 15
+   Used by 41896 - RIM 43,2 X 26
+   Used by 56908 - RIM WIDE 43,2X26 W 6 HOL.Ø 4.8
+Fixed connector subtype 16
+   Used by 15413 - DÆK 49.53x20 TRUCK
+   Used by 44308 - OFFROAD TYRE 43,2 X 22
+   Used by 44309 - TYRE NORMAL WIDE Ø43,2 X 22
+   Used by 53992 - CATERPILLAR TRACK
+   Used by 55976 - TYRE BALOON WIDE Ø56 X 26
+   Used by 55978 - TYRE LOW WIDE Ø37 X 22
+   Used by 61481 - TYRE BALOON WIDE Ø43 X 26
+Fixed connector subtype 17
+   Used by 56145 - RIM WIDE W.CROSS 30x20
+   Used by 44292 - RIM Ø 30,4 X 20
+Fixed connector subtype 20
+   Used by 64572 - FLEXSKINNE HAN
+   Used by 64573 - FLEXSKINNE HUN
+   Used by 74746 - STRAIGHT RAIL 16M WITH EL.
+   Used by 53401 - RAIL STRAIGHT 16 M
+   Used by 53400 - RAIL CURVED 22½ DEGREES
+   Used by 74747 - CURVED RAIL 22.5° WITH EL.
+   Used by 85976 - TRACK BOW 4M 45 DEGREES
+   Used by 85977 - TRACK FALL 4M
+   Used by 75541 - RIGHT POINTS WITH EL.
+   Used by 75542 - LEFT POINTS WITH EL.
+Fixed connector subtype 21
+   Used by 64572 - FLEXSKINNE HAN
+   Used by 64573 - FLEXSKINNE HUN
+   Used by 74746 - STRAIGHT RAIL 16M WITH EL.
+   Used by 53401 - RAIL STRAIGHT 16 M
+   Used by 53400 - RAIL CURVED 22½ DEGREES
+   Used by 74747 - CURVED RAIL 22.5° WITH EL.
+   Used by 85976 - TRACK BOW 4M 45 DEGREES
+   Used by 85977 - TRACK FALL 4M
+   Used by 75541 - RIGHT POINTS WITH EL.
+   Used by 75542 - LEFT POINTS WITH EL.
+Fixed connector subtype 22
+   Used by 2377 - WALL ELEMENT 1X2X2 W. WINDOW
+   Used by 4863 - WALL ELEMENT 1X4X2 W. WINDOWS
+Fixed connector subtype 23
+   Used by 4862 - PANE FOR WALL ELEMENT
+Fixed connector subtype 24
+   Used by 30028 - TYRE NORMAL WIDE Ø14.6 X 9
+Fixed connector subtype 25
+   Used by 30027 - RIM WIDE W.HOLE Ø8.1 X 9
+   Used by 74967 - RIM WIDE W.HOLE Ø8.1 X 9
+Fixed connector subtype 26
+   Used by 3139 - TYRE D8
+   Used by 3641 - TYRE HIGH NARROW Ø15 X 6
+   Used by 4084 - TYRE Ø8/21
+   Used by 59895 - TYRE D8, SEBS
+   Used by 87414 - TYRE HIGH NARROW Ø15 X 6
+   Used by 4288 - BALLOON TYRE Ø8/Ø21
+Fixed connector subtype 27
+   Used by 32123 - 1/2 BUSH
+   Used by 3464 - HUB FOR FORK
+   Used by 4624 - RIM NARROW W. HOLE Ø8
+   Used by 6141 - PLATE 1X1 ROUND
+   Used by 85861 - PL.ROUND 1X1 W. THROUGHG. HOLE
+Fixed connector subtype 28
+   Used by 53792 - Ultrasound sensor
+   Used by 55963 - Soundsensor
+   Used by 55969 - Lightsensor
+   Used by 64892 - COLOUR SENSOR, ASSEMBLED
+   Used by 95650 - MS, EV3, SENSOR, COLOUR
+   Used by 99380 - MS, EV3, GYRO SENSOR
+   Used by 55967 - Pushsensor front
+   Used by 74665 - MS SENSOR TOUCH HOUSING
+   Used by 95652 - MS-EV3, ULTRASONIC SENSOR
+   Used by 95654 - MS-EV3, IR SENSOR
+Fixed connector subtype 29
+   Used by 60410 - RJ12 STIK - VIRTUEL
+Fixed connector subtype 30
+   Used by 15619 - MINI  MASK NO. 1
+   Used by 19917 - MINI FIGURE COLLAR NO.1
+   Used by 22495 - MINI VISOR, NO. 6
+   Used by 26066 - MINI COLLAR NO 3
+   Used by 27148 - MINI ARMOUR NO. 1
+   Used by 27151 - MINI EQUIPMENT, NO. 3
+   Used by 27325 - MINI CLOTHING, NO. 5
+   Used by 56630 - SPECIAL MANTLE
+   Used by 93056 - ARMOUR W/SPIKE
+   Used by 93057 - ARMOUR W/BONE
+Fixed connector subtype 31
+   Used by 24445 - PLATE W/MINI NECK CONNECTOR
+   Used by 19732 - ANIMAL LEGS NO.2
+   Used by 19734 - ANIMAL LEGS NO.1
+   Used by 25767 - MINI TORSO PART NO. 1
+   Used by 60115 - SKELETON BODY W SHAFT 3.2
+   Used by 93060 - SKELETON TORSO NO. 3
+   Used by 98127 - MINI ARMOUR WITHOUT ARMS
+   Used by 3814 - MINI UPPER PART
+   Used by 6260 - SKELETON, BODY
+Fixed connector subtype 32
+   Used by 89201 - TYRE LOW WIDE Ø24 X 14
+   Used by 30391 - TYRE NORMAL WIDE Ø30,4 X 14
+   Used by 30648 - TYRE LOW WIDE Ø24 X 14
+   Used by 56891 - TYRE BALLOON WIDE Ø 37x18
+   Used by 58090 - Tyre Street Ø30.4 x 14
+   Used by 92402 - TYRE NORMAL WIDE Ø30,4 X 14
+   Used by 43903 - GREASE BAND 151MM X 2M
+Fixed connector subtype 33
+   Used by 30285 - HUB Ø 17.6 X 14 MM
+   Used by 55982 - RIM WIDE 18x14 W. CROSS Ø4.8
+   Used by 55981 - RIM WIDE 18x14 W. HOLE Ø4.8
+Fixed connector subtype 36
+   Used by 6556 - CONTAINER FRAME 1X4X3
+Fixed connector subtype 37
+   Used by 4034 - TRAIN WINDOW GLASS 4X3
+Fixed connector subtype 38
+   Used by 42611 - TYRE Ø17,6 X 6,24
+   Used by 50951 - TYRE LOW NARROW Ø14.58 X 6.24
+   Used by 92409 - TYRE Ø17,6 X 6,24
+Fixed connector subtype 39
+   Used by 50944 - RIM NARROW W. HOLE Ø11.2 X 6.2
+   Used by 93593 - RIM NO.1 Ø11,176X6,2
+   Used by 93594 - RIM NO.2 Ø11,176X6,2
+   Used by 93595 - RIM NO.3 Ø11,176X6,2
+   Used by 42610 - HUB Ø11,2 X 7,84
+Fixed connector subtype 40
+   Used by 2346 - TYRE HIGH NARROW Ø30.4 X 11
+   Used by 3483 - TYRE LOW NARROW Ø17 MM
+   Used by 3634 - TRACTOR TYRE Ø17/Ø43
+   Used by 56897 - TYRE HIGH SMALL Ø 30.4 X 11
+   Used by 61254 - TYRE LOW NARROW Ø24x7MM
+Fixed connector subtype 41
+   Used by 30155 - WHEEL HUB W. SPOKES Ø17
+   Used by 3482 - SPOKED HUG  D17MM
+   Used by 56903 - RIM NARROW Ø 18x7 M CROSS
+   Used by 6248 - HUB Ø17 FOR TECHNIC SNAP
+   Used by 13971 - RIM NARROW Ø18x7 W HOLE Ø4.8
+   Used by 56902 - RIM NARROW Ø18x7 W HOLE Ø4.8
+Fixed connector subtype 47
+   Used by 4266 - TECHNIC HUB Ø30.4 X 20
+Fixed connector subtype 48
+   Used by 50861 - TYRE Ø 20.9 X 5.8
+Fixed connector subtype 49
+   Used by 50862 - RIM Ø 14.58 X 8
+Fixed connector subtype 50
+   Used by 4035 - FRAME F. TRAIN WINDOW 1X2X3
+Fixed connector subtype 51
+   Used by 4036 - TRAIN WINDOW 2X3 SAN
+Fixed connector subtype 52
+   Used by 50860 - MOTORCYCLE FAIRING 1
+   Used by 85983 - MOTOR CYCLE TOP NO. 3
+   Used by 89536 - MOTOR CYCLE FAIRING
+Fixed connector subtype 53
+   Used by 50859 - MOTORCYCLE FRAME 6M
+Fixed connector subtype 54
+   Used by 18895 - MOTORCYCLE FAIRING NO. 4
+   Used by 92547 - SPINNER Ø47.79 X 1-1/3
+   Used by 50860 - MOTORCYCLE FAIRING 1
+   Used by 15396 - SCOOTER
+   Used by 85983 - MOTOR CYCLE TOP NO. 3
+   Used by 89536 - MOTOR CYCLE FAIRING
+   Used by 33485 - MINI BICYCLE FRAME
+   Used by 4719 - MINI BICYCLE FRAME
+   Used by 76040 - THREE-WHEELED MOTOR CYCLE
+Fixed connector subtype 55
+   Used by 10177 - RIGHT MINI FIGURE ROBOT LEG
+   Used by 2532 - MINI WOODEN LEG
+   Used by 16706 - MINI LEGS, INNER PART
+   Used by 41879 - MINI LEG
+   Used by 20460 - MINI LEG LEFT NO. 2, LOWER PART
+   Used by 20461 - MINI LEG RIGHT NO. 2, LOWER PART
+   Used by 3816 - MINI LEG RIGHT
+   Used by 3817 - MINI LEG LEFT
+Fixed connector subtype 56
+   Used by 60032 - WALL ELEMENT 1X2X2 W. WINDOW
+   Used by 60592 - FRAME 1X2X2
+   Used by 90195 - WALL 1X2X2 W. BOWED SLIT
+   Used by 61345 - WALL W/WINDOW W.RADIUS 1x4x2
+Fixed connector subtype 57
+   Used by 60601 - GLASS FOR FRAME 1X2X2
+Fixed connector subtype 58
+   Used by 48492 - HORSE HEAD SHELL
+   Used by 6125 - HEAD DECO. FOR HORSE
+   Used by 89524 - HORSE HEAD ORNAMENT
+Fixed connector subtype 59
+   Used by 4492 - HORSE, HEAD
+Fixed connector subtype 60
+   Used by 6158 - SMOKE HELMET PROTECTION
+Fixed connector subtype 61
+   Used by 3838 - MINI OXYGEN BOTTLES
+Fixed connector subtype 62
+   Used by 60593 - FRAME 1X2X3
+Fixed connector subtype 63
+   Used by 60602 - GLASS FOR FRAME 1X2X3
+Fixed connector subtype 64
+   Used by 2537 - MAST, DISTANCE PIECE
+Fixed connector subtype 65
+   Used by 30047 - BOWSPRIT 11 2/3 M
+   Used by 2538 - MAST, BOWSPRIT
+Fixed connector subtype 66
+   Used by 4844 - FAB. MERRY-GO-ROUND, REV. BASE
+   Used by 6067 - MAST FOOT
+Fixed connector subtype 67
+   Used by 2537 - MAST, DISTANCE PIECE
+   Used by 30047 - BOWSPRIT 11 2/3 M
+   Used by 2538 - MAST, BOWSPRIT
+Fixed connector subtype 68
+   Used by 6539 - DRIVING RING
+Fixed connector subtype 69
+   Used by 6538 - CROSS AXLE, EXTENSION M/3 RIBS
+Fixed connector subtype 70
+   Used by 32019 - TYRE Ø 62,4X20
+Fixed connector subtype 71
+   Used by 32020 - RIM Ø 43,2 X 18
+   Used by 86652 - RIM Ø 43,2 X 18
+Fixed connector subtype 72
+   Used by 23798 - TYRE TRACTOR DIA. 107X44
+   Used by 44771 - TYRE LOW WIDE Ø68,8 X 36
+   Used by 54120 - TYRE BALOON WIDE Ø94,8 X 44
+   Used by 92912 - TYRE Ø 94,3 X 38
+Fixed connector subtype 73
+   Used by 44772 - RIM Ø 56 X 34
+   Used by 15038 - RIM Ø 56 X 34
+Fixed connector subtype 74
+   Used by 2539 - TOP
+Fixed connector subtype 75
+   Used by 2537 - MAST, DISTANCE PIECE
+Fixed connector subtype 76
+   Used by 30293 - ROCK 4X4X1 1/3 UPPER PART
+Fixed connector subtype 77
+   Used by 30294 - ROCK 4X4X1 2/3 LOWER PART
+Fixed connector subtype 78
+   Used by 87613 - Plane Front 6x10x4 w. window
+Fixed connector subtype 79
+   Used by 87612 - Window f. plane front 6x10x4
+Fixed connector subtype 80
+   Used by 30699 - TYRE NORMAL, NARROW, DIA. 43X14, NO.1
+   Used by 56898 - TYRE HIGH NARROW Ø 43/14
+Fixed connector subtype 81
+   Used by 56904 - RIM NARROW Ø 30/14 W CROSS
+Fixed connector subtype 82
+   Used by 11957 - MOTORCYCLE TYRE Ø 100,6
+   Used by 88516 - MOTORCYCLE TYRE Ø 94.2
+Fixed connector subtype 83
+   Used by 88517 - MOTORCYCLE RIM Ø 75
+Fixed connector subtype 86
+   Used by 2493 - WINDOW FRAME 1X4X5
+   Used by 55768 - TRAIN FRONT
+Fixed connector subtype 87
+   Used by 2494 - GLASS 4X5
+Fixed connector subtype 88
+   Used by 87754 - HELMET W. AIR BOTTLES
+Fixed connector subtype 89
+   Used by 89159 - SPACE VISOR TR
+Fixed connector subtype 90
+   Used by 74261 - BALL CUP HIGH FRICTION W. RUBBER
+   Used by 98587 - MASK NO 5- HF 2012
+   Used by 90636 - SHELL A 8M BALL SNAP Ø10.2
+   Used by 90638 - SHELL A, 6 M, W/ BALL SNAP, DIA. 10.2
+   Used by 90639 - SHELL A 5M BALL SNAP Ø10.2
+   Used by 90640 - SHELL A 4M BALL SNAP Ø10.2
+   Used by 90641 - SHELL A 3M BALL SNAP Ø10.2
+   Used by 90650 - SHELL C 6M BALL SNAP Ø10.2
+   Used by 90652 - SHELL T 5X8X3 BALL SNAP Ø10.2
+   Used by 93277 - HEAD, LOWER PART W. SNAP
+Fixed connector subtype 91
+   Used by 90609 - BEAM A 5M BALL/CUP Ø10.2
+   Used by 90617 - BEAM B 5M BALL/CUP Ø10.2
+   Used by 90608 - BEAM A 6M BALL/CUP Ø10.2
+   Used by 90622 - BEAM C 5M CUP/CUP Ø10.2
+   Used by 98577 - BEAM 3M Ø10.2 BALL WITH GUIDE
+   Used by 90616 - BEAM B 6M BALL/CUP Ø10.2
+   Used by 90607 - BEAM A 7M BALL/CUP Ø10.2
+   Used by 90615 - BEAM B 7M BALL/CUP Ø10.2
+   Used by 90605 - BEAM A 9M BALL/CUP Ø10.2
+   Used by 90613 - BEAM B 9M BALL/CUP Ø10.2
+Fixed connector subtype 92
+   Used by 95348 - MINI SWORD HOLDER SINGLE
+   Used by 15725 - SWORDHOLDER W. Ø 3.2 SHAFT
+   Used by 23983 - ARMOR NO. 16
+   Used by 88290 - MINI SWORD HOLDER
+Fixed connector subtype 93
+   Used by 98370 - MINI LONG SWORD
+   Used by 2530 - SWORD
+   Used by 21459 - NINJA SWORD
+   Used by 30173 - NINJA SWORD
+Fixed connector subtype 94
+   Used by 10304 - CHEST LID
+   Used by 42447 - COFFIN LID
+   Used by 30164 - MUMMY COFFIN LID
+Fixed connector subtype 95
+   Used by 30163 - MUMMY COFFIN
+Fixed connector subtype 96
+   Used by 58124 - FUNC. PLUG TOP
+Fixed connector subtype 97
+   Used by 64228 - FUNC. BATTERY BOX 4x8x4 AAA
+   Used by 58124 - FUNC. PLUG TOP
+   Used by 58148 - FUNC. IR/RX LOWERPART
+   Used by 59510 - Func. TechBatBox - Top Part
+Fixed connector subtype 98
+   Used by 24132 - CONTAINER, TOP, 4X4X2 1/3, NO. 1
+   Used by 30208 - INSECT EYE Ø 31,84
+   Used by 86500 - DOME Ø32
+   Used by 30286 - METEOR
+Fixed connector subtype 99
+   Used by 30342 - METEOR, LOWER PART
+   Used by 24130 - CONTAINER, BOTTOM, 4X4X1 2/3, NO. 1
+Fixed connector subtype 100
+   Used by 15618 - ARMOUR NO.6
+   Used by 98132 - MINI ARMOUR W/SWORD HOLDER
+Fixed connector subtype 101
+   Used by 2530 - SWORD
+   Used by 21459 - NINJA SWORD
+   Used by 30173 - NINJA SWORD
+Fixed connector subtype 102
+   Used by 71372 - CATERPILLAR BELT
+Fixed connector subtype 103
+   Used by 32007 - RIM FOR BELT Ø 24 X 20
+Fixed connector subtype 104
+   Used by 61182 - Rebel helmet
+Fixed connector subtype 105
+   Used by 2447 - MINI VISOR 2
+Fixed connector subtype 106
+   Used by 44359 - BALL 3M, 1/2
+Fixed connector subtype 107
+   Used by 44359 - BALL 3M, 1/2
+Fixed connector subtype 108
+   Used by 13745 - HORSE HEAD, ARMOUR
+Fixed connector subtype 109
+   Used by 10350 - ANIMAL NO.11 HEAD
+Fixed connector subtype 110
+   Used by 11598 - COCOON 3M/ HOLE Ø4.85
+   Used by 13754 - COCOON 2M / HOLE Ø4.85
+Fixed connector subtype 111
+   Used by 11598 - COCOON 3M/ HOLE Ø4.85
+   Used by 13754 - COCOON 2M / HOLE Ø4.85
+Fixed connector subtype 114
+   Used by 11209 - TYRE NORMAL / NARROW Ø 21X9,9
+Fixed connector subtype 115
+   Used by 11208 - RIM NARROW Ø14,6X9,9 HOLE Ø 3,2
+Fixed connector subtype 117
+   Used by 24452 - SKIRT W/O HIP, NO. 1
+Fixed connector subtype 118
+   Used by 11293 - HELICOPTER FRONT 6X8X4
+Fixed connector subtype 119
+   Used by 11297 - WINDOW FOR HELICOPTER FRONT 6X8X4
+Fixed connector subtype 120
+   Used by 20460 - MINI LEG LEFT NO. 2, LOWER PART
+   Used by 20461 - MINI LEG RIGHT NO. 2, LOWER PART
+   Used by 3816 - MINI LEG RIGHT
+   Used by 3817 - MINI LEG LEFT
+Fixed connector subtype 122
+   Used by 13760 - WINDSCREEN FRAME 2X6X2
+Fixed connector subtype 123
+   Used by 13756 - GLASS FOR WINDSCREEN 2X6X2
+Fixed connector subtype 124
+   Used by 4181 - LEFT DOOR 1X4X5
+   Used by 4182 - RIGHT DOOR 1X4X5
+Fixed connector subtype 125
+   Used by 4183 - GLASS FOR DOOR
+Fixed connector subtype 126
+   Used by 6579 - TYRE Ø43.2 X 28
+Fixed connector subtype 127
+   Used by 6580 - RIM Ø30.4 X 22.8
+Fixed connector subtype 128
+   Used by 6581 - TYRE Ø49.6 X 20
+Fixed connector subtype 129
+   Used by 6582 - RIM Ø36.8X20
+Fixed connector subtype 130
+   Used by 2995 - TYRE Ø68.8 X 40
+Fixed connector subtype 131
+   Used by 2996 - RIM Ø43.2 X 30.5
+Fixed connector subtype 132
+   Used by 15536 - TRAIN FRONT 14X6X7 1/3
+Fixed connector subtype 133
+   Used by 15537 - GLASS FOR TRAIN FRONT 14X6X7 1/3
+Fixed connector subtype 134
+   Used by 17454 - TRAINFRONT 2X6X2
+Fixed connector subtype 135
+   Used by 17457 - GLAS FOR TRAINFRONT 2X6X2
+Fixed connector subtype 136
+   Used by 6578 - TYRE Ø30.4 X 14 W. INLET DISC
+Fixed connector subtype 137
+   Used by 2994 - RIM Ø24 X 14
+Fixed connector subtype 138
+   Used by 18977 - TYRE LOW Ø24X12
+Fixed connector subtype 139
+   Used by 18976 - RIM Ø18X12 W CROSS & STUD
+Fixed connector subtype 140
+   Used by 18947 - GEAR SHIFTER RING 3M
+Fixed connector subtype 141
+   Used by 18948 - GEAR SHIFTER CONNECTOR 3M
+Fixed connector subtype 142
+   Used by 16968 - DISK SHOOTER 1 X 4
+Fixed connector subtype 143
+   Used by 14769 - FLAT TILE 2X2, ROUND
+   Used by 4150 - FLAT TILE 2X2, ROUND
+   Used by 15535 - FLAT TILE 2x2 ROUND W. HOLE Ø4.85
+Fixed connector subtype 144
+   Used by 19730 - FIGURE HELMET NO.1
+Fixed connector subtype 145
+   Used by 19729 - FIGUR HEAD NO.1
+   Used by 30443 - MINI HEAD NO. 2183
+Fixed connector subtype 146
+   Used by 61287 - DOME Ø21.53
+Fixed connector subtype 147
+   Used by 61287 - DOME Ø21.53
+Fixed connector subtype 148
+   Used by 61287 - DOME Ø21.53
+Fixed connector subtype 149
+   Used by 3626 - MINI HEAD
+Fixed connector subtype 150
+   Used by 18907 - PLANE FRONT, TOP 6X10X4
+Fixed connector subtype 151
+   Used by 18908 - PLANE INSERT NO. 1
+Fixed connector subtype 152
+   Used by 89648 - WALL 2X8X2 WRY INV. W. WIND.
+   Used by 24234 - SH 3 EXT - Door
+Fixed connector subtype 153
+   Used by 24233 - SH 3 EXT - Window
+   Used by 89649 - GLAS FOR WALL 2X8X2 WRY INV.
+Fixed connector subtype 154
+   Used by 24225 - SH 2 EXT - Door
+   Used by 19071 - LPF2 SMART HUB 2 I/O 4X8X3
+   Used by 27191 - HOUSING TOP
+Fixed connector subtype 155
+   Used by 23816 - LPF2 MALE PLUG 1
+   Used by 24224 - SH 2 EXT - Window
+Fixed connector subtype 156
+   Used by 24184 - LIFE JACKET
+Fixed connector subtype 158
+   Used by 23799 - TYRE LOW WIDE  DIA. 81.6X44
+Fixed connector subtype 159
+   Used by 23800 - RIM WIDE DIA 62.3X42 W/ 4.85 HOLE
+Fixed connector subtype 999000
+   Used by 33763 - CORRUGATED PIPE 208MM
+   Used by 43675 - CORRUGATED PIPE 152MM
+   Used by 57539 - FLEX HOSE 19M W/3. 18 STICK
+   Used by 60169 - CHAIN 16 M
+   Used by 63141 - STRING W. COUPL. POINTS 20M
+   Used by 71917 - CORRUGATED PIPE 72MM
+   Used by 71985 - CORRUGATED PIPE 56MM
+   Used by 71986 - CORRUGATED PIPE 88MM
+   Used by 92338 - CHAIN 6 M
+   Used by 98567 - TOOL BELT - 17M
+Fixed connector subtype 999001
+   Used by 43675 - CORRUGATED PIPE 152MM
+   Used by 57539 - FLEX HOSE 19M W/3. 18 STICK
+   Used by 60169 - CHAIN 16 M
+   Used by 63141 - STRING W. COUPL. POINTS 20M
+   Used by 71917 - CORRUGATED PIPE 72MM
+   Used by 71985 - CORRUGATED PIPE 56MM
+   Used by 71986 - CORRUGATED PIPE 88MM
+   Used by 92338 - CHAIN 6 M
+   Used by 98567 - TOOL BELT - 17M
+Fixed connector subtype 999002
+   Used by 14301 - FLEX TUBE 12 M
+   Used by 27328 - FLEX HOSE 10 MODULE W/3.2 SHAFT
+   Used by 32199 - FLEX ROD 11M
+   Used by 32200 - FLEX ROD 12M
+   Used by 32580 - FLEX ROD 7M
+   Used by 55668 - OUTER CABLE 64MM, VIRTUEL
+   Used by 55676 - OUTER CABLE 160MM, VIRTUEL
+   Used by 57274 - OUTER CABLE 256MM
+   Used by 58856 - OUTER CABLE 24MM
+   Used by 60166 - OUTER CABLE 56MM
+Fixed connector subtype 999003
+   Used by 14301 - FLEX TUBE 12 M
+   Used by 27328 - FLEX HOSE 10 MODULE W/3.2 SHAFT
+   Used by 32199 - FLEX ROD 11M
+   Used by 32200 - FLEX ROD 12M
+   Used by 32580 - FLEX ROD 7M
+   Used by 55668 - OUTER CABLE 64MM, VIRTUEL
+   Used by 55676 - OUTER CABLE 160MM, VIRTUEL
+   Used by 57274 - OUTER CABLE 256MM
+   Used by 58856 - OUTER CABLE 24MM
+   Used by 60166 - OUTER CABLE 56MM
+Gear connector subtype 3
+   Used by 10928 - GEAR WHEEL T=8, M=1
+   Used by 11955 - Z8 GEAR WITHOUT FRICTION
+   Used by 32052 - COUPLING LID
+   Used by 3647 - GEAR WHEEL T=8, M=1
+   Used by 4019 - GEAR WHEEL Z=16, M=1
+   Used by 94925 - GEAR WHEEL Z16
+   Used by 3648 - GEAR WHEEL Z24
+   Used by 99010 - UPPER PART FOR TURNTABLE z28
+   Used by 3649 - GEAR WHEEL 40T
+Gear connector subtype 9
+   Used by 3650 - CROWN- AND GEAR WHEEL Z24
+Gear connector subtype 11
+   Used by 18575 - DOUBLE CONICAL WHEEL Z20 1M
+   Used by 32269 - DOUBLE CONICAL WHEEL Z20 1M
+   Used by 32270 - DOUBLE CONICAL WHEEL Z12 1M
+   Used by 24014 - GEAR WHEEL Z12 W/ HOLE / CROSSAXLE
+   Used by 32498 - DOUBLE CONICAL WHEEL Z36
+Gear connector subtype 13
+   Used by 32198 - BEVEL GEAR Z20
+   Used by 6589 - CONICAL WHEEL Z12
+   Used by 87407 - CONE WHEEL Z20 Ø4.85
+   Used by 62821 - DIFFERENTIALE 3M Z 28
+Hinge connector subtype 2
+   Used by 21709 - SHOVEL 4X6X2 1/3 FRIC/FORK
+   Used by 30394 - SHOVEL 4X6X2 1/3 FRIC/FORK
+   Used by 30633 - WINDSCREEN 6X4X4
+   Used by 30649 - COCKPIT 4X8X4
+   Used by 42602 - COCKPIT 6X8X4
+   Used by 47508 - SHOVEL 4 X 8 X 2 2/3
+   Used by 30372 - COCKPIT 4X7X2 FRIC/FORK
+   Used by 30553 - FRIC/FORK W. CROSS HOLE
+   Used by 50747 - Dome ø47.84 w. combi hinge
+   Used by 85962 - COCKPIT Ø64X48 W. FORK
+Hinge connector subtype 3
+   Used by 30552 - FRIC/STUMP WITH CROSS HOLE
+   Used by 41532 - STUB W. FRICTION BUSH 3 M
+   Used by 44300 - PLATE 1X3 W/STUB/ALONG/U.P.
+   Used by 18455 - BRICK 2x4x1 2/3 W/Ve STUB
+   Used by 30364 - BRICK 1X2 W/STUB VERTICAL END
+   Used by 30383 - PLATE 1X2 W/STUB/ALONG/UPPER P
+   Used by 30541 - BRICK 1X2 W/STUB HORIZ. END
+   Used by 30554 - LINK 1M FRIC/FORK/STUMPF
+   Used by 44301 - PLATE 1X2 W/STUB VERTICAL/END
+   Used by 44567 - PLATE 1X2 W. STUB/VERTICAL
+Hinge connector subtype 4
+   Used by 3937 - ROCKER BEARING 1X2
+   Used by 2440 - SNOW PLOUGH LL
+   Used by 3640 - PLATE 2X4 ACROSS HINGE
+   Used by 2443 - OCTAGONAL WINDOW
+Hinge connector subtype 5
+   Used by 3938 - PLATE 1X2 (ROCKING)
+   Used by 6134 - PLATE 2X2 (ROCKING)
+   Used by 2418 - GLOBE 6X6
+   Used by 3639 - PLATE 2X4 CROSS COUPLING
+   Used by 2598 - GLOBE TOP 10X10X4 - TR
+Hinge connector subtype 6
+   Used by 2429 - HINGE PLATE 1X2 II
+Hinge connector subtype 7
+   Used by 2430 - HINGE PLATE 1X2 I
+Hinge connector subtype 8
+   Used by 62520 - FUNC. JOINT HEAD
+Hinge connector subtype 9
+   Used by 3326 - CROSS FOR UNIVERSAL JOINT
+Hinge connector subtype 10
+   Used by 14696 - CHAIN LINK M=1
+   Used by 3711 - CHAIN LINK M=1
+   Used by 15379 - CHAINS M PLATE M 5 ø3, 2 HOLE
+   Used by 3873 - JOINT FOR GREASE BAND
+Hinge connector subtype 11
+   Used by 14696 - CHAIN LINK M=1
+   Used by 3711 - CHAIN LINK M=1
+   Used by 15379 - CHAINS M PLATE M 5 ø3, 2 HOLE
+   Used by 3873 - JOINT FOR GREASE BAND
+Hinge connector subtype 12
+   Used by 24082 - MINI LEG NO. 1 RIGHT
+   Used by 24083 - MINI LEG NO. 1 LEFT
+   Used by 10177 - RIGHT MINI FIGURE ROBOT LEG
+   Used by 2532 - MINI WOODEN LEG
+   Used by 20460 - MINI LEG LEFT NO. 2, LOWER PART
+   Used by 20461 - MINI LEG RIGHT NO. 2, LOWER PART
+   Used by 3816 - MINI LEG RIGHT
+   Used by 3817 - MINI LEG LEFT
+Hinge connector subtype 13
+   Used by 3815 - MINI HIP
+Hinge connector subtype 14
+   Used by 26050 - CREATURE, NO. 44
+   Used by 21968 - BODY FOR CREATURE NO. 25
+   Used by 24940 - CREATURE NO. 35 FRONT
+   Used by 25281 - CREATURE NO. 36 FRONT
+   Used by 25315 - CREATURE NO. 38 FRONT
+   Used by 25331 - CREATURE NO. 39 FRONT
+   Used by 25336 - CREATURE NO. 40 FRONT
+   Used by 24937 - CREATURE NO. 34 FRONT
+   Used by 2550 - MONKEY
+   Used by 98127 - MINI ARMOUR WITHOUT ARMS
+Hinge connector subtype 15
+   Used by 11263 - MINI CHICKEN WING
+   Used by 24074 - MINI ARM NO. 1
+   Used by 10303 - MINIFIGURE ARM W.WING
+   Used by 21969 - ARM FOR CREATURE NO. 25
+   Used by 24943 - CREATURE ARM NO. 2
+   Used by 34335 - RIGHT MINI ARM, NO. 145
+   Used by 16000 - MINI ARM, RIGHT, UPPER PART
+   Used by 16001 - MINI ARM, LEFT, UPPER PART
+   Used by 3818 - MINI ARM, RIGHT
+   Used by 3819 - MINI ARM, LEFT
+Hinge connector subtype 16
+   Used by 10303 - MINIFIGURE ARM W.WING
+   Used by 16000 - MINI ARM, RIGHT, UPPER PART
+   Used by 16001 - MINI ARM, LEFT, UPPER PART
+   Used by 3818 - MINI ARM, RIGHT
+   Used by 3819 - MINI ARM, LEFT
+Hinge connector subtype 17
+   Used by 13543 - BASEBALL GLOVE
+   Used by 95320 - MINI BOXING GLOVE, LEFT
+   Used by 95321 - MINI BOXING GLOVE, RIGHT
+   Used by 2531 - MINI CLAW
+   Used by 3820 - MINI HAND
+Hinge connector subtype 18
+   Used by 15627 - WALL 1X6X6 W. WINDOW
+   Used by 4132 - WINDOW FRAME 2X4X3
+   Used by 60594 - FRAME 1X4X3
+   Used by 60598 - FRAME 2X4X3
+   Used by 6556 - CONTAINER FRAME 1X4X3
+   Used by 60806 - FRAME/SLANTING 3X4X3
+   Used by 2443 - OCTAGONAL WINDOW
+   Used by 3853 - WINDOW FRAME 4X3
+Hinge connector subtype 19
+   Used by 3854 - INSIDE FRAME 2X3
+   Used by 3856 - SHUTTER 2X3
+   Used by 60608 - WINDOW ½ FOR FRAME 1X4X3
+   Used by 60614 - LID ½ FOR FRAME 1X4X3
+   Used by 6546 - CONTAINER DOOR 1X2X3
+   Used by 2529 - WINDOW 2X3 W. LATTICE
+   Used by 60607 - LATTIC 1/2 FOR FRAME 1X4X3
+Hinge connector subtype 20
+   Used by 32198 - BEVEL GEAR Z20
+   Used by 6589 - CONICAL WHEEL Z12
+Hinge connector subtype 21
+   Used by 62821 - DIFFERENTIALE 3M Z 28
+   Used by 6573 - DIFFERENTIALE GEAR CASING
+Hinge connector subtype 22
+   Used by 6556 - CONTAINER FRAME 1X4X3
+   Used by 2443 - OCTAGONAL WINDOW
+   Used by 3853 - WINDOW FRAME 4X3
+Hinge connector subtype 23
+   Used by 3855 - GLASS 23, 75X28, 5X2
+   Used by 6016 - LATTICE PLATE 1X4X3
+Hinge connector subtype 26
+   Used by 2609 - PLATE 2X2X1/3 FOR MAGNET
+   Used by 2920 - COUPLING LEVER
+   Used by 2607 - MAGNET HOLDER
+Hinge connector subtype 27
+   Used by 73092 - MAGNETO HOLDER W. MAGNET
+Hinge connector subtype 28
+   Used by 4022 - BUFFER/CLUTCH
+   Used by 18859 - DISH Ø64X9.6 TR.
+   Used by 19725 - DISH Ø80X9.6 TR.
+   Used by 21599 - SATELLITE DISH 6X6 TR.
+   Used by 2584 - DRUM HOLDER 2X2
+   Used by 3961 - ROUND PLATE Ø64X9.6
+   Used by 4151 - GRID PLATE 8X8
+   Used by 4285 - PARABOLIC REFLECTOR Ø48
+   Used by 44375 - PARABOLA 6X6
+   Used by 50990 - DISC Ø80
+Hinge connector subtype 29
+   Used by 2920 - COUPLING LEVER
+   Used by 4025 - BOGIE PLATE 4X6
+   Used by 70358 - 9V TRAIN ENGINE
+   Used by 54755 - Train Motor - Top Part
+Hinge connector subtype 30
+   Used by 3680 - TURN PLATE 2X2, LOWER PART
+Hinge connector subtype 31
+   Used by 3679 - TURN PLATE 2X2, UPPER PART
+Hinge connector subtype 34
+   Used by 4345 - MAILBOX, CASING 2X2X2
+Hinge connector subtype 35
+   Used by 4346 - MAILBOX, FRONT 2X2
+Hinge connector subtype 36
+   Used by 75541 - RIGHT POINTS WITH EL.
+   Used by 75542 - LEFT POINTS WITH EL.
+Hinge connector subtype 37
+   Used by 2866 - CONTROL SWITCH
+Hinge connector subtype 38
+   Used by 64417 - MAGNET HOLDER
+   Used by 73092 - MAGNETO HOLDER W. MAGNET
+Hinge connector subtype 39
+   Used by 64417 - MAGNET HOLDER
+   Used by 73092 - MAGNETO HOLDER W. MAGNET
+Hinge connector subtype 40
+   Used by 3828 - STEERING WHEEL Ø11
+Hinge connector subtype 41
+   Used by 3829 - WHEEL CONSOLE
+Hinge connector subtype 42
+   Used by 4592 - ANTENNA, BASE
+Hinge connector subtype 43
+   Used by 4593 - ANTENNA, MAST
+Hinge connector subtype 44
+   Used by 30044 - WINDOW FRAME 1X2X2 2/3
+   Used by 48490 - WALL ELEMENT 3X8X7 W/WINDOW
+   Used by 40241 - DOOR 4X6 W/WINDOW
+   Used by 64390 - WOODEN DOOR 4X6 W/WINDOW
+Hinge connector subtype 45
+   Used by 30045 - CAVITY W. IRON LATTICE
+   Used by 30046 - CAVITY W. LEADS
+   Used by 94161 - WOODEN DOOR
+Hinge connector subtype 46
+   Used by 60599 - FRAME 2X4X6
+   Used by 28327 - WALL 4X4X6, DEG. 45., NO. 1
+   Used by 57894 - FRAME 1X4X6 TRIPARTITE
+   Used by 60596 - FRAME 1X4X6
+   Used by 15626 - WALL 4X16X10 W. GATE
+   Used by 30179 - FRAME 1X4X6 FOR DOOR
+Hinge connector subtype 47
+   Used by 60797 - DOOR GLAS T/FRAME 1X4X6 CO.I
+   Used by 76041 - DOOR FOR FRAME 1X4X6
+   Used by 24054 - DOOR W/ BOW 4X72/3, NO. 1
+   Used by 60616 - GLASS DOOR FOR FRAME 1X4X6
+   Used by 60623 - D. W. PANES F. FRAME 1X4X6
+   Used by 60621 - LATTICE DOOR FOR FRAME 1X4X6
+Hinge connector subtype 48
+   Used by 4738 - CHEST 2X4
+Hinge connector subtype 49
+   Used by 4739 - CHEST LID 2X4
+Hinge connector subtype 50
+   Used by 16599 - MINI  HELMET NO 43
+   Used by 17355 - MINI FIGURE HELMET, NO. 53
+   Used by 30124 - MINI CRASH HELMET
+   Used by 30171 - FLYING HELMET
+   Used by 30325 - HELMET WITH LIGHT
+   Used by 35546 - MINI HELMET NO. 88
+   Used by 3842 - MINI CRASH HELMET
+   Used by 6158 - SMOKE HELMET PROTECTION
+   Used by 85942 - SNAKE MASK
+   Used by 93560 - MINI FOOTBALL, HELMET
+Hinge connector subtype 51
+   Used by 11691 - MASK FOR HELMET
+   Used by 15446 - MINI GOGGLES NO. 2
+   Used by 22393 - MINI VISOR NO.1
+   Used by 22394 - MINI VISOR NO.7
+   Used by 22401 - MINI VISOR NO.5
+   Used by 23318 - SPACE VISOR, BLUEMETAL.
+   Used by 23851 - VISOR FOR MINI HELMET NO. 88
+   Used by 28955 - MINI VISOR NO.3
+   Used by 30090 - DIVERS MASK
+   Used by 30170 - FLYING GOGGLES
+Hinge connector subtype 52
+   Used by 59143 - FUNC. MOTOR Ø24, FRONTHOUSING
+   Used by 59154 - FUNC. MOTOR Ø40, MAINHOUSING
+   Used by 54715 - Main Housing Left
+   Used by 74043 - MS SMALL TACHO MOTOR HOUSING,V
+   Used by 74042 - MS TACHO MOTOR HOUSING,VIRTUEL
+Hinge connector subtype 53
+   Used by 59146 - FUNC. MOTOR Ø24, OUTPUT DRIVE
+   Used by 59158 - FUNC. MOTOR Ø40, OUTPUT DRIVE
+   Used by 54725 - Output drive
+Hinge connector subtype 54
+   Used by 3831 - HINGE 1X2 LOWER PART
+Hinge connector subtype 55
+   Used by 3830 - HINGE 1X2 UPPER PART
+Hinge connector subtype 56
+   Used by 48168 - TURNTABLE Z56 Ø4.85 TOP
+Hinge connector subtype 57
+   Used by 48452 - TURNTABLE Z24 Ø4.85 BOTTOM
+Hinge connector subtype 58
+   Used by 57029 - RELEASE HOUSE 6X2X2
+Hinge connector subtype 59
+   Used by 61280 - RELEASE HOUSING, CATCH
+Hinge connector subtype 60
+   Used by 2415 - WHEEL FORK 2X2
+   Used by 2655 - WHEEL FORK 2X2 ROUND
+   Used by 4003 - WHEEL BARROW
+   Used by 42511 - SKATEBOARD
+   Used by 18896 - MOTORCYCLE FRAME NO. 2
+   Used by 50859 - MOTORCYCLE FRAME 6M
+   Used by 15396 - SCOOTER
+   Used by 24312 - WHEELCHAIR W/MINISNAP
+   Used by 2495 - SACK TRUCK
+   Used by 98288 - Mini Wheel barrow w.ø3.2shaft
+Hinge connector subtype 61
+   Used by 2496 - WHEEL AXLE Ø8.2/Ø1.9
+   Used by 3464 - HUB FOR FORK
+   Used by 50862 - RIM Ø 14.58 X 8
+Hinge connector subtype 62
+   Used by 30189 - FRONT FORK
+Hinge connector subtype 63
+   Used by 30190 - RIM FOR MOTOR CYCLE
+Hinge connector subtype 64
+   Used by 4532 - CUPBOARD 2X3X2
+   Used by 92410 - CUPBOARD 2X3X2
+Hinge connector subtype 65
+   Used by 4533 - CUPBOARD, DOOR 3X2
+Hinge connector subtype 66
+   Used by 4447 - FRAME SKYLIGHT 4X4X3/45°
+   Used by 4741 - FRAME RIGHT/INV. 1X4X6
+Hinge connector subtype 67
+   Used by 4448 - GLASS F. SKYLIGHT 4X4X3/45°
+Hinge connector subtype 68
+   Used by 30516 - TURNTABLE LOWER PART W/CLICK
+   Used by 3403 - TURN TABLE, LOWER PART
+   Used by 61485 - BOTTOM W. TURNTABLE 4X4
+Hinge connector subtype 69
+   Used by 30658 - TURNTABLE, UPPER PART W/TAB
+   Used by 3404 - TURN TABLE, UPPER PART
+   Used by 87081 - BRICK 4X4 ROUND W. Ø4.9 W. KL.
+   Used by 11213 - PLATE 6X6 ROUND WITH TUBE SNAP
+   Used by 60474 - PLATE 4X4 ROUND W. SNAP
+   Used by 87750 - KEY STONE 4X4 W. Ø4.85 HOLE
+   Used by 89523 - PLATE OCTAGONAL 10X10 W. SNAP
+   Used by 18897 - CIRCLE BRICK 6X6 W/4.85 HOLE
+Hinge connector subtype 70
+   Used by 4132 - WINDOW FRAME 2X4X3
+Hinge connector subtype 71
+   Used by 4133 - WINDOW 4X3
+Hinge connector subtype 72
+   Used by 4218 - LAMELLA FOR ROLLING GATE
+   Used by 4219 - STOP LAMELLA FOR ROLLING GATE
+Hinge connector subtype 73
+   Used by 4218 - LAMELLA FOR ROLLING GATE
+Hinge connector subtype 74
+   Used by 33485 - MINI BICYCLE FRAME
+   Used by 4719 - MINI BICYCLE FRAME
+Hinge connector subtype 75
+   Used by 64248 - TYRE AND WHEEL, VIRTUEL
+Hinge connector subtype 76
+   Used by 3581 - SHUTTERHOLDER 1X1X2
+   Used by 40242 - FRAME FOR DOOR 1X8X6
+Hinge connector subtype 77
+   Used by 3582 - SHUTTER FOR WINDOW
+   Used by 3644 - DOOR 4X6
+   Used by 6078 - STABLE DOOR 1/2
+   Used by 2400 - GATE 5X9
+   Used by 2554 - GATE 3X6
+   Used by 30223 - GATE 5X9X 2/3 W. KNOBS
+   Used by 33216 - DOOR FOR WALL ELEMENT
+   Used by 6105 - GATE 4X8
+   Used by 40241 - DOOR 4X6 W/WINDOW
+Hinge connector subtype 80
+   Used by 6235 - FRAME 2X6X6
+Hinge connector subtype 81
+   Used by 6234 - DOOR FOR FRAME 2X6X6
+Hinge connector subtype 82
+   Used by 15627 - WALL 1X6X6 W. WINDOW
+   Used by 60594 - FRAME 1X4X3
+   Used by 60598 - FRAME 2X4X3
+   Used by 60806 - FRAME/SLANTING 3X4X3
+Hinge connector subtype 83
+   Used by 60603 - GLASS FOR FRAME 1X4X3
+   Used by 62113 - LATTICE PLATE 1X4X3
+Hinge connector subtype 84
+   Used by 44224 - FLEX JOINT 6M, Ø24, MALE
+Hinge connector subtype 85
+   Used by 44225 - FLEX JOINT 6M, Ø24, FEMALE
+Hinge connector subtype 86
+   Used by 2421 - PROPELLER
+   Used by 24314 - WHEEL 21x2 W/3.2 HOLE
+   Used by 2470 - WHEEL W. SPOKES Ø27.4
+   Used by 4489 - WHEEL WITH SPOKES Ø33.8
+   Used by 50254 - TRAINWHEEL Ø8.2/14.6
+   Used by 30027 - RIM WIDE W.HOLE Ø8.1 X 9
+   Used by 4624 - RIM NARROW W. HOLE Ø8
+   Used by 50944 - RIM NARROW W. HOLE Ø11.2 X 6.2
+   Used by 6014 - RIM WIDE W. HOLE Ø11
+   Used by 74967 - RIM WIDE W.HOLE Ø8.1 X 9
+Hinge connector subtype 87
+   Used by 10042 - SNAP Ø3,2 BRINGS AND GEAR WHEEL
+   Used by 4870 - HOLDER F. AEROPLANE WHEEL
+   Used by 21445 - WHEEL BEARING 1X2X1/3 W/MINI SNAP
+   Used by 10313 - BEARING ELEMENT 2X2, SINGLE
+   Used by 4488 - BEARING ELEMENT 2X2, SINGLE
+   Used by 61483 - UNDERCARRIAGE W. VERT. SNAP
+   Used by 2926 - BEARING PLATE 1X4, DOUBLE
+   Used by 4600 - BEARING ELEMENT 2X2, DOUBLE
+   Used by 6157 - BEARING ELEMENT 2X2 2/3
+   Used by 18892 - BEARING ELEMENT 2X4 MINI SNAP
+Hinge connector subtype 88
+   Used by 58135 - FUNC. IR/TX BATTERY LID
+Hinge connector subtype 89
+   Used by 58136 - FUNC. IR/TX BUTTOM
+Hinge connector subtype 90
+   Used by 2547 - SHARK
+   Used by 14518 - SHARK BODY 6X9
+Hinge connector subtype 91
+   Used by 18925 - ANIMAL HEAD NO.12
+   Used by 20512 - SHARK, JAW
+   Used by 2548 - SHARK, JAW
+   Used by 30085 - SAWFISH
+   Used by 87587 - SHARK, JAW
+Hinge connector subtype 94
+   Used by 28235 - RIGHT CREATURE HEAD, NO. 1
+   Used by 76442 - TRICERATOPS 4X11X5
+   Used by 40390 - CARNOSAUR HEAD 3X6X3
+   Used by 6026 - CROCODILE, BODY
+   Used by 40388 - MOSASAUR, LOWER JAW 6X10X3
+   Used by 75174 - DRAGON
+Hinge connector subtype 95
+   Used by 30460 - TRICERATOPS UPPER JAW
+   Used by 6027 - UPPER JAW
+   Used by 43900 - DRAGON'S HEAD (GOLD)
+Hinge connector subtype 96
+   Used by 76443 - STEGOSAURUS 4X12X6
+   Used by 76442 - TRICERATOPS 4X11X5
+   Used by 76409 - TYRANNOSAURUS REX BODY 4X12X8
+   Used by 6026 - CROCODILE, BODY
+   Used by 75174 - DRAGON
+Hinge connector subtype 97
+   Used by 30456 - DINOSAURUS TAIL
+   Used by 6028 - TAIL
+   Used by 45106 - DRAGON'S TAIL W. GOLD-DECO
+Hinge connector subtype 98
+   Used by 4493 - HORSE, LEFT SHALL
+Hinge connector subtype 99
+   Used by 4492 - HORSE, HEAD
+Hinge connector subtype 100
+   Used by 4715 - UNDERFRAME FOR STRETCHER
+Hinge connector subtype 101
+   Used by 4714 - STRETCHER 2X6
+Hinge connector subtype 102
+   Used by 20446 - ANIMAL NO.23 TAIL TOP
+   Used by 98051 - ANIMAL NO  5,  TAIL UPPER
+   Used by 59220 - NECK, LEFT
+   Used by 98055 - ANIMAL NO 5, HEAD LEFT
+   Used by 93173 - DRAGON`S HEAD, 2  - VIRTUEL
+   Used by 59222 - DRAGON`S HEAD, LEFT
+Hinge connector subtype 103
+   Used by 41141 - FIGURE SNAP, MALE
+Hinge connector subtype 104
+   Used by 93173 - DRAGON`S HEAD, 2  - VIRTUEL
+   Used by 59222 - DRAGON`S HEAD, LEFT
+Hinge connector subtype 105
+   Used by 59227 - DRAGON'S HEAD, JAW
+Hinge connector subtype 106
+   Used by 64417 - MAGNET HOLDER
+Hinge connector subtype 107
+   Used by 64415 - BUFFER 1
+   Used by 64424 - BUFFER 2
+   Used by 91966 - BUFFER 1
+   Used by 91968 - BUFFER 2
+Hinge connector subtype 108
+   Used by 40375 - NECK - TAIL ROTARY JOINT
+   Used by 43889 - PIVOT JOINT W. TECHNIC HOLE
+Hinge connector subtype 109
+   Used by 40373 - BODY 5X2X4, LEFT
+Hinge connector subtype 110
+   Used by 61521 - Func. Winch Box
+Hinge connector subtype 111
+   Used by 61524 - Func. Winch Shaft
+Hinge connector subtype 112
+   Used by 30491 - HOLDER FOR CHAIR Ø20MM
+Hinge connector subtype 113
+   Used by 30488 - CHAIR Ø20MM X5X2 1/3
+Hinge connector subtype 114
+   Used by 30459 - TYRANNOSAURUS REX UPPER JAW
+   Used by 51344 - Dragon`s head Harry Potter
+Hinge connector subtype 115
+   Used by 52258 - DRAGON`S BODY, ASS.
+   Used by 76409 - TYRANNOSAURUS REX BODY 4X12X8
+   Used by 40390 - CARNOSAUR HEAD 3X6X3
+Hinge connector subtype 116
+   Used by 30291 - POLAR BEAR, HEAD
+   Used by 98292 - BEAR HEAD LEFT
+   Used by 98290 - BEAR BODY LEFT
+Hinge connector subtype 117
+   Used by 30289 - POLAR BEAR, LEFT SHELL
+   Used by 98294 - BEAR LEG LEFT
+   Used by 98290 - BEAR BODY LEFT
+Hinge connector subtype 118
+   Used by 2475 - STRAP, BRUSH
+Hinge connector subtype 119
+   Used by 2497 - AXLE Ø4.9, BRUSH
+Hinge connector subtype 120
+   Used by 3186 - FENCING GATE 1X4
+Hinge connector subtype 121
+   Used by 3187 - GATE HINGE 1X4
+Hinge connector subtype 122
+   Used by 30041 - TRAPDOOR FRAME 6X8
+Hinge connector subtype 123
+   Used by 30042 - TRAPDOOR 4X5
+Hinge connector subtype 126
+   Used by 2584 - DRUM HOLDER 2X2
+Hinge connector subtype 127
+   Used by 2585 - DRUM Ø11
+Hinge connector subtype 128
+   Used by 4209 - DRUM HOLDER 2X4X2
+Hinge connector subtype 129
+   Used by 4208 - HOSE DRUM
+Hinge connector subtype 130
+   Used by 6154 - FRAME 1X4X4
+Hinge connector subtype 131
+   Used by 6155 - WICKET 4X4
+Hinge connector subtype 132
+   Used by 62274 - Spindelhead
+Hinge connector subtype 133
+   Used by 62275 - Piston
+Hinge connector subtype 134
+   Used by 62271 - Basehousing
+Hinge connector subtype 135
+   Used by 62273 - Inputdrive
+Hinge connector subtype 136
+   Used by 2489 - BARREL 2X2
+   Used by 15395 - DOME 2X2, INVERTED W. ONE STUD
+   Used by 92926 - DUSTBIN 2x2x2
+   Used by 2439 - DUSTBIN
+Hinge connector subtype 137
+   Used by 15469 - PLATE 2X2,2/3 W/KRYDSHUL& CROWN LEAF
+   Used by 18674 - PLATE ROUND W. 1 KNOB
+   Used by 2489 - BARREL 2X2
+   Used by 27266 - DESIGN, BRICK 2X2X1, CIRCLE W/ SPIKES
+   Used by 30367 - FINAL BRICK 2X2
+   Used by 4032 - PLATE 2X2 ROUND
+   Used by 6143 - BRICK Ø16 W. CROSS
+   Used by 14918 - NOSE CONE 2X2X2
+   Used by 19798 - UNDERCARRIAGE 2X2X2
+   Used by 28598 - DESIGN, BRICK 2X2X3, NO. 1
+Hinge connector subtype 138
+   Used by 15395 - DOME 2X2, INVERTED W. ONE STUD
+   Used by 92926 - DUSTBIN 2x2x2
+   Used by 2439 - DUSTBIN
+Hinge connector subtype 139
+   Used by 4740 - SATELLITE DISH Ø16
+   Used by 98284 - PLATE ROUND 2X2 W. VER.SHAFT
+Hinge connector subtype 140
+   Used by 56619 - M5
+   Used by 61482 - HANDCUFFS
+   Used by 97927 - HANDCUFFS
+Hinge connector subtype 141
+   Used by 16000 - MINI ARM, RIGHT, UPPER PART
+   Used by 16001 - MINI ARM, LEFT, UPPER PART
+   Used by 3818 - MINI ARM, RIGHT
+   Used by 3819 - MINI ARM, LEFT
+Hinge connector subtype 142
+   Used by 6236 - WINDOW FRAME 2X6X6
+Hinge connector subtype 143
+   Used by 6237 - WINDOW FOR FRAME 2X6X6
+Hinge connector subtype 144
+   Used by 92026 - ENGINE - TURBO, VIRTUEL
+Hinge connector subtype 145
+   Used by 54809 - TURBO PROPELLER
+Hinge connector subtype 146
+   Used by 92026 - ENGINE - TURBO, VIRTUEL
+Hinge connector subtype 147
+   Used by 54655 - RUDDER FOR TURBO ENGINE
+Hinge connector subtype 148
+   Used by 64784 - ROCK MONSTER MINI BODY
+Hinge connector subtype 149
+   Used by 64783 - ROCK MONSTER, MINI, ARM
+Hinge connector subtype 150
+   Used by 64784 - ROCK MONSTER MINI BODY
+Hinge connector subtype 151
+   Used by 64785 - ROCK MONSTER MINI HEAD
+   Used by 87780 - ROCK MONSTER MINI HEAD NO. 2
+Hinge connector subtype 152
+   Used by 29238 - RIGHT HEAD, BIG CAT NO.1
+   Used by 64780 - RIGHT COW HEAD
+   Used by 29241 - RIGHT BODY BIG CAT NO.1
+Hinge connector subtype 153
+   Used by 29243 - RIGHT LEG BIG NO. 1
+   Used by 64778 - RIGHT COW
+   Used by 29241 - RIGHT BODY BIG CAT NO.1
+Hinge connector subtype 154
+   Used by 85198 - ROCK HEAD MAXI, UPPER,ASSEMB.
+Hinge connector subtype 155
+   Used by 85197 - ROCK HEAD MAXI,JAW,ASSEMB.
+Hinge connector subtype 156
+   Used by 30942 - SHARK, TOP NO.1
+   Used by 93170 - SHARK 8x16, TOP-LOWER PART
+Hinge connector subtype 157
+   Used by 62604 - SHARK HEAD
+Hinge connector subtype 158
+   Used by 92284 - ROCK MONSTER,MIDI VIRTUEL
+   Used by 92285 - ROCK MONS. MIDI 2, VIRT.
+Hinge connector subtype 159
+   Used by 85059 - HAND WHEEL
+Hinge connector subtype 160
+   Used by 41982 - TROLL, FRONT
+Hinge connector subtype 161
+   Used by 41984 - TROLL, ARM
+Hinge connector subtype 162
+   Used by 3960 - ROUND PLATE Ø32X6.4
+Hinge connector subtype 163
+   Used by 30139 - BARREL 4X4
+Hinge connector subtype 164
+   Used by 15374 - HEAD NO. 3, 2014
+   Used by 15377 - HEAD NO. 6, 2014
+   Used by 87837 - CLAW W/BALL CUP
+   Used by 90611 - BEAM A 4M BALL/CUP Ø10.2
+   Used by 90612 - BEAM A 3M BALL/CUP Ø 10.2
+   Used by 93575 - HAND 2X3X2 BALL CUP Ø10.2
+   Used by 98565 - 3m double ball cup- HF 2012
+   Used by 20473 - SHELL W/10,2 BALL SNAP NO.1
+   Used by 92013 - BRICK 2X2 W. CUP FOR BALL
+   Used by 93571 - BALL CUP 3M Ø10.2
+Hinge connector subtype 165
+   Used by 90609 - BEAM A 5M BALL/CUP Ø10.2
+   Used by 90617 - BEAM B 5M BALL/CUP Ø10.2
+   Used by 90608 - BEAM A 6M BALL/CUP Ø10.2
+   Used by 90622 - BEAM C 5M CUP/CUP Ø10.2
+   Used by 90616 - BEAM B 6M BALL/CUP Ø10.2
+   Used by 90607 - BEAM A 7M BALL/CUP Ø10.2
+   Used by 90615 - BEAM B 7M BALL/CUP Ø10.2
+   Used by 90605 - BEAM A 9M BALL/CUP Ø10.2
+   Used by 90613 - BEAM B 9M BALL/CUP Ø10.2
+   Used by 98590 - BEAM TORSO 7X5 BALL Ø10.2
+Hinge connector subtype 166
+   Used by 32069 - T. STEERING GEAR, BEARING 2M
+Hinge connector subtype 167
+   Used by 32068 - TECHNIC STEERING-GEAR 3M
+Hinge connector subtype 168
+   Used by 4214 - FRAME 1X4X2 W. HINGE
+   Used by 4625 - PLATE 1X4 VERTICAL HINGE
+   Used by 4315 - HINGE PLATE 1X4
+Hinge connector subtype 169
+   Used by 2507 - COCKPIT 4X10X2 1/3
+   Used by 2620 - WINDSCREEN 4X4X3
+   Used by 30083 - GLASS CASE Ø47.84 W. HINGE
+   Used by 30161 - WINDSCREEN 1X4X1 1/3
+   Used by 4474 - COCKPIT 4X6X2
+   Used by 2873 - SIDEBOARD 2X4
+   Used by 2483 - COCKPIT 4X4X4
+   Used by 4213 - ROOF 4X4 W. HINGE
+   Used by 6139 - WALL HINGE 45°
+   Used by 4857 - ROOF TILE 4X4/45° W. HINGE
+Hinge connector subtype 170
+   Used by 2433 - STEERING LEVER
+   Used by 2452 - PLATE 1X2 W. HINGE
+   Used by 4275 - HINGE PLATE 1X2 1/2
+Hinge connector subtype 171
+   Used by 4531 - HINGE PLATE 1X2.5 WITHOUT KNOB
+   Used by 4276 - HINGE PLATE 1X2 1/2
+   Used by 6120 - UNDER CARRIAGE 1X4
+Hinge connector subtype 172
+   Used by 6101 - CONNECTING LINK
+   Used by 4220 - LINK FOR GRAB
+   Used by 6047 - LINK W. SNAP, FEMALE
+Hinge connector subtype 173
+   Used by 6101 - CONNECTING LINK
+   Used by 6048 - LINK W. SNAP, MALE W. FRIC.
+Hinge connector subtype 174
+   Used by 4221 - GRAB FOR LINK
+Hinge connector subtype 175
+   Used by 4220 - LINK FOR GRAB
+Hinge connector subtype 176
+   Used by 99010 - UPPER PART FOR TURNTABLE z28
+Hinge connector subtype 177
+   Used by 99009 - LOWER PART FOR TURNTABLE z28
+Hinge connector subtype 178
+   Used by 12884 - BUCKET STRAIGHT
+   Used by 95343 - BUCKET
+   Used by 98374 - MINI POT
+Hinge connector subtype 179
+   Used by 95344 - HANDLE
+Hinge connector subtype 180
+   Used by 3489 - BUCKET
+Hinge connector subtype 181
+   Used by 3490 - HOLDER FOR BUCKET
+Hinge connector subtype 182
+   Used by 4130 - DOOR FRAME 2X4X5
+Hinge connector subtype 183
+   Used by 4131 - DOOR 4X5
+Hinge connector subtype 184
+   Used by 32495 - LT WHEEL BEARING
+   Used by 11950 - WHEEL BEARING BACK
+   Used by 11949 - WHEEL BEARING FRONT
+   Used by 23801 - WHEEL BEARING BACK W/ CROSS HOLE
+   Used by 92908 - GEAR BLOCK 3½ 6½X3
+Hinge connector subtype 185
+   Used by 32496 - LT HUB ELEMENT
+   Used by 92909 - 3 SNAP GEARBLOK
+Hinge connector subtype 186
+   Used by 40243 - NEWEL-STEP
+Hinge connector subtype 187
+   Used by 40243 - NEWEL-STEP
+Hinge connector subtype 188
+   Used by 92906 - CARBAN CUP WITH CROSS AXLE 2M
+   Used by 32496 - LT HUB ELEMENT
+   Used by 92909 - 3 SNAP GEARBLOK
+Hinge connector subtype 189
+   Used by 32494 - LT CARDAN BALL
+Hinge connector subtype 190
+   Used by 2855 - TECHNIC TURN TABLE, TOP
+Hinge connector subtype 191
+   Used by 2856 - TECHNIC TURN TABLE, BOTTOM
+Hinge connector subtype 192
+   Used by 10352 - ANIMAL NO.11 BODY LEFT
+Hinge connector subtype 193
+   Used by 10350 - ANIMAL NO.11 HEAD
+Hinge connector subtype 194
+   Used by 10352 - ANIMAL NO.11 BODY LEFT
+Hinge connector subtype 195
+   Used by 10354 - ANIMAL NO.11 LEG LEFT
+Hinge connector subtype 196
+   Used by 11125 - FRAME
+Hinge connector subtype 197
+   Used by 11140 - FLYWHEEL
+Hinge connector subtype 198
+   Used by 20451 - ANIMAL NO.24 HEAD LEFT
+   Used by 98065 - ANIMAL NO 3, HEAD LEFT
+Hinge connector subtype 199
+   Used by 98067 - ANIMAL NO 3, JAW
+Hinge connector subtype 200
+   Used by 13758 - HEAD, CREATURE NO. 8, 2013
+   Used by 15485 - WIG W. BEARD NO. 70
+   Used by 17013 - CREATURE HEAD NO. 9
+   Used by 17535 - CREATURE NO. 19
+   Used by 18645 - MINI HEAD W. GEAR NO.10- HEAD
+   Used by 20598 - MINI HEAD NO. 11 TOP
+   Used by 21417 - CREATURE NO. 22
+   Used by 26049 - MINI HEAD, NO. 2004
+   Used by 26051 - MINI HEAD, NO. 2005
+   Used by 26052 - MINI HEAD, NO. 2006
+Hinge connector subtype 201
+   Used by 41982 - TROLL, FRONT
+   Used by 24301 - BODY, NO. 1
+   Used by 24445 - PLATE W/MINI NECK CONNECTOR
+   Used by 19732 - ANIMAL LEGS NO.2
+   Used by 19734 - ANIMAL LEGS NO.1
+   Used by 25767 - MINI TORSO PART NO. 1
+   Used by 60115 - SKELETON BODY W SHAFT 3.2
+   Used by 93060 - SKELETON TORSO NO. 3
+   Used by 98127 - MINI ARMOUR WITHOUT ARMS
+   Used by 3814 - MINI UPPER PART
+Hinge connector subtype 202
+   Used by 64573 - FLEXSKINNE HUN
+Hinge connector subtype 203
+   Used by 64572 - FLEXSKINNE HAN
+Hinge connector subtype 204
+   Used by 98086 - ANIMAL NO 2, HEAD
+Hinge connector subtype 205
+   Used by 98653 - ANIMAL NO 2, BODY
+Hinge connector subtype 206
+   Used by 98055 - ANIMAL NO 5, HEAD LEFT
+Hinge connector subtype 207
+   Used by 98057 - ANIMAL NO 5, JAW
+Hinge connector subtype 208
+   Used by 15403 - PLATE 1X2 W/SHOOTER
+   Used by 20105 - MINI SHOOTER CB W. Ø3.2 SHAFT
+   Used by 15391 - MINI SHOOTER WITH Ø3.2 SHAFT
+   Used by 23922 - SHOOTER W/3.2 SHAFT/5.9 CUP FRIC
+   Used by 22487 - MINI SHOOTER W/3.2 SHAFT
+Hinge connector subtype 209
+   Used by 15392 - TRIGGER FOR MINI SHOOTER
+Hinge connector subtype 210
+   Used by 3750 - CRANE BLOCK 2X4
+Hinge connector subtype 211
+   Used by 3752 - DRUM FOR CRANE
+Hinge connector subtype 212
+   Used by 92694 - HOUSING
+Hinge connector subtype 213
+   Used by 92695 - INPUTDRIVE
+Hinge connector subtype 214
+   Used by 92694 - HOUSING
+Hinge connector subtype 215
+   Used by 92696 - PISTON
+Hinge connector subtype 216
+   Used by 10907 - HELMET NO. 5
+Hinge connector subtype 217
+   Used by 10908 - VISOR NR. 1
+Hinge connector subtype 218
+   Used by 2348 - GLAS 2X3 FOR SUNROOF
+Hinge connector subtype 219
+   Used by 2349 - HINGE PLATE 4X4 W. SUNROOF
+Hinge connector subtype 220
+   Used by 20377 - LEG, SKIRT NO. 6
+   Used by 21630 - LEG, UPPER PART, NO. 1
+   Used by 21634 - LEG, UPPER PART, NO. 2
+   Used by 25727 - LEG, SHORTS NO. 4
+Hinge connector subtype 224
+   Used by 32052 - COUPLING LID
+Hinge connector subtype 225
+   Used by 32053 - COUPLING DRUM
+Hinge connector subtype 226
+   Used by 10040 - PULL-BACK 4x8x2/3, UPPERPART
+Hinge connector subtype 227
+   Used by 10042 - SNAP Ø3,2 BRINGS AND GEAR WHEEL
+Hinge connector subtype 228
+   Used by 21972 - POWER FUNCTION, REAR HOUSING 2.0 MM
+   Used by 29124 - FRONT HOUSING
+   Used by 10130 - MAIN HOUSING REAR
+   Used by 10089 - MAIN HOUSING REAR
+   Used by 27191 - HOUSING TOP
+Hinge connector subtype 229
+   Used by 10095 - OUTPUT DRIVE
+   Used by 22412 - POWER FUNCTION 2.0 MM OUTPUT GEAR
+   Used by 10152 - OUTPUTDRIVE
+Hinge connector subtype 230
+   Used by 15372 - HEAD NO. 1, 2014
+   Used by 24196 - CREATURE HEAD, NO. 17
+   Used by 25304 - CREATURE HEAD NO. 18
+Hinge connector subtype 231
+   Used by 16737 - LOWER JAW FOR HEAD NO.1, 2014
+   Used by 24199 - CREATURE, JAW, NO. 3
+Hinge connector subtype 232
+   Used by 18588 - SIX SHOOTER HOUSING
+Hinge connector subtype 233
+   Used by 18587 - SIX SHOOTER TRIGGER
+Hinge connector subtype 234
+   Used by 54755 - Train Motor - Top Part
+Hinge connector subtype 235
+   Used by 54757 - Output Shaft
+Hinge connector subtype 236
+   Used by 18904 - CROCODILE 4X9  BODY
+Hinge connector subtype 237
+   Used by 18905 - CROCODILE  HEAD
+Hinge connector subtype 238
+   Used by 18938 - UPPER PART FOR TURNTABLE Z60
+Hinge connector subtype 239
+   Used by 18939 - LOWER PART FOR TURNTABLE Z60
+Hinge connector subtype 240
+   Used by 24093 - BOOK NO. 2
+Hinge connector subtype 241
+   Used by 24324 - BOOK NO. 3
+Hinge connector subtype 242
+   Used by 88067 - DOME  8X4,5X3 2/3
+Hinge connector subtype 243
+   Used by 88068 - VISOR 8M
+Hinge connector subtype 260
+   Used by 28240 - RIGHT CREATURE TORSO, N0. 1
+Hinge connector subtype 261
+   Used by 28235 - RIGHT CREATURE HEAD, NO. 1
+Hinge connector subtype 262
+   Used by 18585 - 2*4 LAUNCHER
+Hinge connector subtype 263
+   Used by 18590 - GEAR WHEEL, Z8, W/ 4,85 HOLE
+Hinge connector subtype 400
+   Used by 40243 - NEWEL-STEP
+Hinge connector subtype 401
+   Used by 40244 - COLUMN Ø7,84
+Rail connector subtype 0
+   Used by 74746 - STRAIGHT RAIL 16M WITH EL.
+   Used by 53401 - RAIL STRAIGHT 16 M
+   Used by 75541 - RIGHT POINTS WITH EL.
+   Used by 75542 - LEFT POINTS WITH EL.
+Rail connector subtype 1
+   Used by 50254 - TRAINWHEEL Ø8.2/14.6
+   Used by 57999 - TRAIN WHEEL W/O-RING
+   Used by 85557 - Toghjul med flange
+   Used by 85558 - Toghjul uden flange
+   Used by 74784 - BEARING ELEMENT 3X6
+   Used by 70358 - 9V TRAIN ENGINE
+Slider connector subtype 2
+   Used by 32028 - PLATE 1X2 WITH SLIDE
+   Used by 4510 - PLATE 1X8 WITH RAIL
+Slider connector subtype 3
+   Used by 4511 - SLIDING GATE 6X5
+Slider connector subtype 4
+   Used by 2653 - SLIDING PIECE 1X4
+   Used by 4216 - BRICK 1X2 W. GROOVE
+   Used by 88393 - BRICK 1X2X5 W. GROOVE
+   Used by 6056 - BRICK 1X2X6 W. TRACK
+   Used by 4217 - BRICK 1X14 W. GROOVE
+   Used by 30518 - LATTICE 2X16X1.2/3
+   Used by 90258 - BRICK 2X2 W/GROOVE A.CR.HOLE
+Slider connector subtype 5
+   Used by 32028 - PLATE 1X2 WITH SLIDE
+   Used by 4510 - PLATE 1X8 WITH RAIL
+   Used by 4218 - LAMELLA FOR ROLLING GATE
+   Used by 4219 - STOP LAMELLA FOR ROLLING GATE
+   Used by 6046 - LATTICE 9X13 M
+   Used by 99061 - LATTICE 10 X 12 M
+   Used by 89519 - LATTICE W. KNOB 9 X 13
+   Used by 11216 - LATTICE W. KNOB 13 X 17M
+Slider connector subtype 6
+   Used by 55205 - FX SOUND BRICK UPPER PART
+   Used by 91996 - LED-FOR FX LIGHT, VIRTUEL A
+   Used by 55967 - Pushsensor front
+   Used by 74665 - MS SENSOR TOUCH HOUSING
+Slider connector subtype 7
+   Used by 54931 - TRIGGER W. X HOLE
+   Used by 55209 - FX SOUND BRICK PRESS BUTTON
+   Used by 55968 - Pushbutton
+   Used by 99386 - MS, SENSOR, TOUCH, BUTTON
+Slider connector subtype 8
+   Used by 57029 - RELEASE HOUSE 6X2X2
+Slider connector subtype 9
+   Used by 57028 - ARROW 8M W/SOFT UPPER P.
+Slider connector subtype 10
+   Used by 4532 - CUPBOARD 2X3X2
+   Used by 92410 - CUPBOARD 2X3X2
+Slider connector subtype 11
+   Used by 4536 - DRAWER
+Slider connector subtype 12
+   Used by 87913 - PLATE 2X6 W. HOLDER
+   Used by 15118 - LADDER
+   Used by 4207 - LADDER
+   Used by 11299 - LADDER 4X16 W. Ø3.2 SHAFT
+Slider connector subtype 13
+   Used by 15118 - LADDER
+   Used by 4207 - LADDER
+   Used by 11299 - LADDER 4X16 W. Ø3.2 SHAFT
+Slider connector subtype 14
+   Used by 58148 - FUNC. IR/RX LOWERPART
+   Used by 58135 - FUNC. IR/TX BATTERY LID
+Slider connector subtype 15
+   Used by 58150 - FUNC. IR/RX, BUTTON
+   Used by 59365 - FUNC. IR/TX CHANALSWITCH
+Slider connector subtype 16
+   Used by 59510 - Func. TechBatBox - Top Part
+Slider connector subtype 17
+   Used by 59165 - FUNC. BAT.BOX, SWITZ BUTTON
+Slider connector subtype 18
+   Used by 4255 - SHOCK ABSORBER, CYLINDER
+Slider connector subtype 19
+   Used by 4254 - SHOCK ABSORBER, PISTON
+Slider connector subtype 20
+   Used by 2533 - CANNON, BARREL
+Slider connector subtype 21
+   Used by 2534 - CANNON FIRING PIN
+Slider connector subtype 22
+   Used by 61521 - Func. Winch Box
+Slider connector subtype 23
+   Used by 61523 - Func. Winch Button
+Slider connector subtype 24
+   Used by 62271 - Basehousing
+Slider connector subtype 25
+   Used by 62275 - Piston
+Slider connector subtype 26
+   Used by 30272 - ARCH WITH GROOVE 2X12X6
+Slider connector subtype 27
+   Used by 6046 - LATTICE 9X13 M
+Slider connector subtype 28
+   Used by 4518 - MAST FOR FORK LIFT
+Slider connector subtype 29
+   Used by 45707 - FORK
+Slider connector subtype 30
+   Used by 2909 - BIG SHOCKABSORBER, UPPER PART
+Slider connector subtype 31
+   Used by 2910 - BIG SHOCKABSORBER, LOWER PART
+Slider connector subtype 32
+   Used by 40243 - NEWEL-STEP
+Slider connector subtype 34
+   Used by 2850 - PLASTIC MOTOR, CYLINDER
+Slider connector subtype 35
+   Used by 2851 - PLASTIC MOTOR, PISTON
+Slider connector subtype 36
+   Used by 23422 - HANDLE FOR POLE W/3.2 SHAFT
+   Used by 18585 - 2*4 LAUNCHER
+Slider connector subtype 37
+   Used by 23421 - POLE 32M W/3.2 SHAFT
+   Used by 16965 - RIPCORD MODULE 1, 5X32 MODULE
