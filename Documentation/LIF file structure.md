@@ -57,10 +57,12 @@ The block type **5** contains the files and folders names and some more informat
 -------: | :----- | :-------------------------------
  2 bytes | Int16  | Entry type (equals 1)
  4 bytes | Int32  | Unknown value (equals 0 or 7) The value 0 seems to be used for the root folder.
- N bytes | Char[] | Folder name. (Unicode null-terminated text)
+ N bytes | Char[] | Folder name. (Unicode null-terminated text) 
  4 bytes |        | Spacing (Always equals 0)
- 4 bytes | Int32? | Spacing (Always equals 20)
+ 4 bytes | Int32? | Block size (Always equals 20 so it equals the block header size)
  4 bytes | Int32  | The number of sub-entries (files and folders)
+
+**Note:** The folder name is in Unicode format so there is two bytes per characters (including the terminating null). Also each character is in big endian.
 ### LIF File Entry
   SIZE   |  TYPE  |   DESCRIPTION
 -------: | :----- | :-------------------------------
@@ -72,3 +74,5 @@ The block type **5** contains the files and folders names and some more informat
  8 bytes | Long (Filetime)  | Created, modified or accessed date
  8 bytes | Long (Filetime)  | Created, modified or accessed date
  8 bytes | Long (Filetime)  | Created, modified or accessed date
+
+**Note:** The file name is in Unicode format so there is two bytes per characters (including the terminating null). Also each character is in big endian.
