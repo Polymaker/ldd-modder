@@ -4,24 +4,25 @@ Here's an exemple of the structure of a LIF file:
 * **File Header**
 * **Root Block** (Block Type 1)
   * **File content** (Block Type 2)
-    * **Root directory** (Block Type 3)
-      * *File (Block Type 4)* 
-      * *File (Block Type 4)* 
-      * *Folder (Block Type 3)* 
-     	  * *File (Block Type 4)* 
-     	  * *File (Block Type 4)* 
-     	  * *Folder (Block Type 3)* 
-     		* *File (Block Type 4)* 
-     		* *etc...*
-  * **File hierarchy** (Block Type 5)
-    * *File (Entry type 2)*
-    * *File (Entry type 2)*
-    * *Directory (Entry type 1)*
-   	  * *File (Entry type 2)*
-   	  * *File (Entry type 2)*
-   	  * *Directory (Entry type 1)*
-   		* *File (Entry type 2)*
+  * **Root directory** (Block Type 3)
+    * *File (Block Type 4)* 
+    * *File (Block Type 4)* 
+    * *Folder (Block Type 3)* 
+   	  * *File (Block Type 4)* 
+   	  * *File (Block Type 4)* 
+   	  * *Folder (Block Type 3)* 
+   		* *File (Block Type 4)* 
    		* *etc...*
+  * **File hierarchy** (Block Type 5)
+    * **Root directory** (Entry type 1)
+      * *File (Entry type 2)*
+      * *File (Entry type 2)*
+      * *Directory (Entry type 1)*
+   	    * *File (Entry type 2)*
+   	    * *File (Entry type 2)*
+   	    * *Directory (Entry type 1)*
+   	  	  * *File (Entry type 2)*
+   	  	  * *etc...*
 		
 ## Data structures
 ***Note:** Most values are in big endian order*
@@ -45,13 +46,12 @@ Here's an exemple of the structure of a LIF file:
  4 bytes |        | Spacing (Always equals 0)
  X bytes |        | The block content/data.
 The block type **1** is the "root block" and its size includes the remainder of the LIF file.
-The block type **2** contains the files content/data. The block content is a hierarchy of type 3 and 4 blocks.
+The block type **2** contains the files content/data. The block content seems hard-coded and it is always 1 (Int16) and 0 (Int32).
 The block type **3** represents a folder. The block content is a hierarchy of type 3 and 4 blocks.
 The block type **4** represents a file. The block data is the file content/data.
 The block type **5** contains the files and folders names and some more information. The block content is a hierarchy of LIF entries.
 
 **Note:** The block header's is 20 bytes total. The data size is equal to the specified size - 20 bytes.
-**Note:** The data of the type 2 block seems to be hard-coded. It is always 1 (int16) and 0 (int32).
 ### LIF Folder Entry
   SIZE   |  TYPE  |   DESCRIPTION
 -------: | :----- | :-------------------------------
@@ -59,7 +59,7 @@ The block type **5** contains the files and folders names and some more informat
  4 bytes | Int32  | Unknown value (equals 0 or 7) The value 0 seems to be used for the root folder.
  N bytes | Char[] | Folder name. (Unicode null-terminated text)
  4 bytes |        | Spacing (Always equals 0)
- 4 bytes | Int32? | Spacing (Always equals 14)
+ 4 bytes | Int32? | Spacing (Always equals 20)
  4 bytes | Int32  | The number of sub-entries (files and folders)
 ### LIF File Entry
   SIZE   |  TYPE  |   DESCRIPTION
@@ -68,7 +68,7 @@ The block type **5** contains the files and folders names and some more informat
  4 bytes | Int32  | Spacing/unknown value (0 or 7)
  N bytes | Char[] | File name. (Unicode null-terminated text)
  4 bytes |        | Spacing (Always equals 0)
- 4 bytes | Int32  | File size
+ 4 bytes | Int32  | File size (it is actually the block size because it includes the block header size (20))
  8 bytes | Long (Filetime)  | Created, modified or accessed date
  8 bytes | Long (Filetime)  | Created, modified or accessed date
  8 bytes | Long (Filetime)  | Created, modified or accessed date

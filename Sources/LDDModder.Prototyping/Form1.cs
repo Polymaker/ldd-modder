@@ -329,16 +329,14 @@ namespace LDDModder.Prototyping
         {
             /*var test = LocalizationFile.Read(@"C:\Program Files (x86)\LEGO Company\LEGO Digital Designer\Assets\de\localizedStrings.loc");
             test.Save("localizedStrings_en.loc");*/
-
-            var lifFile = LifFile.Open(@"C:\Program Files (x86)\LEGO Company\LEGO Digital Designer\Assets.lif");
+            //var test = LifFile.Open(@"test.lif");
+            var lifFile = LifFile.Open(@"db.lif");
             //Path.GetDirectoryName(Application.ExecutablePath)
             //lifFile.ExtractTo("DB");
-            
+            using (var fs = File.Open("test.lif", FileMode.Create))
+                lifFile.Save(fs);
             lifFile.Dispose();
-
-            var testLif = new LifFile();
-            testLif.RootFolder.AddFile("");
-
+            
         }
 
         public void TestCustomBrick()

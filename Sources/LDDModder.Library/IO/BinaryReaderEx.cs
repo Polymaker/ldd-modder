@@ -15,6 +15,7 @@ namespace LDDModder.IO
 
         private Encoding _Encoding;
         public Endianness DefaultEndian { get; set; }
+        public StringMarshalingMode DefaultStringMarshaling { get; set; } = StringMarshalingMode.FixedLength;
 
         public Encoding Encoding
         {
@@ -141,6 +142,25 @@ namespace LDDModder.IO
         }
 
         #endregion
+
+
+        public string ReadString(Encoding encoding)
+        {
+            var currentEncoding = Encoding;
+            try
+            {
+                ChangeEncoding(encoding);
+                return ReadString();
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                ChangeEncoding(currentEncoding);
+            }
+        }
 
         public string ReadString(int length)
         {
@@ -273,17 +293,29 @@ namespace LDDModder.IO
                 {
                     var marshalAttr = fieldInfo.GetCustomAttribute<MarshalAsAttribute>();
                     var charsetAttr = fieldInfo.GetCustomAttribute<EncodingAttribute>();
-                    Encoding encoding = Encoding;
+                    var stringMarshalAttr = fieldInfo.GetCustomAttribute<StringMarshalingAttribute>();
+                    
+                    var stringMarshaling = DefaultStringMarshaling;
+                    if (stringMarshalAttr != null)
+                        stringMarshaling = stringMarshalAttr.MarshalingMode;
 
+                    var encoding = Encoding;
                     if (charsetAttr?.CharSet == CharSet.Ansi)
                         encoding = Encoding.Default;
                     if (charsetAttr?.CharSet == CharSet.Unicode)
                         encoding = Encoding.Unicode;
 
-                    if (marshalAttr != null)
+                    if (marshalAttr != null && marshalAttr.SizeConst > 0)
+                    {
                         convertedValue = ReadString(marshalAttr.SizeConst, encoding);
+                    }
                     else
-                        convertedValue = ReadNullTerminatedString(encoding);
+                    {
+                        if (stringMarshaling == StringMarshalingMode.FixedLength)
+                            convertedValue = ReadString(encoding);
+                        else
+                            convertedValue = ReadNullTerminatedString(encoding);
+                    }
                 }
                 else if (fieldInfo.FieldType == typeof(byte[]))
                 {

@@ -205,7 +205,7 @@ namespace LDDModder.LDD.Files
                 else if (entryType == 2)
                 {
                     var fileInfo = br.ReadStruct<LIFFFileEntry>();
-                    var dataStream = new StreamPortion(br.BaseStream, expectedBlock.PositionInStream + LIFFBLOCK_SIZE, fileInfo.FileSize);
+                    var dataStream = new StreamPortion(br.BaseStream, expectedBlock.PositionInStream + LIFFBLOCK_SIZE, fileInfo.FileSize - LIFFBLOCK_SIZE);
                     entry = new FileEntry(dataStream, fileInfo.Filename);
                     ((FileEntry)entry).SetFileAttributes(
                         DateTime.FromFileTime(fileInfo.Created), 
@@ -216,6 +216,143 @@ namespace LDDModder.LDD.Files
                     throw new IOException("The file is not a valid LIF.");
 
                 parentFolder.Entries.Add(entry);
+            }
+        }
+
+        #endregion
+
+		#region LIF WRITING
+		
+		public void Save(Stream stream)
+		{
+            using (var bw = new BinaryWriterEx(stream, true))
+            {
+                bw.DefaultEndian = Endianness.BigEndian;
+                var header = LIFFHeader.Default;
+                bw.WriteStruct(header);
+                long rootBlockPos = stream.Position;
+                var rootBlock = new LIFFBlock
+                {
+                    BlockHeader = 1,
+                    BlockType = 1,
+                };
+                bw.WriteStruct(rootBlock);
+                var contentBlock = new LIFFBlock
+                {
+                    BlockHeader = 1,
+                    BlockType = 2,
+                    Spacing2 = 1,
+                    BlockSize = 26
+                };
+                bw.WriteStruct(contentBlock);
+                bw.WriteInt16(1);
+                bw.WriteInt32(0);
+
+                WriteFolderBlocks(bw, RootFolder);
+
+                long hierarchyBlockPos = stream.Position;
+                var hierarchyBlock = new LIFFBlock
+                {
+                    BlockHeader = 1,
+                    BlockType = 5,
+                    Spacing2 = 1
+                };
+                bw.WriteStruct(hierarchyBlock);
+
+                WriteFolderEntries(bw, RootFolder);
+                hierarchyBlock.BlockSize = (int)(stream.Position - hierarchyBlockPos);
+                stream.Position = hierarchyBlockPos;
+                bw.WriteStruct(hierarchyBlock);
+
+                rootBlock.BlockSize = (int)(stream.Length - rootBlockPos);
+                stream.Position = rootBlockPos;
+                bw.WriteStruct(rootBlock);
+
+                header.FileSize = (int)stream.Length;
+                stream.Position = 0;
+                bw.WriteStruct(header);
+            }
+		}
+
+        private void WriteFolderBlocks(BinaryWriterEx bw, FolderEntry folder)
+        {
+            var allChilds = folder.GetEntryHierarchy().ToList();
+            var totalFilesSize = allChilds.OfType<FileEntry>().Sum(x => x.FileSize);
+            var folderBlock = new LIFFBlock
+            {
+                BlockHeader = 1,
+                BlockType = 3,
+                BlockSize = ((allChilds.Count() + 1) * LIFFBLOCK_SIZE) + (int)totalFilesSize
+            };
+            bw.WriteStruct(folderBlock);
+
+            foreach (var entry in folder.Entries.OrderBy(x => x.Name))
+            {
+                if (entry is FileEntry file)
+                {
+                    var fileBlock = new LIFFBlock
+                    {
+                        BlockHeader = 1,
+                        BlockType = 4,
+                        Spacing1 = 1,
+                        BlockSize = LIFFBLOCK_SIZE + (int)file.FileSize
+                    };
+                    bw.WriteStruct(fileBlock);
+                    var fileStream = file.GetStream();
+                    //fileStream.CopyTo(bw.BaseStream, 4096);
+
+                    byte[] buffer = new byte[4096];
+                    int bytesRead = 0;
+                    while (bytesRead < file.FileSize)
+                    {
+                        int b = fileStream.Read(buffer, 0, buffer.Length);
+                        bytesRead += b;
+                        bw.Write(buffer, 0, b);
+                        if (b == 0)
+                            break;
+                    }
+                }
+                else
+                {
+                    WriteFolderBlocks(bw, (FolderEntry)entry);
+                }
+            }
+        }
+
+        private void WriteFolderEntries(BinaryWriterEx bw, FolderEntry folder)
+        {
+            var allChilds = folder.GetEntryHierarchy().ToList();
+
+            var folderEntry = new LIFFFolderEntry()
+            {
+                EntryType = 1,
+                Filename = folder.IsRootDirectory ? null : folder.Name,
+                EntryCount = folder.Entries.Count,
+                Reserved1 = folder.IsRootDirectory ? 0 : 7,
+                BlockSize = 20
+            };
+            bw.WriteStruct(folderEntry);
+
+            foreach (var entry in folder.Entries.OrderBy(x => x.Name))
+            {
+                if (entry is FileEntry file)
+                {
+                    var fileEntry = new LIFFFileEntry()
+                    {
+                        EntryType = 2,
+                        Filename = file.Name,
+                        FileSize = (int)file.FileSize + LIFFBLOCK_SIZE,
+                        Reserved1 = 7,
+                        Created = file.CreatedDate.ToFileTime(),
+                        Modified = file.ModifiedDate.ToFileTime(),
+                        Accessed = file.ModifiedDate2.ToFileTime()
+                    };
+                    bw.WriteStruct(fileEntry);
+                }
+                else
+                {
+                    WriteFolderEntries(bw, (FolderEntry)entry);
+                }
             }
         }
 
@@ -270,6 +407,7 @@ namespace LDDModder.LDD.Files
                     {
                         BlockHeader = 1,
                         BlockType = 4,
+                        Spacing1 = 1,
                         BlockSize = LIFFBLOCK_SIZE + (int)file.Length
                     };
                     blockList.Add(new Tuple<FileSystemInfo, LIFFBlock>(entryInfo, fileBlock));
@@ -312,6 +450,12 @@ namespace LDDModder.LDD.Files
             public int FileSize;
             public short Reserved2;
             public int Reserved3;
+
+            public static LIFFHeader Default => new LIFFHeader
+            {
+                Header = "LIFF",
+                Reserved2 = 1
+            };
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -349,10 +493,10 @@ namespace LDDModder.LDD.Files
         {
             public short EntryType;
             public int Reserved1; //0 or 7
-            [Encoding(CharSet.Unicode)]
+            [Encoding(CharSet.Unicode), StringMarshaling(StringMarshalingMode.NullTerminated)]
             public string Filename;
             public int Spacing1;
-            public int Reserved2; //14
+            public int BlockSize; //20
             public int EntryCount;
         }
 
@@ -361,7 +505,7 @@ namespace LDDModder.LDD.Files
         {
             public short EntryType;
             public int Reserved1; //0 or 7
-            [Encoding(CharSet.Unicode)]
+            [Encoding(CharSet.Unicode), StringMarshaling(StringMarshalingMode.NullTerminated)]
             public string Filename;
             public int Spacing1;
             //public int Reserved2; //0
@@ -549,6 +693,19 @@ namespace LDDModder.LDD.Files
                     }
                 }
             }
+			
+			public IEnumerable<LifEntry> GetEntryHierarchy()
+            {
+                foreach (var entry in Entries.OrderBy(x => x.Name))
+                {
+					yield return entry;
+                    if (entry is FolderEntry folder)
+                    {
+                        foreach (var childEntry in folder.GetEntryHierarchy())
+                            yield return childEntry;
+                    }
+                }
+            }
 
             public override void Rename(string newName)
             {
@@ -557,7 +714,7 @@ namespace LDDModder.LDD.Files
                 base.Rename(newName);
             }
 
-            public FolderEntry AddFolder(string folderName)
+            public FolderEntry CreateFolder(string folderName)
             {
                 ValidateEntryName(folderName);
                 if (Folders.Any(x => x.Name.Equals(folderName, StringComparison.InvariantCultureIgnoreCase)))
@@ -566,6 +723,25 @@ namespace LDDModder.LDD.Files
                 Entries.Add(newFolder);
                 return newFolder;
             }
+			
+/* 			public FolderEntry AddExistingFolder(string folderPath)
+            {
+				return AddExistingFolder(folderPath, Path.GetDirectoryName(folderPath));
+            }
+			
+			public FolderEntry AddExistingFolder(string folderPath, string folderName)
+            {
+				if (!Directory.Exists(folderPath))
+					throw new FileNotFoundException();
+				
+                ValidateEntryName(folderName);
+                if (Folders.Any(x => x.Name.Equals(folderName, StringComparison.InvariantCultureIgnoreCase)))
+                    throw new ArgumentException("Folder already exist");
+                var newFolder = new FolderEntry(folderName);
+                Entries.Add(newFolder);
+				foreach (var filePath in Directory.GetFiles
+                return newFolder;
+            } */
 
             public FileEntry AddFile(FileStream fileStream)
             {
@@ -640,6 +816,11 @@ namespace LDDModder.LDD.Files
             {
                 DataStream = dataStream;
             }
+			
+			~FileEntry()
+			{
+				Dispose();
+			}
 
             public void ExtractTo(Stream targetStream)
             {
@@ -669,6 +850,7 @@ namespace LDDModder.LDD.Files
                     DataStream.Dispose();
                     DataStream = null;
                 }
+				GC.SuppressFinalize(this);
             }
 
             public void SetFileAttributes(DateTime createdDate, DateTime modifiedDate, DateTime modifiedDate2)
