@@ -1,5 +1,6 @@
 ﻿using LDDModder.IO;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -18,6 +19,12 @@ namespace LDDModder.LDD.Files
         internal LifFile(Stream baseStream)
         {
             BaseStream = baseStream;
+            RootFolder = new FolderEntry(this);
+        }
+
+        public LifFile()
+        {
+            RootFolder = new FolderEntry(this);
         }
 
         public IEnumerable<FileEntry> GetAllFiles()
@@ -27,14 +34,14 @@ namespace LDDModder.LDD.Files
 
         private void ExtractFile(FileEntry entry, Stream target)
         {
-            BaseStream.Position = entry.BlockInfo.PositionInStream + LIFFBLOCK_SIZE;
             byte[] buffer = new byte[4096];
             int bytesRead = 0;
+            var dataStream = entry.GetStream();
 
-            while (bytesRead < entry.FileSize)
+            while (bytesRead < dataStream.Length)
             {
-                int bytesToRead = Math.Min(buffer.Length, entry.FileSize - bytesRead);
-                bytesRead += BaseStream.Read(buffer, 0, bytesToRead);
+                int bytesToRead = Math.Min(buffer.Length, (int)(dataStream.Length - bytesRead));
+                bytesRead += dataStream.Read(buffer, 0, bytesToRead);
                 target.Write(buffer, 0, bytesToRead);
             }
         }
@@ -170,22 +177,21 @@ namespace LDDModder.LDD.Files
 
 
             var lifFile = new LifFile(br.BaseStream);
-            var rootFolder = new FolderEntry(lifFile, rootBlock, rootFolderEntry);
+            //var rootFolder = new FolderEntry(lifFile, rootBlock, rootFolderEntry);
 
-            ReadFolderFileHierarchy(br, rootFolder);
-            lifFile.RootFolder = rootFolder;
+            ReadFolderFileHierarchy(br, lifFile.RootFolder, rootBlock, rootFolderEntry);
 
             return lifFile;
         }
 
-        private static void ReadFolderFileHierarchy(BinaryReaderEx br, FolderEntry parentFolder)
+        private static void ReadFolderFileHierarchy(BinaryReaderEx br, FolderEntry parentFolder, BlockHierarchy hierarchy, LIFFFolderEntry folderEntry)
         {
-            if (parentFolder.BlockInfo.ChildCount != parentFolder.EntryInfo.EntryCount)
+            if (hierarchy.ChildCount != folderEntry.EntryCount)
                 throw new IOException("The file is not a valid LIF. Entry count mismatch.");
 
-            for (int i = 0; i < parentFolder.EntryInfo.EntryCount; i++)
+            for (int i = 0; i < folderEntry.EntryCount; i++)
             {
-                var expectedBlock = parentFolder.BlockInfo.Childs[i];
+                var expectedBlock = hierarchy.Childs[i];
                 short entryType = br.ReadInt16();
                 br.BaseStream.Skip(-2);
 
@@ -193,13 +199,18 @@ namespace LDDModder.LDD.Files
                 if (entryType == 1)
                 {
                     var folderInfo = br.ReadStruct<LIFFFolderEntry>();
-                    entry = new FolderEntry(parentFolder, expectedBlock, folderInfo);
-                    ReadFolderFileHierarchy(br, (FolderEntry)entry);
+                    entry = new FolderEntry(folderInfo.Filename);
+                    ReadFolderFileHierarchy(br, (FolderEntry)entry, expectedBlock, folderInfo);
                 }
                 else if (entryType == 2)
                 {
                     var fileInfo = br.ReadStruct<LIFFFileEntry>();
-                    entry = new FileEntry(parentFolder, expectedBlock, fileInfo);
+                    var dataStream = new StreamPortion(br.BaseStream, expectedBlock.PositionInStream + LIFFBLOCK_SIZE, fileInfo.FileSize);
+                    entry = new FileEntry(dataStream, fileInfo.Filename);
+                    ((FileEntry)entry).SetFileAttributes(
+                        DateTime.FromFileTime(fileInfo.Created), 
+                        DateTime.FromFileTime(fileInfo.Modified), 
+                        DateTime.FromFileTime(fileInfo.Accessed));
                 }
                 else
                     throw new IOException("The file is not a valid LIF.");
@@ -355,8 +366,8 @@ namespace LDDModder.LDD.Files
             public int Spacing1;
             //public int Reserved2; //0
             public int FileSize;
-            public long Created;
             public long Modified;
+            public long Created;
             public long Accessed;
             //[MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)]
             //public byte[] Checksum;
@@ -380,61 +391,147 @@ namespace LDDModder.LDD.Files
             }
         }
 
+        internal interface ILifEntry
+        {
+            void SetParent(FolderEntry parent);
+        }
+
         #endregion
 
         #region Public types
 
-        public abstract class LifEntry
+        public sealed class LifEntryCollection : IEnumerable<LifEntry>, ICollection<LifEntry>
         {
-            internal BlockHierarchy BlockInfo;
-            public LifFile Lif { get; }
-            public FolderEntry Parent { get; }
+            public FolderEntry Owner { get; }
 
-            public abstract string Name { get; }
+            public int Count => Entries.Count;
+
+            public bool IsReadOnly => ((ICollection<LifEntry>)Entries).IsReadOnly;
+
+            private List<LifEntry> Entries;
+
+            public LifEntryCollection(FolderEntry owner)
+            {
+                Owner = owner;
+                Entries = new List<LifEntry>();
+            }
+
+            public IEnumerator<LifEntry> GetEnumerator()
+            {
+                return ((IEnumerable<LifEntry>)Entries).GetEnumerator();
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return ((IEnumerable<LifEntry>)Entries).GetEnumerator();
+            }
+
+            public void Add(LifEntry item)
+            {
+                if (item.Parent != null)
+                    throw new InvalidOperationException("The entry belongs to another folder");
+                if (Owner.GetAllFiles().Contains(item))
+                    throw new InvalidOperationException("Cannot add a parent entry into a child");
+
+                ((ILifEntry)item).SetParent(Owner);
+                Entries.Add(item);
+            }
+
+            public void Clear()
+            {
+                Entries.ForEach(e => ((ILifEntry)e).SetParent(null));
+                Entries.Clear();
+            }
+
+            public bool Contains(LifEntry item)
+            {
+                return Entries.Contains(item);
+            }
+
+            public void CopyTo(LifEntry[] array, int arrayIndex)
+            {
+                ((ICollection<LifEntry>)Entries).CopyTo(array, arrayIndex);
+            }
+
+            public bool Remove(LifEntry item)
+            {
+                bool result = Entries.Remove(item);
+                if (result)
+                    ((ILifEntry)item).SetParent(null);
+                return result;
+            }
+        }
+
+        public abstract class LifEntry : ILifEntry
+        {
+            public virtual LifFile Lif => Parent?.Lif;
+            public FolderEntry Parent { get; private set; }
+
+            public string Name { get; protected set; }
 
             public string Fullname => !string.IsNullOrEmpty(Parent?.Name) ? Path.Combine(Parent.Fullname, Name) : (Name ?? string.Empty);
 
-            internal LifEntry(LifFile lif, BlockHierarchy blockInfo)
+            internal LifEntry(string name)
             {
-                Lif = lif;
-                BlockInfo = blockInfo;
-            }
-
-            internal LifEntry(FolderEntry parent, BlockHierarchy blockInfo) : this(parent.Lif, blockInfo)
-            {
-                Parent = parent;
+                Name = name;
             }
 
             public override string ToString()
             {
-                return Parent == null ? "root" : Name;
+                if (this is FolderEntry fe)
+                {
+                    if (fe.IsRootDirectory)
+                        return "Root folder";
+                    return "Folder: " + Name;
+                }
+                    
+                return "File: " + Name;
+            }
+
+            void ILifEntry.SetParent(FolderEntry parent)
+            {
+                Parent = parent;
+            }
+
+            public virtual void Rename(string newName)
+            {
+                ValidateEntryName(newName);
+                Name = newName;
+            }
+
+            protected void ValidateEntryName(string name)
+            {
+                if (string.IsNullOrEmpty(name))
+                    throw new ArgumentException("Name cannot be empty");
+                //if (name.ContainsAny(Path.GetInvalidPathChars()))
+                //    throw new ArgumentException("Name contains invalid characters");
+                if (name.ContainsAny(Path.GetInvalidFileNameChars()))
+                    throw new ArgumentException("Name contains invalid characters");
             }
         }
 
-        public class FolderEntry : LifEntry
+        public class FolderEntry : LifEntry, IEnumerable<LifEntry>
         {
-            internal LIFFFolderEntry EntryInfo;
+            private LifFile _Lif;
+            public override LifFile Lif => _Lif ?? base.Lif;
 
-            public override string Name => EntryInfo.Filename;
+            public bool IsRootDirectory { get; }
 
-            public int ContentSize => BlockInfo.Block.BlockSize - LIFFBLOCK_SIZE;
-
-            internal List<LifEntry> Entries { get; }
+            public LifEntryCollection Entries { get; }
 
             public IEnumerable<FolderEntry> Folders => Entries.OfType<FolderEntry>();
             public IEnumerable<FileEntry> Files => Entries.OfType<FileEntry>();
 
-            internal FolderEntry(LifFile lif, BlockHierarchy blockInfo, LIFFFolderEntry entryInfo) : base(lif, blockInfo)
+            internal FolderEntry(LifFile lif) : base(string.Empty)
             {
-                EntryInfo = entryInfo;
-                Entries = new List<LifEntry>();
+                _Lif = lif;
+                Entries = new LifEntryCollection(this);
+                IsRootDirectory = true;
             }
 
-            internal FolderEntry(FolderEntry parent, BlockHierarchy blockInfo, LIFFFolderEntry entryInfo) : base(parent, blockInfo)
+            internal FolderEntry(string name) : base(name)
             {
-                BlockInfo = blockInfo;
-                EntryInfo = entryInfo;
-                Entries = new List<LifEntry>();
+                Entries = new LifEntryCollection(this);
             }
 
             public IEnumerable<FileEntry> GetAllFiles()
@@ -452,28 +549,96 @@ namespace LDDModder.LDD.Files
                     }
                 }
             }
+
+            public override void Rename(string newName)
+            {
+                if (IsRootDirectory)
+                    throw new InvalidOperationException();
+                base.Rename(newName);
+            }
+
+            public FolderEntry AddFolder(string folderName)
+            {
+                ValidateEntryName(folderName);
+                if (Folders.Any(x => x.Name.Equals(folderName, StringComparison.InvariantCultureIgnoreCase)))
+                    throw new ArgumentException("Folder already exist");
+                var newFolder = new FolderEntry(folderName);
+                Entries.Add(newFolder);
+                return newFolder;
+            }
+
+            public FileEntry AddFile(FileStream fileStream)
+            {
+                return AddFile(fileStream, Path.GetFileName(fileStream.Name));
+            }
+
+            public FileEntry AddFile(Stream fileStream, string filename)
+            {
+                ValidateEntryName(filename);
+
+                if (Files.Any(x => x.Name.Equals(filename, StringComparison.InvariantCultureIgnoreCase)))
+                    throw new ArgumentException("File already exist");
+
+                var newFile = new FileEntry(fileStream, filename);
+                Entries.Add(newFile);
+
+                if (fileStream is FileStream fs)
+                {
+                    newFile.SetFileAttributes(
+                        File.GetCreationTime(fs.Name),
+                        File.GetLastWriteTime(fs.Name),
+                        File.GetLastAccessTime(fs.Name));
+                }
+
+                return newFile;
+            }
+
+            public FileEntry AddFile(FileInfo fileInfo)
+            {
+                return AddFile(fileInfo.OpenRead());
+            }
+
+            public FileEntry AddFile(FileInfo fileInfo, string fileName)
+            {
+                return AddFile(fileInfo.OpenRead(), fileName);
+            }
+
+            public FileEntry AddFile(string filePath)
+            {
+                return AddFile(File.OpenRead(filePath));
+            }
+
+            public FileEntry AddFile(string filePath, string fileName)
+            {
+                return AddFile(File.OpenRead(filePath), fileName);
+            }
+
+            public IEnumerator<LifEntry> GetEnumerator()
+            {
+                return Entries.GetEnumerator();
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return Entries.GetEnumerator();
+            }
         }
 
-        public sealed class FileEntry : LifEntry
+        public sealed class FileEntry : LifEntry, IDisposable
         {
-            internal LIFFFileEntry EntryInfo;
+            private Stream DataStream;
 
-            public override string Name => EntryInfo.Filename;
+            public long FileSize => DataStream.Length;
 
-            public int FileSize => EntryInfo.FileSize;
+            public DateTime CreatedDate { get; private set; }
 
-            public DateTime CreatedDate { get; }
+            public DateTime ModifiedDate { get; private set; }
 
-            public DateTime ModifiedDate { get; }
+            public DateTime ModifiedDate2 { get; private set; }
 
-            public DateTime ModifiedDate2 { get; }
-
-            internal FileEntry(FolderEntry folder, BlockHierarchy blockInfo, LIFFFileEntry entryInfo) : base(folder, blockInfo)
+            internal FileEntry(Stream dataStream, string filename) : base(filename)
             {
-                EntryInfo = entryInfo;
-                CreatedDate = DateTime.FromFileTime(entryInfo.Created);
-                ModifiedDate = DateTime.FromFileTime(entryInfo.Modified);
-                ModifiedDate2 = DateTime.FromFileTime(entryInfo.Accessed);
+                DataStream = dataStream;
             }
 
             public void ExtractTo(Stream targetStream)
@@ -490,6 +655,27 @@ namespace LDDModder.LDD.Files
             public void ExtractToDirectory(string directory)
             {
                 ExtractTo(Path.Combine(directory, Name));
+            }
+
+            public Stream GetStream()
+            {
+                return DataStream;
+            }
+
+            public void Dispose()
+            {
+                if (DataStream != null && !(DataStream is StreamPortion))
+                {
+                    DataStream.Dispose();
+                    DataStream = null;
+                }
+            }
+
+            public void SetFileAttributes(DateTime createdDate, DateTime modifiedDate, DateTime modifiedDate2)
+            {
+                CreatedDate = createdDate;
+                ModifiedDate = modifiedDate;
+                ModifiedDate2 = modifiedDate2;
             }
         }
 

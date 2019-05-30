@@ -33,5 +33,13 @@ namespace System.Collections.Generic
         {
             return collection.Count(a => items.Contains(a));
         }
+
+        public static bool ContainsAny<T>(this IEnumerable<T> collection, IEnumerable<T> items)
+        {
+            foreach (var item in items)
+                if (collection.Contains(item))
+                    return true;
+            return false;
+        }
     }
 }

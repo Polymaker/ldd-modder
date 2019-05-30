@@ -29,9 +29,9 @@ namespace LDDModder.Prototyping
         {
             base.OnLoad(e);
             //TestPrimitives();
-            TestGFiles();
+            //TestGFiles();
             //TestCustomBrick();
-            //TestLddFiles();
+            TestLddFiles();
         }
 
         private void TestPrimitives()
@@ -330,11 +330,15 @@ namespace LDDModder.Prototyping
             /*var test = LocalizationFile.Read(@"C:\Program Files (x86)\LEGO Company\LEGO Digital Designer\Assets\de\localizedStrings.loc");
             test.Save("localizedStrings_en.loc");*/
 
-            var lifFile = LifFile.Open(@"C:\Program Files (x86)\LEGO Company\LEGO Digital Designer\Assets\db.lif");
+            var lifFile = LifFile.Open(@"C:\Program Files (x86)\LEGO Company\LEGO Digital Designer\Assets.lif");
             //Path.GetDirectoryName(Application.ExecutablePath)
             //lifFile.ExtractTo("DB");
-
+            
             lifFile.Dispose();
+
+            var testLif = new LifFile();
+            testLif.RootFolder.AddFile("");
+
         }
 
         public void TestCustomBrick()
