@@ -80,6 +80,11 @@ namespace LDDModder.Serialization
             base.WriteEndElement();
         }
 
+        public override void WriteValue(object value)
+        {
+            base.WriteValue(value);
+        }
+
         public override void WriteString(string text)
         {
             if (String.IsNullOrEmpty(text) || isInsideAttribute || Formatting != Formatting.Indented || XmlSpace == XmlSpace.Preserve)

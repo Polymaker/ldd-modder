@@ -4,6 +4,7 @@ using OpenTK;
 using Poly3D.Engine;
 using Poly3D.Engine.Data;
 using Poly3D.Engine.Meshes;
+using Poly3D.Prefabs.Scripts;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -116,13 +117,24 @@ namespace LDDModder.Display.Models
 
         public static SceneObject CreateConnectivityObject(Scene scene, Connectivity connection)
         {
-            var mesh = CreateConnectivityMesh(connection);
-            if (mesh == null)
+            //var mesh = CreateConnectivityMesh(connection);
+            //if (mesh == null)
+            //    return null;
+            if (connection.Type == ConnectivityType.Custom2DField)
                 return null;
 
             var connectionObject = scene.AddObject<SceneObject>();
-            
             connectionObject.Transform.SetTransform(connection.Get3dTransform(), SceneSpace.World);
+
+            var mani = connectionObject.AddComponent<TransformManipulator>();
+            mani.Size = 0.5f;
+
+            var mesh = CreateConnectivityMesh(connection);
+
+            if (mesh == null)
+            {
+                return connectionObject;
+            }
 
             //the mesh is in a separate object to keep the ldd transform and the mesh transform separated
             var meshObject = connectionObject.AddObject();
@@ -133,7 +145,7 @@ namespace LDDModder.Display.Models
                 var axel = (ConnectivityAxel)connection;
                 if ((axel.SubType == 2 || axel.SubType == 4) && (axel.StartCapped || axel.EndCapped))
                 {
-                    if (axel.StartCapped)
+                    if (axel.StartCapped && axel.Length.IsCloseTo(0.8, 0.01))
                         meshObject.Transform.Translate(new Vector3(0, 0.8f, 0), RelativeSpace.Self);
                 }
                 if ((axel.SubType == 3 || axel.SubType == 19) && axel.Length.IsCloseTo(0.8, 0.05))//male pin (model orientation is important)
@@ -144,6 +156,11 @@ namespace LDDModder.Display.Models
                         meshObject.Transform.Translate(Vector3.UnitY * (float)-axel.Length, RelativeSpace.Self);
                     }
                 }
+            }
+            else if(connection.Type == ConnectivityType.Ball)
+            {
+                if (connection.SubType == 3)
+                    meshObject.Transform.Rotate(new Vector3(180, 0, 0), RelativeSpace.Self);
             }
             
             return connectionObject;
@@ -161,7 +178,15 @@ namespace LDDModder.Display.Models
             else if (connection.Type == ConnectivityType.Ball)
             {
                 if(connection.SubType == 2 || connection.SubType == 3)//towball (3 = male, 2 = female)
+                {
                     return WavefrontMeshLoader.LoadWavefrontObj(ResourcesHelper.GetResource("Models.TowBall.obj"));
+                }
+                else if(connection.SubType == 4 || connection.SubType == 5)//technic ball (5 = male, 4 = female)
+                {
+                    var ball = WavefrontMeshLoader.LoadWavefrontObj(ResourcesHelper.GetResource("Models.Sphere.obj"));
+                    ScaleMesh(ball, Vector3.One * 0.51f);
+                    return ball;
+                }
             }
 
             //var sphereMesh = WavefrontMeshLoader.LoadWavefrontObj(ResourcesHelper.GetResource("Models.Sphere.obj"));
@@ -214,13 +239,10 @@ namespace LDDModder.Display.Models
                 //if either end is capped, use a male cross axle model to show connection direction
                 if (axleConn.StartCapped || axleConn.EndCapped)
                 {
-                    if(axleConn.Length.IsCloseTo(0.8, 0.05))
+                    if(axleConn.Length.IsCloseTo(0.8, 0.01))
                         return LoadResourceMesh("Models.Cross2.obj");//cross axle 2m with notches
-                    adjustedLength += 0.8f;//add one base unit to protrude
+                    //adjustedLength += 0.8f;//add one base unit to protrude
                 }
-
-                //if (axleConn.Length.IsCloseTo(1.6, 0.05))
-                //    return LoadResourceMesh("Models.Cross2.obj");
 
                 var axleMesh = WavefrontMeshLoader.LoadWavefrontObj(ResourcesHelper.GetResource("Models.Cross1.obj"));
                 ScaleMesh(axleMesh, new Vector3(1f, adjustedLength / 0.8f, 1f));
@@ -233,6 +255,24 @@ namespace LDDModder.Display.Models
                 return axleMesh;
             }
 
+            if(axleConn.SubType == (int)ConnectivityAxel.SubTypes.BarMale)
+            {
+                var barMesh = WavefrontMeshLoader.LoadWavefrontObj(ResourcesHelper.GetResource("Models.BarMale.obj"));
+                ScaleMesh(barMesh, new Vector3(1f, (float)axleConn.Length / 0.8f, 1f));
+                return barMesh;
+            }
+            else if (axleConn.SubType == (int)ConnectivityAxel.SubTypes.BarFemale)
+            {
+                var barMesh = WavefrontMeshLoader.LoadWavefrontObj(ResourcesHelper.GetResource("Models.BarFemale.obj"));
+                ScaleMesh(barMesh, new Vector3(1f, (float)axleConn.Length / 0.8f, 1f));
+                return barMesh;
+            }
+            else if (axleConn.SubType == 17)
+            {
+                var pinMesh = LoadResourceMesh("Models.BarFemale.obj");
+                ScaleMesh(pinMesh, new Vector3(1.2f, (float)axleConn.Length / 0.8f, 1.2f));
+                return pinMesh;
+            }
             return null;
         }
 

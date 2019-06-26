@@ -35,14 +35,14 @@
             // custom2dFieldEditor1
             // 
             this.custom2dFieldEditor1.EditValue = null;
-            this.custom2dFieldEditor1.Location = new System.Drawing.Point(12, 38);
+            this.custom2dFieldEditor1.Location = new System.Drawing.Point(12, 83);
             this.custom2dFieldEditor1.Name = "custom2dFieldEditor1";
-            this.custom2dFieldEditor1.Size = new System.Drawing.Size(221, 185);
+            this.custom2dFieldEditor1.Size = new System.Drawing.Size(221, 140);
             this.custom2dFieldEditor1.TabIndex = 2;
             // 
             // buttonEdit1
             // 
-            this.buttonEdit1.Location = new System.Drawing.Point(12, 12);
+            this.buttonEdit1.Location = new System.Drawing.Point(12, 24);
             this.buttonEdit1.Name = "buttonEdit1";
             this.buttonEdit1.Size = new System.Drawing.Size(181, 20);
             this.buttonEdit1.TabIndex = 3;

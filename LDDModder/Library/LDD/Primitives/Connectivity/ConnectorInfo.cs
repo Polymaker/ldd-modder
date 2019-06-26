@@ -77,8 +77,8 @@ namespace LDDModder.LDD.Primitives
             _Connectors.Add(new ConnectorInfo(ConnectivityType.Ball, 2, "Tow ball", false));
             _Connectors.Add(new ConnectorInfo(ConnectivityType.Ball, 3, "Tow ball", true));
 
-            //_Connectors.Add(new ConnectorInfo(ConnectivityType.Ball, 4 , "?", ?));
-            //_Connectors.Add(new ConnectorInfo(ConnectivityType.Ball, 5 , "?", ?));
+            _Connectors.Add(new ConnectorInfo(ConnectivityType.Ball, 4 , "Technic ball", false));
+            _Connectors.Add(new ConnectorInfo(ConnectivityType.Ball, 5 , "Technic ball", true));
             //_Connectors.Add(new ConnectorInfo(ConnectivityType.Ball, 6 , "?", ?));
             //_Connectors.Add(new ConnectorInfo(ConnectivityType.Ball, 7 , "?", ?));
             //_Connectors.Add(new ConnectorInfo(ConnectivityType.Ball, 8 , "?", ?));
@@ -94,6 +94,9 @@ namespace LDDModder.LDD.Primitives
             //_Connectors.Add(new ConnectorInfo(ConnectivityType.Ball, 18, "?", ?));
             //_Connectors.Add(new ConnectorInfo(ConnectivityType.Ball, 19, "?", ?));
             //_Connectors.Add(new ConnectorInfo(ConnectivityType.Ball, 999000, "?", ?));
+            //_Connectors.Add(new ConnectorInfo(ConnectivityType.Ball, 999001, "?", ?));
+            //_Connectors.Add(new ConnectorInfo(ConnectivityType.Ball, 999002, "?", ?));
+            //_Connectors.Add(new ConnectorInfo(ConnectivityType.Ball, 999003, "?", ?));
         }
     }
 }

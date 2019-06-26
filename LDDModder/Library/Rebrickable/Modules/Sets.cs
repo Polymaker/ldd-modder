@@ -81,7 +81,7 @@ namespace LDDModder.Rebrickable.Modules
             return null;
         }
 
-        public ListResult<SetPart> GetSetParts(string setNum, int page = 1, int pageSize = 100)
+        public ListResult<SetPart> GetSetParts(string setNum, bool includePartDetails = false, int page = 1, int pageSize = 100)
         {
             var request = RebrickableAPIv3.CreateRequest($"{Url}{setNum}/parts/?page={page}&page_size={pageSize}");
             try
@@ -102,9 +102,12 @@ namespace LDDModder.Rebrickable.Modules
             return null;
         }
 
-        public ListResult<SetPart> GetAllSetParts(string setNum, int pageSize = 200)
+        public ListResult<SetPart> GetAllSetParts(string setNum, bool includePartDetails = false, int pageSize = 200)
         {
-            return RebrickableAPIv3.GetAllResults<SetPart>($"{Url}{setNum}/parts/", pageSize);
+            string url = $"{Url}{setNum}/parts/";
+            if (includePartDetails)
+                url += "?inc_part_details=1";
+            return RebrickableAPIv3.GetAllResults<SetPart>(url, pageSize);
         }
     }
 }

@@ -1,8 +1,11 @@
-﻿using LDDModder.Utilities;
+﻿using LDDModder.Serialization;
+using LDDModder.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml;
 using System.Xml.Linq;
+using System.Xml.Schema;
 using System.Xml.Serialization;
 
 namespace LDDModder.LDD.Primitives
@@ -71,6 +74,20 @@ namespace LDDModder.LDD.Primitives
         //        xmlSer.Serialize(xw, collision);
         //    return d.Root;
         //}
+
+        public static XElement Serialize(Collision collision)
+        {
+            var result = LDDModder.Serialization.XSerializationHelper.Serialize(collision);
+            if (result != null)
+            {
+                var tranformElem = LDDModder.Serialization.XSerializationHelper.Serialize(collision.Transform);
+                foreach (var transformAttr in tranformElem.Attributes())
+                    result.Add(transformAttr);
+                result.SortAttributes(a => Array.IndexOf(AttributeOrder, a.Name.LocalName));
+                return result;
+            }
+            return null;
+        }
 
         public static IEnumerable<XElement> Serialize(IEnumerable<Collision> collisions)
         {

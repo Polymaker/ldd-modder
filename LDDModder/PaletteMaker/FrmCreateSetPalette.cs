@@ -200,7 +200,7 @@ namespace LDDModder.PaletteMaker
             {
                 Task.Factory.StartNew(() =>
                 {
-                    var partsInfo = RebrickableAPIv3.Sets.GetAllSetParts(setNumber);
+                    var partsInfo = RebrickableAPIv3.Sets.GetAllSetParts(setNumber, true, 300);
                     BeginInvoke(new Action<Rebrickable.Models.ListResult<Rebrickable.Models.SetPart>>(FillPartGrid), partsInfo);
                 });
             }
@@ -219,7 +219,7 @@ namespace LDDModder.PaletteMaker
         class BrickMappingItem
         {
             public Rebrickable.Models.SetPart RBPart { get; set; }
-            public int PartID { get { return RBPart.Id; } }
+            public string PartID { get { return RBPart.Part.PartNum; } }
             public string PartType { get; set; }
             public string Name { get { return RBPart.Part.Name; } }
             public string Color { get { return RBPart.Color.Name; } }

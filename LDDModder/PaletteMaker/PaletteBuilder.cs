@@ -247,7 +247,7 @@ namespace LDDModder.PaletteMaker
 
             int origCount = LddPalette.Items.Count;
 
-            if (LddPalette.Items.Any(i => i.ElementID == rbSetPart.ElementId.ToString()))
+            if (rbSetPart.ElementId.HasValue && LddPalette.Items.Any(i => i.ElementID == rbSetPart.ElementId.ToString()))
                 return LddPalette.Items.First(i => i.ElementID == rbSetPart.ElementId.ToString()).Clone(rbSetPart.Quantity);
 
             if (!RbColorToLDD.ContainsKey(rbSetPart.Color.Id))
@@ -255,29 +255,27 @@ namespace LDDModder.PaletteMaker
                 Trace.WriteLine(string.Format("Could not match Rebrickable color to LDD. (Color ID: {0})", rbSetPart.Color.Id));
                 return null;
             }
-
-            int designId = 0;
+            
             int lddColorId = RbColorToLDD[rbSetPart.Color.Id];
             PaletteItem paletteItem = null;
 
-            if (GetLddPaletteItem(rbSetPart.Id, lddColorId, rbSetPart.ElementId.ToString(), rbSetPart.Quantity, out paletteItem))
-                return paletteItem;
-            //if (int.TryParse(rbSetPart.PartId, out designId))
-            //{
-            //    if (GetLddPaletteItem(designId, lddColorId, rbSetPart.ElementId, rbSetPart.Quantity, out paletteItem))
-            //        return paletteItem;
-            //}
-            return null;
+            if(int.TryParse(rbSetPart.Part.PartNum, out int designID))
+            {
+                if (GetLddPaletteItem(designID, lddColorId, rbSetPart.ElementId.ToString(), rbSetPart.Quantity, out paletteItem))
+                    return paletteItem;
+            }
+
+  
             //var rbPartInfo = RebrickableAPIv2.GetPart.Execute(new GetPartParameters(rbSetPart.Id, true, true, false));
-            //paletteItem = GetItemFromPartInfo(rbPartInfo, lddColorId, rbSetPart.ElementId, rbSetPart.Quantity);
+            paletteItem = GetItemFromPartInfo(rbSetPart.Part, lddColorId, rbSetPart.ElementId.ToString(), rbSetPart.Quantity);
 
 
-            //if (LddPalette.Items.Count > origCount)
-            //{
-            //    Trace.WriteLine("Items added to palette. Saving updated file.");
-            //    LDDModder.Serialization.XSerializable.Save(LddPalette, LDD_PALETTE_NAME);
-            //}
-            //return paletteItem;
+            if (LddPalette.Items.Count > origCount)
+            {
+                Trace.WriteLine("Items added to palette. Saving updated file.");
+                LDDModder.Serialization.XSerializable.Save(LddPalette, LDD_PALETTE_NAME);
+            }
+            return paletteItem;
         }
 
         static PaletteItem GetPaletteItem(int designId, int lddColor, string elementId, int quantity)
@@ -308,18 +306,18 @@ namespace LDDModder.PaletteMaker
             return null;
         }
 
-        static PaletteItem GetItemFromPartInfo(GetPartResult rbPartInfo, int lddColorId, string elementId, int quantity, bool nested = false)
+        static PaletteItem GetItemFromPartInfo(Rebrickable.Models.Part rbPartInfo, int lddColorId, string elementId, int quantity, bool nested = false)
         {
             PaletteItem paletteItem = null;
             int designId = 0;
 
-            if (rbPartInfo.ExternalParts != null &&
-               rbPartInfo.ExternalParts.LegoDesignIds != null &&
-               rbPartInfo.ExternalParts.LegoDesignIds.Count > 0)
+            if (rbPartInfo.ExternalIds != null &&
+               rbPartInfo.ExternalIds.LEGO != null &&
+               rbPartInfo.ExternalIds.LEGO.Count > 0)
             {
-                for (int i = 0; i < rbPartInfo.ExternalParts.LegoDesignIds.Count; i++)
+                for (int i = 0; i < rbPartInfo.ExternalIds.LEGO.Count; i++)
                 {
-                    if (int.TryParse(rbPartInfo.ExternalParts.LegoDesignIds[i], out designId))
+                    if (int.TryParse(rbPartInfo.ExternalIds.LEGO[i], out designId))
                     {
                         if (GetLddPaletteItem(designId, lddColorId, elementId, quantity, out paletteItem))
                             return paletteItem;
@@ -327,23 +325,29 @@ namespace LDDModder.PaletteMaker
                 }
             }
 
-            if (!nested && 
-                rbPartInfo.RelatedParts != null &&
-                rbPartInfo.RelatedParts.Count > 0)
+            if (!nested &&
+                rbPartInfo.Molds != null &&
+                rbPartInfo.Molds.Length > 0)
             {
-                for (int i = 0; i < rbPartInfo.RelatedParts.Count; i++)
+                for (int i = 0; i < rbPartInfo.Molds.Length; i++)
                 {
-                    if (rbPartInfo.RelatedParts[i].Type == "MOLD")
-                    {
-                        var altPartInfo = RebrickableAPIv2.GetPart.Execute(new GetPartParameters(rbPartInfo.RelatedParts[i].PartId, true, true, false));
-                        paletteItem = GetItemFromPartInfo(altPartInfo, lddColorId, string.Empty, quantity, true);
-                        if (paletteItem != null)
-                            return paletteItem;
-                    }
+                    if (int.TryParse(rbPartInfo.Molds[i], out int designID) && GetLddPaletteItem(designID, lddColorId, string.Empty, quantity, out paletteItem))
+                        return paletteItem;
                 }
             }
 
-            int mainId = int.Parse(Regex.Match(rbPartInfo.PartId, @"\d+").Value);
+            if (!nested &&
+               rbPartInfo.Alternates != null &&
+               rbPartInfo.Alternates.Length > 0)
+            {
+                for (int i = 0; i < rbPartInfo.Alternates.Length; i++)
+                {
+                    if (int.TryParse(rbPartInfo.Alternates[i], out int designID) && GetLddPaletteItem(designID, lddColorId, string.Empty, quantity, out paletteItem))
+                        return paletteItem;
+                }
+            }
+
+            int mainId = int.Parse(Regex.Match(rbPartInfo.PartNum, @"\d+").Value);
             if (GetLddPaletteItem(mainId, lddColorId, string.Empty, quantity, out paletteItem))
                 return paletteItem;
 

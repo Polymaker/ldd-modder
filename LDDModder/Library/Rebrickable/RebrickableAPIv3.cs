@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 
 namespace LDDModder.Rebrickable
@@ -41,7 +42,10 @@ namespace LDDModder.Rebrickable
         {
             if (url.Contains("?"))
             {
-                url += $"&page_size={pageSize}";
+                if (url.Contains("page_size"))
+                    url = Regex.Replace(url, "page_size=\\d+", $"page_size={pageSize}");
+                else
+                    url += $"&page_size={pageSize}";
             }
             else
                 url = url.TrimEnd('/') + $"/?page_size={pageSize}";
@@ -55,7 +59,7 @@ namespace LDDModder.Rebrickable
 
                 while (!string.IsNullOrEmpty(result.Next))
                 {
-                    Thread.Sleep(500);
+                    Thread.Sleep(300);
                     request = CreateRequest(result.Next);
                     jsonContent = GetRequestData(request);
                     result = JsonConvert.DeserializeObject<ListResult<T>>(jsonContent);

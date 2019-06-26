@@ -42,7 +42,7 @@ namespace LDDModder.LDD.Primitives
         public bool IsFemaleConnection { get { return SubType == 22; } }
 
         /// <summary>
-        /// For some (still unknown) reasons, the width and heigth of the array is +1 from the specified value (Width/Height properties)
+        /// For some (still unknown) reasons, the width and height of the array is +1 from the specified value (Width/Height properties)
         /// </summary>
         [XmlIgnore]
         public ConnectionItem[,] Mapping

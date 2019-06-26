@@ -46,5 +46,10 @@ namespace LDDModder.LDD.Primitives
             Ty = ty;
             Tz = tz;
         }
+
+        public override string ToString()
+        {
+            return $"Angle={Angle} Ax={Ax} Ay={Ay} Az={Az} Tx={Tx} Ty={Ty} Tz={Tz}";
+        }
     }
 }

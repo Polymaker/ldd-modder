@@ -14,7 +14,7 @@ Male studs = Custom2DField type 23
  9:4:1 = under peg/cylinder
  
 15:4:1 = stud connection (normal, female)
-
+17:4:1 = stud connection (normal, female)
 18:4:1 = space between (center) 4 studs
 
 22:1:1 = corner border/wall

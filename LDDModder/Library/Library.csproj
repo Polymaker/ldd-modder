@@ -68,6 +68,11 @@
     <Compile Include="LDD\LDDLocation.cs" />
     <Compile Include="LDD\LDDManager.cs" />
     <Compile Include="LDD\LifInstance.cs" />
+    <Compile Include="LDD\Meshes\BrickMesh.cs" />
+    <Compile Include="LDD\Meshes\MeshBase.cs" />
+    <Compile Include="LDD\Meshes\MeshType.cs" />
+    <Compile Include="LDD\Meshes\TexturedMesh.cs" />
+    <Compile Include="LDD\Meshes\Vertex.cs" />
     <Compile Include="LDD\Models\Assembly.cs" />
     <Compile Include="LDD\Models\Bone.cs" />
     <Compile Include="LDD\Models\Brick.cs" />
