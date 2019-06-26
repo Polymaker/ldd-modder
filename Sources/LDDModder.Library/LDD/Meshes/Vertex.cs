@@ -13,8 +13,11 @@ namespace LDDModder.LDD.Meshes
         public Vector3 Normal { get; set; }
         public Vector2 TexCoord { get; set; }
 
+        public List<BoneWeight> BoneWeights { get; }
+
         public Vertex()
         {
+            BoneWeights = new List<BoneWeight>();
         }
 
         public Vertex(Vector3 position, Vector3 normal)
@@ -22,6 +25,7 @@ namespace LDDModder.LDD.Meshes
             Position = position;
             Normal = normal;
             TexCoord = Vector2.Empty;
+            BoneWeights = new List<BoneWeight>();
         }
 
         public Vertex(float px, float py, float pz, float nx, float ny, float nz)
@@ -29,11 +33,13 @@ namespace LDDModder.LDD.Meshes
             Position = new Vector3(px, py, pz);
             Normal = new Vector3(nx, ny, nz);
             TexCoord = Vector2.Empty;
+            BoneWeights = new List<BoneWeight>();
         }
 
         public Vertex(Vector3 position, Vector3 normal, Vector2 texCoord) : this(position, normal)
         {
             TexCoord = texCoord;
+            BoneWeights = new List<BoneWeight>();
         }
 
         //public override bool Equals(object obj)

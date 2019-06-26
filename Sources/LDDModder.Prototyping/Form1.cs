@@ -29,9 +29,10 @@ namespace LDDModder.Prototyping
         {
             base.OnLoad(e);
             //TestPrimitives();
-            //TestGFiles();
+            TestGFiles();
+            SolveShaderData();
             //TestCustomBrick();
-            TestLddFiles();
+            //TestLddFiles();
         }
 
         private void TestPrimitives()
@@ -99,93 +100,40 @@ namespace LDDModder.Prototyping
 
             using (var fs = File.OpenRead(Path.Combine(meshDirectory, "3023.g")))
             {
-                var brickMesh = GFileReader.Read(fs);
-                //TestRoundEdgeData(brickMesh);
-                var boundaryEdges = brickMesh.CalculateBoundaryEdges();
-                var triangles = brickMesh.CalculateTriangles();
-
-                for (int i = 0; i < brickMesh.Indices.Length / 3; i++)
+                var brickMesh = GFileReader.ReadMesh(fs);
+                int triCtr = 0;
+                foreach(var triangle in brickMesh.Geometry.Triangles)
                 {
-                    var idx0 = brickMesh.Indices[(i * 3) + 0];
-                    var idx1 = brickMesh.Indices[(i * 3) + 1];
-                    var idx2 = brickMesh.Indices[(i * 3) + 2];
-                    var shaderDataVariations = new List<Vector2>();
-                    var currentTriangle = triangles[i];
+                    //var shaderDataVariations = new List<Vector2>();
 
-                    int boundaryEdgeCount = boundaryEdges.CountContained(currentTriangle.Edges);
+                    //for (int j = 0; j < 3; j++)
+                    //{
+                    //    var index = triangle.Indices[j];
+                    //    var shaderData = index.RoundEdgeData;
+                    //    for (int n = 0; n < shaderData.Length; n++)
+                    //    {
+                    //        shaderData[n].X = (float)Math.Round(shaderData[n].X, 4);
+                    //        shaderData[n].Y = (float)Math.Round(shaderData[n].Y, 4);
+                    //    }
+                    //    shaderDataVariations.AddRange(shaderData);
+                    //}
 
+                    //shaderDataVariations = shaderDataVariations.DistinctValues().ToList();
+                    //var values1 = shaderDataVariations.Select(x => Math.Abs(x.X)).EqualsDistinct().OrderBy(x => x).ToList();
+                    //var values2 = shaderDataVariations.Select(x => Math.Abs(x.Y)).EqualsDistinct().OrderBy(x => x).ToList();
+
+                    Console.WriteLine($"Triangle {triCtr++} vertices:");
                     for (int j = 0; j < 3; j++)
                     {
-                        var index = brickMesh.Indices[(i * 3) + j];
-                        var shaderData = brickMesh.EdgeShaderValues[index.ShaderDataIndex].Coords;
-                        for (int n = 0; n < shaderData.Length; n++)
-                        {
-                            shaderData[n].X = (float)Math.Round(shaderData[n].X, 4);
-                            shaderData[n].Y = (float)Math.Round(shaderData[n].Y, 4);
-                        }
-                        shaderDataVariations.AddRange(shaderData);
-                    }
+                        var index = triangle.Indices[j];
+                        var shaderData = index.RoundEdgeData;
 
-                    shaderDataVariations = shaderDataVariations.DistinctValues().ToList();
-                    var values1 = shaderDataVariations.Select(x => Math.Abs(x.X)).EqualsDistinct().OrderBy(x => x).ToList();
-                    var values2 = shaderDataVariations.Select(x => Math.Abs(x.Y)).EqualsDistinct().OrderBy(x => x).ToList();
+                        Console.WriteLine($"  Vertex {j}: {index.Vertex}");
 
-                    Console.WriteLine($"Triangle {i} vertices:");
-                    for (int j = 0; j < 3; j++)
-                    {
-                        var faceNormal = brickMesh.GetTriangleNormal(i);
-                        var index = brickMesh.Indices[(i * 3) + j];
-                        var shaderData = brickMesh.EdgeShaderValues[index.ShaderDataIndex].Coords;
-                        //if ((shaderData[2 * j].Y != 0 && shaderData[2 * j].Y != 1000) || (shaderData[(2 * j) + 1].Y != 0 && shaderData[(2 * j) + 1].Y != 1000))
-                        //{
-
-                        //}
-
-                        Console.WriteLine($"  Index {(i * 3) + j} position: {brickMesh.Vertices[index.VertexIndex].Position}");
-
-                        int positiveXvalues = 0;
-                        int emptyValues = 0;
-                        //var coordStrs = new List<string>();
-                        for (int z = 0; z < 6; z++)
-                        {
-                            var coord = shaderData[z];
-                            if (coord.X > 0 && Math.Round(coord.X) != 1000)
-                                positiveXvalues++;
-                            if (Math.Round(coord.X) == 1000)
-                                emptyValues++;
-
-                            //    var type1 = values1.IndexOf(Math.Abs(coord.X));
-                            //    var type2 = values2.IndexOf(Math.Abs(coord.Y)) + 1;
-                            //    var sign = Math.Sign(coord.X) < 0 ? "-" : "";
-                            //    coordStrs.Add($"{coord} ({sign}{(char)(type1 + 65)}:{type2})");
-                        }
-                        if (/*positiveXvalues > 2 || */positiveXvalues + emptyValues < (3 - boundaryEdgeCount) * 2 || 
-                            positiveXvalues > (3 - boundaryEdgeCount) * 2)
-                        {
-
-                        }
-                        //Console.WriteLine("  RE: " + string.Join(", ", coordStrs));
                         Console.WriteLine("  RE: " + string.Join(", ", shaderData.Take(6)));
-                        //Console.WriteLine("  RE: " + string.Join(", ", shaderData.Select(x => $"{x} ({(char)(shaderDataVariations.IndexOf(x) + 65)})".PadLeft(10))));
-                        
-
-
-                        //for (int k = 0; k < 3; k++)
-                        //{
-                        //    var other = brickMesh.Indices[(i * 3) + k];
-                        //    var v1 = brickMesh.Vertices[index.VertexIndex].Position.ProjectToPlane(faceNormal);
-                        //    var v2 = brickMesh.Vertices[other.VertexIndex].Position.ProjectToPlane(faceNormal);
-                        //    Console.Write((v2.X - v1.X).ToString().PadLeft(6));
-                        //    Console.Write((v2.Y - v1.Y).ToString().PadLeft(6));
-                        //}
-                        //Console.Write(Environment.NewLine);
-                        //if (index.UnknownDataIndex >= 0 && index.UnknownDataIndex < brickMesh.AverageNormals.Length)
-                        //{
-                        //    Console.WriteLine($"  Unknown data: {brickMesh.AverageNormals[index.UnknownDataIndex]}");
-                        //}
                     }
                 }
-                
+
             }
 
             /*
@@ -195,11 +143,11 @@ namespace LDDModder.Prototyping
             {
                 Console.WriteLine("Reading file " + Path.GetFileName(meshFilename));
 
-                Mesh mesh = null;
+                Mesh2 mesh = null;
                 try
                 {
                     using (var fs = File.OpenRead(meshFilename))
-                        mesh = GFileReader.Read(fs);
+                        mesh = GFileReader.ReadMesh(fs);
 
                     //if (mesh.CullingInfos.Count(x=>x.CullingType == MeshCullingType.MainModel) > 1)
                     //    Trace.WriteLine("More than one type 2 variant!");
@@ -230,10 +178,67 @@ namespace LDDModder.Prototyping
                     meshRead = 0;
                     GC.Collect();
                 }
-            }*/
-
+            }
+            */
         }
 
+        private void SolveShaderData()
+        {
+            string meshDirectory = Environment.ExpandEnvironmentVariables(@"%appdata%\LEGO Company\LEGO Digital Designer\db\Primitives\LOD0\");
+            float edgeWidthRatio = 15.5f / 0.8f;
+
+            using (var fs = File.OpenRead(Path.Combine(meshDirectory, "3023.g")))
+            {
+                var brickMesh = GFileReader.ReadMesh(fs);
+                int triCtr = 0;
+                foreach (var tri in brickMesh.Geometry.Triangles)
+                {
+                    Console.WriteLine($"Triangle {triCtr++}:");
+                    foreach (var idx in tri.Indices)
+                    {
+                        var values = new List<Vector2>();
+                        idx.RoundEdgeData.Take(6).ToArray();
+
+                        for (int i = 0; i < 3; i++)
+                        {
+                            var dist1 = Vector3.GetPlanarDistance(tri.Edges[i].P1.Position, tri.Edges[i].P2.Position, 
+                                idx.Vertex.Position, tri.Normal);
+
+                            var dist2 = Vector3.GetPlanarDistance(tri.Edges[i].P2.Position, tri.Edges[i].P1.Position,
+                                idx.Vertex.Position, tri.Normal);
+
+                            values.Add(Vector2.Empty);
+                            values.Add(dist2);
+                        }
+
+                        var adjustedShaderData = idx.RoundEdgeData.Take(6).ToArray();
+
+                        for (int n = 0; n < adjustedShaderData.Length; n++)
+                        {
+                            adjustedShaderData[n].X = (float)Math.Round(adjustedShaderData[n].X, 4);
+                            adjustedShaderData[n].Y = (float)Math.Round(adjustedShaderData[n].Y, 4);
+
+                            if (Math.Abs(adjustedShaderData[n].X) >= 100 && Math.Abs(adjustedShaderData[n].X) < 1000)
+                            {
+                                if (adjustedShaderData[n].X < 0)
+                                    adjustedShaderData[n].X += 100;
+                                else
+                                    adjustedShaderData[n].X -= 100;
+                                adjustedShaderData[n].X = (float)Math.Round(adjustedShaderData[n].X / edgeWidthRatio, 4);
+                                adjustedShaderData[n].Y = (float)Math.Round(adjustedShaderData[n].Y / edgeWidthRatio, 4);
+                            }
+                            else
+                            {
+                                adjustedShaderData[n].X = -1;
+                                adjustedShaderData[n].Y = -1;
+                            }
+                        }
+                        Console.WriteLine("  RE: " + string.Join(", ", adjustedShaderData.Take(6)));
+                    }
+
+                }
+            }
+        }
 
         private void TestRoundEdgeData(Mesh mesh)
         {

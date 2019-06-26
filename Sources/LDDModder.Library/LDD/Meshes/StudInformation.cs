@@ -8,7 +8,12 @@
         public int ConnectorIndex { get; set; }
 
         public int Value2 { get; set; }
-        public int Value3 { get; set; }
+
+        /// <summary>
+        /// The index of the stud in the Custom2DField array (considered as a 1D array).
+        /// </summary>
+        public int DataArrayIndex { get; set; }
+
         public int Value4 { get; set; }
         public int Value5 { get; set; }
         public int Value6 { get; set; }
@@ -21,7 +26,7 @@
         {
             ConnectorIndex = connectorIndex;
             Value2 = value2;
-            Value3 = value3;
+            DataArrayIndex = value3;
             Value4 = value4;
             Value5 = value5;
             Value6 = value6;
@@ -31,7 +36,7 @@
         {
             ConnectorIndex = values[0];
             Value2 = values[1];
-            Value3 = values[2];
+            DataArrayIndex = values[2];
             Value4 = values[3];
             Value5 = values[4];
             Value6 = values[5];

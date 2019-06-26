@@ -41,6 +41,10 @@ namespace LDDModder.LDD.Meshes
 
         public List<byte[]> UnknownData { get; set; }
 
+        public MeshGeometry CulledGeometry { get; set; }
+
+        public MeshGeometry ReplacementGeometry { get; set; }
+
         public CullingInfo()
         {
             UnknownData = new List<byte[]>();
@@ -89,6 +93,8 @@ namespace LDDModder.LDD.Meshes
 
                 var cullingInfo = new CullingInfo(variantType, headerValues);
 
+
+
                 if (extraDataBlock >= 1)
                 {
                     int studBlockSize = br.ReadInt32();
@@ -128,49 +134,63 @@ namespace LDDModder.LDD.Meshes
                         Trace.WriteLine("Incorrect data size read");
                         br.BaseStream.Position = startPosition + vertexDataOffset;
                     }
-
+                    var replacementGeom = new MeshGeometry();
                     int vertexCount = br.ReadInt32();
                     int indexCount = br.ReadInt32();
                     cullingInfo.Vertices = new Vertex[vertexCount];
                     cullingInfo.Indices = new IndexReference[indexCount];
-                    var positions = new List<Vector3>();
-                    var normals = new List<Vector3>();
-                    var uvs = new List<Vector2>();
+                    var positions = new Vector3[vertexCount];
+                    var normals = new Vector3[vertexCount];
+                    var uvs = new Vector2[vertexCount];
+                    var vertices = new List<Vertex>();
 
                     for (int i = 0; i < vertexCount; i++)
-                        positions.Add(new Vector3(br.ReadSingles(3)));
+                        positions[i] = new Vector3(br.ReadSingles(3));
 
                     for (int i = 0; i < vertexCount; i++)
-                        normals.Add(new Vector3(br.ReadSingles(3)));
+                        normals[i] = new Vector3(br.ReadSingles(3));
 
-                    if (mesh.Type == MeshType.StandardTextured || mesh.Type == MeshType.FlexibleTextured)
+                    for (int i = 0; i < vertexCount; i++)
                     {
-                        for (int i = 0; i < vertexCount; i++)
-                            uvs.Add(new Vector2(br.ReadSingles(2)));
+                        if (mesh.Type == MeshType.StandardTextured || mesh.Type == MeshType.FlexibleTextured)
+                            uvs[i] = new Vector2(br.ReadSingles(2));
+                        else
+                            uvs[i] = Vector2.Empty;
                     }
 
-                    if (mesh.Type == MeshType.StandardTextured || mesh.Type == MeshType.FlexibleTextured)
+                    for (int i = 0; i < vertexCount; i++)
+                        vertices.Add(new Vertex(positions[i], normals[i], uvs[i]));
+
+                    replacementGeom.SetVertices(vertices);
+
+                    for (int i = 0; i < indexCount; i += 3)
                     {
-                        for (int i = 0; i < vertexCount; i++)
-                            cullingInfo.Vertices[i] = new Vertex(positions[i], normals[i], uvs[i]);
-                    }
-                    else
-                    {
-                        for (int i = 0; i < vertexCount; i++)
-                            cullingInfo.Vertices[i] = new Vertex(positions[i], normals[i]);
+                        replacementGeom.AddTriangleFromIndices(br.ReadInt32(), br.ReadInt32(), br.ReadInt32());
+                        //cullingInfo.Indices[i] = new IndexReference(br.ReadInt32());
                     }
 
                     for (int i = 0; i < indexCount; i++)
-                        cullingInfo.Indices[i] = new IndexReference(br.ReadInt32());
-
-                    for (int i = 0; i < indexCount; i++)
-                        cullingInfo.Indices[i].AverageNormalIndex = br.ReadInt32();
+                    {
+                        int averageNormalIndex = br.ReadInt32();
+                        if (averageNormalIndex >= 0 && averageNormalIndex < mesh.AverageNormals.Length)
+                        {
+                            replacementGeom.Indices[i].AverageNormal = mesh.AverageNormals[averageNormalIndex];
+                        }
+                        //cullingInfo.Indices[i].AverageNormalIndex = averageNormalIndex;
+                    }
 
                     for (int i = 0; i < indexCount; i++)
                     {
                         int shaderOffset = br.ReadInt32();
-                        cullingInfo.Indices[i].AverageNormalIndex = mesh.ShaderOffsetToIndex(shaderOffset);
+                        int shaderIndex = mesh.ShaderOffsetToIndex(shaderOffset);
+                        if (shaderIndex >= 0 && shaderIndex < mesh.EdgeShaderValues.Length)
+                        {
+                            replacementGeom.Indices[i].RoundEdgeData = mesh.EdgeShaderValues[shaderIndex].Coords;
+                        }
+                        //cullingInfo.Indices[i].ShaderDataIndex = mesh.ShaderOffsetToIndex(shaderOffset);
                     }
+
+                    cullingInfo.ReplacementGeometry = replacementGeom;
                 }
 
                 return cullingInfo;
@@ -220,7 +240,7 @@ namespace LDDModder.LDD.Meshes
                             {
                                 bw.Write(Studs[i].ConnectorIndex);
                                 bw.Write(Studs[i].Value2);
-                                bw.Write(Studs[i].Value3);
+                                bw.Write(Studs[i].DataArrayIndex);
                                 bw.Write(Studs[i].Value4);
                                 bw.Write(Studs[i].Value5);
                                 bw.Write(Studs[i].Value6);

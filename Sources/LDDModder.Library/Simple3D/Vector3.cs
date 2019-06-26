@@ -175,6 +175,14 @@ namespace LDDModder.Simple3D
             return (float)Math.Acos(MathHelper.Clamp(dot / (first.Length * second.Length), -1.0f, 1.0f));
         }
 
+        public static Vector3 CalculateNormal(Vector3 v1, Vector3 v2, Vector3 v3)
+        {
+            var u = v2 - v1;
+            var v = v3 - v1;
+            var n = new Vector3((u.Y * v.Z) - (u.Z * v.Y), (u.Z * v.X) - (u.X * v.Z), (u.X * v.Y) - (u.Y * v.X));
+            return n.Normalized();
+        }
+
         public static Vector3 ProjectToPlane(Vector3 point, Vector3 planeOrigin, Vector3 planeNormal)
         {
             var v = point - planeOrigin;
@@ -203,6 +211,29 @@ namespace LDDModder.Simple3D
 
             var t1 = Dot(xAxis, v);
             var t2 = Dot(yAxis, v);
+
+            return new Vector2(t1, t2);
+        }
+
+        public static Vector2 GetPlanarDistance(Vector3 v1, Vector3 v2, Vector3 pt, Vector3 planeNormal)
+        {
+            var hAxis = (v2 - v1).Normalized();
+            var vAxis = Cross(planeNormal, hAxis);
+            var v = pt - v1;
+            var t1 = Dot(hAxis, v);
+            var t2 = Dot(vAxis, v);
+
+            return new Vector2(t1, t2);
+        }
+
+        public static Vector2 GetPlanarDistance(Vector3 v1, Vector3 v2, Vector3 pt)
+        {
+            var planeNormal = CalculateNormal(v1, v2, pt);
+            var hAxis = (v2 - v1).Normalized();
+            var vAxis = Cross(planeNormal, hAxis);
+            var v = pt - v1;
+            var t1 = Dot(hAxis, v);
+            var t2 = Dot(vAxis, v);
 
             return new Vector2(t1, t2);
         }

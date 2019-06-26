@@ -1,0 +1,58 @@
+﻿using LDDModder.Simple3D;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace LDDModder.LDD.Meshes
+{
+    public class Triangle2
+    {
+        public VertexIndex[] Indices { get; }
+
+        public Vertex[] Vertices => new Vertex[] { Indices[0].Vertex, Indices[1].Vertex, Indices[2].Vertex };
+
+        public Vertex V1 => Vertices[0];
+
+        public Vertex V2 => Vertices[1];
+
+        public Vertex V3 => Vertices[2];
+
+        public Edge[] Edges { get; }
+
+        public Vector3 Normal { get; private set; }
+
+        public Triangle2(Vertex v1, Vertex v2, Vertex v3)
+        {
+            Indices = new VertexIndex[]
+            {
+                new VertexIndex(v1),
+                new VertexIndex(v2),
+                new VertexIndex(v3)
+            };
+            Edges = new Edge[]
+            {
+                new Edge(v1,v2),
+                new Edge(v2,v3),
+                new Edge(v3,v1)
+            };
+
+            CalculateNormal();
+        }
+
+        public void CalculateNormal()
+        {
+            var u = V2.Position - V1.Position;
+            var v = V3.Position - V1.Position;
+            var n = new Vector3((u.Y * v.Z) - (u.Z * v.Y), (u.Z * v.X) - (u.X * v.Z), (u.X * v.Y) - (u.Y * v.X));
+            n.Normalize();
+            Normal = n;
+        }
+
+        public Vector3 GetCenter()
+        {
+            return (V1.Position + V2.Position + V3.Position) / 3;
+        }
+    }
+}

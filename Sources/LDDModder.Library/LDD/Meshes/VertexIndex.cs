@@ -9,8 +9,16 @@ namespace LDDModder.LDD.Meshes
 {
     public class VertexIndex
     {
+        public Vertex Vertex { get; }
 
-        public float[] RoundEdgeData { get; set; }
+        public Vector2[] RoundEdgeData { get; set; }
+
         public Vector3 AverageNormal { get; set; }
+
+        public VertexIndex(Vertex vertex)
+        {
+            Vertex = vertex;
+            RoundEdgeData = new Vector2[6];
+        }
     }
 }
