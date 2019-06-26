@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<LEGOPrimitive versionMajor="1" versionMinor="0">
+  <Annotations>
+    <Annotation aliases="32496"/>
+    <Annotation designname="LT HUB ELEMENT"/>
+    <Annotation maingroupid="372"/>
+    <Annotation maingroupname="TRANSPORTATION MEANS, VEHICLES"/>
+    <Annotation platformid="300"/>
+    <Annotation platformname="TECHNIC"/>
+    <Annotation version="2"/>
+  </Annotations>
+  <Collision>
+  </Collision>
+  <Connectivity>
+	<Hinge type="185" oriented="1" angle="120" ax="-0.57735" ay="0.57735" az="-0.57735" tx="0" ty="0" tz="1.32"/>
+	<Hinge type="188" oriented="0" angle="90" ax="0" ay="1" az="0" tx="0" ty="0" tz="1.330839"/>
+	<Axel type="3" length="0.8" requireGrabbing="0" startCapped="1" endCapped="0" angle="120" ax="-0.57735" ay="0.57735" az="-0.57735" tx="0.694846" ty="0.4" tz="-0.270215"/>
+    <Axel type="3" length="0.8" requireGrabbing="0" startCapped="1" endCapped="0" angle="120" ax="-0.57735" ay="0.57735" az="-0.57735" tx="-0.694846" ty="0.4" tz="-0.270215"/>
+    <Axel type="3" length="0.8" requireGrabbing="0" startCapped="1" endCapped="0" angle="120" ax="-0.57735" ay="0.57735" az="-0.57735" tx="0" ty="-0.8" tz="-0.270215"/>
+  </Connectivity>
+  <PhysicsAttributes inertiaTensor="0.693333,0,0,0,0.616663,0,0,0,0.883329" centerOfMass="0,0,-0.4" mass="1" frictionType="0"/>
+  <Bounding>
+    <AABB minX="-1.009898" minY="-1.119789" minZ="-1.070215" maxX="1.009862" maxY="0.7171937" maxZ="1.489482"/>
+  </Bounding>
+  <GeometryBounding>
+<!--     <AABB minX="-1.09999" minY="-1.16995" minZ="-1.2" maxX="1.09999" maxY="1.16995" maxZ="0.37"/> -->
+  </GeometryBounding>
+</LEGOPrimitive>
