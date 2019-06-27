@@ -71,6 +71,11 @@ namespace LDDModder.Simple3D
             return Vector3.Empty;
         }
 
+        public Vector3 Rounded()
+        {
+            return new Vector3((float)Math.Round(X, 4), (float)Math.Round(Y, 4), (float)Math.Round(Z, 4));
+        }
+
 
         #region Equality comparison
 
@@ -143,7 +148,7 @@ namespace LDDModder.Simple3D
 
         public override string ToString()
         {
-            return $"[{X};{Y};{Z}]";
+            return $"[{X}; {Y}; {Z}]";
         }
 
         public static float Dot(Vector3 left, Vector3 right)

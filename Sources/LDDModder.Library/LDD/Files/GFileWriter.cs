@@ -26,7 +26,7 @@ namespace LDDModder.LDD.Files
             }
         }
 
-        private static void WriteMeshFile(Stream stream, MESH_FILE meshFile)
+        public static void WriteMeshFile(Stream stream, MESH_FILE meshFile)
         {
             using (var bw = new BinaryWriterEx(stream, Encoding.UTF8, true))
             {
@@ -104,17 +104,16 @@ namespace LDDModder.LDD.Files
 
                     for (int i = 0; i < meshFile.Header.VertexCount; i++)
                         bw.WriteInt32(dataOffsets[i]);
+                }
 
-                    //Mesh Culling Info
+                //Mesh Culling Info
+                {
+                    bw.WriteInt32(meshFile.Culling.Length);
+                    WriteSizedBlock(bw, () =>
                     {
-                        bw.WriteInt32(meshFile.Culling.Length);
-                        WriteSizedBlock(bw, () =>
-                        {
-                            for (int i = 0; i < meshFile.Culling.Length; i++)
-                                WriteCullingInfo(bw, meshFile.Culling[i]);
-                        }, false);
-                    }
-                    
+                        for (int i = 0; i < meshFile.Culling.Length; i++)
+                            WriteCullingInfo(bw, meshFile.Culling[i]);
+                    }, false);
                 }
             }
         }
@@ -133,6 +132,7 @@ namespace LDDModder.LDD.Files
                 bw.WriteSingle(v.X);
                 bw.WriteSingle(v.Y);
             }
+            long startPos = bw.BaseStream.Position;
 
             WriteSizedBlock(bw, () =>
             {
@@ -197,8 +197,11 @@ namespace LDDModder.LDD.Files
                     var cullingGeom = culling.ReplacementGeometry.Value;
                     long currentPos = bw.BaseStream.Position;
                     bw.BaseStream.Position = vertexOffsetPos;
-                    bw.Write((int)currentPos);
+                    bw.Write((int)(currentPos - startPos));
                     bw.BaseStream.Position = currentPos;
+
+                    bw.WriteInt32(cullingGeom.Positions.Length);
+                    bw.WriteInt32(cullingGeom.Indices.Length);
 
                     foreach (var pos in cullingGeom.Positions)
                         WriteVector3(pos);

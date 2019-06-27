@@ -174,7 +174,7 @@ namespace LDDModder.Simple3D
 
         public override string ToString()
         {
-            return $"[{X};{Y}]";
+            return $"[{X}; {Y}]";
         }
 
         #region Constants

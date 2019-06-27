@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace LDDModder.LDD.Files.MeshStructures
 {
+    [StructLayout(LayoutKind.Sequential)]
     public struct MESH_HEADER
     {
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 4)]

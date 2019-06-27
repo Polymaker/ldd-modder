@@ -226,7 +226,7 @@ namespace LDDModder.LDD.Files
                 culling.ReplacementGeometry = geom;
             }
 
-            return default(MESH_CULLING);
+            return culling;
         }
 
         public static Mesh2 ReadMesh(Stream stream)

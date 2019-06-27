@@ -29,7 +29,7 @@ namespace LDDModder.Prototyping
         {
             base.OnLoad(e);
             //TestPrimitives();
-            TestGFiles();
+            //TestGFiles();
             SolveShaderData();
             //TestCustomBrick();
             //TestLddFiles();
@@ -98,7 +98,7 @@ namespace LDDModder.Prototyping
         {
             string meshDirectory = Environment.ExpandEnvironmentVariables(@"%appdata%\LEGO Company\LEGO Digital Designer\db\Primitives\LOD0\");
 
-            using (var fs = File.OpenRead(Path.Combine(meshDirectory, "3023.g")))
+            using (var fs = File.OpenRead(Path.Combine(meshDirectory, "4286.g")))
             {
                 var brickMesh = GFileReader.ReadMesh(fs);
                 int triCtr = 0;
@@ -187,9 +187,34 @@ namespace LDDModder.Prototyping
             string meshDirectory = Environment.ExpandEnvironmentVariables(@"%appdata%\LEGO Company\LEGO Digital Designer\db\Primitives\LOD0\");
             float edgeWidthRatio = 15.5f / 0.8f;
 
-            using (var fs = File.OpenRead(Path.Combine(meshDirectory, "3023.g")))
+            using (var fs = File.OpenRead(Path.Combine(meshDirectory, "4286.g")))
+            //using (var fs = File.OpenRead("4286.g.orig"))
             {
                 var brickMesh = GFileReader.ReadMesh(fs);
+
+                //var mesh = brickMesh.OriginalData.Value;
+                //for (int t = 0; t < 3; t++)
+                //{
+                //    int sidx = mesh.GetShaderDataIndexFromOffset(mesh.Geometry.Indices[(9 * 3) + t].REShaderOffset);
+                //    for (int x = 0; x < 3; x++)
+                //    {
+                //        var tmp = mesh.RoundEdgeShaderData[sidx].Coords[x * 2];
+                //        mesh.RoundEdgeShaderData[sidx].Coords[x * 2] = mesh.RoundEdgeShaderData[sidx].Coords[(x * 2) + 1];
+                //        mesh.RoundEdgeShaderData[sidx].Coords[(x * 2) + 1] = tmp;
+                //    }
+                //    mesh.RoundEdgeShaderData[sidx].Coords[1].X = mesh.RoundEdgeShaderData[sidx].Coords[1].X * -1f;
+
+                //    mesh.RoundEdgeShaderData[sidx].Coords[5].X = mesh.RoundEdgeShaderData[sidx].Coords[5].X * -1f;
+                //    if (t == 0)
+                //    {
+                //        mesh.RoundEdgeShaderData[sidx].Coords[0].X = mesh.RoundEdgeShaderData[sidx].Coords[0].X - 15.5F;
+                //    }
+
+                //}
+
+                //using (var fs2 = File.Open(Path.Combine(meshDirectory, "4286.g"), FileMode.Create))
+                //    GFileWriter.WriteMeshFile(fs2, mesh);
+
                 int triCtr = 0;
                 foreach (var tri in brickMesh.Geometry.Triangles)
                 {
@@ -220,20 +245,22 @@ namespace LDDModder.Prototyping
 
                             if (Math.Abs(adjustedShaderData[n].X) >= 100 && Math.Abs(adjustedShaderData[n].X) < 1000)
                             {
-                                if (adjustedShaderData[n].X < 0)
-                                    adjustedShaderData[n].X += 100;
-                                else
-                                    adjustedShaderData[n].X -= 100;
+                                var sign = Math.Sign(adjustedShaderData[n].X);
+                                adjustedShaderData[n].X -= sign * 100f;
                                 adjustedShaderData[n].X = (float)Math.Round(adjustedShaderData[n].X / edgeWidthRatio, 4);
                                 adjustedShaderData[n].Y = (float)Math.Round(adjustedShaderData[n].Y / edgeWidthRatio, 4);
+                                adjustedShaderData[n].X += sign * 100f;
                             }
                             else
                             {
-                                adjustedShaderData[n].X = -1;
-                                adjustedShaderData[n].Y = -1;
+                                //adjustedShaderData[n].X = -1;
+                                //adjustedShaderData[n].Y = -1;
                             }
                         }
+
+                        Console.WriteLine($"  Pos: {idx.Vertex.Position.Rounded()}");
                         Console.WriteLine("  RE: " + string.Join(", ", adjustedShaderData.Take(6)));
+
                     }
 
                 }

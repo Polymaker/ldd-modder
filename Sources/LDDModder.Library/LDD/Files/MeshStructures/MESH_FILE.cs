@@ -15,7 +15,7 @@ namespace LDDModder.LDD.Files.MeshStructures
         public ROUNDEDGE_SHADER_DATA[] RoundEdgeShaderData;
         public MESH_CULLING[] Culling;
 
-        public ROUNDEDGE_SHADER_DATA GetShaderDateFromOffset(int offset)
+        public ROUNDEDGE_SHADER_DATA GetShaderDataFromOffset(int offset)
         {
             int total = 0;
 
@@ -28,6 +28,21 @@ namespace LDDModder.LDD.Files.MeshStructures
             }
 
             return default(ROUNDEDGE_SHADER_DATA);
+        }
+
+        public int GetShaderDataIndexFromOffset(int offset)
+        {
+            int total = 0;
+
+            for (int i = 0; i < RoundEdgeShaderData.Length; i++)
+            {
+                if (total == offset)
+                    return i;
+
+                total += RoundEdgeShaderData[i].Coords.Length * 2;
+            }
+
+            return -1;
         }
 
         public bool GetShaderDataFromOffset(int offset, out ROUNDEDGE_SHADER_DATA data)

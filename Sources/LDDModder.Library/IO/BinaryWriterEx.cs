@@ -57,7 +57,11 @@ namespace LDDModder.IO
         public void WriteInt16(short value, Endianness endianness)
         {
             if (endianness == SystemEndian)
+            {
                 base.Write(value);
+                return;
+            }
+
             var bytes = BitConverter.GetBytes(value);
             WriteBytes(Reverse(bytes));
         }
@@ -70,7 +74,11 @@ namespace LDDModder.IO
         public void WriteUInt16(ushort value, Endianness endianness)
         {
             if (endianness == SystemEndian)
+            {
                 base.Write(value);
+                return;
+            }
+
             var bytes = BitConverter.GetBytes(value);
             WriteBytes(Reverse(bytes));
         }
@@ -83,7 +91,11 @@ namespace LDDModder.IO
         public void WriteInt32(int value, Endianness endianness)
         {
             if (endianness == SystemEndian)
+            {
                 base.Write(value);
+                return;
+            }
+
             var bytes = BitConverter.GetBytes(value);
             WriteBytes(Reverse(bytes));
         }
@@ -96,7 +108,11 @@ namespace LDDModder.IO
         public void WriteUInt32(uint value, Endianness endianness)
         {
             if (endianness == SystemEndian)
+            {
                 base.Write(value);
+                return;
+            }
+
             var bytes = BitConverter.GetBytes(value);
             WriteBytes(Reverse(bytes));
         }
@@ -109,7 +125,11 @@ namespace LDDModder.IO
         public void WriteInt64(long value, Endianness endianness)
         {
             if (endianness == SystemEndian)
+            {
                 base.Write(value);
+                return;
+            }
+
             var bytes = BitConverter.GetBytes(value);
             WriteBytes(Reverse(bytes));
         }
@@ -122,7 +142,11 @@ namespace LDDModder.IO
         public void WriteUInt64(ulong value, Endianness endianness)
         {
             if (endianness == SystemEndian)
+            {
                 base.Write(value);
+                return;
+            }
+
             var bytes = BitConverter.GetBytes(value);
             WriteBytes(Reverse(bytes));
         }
@@ -135,7 +159,11 @@ namespace LDDModder.IO
         public void WriteSingle(float value, Endianness endianness)
         {
             if (endianness == SystemEndian)
+            {
                 base.Write(value);
+                return;
+            }
+
             var bytes = BitConverter.GetBytes(value);
             WriteBytes(Reverse(bytes));
         }
@@ -148,7 +176,11 @@ namespace LDDModder.IO
         public void WriteDouble(double value, Endianness endianness)
         {
             if (endianness == SystemEndian)
+            {
                 base.Write(value);
+                return;
+            }
+
             var bytes = BitConverter.GetBytes(value);
             WriteBytes(Reverse(bytes));
         }
@@ -161,7 +193,11 @@ namespace LDDModder.IO
         public void WriteDecimal(decimal value, Endianness endianness)
         {
             if (endianness == SystemEndian)
+            {
                 base.Write(value);
+                return;
+            }
+
             var parts = decimal.GetBits(value);
             var bytes = new byte[16];
             bytes[0] = (byte)parts[0];
