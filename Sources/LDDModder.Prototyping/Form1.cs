@@ -182,42 +182,66 @@ namespace LDDModder.Prototyping
             */
         }
 
+        private void FixBrick4286()
+        {
+            string meshDirectory = Environment.ExpandEnvironmentVariables(@"%appdata%\LEGO Company\LEGO Digital Designer\db\Primitives\LOD0\");
+            float edgeWidthRatio = 15.5f / 0.8f;
+
+            using (var fs = File.OpenRead("4286.g.orig"))
+            {
+                var brickMesh = GFileReader.ReadMesh(fs);
+
+                var mesh = brickMesh.OriginalData.Value;
+                for (int t = 0; t < 3; t++)
+                {
+                    int sidx = mesh.GetShaderDataIndexFromOffset(mesh.Geometry.Indices[(9 * 3) + t].REShaderOffset);
+                    for (int x = 0; x < 2; x++)
+                    {
+                        var tmp = mesh.RoundEdgeShaderData[sidx].Coords[x * 2];
+                        mesh.RoundEdgeShaderData[sidx].Coords[x * 2] = mesh.RoundEdgeShaderData[sidx].Coords[(x * 2) + 1];
+                        mesh.RoundEdgeShaderData[sidx].Coords[(x * 2) + 1] = tmp;
+                    }
+
+                    mesh.RoundEdgeShaderData[sidx].Coords[1].X = mesh.RoundEdgeShaderData[sidx].Coords[1].X * -1f;
+                    mesh.RoundEdgeShaderData[sidx].Coords[3].X = mesh.RoundEdgeShaderData[sidx].Coords[3].X * -1f;
+                    //mesh.RoundEdgeShaderData[sidx].Coords[1] = new Vector2(1000, 1000);
+                    //mesh.RoundEdgeShaderData[sidx].Coords[3] = new Vector2(1000, 1000);
+                    //mesh.RoundEdgeShaderData[sidx].Coords[4] = new Vector2(1000, 1000);
+                    //mesh.RoundEdgeShaderData[sidx].Coords[5] = new Vector2(1000, 1000);
+                    //mesh.RoundEdgeShaderData[sidx].Coords[5].X = mesh.RoundEdgeShaderData[sidx].Coords[5].X * -1f;
+                    //if (t == 0)
+                    //{
+                    //    mesh.RoundEdgeShaderData[sidx].Coords[1].X = mesh.RoundEdgeShaderData[sidx].Coords[1].X + (15.5F * 2f);
+                    //}
+
+                }
+
+                using (var fs2 = File.Open(Path.Combine(meshDirectory, "4286.g"), FileMode.Create))
+                    GFileWriter.WriteMeshFile(fs2, mesh);
+            }
+        }
+
         private void SolveShaderData()
         {
             string meshDirectory = Environment.ExpandEnvironmentVariables(@"%appdata%\LEGO Company\LEGO Digital Designer\db\Primitives\LOD0\");
             float edgeWidthRatio = 15.5f / 0.8f;
+
+            FixBrick4286();
 
             using (var fs = File.OpenRead(Path.Combine(meshDirectory, "4286.g")))
             //using (var fs = File.OpenRead("4286.g.orig"))
             {
                 var brickMesh = GFileReader.ReadMesh(fs);
 
-                //var mesh = brickMesh.OriginalData.Value;
-                //for (int t = 0; t < 3; t++)
-                //{
-                //    int sidx = mesh.GetShaderDataIndexFromOffset(mesh.Geometry.Indices[(9 * 3) + t].REShaderOffset);
-                //    for (int x = 0; x < 3; x++)
-                //    {
-                //        var tmp = mesh.RoundEdgeShaderData[sidx].Coords[x * 2];
-                //        mesh.RoundEdgeShaderData[sidx].Coords[x * 2] = mesh.RoundEdgeShaderData[sidx].Coords[(x * 2) + 1];
-                //        mesh.RoundEdgeShaderData[sidx].Coords[(x * 2) + 1] = tmp;
-                //    }
-                //    mesh.RoundEdgeShaderData[sidx].Coords[1].X = mesh.RoundEdgeShaderData[sidx].Coords[1].X * -1f;
-
-                //    mesh.RoundEdgeShaderData[sidx].Coords[5].X = mesh.RoundEdgeShaderData[sidx].Coords[5].X * -1f;
-                //    if (t == 0)
-                //    {
-                //        mesh.RoundEdgeShaderData[sidx].Coords[0].X = mesh.RoundEdgeShaderData[sidx].Coords[0].X - 15.5F;
-                //    }
-
-                //}
-
-                //using (var fs2 = File.Open(Path.Combine(meshDirectory, "4286.g"), FileMode.Create))
-                //    GFileWriter.WriteMeshFile(fs2, mesh);
-
                 int triCtr = 0;
                 foreach (var tri in brickMesh.Geometry.Triangles)
                 {
+                    if (triCtr != 9)
+                    {
+                        triCtr++;
+                        continue;
+                    }
+
                     Console.WriteLine($"Triangle {triCtr++}:");
                     foreach (var idx in tri.Indices)
                     {
@@ -267,106 +291,17 @@ namespace LDDModder.Prototyping
             }
         }
 
-        private void TestRoundEdgeData(Mesh mesh)
-        {
-            for (int t = 0; t < mesh.Indices.Length / 3; t++)
-            {
-                var edgePerps = new Vector3[3];
-                var vertices = new Vector3[3];
-
-                for (int i = 0; i < 3; i++)
-                {
-                    vertices[i] = mesh.GetIndexVertex((t * 3) + i).Position;
-
-                    var idx1 = mesh.Indices[(t * 3) + i];
-                    var idx2 = mesh.Indices[(t * 3) + (i + 1) % 3];
-                    var idx3 = mesh.Indices[(t * 3) + (i + 2) % 3];
-                    edgePerps[i] = Vector3.GetPerpendicular(
-                        mesh.Vertices[idx1.VertexIndex].Position,
-                        mesh.Vertices[idx2.VertexIndex].Position,
-                        mesh.Vertices[idx3.VertexIndex].Position);
-                }
-
-                for (int i = 0; i < 3; i++)
-                {
-                    var index = mesh.Indices[(t * 3) + i];
-                    var pos1 = vertices[i];
-                    Vector3 avgNormal = Vector3.Empty;
-                    if (index.AverageNormalIndex < mesh.AverageNormals.Length)
-                        avgNormal = mesh.AverageNormals[index.AverageNormalIndex];
-                    var shaderData = mesh.EdgeShaderValues[index.ShaderDataIndex].Coords;
-                    if (shaderData.Length > 6)
-                        shaderData = shaderData.Take(6).ToArray();
-
-                    for (int d = 0; d < 6; d++)
-                    {
-                        var coord = shaderData[d];
-                        if (coord.X == 1000)
-                            continue;
-
-                        if (Math.Floor(d / 2f) == i)
-                        {
-                            if (Math.Abs(coord.X) == 100)
-                            {
-
-                            }
-                        }
-                        //FindValue(coord.X, i, d * 2, vertices, edgePerps);
-                        //FindValue(coord.Y, i, (d * 2) + 1, vertices, edgePerps);
-                    }
-                }
-            }
-        }
-
-        private void FindValue(float value, int vertIdx, int valueIdx, Vector3[] verts, Vector3[] edgePerps)
-        {
-            float edgeWidthRatio = 15.5f / 0.8f;
-
-            var pos1 = verts[vertIdx];
-            bool matched = false;
-
-            bool MatchValue(float v)
-            {
-                var adj = v * edgeWidthRatio;
-                if (valueIdx % 2 == 0)
-                    adj += 100f;
-
-                return Math.Abs(value).EqualOrClose(adj, 0.00001f);
-            }
-
-            for (int i = 0; i < 3; i++)
-            {
-                var pos2 = verts[i];
-                var dist = Vector3.Distance(pos1, pos2);
-
-                if (MatchValue(dist))
-                {
-                    matched = true;
-                }
-            }
-
-            for (int i = 0; i < 3; i++)
-            {
-                var perp = edgePerps[i];
-                
-            }
-
-            if (!matched && Math.Abs(value) != 100)
-            {
-
-            }
-        }
-
         private void TestLddFiles()
         {
+            string lddDirectory = Environment.ExpandEnvironmentVariables(@"%appdata%\LEGO Company\LEGO Digital Designer\");
             /*var test = LocalizationFile.Read(@"C:\Program Files (x86)\LEGO Company\LEGO Digital Designer\Assets\de\localizedStrings.loc");
             test.Save("localizedStrings_en.loc");*/
             //var test = LifFile.Open(@"test.lif");
-            var lifFile = LifFile.Open(@"db.lif");
+            var lifFile = LifFile.Open(Path.Combine(lddDirectory, "Palettes", "LDD.lif"));
             //Path.GetDirectoryName(Application.ExecutablePath)
             //lifFile.ExtractTo("DB");
-            using (var fs = File.Open("test.lif", FileMode.Create))
-                lifFile.Save(fs);
+            //using (var fs = File.Open("test.lif", FileMode.Create))
+            //    lifFile.Save(fs);
             lifFile.Dispose();
             
         }
