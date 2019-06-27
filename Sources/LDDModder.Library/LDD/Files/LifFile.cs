@@ -294,7 +294,7 @@ namespace LDDModder.LDD.Files
                     {
                         BlockHeader = 1,
                         BlockType = 4,
-                        Spacing1 = 1,
+                        Spacing2 = 1,
                         BlockSize = LIFFBLOCK_SIZE + (int)file.FileSize
                     };
                     bw.WriteStruct(fileBlock);
