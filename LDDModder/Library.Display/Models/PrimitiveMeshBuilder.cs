@@ -8,9 +8,11 @@ using Poly3D.Prefabs.Scripts;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace LDDModder.Display.Models
 {
@@ -78,6 +80,7 @@ namespace LDDModder.Display.Models
 
         public static SceneObject CreateCollisionObject(Scene scene, Collision collision)
         {
+            
             var mesh = CreateCollisionMesh(collision);
             if (mesh == null)
                 return null;
@@ -93,7 +96,7 @@ namespace LDDModder.Display.Models
             if (collision is CollisionBox)
             {
                 var box = (CollisionBox)collision;
-
+                
                 var mesh = WavefrontMeshLoader.LoadWavefrontObj(ResourcesHelper.GetResource("Models.Cube.obj"));
                 var scale = new Vector3((float)box.Sx, (float)box.Sy, (float)box.Sz);
                 ScaleMesh(mesh, scale);
