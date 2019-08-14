@@ -18,5 +18,10 @@ namespace LDDModder.LDD.Files.MeshStructures
             for (int i = 0; i < Coords.Length; i++)
                 Coords[i] = new Vector2(values[i * 2], values[(i * 2) + 1]);
         }
+
+        public ROUNDEDGE_SHADER_DATA(Vector2[] coords)
+        {
+            Coords = coords;
+        }
     }
 }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace LDDModder.LDD.Meshes
 {
-    public class Vertex
+    public class Vertex/* : IEqualityComparer<Vertex>*/
     {
         public Vector3 Position { get; set; }
         public Vector3 Normal { get; set; }
@@ -57,13 +57,23 @@ namespace LDDModder.LDD.Meshes
                    TexCoord.Equals(vertex.TexCoord);
         }
 
-        //public override int GetHashCode()
+        public int GetHash()
+        {
+            var hashCode = 550714527;
+            hashCode = hashCode * -1521134295 + Position.GetHashCode();
+            hashCode = hashCode * -1521134295 + Normal.GetHashCode();
+            hashCode = hashCode * -1521134295 + TexCoord.GetHashCode();
+            return hashCode;
+        }
+
+        //public bool Equals(Vertex x, Vertex y)
         //{
-        //    var hashCode = 550714527;
-        //    hashCode = hashCode * -1521134295 + Position.GetHashCode();
-        //    hashCode = hashCode * -1521134295 + Normal.GetHashCode();
-        //    hashCode = hashCode * -1521134295 + TexCoord.GetHashCode();
-        //    return hashCode;
+        //    return x.Equals(y);
+        //}
+
+        //public int GetHashCode(Vertex obj)
+        //{
+        //    return obj.GetHash();
         //}
     }
 }

@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 
 namespace LDDModder.Simple3D
 {
-
     public struct Vector4
     {
         public float X { get; set; }

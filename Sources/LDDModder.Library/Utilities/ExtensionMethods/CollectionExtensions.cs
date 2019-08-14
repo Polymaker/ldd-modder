@@ -17,14 +17,17 @@ namespace System.Collections.Generic
 
         public static IEnumerable<T> EqualsDistinct<T>(this IEnumerable<T> collection)
         {
-            var values = new List<T>();
-            var comparator = EqualityComparer<T>.Default;
+            var hashList = new Dictionary<T, int>();
             foreach (var v in collection)
             {
-                if (!values.Any(x => comparator.Equals(v, x)))
+                if (!hashList.ContainsKey(v))
                 {
-                    values.Add(v);
+                    hashList.Add(v, 1);
                     yield return v;
+                }
+                else
+                {
+
                 }
             }
         }

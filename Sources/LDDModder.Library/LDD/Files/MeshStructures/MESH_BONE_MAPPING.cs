@@ -14,5 +14,10 @@ namespace LDDModder.LDD.Files.MeshStructures
         {
             BoneWeights = new MESH_BONE_WEIGHT[count];
         }
+
+        public MESH_BONE_MAPPING(IEnumerable<MESH_BONE_WEIGHT> weights)
+        {
+            BoneWeights = weights.ToArray();
+        }
     }
 }

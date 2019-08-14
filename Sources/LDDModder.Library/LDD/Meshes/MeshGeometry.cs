@@ -1,6 +1,8 @@
-﻿using System;
+﻿using LDDModder.Simple3D;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,109 +12,29 @@ namespace LDDModder.LDD.Meshes
     public class MeshGeometry
     {
         private List<Vertex> _Vertices;
-        private List<Triangle2> _Triangles;
-        private IndexList _Indices;
+        private List<Triangle> _Triangles;
+
+        public MeshIndexList Indices { get; }
+
+        public int IndexCount => Indices.Count;
+
         public IList<Vertex> Vertices => _Vertices.AsReadOnly();
 
-        public IList<Triangle2> Triangles => _Triangles.AsReadOnly();
+        public int VertexCount => Vertices.Count;
 
-        private class IndexList : IList<VertexIndex>
-        {
-            private readonly MeshGeometry Geometry;
+        public IList<Triangle> Triangles => _Triangles.AsReadOnly();
 
-            private IList<Triangle2> Triangles => Geometry.Triangles;
+        public int TriangleCount => Triangles.Count;
 
-            public IndexList(MeshGeometry geometry)
-            {
-                Geometry = geometry;
-            }
+        public bool IsTextured => Vertices.Any(x => !x.TexCoord.IsEmpty);
 
-            private int GetTriangleIndex(int index)
-            {
-                return (int)Math.Floor(index / 3d);
-            }
-
-            public VertexIndex this[int index]
-            {
-                get => Triangles[GetTriangleIndex(index)].Indices[index % 3];
-                set => throw new NotSupportedException();
-            }
-
-            public int Count => Triangles.Count * 3;
-
-            public bool IsReadOnly => true;
-
-            public void Add(VertexIndex item)
-            {
-                throw new NotSupportedException();
-            }
-
-            public void Clear()
-            {
-                throw new NotSupportedException();
-            }
-
-            public bool Contains(VertexIndex item)
-            {
-                return Triangles.Any(t => t.Indices.Contains(item));
-            }
-
-            public void CopyTo(VertexIndex[] array, int arrayIndex)
-            {
-                throw new NotImplementedException();
-            }
-
-            public IEnumerator<VertexIndex> GetEnumerator()
-            {
-                foreach(var triangle in Triangles)
-                {
-                    foreach (var idx in triangle.Indices)
-                        yield return idx;
-                }
-            }
-
-            public int IndexOf(VertexIndex item)
-            {
-                for (int i = 0; i < Triangles.Count; i++)
-                {
-                    for (int j = 0; j< 3; j++)
-                    {
-                        if (Triangles[i].Indices[j] == item)
-                            return (i * 3) + j;
-                    }
-                }
-
-                return -1;
-            }
-
-            public void Insert(int index, VertexIndex item)
-            {
-                throw new NotSupportedException();
-            }
-
-            public bool Remove(VertexIndex item)
-            {
-                throw new NotSupportedException();
-            }
-
-            public void RemoveAt(int index)
-            {
-                throw new NotSupportedException();
-            }
-
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                return GetEnumerator();
-            }
-        }
-
-        public IList<VertexIndex> Indices => _Indices;
+        public bool IsFlexible => Vertices.Any(x => x.BoneWeights.Any());
 
         public MeshGeometry()
         {
             _Vertices = new List<Vertex>();
-            _Triangles = new List<Triangle2>();
-            _Indices = new IndexList(this);
+            _Triangles = new List<Triangle>();
+            Indices = new MeshIndexList(this);
         }
 
         private Vertex AddVertex(Vertex vertex)
@@ -136,7 +58,7 @@ namespace LDDModder.LDD.Meshes
 
         public void AddTriangle(Vertex v1, Vertex v2, Vertex v3)
         {
-            _Triangles.Add(new Triangle2(AddVertex(v1), AddVertex(v2), AddVertex(v3)));
+            _Triangles.Add(new Triangle(AddVertex(v1), AddVertex(v2), AddVertex(v3)));
         }
 
         public void AddTriangleFromIndices(int i1, int i2, int i3)
@@ -147,7 +69,136 @@ namespace LDDModder.LDD.Meshes
                 throw new IndexOutOfRangeException("i2");
             if (i3 >= _Vertices.Count)
                 throw new IndexOutOfRangeException("i3");
-            _Triangles.Add(new Triangle2(_Vertices[i1], _Vertices[i2], _Vertices[i3]));
+            _Triangles.Add(new Triangle(_Vertices[i1], _Vertices[i2], _Vertices[i3]));
+        }
+
+        public void SimplifyVertices()
+        {
+            //var timer = Stopwatch.StartNew();
+
+            //hashcodes are not completely unique but I still use them as a pre-filter
+            var distinctVert = new Dictionary<int, List<Vertex>>();
+            var vertIndices = new Dictionary<Vertex, List<VertexIndex>>();
+
+            foreach (var idx in Indices)
+            {
+                if (!vertIndices.ContainsKey(idx.Vertex))
+                    vertIndices.Add(idx.Vertex, new List<VertexIndex>());
+                vertIndices[idx.Vertex].Add(idx);
+            }
+
+            for (int i = 0; i < _Vertices.Count; i++)
+            {
+                var v = _Vertices[i];
+                var vh = v.GetHash();
+                if (!distinctVert.ContainsKey(vh))
+                    distinctVert.Add(vh, new List<Vertex>());
+                distinctVert[vh].Add(v);
+            }
+            bool hasUnusedVerts = false;
+            var simplifiedVerts = new List<Vertex>();
+            foreach (var kv in distinctVert)
+            {
+                var vList = kv.Value;
+                while (vList.Any())
+                {
+                    var v = vList[0];
+                    simplifiedVerts.Add(v);
+                    vList.RemoveAt(0);
+                    foreach (var vv in vList.Where(x => x.Equals(v)).ToArray())
+                    {
+                        if (vertIndices.ContainsKey(vv))
+                            vertIndices[vv].ForEach(idx => idx.ReassignVertex(v));
+                        else
+                            hasUnusedVerts = true;
+                        vList.Remove(vv);
+                    }
+                }
+            }
+
+            if (hasUnusedVerts)
+                Debug.WriteLine("Model has unused vertices");
+
+            //timer.Stop();
+            //Debug.WriteLine($"removed duplicates in: {timer.Elapsed}");
+
+            _Vertices.Clear();
+            _Vertices.AddRange(simplifiedVerts);
+
+            for (int i = 0; i < Triangles.Count; i++)
+                Triangles[i].RebuildEdges();
+        }
+
+        public void CalculateAverageNormals()
+        {
+            var vfD = new Dictionary<Vector3, List<Triangle>>();
+            foreach (var tri in Triangles)
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    if (!vfD.ContainsKey(tri.Vertices[i].Position))
+                        vfD.Add(tri.Vertices[i].Position, new List<Triangle>());
+                    if (!vfD[tri.Vertices[i].Position].Contains(tri))
+                        vfD[tri.Vertices[i].Position].Add(tri);
+                }
+            }
+
+            foreach (var idx in Indices)
+            {
+                var tangentFaces = vfD[idx.Vertex.Position];// GetVertexFaces(idx.Vertex).ToList();
+                var faceNormals = tangentFaces.Select(x => x.Normal).DistinctValues().ToList();
+
+                Vector3 avgNormal = Vector3.Zero;
+                foreach (var norm in faceNormals)
+                    avgNormal += norm;
+
+                avgNormal /= faceNormals.Count;
+                avgNormal.Normalize();
+
+                idx.AverageNormal = avgNormal;
+            }
+        }
+
+        public static MeshGeometry Create(Files.MeshStructures.MESH_DATA mesh)
+        {
+            var vertices = new List<Vertex>();
+            bool isTextured = mesh.UVs != null && mesh.UVs.Length > 0;
+            bool isFlexible = mesh.Bones != null && mesh.Bones.Length > 0;
+
+            for (int i = 0; i < mesh.Positions.Length; i++)
+            {
+                vertices.Add(new Vertex(
+                    mesh.Positions[i],
+                    mesh.Normals[i],
+                    isTextured ? mesh.UVs[i] : Vector2.Empty
+                    ));
+
+                if (isFlexible)
+                {
+                    var bones = mesh.Bones[i];
+                    for (int j = 0; j < bones.BoneWeights.Length; j++)
+                        vertices[i].BoneWeights.Add(new BoneWeight(bones.BoneWeights[j].BoneID, bones.BoneWeights[j].Weight));
+                }
+            }
+            var geom = new MeshGeometry();
+            geom.SetVertices(vertices);
+
+            for (int i = 0; i < mesh.Indices.Length; i += 3)
+            {
+                geom.AddTriangleFromIndices(
+                    mesh.Indices[i].VertexIndex,
+                    mesh.Indices[i + 1].VertexIndex,
+                    mesh.Indices[i + 2].VertexIndex);
+            }
+
+            return geom;
+        }
+
+        public MeshType GetMeshType()
+        {
+            if (IsFlexible)
+                return IsTextured ? MeshType.FlexibleTextured : MeshType.Flexible;
+            return IsTextured ? MeshType.StandardTextured : MeshType.Standard;
         }
     }
 }

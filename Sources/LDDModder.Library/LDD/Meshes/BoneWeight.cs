@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LDDModder.LDD.Meshes
 {
-    public struct BoneWeight
+    public class BoneWeight
     {
         public int BoneID { get; set; }
         public float Weight { get; set; }

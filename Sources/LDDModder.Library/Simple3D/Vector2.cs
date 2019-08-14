@@ -34,6 +34,11 @@ namespace LDDModder.Simple3D
             Y = values[1];
         }
 
+        public static explicit operator Vector2(Assimp.Vector2D vector)
+        {
+            return new Vector2(vector.X, vector.Y);
+        }
+
         #region Equality operators
 
         public override bool Equals(object obj)
@@ -77,11 +82,16 @@ namespace LDDModder.Simple3D
 
         public override int GetHashCode()
         {
-            var hashCode = 1861411795;
-            hashCode = hashCode * -1521134295 + X.GetHashCode();
-            hashCode = hashCode * -1521134295 + Y.GetHashCode();
-            return hashCode;
+            return X.GetHashCode() ^ Y.GetHashCode();
         }
+
+        //public override int GetHashCode()
+        //{
+        //    var hashCode = 1861411795;
+        //    hashCode = hashCode * -1521134295 + X.GetHashCode();
+        //    hashCode = hashCode * -1521134295 + Y.GetHashCode();
+        //    return hashCode;
+        //}
 
         #endregion
 

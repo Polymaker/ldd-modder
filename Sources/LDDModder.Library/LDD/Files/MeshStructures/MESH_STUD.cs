@@ -34,5 +34,18 @@ namespace LDDModder.LDD.Files.MeshStructures
             Value5 = values[4];
             Value6 = values[5];
         }
+
+        public int[] ToArray()
+        {
+            return new int[]
+            {
+                ConnectorIndex,
+                Value2,
+                DataArrayIndex,
+                Value4,
+                Value5,
+                Value6
+            };
+        }
     }
 }

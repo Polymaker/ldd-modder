@@ -9,16 +9,22 @@ namespace LDDModder.LDD.Meshes
 {
     public class VertexIndex
     {
-        public Vertex Vertex { get; }
+        public Vertex Vertex { get; private set; }
 
-        public Vector2[] RoundEdgeData { get; set; }
+        public RoundEdgeData RoundEdgeData { get; set; }
 
         public Vector3 AverageNormal { get; set; }
 
         public VertexIndex(Vertex vertex)
         {
             Vertex = vertex;
-            RoundEdgeData = new Vector2[6];
+            AverageNormal = Vector3.UnitY;
+            RoundEdgeData = RoundEdgeData.NoOutline;
+        }
+
+        internal void ReassignVertex(Vertex vertex)
+        {
+            Vertex = vertex;
         }
     }
 }

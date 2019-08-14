@@ -2,6 +2,7 @@
 using LDDModder.LDD.Files.MeshStructures;
 using LDDModder.LDD.Meshes;
 using LDDModder.Simple3D;
+using LDDModder.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,7 +14,7 @@ namespace LDDModder.LDD.Files
 {
     public class GFileWriter
     {
-        public static void WriteMesh(Stream stream, Mesh2 mesh)
+        public static void WriteMesh(Stream stream, Mesh mesh)
         {
             try
             {
@@ -25,6 +26,8 @@ namespace LDDModder.LDD.Files
                 throw;
             }
         }
+
+        #region File structure writing
 
         public static void WriteMeshFile(Stream stream, MESH_FILE meshFile)
         {
@@ -241,11 +244,108 @@ namespace LDDModder.LDD.Files
             bw.BaseStream.Position = endPos;
         }
 
-        private static MESH_FILE BuildMeshFile(Mesh2 mesh)
+        #endregion
+
+        #region Convertion from Object oriented structure to File format structure
+
+        private class ShaderDataHelper
         {
-            return default(MESH_FILE);
+            public ListIndexer<Vector3> AvgNormals { get; }
+            public ListIndexer<RoundEdgeData> RoundEdgeData { get; }
+
+            public ShaderDataHelper(List<Vector3> normals, List<RoundEdgeData> roundEdges)
+            {
+                AvgNormals = new ListIndexer<Vector3>(normals);
+                RoundEdgeData = new ListIndexer<RoundEdgeData>(roundEdges);
+            }
         }
 
-        //private static MESH_CULLING CreateCulling()
+        private static MESH_FILE BuildMeshFile(Mesh mesh)
+        {
+            var file = new MESH_FILE
+            {
+                Header = MESH_HEADER.Create(mesh)
+            };
+
+            var avgNormals = mesh.GetAverageNormals().DistinctValues().ToList();
+            var outlines = mesh.GetRoundEdgeShaderData().EqualsDistinct().ToList();
+            for (int i = 21; i < outlines.Count; i += 21)
+                outlines[i].PackData();
+            var shaderData = new ShaderDataHelper(avgNormals, outlines);
+
+            file.AverageNormals = avgNormals.ToArray();
+            file.RoundEdgeShaderData = outlines.Select(x => new ROUNDEDGE_SHADER_DATA(x.Coords)).ToArray();
+
+            file.Geometry = SerializeMeshGeometry(shaderData, mesh.Geometry);
+            file.Culling = new MESH_CULLING[mesh.Cullings.Count];
+
+            for (int i = 0; i < mesh.Cullings.Count; i++)
+                file.Culling[i] = SerializeMeshCulling(shaderData, mesh.Cullings[i]);
+
+            return file;
+        }
+
+        private static MESH_DATA SerializeMeshGeometry(ShaderDataHelper shaderData, MeshGeometry meshGeometry)
+        {
+            var meshData = MESH_DATA.Create(meshGeometry);
+            for (int i = 0; i < meshGeometry.Vertices.Count; i++)
+            {
+                var vert = meshGeometry.Vertices[i];
+                meshData.Positions[i] = vert.Position;
+                meshData.Normals[i] = vert.Normal;
+
+                if (meshGeometry.IsTextured)
+                    meshData.UVs[i] = vert.TexCoord;
+
+                if (vert.BoneWeights.Any())
+                {
+                    var boneWeights = vert.BoneWeights.Select(x => new MESH_BONE_WEIGHT { BoneID = x.BoneID, Weight = x.Weight });
+                    meshData.Bones[i] = new MESH_BONE_MAPPING(boneWeights);
+                }
+            }
+
+            for (int i = 0; i < meshGeometry.Indices.Count; i++)
+            {
+                var idx = meshGeometry.Indices[i];
+                meshData.Indices[i].VertexIndex = meshGeometry.Vertices.IndexOf(idx.Vertex);
+
+                meshData.Indices[i].AverageNormalIndex = shaderData.AvgNormals.IndexOf(idx.AverageNormal);
+                int reIdx = shaderData.RoundEdgeData.IndexOf(idx.RoundEdgeData);
+                int reOffset = reIdx * 12 + ((int)Math.Floor(reIdx / 21d) * 4);
+                meshData.Indices[i].REShaderOffset = reOffset;
+            }
+
+            return meshData;
+        }
+
+        private static MESH_CULLING SerializeMeshCulling(ShaderDataHelper shaderData, MeshCulling meshCulling)
+        {
+            var culling = new MESH_CULLING
+            {
+                Type = (int)meshCulling.Type,
+                FromVertex = meshCulling.FromVertex,
+                VertexCount = meshCulling.VertexCount,
+                FromIndex = meshCulling.FromIndex,
+                IndexCount = meshCulling.IndexCount
+            };
+
+            if (meshCulling.ReplacementMesh != null)
+                culling.ReplacementGeometry = SerializeMeshGeometry(shaderData, meshCulling.ReplacementMesh);
+
+            if (meshCulling.UnknownData != null && meshCulling.UnknownData.Any())
+            {
+                culling.UnknownData = meshCulling.UnknownData.Select(x => new MESH_CULLING_DATA(x.ToArray())).ToArray();
+            }
+
+            if (meshCulling.Studs != null && meshCulling.Studs.Any())
+            {
+                culling.Studs = meshCulling.Studs.Select(x => new MESH_STUD(x.ToArray())).ToArray();
+            }
+
+            return culling;
+        }
+
+        #endregion
+
     }
 }

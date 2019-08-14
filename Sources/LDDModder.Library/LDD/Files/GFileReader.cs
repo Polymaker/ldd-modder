@@ -14,7 +14,10 @@ namespace LDDModder.LDD.Files
 {
     public class GFileReader
     {
-        private static MESH_FILE ReadMeshFile(Stream stream)
+
+        #region Binary Reading
+
+        public static MESH_FILE ReadMeshFile(Stream stream)
         {
             stream.Position = 0;
 
@@ -200,7 +203,7 @@ namespace LDDModder.LDD.Files
                 int vertexCount = br.ReadInt32();
                 int indexCount = br.ReadInt32();
                 var geom = MESH_DATA.Create(vertexCount, indexCount, isTextured, false);
-                
+
 
                 for (int i = 0; i < vertexCount; i++)
                     geom.Positions[i] = new Vector3(br.ReadSingles(3));
@@ -229,7 +232,11 @@ namespace LDDModder.LDD.Files
             return culling;
         }
 
-        public static Mesh2 ReadMesh(Stream stream)
+        #endregion
+
+        #region Convertion from File format structure to Object oriented structure
+
+        public static Mesh ReadMesh(Stream stream)
         {
             try
             {
@@ -238,175 +245,185 @@ namespace LDDModder.LDD.Files
                 bool isTextured = meshType == MeshType.StandardTextured || meshType == MeshType.FlexibleTextured;
                 bool isFlexible = meshType == MeshType.Flexible || meshType == MeshType.FlexibleTextured;
 
-                var baseGeometry = new MeshGeometry();
-                var vertices = new List<Vertex>();
+                var mainMesh = MeshGeometry.Create(meshFile.Geometry);
 
-                for (int i = 0; i < meshFile.Header.VertexCount; i++)
+                SetShaderData(meshFile, meshFile.Geometry, mainMesh);
+
+                var mesh = new Mesh(meshFile, (MeshType)meshFile.Header.MeshType);
+                mesh.SetGeometry(mainMesh);
+
+                for (int i = 0; i < meshFile.Culling.Length; i++)
                 {
-                    vertices.Add(new Vertex(
-                        meshFile.Geometry.Positions[i],
-                        meshFile.Geometry.Normals[i],
-                        isTextured ? meshFile.Geometry.UVs[i] : Vector2.Empty
-                        ));
-
-                    if (isFlexible)
+                    var data = meshFile.Culling[i];
+                    var culling = new MeshCulling((MeshCullingType)data.Type)
                     {
-                        var bones = meshFile.Geometry.Bones[i];
-                        for (int j = 0; j < bones.BoneWeights.Length; j++)
-                            vertices[i].BoneWeights.Add(new BoneWeight(bones.BoneWeights[j].BoneID, bones.BoneWeights[j].Weight));
-                    }
-                }
+                        FromIndex = data.FromIndex,
+                        IndexCount = data.IndexCount,
+                        FromVertex = data.FromVertex,
+                        VertexCount = data.VertexCount,
+                    };
 
-                baseGeometry.SetVertices(vertices);
+                    if (data.UnknownData != null)
+                        culling.UnknownData = data.UnknownData.Select(x => x.Data).ToList();
 
-                for (int i = 0; i < meshFile.Header.IndexCount; i += 3)
-                {
-                    baseGeometry.AddTriangleFromIndices(
-                        meshFile.Geometry.Indices[i].VertexIndex, 
-                        meshFile.Geometry.Indices[i + 1].VertexIndex, 
-                        meshFile.Geometry.Indices[i + 2].VertexIndex);
-                }
-
-                for (int i = 0; i < meshFile.Header.IndexCount; i++)
-                {
-                    var index = meshFile.Geometry.Indices[i];
-
-                    if (index.AverageNormalIndex >= 0 && index.AverageNormalIndex < meshFile.AverageNormals.Length)
-                        baseGeometry.Indices[i].AverageNormal = meshFile.AverageNormals[index.AverageNormalIndex];
-
-                    if (meshFile.GetShaderDataFromOffset(index.REShaderOffset, out ROUNDEDGE_SHADER_DATA shaderData))
+                    if (data.Studs != null && data.Studs.Length > 0)
                     {
-                        baseGeometry.Indices[i].RoundEdgeData = shaderData.Coords/*.Take(6).ToArray()*/;
+                        for (int j = 0; j < data.Studs.Length; j++)
+                            culling.Studs.Add(new StudInformation(data.Studs[j].ToArray()));
                     }
-                }
 
-                var mesh = new Mesh2(meshFile, (MeshType)meshFile.Header.MeshType);
-                mesh.SetGeometry(baseGeometry);
+                    if (data.ReplacementGeometry.HasValue)
+                    {
+                        var geom = MeshGeometry.Create(data.ReplacementGeometry.Value);
+                        SetShaderData(meshFile, data.ReplacementGeometry.Value, geom);
+                        culling.ReplacementMesh = geom;
+                    }
+
+                    mesh.Cullings.Add(culling);
+                }
                 return mesh;
             }
             catch
             {
                 throw;
             }
-            return null;
         }
 
-        public static void Write(Stream stream, Mesh mesh)
+        private static void SetShaderData(MESH_FILE file, MESH_DATA data, MeshGeometry mesh)
         {
-            using (var bw = new BinaryWriter(stream, Encoding.UTF8, true))
+            for (int i = 0; i < data.Indices.Length; i++)
             {
-                bw.Write("10GB".ToCharArray());
-                bw.Write(mesh.Vertices.Length);
-                bw.Write(mesh.Indices.Length);
-                bw.Write((int)mesh.Type);
+                var index = data.Indices[i];
 
-                foreach (var vert in mesh.Vertices)
+                if (index.AverageNormalIndex >= 0 && index.AverageNormalIndex < file.AverageNormals.Length)
+                    mesh.Indices[i].AverageNormal = file.AverageNormals[index.AverageNormalIndex];
+
+                if (file.GetShaderDataFromOffset(index.REShaderOffset, out ROUNDEDGE_SHADER_DATA shaderData))
                 {
-                    bw.Write(vert.Position.X);
-                    bw.Write(vert.Position.Y);
-                    bw.Write(vert.Position.Z);
-                }
-                foreach (var vert in mesh.Vertices)
-                {
-                    bw.Write(vert.Normal.X);
-                    bw.Write(vert.Normal.Y);
-                    bw.Write(vert.Normal.Z);
-                }
-
-                if (mesh.Type == MeshType.StandardTextured || mesh.Type == MeshType.FlexibleTextured)
-                {
-                    foreach (var vert in mesh.Vertices)
-                    {
-                        if (vert.TexCoord != Vector2.Empty)
-                        {
-                            bw.Write(vert.TexCoord.X);
-                            bw.Write(vert.TexCoord.Y);
-                        }
-                        else
-                        {
-                            bw.Write(0f);
-                            bw.Write(0f);
-                        }
-                    }
-                }
-
-                foreach (var idx in mesh.Indices)
-                    bw.Write(idx.VertexIndex);
-
-                //round edge shader data
-                {
-                    if (mesh.EdgeShaderValues == null || mesh.EdgeShaderValues.Length == 0)
-                    {
-                        mesh.EdgeShaderValues = new RoundEdgeData[]
-                        {
-                            new RoundEdgeData(new Vector3(1000,1000,1000),
-                            new Vector3(1000,1000,1000),
-                            new Vector3(1000,1000,1000),
-                            new Vector3(1000,1000,1000))
-                        };
-                    }
-
-                    int totalValues = mesh.EdgeShaderValues.Sum(x => x.Coords.Length * 2);
-                    bw.Write(totalValues);
-
-                    mesh.UpdateEdgeShaderOffsets();
-
-                    foreach (var shaderData in mesh.EdgeShaderValues)
-                    {
-                        for (int i = 0; i < shaderData.Coords.Length; i++)
-                        {
-                            bw.Write(shaderData.Coords[i].X);
-                            bw.Write(shaderData.Coords[i].Y);
-                        }
-                    }
-                   
-                    foreach (var idx in mesh.Indices)
-                    {
-                        //bw.Write(mesh.EdgeShaderValues[idx.ShaderDataIndex].FileOffset);
-                        bw.Write(idx.RoundEdgeDataOffset);
-                    }
-
-                }
-
-                //unknown data
-                {
-                    if (mesh.AverageNormals == null || mesh.AverageNormals.Length == 0)
-                    {
-                        mesh.AverageNormals = new Vector3[]
-                        {
-                            new Vector3(0,1,0)
-                        };
-                    }
-
-                    bw.Write(mesh.AverageNormals.Length + 1);
-                    bw.Write(83f); bw.Write(0f); bw.Write(0f);
-
-                    foreach (var data in mesh.AverageNormals)
-                    {
-                        bw.Write(data.X);
-                        bw.Write(data.Y);
-                        bw.Write(data.Z);
-                    }
-
-                    foreach (var idx in mesh.Indices)
-                        bw.Write(idx.AverageNormalIndex);
-                }
-
-                //mesh culling
-                {
-                    bw.Write(mesh.CullingInfos.Length);
-                    long totalSizePos = stream.Position;
-                    bw.Seek(4, SeekOrigin.Current);
-
-                    foreach (var info in mesh.CullingInfos)
-                        info.Write(bw);
-
-                    long totalSize = stream.Position - totalSizePos;
-                    stream.Position = totalSizePos;
-                    bw.Write((int)totalSize - 4);
+                    mesh.Indices[i].RoundEdgeData = new RoundEdgeData(shaderData.Coords.Take(6).ToArray());
                 }
             }
         }
+
+
+        #endregion
+
+        //public static void Write(Stream stream, Mesh mesh)
+        //{
+        //    using (var bw = new BinaryWriter(stream, Encoding.UTF8, true))
+        //    {
+        //        bw.Write("10GB".ToCharArray());
+        //        bw.Write(mesh.Vertices.Length);
+        //        bw.Write(mesh.Indices.Length);
+        //        bw.Write((int)mesh.Type);
+
+        //        foreach (var vert in mesh.Vertices)
+        //        {
+        //            bw.Write(vert.Position.X);
+        //            bw.Write(vert.Position.Y);
+        //            bw.Write(vert.Position.Z);
+        //        }
+        //        foreach (var vert in mesh.Vertices)
+        //        {
+        //            bw.Write(vert.Normal.X);
+        //            bw.Write(vert.Normal.Y);
+        //            bw.Write(vert.Normal.Z);
+        //        }
+
+        //        if (mesh.Type == MeshType.StandardTextured || mesh.Type == MeshType.FlexibleTextured)
+        //        {
+        //            foreach (var vert in mesh.Vertices)
+        //            {
+        //                if (vert.TexCoord != Vector2.Empty)
+        //                {
+        //                    bw.Write(vert.TexCoord.X);
+        //                    bw.Write(vert.TexCoord.Y);
+        //                }
+        //                else
+        //                {
+        //                    bw.Write(0f);
+        //                    bw.Write(0f);
+        //                }
+        //            }
+        //        }
+
+        //        foreach (var idx in mesh.Indices)
+        //            bw.Write(idx.VertexIndex);
+
+        //        //round edge shader data
+        //        {
+        //            if (mesh.EdgeShaderValues == null || mesh.EdgeShaderValues.Length == 0)
+        //            {
+        //                mesh.EdgeShaderValues = new RoundEdgeData[]
+        //                {
+        //                    new RoundEdgeData(new Vector3(1000,1000,1000),
+        //                    new Vector3(1000,1000,1000),
+        //                    new Vector3(1000,1000,1000),
+        //                    new Vector3(1000,1000,1000))
+        //                };
+        //            }
+
+        //            int totalValues = mesh.EdgeShaderValues.Sum(x => x.Coords.Length * 2);
+        //            bw.Write(totalValues);
+
+        //            mesh.UpdateEdgeShaderOffsets();
+
+        //            foreach (var shaderData in mesh.EdgeShaderValues)
+        //            {
+        //                for (int i = 0; i < shaderData.Coords.Length; i++)
+        //                {
+        //                    bw.Write(shaderData.Coords[i].X);
+        //                    bw.Write(shaderData.Coords[i].Y);
+        //                }
+        //            }
+
+        //            foreach (var idx in mesh.Indices)
+        //            {
+        //                //bw.Write(mesh.EdgeShaderValues[idx.ShaderDataIndex].FileOffset);
+        //                bw.Write(idx.RoundEdgeDataOffset);
+        //            }
+
+        //        }
+
+        //        //unknown data
+        //        {
+        //            if (mesh.AverageNormals == null || mesh.AverageNormals.Length == 0)
+        //            {
+        //                mesh.AverageNormals = new Vector3[]
+        //                {
+        //                    new Vector3(0,1,0)
+        //                };
+        //            }
+
+        //            bw.Write(mesh.AverageNormals.Length + 1);
+        //            bw.Write(83f); bw.Write(0f); bw.Write(0f);
+
+        //            foreach (var data in mesh.AverageNormals)
+        //            {
+        //                bw.Write(data.X);
+        //                bw.Write(data.Y);
+        //                bw.Write(data.Z);
+        //            }
+
+        //            foreach (var idx in mesh.Indices)
+        //                bw.Write(idx.AverageNormalIndex);
+        //        }
+
+        //        //mesh culling
+        //        {
+        //            bw.Write(mesh.CullingInfos.Length);
+        //            long totalSizePos = stream.Position;
+        //            bw.Seek(4, SeekOrigin.Current);
+
+        //            foreach (var info in mesh.CullingInfos)
+        //                info.Write(bw);
+
+        //            long totalSize = stream.Position - totalSizePos;
+        //            stream.Position = totalSizePos;
+        //            bw.Write((int)totalSize - 4);
+        //        }
+        //    }
+        //}
 
     }
 }

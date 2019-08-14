@@ -15,6 +15,10 @@ namespace LDDModder.LDD.Files.MeshStructures
         public ROUNDEDGE_SHADER_DATA[] RoundEdgeShaderData;
         public MESH_CULLING[] Culling;
 
+        public bool IsTextured => Header.MeshType == 0x3B || Header.MeshType == 0x3F;
+
+        public bool IsFlexible => Header.MeshType == 0x3E || Header.MeshType == 0x3F;
+
         public ROUNDEDGE_SHADER_DATA GetShaderDataFromOffset(int offset)
         {
             int total = 0;

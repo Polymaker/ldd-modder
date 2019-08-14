@@ -130,7 +130,7 @@ namespace LDDModder.Prototyping
 
                         Console.WriteLine($"  Vertex {j}: {index.Vertex}");
 
-                        Console.WriteLine("  RE: " + string.Join(", ", shaderData.Take(6)));
+                        Console.WriteLine("  RE: " + string.Join(", ", shaderData.Coords.Take(6)));
                     }
                 }
 
@@ -246,7 +246,7 @@ namespace LDDModder.Prototyping
                     foreach (var idx in tri.Indices)
                     {
                         var values = new List<Vector2>();
-                        idx.RoundEdgeData.Take(6).ToArray();
+                        idx.RoundEdgeData.Coords.Take(6).ToArray();
 
                         for (int i = 0; i < 3; i++)
                         {
@@ -260,7 +260,7 @@ namespace LDDModder.Prototyping
                             values.Add(dist2);
                         }
 
-                        var adjustedShaderData = idx.RoundEdgeData.Take(6).ToArray();
+                        var adjustedShaderData = idx.RoundEdgeData.Coords.Take(6).ToArray();
 
                         for (int n = 0; n < adjustedShaderData.Length; n++)
                         {
@@ -291,198 +291,198 @@ namespace LDDModder.Prototyping
             }
         }
 
-        private void TestLddFiles()
-        {
-            string lddDirectory = Environment.ExpandEnvironmentVariables(@"%appdata%\LEGO Company\LEGO Digital Designer\");
-            /*var test = LocalizationFile.Read(@"C:\Program Files (x86)\LEGO Company\LEGO Digital Designer\Assets\de\localizedStrings.loc");
-            test.Save("localizedStrings_en.loc");*/
-            //var test = LifFile.Open(@"test.lif");
-            var lifFile = LifFile.Open(Path.Combine(lddDirectory, "Palettes", "LDD.lif"));
-            //Path.GetDirectoryName(Application.ExecutablePath)
-            //lifFile.ExtractTo("DB");
-            //using (var fs = File.Open("test.lif", FileMode.Create))
-            //    lifFile.Save(fs);
-            lifFile.Dispose();
+        //private void TestLddFiles()
+        //{
+        //    string lddDirectory = Environment.ExpandEnvironmentVariables(@"%appdata%\LEGO Company\LEGO Digital Designer\");
+        //    /*var test = LocalizationFile.Read(@"C:\Program Files (x86)\LEGO Company\LEGO Digital Designer\Assets\de\localizedStrings.loc");
+        //    test.Save("localizedStrings_en.loc");*/
+        //    //var test = LifFile.Open(@"test.lif");
+        //    var lifFile = LifFile.Open(Path.Combine(lddDirectory, "Palettes", "LDD.lif"));
+        //    //Path.GetDirectoryName(Application.ExecutablePath)
+        //    //lifFile.ExtractTo("DB");
+        //    //using (var fs = File.Open("test.lif", FileMode.Create))
+        //    //    lifFile.Save(fs);
+        //    lifFile.Dispose();
             
-        }
+        //}
 
-        public void TestCustomBrick()
-        {
-            var primitive = new Primitive()
-            {
-                ID = 33333,
-                Name = "Test brick",
-                Platform = LDD.Data.Platform.System,
-                MainGroup = LDD.Data.MainGroup.Bricks,
-                DesignVersion = 1
-            };
-            primitive.Aliases.Add(primitive.ID);
+        //public void TestCustomBrick()
+        //{
+        //    var primitive = new Primitive()
+        //    {
+        //        ID = 33333,
+        //        Name = "Test brick",
+        //        Platform = LDD.Data.Platform.System,
+        //        MainGroup = LDD.Data.MainGroup.Bricks,
+        //        DesignVersion = 1
+        //    };
+        //    primitive.Aliases.Add(primitive.ID);
 
-            //var mesh = new LDD.Meshes.Mesh
-            //{
+        //    //var mesh = new LDD.Meshes.Mesh
+        //    //{
                 
-            //    Vertices = new Vertex[24],
-            //    Indices = new IndexReference[12 * 3],
-            //    Type = MeshType.Standard
-            //};
-            var builder = new MeshBuilder();
-            var normals = new Vector3[]
-            {
-                new Vector3(0,1,0),
-                new Vector3(1,0,0),
-                new Vector3(0,0,-1),
-                new Vector3(-1,0,0),
-                new Vector3(0,-1,0),
-                new Vector3(0,0,1),
-            };
+        //    //    Vertices = new Vertex[24],
+        //    //    Indices = new IndexReference[12 * 3],
+        //    //    Type = MeshType.Standard
+        //    //};
+        //    var builder = new MeshBuilder();
+        //    var normals = new Vector3[]
+        //    {
+        //        new Vector3(0,1,0),
+        //        new Vector3(1,0,0),
+        //        new Vector3(0,0,-1),
+        //        new Vector3(-1,0,0),
+        //        new Vector3(0,-1,0),
+        //        new Vector3(0,0,1),
+        //    };
 
-            //int curVert = 0;
-            //int curIdx = 0;
+        //    //int curVert = 0;
+        //    //int curIdx = 0;
 
-            var brickSize = new Vector3(1.6f, 0.32f, 0.8f);
-            var posOffset = new Vector3(0.4f, brickSize.Y / 2f, 0f);
-            for (int i = 0; i < 6; i++)
-            {
-                var curDir = normals[i];
+        //    var brickSize = new Vector3(1.6f, 0.32f, 0.8f);
+        //    var posOffset = new Vector3(0.4f, brickSize.Y / 2f, 0f);
+        //    for (int i = 0; i < 6; i++)
+        //    {
+        //        var curDir = normals[i];
                 
-                float faceDist;
-                float hDist;
-                float vDist;
-                Vector3 left;
-                Vector3 right;
-                Vector3 up;
-                Vector3 down;
-                if (Math.Abs(curDir.X) == 1)
-                {
-                    int sign = Math.Sign(curDir.X);
-                    down = Vector3.UnitZ * sign * -1;
-                    up = Vector3.UnitZ * sign ;
-                    left = Vector3.UnitY * -1f;
-                    right = Vector3.UnitY;
-                    hDist = brickSize.Y / 2f;
-                    vDist = brickSize.Z / 2f;
-                    faceDist = brickSize.X / 2f;
-                }
-                else if (Math.Abs(curDir.Y) == 1)
-                {
-                    int sign = Math.Sign(curDir.Y);
-                    left = Vector3.UnitX * -1;
-                    right = Vector3.UnitX;
-                    up = Vector3.UnitZ * sign * -1;
-                    down = Vector3.UnitZ * sign;
-                    hDist = brickSize.X / 2f;
-                    vDist = brickSize.Z / 2f;
-                    faceDist = brickSize.Y / 2f;
-                }
-                else//Z
-                {
-                    int sign = Math.Sign(curDir.Z);
-                    left = Vector3.UnitX * sign * -1;
-                    right = Vector3.UnitX * sign;
-                    down = Vector3.UnitY * -1f;
-                    up = Vector3.UnitY;
-                    hDist = brickSize.X / 2f;
-                    vDist = brickSize.Y / 2f;
-                    faceDist = brickSize.Z / 2f;
-                }
+        //        float faceDist;
+        //        float hDist;
+        //        float vDist;
+        //        Vector3 left;
+        //        Vector3 right;
+        //        Vector3 up;
+        //        Vector3 down;
+        //        if (Math.Abs(curDir.X) == 1)
+        //        {
+        //            int sign = Math.Sign(curDir.X);
+        //            down = Vector3.UnitZ * sign * -1;
+        //            up = Vector3.UnitZ * sign ;
+        //            left = Vector3.UnitY * -1f;
+        //            right = Vector3.UnitY;
+        //            hDist = brickSize.Y / 2f;
+        //            vDist = brickSize.Z / 2f;
+        //            faceDist = brickSize.X / 2f;
+        //        }
+        //        else if (Math.Abs(curDir.Y) == 1)
+        //        {
+        //            int sign = Math.Sign(curDir.Y);
+        //            left = Vector3.UnitX * -1;
+        //            right = Vector3.UnitX;
+        //            up = Vector3.UnitZ * sign * -1;
+        //            down = Vector3.UnitZ * sign;
+        //            hDist = brickSize.X / 2f;
+        //            vDist = brickSize.Z / 2f;
+        //            faceDist = brickSize.Y / 2f;
+        //        }
+        //        else//Z
+        //        {
+        //            int sign = Math.Sign(curDir.Z);
+        //            left = Vector3.UnitX * sign * -1;
+        //            right = Vector3.UnitX * sign;
+        //            down = Vector3.UnitY * -1f;
+        //            up = Vector3.UnitY;
+        //            hDist = brickSize.X / 2f;
+        //            vDist = brickSize.Y / 2f;
+        //            faceDist = brickSize.Z / 2f;
+        //        }
 
-                var faceCenter = (curDir * faceDist) + posOffset;
-                var v1 = faceCenter + (left * hDist) + (down * vDist);
-                var v2 = faceCenter + (right * hDist) + (down * vDist);
-                var v3 = faceCenter + (left * hDist) + (up * vDist);
-                var v4 = faceCenter + (right * hDist) + (up * vDist);
+        //        var faceCenter = (curDir * faceDist) + posOffset;
+        //        var v1 = faceCenter + (left * hDist) + (down * vDist);
+        //        var v2 = faceCenter + (right * hDist) + (down * vDist);
+        //        var v3 = faceCenter + (left * hDist) + (up * vDist);
+        //        var v4 = faceCenter + (right * hDist) + (up * vDist);
 
-                builder.AddTriangle(new Vertex(v1, curDir), new Vertex(v2, curDir), new Vertex(v3, curDir));
-                builder.AddTriangle(new Vertex(v2, curDir), new Vertex(v4, curDir), new Vertex(v3, curDir));
+        //        builder.AddTriangle(new Vertex(v1, curDir), new Vertex(v2, curDir), new Vertex(v3, curDir));
+        //        builder.AddTriangle(new Vertex(v2, curDir), new Vertex(v4, curDir), new Vertex(v3, curDir));
 
-                //mesh.Vertices[curVert] = new Vertex(v1, curDir);
-                //mesh.Vertices[curVert + 1] = new Vertex(v2, curDir);
-                //mesh.Vertices[curVert + 2] = new Vertex(v3, curDir);
-                //mesh.Vertices[curVert + 3] = new Vertex(v4, curDir);
+        //        //mesh.Vertices[curVert] = new Vertex(v1, curDir);
+        //        //mesh.Vertices[curVert + 1] = new Vertex(v2, curDir);
+        //        //mesh.Vertices[curVert + 2] = new Vertex(v3, curDir);
+        //        //mesh.Vertices[curVert + 3] = new Vertex(v4, curDir);
 
-                //mesh.Indices[curIdx++] = new IndexReference(curVert);
-                //mesh.Indices[curIdx++] = new IndexReference(curVert + 1);
-                //mesh.Indices[curIdx++] = new IndexReference(curVert + 2);
+        //        //mesh.Indices[curIdx++] = new IndexReference(curVert);
+        //        //mesh.Indices[curIdx++] = new IndexReference(curVert + 1);
+        //        //mesh.Indices[curIdx++] = new IndexReference(curVert + 2);
 
-                //mesh.Indices[curIdx++] = new IndexReference(curVert + 1);
-                //mesh.Indices[curIdx++] = new IndexReference(curVert + 3);
-                //mesh.Indices[curIdx++] = new IndexReference(curVert + 2);
+        //        //mesh.Indices[curIdx++] = new IndexReference(curVert + 1);
+        //        //mesh.Indices[curIdx++] = new IndexReference(curVert + 3);
+        //        //mesh.Indices[curIdx++] = new IndexReference(curVert + 2);
 
-                //curVert += 4;
-            }
+        //        //curVert += 4;
+        //    }
 
-            /*
-            mesh.AverageNormals = new Vector3[]
-            {
-                new Vector3(83,0,0),
-                new Vector3(0,0,1)
-            };
+        //    /*
+        //    mesh.AverageNormals = new Vector3[]
+        //    {
+        //        new Vector3(83,0,0),
+        //        new Vector3(0,0,1)
+        //    };
 
-            mesh.EdgeShaderValues = new RoundEdgeData[]
-                {
-                    new RoundEdgeData(
-                        new Vector3(-115.5f,0,-115.5f),
-                        new Vector3(0,100,0),
-                        new Vector3(-100,15.5f,100),
-                        new Vector3(0,-100,15.5f)),
-                    new RoundEdgeData(
-                        new Vector3(-115.5f,15.5f,-100),
-                        new Vector3(0,115.5f,0),
-                        new Vector3(-115.5f,0,100),
-                        new Vector3(15.5f,-100,15.5f)),
-                    new RoundEdgeData(
-                        new Vector3(-100,0,-115.5f),
-                        new Vector3(15.5f,100,15.5f),
-                        new Vector3(-100,15.5f,115.5f),
-                        new Vector3(0,-115.5f,0)),
-                    new RoundEdgeData(
-                        new Vector3(-150f,0,-115.5f),
-                        new Vector3(0,100,0),
-                        new Vector3(-100,15.5f,100),
-                        new Vector3(0,-100,15.5f)),
-                    new RoundEdgeData(
-                        new Vector3(-115.5f,15.5f,-100),
-                        new Vector3(0,115.5f,0),
-                        new Vector3(-150f,0,100),
-                        new Vector3(15.5f,-100,15.5f)),
-                    new RoundEdgeData(
-                        new Vector3(-100,0,-115.5f),
-                        new Vector3(15.5f,100,15.5f),
-                        new Vector3(-100,15.5f,150f),
-                        new Vector3(0,-115.5f,0)),
-                };
+        //    mesh.EdgeShaderValues = new RoundEdgeData[]
+        //        {
+        //            new RoundEdgeData(
+        //                new Vector3(-115.5f,0,-115.5f),
+        //                new Vector3(0,100,0),
+        //                new Vector3(-100,15.5f,100),
+        //                new Vector3(0,-100,15.5f)),
+        //            new RoundEdgeData(
+        //                new Vector3(-115.5f,15.5f,-100),
+        //                new Vector3(0,115.5f,0),
+        //                new Vector3(-115.5f,0,100),
+        //                new Vector3(15.5f,-100,15.5f)),
+        //            new RoundEdgeData(
+        //                new Vector3(-100,0,-115.5f),
+        //                new Vector3(15.5f,100,15.5f),
+        //                new Vector3(-100,15.5f,115.5f),
+        //                new Vector3(0,-115.5f,0)),
+        //            new RoundEdgeData(
+        //                new Vector3(-150f,0,-115.5f),
+        //                new Vector3(0,100,0),
+        //                new Vector3(-100,15.5f,100),
+        //                new Vector3(0,-100,15.5f)),
+        //            new RoundEdgeData(
+        //                new Vector3(-115.5f,15.5f,-100),
+        //                new Vector3(0,115.5f,0),
+        //                new Vector3(-150f,0,100),
+        //                new Vector3(15.5f,-100,15.5f)),
+        //            new RoundEdgeData(
+        //                new Vector3(-100,0,-115.5f),
+        //                new Vector3(15.5f,100,15.5f),
+        //                new Vector3(-100,15.5f,150f),
+        //                new Vector3(0,-115.5f,0)),
+        //        };
 
-            //mesh.GenerateFaceNormals();
+        //    //mesh.GenerateFaceNormals();
 
-            for (int i = 0; i < mesh.Indices.Length; i++)
-            {
-                mesh.Indices[i].ShaderDataIndex = i % mesh.EdgeShaderValues.Length;
-            }
+        //    for (int i = 0; i < mesh.Indices.Length; i++)
+        //    {
+        //        mesh.Indices[i].ShaderDataIndex = i % mesh.EdgeShaderValues.Length;
+        //    }
 
-            mesh.CullingInfos = new CullingInfo[]
-            {
-                new CullingInfo(MeshCullingType.MainModel,0, mesh.Vertices.Length, 0, mesh.Indices.Length)
-            };*/
+        //    mesh.CullingInfos = new CullingInfo[]
+        //    {
+        //        new CullingInfo(MeshCullingType.MainModel,0, mesh.Vertices.Length, 0, mesh.Indices.Length)
+        //    };*/
 
-            builder.AddStud(new Vector3(0, brickSize.Y, 0));
-            builder.AddStud(new Vector3(0.8f, brickSize.Y, 0));
-            var mesh = builder.BuildMesh();
+        //    builder.AddStud(new Vector3(0, brickSize.Y, 0));
+        //    builder.AddStud(new Vector3(0.8f, brickSize.Y, 0));
+        //    var mesh = builder.BuildMesh();
 
-            primitive.Bounding = BoundingBox.FromVertices(mesh.Vertices);
-            primitive.GeometryBounding = primitive.Bounding;
+        //    primitive.Bounding = BoundingBox.FromVertices(mesh.Vertices);
+        //    primitive.GeometryBounding = primitive.Bounding;
 
-            string primitiveDirectory = Environment.ExpandEnvironmentVariables(@"%appdata%\LEGO Company\LEGO Digital Designer\db\Primitives\");
+        //    string primitiveDirectory = Environment.ExpandEnvironmentVariables(@"%appdata%\LEGO Company\LEGO Digital Designer\db\Primitives\");
 
-            var xmlDoc = new XDocument(primitive.SerializeToXml());
-            xmlDoc.Save(Path.Combine(primitiveDirectory, $"{primitive.ID}.xml"));
+        //    var xmlDoc = new XDocument(primitive.SerializeToXml());
+        //    xmlDoc.Save(Path.Combine(primitiveDirectory, $"{primitive.ID}.xml"));
 
-            var meshFilename = Path.Combine(primitiveDirectory, "LOD0", $"{primitive.ID}.g");
-            using (var fs = File.Open(meshFilename, FileMode.Create))
-                GFileReader.Write(fs, mesh);
+        //    var meshFilename = Path.Combine(primitiveDirectory, "LOD0", $"{primitive.ID}.g");
+        //    using (var fs = File.Open(meshFilename, FileMode.Create))
+        //        GFileReader.Write(fs, mesh);
 
-            //Mesh result;
-            //using (var fs = File.Open(meshFilename, FileMode.Open))
-            //    result = GFileReader.Read(fs);
-        }
+        //    //Mesh result;
+        //    //using (var fs = File.Open(meshFilename, FileMode.Open))
+        //    //    result = GFileReader.Read(fs);
+        //}
     }
 }

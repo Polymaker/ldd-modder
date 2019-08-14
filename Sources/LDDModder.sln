@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LDDModder.Library", "LDDMod
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LDDModder.Prototyping", "LDDModder.Prototyping\LDDModder.Prototyping.csproj", "{5913C293-0A30-4D82-AADF-5E708CF02C78}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LDDModder.BrickEditor", "LDDModder.BrickEditor\LDDModder.BrickEditor.csproj", "{5379F456-A474-4108-ACD8-3B179CF4D041}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{5913C293-0A30-4D82-AADF-5E708CF02C78}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5913C293-0A30-4D82-AADF-5E708CF02C78}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5913C293-0A30-4D82-AADF-5E708CF02C78}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5379F456-A474-4108-ACD8-3B179CF4D041}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5379F456-A474-4108-ACD8-3B179CF4D041}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5379F456-A474-4108-ACD8-3B179CF4D041}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5379F456-A474-4108-ACD8-3B179CF4D041}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

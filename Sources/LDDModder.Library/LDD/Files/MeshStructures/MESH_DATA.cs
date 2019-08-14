@@ -38,5 +38,10 @@ namespace LDDModder.LDD.Files.MeshStructures
                 Bones = flexible ? new MESH_BONE_MAPPING[vertexCount] : new MESH_BONE_MAPPING[0],
             };
         }
+
+        public static MESH_DATA Create(Meshes.MeshGeometry meshGeometry)
+        {
+            return Create(meshGeometry.Vertices.Count, meshGeometry.Indices.Count, meshGeometry.IsTextured, meshGeometry.IsFlexible);
+        }
     }
 }

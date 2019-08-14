@@ -95,7 +95,8 @@ namespace LDDModder.Simple3D
         {
             if (IsEmpty || other.IsEmpty)
                 return IsEmpty == other.IsEmpty;
-            return Math.Abs(X - other.X) < tolerence && Math.Abs(Y - other.Y) < tolerence && Math.Abs(Z - other.Z) < tolerence;
+            return Distance(this, other) <= tolerence;
+            //return Math.Abs(X - other.X) < tolerence && Math.Abs(Y - other.Y) < tolerence && Math.Abs(Z - other.Z) < tolerence;
         }
 
         public bool Equals(Vector3 x, Vector3 y)
@@ -264,6 +265,11 @@ namespace LDDModder.Simple3D
             var d = (float)Math.Cos(a) * line2.Length;
             //var perp = GetPerpendicular(v1, v2, point);
             return v1 + (line1 * d);
+        }
+
+        public static explicit operator Vector3(Assimp.Vector3D vector)
+        {
+            return new Vector3(vector.X, vector.Y, vector.Z);
         }
     }
 }
