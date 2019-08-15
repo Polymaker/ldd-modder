@@ -1,5 +1,6 @@
 ﻿using Assimp;
 using LDDModder.Simple3D;
+using LDDModder.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -69,5 +70,27 @@ namespace LDDModder.LDD.Meshes
             return new Mesh(geom);
         }
 
+
+        public static Assimp.Mesh ConvertFromLDD(Mesh lddMesh)
+        {
+            var oMesh = new Assimp.Mesh(PrimitiveType.Triangle);
+            var vertIndexer = new ListIndexer<Vertex>(lddMesh.Geometry.Vertices);
+
+            foreach (var v in lddMesh.Geometry.Vertices)
+            {
+                oMesh.Vertices.Add(new Vector3D(v.Position.X, v.Position.Y, v.Position.Z));
+                oMesh.Normals.Add(new Vector3D(v.Normal.X, v.Normal.Y, v.Normal.Z));
+                if (lddMesh.Geometry.IsTextured)
+                    oMesh.TextureCoordinateChannels[0].Add(new Vector3D(v.TexCoord.X, v.TexCoord.Y, 0));
+            }
+
+            foreach (var t in lddMesh.Geometry.Triangles)
+            {
+                var vIndices = t.Vertices.Select(v => vertIndexer.IndexOf(v)).ToArray();
+                oMesh.Faces.Add(new Face(vIndices));
+            }
+
+            return oMesh;
+        }
     }
 }

@@ -39,5 +39,17 @@ namespace System.IO
         {
             stream.Seek(count, SeekOrigin.Current);
         }
+
+        public static void SafelyDispose(this Stream stream)
+        {
+            if (stream != null)
+            {
+                try
+                {
+                    stream.Dispose();
+                }
+                catch { }
+            }
+        }
     }
 }

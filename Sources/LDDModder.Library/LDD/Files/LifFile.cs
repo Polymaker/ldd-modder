@@ -32,6 +32,31 @@ namespace LDDModder.LDD.Files
             return RootFolder.GetAllFiles();
         }
 
+        public FolderEntry GetFolder(string fullname)
+        {
+            return RootFolder.GetEntryHierarchy().OfType<FolderEntry>().FirstOrDefault(x => x.Fullname == fullname);
+        }
+
+        public FolderEntry CreateFolder(string folderName)
+        {
+            if (!IsValidPath(folderName) || Path.IsPathRooted(folderName))
+                throw new InvalidOperationException("Invalid folder name.");
+
+            string[] subDirs = folderName.Split(Path.PathSeparator);
+
+            var curFolder = RootFolder;
+
+            for (int i = 0; i < subDirs.Length; i++)
+            {
+                var subFolder = curFolder.GetFolder(subDirs[i]);
+                if (subFolder == null)
+                    subFolder = curFolder.CreateFolder(subDirs[i]);
+                curFolder = subFolder;
+            }
+
+            return curFolder;
+        }
+
         private void ExtractFile(FileEntry entry, Stream target)
         {
             byte[] buffer = new byte[4096];
@@ -79,33 +104,58 @@ namespace LDDModder.LDD.Files
             return Read(File.OpenRead(filename));
         }
 
+        private void LoadFromStream(Stream stream)
+        {
+            using (var br = new BinaryReaderEx(stream, Encoding.UTF8, true))
+            {
+                br.DefaultEndian = Endianness.BigEndian;
+                ReadLifHeader(br);
+
+                ClearBaseStream();
+                BaseStream = stream;
+
+                ReadEntryHierarchy(this, br);
+            }
+        }
+
+        private void ClearBaseStream()
+        {
+            RootFolder.Entries.Clear();
+            BaseStream.SafelyDispose();
+            BaseStream = null;
+        }
+
         public static LifFile Read(Stream stream)
         {
             using (var br = new BinaryReaderEx(stream, Encoding.UTF8, true))
             {
                 br.DefaultEndian = Endianness.BigEndian;
 
-                var header = br.ReadStruct<LIFFHeader>();
-
-                if (header.Header != "LIFF")
-                    throw new IOException("The file is not a valid LIF. Header is not 'LIFF'.");
-                if (header.Reserved2 != 1)
-                    Trace.WriteLine($"Unexpected value {header.Reserved2}");
-
-                var rootBlock = br.ReadStruct<LIFFBlock>();
-                if (rootBlock.BlockType != 1)
-                    throw new IOException("The file is not a valid LIF. Root block type is not '1'.");
-
-                var contentBlock = br.ReadStruct<LIFFBlock>();
-                if (contentBlock.BlockType != 2)
-                    throw new IOException("The file is not a valid LIF. Content block type is not '2'.");
-
-                stream.Skip(contentBlock.BlockSize - LIFFBLOCK_SIZE);
-
-                var rootFolder = ReadBlockHierarchy(br);
-                return ReadEntryHierarchy(br, rootFolder);
-
+                ReadLifHeader(br);
+                var lifFile = new LifFile(stream);
+                ReadEntryHierarchy(lifFile, br);
+                return lifFile;
             }
+        }
+
+        private static void ReadLifHeader(BinaryReaderEx br)
+        {
+            var header = br.ReadStruct<LIFFHeader>();
+
+            if (header.Header != "LIFF")
+                throw new IOException("The file is not a valid LIF. Header is not 'LIFF'.");
+            if (header.Reserved2 != 1)
+                Trace.WriteLine($"Unexpected value {header.Reserved2}");
+
+            var rootBlock = br.ReadStruct<LIFFBlock>();
+            if (rootBlock.BlockType != 1)
+                throw new IOException("The file is not a valid LIF. Root block type is not '1'.");
+
+            var contentBlock = br.ReadStruct<LIFFBlock>();
+            if (contentBlock.BlockType != 2)
+                throw new IOException("The file is not a valid LIF. Content block type is not '2'.");
+
+            br.BaseStream.Skip(contentBlock.BlockSize - LIFFBLOCK_SIZE);
         }
 
         private static BlockHierarchy ReadBlockHierarchy(BinaryReaderEx br)
@@ -158,8 +208,10 @@ namespace LDDModder.LDD.Files
             }
         }
 
-        private static LifFile ReadEntryHierarchy(BinaryReaderEx br, BlockHierarchy rootBlock)
+        private static void ReadEntryHierarchy(LifFile lifFile, BinaryReaderEx br)
         {
+            var rootBlock = ReadBlockHierarchy(br);
+
             var hierarchyBlock = br.ReadStruct<LIFFBlock>();
             if (hierarchyBlock.BlockType != 5)
                 throw new IOException("The file is not a valid LIF. Hierarchy block type is not '5'.");
@@ -175,16 +227,10 @@ namespace LDDModder.LDD.Files
             if (rootFolderEntry.EntryType != 1)
                 throw new IOException("The file is not a valid LIF.");
 
-
-            var lifFile = new LifFile(br.BaseStream);
-            //var rootFolder = new FolderEntry(lifFile, rootBlock, rootFolderEntry);
-
-            ReadFolderFileHierarchy(br, lifFile.RootFolder, rootBlock, rootFolderEntry);
-
-            return lifFile;
+            PopulateFolderFileHierarchy(br, lifFile.RootFolder, rootBlock, rootFolderEntry);
         }
 
-        private static void ReadFolderFileHierarchy(BinaryReaderEx br, FolderEntry parentFolder, BlockHierarchy hierarchy, LIFFFolderEntry folderEntry)
+        private static void PopulateFolderFileHierarchy(BinaryReaderEx br, FolderEntry parentFolder, BlockHierarchy hierarchy, LIFFFolderEntry folderEntry)
         {
             if (hierarchy.ChildCount != folderEntry.EntryCount)
                 throw new IOException("The file is not a valid LIF. Entry count mismatch.");
@@ -200,7 +246,7 @@ namespace LDDModder.LDD.Files
                 {
                     var folderInfo = br.ReadStruct<LIFFFolderEntry>();
                     entry = new FolderEntry(folderInfo.Filename);
-                    ReadFolderFileHierarchy(br, (FolderEntry)entry, expectedBlock, folderInfo);
+                    PopulateFolderFileHierarchy(br, (FolderEntry)entry, expectedBlock, folderInfo);
                 }
                 else if (entryType == 2)
                 {
@@ -223,8 +269,52 @@ namespace LDDModder.LDD.Files
 
 		#region LIF WRITING
 		
-		public void Save(Stream stream)
+        public void Save()
+        {
+            if (BaseStream != null)
+            {
+                var tmpPath = Path.GetTempFileName();
+                SaveAs(tmpPath);
+
+                if (BaseStream is FileStream baseFs)
+                {
+                    string origPath = baseFs.Name;
+                    BaseStream.SafelyDispose();
+                    File.Delete(origPath);
+                    File.Move(tmpPath, origPath);
+                    LoadFromStream(File.OpenRead(origPath));
+                }
+                else
+                {
+                    ClearBaseStream();
+
+                    var ms = new MemoryStream();
+                    using (var fs = File.Open(tmpPath, FileMode.Create))
+                        fs.CopyTo(ms);
+
+                    LoadFromStream(ms);
+                }
+                File.Delete(tmpPath);
+            }
+            //else
+            //    throw new InvalidOperationException("");
+        }
+
+        public void SaveAs(string filename)
+        {
+            filename = Path.GetFullPath(filename);
+            if (BaseStream is FileStream baseFs && baseFs.Name == filename)
+                throw new InvalidOperationException("Cannot overwrite the same LIF file.");
+
+            using (var fs = File.Open(filename, FileMode.Create))
+                WriteToStream(fs);
+        }
+
+		public void WriteToStream(Stream stream)
 		{
+            if (stream == BaseStream)
+                throw new InvalidOperationException("Cannot overwrite the same stream.");
+
             using (var bw = new BinaryWriterEx(stream, true))
             {
                 bw.DefaultEndian = Endianness.BigEndian;
@@ -362,65 +452,23 @@ namespace LDDModder.LDD.Files
         /// TODO
         /// </summary>
         /// <param name="folder"></param>
-        public static void CreateLif(DirectoryInfo folder)
+        public static LifFile CreateFromDirectory(DirectoryInfo folder)
         {
-            var header = new LIFFHeader
-            {
-                Header = "LIFF",
-                Reserved2 = 1
-            };
-            var rootBlock = new LIFFBlock
-            {
-                BlockHeader = 1,
-                BlockType = 1,
-            };
-            var contentBlock = new LIFFBlock
-            {
-                BlockHeader = 1,
-                BlockType = 2,
-                Spacing2 = 1,
-                BlockSize = 26
-            };
-
-            var rootFolder = new LIFFBlock
-            {
-                BlockHeader = 1,
-                BlockType = 3,
-            };
-            var blockList = new List<Tuple<FileSystemInfo, LIFFBlock>>();
+            var lif = new LifFile();
 
             foreach (var entryInfo in folder.EnumerateFileSystemInfos("*", SearchOption.AllDirectories))
             {
-                if (entryInfo is DirectoryInfo directory)
+                if(entryInfo is FileInfo file)
                 {
-                    var folderBlock = new LIFFBlock
-                    {
-                        BlockHeader = 1,
-                        BlockType = 3,
-                        BlockSize = LIFFBLOCK_SIZE 
-                    };
-                    blockList.Add(new Tuple<FileSystemInfo, LIFFBlock>(entryInfo, folderBlock));
-                }
-                else if(entryInfo is FileInfo file)
-                {
-                    var fileBlock = new LIFFBlock
-                    {
-                        BlockHeader = 1,
-                        BlockType = 4,
-                        Spacing1 = 1,
-                        BlockSize = LIFFBLOCK_SIZE + (int)file.Length
-                    };
-                    blockList.Add(new Tuple<FileSystemInfo, LIFFBlock>(entryInfo, fileBlock));
+                    string relativeDir = file.DirectoryName.Substring(folder.FullName.Length);
+                    var lifFolder = lif.GetFolder(relativeDir);
+                    if (lifFolder == null)
+                        lifFolder = lif.CreateFolder(relativeDir);
+                    lifFolder.AddFile(file);
                 }
             }
 
-            foreach (var folderTuple in blockList.Where(x => x.Item1 is DirectoryInfo))
-            {
-                var directory = folderTuple.Item1 as DirectoryInfo;
-                var fileBlocks = blockList.Where(x => x.Item1 is FileInfo fi && fi.Directory == directory).Select(x => x.Item2);
-                
-                //folderTuple.Item2.BlockSize = LIFFBLOCK_SIZE + fileBlocks.Sum(x => x.BlockSize);
-            }
+            return lif;
         }
 
         public void Dispose()
@@ -433,11 +481,12 @@ namespace LDDModder.LDD.Files
 
             if (RootFolder != null)
             {
+                foreach(var f in GetAllFiles())
+                    f.Dispose();
                 RootFolder.Entries.Clear();
                 RootFolder = null;
             }
         }
-
 
         #region Internal types
 
@@ -678,6 +727,11 @@ namespace LDDModder.LDD.Files
                 Entries = new LifEntryCollection(this);
             }
 
+            public FolderEntry GetFolder(string folderName)
+            {
+                return Folders.FirstOrDefault(x => x.Name == folderName);
+            }
+
             public IEnumerable<FileEntry> GetAllFiles()
             {
                 foreach (var entry in Entries)
@@ -863,5 +917,12 @@ namespace LDDModder.LDD.Files
 
         #endregion
 
+
+        private static bool IsValidPath(string path)
+        {
+            if (path.ContainsAny(Path.GetInvalidFileNameChars()))
+                return false;
+            return true;
+        }
     }
 }

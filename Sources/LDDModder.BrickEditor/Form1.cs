@@ -21,12 +21,14 @@ namespace LDDModder.BrickEditor
 {
     public partial class Form1 : Form
     {
+        private string LddMeshDirectory;
+        private string PrimitiveDirectory;
         public Form1()
         {
             InitializeComponent();
             //Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-            string meshDirectory = Environment.ExpandEnvironmentVariables(@"%appdata%\LEGO Company\LEGO Digital Designer\db\Primitives\LOD0\");
-            string primitiveDirectory = Environment.ExpandEnvironmentVariables(@"%appdata%\LEGO Company\LEGO Digital Designer\db\Primitives\");
+            LddMeshDirectory = Environment.ExpandEnvironmentVariables(@"%appdata%\LEGO Company\LEGO Digital Designer\db\Primitives\LOD0\");
+            PrimitiveDirectory = Environment.ExpandEnvironmentVariables(@"%appdata%\LEGO Company\LEGO Digital Designer\db\Primitives\");
 
             //int brickID = 3020;
             //LDD.Meshes.Mesh brickMesh = null;
@@ -35,8 +37,43 @@ namespace LDDModder.BrickEditor
 
             //using (var fs = File.Create($"{brickID} cust.g"))
             //    GFileWriter.WriteMesh(fs, brickMesh);
+            //TestCustomBrick();
+            TestExportMesh();
+        }
 
-            TestCustomBrick();
+        private void TestExportMesh()
+        {
+            AssimpContext importer = new AssimpContext();
+
+            var formats = importer.GetSupportedExportFormats();
+            
+            int brickID = 3020;
+            LDD.Meshes.Mesh brickMesh = null;
+            using (var fs = File.OpenRead(Path.Combine(LddMeshDirectory, $"{brickID}.g")))
+                brickMesh = GFileReader.ReadMesh(fs);
+
+            var converted = MeshConverter.ConvertFromLDD(brickMesh);
+
+            var meshScene = importer.ImportFile(@"..\..\duck.dae",
+                PostProcessSteps.Triangulate | PostProcessSteps.GenerateNormals | PostProcessSteps.PreTransformVertices);
+            meshScene.Meshes.RemoveAt(0);
+            meshScene.Meshes.Add(converted);
+            meshScene.RootNode.Children.Remove(meshScene.RootNode.Children[1]);
+            meshScene.RootNode.Children.Remove(meshScene.RootNode.Children[1]);
+            meshScene.Lights.Clear();
+
+            //meshScene.Materials.Clear();
+            //var test = new Assimp.Scene();
+            //converted.Name = "Mesh0";
+            //test.Meshes.Add(converted);
+            //test.RootNode = new Node("Scene");
+            //var meshNode = new Node("#Mesh0");
+
+            //meshNode.MeshIndices.Add(0);
+            //test.RootNode.Children.Add(meshNode);
+
+            var expFormat = formats.FirstOrDefault(x => x.FormatId == "collada");
+            importer.ExportFile(meshScene, $"{brickID}.{expFormat.FileExtension}", expFormat.FormatId);
         }
 
         private void TestCustomBrick()
@@ -50,7 +87,7 @@ namespace LDDModder.BrickEditor
             AssimpContext importer = new AssimpContext();
             //importer.SetConfig(new Assimp.Configs.GlobalScaleConfig(0.2f));
             importer.Scale = 1.5f;
-            var meshScene = importer.ImportFile(@"C:\Users\JWTurner\Documents\Development\Test\ldd-modder\Sources\duck.dae", 
+            var meshScene = importer.ImportFile(@"..\..\duck.dae", 
                 PostProcessSteps.Triangulate | PostProcessSteps.GenerateNormals | PostProcessSteps.PreTransformVertices);
             
             var converted = MeshConverter.ConvertToLDD(meshScene.Meshes[0], true);
@@ -61,7 +98,6 @@ namespace LDDModder.BrickEditor
                 VertexCount = converted.Geometry.VertexCount,
                 IndexCount = converted.Geometry.IndexCount
             });
-
             using (var fs = File.Create(Path.Combine(meshDirectory, $"{123123}.g")))
                 GFileWriter.WriteMesh(fs, converted);
 

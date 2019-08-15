@@ -30,7 +30,7 @@ namespace LDDModder.Prototyping
             base.OnLoad(e);
             //TestPrimitives();
             //TestGFiles();
-            SolveShaderData();
+            //SolveShaderData();
             //TestCustomBrick();
             //TestLddFiles();
         }
