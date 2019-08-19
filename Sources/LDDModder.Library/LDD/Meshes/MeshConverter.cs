@@ -73,18 +73,23 @@ namespace LDDModder.LDD.Meshes
 
         public static Assimp.Mesh ConvertFromLDD(Mesh lddMesh)
         {
-            var oMesh = new Assimp.Mesh(PrimitiveType.Triangle);
-            var vertIndexer = new ListIndexer<Vertex>(lddMesh.Geometry.Vertices);
+            return ConvertFromLDD(lddMesh.Geometry);
+        }
 
-            foreach (var v in lddMesh.Geometry.Vertices)
+        public static Assimp.Mesh ConvertFromLDD(MeshGeometry meshGeom)
+        {
+            var oMesh = new Assimp.Mesh(PrimitiveType.Triangle);
+            var vertIndexer = new ListIndexer<Vertex>(meshGeom.Vertices);
+
+            foreach (var v in meshGeom.Vertices)
             {
                 oMesh.Vertices.Add(new Vector3D(v.Position.X, v.Position.Y, v.Position.Z));
                 oMesh.Normals.Add(new Vector3D(v.Normal.X, v.Normal.Y, v.Normal.Z));
-                if (lddMesh.Geometry.IsTextured)
+                if (meshGeom.IsTextured)
                     oMesh.TextureCoordinateChannels[0].Add(new Vector3D(v.TexCoord.X, v.TexCoord.Y, 0));
             }
 
-            foreach (var t in lddMesh.Geometry.Triangles)
+            foreach (var t in meshGeom.Triangles)
             {
                 var vIndices = t.Vertices.Select(v => vertIndexer.IndexOf(v)).ToArray();
                 oMesh.Faces.Add(new Face(vIndices));

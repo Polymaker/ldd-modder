@@ -305,7 +305,6 @@ namespace LDDModder.LDD.Files
             }
         }
 
-
         #endregion
 
         //public static void Write(Stream stream, Mesh mesh)

@@ -2,6 +2,7 @@
 using LDDModder.Simple3D;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,6 +18,20 @@ namespace LDDModder.LDD.Meshes
         public MeshGeometry Geometry { get; private set; }
 
         public List<MeshCulling> Cullings { get; }
+
+        public int IndexCount => Geometry.IndexCount;
+
+        public IList<Vertex> Vertices => Geometry.Vertices;
+
+        public int VertexCount => Geometry.VertexCount;
+
+        public IList<Triangle> Triangles => Geometry.Triangles;
+
+        public int TriangleCount => Geometry.TriangleCount;
+
+        public bool IsTextured => Geometry.IsTextured;
+
+        public bool IsFlexible => Geometry.IsFlexible;
 
         internal Mesh(MESH_FILE originalData, MeshType type)
         {
@@ -61,6 +76,12 @@ namespace LDDModder.LDD.Meshes
             var extra = Cullings.Where(c => c.ReplacementMesh != null).SelectMany(c => c.ReplacementMesh.Indices.Select(i => i.RoundEdgeData));
             var test = Geometry.Indices.Select(x => x.RoundEdgeData).ToList();
             return Geometry.Indices.Select(x => x.RoundEdgeData).Concat(extra);
+        }
+
+        public static Mesh Read(string filename)
+        {
+            using (var fs = File.OpenRead(filename))
+                return Files.GFileReader.ReadMesh(fs);
         }
     }
 }
