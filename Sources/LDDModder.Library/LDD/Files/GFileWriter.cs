@@ -288,6 +288,7 @@ namespace LDDModder.LDD.Files
         private static MESH_DATA SerializeMeshGeometry(ShaderDataHelper shaderData, MeshGeometry meshGeometry)
         {
             var meshData = MESH_DATA.Create(meshGeometry);
+            var vertIndexer = new ListIndexer<Vertex>(meshGeometry.Vertices);
             for (int i = 0; i < meshGeometry.Vertices.Count; i++)
             {
                 var vert = meshGeometry.Vertices[i];
@@ -307,7 +308,7 @@ namespace LDDModder.LDD.Files
             for (int i = 0; i < meshGeometry.Indices.Count; i++)
             {
                 var idx = meshGeometry.Indices[i];
-                meshData.Indices[i].VertexIndex = meshGeometry.Vertices.IndexOf(idx.Vertex);
+                meshData.Indices[i].VertexIndex = vertIndexer.IndexOf(idx.Vertex);
 
                 meshData.Indices[i].AverageNormalIndex = shaderData.AvgNormals.IndexOf(idx.AverageNormal);
                 int reIdx = shaderData.RoundEdgeData.IndexOf(idx.RoundEdgeData);

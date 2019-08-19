@@ -194,6 +194,7 @@
 		<Connector type="Fixed" subtype="111" gender="" description="" />
 		<Connector type="Fixed" subtype="114" gender="" description="" />
 		<Connector type="Fixed" subtype="115" gender="" description="" />
+		<Connector type="Fixed" subtype="117" gender="" description="" />
 		<Connector type="Fixed" subtype="118" gender="" description="" />
 		<Connector type="Fixed" subtype="119" gender="" description="" />
 		<Connector type="Fixed" subtype="120" gender="" description="" />
@@ -231,6 +232,13 @@
 		<Connector type="Fixed" subtype="153" gender="" description="" />
 		<Connector type="Fixed" subtype="154" gender="" description="" />
 		<Connector type="Fixed" subtype="155" gender="" description="" />
+		<Connector type="Fixed" subtype="156" gender="" description="" />
+		<Connector type="Fixed" subtype="158" gender="" description="" />
+		<Connector type="Fixed" subtype="159" gender="" description="" />
+		<Connector type="Fixed" subtype="999000" gender="" description="" />
+		<Connector type="Fixed" subtype="999001" gender="" description="" />
+		<Connector type="Fixed" subtype="999002" gender="" description="" />
+		<Connector type="Fixed" subtype="999003" gender="" description="" />
 	</Fixed>
 	<Gears><!-- The gear connectors do not seem to connect with anything -->
 		<Connector type="Gear" subtype="3" description="Standard gear" />
@@ -450,6 +458,7 @@
 		<Connector type="Hinge" subtype="217" gender="" description="" />
 		<Connector type="Hinge" subtype="218" gender="" description="" />
 		<Connector type="Hinge" subtype="219" gender="" description="" />
+		<Connector type="Hinge" subtype="220" gender="" description="" />
 		<Connector type="Hinge" subtype="224" gender="" description="" />
 		<Connector type="Hinge" subtype="225" gender="" description="" />
 		<Connector type="Hinge" subtype="226" gender="" description="" />
@@ -470,6 +479,10 @@
 		<Connector type="Hinge" subtype="241" gender="" description="" />
 		<Connector type="Hinge" subtype="242" gender="" description="" />
 		<Connector type="Hinge" subtype="243" gender="" description="" />
+		<Connector type="Hinge" subtype="260" gender="" description="" />
+		<Connector type="Hinge" subtype="261" gender="" description="" />
+		<Connector type="Hinge" subtype="262" gender="" description="" />
+		<Connector type="Hinge" subtype="263" gender="" description="" />
 		<Connector type="Hinge" subtype="400" gender="" description="" />
 		<Connector type="Hinge" subtype="401" gender="" description="" />
 	</Hinges>

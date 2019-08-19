@@ -15,6 +15,11 @@ namespace LDDModder.LDD.Primitives
         public PhysicsAttributes PhysicsAttributes { get; set; }
         public BoundingBox Bounding { get; set; }
 
+        /// <summary>
+        /// Item 1: Number of Connectivity elements excluding types 99900X
+        /// Item 2: The previous bone ID (the one it connects to)
+        /// Item 3: No clue
+        /// </summary>
         public Tuple<int,int,int> ConnectionCheck { get; set; }
 
         public List<Connector> Connectors { get; }
@@ -24,6 +29,7 @@ namespace LDDModder.LDD.Primitives
         {
             Connectors = new List<Connectors.Connector>();
             Collisions = new List<Collisions.Collision>();
+            Transform = new Transform();
         }
 
         public XElement SerializeToXml()

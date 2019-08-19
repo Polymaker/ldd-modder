@@ -1,4 +1,5 @@
 ﻿using LDDModder.Simple3D;
+using LDDModder.Utilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -199,6 +200,51 @@ namespace LDDModder.LDD.Meshes
             if (IsFlexible)
                 return IsTextured ? MeshType.FlexibleTextured : MeshType.Flexible;
             return IsTextured ? MeshType.StandardTextured : MeshType.Standard;
+        }
+
+        public int[] GetTriangleIndices()
+        {
+            var vertIndexer = new ListIndexer<Vertex>(_Vertices);
+            var idxList = new List<int>();
+
+            foreach(var t in Triangles)
+            {
+                idxList.Add(vertIndexer.IndexOf(t.V1));
+                idxList.Add(vertIndexer.IndexOf(t.V2));
+                idxList.Add(vertIndexer.IndexOf(t.V3));
+            }
+            return idxList.ToArray();
+        }
+
+        public MeshGeometry Clone()
+        {
+            var geom = new MeshGeometry();
+            var vertIndexer = new ListIndexer<Vertex>(_Vertices);
+
+            foreach (var v in Vertices)
+            {
+                var newV = new Vertex(v.Position, v.Normal, v.TexCoord);
+                foreach (var bw in v.BoneWeights)
+                    newV.BoneWeights.Add(new BoneWeight(bw.BoneID, bw.Weight));
+                geom._Vertices.Add(newV);
+            }
+            var triIdx = GetTriangleIndices();
+
+            for (int i = 0; i < triIdx.Length; i += 3)
+            {
+                geom._Triangles.Add(new Triangle(
+                    geom.Vertices[triIdx[i]], 
+                    geom.Vertices[triIdx[i + 1]], 
+                    geom.Vertices[triIdx[i + 2]]));
+            }
+
+            for (int i = 0; i < Indices.Count; i++)
+            {
+                geom.Indices[i].AverageNormal = Indices[i].AverageNormal;
+                geom.Indices[i].RoundEdgeData = new RoundEdgeData(Indices[i].RoundEdgeData.Coords);
+            }
+
+            return geom;
         }
     }
 }

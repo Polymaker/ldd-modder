@@ -13,7 +13,7 @@ namespace LDDModder.LDD.Meshes
     {
         public MESH_FILE? OriginalData { get; }
 
-        public MeshType Type { get; }
+        public MeshType Type { get; private set; }
 
         public MeshGeometry Geometry { get; private set; }
 

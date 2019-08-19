@@ -273,5 +273,11 @@ namespace LDDModder.LDD.Primitives
                 }
             }
         }
+
+        public void Save(string filename)
+        {
+            var xml = SerializeToXml();
+            xml.Save(filename);
+        }
     }
 }

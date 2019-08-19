@@ -15,6 +15,14 @@ namespace LDDModder.LDD.Primitives
         public Vector3 Axis { get; set; }
         public Vector3 Translation { get; set; }
 
+        public float Ax { get => Axis.X; set => Axis = new Vector3(value, Axis.Y, Axis.Z); }
+        public float Ay { get => Axis.Y; set => Axis = new Vector3(Axis.X, value, Axis.Z); }
+        public float Az { get => Axis.Z; set => Axis = new Vector3(Axis.X, Axis.Y, value); }
+
+        public float Tx { get => Translation.X; set => Translation = new Vector3(value, Translation.Y, Translation.Z); }
+        public float Ty { get => Translation.Y; set => Translation = new Vector3(Translation.X, value, Translation.Z); }
+        public float Tz { get => Translation.Z; set => Translation = new Vector3(Translation.X, Translation.Y, value); }
+
         public XAttribute[] ToXmlAttributes()
         {
             return new XAttribute[]
