@@ -37,5 +37,10 @@ namespace LDDModder.LDD.Data
         }
 
         public static readonly MainGroup Bricks = new MainGroup(201, "BRICKS");
+
+        public override string ToString()
+        {
+            return $"{ID} - {Name}";
+        }
     }
 }

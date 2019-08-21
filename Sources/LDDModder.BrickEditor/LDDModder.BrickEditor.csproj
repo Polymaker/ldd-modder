@@ -38,6 +38,18 @@
     <Reference Include="AssimpNet, Version=4.1.0.0, Culture=neutral, PublicKeyToken=0d51b391f59f42a6, processorArchitecture=MSIL">
       <HintPath>..\packages\AssimpNet.4.1.0\lib\net40\AssimpNet.dll</HintPath>
     </Reference>
+    <Reference Include="ObjectTK">
+      <HintPath>..\References\ObjectTK.dll</HintPath>
+    </Reference>
+    <Reference Include="ObjectTK.Tools">
+      <HintPath>..\References\ObjectTK.Tools.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenTK, Version=3.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <HintPath>..\packages\OpenTK.3.1.0\lib\net20\OpenTK.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenTK.GLControl, Version=3.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <HintPath>..\packages\OpenTK.GLControl.3.1.0\lib\net20\OpenTK.GLControl.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -51,6 +63,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BrickCreatorWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="BrickCreatorWindow.Designer.cs">
+      <DependentUpon>BrickCreatorWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DecorationUtil.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DecorationUtil.Designer.cs">
+      <DependentUpon>DecorationUtil.cs</DependentUpon>
+    </Compile>
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -59,6 +83,12 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="BrickCreatorWindow.resx">
+      <DependentUpon>BrickCreatorWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DecorationUtil.resx">
+      <DependentUpon>DecorationUtil.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -71,6 +101,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <None Include="OpenTK.dll.config" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -90,6 +121,9 @@
       <Project>{9c186783-9516-4837-8bc6-a5ec1158e17f}</Project>
       <Name>LDDModder.Library</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="GL\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\AssimpNet.4.1.0\build\AssimpNet.targets" Condition="Exists('..\packages\AssimpNet.4.1.0\build\AssimpNet.targets')" />

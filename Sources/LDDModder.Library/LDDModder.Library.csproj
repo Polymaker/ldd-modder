@@ -75,6 +75,7 @@
     <Compile Include="LDD\LDDEnvironment.cs" />
     <Compile Include="LDD\Meshes\BoneWeight.cs" />
     <Compile Include="LDD\Meshes\Edge.cs" />
+    <Compile Include="LDD\Meshes\GeometryBuilder.cs" />
     <Compile Include="LDD\Meshes\Mesh.cs" />
     <Compile Include="LDD\Meshes\MeshConverter.cs" />
     <Compile Include="LDD\Meshes\MeshCulling.cs" />
@@ -111,7 +112,8 @@
     <Compile Include="Serialization\LinqXmlExtensions.cs" />
     <Compile Include="Serialization\XmlHelper.cs" />
     <Compile Include="Simple3D\ExtensionMethods.cs" />
-    <Compile Include="Simple3D\Matrices.cs" />
+    <Compile Include="Simple3D\Matrix3.cs" />
+    <Compile Include="Simple3D\Matrix4.cs" />
     <Compile Include="Simple3D\Vector2.cs" />
     <Compile Include="Simple3D\Vector3.cs" />
     <Compile Include="Simple3D\Vector4.cs" />

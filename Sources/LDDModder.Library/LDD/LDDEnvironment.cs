@@ -11,5 +11,16 @@ namespace LDDModder.LDD
         public string ProgramFilesPath { get; set; }
         public string ApplicationDataPath { get; set; }
 
+        public static LDDEnvironment Current { get; private set; }
+
+        //static LDDEnvironment()
+        //{
+        //    var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+        //    var progFilesPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
+        //    if (string.IsNullOrEmpty(progFilesPath))
+        //        progFilesPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+
+
+        //}
     }
 }

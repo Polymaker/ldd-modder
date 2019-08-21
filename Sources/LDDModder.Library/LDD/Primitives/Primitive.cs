@@ -60,6 +60,9 @@ namespace LDDModder.LDD.Primitives
             
             var annotations = rootElem.AddElement("Annotations");
 
+            if (!Aliases.Contains(ID) && ID > 0)
+                Aliases.Add(ID);
+
             if (Aliases.Any())
                 annotations.Add(new XElement("Annotation", new XAttribute("aliases", string.Join(";", Aliases))));
 

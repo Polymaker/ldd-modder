@@ -27,6 +27,8 @@ namespace LDDModder.LDD.Meshes
 
         public IList<Triangle> Triangles => Geometry.Triangles;
 
+        public MeshIndexList Indices => Geometry.Indices;
+
         public int TriangleCount => Geometry.TriangleCount;
 
         public bool IsTextured => Geometry.IsTextured;
@@ -82,6 +84,38 @@ namespace LDDModder.LDD.Meshes
         {
             using (var fs = File.OpenRead(filename))
                 return Files.GFileReader.ReadMesh(fs);
+        }
+
+        public MeshGeometry GetCullingGeometry(MeshCulling culling, bool linked = true)
+        {
+            //var geom = new MeshGeometry();
+            var vertMatch = new Dictionary<int, int>();
+            var builder = new GeometryBuilder();
+
+            for (int i = 0; i < culling.VertexCount; i++)
+            {
+                var v = Vertices[i + culling.FromVertex];
+                if (!linked)
+                    v = v.Clone();
+                //geom.AddVertex(v, false);
+                builder.AddVertex(v, false);
+                vertMatch.Add(i + culling.FromVertex, i);
+            }
+
+            var triIdx = Geometry.GetTriangleIndices();
+            for (int i = 0; i < culling.IndexCount; i += 3)
+            {
+                int idx1 = triIdx[i + culling.FromIndex];
+                int idx2 = triIdx[i + 1 + culling.FromIndex];
+                int idx3 = triIdx[i + 2 + culling.FromIndex];
+                idx1 = vertMatch[idx1];
+                idx2 = vertMatch[idx2];
+                idx3 = vertMatch[idx3];
+                builder.AddTriangle(vertMatch[idx1], vertMatch[idx2], vertMatch[idx3]);
+                //geom.AddTriangle2(geom.Vertices[idx1], geom.Vertices[idx2], geom.Vertices[idx3]);
+            }
+            return builder.GetGeometry();
+            //return geom;
         }
     }
 }

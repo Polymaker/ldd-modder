@@ -267,6 +267,16 @@ namespace LDDModder.Simple3D
             return v1 + (line1 * d);
         }
 
+        public static Vector3 Min(Vector3 v1, Vector3 v2)
+        {
+            return new Vector3(v1.X < v2.X ? v1.X : v2.X, v1.Y < v2.Y ? v1.Y : v2.Y, v1.Z < v2.Z ? v1.Z : v2.Z);
+        }
+
+        public static Vector3 Max(Vector3 v1, Vector3 v2)
+        {
+            return new Vector3(v1.X > v2.X ? v1.X : v2.X, v1.Y > v2.Y ? v1.Y : v2.Y, v1.Z > v2.Z ? v1.Z : v2.Z);
+        }
+
         public static explicit operator Vector3(Assimp.Vector3D vector)
         {
             return new Vector3(vector.X, vector.Y, vector.Z);

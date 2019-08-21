@@ -1,6 +1,7 @@
 ﻿using LDDModder.LDD.Files;
 using LDDModder.LDD.Meshes;
 using LDDModder.LDD.Primitives;
+using LDDModder.Simple3D;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,6 +16,8 @@ namespace LDDModder.LDD.Data
         public Mesh MainModel { get; set; }
         public List<Mesh> DecorationMeshes { get; } = new List<Mesh>();
         public Primitive PartInfo { get; set; }
+
+        public IEnumerable<Mesh> AllMeshes => new Mesh[] { MainModel }.Concat(DecorationMeshes);
 
         public static PartMesh Read(string lddDbPath, int partID)
         {
@@ -43,6 +46,83 @@ namespace LDDModder.LDD.Data
             }
 
             return meshInfo;
+        }
+
+        public void Save(string directory, string name)
+        {
+            using (var fs = File.Open(Path.Combine(directory, name + ".g"), FileMode.Create))
+                GFileWriter.WriteMesh(fs, MainModel);
+
+            for (int i = 0; i < DecorationMeshes.Count; i++)
+            {
+                using (var fs = File.Open(Path.Combine(directory, name + $".g{i + 1}"), FileMode.Create))
+                    GFileWriter.WriteMesh(fs, DecorationMeshes[i]);
+            }
+
+            PartInfo.Save(Path.Combine(directory, name + ".xml"));
+        }
+
+        public BoundingBox GetBoundingBox()
+        {
+            var bounds = new List<BoundingBox>();
+            foreach (var m in AllMeshes)
+                bounds.Add(BoundingBox.FromVertices(m.Vertices));
+
+            var min = bounds[0].Min;
+            var max = bounds[0].Max;
+
+            for (int i = 1; i < bounds.Count; i++)
+            {
+                min = Simple3D.Vector3.Min(min, bounds[i].Min);
+                max = Simple3D.Vector3.Max(max, bounds[i].Max);
+            }
+
+            return new BoundingBox() { Min = min, Max = max };
+        }
+
+        public void ComputeAverageNormals()
+        {
+            var vfD = new Dictionary<Vector3, List<Triangle>>();
+
+            foreach (var m in AllMeshes)
+            {
+                foreach (var tri in m.Triangles)
+                {
+                    for (int i = 0; i < 3; i++)
+                    {
+                        if (!vfD.ContainsKey(tri.Vertices[i].Position))
+                            vfD.Add(tri.Vertices[i].Position, new List<Triangle>());
+                        //if (!vfD[tri.Vertices[i].Position].Contains(tri))
+                        vfD[tri.Vertices[i].Position].Add(tri);
+                    }
+                }
+            }
+
+            var vND = new Dictionary<Vector3, Vector3>();
+
+            foreach (var kv in vfD)
+            {
+                var faceNormals = kv.Value.Select(x => x.Normal).DistinctValues().ToList();
+                Vector3 avgNormal = Vector3.Zero;
+                foreach (var norm in faceNormals)
+                    avgNormal += norm;
+
+                avgNormal /= faceNormals.Count;
+                avgNormal.Normalize();
+
+                vND.Add(kv.Key, avgNormal);
+            }
+
+            foreach (var m in AllMeshes)
+            {
+                foreach(var idx in m.Indices)
+                    idx.AverageNormal = vND[idx.Vertex.Position];
+            }
+        }
+
+        public void ComputeRoundEdgeShader()
+        {
+
         }
     }
 }

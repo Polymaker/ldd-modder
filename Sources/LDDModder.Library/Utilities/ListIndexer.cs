@@ -38,5 +38,18 @@ namespace LDDModder.Utilities
             //}
             //return -1;
         }
+
+        public void Reindex()
+        {
+            int i = 0;
+            foreach (var item in BaseList)
+            {
+                if (!Indexer.ContainsKey(item))
+                    Indexer.Add(item, i);
+                else
+                    Indexer[item] = i;
+                i++;
+            }
+        }
     }
 }

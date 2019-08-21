@@ -32,13 +32,34 @@ namespace LDDModder.LDD.Primitives
         public float SizeZ => MaxZ - MinZ;
 
         [XmlIgnore]
-        public Tuple<float, float, float> Center
+        public Vector3 Min
         {
-            get
+            get => new Vector3(MinX, MinY, MinZ);
+            set
             {
-                return new Tuple<float, float, float>((SizeX / 2f) + MinX, (SizeY / 2f) + MinY, (SizeZ / 2f) + MinZ);
+                MinX = value.X;
+                MinY = value.Y;
+                MinZ = value.Z;
             }
         }
+
+        [XmlIgnore]
+        public Vector3 Max
+        {
+            get => new Vector3(MaxX, MaxY, MaxZ);
+            set
+            {
+                MaxX = value.X;
+                MaxY = value.Y;
+                MaxZ = value.Z;
+            }
+        }
+
+        [XmlIgnore]
+        public Vector3 Size => new Vector3(SizeX, SizeY, SizeZ);
+
+        [XmlIgnore]
+        public Vector3 Center => new Vector3((SizeX / 2f) + MinX, (SizeY / 2f) + MinY, (SizeZ / 2f) + MinZ);
 
         public BoundingBox()
         {

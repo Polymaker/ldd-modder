@@ -38,18 +38,24 @@ namespace LDDModder.LDD.Meshes
             Indices = new MeshIndexList(this);
         }
 
-        private Vertex AddVertex(Vertex vertex)
-        {
-            var existing = _Vertices.FirstOrDefault(x => x.Equals(vertex));
+        //public Vertex AddVertex(Vertex vertex, bool checkDuplicate = true)
+        //{
+        //    if (checkDuplicate)
+        //    {
+        //        var existing = _Vertices.FirstOrDefault(x => x.Equals(vertex));
 
-            if (existing == null)
-            {
-                _Vertices.Add(vertex);
-                return vertex;
-            }
+        //        if (existing == null)
+        //        {
+        //            _Vertices.Add(vertex);
+        //            return vertex;
+        //        }
 
-            return existing;
-        }
+        //        return existing;
+        //    }
+
+        //    _Vertices.Add(vertex);
+        //    return vertex;
+        //}
 
         public void SetVertices(IEnumerable<Vertex> vertices)
         {
@@ -57,10 +63,27 @@ namespace LDDModder.LDD.Meshes
             _Vertices.AddRange(vertices);
         }
 
-        public void AddTriangle(Vertex v1, Vertex v2, Vertex v3)
+        public void SetTriangles(IEnumerable<Triangle> triangles, bool withVertices = false)
         {
-            _Triangles.Add(new Triangle(AddVertex(v1), AddVertex(v2), AddVertex(v3)));
+            _Triangles.Clear();
+            _Triangles.AddRange(triangles);
+
+            if (withVertices)
+            {
+                _Vertices.Clear();
+                _Vertices.AddRange(_Triangles.SelectMany(x => x.Vertices).Distinct());
+            }
         }
+
+        //public void AddTriangle(Vertex v1, Vertex v2, Vertex v3)
+        //{
+        //    _Triangles.Add(new Triangle(AddVertex(v1), AddVertex(v2), AddVertex(v3)));
+        //}
+
+        //public void AddTriangle2(Vertex v1, Vertex v2, Vertex v3)
+        //{
+        //    _Triangles.Add(new Triangle(v1, v2, v3));
+        //}
 
         public void AddTriangleFromIndices(int i1, int i2, int i3)
         {
@@ -96,6 +119,7 @@ namespace LDDModder.LDD.Meshes
                     distinctVert.Add(vh, new List<Vertex>());
                 distinctVert[vh].Add(v);
             }
+
             bool hasUnusedVerts = false;
             var simplifiedVerts = new List<Vertex>();
             foreach (var kv in distinctVert)
@@ -216,18 +240,17 @@ namespace LDDModder.LDD.Meshes
             return idxList.ToArray();
         }
 
+        public Vector3[] GetVertexPositions()
+        {
+            return Vertices.Select(v => v.Position).ToArray();
+        }
+
         public MeshGeometry Clone()
         {
             var geom = new MeshGeometry();
-            var vertIndexer = new ListIndexer<Vertex>(_Vertices);
 
-            foreach (var v in Vertices)
-            {
-                var newV = new Vertex(v.Position, v.Normal, v.TexCoord);
-                foreach (var bw in v.BoneWeights)
-                    newV.BoneWeights.Add(new BoneWeight(bw.BoneID, bw.Weight));
-                geom._Vertices.Add(newV);
-            }
+            geom._Vertices.AddRange(Vertices.Select(x => x.Clone()));
+
             var triIdx = GetTriangleIndices();
 
             for (int i = 0; i < triIdx.Length; i += 3)

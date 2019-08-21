@@ -9,17 +9,11 @@ namespace LDDModder.LDD.Meshes
 {
     public class RoundEdgeData : IEquatable<RoundEdgeData>, IEqualityComparer<RoundEdgeData>
     {
-        //public int FileOffset { get; set; }
-
-        //public float[] Values { get; set; }
-
         public Vector2[] Coords { get; set; }
 
         public static readonly Vector2 EmptyCoord = new Vector2(1000, 1000);
 
         public static readonly RoundEdgeData NoOutline = new RoundEdgeData(EmptyCoord, EmptyCoord, EmptyCoord, EmptyCoord, EmptyCoord, EmptyCoord);
-
-        //public bool IsEndOfRow => Coords.Length > 6;
 
         public RoundEdgeData()
         {

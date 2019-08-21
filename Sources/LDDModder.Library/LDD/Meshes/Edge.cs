@@ -1,6 +1,8 @@
-﻿namespace LDDModder.LDD.Meshes
+﻿using System.Collections.Generic;
+
+namespace LDDModder.LDD.Meshes
 {
-    public class Edge
+    public class Edge : IEqualityComparer<Edge>
     {
         public Vertex P1 { get; set; }
         public Vertex P2 { get; set; }
@@ -39,6 +41,16 @@
         public bool Contains(Vertex vertex)
         {
             return P1.Equals(vertex) || P2.Equals(vertex);
+        }
+
+        public bool Equals(Edge x, Edge y)
+        {
+            return x.Equals(y);
+        }
+
+        public int GetHashCode(Edge obj)
+        {
+            return obj.GetHashCode();
         }
     }
 }

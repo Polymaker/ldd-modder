@@ -23,6 +23,22 @@ namespace LDDModder.LDD.Primitives
         public float Ty { get => Translation.Y; set => Translation = new Vector3(Translation.X, value, Translation.Z); }
         public float Tz { get => Translation.Z; set => Translation = new Vector3(Translation.X, Translation.Y, value); }
 
+        public Transform() { }
+
+        public Transform(float angle, Vector3 axis, Vector3 translation)
+        {
+            Angle = angle;
+            Axis = axis;
+            Translation = translation;
+        }
+
+        public Transform(float angle, float ax, float ay, float az, float tx, float ty, float tz)
+        {
+            Angle = angle;
+            Axis = new Vector3(ax, ay, az);
+            Translation = new Vector3(tx, ty, tz);
+        }
+
         public XAttribute[] ToXmlAttributes()
         {
             return new XAttribute[]
@@ -51,6 +67,13 @@ namespace LDDModder.LDD.Primitives
                     element.ReadAttribute<float>("ty"),
                     element.ReadAttribute<float>("tz")),
             };
+        }
+
+        public Matrix4 ToMatrix4()
+        {
+            var rot = Matrix4.FromAngleAxis(Angle * ((float)Math.PI / 180f), Axis);
+            var trans = Matrix4.FromTranslation(Translation);
+            return rot * trans;
         }
     }
 }

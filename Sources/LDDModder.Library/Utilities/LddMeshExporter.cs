@@ -13,22 +13,31 @@ namespace LDDModder.Utilities
         public static void ExportLddPart(PartMesh part, string filename, string formatID)
         {
             var scene = new Scene() { RootNode = new Node("Root") };
-            var defMat = new Assimp.Material();
-            scene.Materials.Add(defMat);
+            scene.Materials.Add(new Assimp.Material() { Name = "BaseModel" });
 
-            CreateMeshNode(scene, part, part.MainModel);
+            CreateMeshNode(scene, part, part.MainModel).Name = "BaseModel";
 
-            foreach(var decMesh in part.DecorationMeshes)
-                CreateMeshNode(scene, part, decMesh);
+            for (int i = 0; i < part.DecorationMeshes.Count; i++)
+            {
+                var decMesh = part.DecorationMeshes[i];
+                
+                scene.Materials.Add(new Assimp.Material()
+                {
+                    Name = $"Decoration{i + 1}",
+                });
+                CreateMeshNode(scene, part, decMesh).Name = $"Decoration{i + 1}";
+                scene.Meshes[i + 1].MaterialIndex = i + 1;
+            }
 
             AssimpContext importer = new AssimpContext();
             importer.ExportFile(scene, filename, formatID, PostProcessSteps.ValidateDataStructure);
         }
 
-        private static void CreateMeshNode(Scene scene, PartMesh part, LDD.Meshes.Mesh lddMesh)
+        private static Node CreateMeshNode(Scene scene, PartMesh part, LDD.Meshes.Mesh lddMesh)
         {
             var meshNode = new Node();
             var aMesh = LDD.Meshes.MeshConverter.ConvertFromLDD(lddMesh);
+            
             meshNode.MeshIndices.Add(scene.MeshCount);
             scene.Meshes.Add(aMesh);
 
@@ -61,9 +70,14 @@ namespace LDDModder.Utilities
                 }
                 armatureNode.Children.Add(meshNode);
                 scene.RootNode.Children.Add(armatureNode);
+
+                return meshNode;
             }
             else
+            {
                 scene.RootNode.Children.Add(meshNode);
+                return meshNode;
+            }
 
 
         }

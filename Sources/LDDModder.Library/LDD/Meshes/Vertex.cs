@@ -57,6 +57,22 @@ namespace LDDModder.LDD.Meshes
                    TexCoord.Equals(vertex.TexCoord);
         }
 
+        public bool Equals(Vertex vertex, bool checkBones)
+        {
+            if (checkBones)
+            {
+                if (BoneWeights.Count != vertex.BoneWeights.Count)
+                    return false;
+
+                if (!BoneWeights.SequenceEqual(vertex.BoneWeights))
+                    return false;
+            }
+
+            return Position.Equals(vertex.Position) &&
+                   Normal.Equals(vertex.Normal) &&
+                   TexCoord.Equals(vertex.TexCoord);
+        }
+
         public int GetHash()
         {
             var hashCode = 550714527;
@@ -64,6 +80,13 @@ namespace LDDModder.LDD.Meshes
             hashCode = hashCode * -1521134295 + Normal.GetHashCode();
             hashCode = hashCode * -1521134295 + TexCoord.GetHashCode();
             return hashCode;
+        }
+
+        public Vertex Clone()
+        {
+            var v = new Vertex(Position, Normal, TexCoord);
+            v.BoneWeights.AddRange(BoneWeights);
+            return v;
         }
 
         //public bool Equals(Vertex x, Vertex y)

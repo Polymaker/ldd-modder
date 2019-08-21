@@ -36,8 +36,14 @@ namespace LDDModder.LDD.Data
             return hashCode;
         }
 
+        public override string ToString()
+        {
+            return $"{ID} - {Name}";
+        }
+
+        public static readonly Platform None = new Platform(0, "None");
         public static readonly Platform System = new Platform(200, "SYSTEM");
-
-
+        public static readonly Platform Technic = new Platform(300, "TECHNIC");
+        public static readonly Platform ActionFigures = new Platform(500, "ACTION FIGURES");
     }
 }

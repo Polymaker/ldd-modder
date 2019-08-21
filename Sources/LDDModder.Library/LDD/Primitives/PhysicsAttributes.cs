@@ -48,9 +48,9 @@ namespace LDDModder.LDD.Primitives
 
             elem.Add(new XAttribute("inertiaTensor", 
                 string.Format(CultureInfo.InvariantCulture, "{0},{1},{2},{3},{4},{5},{6},{7},{8}", 
-                InertiaTensor.M11, InertiaTensor.M12, InertiaTensor.M13,
-                InertiaTensor.M21, InertiaTensor.M22, InertiaTensor.M23,
-                InertiaTensor.M31, InertiaTensor.M32, InertiaTensor.M33)));
+                InertiaTensor.A1, InertiaTensor.A2, InertiaTensor.A3,
+                InertiaTensor.B1, InertiaTensor.B2, InertiaTensor.B3,
+                InertiaTensor.C1, InertiaTensor.C2, InertiaTensor.C3)));
 
             elem.Add(new XAttribute("centerOfMass",
                 string.Format(CultureInfo.InvariantCulture, "{0},{1},{2}",
