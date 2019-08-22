@@ -126,7 +126,6 @@ namespace LDDModder.Simple3D
 
         #endregion
 
-
         public static Vector3 operator *(Vector3 vec, float number)
         {
             return new Vector3(vec.X * number, vec.Y * number, vec.Z * number);
@@ -145,6 +144,24 @@ namespace LDDModder.Simple3D
         public static Vector3 operator -(Vector3 vec1, Vector3 vec2)
         {
             return new Vector3(vec1.X - vec2.X, vec1.Y - vec2.Y, vec1.Z - vec2.Z);
+        }
+
+        public static Vector3 operator *(Matrix3 matrix, Vector3 vector)
+        {
+            Vector3 result = default;
+            result.X = vector.X * matrix.A1 + vector.Y * matrix.A2 + vector.Z * matrix.A3;
+            result.Y = vector.X * matrix.B1 + vector.Y * matrix.B2 + vector.Z * matrix.B3;
+            result.Z = vector.X * matrix.C1 + vector.Y * matrix.C2 + vector.Z * matrix.C3;
+            return result;
+        }
+
+        public static Vector3 operator *(Matrix4 matrix, Vector3 vector)
+        {
+            Vector3 result = default;
+            result.X = vector.X * matrix.A1 + vector.Y * matrix.A2 + vector.Z * matrix.A3 + matrix.A4;
+            result.Y = vector.X * matrix.B1 + vector.Y * matrix.B2 + vector.Z * matrix.B3 + matrix.B4;
+            result.Z = vector.X * matrix.C1 + vector.Y * matrix.C2 + vector.Z * matrix.C3 + matrix.C4;
+            return result;
         }
 
         public override string ToString()

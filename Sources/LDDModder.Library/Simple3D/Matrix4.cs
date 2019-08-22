@@ -478,5 +478,30 @@ namespace LDDModder.Simple3D
             identity.C4 = translation.Z;
             return identity;
         }
+
+        public static Matrix4 LookAt(Vector3 eye, Vector3 target, Vector3 up)
+        {
+            Vector3 z = (eye - target).Normalized();
+            Vector3 x = (Vector3.Cross(up, z)).Normalized();
+            Vector3 y = (Vector3.Cross(z, x)).Normalized();
+            Matrix4 result = default(Matrix4);
+            result.A1 = x.X;
+            result.A2 = y.X;
+            result.A3 = z.X;
+            result.A4 = 0f;
+            result.B1 = x.Y;
+            result.B2 = y.Y;
+            result.B3 = z.Y;
+            result.B4 = 0f;
+            result.C1 = x.Z;
+            result.C2 = y.Z;
+            result.C3 = z.Z;
+            result.C4 = 0f;
+            result.D1 = 0f - (x.X * eye.X + x.Y * eye.Y + x.Z * eye.Z);
+            result.D2 = 0f - (y.X * eye.X + y.Y * eye.Y + y.Z * eye.Z);
+            result.D3 = 0f - (z.X * eye.X + z.Y * eye.Y + z.Z * eye.Z);
+            result.D4 = 1f;
+            return result;
+        }
     }
 }

@@ -118,6 +118,7 @@
     <Compile Include="Simple3D\Vector3.cs" />
     <Compile Include="Simple3D\Vector4.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utilities\AssimpConverter.cs" />
     <Compile Include="Utilities\ExtensionMethods\CollectionExtensions.cs" />
     <Compile Include="Utilities\ExtensionMethods\NumberExtensions.cs" />
     <Compile Include="Utilities\ExtensionMethods\StreamExtensions.cs" />

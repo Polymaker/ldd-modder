@@ -75,5 +75,10 @@ namespace LDDModder.LDD.Primitives
             var trans = Matrix4.FromTranslation(Translation);
             return rot * trans;
         }
+
+        public Vector3 GetPosition()
+        {
+            return ToMatrix4() * Vector3.Zero;
+        }
     }
 }

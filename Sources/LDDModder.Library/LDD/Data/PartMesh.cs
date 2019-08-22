@@ -15,6 +15,7 @@ namespace LDDModder.LDD.Data
     {
         public Mesh MainModel { get; set; }
         public List<Mesh> DecorationMeshes { get; } = new List<Mesh>();
+        
         public Primitive PartInfo { get; set; }
 
         public IEnumerable<Mesh> AllMeshes => new Mesh[] { MainModel }.Concat(DecorationMeshes);
