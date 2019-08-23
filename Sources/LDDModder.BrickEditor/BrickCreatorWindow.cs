@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -26,9 +27,25 @@ namespace LDDModder.BrickEditor
             BrickMeshes = new BindingList<BrickMeshObject>();
         }
 
+       
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+            AssimpContext = new Assimp.AssimpContext();
+
+
+            //TestAssimpBones();
+            //ListPlatformsGroups();
+            string LddDbDirectory = Environment.ExpandEnvironmentVariables(@"%appdata%\LEGO Company\LEGO Digital Designer\db\");
+            var brick = PartMesh.Read(LddDbDirectory, 14301);
+            LDDModder.Utilities.LddMeshExporter.ExportLddPart(brick, "14301.dae", "collada");
+            InitializeUI();
+        }
+
+        /*
         private IEnumerable<Assimp.Node> GetAllNodes(Assimp.Node node)
         {
-            foreach(var n in node.Children)
+            foreach (var n in node.Children)
             {
                 yield return n;
                 foreach (var nn in GetAllNodes(n))
@@ -73,20 +90,6 @@ namespace LDDModder.BrickEditor
             return pitchYawRoll;
         }
 
-        protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
-            AssimpContext = new Assimp.AssimpContext();
-
-
-            //TestAssimpBones();
-            //ListPlatformsGroups();
-            string LddDbDirectory = Environment.ExpandEnvironmentVariables(@"%appdata%\LEGO Company\LEGO Digital Designer\db\");
-            var brick = PartMesh.Read(LddDbDirectory, 14301);
-            LDDModder.Utilities.LddMeshExporter.ExportLddPart(brick, "14301.dae", "collada");
-            InitializeUI();
-        }
-
         private void TestAssimpBones()
         {
             var testScene = AssimpContext.ImportFile(@"14301 blender.dae");
@@ -123,6 +126,7 @@ namespace LDDModder.BrickEditor
                 Console.WriteLine($"{pt1}   {pt3}");
             }
         }
+        */
 
         private void InitializeUI()
         {
@@ -292,13 +296,19 @@ namespace LDDModder.BrickEditor
         {
             try
             {
+                ImportExportProgress.Value = 0;
+                ImportExportProgress.Visible = true;
+
                 var scene = AssimpContext.ImportFile(filename, 
                     Assimp.PostProcessSteps.Triangulate | 
                     Assimp.PostProcessSteps.GenerateNormals | 
                     Assimp.PostProcessSteps.PreTransformVertices);
 
+                ImportExportProgress.Value = 20;
+
                 if (scene != null)
                 {
+                    int counter = 1;
                     foreach (var mesh in scene.Meshes)
                     {
                         BrickMeshes.Add(new BrickMeshObject()
@@ -309,16 +319,27 @@ namespace LDDModder.BrickEditor
                             MeshName = mesh.Name,
                             IsMainModel = !mesh.HasTextureCoords(0)
                         });
+
+                        float progress = counter++ / (float)scene.MeshCount;
+                        ImportExportProgress.Value = 20 + (int)(progress * 80);
                     }
                 }
             }
-            catch { }
+            catch
+            {
+                MessageBox.Show("There was a problem importing the mesh");
+            }
+
+            HideProgressDelayed();
         }
 
         private void CreateBrickButton_Click(object sender, EventArgs e)
         {
             if (!ValidateBrick())
                 return;
+
+            ImportExportProgress.Value = 0;
+            ImportExportProgress.Visible = true;
 
             int decorationID = 1;
             var decoratedMeshes = BrickMeshes.Where(x => x.DecorationID.HasValue);
@@ -330,16 +351,17 @@ namespace LDDModder.BrickEditor
                 decorationID++;
             }
 
-            var partMesh = new PartMesh();
-
-            partMesh.PartInfo = new Primitive()
+            var partMesh = new PartMesh
             {
-                ID = int.Parse(IDTextbox.Text),
-                Name = NameTextbox.Text,
-                Platform = PlatformCombo.SelectedItem as Platform
+                Info = new Primitive()
+                {
+                    ID = int.Parse(IDTextbox.Text),
+                    Name = NameTextbox.Text,
+                    Platform = PlatformCombo.SelectedItem as Platform
+                }
             };
-            
-            var validMeshes = BrickMeshes.Where(x => x.IsMainModel || x.DecorationID.HasValue);
+
+            var validMeshes = BrickMeshes.Where(x => x.IsMainModel || x.DecorationID.HasValue).ToList();
 
             foreach (var meshGroup in validMeshes.GroupBy(x => x.DecorationID).OrderBy(x => x.Key ?? 0))
             {
@@ -349,27 +371,35 @@ namespace LDDModder.BrickEditor
                     partMesh.MainModel = partialMesh;
                 else
                     partMesh.DecorationMeshes.Add(partialMesh);
+
+                var progress = partMesh.AllMeshes.Count() / (float)validMeshes.Count;
+                ImportExportProgress.Value = (int)(progress * 80);
             }
 
             partMesh.ComputeAverageNormals();
+            ImportExportProgress.Value = 95;
 
             if (partMesh.DecorationMeshes.Any())
             {
-                partMesh.PartInfo.SurfaceMappingTable = Enumerable.Range(0, partMesh.DecorationMeshes.Count + 1).ToArray();
+                partMesh.Info.SurfaceMappingTable = Enumerable.Range(0, partMesh.DecorationMeshes.Count + 1).ToArray();
             }
 
-            partMesh.PartInfo.Bounding = partMesh.GetBoundingBox();
-            partMesh.PartInfo.GeometryBounding = partMesh.PartInfo.Bounding;
-            
+            partMesh.Info.Bounding = partMesh.GetBoundingBox();
+            partMesh.Info.GeometryBounding = partMesh.Info.Bounding;
+
+            ImportExportProgress.Value = 100;
+
             using (var sfd = new SaveFileDialog())
             {
-                sfd.FileName = partMesh.PartInfo.ID.ToString();
+                sfd.FileName = partMesh.Info.ID.ToString();
 
                 if (sfd.ShowDialog() == DialogResult.OK)
                 {
                     partMesh.Save(Path.GetDirectoryName(sfd.FileName), Path.GetFileNameWithoutExtension(sfd.FileName));
                 }
             }
+
+            HideProgressDelayed();
         }
 
         private Mesh CreatePartialMesh(IEnumerable<BrickMeshObject> brickMeshes)
@@ -434,5 +464,22 @@ namespace LDDModder.BrickEditor
             return !errorMessages.Any();
         }
 
+        private void ClearAllButton_Click(object sender, EventArgs e)
+        {
+            IDTextbox.Text = string.Empty;
+            NameTextbox.Text = string.Empty;
+            PlatformCombo.SelectedIndex = 0;
+
+            BrickMeshes.Clear();
+        }
+
+        private void HideProgressDelayed(int delay = 1500)
+        {
+            Task.Factory.StartNew(() =>
+            {
+                Thread.Sleep(delay);
+                Invoke((Action)(() => ImportExportProgress.Visible = false));
+            });
+        }
     }
 }

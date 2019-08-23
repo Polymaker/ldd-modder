@@ -37,7 +37,7 @@ namespace LDDModder.Utilities
                 Matrix4x4 lastMatrix = Matrix4x4.Identity;
                 Node lastBoneNode = null;
                 var boneMatrixes = new Dictionary<string, Matrix4x4>();
-                var primitive = part.PartInfo;
+                var primitive = part.Info;
                 var currentDir = new Vector3D(0,1,0);
 
                 for (int i = 0; i < primitive.FlexBones.Count; i++)
@@ -50,14 +50,14 @@ namespace LDDModder.Utilities
                     Vector3D bonePos = flexBone.Transform.GetPosition().Convert();
                     
 
-                    if (i + 1 < part.PartInfo.FlexBones.Count)
+                    if (i + 1 < part.Info.FlexBones.Count)
                     {
-                        boneDir = (part.PartInfo.FlexBones[i + 1].Transform.GetPosition() - flexBone.Transform.GetPosition()).Convert();
+                        boneDir = (part.Info.FlexBones[i + 1].Transform.GetPosition() - flexBone.Transform.GetPosition()).Convert();
                         boneDir.Normalize();
                     }
                     else
                     {
-                        boneDir = (flexBone.Transform.GetPosition() - part.PartInfo.FlexBones[i - 1].Transform.GetPosition()).Convert();
+                        boneDir = (flexBone.Transform.GetPosition() - part.Info.FlexBones[i - 1].Transform.GetPosition()).Convert();
                         boneDir.Normalize();
                     }
                     
@@ -151,7 +151,7 @@ namespace LDDModder.Utilities
 
             if (lddMesh.IsFlexible)
             {
-                foreach (var flexBone in part.PartInfo.FlexBones)
+                foreach (var flexBone in part.Info.FlexBones)
                 {
                     var bone = new Assimp.Bone()
                     {

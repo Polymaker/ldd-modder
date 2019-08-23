@@ -114,6 +114,7 @@
     <Compile Include="Simple3D\ExtensionMethods.cs" />
     <Compile Include="Simple3D\Matrix3.cs" />
     <Compile Include="Simple3D\Matrix4.cs" />
+    <Compile Include="Simple3D\Quaternion.cs" />
     <Compile Include="Simple3D\Vector2.cs" />
     <Compile Include="Simple3D\Vector3.cs" />
     <Compile Include="Simple3D\Vector4.cs" />

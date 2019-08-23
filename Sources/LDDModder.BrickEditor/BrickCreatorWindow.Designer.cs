@@ -47,6 +47,8 @@
             this.IsTexturedColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.MainModelChkColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.DecorationNumberColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ClearAllButton = new System.Windows.Forms.Button();
+            this.ImportExportProgress = new System.Windows.Forms.ProgressBar();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.BrickMeshGridView)).BeginInit();
             this.SuspendLayout();
@@ -72,7 +74,7 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(302, 109);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(302, 111);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // IDTextbox
@@ -168,7 +170,7 @@
             this.BrickMeshGridView.Location = new System.Drawing.Point(12, 127);
             this.BrickMeshGridView.Name = "BrickMeshGridView";
             this.BrickMeshGridView.RowHeadersWidth = 20;
-            this.BrickMeshGridView.Size = new System.Drawing.Size(640, 115);
+            this.BrickMeshGridView.Size = new System.Drawing.Size(619, 207);
             this.BrickMeshGridView.TabIndex = 1;
             this.BrickMeshGridView.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.BrickMeshGridView_CellEndEdit);
             this.BrickMeshGridView.CellValidating += new System.Windows.Forms.DataGridViewCellValidatingEventHandler(this.BrickMeshGridView_CellValidating);
@@ -177,7 +179,7 @@
             // AddMeshButton
             // 
             this.AddMeshButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.AddMeshButton.Location = new System.Drawing.Point(12, 249);
+            this.AddMeshButton.Location = new System.Drawing.Point(12, 341);
             this.AddMeshButton.Name = "AddMeshButton";
             this.AddMeshButton.Size = new System.Drawing.Size(90, 23);
             this.AddMeshButton.TabIndex = 2;
@@ -189,7 +191,7 @@
             // 
             this.RemoveMeshButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.RemoveMeshButton.Enabled = false;
-            this.RemoveMeshButton.Location = new System.Drawing.Point(108, 249);
+            this.RemoveMeshButton.Location = new System.Drawing.Point(108, 341);
             this.RemoveMeshButton.Name = "RemoveMeshButton";
             this.RemoveMeshButton.Size = new System.Drawing.Size(90, 23);
             this.RemoveMeshButton.TabIndex = 3;
@@ -199,7 +201,7 @@
             // 
             // CreateBrickButton
             // 
-            this.CreateBrickButton.Location = new System.Drawing.Point(320, 13);
+            this.CreateBrickButton.Location = new System.Drawing.Point(320, 14);
             this.CreateBrickButton.Name = "CreateBrickButton";
             this.CreateBrickButton.Size = new System.Drawing.Size(90, 23);
             this.CreateBrickButton.TabIndex = 4;
@@ -249,19 +251,42 @@
             this.DecorationNumberColumn.DataPropertyName = "DecorationID";
             this.DecorationNumberColumn.HeaderText = "Decoration #";
             this.DecorationNumberColumn.Name = "DecorationNumberColumn";
+            this.DecorationNumberColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.DecorationNumberColumn.Width = 80;
+            // 
+            // ClearAllButton
+            // 
+            this.ClearAllButton.Location = new System.Drawing.Point(320, 40);
+            this.ClearAllButton.Name = "ClearAllButton";
+            this.ClearAllButton.Size = new System.Drawing.Size(90, 23);
+            this.ClearAllButton.TabIndex = 5;
+            this.ClearAllButton.Text = "Clear All";
+            this.ClearAllButton.UseVisualStyleBackColor = true;
+            this.ClearAllButton.Click += new System.EventHandler(this.ClearAllButton_Click);
+            // 
+            // ImportExportProgress
+            // 
+            this.ImportExportProgress.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.ImportExportProgress.Location = new System.Drawing.Point(472, 338);
+            this.ImportExportProgress.Name = "ImportExportProgress";
+            this.ImportExportProgress.Size = new System.Drawing.Size(159, 23);
+            this.ImportExportProgress.TabIndex = 6;
+            this.ImportExportProgress.Visible = false;
             // 
             // BrickCreatorWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(664, 281);
+            this.ClientSize = new System.Drawing.Size(643, 373);
+            this.Controls.Add(this.ImportExportProgress);
+            this.Controls.Add(this.ClearAllButton);
             this.Controls.Add(this.CreateBrickButton);
             this.Controls.Add(this.RemoveMeshButton);
             this.Controls.Add(this.AddMeshButton);
             this.Controls.Add(this.BrickMeshGridView);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "BrickCreatorWindow";
-            this.Text = "BrickCreatorWindow";
+            this.Text = "LDD Brick Creator";
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.BrickMeshGridView)).EndInit();
@@ -290,5 +315,7 @@
         private System.Windows.Forms.DataGridViewCheckBoxColumn IsTexturedColumn;
         private System.Windows.Forms.DataGridViewCheckBoxColumn MainModelChkColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn DecorationNumberColumn;
+        private System.Windows.Forms.Button ClearAllButton;
+        private System.Windows.Forms.ProgressBar ImportExportProgress;
     }
 }

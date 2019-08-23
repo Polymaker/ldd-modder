@@ -302,6 +302,8 @@ namespace LDDModder.Simple3D
             D4 = d4;
         }
 
+        // TODO: Review to ensure row-major or column-major order consistency.
+        //       (OpenTK and Assimp do not use the same order)
         public void Inverse()
         {
             float num = Determinant;
@@ -359,6 +361,9 @@ namespace LDDModder.Simple3D
             D4 = d4;
         }
 
+
+        // TODO: Review to ensure row-major or column-major order consistency.
+        //       (OpenTK and Assimp do not use the same order)
         public static Matrix4 operator *(Matrix4 a, Matrix4 b)
         {
             return new Matrix4(
@@ -437,6 +442,8 @@ namespace LDDModder.Simple3D
 
         #endregion
 
+        // TODO: Review to ensure row-major or column-major order consistency.
+        //       (OpenTK and Assimp do not use the same order)
         public static Matrix4 FromAngleAxis(float radians, Vector3 axis)
         {
             float x = axis.X;
@@ -470,6 +477,8 @@ namespace LDDModder.Simple3D
             return result;
         }
 
+        // TODO: Review to ensure row-major or column-major order consistency.
+        //       (OpenTK and Assimp do not use the same order)
         public static Matrix4 FromTranslation(Vector3 translation)
         {
             Matrix4 identity = Identity;
@@ -479,6 +488,8 @@ namespace LDDModder.Simple3D
             return identity;
         }
 
+        // TODO: Review to ensure row-major or column-major order consistency.
+        //       (OpenTK and Assimp do not use the same order)
         public static Matrix4 LookAt(Vector3 eye, Vector3 target, Vector3 up)
         {
             Vector3 z = (eye - target).Normalized();
@@ -502,6 +513,68 @@ namespace LDDModder.Simple3D
             result.D3 = 0f - (z.X * eye.X + z.Y * eye.Y + z.Z * eye.Z);
             result.D4 = 1f;
             return result;
+        }
+
+        // TODO: Review to ensure row-major or column-major order consistency.
+        //       (OpenTK and Assimp do not use the same order)
+        public Quaternion ExtractRotation(bool row_normalise = true)
+        {
+            Vector3 row0 = RowA.Xyz;
+            Vector3 row = RowB.Xyz;
+            Vector3 row2 = RowC.Xyz;
+            if (row_normalise)
+            {
+                row0 = row0.Normalized();
+                row = row.Normalized();
+                row2 = row2.Normalized();
+            }
+            Quaternion q = default(Quaternion);
+            double trace = 0.25 * ((double)(row0[0] + row[1] + row2[2]) + 1.0);
+            if (trace > 0.0)
+            {
+                double sq8 = Math.Sqrt(trace);
+                q.W = (float)sq8;
+                sq8 = 1.0 / (4.0 * sq8);
+                q.X = (float)((double)(row[2] - row2[1]) * sq8);
+                q.Y = (float)((double)(row2[0] - row0[2]) * sq8);
+                q.Z = (float)((double)(row0[1] - row[0]) * sq8);
+            }
+            else if (row0[0] > row[1] && row0[0] > row2[2])
+            {
+                double sq6 = 2.0 * Math.Sqrt(1.0 + (double)row0[0] - (double)row[1] - (double)row2[2]);
+                q.X = (float)(0.25 * sq6);
+                sq6 = 1.0 / sq6;
+                q.W = (float)((double)(row2[1] - row[2]) * sq6);
+                q.Y = (float)((double)(row[0] + row0[1]) * sq6);
+                q.Z = (float)((double)(row2[0] + row0[2]) * sq6);
+            }
+            else if (row[1] > row2[2])
+            {
+                double sq4 = 2.0 * Math.Sqrt(1.0 + (double)row[1] - (double)row0[0] - (double)row2[2]);
+                q.Y = (float)(0.25 * sq4);
+                sq4 = 1.0 / sq4;
+                q.W = (float)((double)(row2[0] - row0[2]) * sq4);
+                q.X = (float)((double)(row[0] + row0[1]) * sq4);
+                q.Z = (float)((double)(row2[1] + row[2]) * sq4);
+            }
+            else
+            {
+                double sq2 = 2.0 * Math.Sqrt(1.0 + (double)row2[2] - (double)row0[0] - (double)row[1]);
+                q.Z = (float)(0.25 * sq2);
+                sq2 = 1.0 / sq2;
+                q.W = (float)((double)(row[0] - row0[1]) * sq2);
+                q.X = (float)((double)(row2[0] + row0[2]) * sq2);
+                q.Y = (float)((double)(row2[1] + row[2]) * sq2);
+            }
+            q.Normalize();
+            return q;
+        }
+
+        // TODO: Review to ensure row-major or column-major order consistency.
+        //       (OpenTK and Assimp do not use the same order)
+        public Vector3 ExtractTranslation()
+        {
+            return Col4.Xyz;
         }
     }
 }

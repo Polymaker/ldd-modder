@@ -76,6 +76,13 @@ namespace LDDModder.LDD.Primitives
             return rot * trans;
         }
 
+        public static Transform FromMatrix(Matrix4 matrix)
+        {
+            var rot = matrix.ExtractRotation();
+            rot.ToAxisAngle(out Vector3 axis, out float angle);
+            return new Transform(angle, axis, matrix.ExtractTranslation());
+        }
+
         public Vector3 GetPosition()
         {
             return ToMatrix4() * Vector3.Zero;

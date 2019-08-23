@@ -44,11 +44,11 @@ namespace LDDModder.BrickEditor
 
             var brick = PartMesh.Read(LddDbDirectory, 47996);
 
-            var yFlexPos = brick.PartInfo.Connectors.OfType<LDD.Primitives.Connectors.AxelConnector>()
+            var yFlexPos = brick.Info.Connectors.OfType<LDD.Primitives.Connectors.AxelConnector>()
                 .Where(x => x.Length < 1).Select(x => x.Transform.Translation.Y).Distinct();
 
             int boneID = 0;
-            var primitive = brick.PartInfo;
+            var primitive = brick.Info;
             var newMesh = brick.MainModel.Geometry.Clone();
             var meshBounds = BoundingBox.FromVertices(newMesh.Vertices.Select(x => x.Position));
             foreach(float yPos in yFlexPos)
@@ -61,7 +61,7 @@ namespace LDDModder.BrickEditor
                 bone.Transform.Axis = Simple3D.Vector3.UnitY;
                 bone.Transform.Angle = 90;
                 bone.Transform.Translation = new Simple3D.Vector3(1.2f, yPos, 0);
-                brick.PartInfo.FlexBones.Add(bone);
+                brick.Info.FlexBones.Add(bone);
 
                 if (bone.ID > 0)
                     bone.ConnectionCheck = new Tuple<int, int, int>(0, bone.ID - 1, 2);

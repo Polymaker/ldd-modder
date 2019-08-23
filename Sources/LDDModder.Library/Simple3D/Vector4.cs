@@ -11,6 +11,17 @@ namespace LDDModder.Simple3D
         public float Z { get; set; }
         public float W { get; set; }
 
+        public Vector3 Xyz
+        {
+            get => new Vector3(X, Y, Z);
+            set
+            {
+                X = value.X;
+                Y = value.Y;
+                Z = value.Z;
+            }
+        }
+
         public Vector4(float x, float y, float z, float w)
         {
             X = x;

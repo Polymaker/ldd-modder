@@ -251,6 +251,8 @@ namespace LDDModder.Simple3D
             C3 = c3;
         }
 
+        // TODO: Review to ensure row-major or column-major order consistency.
+        //       (OpenTK and Assimp do not use the same order)
         public static Matrix3 operator *(Matrix3 a, Matrix3 b)
         {
             return new Matrix3(a.A1 * b.A1 + a.B1 * b.A2 + a.C1 * b.A3, a.A2 * b.A1 + a.B2 * b.A2 + a.C2 * b.A3, a.A3 * b.A1 + a.B3 * b.A2 + a.C3 * b.A3, a.A1 * b.B1 + a.B1 * b.B2 + a.C1 * b.B3, a.A2 * b.B1 + a.B2 * b.B2 + a.C2 * b.B3, a.A3 * b.B1 + a.B3 * b.B2 + a.C3 * b.B3, a.A1 * b.C1 + a.B1 * b.C2 + a.C1 * b.C3, a.A2 * b.C1 + a.B2 * b.C2 + a.C2 * b.C3, a.A3 * b.C1 + a.B3 * b.C2 + a.C3 * b.C3);
@@ -300,6 +302,8 @@ namespace LDDModder.Simple3D
             return hashCode;
         }
 
+        // TODO: Review to ensure row-major or column-major order consistency.
+        //       (OpenTK and Assimp do not use the same order)
         public static Matrix3 FromAngleAxis(float radians, Vector3 axis)
         {
             float x = axis.X;

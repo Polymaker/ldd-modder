@@ -16,9 +16,14 @@ namespace LDDModder.LDD.Data
         public Mesh MainModel { get; set; }
         public List<Mesh> DecorationMeshes { get; } = new List<Mesh>();
         
-        public Primitive PartInfo { get; set; }
+        public Primitive Info { get; set; }
 
         public IEnumerable<Mesh> AllMeshes => new Mesh[] { MainModel }.Concat(DecorationMeshes);
+
+        public PartMesh()
+        {
+            Info = new Primitive();
+        }
 
         public static PartMesh Read(string lddDbPath, int partID)
         {
@@ -34,7 +39,7 @@ namespace LDDModder.LDD.Data
 
             var meshInfo = new PartMesh()
             {
-                PartInfo = Primitive.FromXmlFile(primitiveFile)
+                Info = Primitive.FromXmlFile(primitiveFile)
             };
 
             foreach (string meshFile in Directory.GetFiles(meshesPath, $"{partID}.g*"))
@@ -60,7 +65,7 @@ namespace LDDModder.LDD.Data
                     GFileWriter.WriteMesh(fs, DecorationMeshes[i]);
             }
 
-            PartInfo.Save(Path.Combine(directory, name + ".xml"));
+            Info.Save(Path.Combine(directory, name + ".xml"));
         }
 
         public BoundingBox GetBoundingBox()

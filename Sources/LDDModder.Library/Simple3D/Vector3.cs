@@ -24,6 +24,41 @@ namespace LDDModder.Simple3D
         public float Y { get; set; }
         public float Z { get; set; }
 
+        public float this[int i]
+        {
+            get
+            {
+                switch(i)
+                {
+                    case 0:
+                        return X;
+                    case 1:
+                        return Y;
+                    case 2:
+                        return Z;
+                    default:
+                        return 0;
+                }
+            }
+            set
+            {
+                switch (i)
+                {
+                    case 0:
+                        X = value;
+                        break;
+                    case 1:
+                        Y = value;
+                        break;
+                    case 2:
+                        Z = value;
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
         public bool IsEmpty => float.IsNaN(X);
 
         public float Length
