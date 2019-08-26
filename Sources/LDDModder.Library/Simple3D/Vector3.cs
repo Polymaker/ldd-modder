@@ -88,30 +88,6 @@ namespace LDDModder.Simple3D
             Z = values[2];
         }
 
-        public void Normalize()
-        {
-            if (!IsEmpty)
-            {
-                var len = Length;
-                X /= len;
-                Y /= len;
-                Z /= len;
-            }
-        }
-
-        public Vector3 Normalized()
-        {
-            if (!IsEmpty)
-                return this / Length;
-            return Vector3.Empty;
-        }
-
-        public Vector3 Rounded()
-        {
-            return new Vector3((float)Math.Round(X, 4), (float)Math.Round(Y, 4), (float)Math.Round(Z, 4));
-        }
-
-
         #region Equality comparison
 
         public override bool Equals(object obj)
@@ -161,6 +137,8 @@ namespace LDDModder.Simple3D
 
         #endregion
 
+        #region Operators
+
         public static Vector3 operator *(Vector3 vec, float number)
         {
             return new Vector3(vec.X * number, vec.Y * number, vec.Z * number);
@@ -199,9 +177,34 @@ namespace LDDModder.Simple3D
             return result;
         }
 
-        public override string ToString()
+        #endregion
+
+        #region Functions
+
+        public void Normalize()
         {
-            return $"[{X}; {Y}; {Z}]";
+            if (!IsEmpty)
+            {
+                var len = Length;
+                X /= len;
+                Y /= len;
+                Z /= len;
+            }
+        }
+
+        public Vector3 Normalized()
+        {
+            if (!IsEmpty)
+                return this / Length;
+            return Vector3.Empty;
+        }
+
+        public Vector3 Rounded(int decimals = 4)
+        {
+            return new Vector3(
+                (float)Math.Round(X, decimals), 
+                (float)Math.Round(Y, decimals), 
+                (float)Math.Round(Z, decimals));
         }
 
         public static float Dot(Vector3 left, Vector3 right)
@@ -327,6 +330,13 @@ namespace LDDModder.Simple3D
         public static Vector3 Max(Vector3 v1, Vector3 v2)
         {
             return new Vector3(v1.X > v2.X ? v1.X : v2.X, v1.Y > v2.Y ? v1.Y : v2.Y, v1.Z > v2.Z ? v1.Z : v2.Z);
+        }
+
+        #endregion
+
+        public override string ToString()
+        {
+            return $"[{X}; {Y}; {Z}]";
         }
 
         public static explicit operator Vector3(Assimp.Vector3D vector)

@@ -30,6 +30,38 @@ namespace LDDModder.Simple3D
             W = w;
         }
 
+        public Vector4(Vector3 vector, float w)
+        {
+            X = vector.X;
+            Y = vector.Y;
+            Z = vector.Z;
+            W = w;
+        }
+
+        #region Operators
+
+        public static Vector4 operator *(Vector4 vec, float number)
+        {
+            return new Vector4(vec.X * number, vec.Y * number, vec.Z * number, vec.W * number);
+        }
+
+        public static Vector4 operator /(Vector4 vec, float number)
+        {
+            return new Vector4(vec.X / number, vec.Y / number, vec.Z / number, vec.W / number);
+        }
+
+        public static Vector4 operator +(Vector4 left, Vector4 right)
+        {
+            return new Vector4(left.X + right.X, left.Y + right.Y, left.Z + right.Z, left.W + right.W);
+        }
+
+        public static Vector4 operator -(Vector4 vec1, Vector4 vec2)
+        {
+            return new Vector4(vec1.X - vec2.X, vec1.Y - vec2.Y, vec1.Z - vec2.Z, vec1.W - vec2.W);
+        }
+
+        #endregion
+
         public override int GetHashCode()
         {
             return X.GetHashCode() ^ Y.GetHashCode() ^ Z.GetHashCode();

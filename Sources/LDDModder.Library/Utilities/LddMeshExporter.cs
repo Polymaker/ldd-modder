@@ -178,20 +178,5 @@ namespace LDDModder.Utilities
         {
             return $"Bone_{flexBone.ID.ToString().PadLeft(4, '0')}";
         }
-
-
-        private static Matrix4x4 LddTransformToMatrix(LDD.Primitives.Transform transform)
-        {
-            var rotAxis = new Vector3D(transform.Axis.X, transform.Axis.Y, transform.Axis.Z);
-            var rotAngle = transform.Angle * ((float)Math.PI / 180f);
-            var rotMat = Matrix4x4.FromAngleAxis(rotAngle, rotAxis);
-            var transMat = Matrix4x4.FromTranslation(new Vector3D(transform.Translation.X, transform.Translation.Y, transform.Translation.Z));
-
-            var finalMat = Matrix4x4.Identity;
-            finalMat *= rotMat;
-            finalMat *= transMat;
-            finalMat.Inverse();
-            return finalMat;
-        }
     }
 }

@@ -90,14 +90,14 @@ namespace LDDModder.Simple3D
 
         public float Determinant => A1 * B2 * C3 - A1 * B3 * C2 + A2 * B3 * C1 - A2 * B1 * C3 + A3 * B1 * C2 - A3 * B2 * C1;
 
-        public float this[int x, int y]
+        public float this[int row, int col]
         {
             get
             {
-                switch (x)
+                switch (row)
                 {
                     case 1:
-                        switch (y)
+                        switch (col)
                         {
                             case 1:
                                 return A1;
@@ -109,7 +109,7 @@ namespace LDDModder.Simple3D
                                 return 0f;
                         }
                     case 2:
-                        switch (y)
+                        switch (col)
                         {
                             case 1:
                                 return B1;
@@ -121,7 +121,7 @@ namespace LDDModder.Simple3D
                                 return 0f;
                         }
                     case 3:
-                        switch (y)
+                        switch (col)
                         {
                             case 1:
                                 return C1;
@@ -138,10 +138,10 @@ namespace LDDModder.Simple3D
             }
             set
             {
-                switch (x)
+                switch (row)
                 {
                     case 1:
-                        switch (y)
+                        switch (col)
                         {
                             case 1:
                                 A1 = value;
@@ -155,7 +155,7 @@ namespace LDDModder.Simple3D
                         }
                         break;
                     case 2:
-                        switch (y)
+                        switch (col)
                         {
                             case 1:
                                 B1 = value;
@@ -169,7 +169,7 @@ namespace LDDModder.Simple3D
                         }
                         break;
                     case 3:
-                        switch (y)
+                        switch (col)
                         {
                             case 1:
                                 C1 = value;
@@ -215,47 +215,33 @@ namespace LDDModder.Simple3D
             C3 = c3;
         }
 
-        public void Inverse()
+        public void Normalize()
         {
-            float num = Determinant;
-            if (num == 0f)
-            {
-                A1 = float.NaN;
-                A2 = float.NaN;
-                A3 = float.NaN;
-                B1 = float.NaN;
-                B2 = float.NaN;
-                B3 = float.NaN;
-                C1 = float.NaN;
-                C2 = float.NaN;
-                C3 = float.NaN;
-            }
-            float num2 = 1f / num;
-            float a = num2 * (B2 * C3 - B3 * C2);
-            float a2 = (0f - num2) * (A2 * C3 - A3 * C2);
-            float a3 = num2 * (A2 * B3 - A3 * B2);
-            float b = (0f - num2) * (B1 * C3 - B3 * C1);
-            float b2 = num2 * (A1 * C3 - A3 * C1);
-            float b3 = (0f - num2) * (A1 * B3 - A3 * B1);
-            float c = num2 * (B1 * C2 - B2 * C1);
-            float c2 = (0f - num2) * (A1 * C2 - A2 * C1);
-            float c3 = num2 * (A1 * B2 - A2 * B1);
-            A1 = a;
-            A2 = a2;
-            A3 = a3;
-            B1 = b;
-            B2 = b2;
-            B3 = b3;
-            C1 = c;
-            C2 = c2;
-            C3 = c3;
+            float determinant = Determinant;
+            RowA /= determinant;
+            RowB /= determinant;
+            RowC /= determinant;
         }
 
-        // TODO: Review to ensure row-major or column-major order consistency.
-        //       (OpenTK and Assimp do not use the same order)
-        public static Matrix3 operator *(Matrix3 a, Matrix3 b)
+        public Matrix3 Normalized()
         {
-            return new Matrix3(a.A1 * b.A1 + a.B1 * b.A2 + a.C1 * b.A3, a.A2 * b.A1 + a.B2 * b.A2 + a.C2 * b.A3, a.A3 * b.A1 + a.B3 * b.A2 + a.C3 * b.A3, a.A1 * b.B1 + a.B1 * b.B2 + a.C1 * b.B3, a.A2 * b.B1 + a.B2 * b.B2 + a.C2 * b.B3, a.A3 * b.B1 + a.B3 * b.B2 + a.C3 * b.B3, a.A1 * b.C1 + a.B1 * b.C2 + a.C1 * b.C3, a.A2 * b.C1 + a.B2 * b.C2 + a.C2 * b.C3, a.A3 * b.C1 + a.B3 * b.C2 + a.C3 * b.C3);
+            Matrix3 m = this;
+            m.Normalize();
+            return m;
+        }
+
+        public Matrix3 Inverted()
+        {
+            Matrix3 m = this;
+            if (m.Determinant != 0f)
+                m.Invert();
+            return m;
+        }
+
+        public static Matrix3 operator *(Matrix3 left, Matrix3 right)
+        {
+            Mult(ref left, ref right, out Matrix3 m);
+            return m;
         }
 
         public float[] ToArray()
@@ -302,32 +288,156 @@ namespace LDDModder.Simple3D
             return hashCode;
         }
 
-        // TODO: Review to ensure row-major or column-major order consistency.
-        //       (OpenTK and Assimp do not use the same order)
+        #region Operations
+
+        public void Invert()
+        {
+            int[] colIdx = new int[3];
+            int[] rowIdx = new int[3];
+            int[] pivotIdx = new int[3] { -1, -1, -1 };
+            float[,] obj = new float[3, 3];
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                    obj[i, j] = this[i, j];
+            }
+            float[,] inverse = obj;
+            int icol = 0;
+            int irow = 0;
+            for (int i2 = 0; i2 < 3; i2++)
+            {
+                float maxPivot = 0f;
+                for (int n = 0; n < 3; n++)
+                {
+                    if (pivotIdx[n] != 0)
+                    {
+                        for (int i = 0; i < 3; i++)
+                        {
+                            if (pivotIdx[i] == -1)
+                            {
+                                float absVal = Math.Abs(inverse[n, i]);
+                                if (absVal > maxPivot)
+                                {
+                                    maxPivot = absVal;
+                                    irow = n;
+                                    icol = i;
+                                }
+                            }
+                            else if (pivotIdx[i] > 0)
+                            {
+                                return;
+                            }
+                        }
+                    }
+                }
+                pivotIdx[icol]++;
+                if (irow != icol)
+                {
+                    for (int m = 0; m < 3; m++)
+                    {
+                        float f2 = inverse[irow, m];
+                        float[,] array = inverse;
+                        int num = irow;
+                        int num2 = m;
+                        float num3 = inverse[icol, m];
+                        array[num, num2] = num3;
+                        inverse[icol, m] = f2;
+                    }
+                }
+                rowIdx[i2] = irow;
+                colIdx[i2] = icol;
+                float pivot = inverse[icol, icol];
+                if (pivot == 0f)
+                {
+                    throw new InvalidOperationException("Matrix is singular and cannot be inverted.");
+                }
+                float oneOverPivot = 1f / pivot;
+                inverse[icol, icol] = 1f;
+                for (int l = 0; l < 3; l++)
+                {
+                    inverse[icol, l] *= oneOverPivot;
+                }
+                for (int k = 0; k < 3; k++)
+                {
+                    if (icol != k)
+                    {
+                        float f = inverse[k, icol];
+                        inverse[k, icol] = 0f;
+                        for (int j = 0; j < 3; j++)
+                        {
+                            inverse[k, j] -= inverse[icol, j] * f;
+                        }
+                    }
+                }
+            }
+            for (int j2 = 2; j2 >= 0; j2--)
+            {
+                int ir = rowIdx[j2];
+                int ic = colIdx[j2];
+                for (int k2 = 0; k2 < 3; k2++)
+                {
+                    float f3 = inverse[k2, ir];
+                    float[,] array2 = inverse;
+                    int num4 = k2;
+                    int num5 = ir;
+                    float num6 = inverse[k2, ic];
+                    array2[num4, num5] = num6;
+                    inverse[k2, ic] = f3;
+                }
+            }
+
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                    this[i, j] = inverse[i, j];
+            }
+        }
+
+        public static void Mult(ref Matrix3 left, ref Matrix3 right, out Matrix3 result)
+        {
+            result.A1 = left.A1 * right.A1 + left.A2 * right.B1 + left.A3 * right.C1;
+            result.A2 = left.A1 * right.A2 + left.A2 * right.B2 + left.A3 * right.C2;
+            result.A3 = left.A1 * right.A3 + left.A2 * right.B3 + left.A3 * right.C3;
+            result.B1 = left.B1 * right.A1 + left.B2 * right.B1 + left.B3 * right.C1;
+            result.B2 = left.B1 * right.A2 + left.B2 * right.B2 + left.B3 * right.C2;
+            result.B3 = left.B1 * right.A3 + left.B2 * right.B3 + left.B3 * right.C3;
+            result.C1 = left.C1 * right.A1 + left.C2 * right.B1 + left.C3 * right.C1;
+            result.C2 = left.C1 * right.A2 + left.C2 * right.B2 + left.C3 * right.C2;
+            result.C3 = left.C1 * right.A3 + left.C2 * right.B3 + left.C3 * right.C3;
+        }
+
+        #endregion
+
+        #region Functions
+
         public static Matrix3 FromAngleAxis(float radians, Vector3 axis)
         {
-            float x = axis.X;
-            float y = axis.Y;
-            float z = axis.Z;
-            float num = (float)Math.Sin(radians);
-            float num2 = (float)Math.Cos(radians);
-            float num3 = x * x;
-            float num4 = y * y;
-            float num5 = z * z;
-            float num6 = x * y;
-            float num7 = x * z;
-            float num8 = y * z;
+            axis.Normalize();
+            float cos = (float)Math.Cos((0f - radians));
+            float sin = (float)Math.Sin((0f - radians));
+            float t = 1f - cos;
+            float tXX = t * axis.X * axis.X;
+            float tXY = t * axis.X * axis.Y;
+            float tXZ = t * axis.X * axis.Z;
+            float tYY = t * axis.Y * axis.Y;
+            float tYZ = t * axis.Y * axis.Z;
+            float tZZ = t * axis.Z * axis.Z;
+            float sinX = sin * axis.X;
+            float sinY = sin * axis.Y;
+            float sinZ = sin * axis.Z;
             Matrix3 result = default(Matrix3);
-            result.A1 = num3 + num2 * (1f - num3);
-            result.B1 = num6 - num2 * num6 + num * z;
-            result.C1 = num7 - num2 * num7 - num * y;
-            result.A2 = num6 - num2 * num6 - num * z;
-            result.B2 = num4 + num2 * (1f - num4);
-            result.C2 = num8 - num2 * num8 + num * x;
-            result.A3 = num7 - num2 * num7 + num * y;
-            result.B3 = num8 - num2 * num8 - num * x;
-            result.C3 = num5 + num2 * (1f - num5);
+            result.A1 = tXX + cos;
+            result.A2 = tXY - sinZ;
+            result.A3 = tXZ + sinY;
+            result.B1 = tXY + sinZ;
+            result.B2 = tYY + cos;
+            result.B3 = tYZ - sinX;
+            result.C1 = tXZ - sinY;
+            result.C2 = tYZ + sinX;
+            result.C3 = tZZ + cos;
             return result;
         }
+
+        #endregion
     }
 }

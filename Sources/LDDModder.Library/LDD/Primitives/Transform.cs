@@ -80,6 +80,7 @@ namespace LDDModder.LDD.Primitives
         {
             var rot = matrix.ExtractRotation();
             rot.ToAxisAngle(out Vector3 axis, out float angle);
+            angle *= (float)Math.PI / 180f;
             return new Transform(angle, axis, matrix.ExtractTranslation());
         }
 

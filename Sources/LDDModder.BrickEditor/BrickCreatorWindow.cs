@@ -33,100 +33,10 @@ namespace LDDModder.BrickEditor
             base.OnLoad(e);
             AssimpContext = new Assimp.AssimpContext();
 
-
-            //TestAssimpBones();
             //ListPlatformsGroups();
-            string LddDbDirectory = Environment.ExpandEnvironmentVariables(@"%appdata%\LEGO Company\LEGO Digital Designer\db\");
-            var brick = PartMesh.Read(LddDbDirectory, 14301);
-            LDDModder.Utilities.LddMeshExporter.ExportLddPart(brick, "14301.dae", "collada");
+
             InitializeUI();
         }
-
-        /*
-        private IEnumerable<Assimp.Node> GetAllNodes(Assimp.Node node)
-        {
-            foreach (var n in node.Children)
-            {
-                yield return n;
-                foreach (var nn in GetAllNodes(n))
-                    yield return nn;
-            }
-        }
-
-        public Assimp.Vector3D GetEuler(Assimp.Quaternion quat)
-        {
-            Assimp.Vector3D pitchYawRoll = new Assimp.Vector3D();
-            quat = new Assimp.Quaternion(-quat.Z, -quat.Y, -quat.X, quat.W);
-            double sqw = quat.W * quat.W;
-            double sqx = quat.X * quat.X;
-            double sqy = quat.Y * quat.Y;
-            double sqz = quat.Z * quat.Z;
-
-            // If quaternion is normalised the unit is one, otherwise it is the correction factor
-            double unit = sqx + sqy + sqz + sqw;
-            double test = quat.X * quat.Y + quat.Z * quat.W;
-            const float PI = 3.1415926535897931f;
-            if (test > 0.499f * unit)
-            {
-                // Singularity at north pole
-                pitchYawRoll.Y = 2f * (float)Math.Atan2(quat.X, quat.W);  // Yaw
-                pitchYawRoll.X = PI * 0.5f;                         // Pitch
-                pitchYawRoll.Z = 0f;                                // Roll
-                return pitchYawRoll;
-            }
-            else if (test < -0.499f * unit)
-            {
-                // Singularity at south pole
-                pitchYawRoll.Y = -2f * (float)Math.Atan2(quat.X, quat.W); // Yaw
-                pitchYawRoll.X = -PI * 0.5f;                        // Pitch
-                pitchYawRoll.Z = 0f;                                // Roll
-                return pitchYawRoll;
-            }
-
-            pitchYawRoll.Y = (float)Math.Atan2(2 * quat.Y * quat.W - 2 * quat.X * quat.Z, sqx - sqy - sqz + sqw);       // Yaw
-            pitchYawRoll.X = (float)Math.Asin(2 * test / unit);                                             // Pitch
-            pitchYawRoll.Z = (float)Math.Atan2(2 * quat.X * quat.W - 2 * quat.Y * quat.Z, -sqx + sqy - sqz + sqw);      // Roll
-
-            return pitchYawRoll;
-        }
-
-        private void TestAssimpBones()
-        {
-            var testScene = AssimpContext.ImportFile(@"14301 blender.dae");
-            var boneNodes = GetAllNodes(testScene.RootNode).Where(x => x.Name.Contains("Bone")).ToList();
-            int ctr = 0;
-            var armatureNode = GetAllNodes(testScene.RootNode).First(x => x.Name.Contains("Armature"));
-            var rootTrans = testScene.RootNode.Transform;
-            var transSum = armatureNode.Transform;
-            var rootInv = rootTrans;
-            rootInv.Inverse();
-
-            foreach (var boneNode in boneNodes)
-            {
-                var bone = testScene.Meshes[0].Bones[ctr++];
-                transSum = boneNode.Transform * transSum;
-                var invOff = bone.OffsetMatrix;
-                invOff.Inverse();
-                invOff = rootInv * invOff;
-                boneNode.Transform.Decompose(out Assimp.Vector3D scale, out Assimp.Quaternion rot, out Assimp.Vector3D translation);
-                invOff.Decompose(out Assimp.Vector3D scale2, out Assimp.Quaternion rot2, out Assimp.Vector3D translation2);
-                var fwd = rot.GetMatrix() * new Assimp.Vector3D(0, 0, 1);
-
-                var rotMat = rot.GetMatrix();
-                var rotAngles = GetEuler(rot) / (3.1416F * 2f) * 360f;
-
-                var pt1 = transSum * new Assimp.Vector3D();
-                pt1.X = (float)Math.Round(pt1.X * 1000F) / 1000f;
-                pt1.Y = (float)Math.Round(pt1.Y * 1000F) / 1000f;
-                pt1.Z = (float)Math.Round(pt1.Z * 1000F) / 1000f;
-                var pt3 = invOff * new Assimp.Vector3D();
-                pt3.X = (float)Math.Round(pt3.X * 1000F) / 1000f;
-                pt3.Y = (float)Math.Round(pt3.Y * 1000F) / 1000f;
-                pt3.Z = (float)Math.Round(pt3.Z * 1000F) / 1000f;
-                Console.WriteLine($"{pt1}   {pt3}");
-            }
-        }
-        */
 
         private void InitializeUI()
         {

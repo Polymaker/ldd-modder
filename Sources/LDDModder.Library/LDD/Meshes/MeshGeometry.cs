@@ -157,6 +157,7 @@ namespace LDDModder.LDD.Meshes
         public void CalculateAverageNormals()
         {
             var vfD = new Dictionary<Vector3, List<Triangle>>();
+
             foreach (var tri in Triangles)
             {
                 for (int i = 0; i < 3; i++)

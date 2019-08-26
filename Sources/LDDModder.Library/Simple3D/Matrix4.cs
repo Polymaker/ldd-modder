@@ -302,87 +302,50 @@ namespace LDDModder.Simple3D
             D4 = d4;
         }
 
-        // TODO: Review to ensure row-major or column-major order consistency.
-        //       (OpenTK and Assimp do not use the same order)
-        public void Inverse()
+        public Matrix4(Vector4 a, Vector4 b, Vector4 c, Vector4 d)
         {
-            float num = Determinant;
-            if (num == 0f)
-            {
-                A1 = float.NaN;
-                A2 = float.NaN;
-                A3 = float.NaN;
-                A4 = float.NaN;
-                B1 = float.NaN;
-                B2 = float.NaN;
-                B3 = float.NaN;
-                B4 = float.NaN;
-                C1 = float.NaN;
-                C2 = float.NaN;
-                C3 = float.NaN;
-                C4 = float.NaN;
-                D1 = float.NaN;
-                D2 = float.NaN;
-                D3 = float.NaN;
-                D4 = float.NaN;
-            }
-            float num2 = 1f / num;
-            float a = num2 * (B2 * (C3 * D4 - C4 * D3) + B3 * (C4 * D2 - C2 * D4) + B4 * (C2 * D3 - C3 * D2));
-            float a2 = (0f - num2) * (A2 * (C3 * D4 - C4 * D3) + A3 * (C4 * D2 - C2 * D4) + A4 * (C2 * D3 - C3 * D2));
-            float a3 = num2 * (A2 * (B3 * D4 - B4 * D3) + A3 * (B4 * D2 - B2 * D4) + A4 * (B2 * D3 - B3 * D2));
-            float a4 = (0f - num2) * (A2 * (B3 * C4 - B4 * C3) + A3 * (B4 * C2 - B2 * C4) + A4 * (B2 * C3 - B3 * C2));
-            float b = (0f - num2) * (B1 * (C3 * D4 - C4 * D3) + B3 * (C4 * D1 - C1 * D4) + B4 * (C1 * D3 - C3 * D1));
-            float b2 = num2 * (A1 * (C3 * D4 - C4 * D3) + A3 * (C4 * D1 - C1 * D4) + A4 * (C1 * D3 - C3 * D1));
-            float b3 = (0f - num2) * (A1 * (B3 * D4 - B4 * D3) + A3 * (B4 * D1 - B1 * D4) + A4 * (B1 * D3 - B3 * D1));
-            float b4 = num2 * (A1 * (B3 * C4 - B4 * C3) + A3 * (B4 * C1 - B1 * C4) + A4 * (B1 * C3 - B3 * C1));
-            float c = num2 * (B1 * (C2 * D4 - C4 * D2) + B2 * (C4 * D1 - C1 * D4) + B4 * (C1 * D2 - C2 * D1));
-            float c2 = (0f - num2) * (A1 * (C2 * D4 - C4 * D2) + A2 * (C4 * D1 - C1 * D4) + A4 * (C1 * D2 - C2 * D1));
-            float c3 = num2 * (A1 * (B2 * D4 - B4 * D2) + A2 * (B4 * D1 - B1 * D4) + A4 * (B1 * D2 - B2 * D1));
-            float c4 = (0f - num2) * (A1 * (B2 * C4 - B4 * C2) + A2 * (B4 * C1 - B1 * C4) + A4 * (B1 * C2 - B2 * C1));
-            float d = (0f - num2) * (B1 * (C2 * D3 - C3 * D2) + B2 * (C3 * D1 - C1 * D3) + B3 * (C1 * D2 - C2 * D1));
-            float d2 = num2 * (A1 * (C2 * D3 - C3 * D2) + A2 * (C3 * D1 - C1 * D3) + A3 * (C1 * D2 - C2 * D1));
-            float d3 = (0f - num2) * (A1 * (B2 * D3 - B3 * D2) + A2 * (B3 * D1 - B1 * D3) + A3 * (B1 * D2 - B2 * D1));
-            float d4 = num2 * (A1 * (B2 * C3 - B3 * C2) + A2 * (B3 * C1 - B1 * C3) + A3 * (B1 * C2 - B2 * C1));
-            A1 = a;
-            A2 = a2;
-            A3 = a3;
-            A4 = a4;
-            B1 = b;
-            B2 = b2;
-            B3 = b3;
-            B4 = b4;
-            C1 = c;
-            C2 = c2;
-            C3 = c3;
-            C4 = c4;
-            D1 = d;
-            D2 = d2;
-            D3 = d3;
-            D4 = d4;
+            A1 = a.X;
+            A2 = a.Y;
+            A3 = a.Z;
+            A4 = a.W;
+            B1 = b.X;
+            B2 = b.Y;
+            B3 = b.Z;
+            B4 = b.W;
+            C1 = c.X;
+            C2 = c.Y;
+            C3 = c.Z;
+            C4 = c.W;
+            D1 = d.X;
+            D2 = d.Y;
+            D3 = d.Z;
+            D4 = d.W;
         }
 
-
-        // TODO: Review to ensure row-major or column-major order consistency.
-        //       (OpenTK and Assimp do not use the same order)
-        public static Matrix4 operator *(Matrix4 a, Matrix4 b)
+        public Matrix4(Matrix3 matrix)
         {
-            return new Matrix4(
-                a.A1 * b.A1 + a.B1 * b.A2 + a.C1 * b.A3 + a.D1 * b.A4, 
-                a.A2 * b.A1 + a.B2 * b.A2 + a.C2 * b.A3 + a.D2 * b.A4, 
-                a.A3 * b.A1 + a.B3 * b.A2 + a.C3 * b.A3 + a.D3 * b.A4, 
-                a.A4 * b.A1 + a.B4 * b.A2 + a.C4 * b.A3 + a.D4 * b.A4, 
-                a.A1 * b.B1 + a.B1 * b.B2 + a.C1 * b.B3 + a.D1 * b.B4, 
-                a.A2 * b.B1 + a.B2 * b.B2 + a.C2 * b.B3 + a.D2 * b.B4, 
-                a.A3 * b.B1 + a.B3 * b.B2 + a.C3 * b.B3 + a.D3 * b.B4, 
-                a.A4 * b.B1 + a.B4 * b.B2 + a.C4 * b.B3 + a.D4 * b.B4, 
-                a.A1 * b.C1 + a.B1 * b.C2 + a.C1 * b.C3 + a.D1 * b.C4, 
-                a.A2 * b.C1 + a.B2 * b.C2 + a.C2 * b.C3 + a.D2 * b.C4, 
-                a.A3 * b.C1 + a.B3 * b.C2 + a.C3 * b.C3 + a.D3 * b.C4, 
-                a.A4 * b.C1 + a.B4 * b.C2 + a.C4 * b.C3 + a.D4 * b.C4, 
-                a.A1 * b.D1 + a.B1 * b.D2 + a.C1 * b.D3 + a.D1 * b.D4, 
-                a.A2 * b.D1 + a.B2 * b.D2 + a.C2 * b.D3 + a.D2 * b.D4, 
-                a.A3 * b.D1 + a.B3 * b.D2 + a.C3 * b.D3 + a.D3 * b.D4, 
-                a.A4 * b.D1 + a.B4 * b.D2 + a.C4 * b.D3 + a.D4 * b.D4);
+            A1 = matrix.A1;
+            A2 = matrix.A2;
+            A3 = matrix.A3;
+            A4 = 0;
+            B1 = matrix.B1;
+            B2 = matrix.B2;
+            B3 = matrix.B3;
+            B4 = 0;
+            C1 = matrix.C1;
+            C2 = matrix.C2;
+            C3 = matrix.C3;
+            C4 = 0;
+            D1 = 0;
+            D2 = 0;
+            D3 = 0;
+            D4 = 0;
+        }
+
+        public static Matrix4 operator *(Matrix4 left, Matrix4 right)
+        {
+            Mult(ref left, ref right, out Matrix4 m);
+            return m;
         }
 
         #region Equality
@@ -442,54 +405,174 @@ namespace LDDModder.Simple3D
 
         #endregion
 
-        // TODO: Review to ensure row-major or column-major order consistency.
-        //       (OpenTK and Assimp do not use the same order)
-        public static Matrix4 FromAngleAxis(float radians, Vector3 axis)
+        public void Normalize()
         {
-            float x = axis.X;
-            float y = axis.Y;
-            float z = axis.Z;
-            float num = (float)Math.Sin((double)radians);
-            float num2 = (float)Math.Cos((double)radians);
-            float num3 = x * x;
-            float num4 = y * y;
-            float num5 = z * z;
-            float num6 = x * y;
-            float num7 = x * z;
-            float num8 = y * z;
-            Matrix4 result = default(Matrix4);
-            result.A1 = num3 + num2 * (1f - num3);
-            result.B1 = num6 - num2 * num6 + num * z;
-            result.C1 = num7 - num2 * num7 - num * y;
-            result.D1 = 0f;
-            result.A2 = num6 - num2 * num6 - num * z;
-            result.B2 = num4 + num2 * (1f - num4);
-            result.C2 = num8 - num2 * num8 + num * x;
-            result.D2 = 0f;
-            result.A3 = num7 - num2 * num7 + num * y;
-            result.B3 = num8 - num2 * num8 - num * x;
-            result.C3 = num5 + num2 * (1f - num5);
-            result.D3 = 0f;
-            result.A4 = 0f;
-            result.B4 = 0f;
-            result.C4 = 0f;
-            result.D4 = 1f;
-            return result;
+            float determinant = Determinant;
+            RowA /= determinant;
+            RowB /= determinant;
+            RowC /= determinant;
+            RowD /= determinant;
         }
 
-        // TODO: Review to ensure row-major or column-major order consistency.
-        //       (OpenTK and Assimp do not use the same order)
+        public Matrix4 Normalized()
+        {
+            Matrix4 m = this;
+            m.Normalize();
+            return m;
+        }
+
+        public Matrix4 Inverted()
+        {
+            Matrix4 m = this;
+            if (m.Determinant != 0f)
+                m.Invert();
+            return m;
+        }
+
+        #region Operations
+
+        public static void Mult(ref Matrix4 left, ref Matrix4 right, out Matrix4 result)
+        {
+            result.A1 = left.A1 * right.A1 + left.A2 * right.B1 + left.A3 * right.C1 + left.A4 * right.D1;
+            result.A2 = left.A1 * right.A2 + left.A2 * right.B2 + left.A3 * right.C2 + left.A4 * right.D2;
+            result.A3 = left.A1 * right.A3 + left.A2 * right.B3 + left.A3 * right.C3 + left.A4 * right.D3;
+            result.A4 = left.A1 * right.A4 + left.A2 * right.B4 + left.A3 * right.C4 + left.A4 * right.D4;
+            result.B1 = left.B1 * right.A1 + left.B2 * right.B1 + left.B3 * right.C1 + left.B4 * right.D1;
+            result.B2 = left.B1 * right.A2 + left.B2 * right.B2 + left.B3 * right.C2 + left.B4 * right.D2;
+            result.B3 = left.B1 * right.A3 + left.B2 * right.B3 + left.B3 * right.C3 + left.B4 * right.D3;
+            result.B4 = left.B1 * right.A4 + left.B2 * right.B4 + left.B3 * right.C4 + left.B4 * right.D4;
+            result.C1 = left.C1 * right.A1 + left.C2 * right.B1 + left.C3 * right.C1 + left.C4 * right.D1;
+            result.C2 = left.C1 * right.A2 + left.C2 * right.B2 + left.C3 * right.C2 + left.C4 * right.D2;
+            result.C3 = left.C1 * right.A3 + left.C2 * right.B3 + left.C3 * right.C3 + left.C4 * right.D3;
+            result.C4 = left.C1 * right.A4 + left.C2 * right.B4 + left.C3 * right.C4 + left.C4 * right.D4;
+            result.D1 = left.D1 * right.A1 + left.D2 * right.B1 + left.D3 * right.C1 + left.D4 * right.D1;
+            result.D2 = left.D1 * right.A2 + left.D2 * right.B2 + left.D3 * right.C2 + left.D4 * right.D2;
+            result.D3 = left.D1 * right.A3 + left.D2 * right.B3 + left.D3 * right.C3 + left.D4 * right.D3;
+            result.D4 = left.D1 * right.A4 + left.D2 * right.B4 + left.D3 * right.C4 + left.D4 * right.D4;
+        }
+
+        public void Invert()
+        {
+            int[] colIdx = new int[4];
+            int[] rowIdx = new int[4];
+            int[] pivotIdx = new int[4] { -1, -1, -1, -1 };
+            float[,] obj = new float[4, 4];
+            for (int i = 0; i < 4; i++)
+            {
+                for (int j = 0; j < 4; j++)
+                    obj[i, j] = this[i, j];
+            }
+
+            float[,] inverse = obj;
+            int icol = 0;
+            int irow = 0;
+            for (int i2 = 0; i2 < 4; i2++)
+            {
+                float maxPivot = 0f;
+                for (int n = 0; n < 4; n++)
+                {
+                    if (pivotIdx[n] != 0)
+                    {
+                        for (int i = 0; i < 4; i++)
+                        {
+                            if (pivotIdx[i] == -1)
+                            {
+                                float absVal = Math.Abs(inverse[n, i]);
+                                if (absVal > maxPivot)
+                                {
+                                    maxPivot = absVal;
+                                    irow = n;
+                                    icol = i;
+                                }
+                            }
+                            else if (pivotIdx[i] > 0)
+                            {
+                                return;
+                            }
+                        }
+                    }
+                }
+                pivotIdx[icol]++;
+                if (irow != icol)
+                {
+                    for (int m = 0; m < 4; m++)
+                    {
+                        float f2 = inverse[irow, m];
+                        float[,] array = inverse;
+                        int num = irow;
+                        int num2 = m;
+                        float num3 = inverse[icol, m];
+                        array[num, num2] = num3;
+                        inverse[icol, m] = f2;
+                    }
+                }
+                rowIdx[i2] = irow;
+                colIdx[i2] = icol;
+                float pivot = inverse[icol, icol];
+                if (pivot == 0f)
+                {
+                    throw new InvalidOperationException("Matrix is singular and cannot be inverted.");
+                }
+                float oneOverPivot = 1f / pivot;
+                inverse[icol, icol] = 1f;
+                for (int l = 0; l < 4; l++)
+                {
+                    inverse[icol, l] *= oneOverPivot;
+                }
+                for (int k = 0; k < 4; k++)
+                {
+                    if (icol != k)
+                    {
+                        float f = inverse[k, icol];
+                        inverse[k, icol] = 0f;
+                        for (int j = 0; j < 4; j++)
+                        {
+                            inverse[k, j] -= inverse[icol, j] * f;
+                        }
+                    }
+                }
+            }
+            for (int j2 = 3; j2 >= 0; j2--)
+            {
+                int ir = rowIdx[j2];
+                int ic = colIdx[j2];
+                for (int k2 = 0; k2 < 4; k2++)
+                {
+                    float f3 = inverse[k2, ir];
+                    float[,] array2 = inverse;
+                    int num4 = k2;
+                    int num5 = ir;
+                    float num6 = inverse[k2, ic];
+                    array2[num4, num5] = num6;
+                    inverse[k2, ic] = f3;
+                }
+            }
+
+            for (int i = 0; i < 4; i++)
+            {
+                for (int j = 0; j < 4; j++)
+                    this[i, j] = inverse[i, j];
+            }
+        }
+
+        #endregion
+
+        #region Functions
+
+        public static Matrix4 FromAngleAxis(float radians, Vector3 axis)
+        {
+            return new Matrix4(Matrix3.FromAngleAxis(radians, axis));
+        }
+
         public static Matrix4 FromTranslation(Vector3 translation)
         {
             Matrix4 identity = Identity;
-            identity.A4 = translation.X;
-            identity.B4 = translation.Y;
-            identity.C4 = translation.Z;
+            identity.D1 = translation.X;
+            identity.D2 = translation.Y;
+            identity.D3 = translation.Z;
             return identity;
         }
 
-        // TODO: Review to ensure row-major or column-major order consistency.
-        //       (OpenTK and Assimp do not use the same order)
         public static Matrix4 LookAt(Vector3 eye, Vector3 target, Vector3 up)
         {
             Vector3 z = (eye - target).Normalized();
@@ -515,8 +598,6 @@ namespace LDDModder.Simple3D
             return result;
         }
 
-        // TODO: Review to ensure row-major or column-major order consistency.
-        //       (OpenTK and Assimp do not use the same order)
         public Quaternion ExtractRotation(bool row_normalise = true)
         {
             Vector3 row0 = RowA.Xyz;
@@ -570,11 +651,12 @@ namespace LDDModder.Simple3D
             return q;
         }
 
-        // TODO: Review to ensure row-major or column-major order consistency.
-        //       (OpenTK and Assimp do not use the same order)
         public Vector3 ExtractTranslation()
         {
-            return Col4.Xyz;
+            return RowD.Xyz;
         }
+
+
+        #endregion
     }
 }
