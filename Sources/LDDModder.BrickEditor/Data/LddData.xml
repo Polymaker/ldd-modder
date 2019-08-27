@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Data>
+  <Platforms>
+    <Platform id="0" name="None" />
+    <Platform id="200" name="SYSTEM" />
+    <Platform id="300" name="TECHNIC" />
+    <Platform id="500" name="ACTION FIGURES" />
+  </Platforms>
+  <Groups>
+    <Group id="0" name="None" />
+    <Group id="201" name="BRICKS" />
+    <Group id="202" name="BRICKS, SPECIAL" />
+    <Group id="203" name="BRICKS, SPECIAL CIRCLES AND ANGLES" />
+    <Group id="204" name="BRICKS, SPECIAL Ø4.85 HOLE AND CONNECTING BUSH" />
+    <Group id="205" name="BRICKS, WITH SLOPE" />
+    <Group id="206" name="BRICKS WITH SLOPE, SPECIAL" />
+    <Group id="207" name="BRICKS WITH BOWS AND ARCHES" />
+    <Group id="208" name="BRICKS WITH SPECIAL BOWS AND ANGLES" />
+    <Group id="215" name="PLATES" />
+    <Group id="216" name="PLATES, SPECIAL" />
+    <Group id="217" name="PLATES, SPECIAL CIRCLES AND ANGLES" />
+    <Group id="218" name="BUILDING PLATES" />
+    <Group id="225" name="FRAMES, WINDOWS, WALLS AND DOORS" />
+    <Group id="226" name="GATES AND ROOFS" />
+    <Group id="227" name="INTERIOR" />
+    <Group id="228" name="PLANTS" />
+    <Group id="235" name="FENCES AND LADDERS" />
+    <Group id="236" name="SIGNS, FLAGS AND POLES" />
+    <Group id="240" name="MINI FIGURE" />
+    <Group id="242" name="FIGURE, HEADS AND MASKS" />
+    <Group id="243" name="FIGURE, WIGS" />
+    <Group id="244" name="FIGURE, HEAD CLOTHING" />
+    <Group id="245" name="FIGURE ACCESSORIES, UPPER AND LOWER PART" />
+    <Group id="246" name="FIGURE ACCESSORIES IN HAND" />
+    <Group id="247" name="FIGURE, WEAPONS" />
+    <Group id="249" name="FOODSTUFF" />
+    <Group id="250" name="FIGURE, THEME" />
+    <Group id="251" name="FIGURE, SPECIAL" />
+    <Group id="252" name="FIGURE, ACCESSORIES FOR THE UPPER AND LOWER PART" />
+    <Group id="253" name="FIGURE ACCESSORIES, UPPER BODY" />
+    <Group id="255" name="TEXTILES" />
+    <Group id="259" name="ANIMALS AND CREATURES" />
+    <Group id="265" name="TYRES AND RIMS FOR SNAP Ø3,2" />
+    <Group id="266" name="TYRES AND RIMS FOR/TO SNAP Ø4,85 W. CROSS" />
+    <Group id="267" name="TYRES AND RIMS, SPECIAL" />
+    <Group id="268" name="WHEEL BASE" />
+    <Group id="272" name="TRANSPORTATION MEANS, VEHICLES" />
+    <Group id="273" name="TRANSPORTATION MEANS, SHIPS" />
+    <Group id="274" name="TRANSPORTATION MEANS, TRAINS" />
+    <Group id="275" name="TRANSPORTATION MEANS, AVIATION" />
+    <Group id="276" name="CRAINS AND SCAFFOLD" />
+    <Group id="277" name="WINDSCREENS AND COCKPITS" />
+    <Group id="281" name="DECORATION ELEMENTS" />
+    <Group id="285" name="CONNECTORS" />
+    <Group id="286" name="FUNCTIONAL ELEMENTS" />
+    <Group id="288" name="FUNCTIONAL ELEMENTS, GEAR WHEELS AND RACKS" />
+    <Group id="290" name="RUBBERS AND STRINGS" />
+    <Group id="291" name="TUBES" />
+    <Group id="292" name="ELECTRIC PARTS" />
+    <Group id="293" name="POWER FUNCTIONS" />
+    <Group id="296" name="MISCELLANEOUS ELEMENTS" />
+    <Group id="299" name="LOOSE PARTS" />
+    <Group id="301" name="BEAMS" />
+    <Group id="302" name="BEAMS, SPECIAL" />
+    <Group id="310" name="BEAMS" />
+    <Group id="311" name="BEAMS, SPECIAL" />
+    <Group id="312" name="BEAMS W/ SHAPES" />
+    <Group id="313" name="BEAMS W/ BALL AND BALL CUP" />
+    <Group id="315" name="HALF BEAMS" />
+    <Group id="320" name="HALF BEAMS" />
+    <Group id="321" name="HALF BEAMS, SPECIAL" />
+    <Group id="340" name="FIGURE PARTS" />
+    <Group id="341" name="HANDS AND FEETS" />
+    <Group id="342" name="FIGURE, HEADS AND MASKS" />
+    <Group id="347" name="FIGURE, WEAPONS" />
+    <Group id="350" name="FIGURE, HEAD AND CLOTHING" />
+    <Group id="351" name="FIGURE, ACCESSORIES TOOLS" />
+    <Group id="352" name="BODY SHELLS" />
+    <Group id="353" name="FIGURE, ACCESSORIES, SHELLS W/ BALLSNAP" />
+    <Group id="359" name="ANIMALS AND ACCESSORIES FOR ANIMALS" />
+    <Group id="366" name="TYRES AND RIMS FOR/TO SNAP Ø4,85 W. CROSS" />
+    <Group id="367" name="TYRES AND RIMS, SPECIAL" />
+    <Group id="368" name="TYRES AND RIMS, SPECIAL" />
+    <Group id="372" name="TRANSPORTATION MEANS, VEHICLES" />
+    <Group id="375" name="TRANSPORTATION MEANS, AVIATION" />
+    <Group id="376" name="TRANSPORTATION MEANS, ACCESSORIES" />
+    <Group id="381" name="DECORATION ELEMENTS" />
+    <Group id="385" name="CONNECTORS" />
+    <Group id="386" name="FUNCTIONAL ELEMENTS" />
+    <Group id="387" name="FUNCTIONAL ELEMENTS, OTHERS" />
+    <Group id="388" name="FUNCTIONAL ELEMENTS, GEAR WHEELS AND RACKS" />
+    <Group id="391" name="TUBES" />
+    <Group id="392" name="ELECTRIC PARTS" />
+    <Group id="393" name="POWER FUNCTIONS" />
+    <Group id="396" name="MISCELLANEOUS ELEMENTS" />
+    <Group id="399" name="LOOSE PARTS" />
+    <Group id="559" name="ANIMALS AND ACCESSORIES FOR ANIMALS" />
+  </Groups>
+</Data>

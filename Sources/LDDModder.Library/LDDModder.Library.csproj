@@ -57,7 +57,6 @@
     <Compile Include="LDD\Data\Material.cs" />
     <Compile Include="LDD\Data\MaterialType.cs" />
     <Compile Include="LDD\Data\Platform.cs" />
-    <Compile Include="LDD\Editing\LddPart.cs" />
     <Compile Include="LDD\Files\GFileReader.cs" />
     <Compile Include="LDD\Files\GFileWriter.cs" />
     <Compile Include="LDD\Files\LifFile.cs" />

@@ -13,6 +13,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Linq;
 
 namespace LDDModder.BrickEditor
 {
@@ -20,29 +21,58 @@ namespace LDDModder.BrickEditor
     {
         private Assimp.AssimpContext AssimpContext;
         private BindingList<BrickMeshObject> BrickMeshes;
+        private List<Platform> Platforms;
+        private List<MainGroup> Groups;
 
         public BrickCreatorWindow()
         {
             InitializeComponent();
             BrickMeshes = new BindingList<BrickMeshObject>();
+            Platforms = new List<Platform>();
+            Groups = new List<MainGroup>();
         }
-
        
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            AssimpContext = new Assimp.AssimpContext();
-
-            //ListPlatformsGroups();
-
+            InitializeData();
             InitializeUI();
         }
 
         private void InitializeUI()
         {
             BrickMeshGridView.AutoGenerateColumns = false;
-            PlatformCombo.DataSource = new Platform[] { Platform.System, Platform.Technic, Platform.ActionFigures };
+            
             BrickMeshGridView.DataSource = BrickMeshes;
+
+            PlatformCombo.DataSource = Platforms;
+            FilterGroupComboBox();
+        }
+
+        private void InitializeData()
+        {
+            AssimpContext = new Assimp.AssimpContext();
+            var dataXml = XDocument.Load("Data\\LddData.xml");
+
+            foreach (var elem in dataXml.Root.Element("Platforms").Elements())
+            {
+                Platforms.Add(new Platform(int.Parse(elem.Attribute("id").Value), elem.Attribute("name").Value));
+            }
+
+            foreach (var elem in dataXml.Root.Element("Groups").Elements())
+            {
+                Groups.Add(new MainGroup(int.Parse(elem.Attribute("id").Value), elem.Attribute("name").Value));
+            }
+        }
+
+        private void FilterGroupComboBox()
+        {
+            var selectedPlatform = PlatformCombo.SelectedItem as Platform;
+            if (selectedPlatform != null)
+            {
+                var platformGroups = Groups.Where(x => selectedPlatform.ID <= x.ID && x.ID <= selectedPlatform.ID + 100);
+                GroupCombo.DataSource = platformGroups.ToList();
+            }
         }
 
         #region GridView Management
@@ -63,7 +93,6 @@ namespace LDDModder.BrickEditor
                 BrickMeshGridView.InvalidateCell(decorationCell);
             }
         }
-
 
         private void BrickMeshGridView_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
@@ -112,77 +141,6 @@ namespace LDDModder.BrickEditor
             }
         }
 
-        private void ListPlatformsGroups()
-        {
-            var PrimitiveDirectory = Environment.ExpandEnvironmentVariables(@"%appdata%\LEGO Company\LEGO Digital Designer\db\Primitives\");
-
-            var platformGroups = new Dictionary<Platform, List<MainGroup>>();
-            var platforms = new List<Platform>();
-            var groups = new List<MainGroup>();
-            var groupUsage = new Dictionary<MainGroup, int>();
-            foreach (var xmlFile in Directory.GetFiles(PrimitiveDirectory, "*.xml"))
-            {
-                try
-                {
-                    var info = Primitive.FromXmlFile(xmlFile);
-                    if (!platformGroups.ContainsKey(info.Platform))
-                        platformGroups.Add(info.Platform, new List<MainGroup>());
-
-                    if (!platformGroups[info.Platform].Contains(info.MainGroup))
-                        platformGroups[info.Platform].Add(info.MainGroup);
-
-                    if (!platforms.Contains(info.Platform))
-                        platforms.Add(info.Platform);
-                    if (!groups.Contains(info.MainGroup))
-                        groups.Add(info.MainGroup);
-
-                    if (!groupUsage.ContainsKey(info.MainGroup))
-                        groupUsage.Add(info.MainGroup, 0);
-
-                    groupUsage[info.MainGroup]++;
-                }
-                catch { }
-            }
-
-            foreach (var grp in groups.GroupBy(x => x.ID).Where(g => g.Count() > 1).ToList())
-            {
-                var mostUsed = grp.OrderByDescending(x => groupUsage[x]).First();
-                groups.RemoveAll(x => x.ID == grp.Key && x.Name != mostUsed.Name);
-            }
-
-            foreach (var plat in platforms.OrderBy(x => x.ID))
-            {
-                var propName = plat.Name.ToLower();
-                propName = propName.Replace(',', ' ');
-                propName = propName.Replace("  ", " ");
-                propName = Regex.Replace(propName, "(^|\\s)(\\w)", (m) =>
-                {
-                    return m.Groups[2].Value.ToUpper();
-                });
-                Console.WriteLine($"public static readonly Platform {propName} = new Platform({plat.ID}, \"{plat.Name}\");");
-            }
-
-            foreach (var grp in groups.OrderBy(x => x.ID))
-            {
-                var propName = grp.Name.ToLower();
-                propName = propName.Replace(',', ' ');
-                propName = propName.Replace("  ", " ");
-                propName = propName.Replace("w/", "With");
-                propName = Regex.Replace(propName, "(^|\\s)(\\w)", (m) =>
-                {
-                    return m.Groups[2].Value.ToUpper();
-                });
-                Console.WriteLine($"public static readonly MainGroup {propName} = new MainGroup({grp.ID}, \"{grp.Name}\");");
-            }
-
-            foreach (var kv in platformGroups)
-            {
-                Console.WriteLine($"Platform {kv.Key}:");
-                foreach (var grp in kv.Value.OrderBy(x => x.ID))
-                    Console.WriteLine($"  {grp}");
-            }
-        }
-
         private void AddMeshButton_Click(object sender, EventArgs e)
         {
             using(var ofd = new OpenFileDialog())
@@ -219,16 +177,24 @@ namespace LDDModder.BrickEditor
                 if (scene != null)
                 {
                     int counter = 1;
+                    int currentDecID = 1;
+                    if (BrickMeshes.Any(x => x.DecorationID.HasValue))
+                        currentDecID = BrickMeshes.Where(x => x.DecorationID.HasValue).Max(x => x.DecorationID.Value) + 1;
                     foreach (var mesh in scene.Meshes)
                     {
-                        BrickMeshes.Add(new BrickMeshObject()
+                        var brickMesh = new BrickMeshObject()
                         {
                             Mesh = mesh,
                             MeshScene = scene,
                             MeshFile = filename,
                             MeshName = mesh.Name,
                             IsMainModel = !mesh.HasTextureCoords(0)
-                        });
+                        };
+
+                        if (brickMesh.IsTextured)
+                            brickMesh.DecorationID = currentDecID++;
+
+                        BrickMeshes.Add(brickMesh);
 
                         float progress = counter++ / (float)scene.MeshCount;
                         ImportExportProgress.Value = 20 + (int)(progress * 80);
@@ -251,6 +217,20 @@ namespace LDDModder.BrickEditor
             ImportExportProgress.Value = 0;
             ImportExportProgress.Visible = true;
 
+            try
+            {
+                CreateBrickFiles();
+            }
+            catch
+            {
+
+            }
+
+            HideProgressDelayed();
+        }
+
+        private void CreateBrickFiles()
+        {
             int decorationID = 1;
             var decoratedMeshes = BrickMeshes.Where(x => x.DecorationID.HasValue);
 
@@ -267,7 +247,8 @@ namespace LDDModder.BrickEditor
                 {
                     ID = int.Parse(IDTextbox.Text),
                     Name = NameTextbox.Text,
-                    Platform = PlatformCombo.SelectedItem as Platform
+                    Platform = PlatformCombo.SelectedItem as Platform,
+                    MainGroup = GroupCombo.SelectedItem as MainGroup
                 }
             };
 
@@ -305,11 +286,19 @@ namespace LDDModder.BrickEditor
 
                 if (sfd.ShowDialog() == DialogResult.OK)
                 {
-                    partMesh.Save(Path.GetDirectoryName(sfd.FileName), Path.GetFileNameWithoutExtension(sfd.FileName));
+                    string baseName = Path.GetFileNameWithoutExtension(sfd.FileName);
+                    string targetDir = Path.GetDirectoryName(sfd.FileName);
+                    if (partMesh.CheckFilesExists(targetDir, baseName))
+                    {
+                        var res = MessageBox.Show("Some files already exists. Do you want to override them?", "Confirm save", 
+                            MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                        if (res == DialogResult.No)
+                            return;
+                    }
+                    partMesh.Save(targetDir, baseName);
+                    MessageBox.Show("Brick files created succesfully.");
                 }
             }
-
-            HideProgressDelayed();
         }
 
         private Mesh CreatePartialMesh(IEnumerable<BrickMeshObject> brickMeshes)
@@ -352,6 +341,10 @@ namespace LDDModder.BrickEditor
             else if(!int.TryParse(IDTextbox.Text, out _))
                 errorMessages.Add("Brick ID must be numeric");
 
+            if (string.IsNullOrWhiteSpace(NameTextbox.Text))
+                errorMessages.Add("Enter a brick name");
+
+
             if (!BrickMeshes.Any())
                 errorMessages.Add("At least one mesh is required");
             else if (!BrickMeshes.Any(x => x.IsMainModel))
@@ -390,6 +383,11 @@ namespace LDDModder.BrickEditor
                 Thread.Sleep(delay);
                 Invoke((Action)(() => ImportExportProgress.Visible = false));
             });
+        }
+
+        private void PlatformCombo_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            FilterGroupComboBox();
         }
     }
 }

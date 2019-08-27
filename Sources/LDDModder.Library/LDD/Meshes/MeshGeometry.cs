@@ -38,25 +38,6 @@ namespace LDDModder.LDD.Meshes
             Indices = new MeshIndexList(this);
         }
 
-        //public Vertex AddVertex(Vertex vertex, bool checkDuplicate = true)
-        //{
-        //    if (checkDuplicate)
-        //    {
-        //        var existing = _Vertices.FirstOrDefault(x => x.Equals(vertex));
-
-        //        if (existing == null)
-        //        {
-        //            _Vertices.Add(vertex);
-        //            return vertex;
-        //        }
-
-        //        return existing;
-        //    }
-
-        //    _Vertices.Add(vertex);
-        //    return vertex;
-        //}
-
         public void SetVertices(IEnumerable<Vertex> vertices)
         {
             _Vertices.Clear();
@@ -74,16 +55,6 @@ namespace LDDModder.LDD.Meshes
                 _Vertices.AddRange(_Triangles.SelectMany(x => x.Vertices).Distinct());
             }
         }
-
-        //public void AddTriangle(Vertex v1, Vertex v2, Vertex v3)
-        //{
-        //    _Triangles.Add(new Triangle(AddVertex(v1), AddVertex(v2), AddVertex(v3)));
-        //}
-
-        //public void AddTriangle2(Vertex v1, Vertex v2, Vertex v3)
-        //{
-        //    _Triangles.Add(new Triangle(v1, v2, v3));
-        //}
 
         public void AddTriangleFromIndices(int i1, int i2, int i3)
         {

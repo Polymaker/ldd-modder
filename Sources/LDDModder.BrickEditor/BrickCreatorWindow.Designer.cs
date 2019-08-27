@@ -36,17 +36,17 @@
             this.PlatformLabel = new System.Windows.Forms.Label();
             this.PlatformCombo = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.comboBox2 = new System.Windows.Forms.ComboBox();
+            this.GroupCombo = new System.Windows.Forms.ComboBox();
             this.BrickMeshGridView = new System.Windows.Forms.DataGridView();
-            this.AddMeshButton = new System.Windows.Forms.Button();
-            this.RemoveMeshButton = new System.Windows.Forms.Button();
-            this.CreateBrickButton = new System.Windows.Forms.Button();
             this.MeshFileColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.MeshNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.MeshInfoColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.IsTexturedColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.MainModelChkColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.DecorationNumberColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.AddMeshButton = new System.Windows.Forms.Button();
+            this.RemoveMeshButton = new System.Windows.Forms.Button();
+            this.CreateBrickButton = new System.Windows.Forms.Button();
             this.ClearAllButton = new System.Windows.Forms.Button();
             this.ImportExportProgress = new System.Windows.Forms.ProgressBar();
             this.tableLayoutPanel1.SuspendLayout();
@@ -55,9 +55,11 @@
             // 
             // tableLayoutPanel1
             // 
+            this.tableLayoutPanel1.AutoSize = true;
+            this.tableLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.tableLayoutPanel1.ColumnCount = 2;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 23.84615F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 76.15385F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 70F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.Controls.Add(this.IDTextbox, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.label1, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.label2, 0, 1);
@@ -65,22 +67,22 @@
             this.tableLayoutPanel1.Controls.Add(this.PlatformLabel, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.PlatformCombo, 1, 2);
             this.tableLayoutPanel1.Controls.Add(this.label4, 0, 3);
-            this.tableLayoutPanel1.Controls.Add(this.comboBox2, 1, 3);
+            this.tableLayoutPanel1.Controls.Add(this.GroupCombo, 1, 3);
             this.tableLayoutPanel1.Location = new System.Drawing.Point(12, 12);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 5;
+            this.tableLayoutPanel1.RowCount = 4;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(302, 111);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(326, 106);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // IDTextbox
             // 
             this.IDTextbox.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.IDTextbox.Location = new System.Drawing.Point(75, 3);
+            this.IDTextbox.Location = new System.Drawing.Point(73, 3);
             this.IDTextbox.Name = "IDTextbox";
             this.IDTextbox.Size = new System.Drawing.Size(100, 20);
             this.IDTextbox.TabIndex = 0;
@@ -89,7 +91,7 @@
             // 
             this.label1.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(24, 6);
+            this.label1.Location = new System.Drawing.Point(22, 6);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(45, 13);
             this.label1.TabIndex = 1;
@@ -99,7 +101,7 @@
             // 
             this.label2.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(34, 32);
+            this.label2.Location = new System.Drawing.Point(32, 32);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(35, 13);
             this.label2.TabIndex = 2;
@@ -108,16 +110,16 @@
             // NameTextbox
             // 
             this.NameTextbox.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.NameTextbox.Location = new System.Drawing.Point(75, 29);
+            this.NameTextbox.Location = new System.Drawing.Point(73, 29);
             this.NameTextbox.Name = "NameTextbox";
-            this.NameTextbox.Size = new System.Drawing.Size(200, 20);
+            this.NameTextbox.Size = new System.Drawing.Size(250, 20);
             this.NameTextbox.TabIndex = 3;
             // 
             // PlatformLabel
             // 
             this.PlatformLabel.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.PlatformLabel.AutoSize = true;
-            this.PlatformLabel.Location = new System.Drawing.Point(24, 59);
+            this.PlatformLabel.Location = new System.Drawing.Point(22, 59);
             this.PlatformLabel.Name = "PlatformLabel";
             this.PlatformLabel.Size = new System.Drawing.Size(45, 13);
             this.PlatformLabel.TabIndex = 4;
@@ -128,29 +130,31 @@
             this.PlatformCombo.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.PlatformCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.PlatformCombo.FormattingEnabled = true;
-            this.PlatformCombo.Location = new System.Drawing.Point(75, 55);
+            this.PlatformCombo.Location = new System.Drawing.Point(73, 55);
             this.PlatformCombo.Name = "PlatformCombo";
-            this.PlatformCombo.Size = new System.Drawing.Size(150, 21);
+            this.PlatformCombo.Size = new System.Drawing.Size(120, 21);
             this.PlatformCombo.TabIndex = 5;
+            this.PlatformCombo.SelectedIndexChanged += new System.EventHandler(this.PlatformCombo_SelectedIndexChanged);
             // 
             // label4
             // 
             this.label4.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(33, 86);
+            this.label4.Location = new System.Drawing.Point(31, 86);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(36, 13);
             this.label4.TabIndex = 6;
             this.label4.Text = "Group";
             // 
-            // comboBox2
+            // GroupCombo
             // 
-            this.comboBox2.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.Location = new System.Drawing.Point(75, 82);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(214, 21);
-            this.comboBox2.TabIndex = 7;
+            this.GroupCombo.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.GroupCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.GroupCombo.FormattingEnabled = true;
+            this.GroupCombo.Location = new System.Drawing.Point(73, 82);
+            this.GroupCombo.Name = "GroupCombo";
+            this.GroupCombo.Size = new System.Drawing.Size(250, 21);
+            this.GroupCombo.TabIndex = 7;
             // 
             // BrickMeshGridView
             // 
@@ -175,39 +179,6 @@
             this.BrickMeshGridView.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.BrickMeshGridView_CellEndEdit);
             this.BrickMeshGridView.CellValidating += new System.Windows.Forms.DataGridViewCellValidatingEventHandler(this.BrickMeshGridView_CellValidating);
             this.BrickMeshGridView.SelectionChanged += new System.EventHandler(this.BrickMeshGridView_SelectionChanged);
-            // 
-            // AddMeshButton
-            // 
-            this.AddMeshButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.AddMeshButton.Location = new System.Drawing.Point(12, 341);
-            this.AddMeshButton.Name = "AddMeshButton";
-            this.AddMeshButton.Size = new System.Drawing.Size(90, 23);
-            this.AddMeshButton.TabIndex = 2;
-            this.AddMeshButton.Text = "Add Mesh…";
-            this.AddMeshButton.UseVisualStyleBackColor = true;
-            this.AddMeshButton.Click += new System.EventHandler(this.AddMeshButton_Click);
-            // 
-            // RemoveMeshButton
-            // 
-            this.RemoveMeshButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.RemoveMeshButton.Enabled = false;
-            this.RemoveMeshButton.Location = new System.Drawing.Point(108, 341);
-            this.RemoveMeshButton.Name = "RemoveMeshButton";
-            this.RemoveMeshButton.Size = new System.Drawing.Size(90, 23);
-            this.RemoveMeshButton.TabIndex = 3;
-            this.RemoveMeshButton.Text = "Remove Mesh";
-            this.RemoveMeshButton.UseVisualStyleBackColor = true;
-            this.RemoveMeshButton.Click += new System.EventHandler(this.RemoveMeshButton_Click);
-            // 
-            // CreateBrickButton
-            // 
-            this.CreateBrickButton.Location = new System.Drawing.Point(320, 14);
-            this.CreateBrickButton.Name = "CreateBrickButton";
-            this.CreateBrickButton.Size = new System.Drawing.Size(90, 23);
-            this.CreateBrickButton.TabIndex = 4;
-            this.CreateBrickButton.Text = "Create Brick";
-            this.CreateBrickButton.UseVisualStyleBackColor = true;
-            this.CreateBrickButton.Click += new System.EventHandler(this.CreateBrickButton_Click);
             // 
             // MeshFileColumn
             // 
@@ -254,9 +225,42 @@
             this.DecorationNumberColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             this.DecorationNumberColumn.Width = 80;
             // 
+            // AddMeshButton
+            // 
+            this.AddMeshButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.AddMeshButton.Location = new System.Drawing.Point(12, 341);
+            this.AddMeshButton.Name = "AddMeshButton";
+            this.AddMeshButton.Size = new System.Drawing.Size(90, 23);
+            this.AddMeshButton.TabIndex = 2;
+            this.AddMeshButton.Text = "Add Mesh…";
+            this.AddMeshButton.UseVisualStyleBackColor = true;
+            this.AddMeshButton.Click += new System.EventHandler(this.AddMeshButton_Click);
+            // 
+            // RemoveMeshButton
+            // 
+            this.RemoveMeshButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.RemoveMeshButton.Enabled = false;
+            this.RemoveMeshButton.Location = new System.Drawing.Point(108, 341);
+            this.RemoveMeshButton.Name = "RemoveMeshButton";
+            this.RemoveMeshButton.Size = new System.Drawing.Size(90, 23);
+            this.RemoveMeshButton.TabIndex = 3;
+            this.RemoveMeshButton.Text = "Remove Mesh";
+            this.RemoveMeshButton.UseVisualStyleBackColor = true;
+            this.RemoveMeshButton.Click += new System.EventHandler(this.RemoveMeshButton_Click);
+            // 
+            // CreateBrickButton
+            // 
+            this.CreateBrickButton.Location = new System.Drawing.Point(341, 14);
+            this.CreateBrickButton.Name = "CreateBrickButton";
+            this.CreateBrickButton.Size = new System.Drawing.Size(90, 23);
+            this.CreateBrickButton.TabIndex = 4;
+            this.CreateBrickButton.Text = "Create Brick";
+            this.CreateBrickButton.UseVisualStyleBackColor = true;
+            this.CreateBrickButton.Click += new System.EventHandler(this.CreateBrickButton_Click);
+            // 
             // ClearAllButton
             // 
-            this.ClearAllButton.Location = new System.Drawing.Point(320, 40);
+            this.ClearAllButton.Location = new System.Drawing.Point(341, 40);
             this.ClearAllButton.Name = "ClearAllButton";
             this.ClearAllButton.Size = new System.Drawing.Size(90, 23);
             this.ClearAllButton.TabIndex = 5;
@@ -291,6 +295,7 @@
             this.tableLayoutPanel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.BrickMeshGridView)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -304,7 +309,7 @@
         private System.Windows.Forms.Label PlatformLabel;
         private System.Windows.Forms.ComboBox PlatformCombo;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.ComboBox comboBox2;
+        private System.Windows.Forms.ComboBox GroupCombo;
         private System.Windows.Forms.DataGridView BrickMeshGridView;
         private System.Windows.Forms.Button AddMeshButton;
         private System.Windows.Forms.Button RemoveMeshButton;

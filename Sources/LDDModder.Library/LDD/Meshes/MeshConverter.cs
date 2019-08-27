@@ -70,7 +70,6 @@ namespace LDDModder.LDD.Meshes
             return new Mesh(geom);
         }
 
-
         public static Assimp.Mesh ConvertFromLDD(Mesh lddMesh)
         {
             return ConvertFromLDD(lddMesh.Geometry);
@@ -79,21 +78,26 @@ namespace LDDModder.LDD.Meshes
         public static Assimp.Mesh ConvertFromLDD(MeshGeometry meshGeom)
         {
             var oMesh = new Assimp.Mesh(PrimitiveType.Triangle);
-            var vertIndexer = new ListIndexer<Vertex>(meshGeom.Vertices);
+            //var vertIndexer = new ListIndexer<Vertex>(meshGeom.Vertices);
 
             foreach (var v in meshGeom.Vertices)
             {
-                oMesh.Vertices.Add(new Vector3D(v.Position.X, v.Position.Y, v.Position.Z));
-                oMesh.Normals.Add(new Vector3D(v.Normal.X, v.Normal.Y, v.Normal.Z));
+                oMesh.Vertices.Add(v.Position.Convert());
+                oMesh.Normals.Add(v.Normal.Convert());
                 if (meshGeom.IsTextured)
                     oMesh.TextureCoordinateChannels[0].Add(new Vector3D(v.TexCoord.X, v.TexCoord.Y, 0));
             }
 
-            foreach (var t in meshGeom.Triangles)
-            {
-                var vIndices = t.Vertices.Select(v => vertIndexer.IndexOf(v)).ToArray();
-                oMesh.Faces.Add(new Face(vIndices));
-            }
+            int[] indices = meshGeom.GetTriangleIndices();
+
+            for (int i = 0; i < indices.Length; i += 3)
+                oMesh.Faces.Add(new Face(new int[] { indices[i], indices[i + 1], indices[i + 2] }));
+
+            //foreach (var t in meshGeom.Triangles)
+            //{
+            //    var vIndices = t.Vertices.Select(v => vertIndexer.IndexOf(v)).ToArray();
+            //    oMesh.Faces.Add(new Face(vIndices));
+            //}
 
             return oMesh;
         }

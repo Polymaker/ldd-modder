@@ -13,12 +13,11 @@ namespace LDDModder.BrickEditor.Rendering
     {
         public VertexArray Vao { get; private set; }
 
-        public Buffer<Vector3> VertexBuffer { get; private set; }
-        //public Buffer<Vector2> TexCoordBuffer { get; protected set; }
-        public Buffer<uint> IndexBuffer { get; private set; }
+        public Buffer<VertVN> VertexBuffer { get; private set; }
+        public Buffer<int> IndexBuffer { get; private set; }
 
-        public List<Vector3> Vertices { get; set; }
-        public List<uint> Indices { get; set; }
+        public List<VertVN> Vertices { get; set; }
+        public List<int> Indices { get; set; }
 
         public ObjectTK.Shaders.Program Program { get; private set; }
 
@@ -27,8 +26,8 @@ namespace LDDModder.BrickEditor.Rendering
         public GLMesh()
         {
             Vao = new VertexArray();
-            Vertices = new List<Vector3>();
-            Indices = new List<uint>();
+            Vertices = new List<VertVN>();
+            Indices = new List<int>();
         }
 
         ~GLMesh()
@@ -47,10 +46,10 @@ namespace LDDModder.BrickEditor.Rendering
 
             DisposeBuffers();
 
-            VertexBuffer = new Buffer<Vector3>();
+            VertexBuffer = new Buffer<VertVN>();
             VertexBuffer.Init(BufferTarget.ArrayBuffer, Vertices.ToArray());
-
-            IndexBuffer = new Buffer<uint>();
+            
+            IndexBuffer = new Buffer<int>();
             IndexBuffer.Init(BufferTarget.ElementArrayBuffer, Indices.ToArray());
 
         }
@@ -62,8 +61,21 @@ namespace LDDModder.BrickEditor.Rendering
             Program = program;
             Vao.Bind();
             Vao.BindAttribute(program.InPosition, VertexBuffer);
+            Vao.BindAttribute(program.InNormal, VertexBuffer, 12);
             Vao.BindElementBuffer(IndexBuffer);
         }
+
+        //public void BindToShader(TexturedShaderProgram program)
+        //{
+        //    if (Disposed)
+        //        throw new ObjectDisposedException(GetType().Name);
+        //    Program = program;
+        //    Vao.Bind();
+        //    Vao.BindAttribute(program.InPosition, VertexBuffer);
+        //    Vao.BindAttribute(program.InNormal, VertexBuffer, 12);
+        //    Vao.BindAttribute(program.InTexCoord, VertexBuffer, 24);
+        //    Vao.BindElementBuffer(IndexBuffer);
+        //}
 
         private void DisposeBuffers()
         {

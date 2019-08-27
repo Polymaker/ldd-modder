@@ -2,6 +2,7 @@
 #version 150
 in vec3 InPosition;
 in vec3 InNormal;
+in vec2 InTexCoord;
 
 //uniform mat4 ModelViewMatrix;
 uniform mat4 ModelViewProjectionMatrix;
@@ -35,13 +36,20 @@ void main()
 #version 150
 out vec4 FragColor;
 in vec3 WireCoord;
+smooth in vec2 TexCoord;
 
 uniform vec4 MaterialColor;
+uniform sampler2D Texture;
 uniform bool DisplayWireframe = false;
 
 void main()
 {
-	vec4 finalColor = MaterialColor;
+	vec4 finalColor = texture(Texture, TexCoord);
+
+	if (finalColor.a < 1)
+	{
+		finalColor = finalColor + (MaterialColor * (1.0 - finalColor.a));
+	}
 
 	if (DisplayWireframe)
 	{

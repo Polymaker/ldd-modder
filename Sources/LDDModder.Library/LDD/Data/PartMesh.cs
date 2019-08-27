@@ -68,6 +68,23 @@ namespace LDDModder.LDD.Data
             Info.Save(Path.Combine(directory, name + ".xml"));
         }
 
+        public bool CheckFilesExists(string directory, string name)
+        {
+            if (File.Exists(Path.Combine(directory, name + ".g")))
+                return true;
+
+            if (File.Exists(Path.Combine(directory, name + ".xml")))
+                return true;
+
+            for (int i = 0; i < DecorationMeshes.Count; i++)
+            {
+                if (File.Exists(Path.Combine(directory, name + $".g{i + 1}")))
+                    return true;
+            }
+
+            return false;
+        }
+
         public BoundingBox GetBoundingBox()
         {
             var bounds = new List<BoundingBox>();
