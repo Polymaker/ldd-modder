@@ -29,16 +29,21 @@ namespace LDDModder.LDD.Meshes
         /// </summary>
         public int IndexCount { get; set; }
 
-        public List<StudInformation> Studs { get; set; }
+        public List<Custom2DFieldReference> Studs { get; set; }
 
-        public List<byte[]> UnknownData { get; set; }
+        /// <summary>
+        /// Only present for MeshCullingType Tube.
+        /// Never more than one item.
+        /// </summary>
+        public List<Custom2DFieldReference> AdjacentStuds { get; set; }
 
         public MeshGeometry ReplacementMesh { get; set; }
 
         public MeshCulling(MeshCullingType type)
         {
             Type = type;
-            Studs = new List<StudInformation>();
+            Studs = new List<Custom2DFieldReference>();
+            AdjacentStuds = new List<Custom2DFieldReference>();
         }
 
         public override string ToString()

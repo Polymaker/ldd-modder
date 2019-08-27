@@ -150,7 +150,7 @@ namespace LDDModder.LDD.Files
 
                 int extraDataVal = 0;
 
-                if (culling.UnknownData != null && culling.UnknownData.Length > 0)
+                if (culling.AdjacentStuds != null && culling.AdjacentStuds.Length > 0)
                     extraDataVal = 2;
                 else if (culling.Studs != null && culling.Studs.Length > 0)
                     extraDataVal = 1;
@@ -161,18 +161,21 @@ namespace LDDModder.LDD.Files
                 {
                     WriteSizedBlock(bw, () =>
                     {
-                        int studCount = culling.Studs?.Length ?? 0;
-                        bw.Write(studCount);
-                        for (int i = 0; i < studCount; i++)
+                        int itemCount = culling.Studs?.Length ?? 0;
+                        bw.Write(itemCount);
+                        for (int i = 0; i < itemCount; i++)
                         {
                             WriteSizedBlock(bw, () =>
                             {
                                 bw.Write(culling.Studs[i].ConnectorIndex);
-                                bw.Write(culling.Studs[i].Value2);
-                                bw.Write(culling.Studs[i].DataArrayIndex);
-                                bw.Write(culling.Studs[i].Value4);
-                                bw.Write(culling.Studs[i].Value5);
-                                bw.Write(culling.Studs[i].Value6);
+                                bw.Write(culling.Studs[i].Indices.Length);
+                                for (int j = 0; j < culling.Studs[i].Indices.Length; j++)
+                                {
+                                    bw.Write(culling.Studs[i].Indices[j].ArrayIndex);
+                                    bw.Write(culling.Studs[i].Indices[j].Value2);
+                                    bw.Write(culling.Studs[i].Indices[j].Value3);
+                                    bw.Write(culling.Studs[i].Indices[j].Value4);
+                                }
                             });
                         }
                     });
@@ -182,14 +185,21 @@ namespace LDDModder.LDD.Files
                 {
                     WriteSizedBlock(bw, () =>
                     {
-                        int dataCount = culling.UnknownData?.Length ?? 0;
-                        bw.Write(dataCount);
-
-                        for (int i = 0; i < dataCount; i++)
+                        int itemCount = culling.AdjacentStuds?.Length ?? 0;
+                        bw.Write(itemCount);
+                        for (int i = 0; i < itemCount; i++)
                         {
                             WriteSizedBlock(bw, () =>
                             {
-                                bw.Write(culling.UnknownData[i].Data);
+                                bw.Write(culling.AdjacentStuds[i].ConnectorIndex);
+                                bw.Write(culling.AdjacentStuds[i].Indices.Length);
+                                for (int j = 0; j < culling.AdjacentStuds[i].Indices.Length; j++)
+                                {
+                                    bw.Write(culling.AdjacentStuds[i].Indices[j].ArrayIndex);
+                                    bw.Write(culling.AdjacentStuds[i].Indices[j].Value2);
+                                    bw.Write(culling.AdjacentStuds[i].Indices[j].Value3);
+                                    bw.Write(culling.AdjacentStuds[i].Indices[j].Value4);
+                                }
                             });
                         }
                     });
@@ -333,15 +343,11 @@ namespace LDDModder.LDD.Files
             if (meshCulling.ReplacementMesh != null)
                 culling.ReplacementGeometry = SerializeMeshGeometry(shaderData, meshCulling.ReplacementMesh);
 
-            if (meshCulling.UnknownData != null && meshCulling.UnknownData.Any())
-            {
-                culling.UnknownData = meshCulling.UnknownData.Select(x => new MESH_CULLING_DATA(x.ToArray())).ToArray();
-            }
-
             if (meshCulling.Studs != null && meshCulling.Studs.Any())
-            {
-                culling.Studs = meshCulling.Studs.Select(x => new MESH_STUD(x.ToArray())).ToArray();
-            }
+                culling.Studs = meshCulling.Studs.Select(x => x.Serialize()).ToArray();
+
+            if (meshCulling.AdjacentStuds != null && meshCulling.AdjacentStuds.Any())
+                culling.AdjacentStuds = meshCulling.AdjacentStuds.Select(x => x.Serialize()).ToArray();
 
             return culling;
         }

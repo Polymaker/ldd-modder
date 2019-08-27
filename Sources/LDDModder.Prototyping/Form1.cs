@@ -29,7 +29,7 @@ namespace LDDModder.Prototyping
         {
             base.OnLoad(e);
             //TestPrimitives();
-            //TestGFiles();
+            TestGFiles();
             //SolveShaderData();
             //TestCustomBrick();
             //TestLddFiles();
@@ -97,7 +97,7 @@ namespace LDDModder.Prototyping
         private void TestGFiles()
         {
             string meshDirectory = Environment.ExpandEnvironmentVariables(@"%appdata%\LEGO Company\LEGO Digital Designer\db\Primitives\LOD0\");
-
+            /*
             using (var fs = File.OpenRead(Path.Combine(meshDirectory, "4286.g")))
             {
                 var brickMesh = GFileReader.ReadMesh(fs);
@@ -134,16 +134,16 @@ namespace LDDModder.Prototyping
                     }
                 }
 
-            }
+            }*/
 
-            /*
+            
             int meshRead = 0;
 
             foreach (var meshFilename in Directory.EnumerateFiles(meshDirectory, "*.g*"))
             {
                 Console.WriteLine("Reading file " + Path.GetFileName(meshFilename));
 
-                Mesh2 mesh = null;
+                Mesh mesh = null;
                 try
                 {
                     using (var fs = File.OpenRead(meshFilename))
@@ -179,7 +179,7 @@ namespace LDDModder.Prototyping
                     GC.Collect();
                 }
             }
-            */
+            
         }
 
         private void FixBrick4286()

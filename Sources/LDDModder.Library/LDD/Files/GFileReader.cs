@@ -161,7 +161,7 @@ namespace LDDModder.LDD.Files
             {
                 int studBlockSize = br.ReadInt32();
                 int studCount = br.ReadInt32();
-                culling.Studs = new MESH_STUD[studCount];
+                culling.Studs = new STUD_2DFIELD_REF[studCount];
 
                 for (int i = 0; i < studCount; i++)
                 {
@@ -172,25 +172,41 @@ namespace LDDModder.LDD.Files
                         br.BaseStream.Skip(infoSize - 4);
                         continue;
                     }
-                    culling.Studs[i] = new MESH_STUD(br.ReadInts(6));
+                    var connectorRef = new STUD_2DFIELD_REF(br.ReadInt32(), br.ReadInt32());
+                    for (int j = 0; j < connectorRef.Indices.Length; j++)
+                        connectorRef.Indices[j] = new STUD_2DFIELD_IDX(br.ReadInts(4));
+                    culling.Studs[i] = connectorRef;
                 }
             }
             else
-                culling.Studs = new MESH_STUD[0];
+                culling.Studs = new STUD_2DFIELD_REF[0];
 
             if (extraDataBlock >= 2)
             {
                 int block2Size = br.ReadInt32();
                 int dataCount = br.ReadInt32();
-                culling.UnknownData = new MESH_CULLING_DATA[dataCount];
+
+                culling.AdjacentStuds = new STUD_2DFIELD_REF[dataCount];
 
                 for (int i = 0; i < dataCount; i++)
                 {
                     int dataSize = br.ReadInt32();
-                    var unknownData = br.ReadBytes(dataSize - 4);
-                    culling.UnknownData[i] = new MESH_CULLING_DATA(unknownData);
+                    if (dataSize != 0x4C)
+                    {
+                        Trace.WriteLine("Unexpected adjacent stud info size!");
+                        br.BaseStream.Skip(dataSize - 4);
+                        continue;
+                    }
+
+                    var connectorRef = new STUD_2DFIELD_REF(br.ReadInt32(), br.ReadInt32());
+                    for (int j = 0; j < connectorRef.Indices.Length; j++)
+                        connectorRef.Indices[j] = new STUD_2DFIELD_IDX(br.ReadInts(4));
+
+                    culling.AdjacentStuds[i] = connectorRef;
                 }
             }
+            else
+                culling.AdjacentStuds = new STUD_2DFIELD_REF[0];
 
             if (vertexDataOffset != 0)
             {
@@ -262,14 +278,17 @@ namespace LDDModder.LDD.Files
                         FromVertex = data.FromVertex,
                         VertexCount = data.VertexCount,
                     };
-
-                    if (data.UnknownData != null)
-                        culling.UnknownData = data.UnknownData.Select(x => x.Data).ToList();
-
+                    
                     if (data.Studs != null && data.Studs.Length > 0)
                     {
                         for (int j = 0; j < data.Studs.Length; j++)
-                            culling.Studs.Add(new StudInformation(data.Studs[j].ToArray()));
+                            culling.Studs.Add(new Custom2DFieldReference(data.Studs[j]));
+                    }
+
+                    if (data.AdjacentStuds != null && data.AdjacentStuds.Length > 0)
+                    {
+                        for (int j = 0; j < data.AdjacentStuds.Length; j++)
+                            culling.AdjacentStuds.Add(new Custom2DFieldReference(data.AdjacentStuds[j]));
                     }
 
                     if (data.ReplacementGeometry.HasValue)

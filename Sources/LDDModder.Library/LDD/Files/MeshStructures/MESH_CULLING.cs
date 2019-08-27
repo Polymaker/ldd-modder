@@ -13,8 +13,8 @@ namespace LDDModder.LDD.Files.MeshStructures
         public int VertexCount;
         public int FromIndex;
         public int IndexCount;
-        public MESH_STUD[] Studs;
-        public MESH_CULLING_DATA[] UnknownData;
+        public STUD_2DFIELD_REF[] Studs;
+        public STUD_2DFIELD_REF[] AdjacentStuds;
         public MESH_DATA? ReplacementGeometry;
     }
 }
