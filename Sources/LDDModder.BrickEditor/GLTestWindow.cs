@@ -24,7 +24,7 @@ namespace LDDModder.BrickEditor
 
         public GLTestWindow() : base(800,600, new GraphicsMode(GraphicsMode.Default.ColorFormat, 24,8,4))
         {
-            VSync = VSyncMode.Off;
+            VSync = VSyncMode.Adaptive;
         }
 
         private void SetupPerspective()

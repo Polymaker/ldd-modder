@@ -138,6 +138,10 @@ namespace LDDModder.Prototyping
 
             
             int meshRead = 0;
+            var maleStuds = new List<Tuple<int, int>>();
+            var femaleStuds = new List<Tuple<int, int>>();
+            var tubeStuds = new List<Tuple<int, int>>();
+            var tubeStuds2 = new List<Tuple<int, int>>();
 
             foreach (var meshFilename in Directory.EnumerateFiles(meshDirectory, "*.g*"))
             {
@@ -149,25 +153,25 @@ namespace LDDModder.Prototyping
                     using (var fs = File.OpenRead(meshFilename))
                         mesh = GFileReader.ReadMesh(fs);
 
-                    //if (mesh.CullingInfos.Count(x=>x.CullingType == MeshCullingType.MainModel) > 1)
-                    //    Trace.WriteLine("More than one type 2 variant!");
 
-                    //foreach (var variant in mesh.CullingInfos)
-                    //{
-                    //    if (variant.CullingType == MeshCullingType.Stud && variant.Studs.Length > 1)
-                    //    {
-                    //        Trace.WriteLine("Type 1 with more than one stud!");
-                    //    }
-                    //    else if (variant.CullingType == MeshCullingType.Tube)
-                    //    {
-                    //        if (variant.Studs.Length > 1)
-                    //            Trace.WriteLine("Type 8 with more than one stud!");
-                    //        if (variant.UnknownData.Count > 1)
-                    //            Trace.WriteLine("More than one unknown data!");
-                    //        if (variant.Vertices != null && variant.Vertices.Length > 0)
-                    //            Trace.WriteLine("Type 8 with vertex data!");
-                    //    }
-                    //}
+                    var studIndices1 = mesh.Cullings.Where(x => x.Type == MeshCullingType.Stud).SelectMany(x => x.Studs).SelectMany(x => x.FieldIndices)
+                        .Select(x => new Tuple<int, int>(x.Value2, x.Value4)).Distinct().ToList();
+                    var studIndices2 = mesh.Cullings.Where(x => x.Type == MeshCullingType.FemaleStud).SelectMany(x => x.Studs).SelectMany(x => x.FieldIndices)
+                        .Select(x => new Tuple<int, int>(x.Value2, x.Value4)).Distinct().ToList();
+                    var studIndices3 = mesh.Cullings.Where(x => x.Type == MeshCullingType.Tube).SelectMany(x => x.Studs).SelectMany(x => x.FieldIndices)
+                        .Select(x => new Tuple<int, int>(x.Value2, x.Value4)).Distinct().ToList();
+                    var studIndices4 = mesh.Cullings.SelectMany(x => x.AdjacentStuds).SelectMany(x => x.FieldIndices)
+                        .Select(x => new Tuple<int, int>(x.Value2, x.Value4)).Distinct().ToList();
+
+                    studIndices1.ForEach(x => { if (!maleStuds.Contains(x)) maleStuds.Add(x); });
+                    studIndices2.ForEach(x => { if (!femaleStuds.Contains(x)) femaleStuds.Add(x); });
+                    studIndices3.ForEach(x => { if (!tubeStuds.Contains(x)) tubeStuds.Add(x); });
+                    studIndices4.ForEach(x => { if (!tubeStuds2.Contains(x)) tubeStuds2.Add(x); });
+                    var test = mesh.Cullings.Where(x => x.Type == MeshCullingType.Tube && x.Studs.Any() && !x.AdjacentStuds.Any());
+                    if (test.Any() && studIndices3.Any(x=>x.Item1 == 2))
+                    {
+
+                    }
                 }
                 catch (Exception ex)
                 {

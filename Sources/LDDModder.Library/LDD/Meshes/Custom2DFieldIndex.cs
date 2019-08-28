@@ -8,9 +8,15 @@ namespace LDDModder.LDD.Meshes
 {
     public class Custom2DFieldIndex
     {
+        /// <summary>
+        /// Index (1D) of the referenced element in the Custom2DField array
+        /// </summary>
         public int Index { get; set; }
         public int Value2 { get; set; }
-        public int Value3 { get; set; }
+        /// <summary>
+        /// Always Zero
+        /// </summary>
+        public int Dummy { get; set; }
         public int Value4 { get; set; }
 
         public Custom2DFieldIndex() { }
@@ -19,7 +25,7 @@ namespace LDDModder.LDD.Meshes
         {
             Index = values[0];
             Value2 = values[1];
-            Value3 = values[2];
+            Dummy = values[2];
             Value4 = values[3];
         }
 
@@ -27,18 +33,18 @@ namespace LDDModder.LDD.Meshes
         {
             Index = studRef.ArrayIndex;
             Value2 = studRef.Value2;
-            Value3 = studRef.Value3;
+            Dummy = studRef.Value3;
             Value4 = studRef.Value4;
         }
 
         public LDD.Files.MeshStructures.STUD_2DFIELD_IDX Serialize()
         {
-            return new Files.MeshStructures.STUD_2DFIELD_IDX(Index, Value2, Value3, Value4);
+            return new Files.MeshStructures.STUD_2DFIELD_IDX(Index, Value2, Dummy, Value4);
         }
 
         public override string ToString()
         {
-            return $"{Index}; {Value2}; {Value3}; {Value4}";
+            return $"{Index}; {Value2}; {Dummy}; {Value4}";
         }
     }
 }
