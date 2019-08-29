@@ -252,7 +252,7 @@ namespace LDDModder.LDD.Files
 
         #region Convertion from File format structure to Object oriented structure
 
-        public static Mesh ReadMesh(Stream stream)
+        public static MeshFile ReadMesh(Stream stream)
         {
             try
             {
@@ -265,7 +265,7 @@ namespace LDDModder.LDD.Files
 
                 SetShaderData(meshFile, meshFile.Geometry, mainMesh);
 
-                var mesh = new Mesh(meshFile, (MeshType)meshFile.Header.MeshType);
+                var mesh = new MeshFile(meshFile, (MeshType)meshFile.Header.MeshType);
                 mesh.SetGeometry(mainMesh);
 
                 for (int i = 0; i < meshFile.Culling.Length; i++)

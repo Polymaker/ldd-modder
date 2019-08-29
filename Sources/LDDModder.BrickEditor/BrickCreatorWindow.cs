@@ -1,4 +1,5 @@
 ﻿using LDDModder.LDD.Data;
+using LDDModder.LDD.Files;
 using LDDModder.LDD.Meshes;
 using LDDModder.LDD.Primitives;
 using System;
@@ -180,6 +181,7 @@ namespace LDDModder.BrickEditor
                     int currentDecID = 1;
                     if (BrickMeshes.Any(x => x.DecorationID.HasValue))
                         currentDecID = BrickMeshes.Where(x => x.DecorationID.HasValue).Max(x => x.DecorationID.Value) + 1;
+
                     foreach (var mesh in scene.Meshes)
                     {
                         var brickMesh = new BrickMeshObject()
@@ -301,7 +303,7 @@ namespace LDDModder.BrickEditor
             }
         }
 
-        private Mesh CreatePartialMesh(IEnumerable<BrickMeshObject> brickMeshes)
+        private MeshFile CreatePartialMesh(IEnumerable<BrickMeshObject> brickMeshes)
         {
             var builder = new GeometryBuilder();
             foreach (var brickMesh in brickMeshes)
@@ -328,7 +330,7 @@ namespace LDDModder.BrickEditor
                 }
             }
 
-            return new Mesh(builder.GetGeometry());
+            return new MeshFile(builder.GetGeometry());
         }
 
         private bool ValidateBrick()

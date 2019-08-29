@@ -22,6 +22,9 @@ namespace LDDModder.BrickEditor.Rendering
         [VertexAttrib(2, VertexAttribPointerType.Float)]
         public VertexAttrib InTexCoord { get; protected set; }
 
+        public Uniform<Vector3> LightPosition { get; protected set; }
+        public Uniform<Matrix4> ModelMatrix { get; protected set; }
+        public Uniform<Matrix4> ViewMatrix { get; protected set; }
         public Uniform<Matrix4> ModelViewProjectionMatrix { get; protected set; }
         public Uniform<Vector4> MaterialColor { get; protected set; }
         public Uniform<bool> DisplayWireframe { get; protected set; }

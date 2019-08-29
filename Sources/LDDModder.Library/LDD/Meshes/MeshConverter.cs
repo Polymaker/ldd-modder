@@ -1,4 +1,5 @@
 ﻿using Assimp;
+using LDDModder.LDD.Files;
 using LDDModder.Simple3D;
 using LDDModder.Utilities;
 using System;
@@ -11,7 +12,7 @@ namespace LDDModder.LDD.Meshes
 {
     public static class MeshConverter
     {
-        public static Mesh ConvertToLDD(Scene scene)
+        public static MeshFile ConvertToLDD(Scene scene)
         {
             foreach (var m in scene.Meshes)
             {
@@ -23,7 +24,7 @@ namespace LDDModder.LDD.Meshes
             return null;
         }
 
-        public static Mesh ConvertToLDD(Assimp.Mesh mesh, bool removeUVs = false)
+        public static MeshFile ConvertToLDD(Assimp.Mesh mesh, bool removeUVs = false)
         {
             List<Vector3D> verts = mesh.Vertices;
             List<Vector3D> norms = (mesh.HasNormals) ? mesh.Normals : null;
@@ -67,10 +68,10 @@ namespace LDDModder.LDD.Meshes
             }
 
             geom.SimplifyVertices();
-            return new Mesh(geom);
+            return new MeshFile(geom);
         }
 
-        public static Assimp.Mesh ConvertFromLDD(Mesh lddMesh)
+        public static Assimp.Mesh ConvertFromLDD(MeshFile lddMesh)
         {
             return ConvertFromLDD(lddMesh.Geometry);
         }

@@ -147,7 +147,7 @@ namespace LDDModder.Prototyping
             {
                 Console.WriteLine("Reading file " + Path.GetFileName(meshFilename));
 
-                Mesh mesh = null;
+                MeshFile mesh = null;
                 try
                 {
                     using (var fs = File.OpenRead(meshFilename))

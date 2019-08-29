@@ -1,4 +1,5 @@
 ﻿using LDDModder.LDD.Files.MeshStructures;
+using LDDModder.LDD.Meshes;
 using LDDModder.Simple3D;
 using System;
 using System.Collections.Generic;
@@ -7,9 +8,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LDDModder.LDD.Meshes
+namespace LDDModder.LDD.Files
 {
-    public class Mesh
+    public class MeshFile
     {
         public MESH_FILE? OriginalData { get; }
 
@@ -35,20 +36,20 @@ namespace LDDModder.LDD.Meshes
 
         public bool IsFlexible => Geometry.IsFlexible;
 
-        internal Mesh(MESH_FILE originalData, MeshType type)
+        internal MeshFile(MESH_FILE originalData, MeshType type)
         {
             OriginalData = originalData;
             Type = type;
             Cullings = new List<MeshCulling>();
         }
 
-        public Mesh(MeshType type)
+        public MeshFile(MeshType type)
         {
             Type = type;
             Cullings = new List<MeshCulling>();
         }
 
-        public Mesh(MeshGeometry geometry)
+        public MeshFile(MeshGeometry geometry)
         {
             bool isTextured = geometry.Vertices.Any(x => !x.TexCoord.IsEmpty);
             bool isFlexible = geometry.Vertices.Any(x => x.BoneWeights.Any());
@@ -80,7 +81,7 @@ namespace LDDModder.LDD.Meshes
             return Geometry.Indices.Select(x => x.RoundEdgeData).Concat(extra);
         }
 
-        public static Mesh Read(string filename)
+        public static MeshFile Read(string filename)
         {
             using (var fs = File.OpenRead(filename))
                 return Files.GFileReader.ReadMesh(fs);
@@ -99,7 +100,7 @@ namespace LDDModder.LDD.Meshes
                     v = v.Clone();
                 //geom.AddVertex(v, false);
                 builder.AddVertex(v, false);
-                vertMatch.Add(i + culling.FromVertex, i);
+                vertMatch.Add(culling.FromVertex + i, i);
             }
 
             var triIdx = Geometry.GetTriangleIndices();
@@ -108,14 +109,15 @@ namespace LDDModder.LDD.Meshes
                 int idx1 = triIdx[i + culling.FromIndex];
                 int idx2 = triIdx[i + 1 + culling.FromIndex];
                 int idx3 = triIdx[i + 2 + culling.FromIndex];
-                idx1 = vertMatch[idx1];
-                idx2 = vertMatch[idx2];
-                idx3 = vertMatch[idx3];
-                builder.AddTriangle(vertMatch[idx1], vertMatch[idx2], vertMatch[idx3]);
+                //idx1 = vertMatch[idx1];
+                //idx2 = vertMatch[idx2];
+                //idx3 = vertMatch[idx3];
+                builder.AddTriangle(idx1 - culling.FromVertex, idx2 - culling.FromVertex, idx3 - culling.FromVertex);
                 //geom.AddTriangle2(geom.Vertices[idx1], geom.Vertices[idx2], geom.Vertices[idx3]);
             }
             return builder.GetGeometry();
             //return geom;
         }
+
     }
 }

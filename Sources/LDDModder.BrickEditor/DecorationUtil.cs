@@ -12,12 +12,13 @@ using System.Windows.Forms;
 using OpenTK.Graphics.OpenGL;
 using OpenTK;
 using ObjectTK.Tools.Cameras;
+using LDDModder.LDD.Files;
 
 namespace LDDModder.BrickEditor
 {
     public partial class DecorationUtil : Form
     {
-        private Mesh CurrentMesh;
+        private MeshFile CurrentMesh;
         private bool GLInitialized;
         private Matrix4 ModelView;
         private Matrix4 Projection;
@@ -59,7 +60,7 @@ namespace LDDModder.BrickEditor
         {
             try
             {
-                var mesh = Mesh.Read(filename);
+                var mesh = MeshFile.Read(filename);
                 CurrentMesh = mesh;
                 ReloadTriangleList();
                 SetupModelView();

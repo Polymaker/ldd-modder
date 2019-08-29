@@ -1,9 +1,11 @@
-﻿using LDDModder.Simple3D;
+﻿using LDDModder.IO;
+using LDDModder.Simple3D;
 using LDDModder.Utilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -239,6 +241,148 @@ namespace LDDModder.LDD.Meshes
                 geom.Indices[i].RoundEdgeData = new RoundEdgeData(Indices[i].RoundEdgeData.Coords);
             }
 
+            return geom;
+        }
+
+        public void Save(Stream stream)
+        {
+            using (var bw = new BinaryWriterEx(stream))
+            {
+                void WriteVector2(Vector2 v)
+                {
+                    bw.WriteSingle(v.X);
+                    bw.WriteSingle(v.Y);
+                }
+                void WriteVector3(Vector3 v)
+                {
+                    bw.WriteSingle(v.X);
+                    bw.WriteSingle(v.Y);
+                    bw.WriteSingle(v.Z);
+                }
+
+                bw.Write(VertexCount);
+                bw.Write(IndexCount);
+                bw.Write(IsTextured);
+                bw.Write(IsFlexible);
+
+                for (int i = 0; i < VertexCount; i++)
+                    WriteVector3(Vertices[i].Position);
+
+                for (int i = 0; i < VertexCount; i++)
+                    WriteVector3(Vertices[i].Normal);
+
+                if (IsTextured)
+                {
+                    for (int i = 0; i < VertexCount; i++)
+                        WriteVector2(Vertices[i].TexCoord);
+                }
+
+                int[] triIndices = GetTriangleIndices();
+                bw.WriteArray(triIndices);
+
+                for (int i = 0; i < triIndices.Length; i++)
+                    WriteVector3(Indices[i].AverageNormal);
+
+                for (int i = 0; i < triIndices.Length; i++)
+                {
+                    for (int j = 0; j < 6; j++)
+                        WriteVector2(Indices[i].RoundEdgeData.Coords[j]);
+                }
+
+                if (IsFlexible)
+                {
+                    for (int i = 0; i < VertexCount; i++)
+                    {
+                        bw.Write(Vertices[i].BoneWeights.Count);
+                        for (int j = 0; j < Vertices[i].BoneWeights.Count; j++)
+                        {
+                            bw.Write(Vertices[i].BoneWeights[j].BoneID);
+                            bw.Write(Vertices[i].BoneWeights[j].Weight);
+                        }
+                    }
+                }
+            }
+        }
+
+        public static MeshGeometry FromStream(Stream stream)
+        {
+            var geom = new MeshGeometry();
+            using(var br = new BinaryReaderEx(stream))
+            {
+                int vertCount = br.ReadInt32();
+                int idxCount = br.ReadInt32();
+                bool isTexured = br.ReadBoolean();
+                bool isFlexible = br.ReadBoolean();
+
+                var positions = new List<Vector3>();
+                var normals = new List<Vector3>();
+                var texCoords = new List<Vector2>();
+
+                for (int i = 0; i < vertCount; i++)
+                    positions.Add(new Vector3(br.ReadSingles(3)));
+
+                for (int i = 0; i < vertCount; i++)
+                    normals.Add(new Vector3(br.ReadSingles(3)));
+
+                if (isTexured)
+                {
+                    for (int i = 0; i < vertCount; i++)
+                        texCoords.Add(new Vector2(br.ReadSingles(2)));
+                }
+
+                var verts = new List<Vertex>();
+                for (int i = 0; i < vertCount; i++)
+                {
+                    verts.Add(new Vertex(
+                        positions[i],
+                        normals[i],
+                        isTexured ? texCoords[i] : Vector2.Empty
+                        ));
+                }
+
+                var triIndices = new List<int>();
+                var avgNormals = new List<Vector3>();
+                var reCoords = new List<RoundEdgeData>();
+
+                for (int i = 0; i < idxCount; i++)
+                    triIndices.Add(br.ReadInt32());
+
+                for (int i = 0; i < idxCount; i++)
+                    avgNormals.Add(new Vector3(br.ReadSingles(3)));
+
+                for (int i = 0; i < idxCount; i++)
+                    reCoords.Add(new RoundEdgeData(br.ReadSingles(12)));
+
+                var triangles = new List<Triangle>();
+
+                for (int i = 0; i < idxCount; i += 3)
+                {
+                    var tri = new Triangle(
+                        verts[triIndices[i]],
+                        verts[triIndices[i + 1]],
+                        verts[triIndices[i + 2]]);
+                    triangles.Add(tri);
+
+                    for (int j = 0; j < 3; j++)
+                    {
+                        tri.Indices[j].AverageNormal = avgNormals[i + j];
+                        tri.Indices[j].RoundEdgeData = reCoords[i + j];
+                    }
+                }
+
+                if (isFlexible)
+                {
+                    for (int i = 0; i < vertCount; i++)
+                    {
+                        int boneCount = br.ReadInt32();
+                        for (int j = 0; j < boneCount; j++)
+                            verts[i].BoneWeights.Add(new BoneWeight(br.ReadInt32(), br.ReadSingle()));
+                    }
+                }
+
+                geom.SetVertices(verts);
+                geom.SetTriangles(triangles);
+            }
             return geom;
         }
     }

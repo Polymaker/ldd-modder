@@ -14,7 +14,7 @@ namespace LDDModder.LDD.Files
 {
     public class GFileWriter
     {
-        public static void WriteMesh(Stream stream, Mesh mesh)
+        public static void WriteMesh(Stream stream, MeshFile mesh)
         {
             try
             {
@@ -270,7 +270,7 @@ namespace LDDModder.LDD.Files
             }
         }
 
-        private static MESH_FILE BuildMeshFile(Mesh mesh)
+        private static MESH_FILE BuildMeshFile(MeshFile mesh)
         {
             var file = new MESH_FILE
             {

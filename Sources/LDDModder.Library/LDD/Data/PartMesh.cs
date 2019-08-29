@@ -13,12 +13,12 @@ namespace LDDModder.LDD.Data
 {
     public class PartMesh
     {
-        public Mesh MainModel { get; set; }
-        public List<Mesh> DecorationMeshes { get; } = new List<Mesh>();
+        public MeshFile MainModel { get; set; }
+        public List<MeshFile> DecorationMeshes { get; } = new List<MeshFile>();
         
         public Primitive Info { get; set; }
 
-        public IEnumerable<Mesh> AllMeshes => new Mesh[] { MainModel }.Concat(DecorationMeshes);
+        public IEnumerable<MeshFile> AllMeshes => new MeshFile[] { MainModel }.Concat(DecorationMeshes);
 
         public PartMesh()
         {
@@ -44,7 +44,7 @@ namespace LDDModder.LDD.Data
 
             foreach (string meshFile in Directory.GetFiles(meshesPath, $"{partID}.g*"))
             {
-                var mesh = Mesh.Read(meshFile);
+                var mesh = MeshFile.Read(meshFile);
                 if (meshFile.ToLower().EndsWith("g"))
                     meshInfo.MainModel = mesh;
                 else
