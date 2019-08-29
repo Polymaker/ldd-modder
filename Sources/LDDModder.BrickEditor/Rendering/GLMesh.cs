@@ -128,8 +128,8 @@ namespace LDDModder.BrickEditor.Rendering
             {
                 mesh.Vertices.Add(new VertVN()
                 {
-                    Position = new Vector3(v.Position.X, v.Position.Y, v.Position.Z),
-                    Normal = new Vector3(v.Normal.X, v.Normal.Y, v.Normal.Z)
+                    Position = v.Position.ToGL(),
+                    Normal = v.Normal.ToGL()
                 });
             }
             mesh.Indices.AddRange(geometry.GetTriangleIndices());
