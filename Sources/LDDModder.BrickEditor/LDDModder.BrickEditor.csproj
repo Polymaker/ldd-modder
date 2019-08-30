@@ -101,6 +101,7 @@
     <Compile Include="UI\Windows\BrickEditorWindow.Designer.cs">
       <DependentUpon>BrickEditorWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="Utilities\Converter.cs" />
     <EmbeddedResource Include="BrickCreatorWindow.resx">
       <DependentUpon>BrickCreatorWindow.cs</DependentUpon>
     </EmbeddedResource>
@@ -155,7 +156,6 @@
   <ItemGroup>
     <Folder Include="UI\Controls\" />
     <Folder Include="UI\Panels\" />
-    <Folder Include="Utilities\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\AssimpNet.4.1.0\build\AssimpNet.targets" Condition="Exists('..\packages\AssimpNet.4.1.0\build\AssimpNet.targets')" />

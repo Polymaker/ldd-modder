@@ -117,6 +117,7 @@ namespace LDDModder.BrickEditor.Rendering
         {
             if (Disposed)
                 throw new ObjectDisposedException(GetType().Name);
+
             Vao.Bind();
             Vao.DrawElements(PrimitiveType.Triangles, IndexBuffer.ElementCount);
         }
