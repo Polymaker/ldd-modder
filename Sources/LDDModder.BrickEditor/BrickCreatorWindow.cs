@@ -1,4 +1,5 @@
 ﻿using LDDModder.LDD.Data;
+using LDDModder.LDD.Files;
 using LDDModder.LDD.Meshes;
 using LDDModder.LDD.Primitives;
 using System;
@@ -303,7 +304,7 @@ namespace LDDModder.BrickEditor
             }
         }
 
-        private Mesh CreatePartialMesh(IEnumerable<BrickMeshObject> brickMeshes)
+        private MeshFile CreatePartialMesh(IEnumerable<BrickMeshObject> brickMeshes)
         {
             var builder = new GeometryBuilder();
             foreach (var brickMesh in brickMeshes)
@@ -330,7 +331,7 @@ namespace LDDModder.BrickEditor
                 }
             }
 
-            return new Mesh(builder.GetGeometry());
+            return new MeshFile(builder.GetGeometry());
         }
 
         private bool ValidateBrick()

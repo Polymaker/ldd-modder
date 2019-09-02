@@ -77,7 +77,7 @@
     <Compile Include="LDD\Meshes\Custom2DFieldIndex.cs" />
     <Compile Include="LDD\Meshes\Edge.cs" />
     <Compile Include="LDD\Meshes\GeometryBuilder.cs" />
-    <Compile Include="LDD\Meshes\Mesh.cs" />
+    <Compile Include="LDD\Files\MeshFile.cs" />
     <Compile Include="LDD\Meshes\MeshConverter.cs" />
     <Compile Include="LDD\Meshes\MeshCulling.cs" />
     <Compile Include="LDD\Meshes\MeshGeometry.cs" />

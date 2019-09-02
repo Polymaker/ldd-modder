@@ -335,6 +335,12 @@ namespace LDDModder.IO
 
         #endregion
 
+        public void WriteArray(int[] array)
+        {
+            for (int i = 0; i < array.Length; i++)
+                Write(array[i]);
+        }
+
         #region Struct writing
 
         public void WriteStruct<T>(T item) where T : struct

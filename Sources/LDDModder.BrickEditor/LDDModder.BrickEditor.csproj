@@ -101,6 +101,7 @@
     <Compile Include="UI\Windows\BrickEditorWindow.Designer.cs">
       <DependentUpon>BrickEditorWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="Utilities\Converter.cs" />
     <EmbeddedResource Include="BrickCreatorWindow.resx">
       <DependentUpon>BrickCreatorWindow.cs</DependentUpon>
     </EmbeddedResource>

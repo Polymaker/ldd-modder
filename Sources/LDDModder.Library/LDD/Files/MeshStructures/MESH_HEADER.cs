@@ -32,7 +32,7 @@ namespace LDDModder.LDD.Files.MeshStructures
             return Create(meshGeometry.GetMeshType(), meshGeometry.Vertices.Count, meshGeometry.Indices.Count);
         }
 
-        public static MESH_HEADER Create(Meshes.Mesh mesh)
+        public static MESH_HEADER Create(Files.MeshFile mesh)
         {
             return Create(mesh.Geometry);
         }

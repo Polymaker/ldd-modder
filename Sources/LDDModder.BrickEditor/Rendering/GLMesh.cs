@@ -13,6 +13,9 @@ namespace LDDModder.BrickEditor.Rendering
     {
         public VertexArray Vao { get; private set; }
 
+        public Matrix4 Transform { get; set; }
+        public Vector4 Color { get; set; }
+
         public Buffer<VertVN> VertexBuffer { get; private set; }
         public Buffer<int> IndexBuffer { get; private set; }
 
@@ -28,6 +31,7 @@ namespace LDDModder.BrickEditor.Rendering
             Vao = new VertexArray();
             Vertices = new List<VertVN>();
             Indices = new List<int>();
+            Transform = Matrix4.Identity;
         }
 
         ~GLMesh()
@@ -41,17 +45,12 @@ namespace LDDModder.BrickEditor.Rendering
             if (Disposed)
                 throw new ObjectDisposedException(GetType().Name);
 
-            if (IndexBuffer != null)
-                Vao.UnbindElementBuffer();
-
             DisposeBuffers();
 
             VertexBuffer = new Buffer<VertVN>();
             VertexBuffer.Init(BufferTarget.ArrayBuffer, Vertices.ToArray());
-            
             IndexBuffer = new Buffer<int>();
             IndexBuffer.Init(BufferTarget.ElementArrayBuffer, Indices.ToArray());
-
         }
 
         public void BindToShader(BasicShaderProgram program)
@@ -79,6 +78,8 @@ namespace LDDModder.BrickEditor.Rendering
 
         private void DisposeBuffers()
         {
+            Vao.Bind();
+
             if (IndexBuffer != null)
             {
                 Vao.UnbindElementBuffer();
@@ -117,7 +118,24 @@ namespace LDDModder.BrickEditor.Rendering
             if (Disposed)
                 throw new ObjectDisposedException(GetType().Name);
 
+            Vao.Bind();
             Vao.DrawElements(PrimitiveType.Triangles, IndexBuffer.ElementCount);
+        }
+
+        public static GLMesh FromGeometry(LDD.Meshes.MeshGeometry geometry)
+        {
+            var mesh = new GLMesh();
+            foreach (var v in geometry.Vertices)
+            {
+                mesh.Vertices.Add(new VertVN()
+                {
+                    Position = v.Position.ToGL(),
+                    Normal = v.Normal.ToGL()
+                });
+            }
+            mesh.Indices.AddRange(geometry.GetTriangleIndices());
+            mesh.UpdateBuffers();
+            return mesh;
         }
     }
 }

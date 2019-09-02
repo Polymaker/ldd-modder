@@ -108,7 +108,7 @@ namespace LDDModder.Utilities
             importer.ExportFile(scene, filename, formatID, PostProcessSteps.ValidateDataStructure);
         }
 
-        private static Node CreateMeshNode(Scene scene, PartMesh part, LDD.Meshes.Mesh lddMesh, string name)
+        private static Node CreateMeshNode(Scene scene, PartMesh part, LDD.Files.MeshFile lddMesh, string name)
         {
             var meshNode = new Node() { Name = name };
             var aMesh = LDD.Meshes.MeshConverter.ConvertFromLDD(lddMesh);
