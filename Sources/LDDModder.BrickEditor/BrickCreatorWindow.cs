@@ -145,7 +145,7 @@ namespace LDDModder.BrickEditor
         {
             using(var ofd = new OpenFileDialog())
             {
-                ofd.Filter = "Mesh files (*.dae, *.obj)|*.dae;*.obj|Wavefront (*.obj)|*.obj|Collada (*.dae)|*.dae|All files (*.*)|*.*";
+                ofd.Filter = "Mesh files (*.dae, *.obj, *.stl)|*.dae;*.obj;*.stl|Wavefront (*.obj)|*.obj|Collada (*.dae)|*.dae|STL (*.stl)|*.stl|All files (*.*)|*.*";
                 if (ofd.ShowDialog() == DialogResult.OK)
                     ImportModel(ofd.FileName);
             }
@@ -180,6 +180,7 @@ namespace LDDModder.BrickEditor
                     int currentDecID = 1;
                     if (BrickMeshes.Any(x => x.DecorationID.HasValue))
                         currentDecID = BrickMeshes.Where(x => x.DecorationID.HasValue).Max(x => x.DecorationID.Value) + 1;
+
                     foreach (var mesh in scene.Meshes)
                     {
                         var brickMesh = new BrickMeshObject()
@@ -201,9 +202,10 @@ namespace LDDModder.BrickEditor
                     }
                 }
             }
-            catch
+            catch(Exception ex)
             {
-                MessageBox.Show("There was a problem importing the mesh");
+                MessageBox.Show("There was a problem importing the mesh.\r\nCheck 'error.log' file for details.");
+                WriteErrorLog($"Error loading mesh file '{filename}':\r\n{ex.ToString()}");
             }
 
             HideProgressDelayed();
@@ -388,6 +390,15 @@ namespace LDDModder.BrickEditor
         private void PlatformCombo_SelectedIndexChanged(object sender, EventArgs e)
         {
             FilterGroupComboBox();
+        }
+
+        private void WriteErrorLog(string message)
+        {
+            using (var fs = File.Open("error.log", FileMode.Append))
+            using (var sw = new StreamWriter(fs))
+            {
+                sw.WriteLine(message);
+            }
         }
     }
 }
