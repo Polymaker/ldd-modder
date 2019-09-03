@@ -86,7 +86,7 @@ namespace LDDModder.LDD.Primitives
                 annotations.Add(new XElement("Annotation", new XAttribute(extra.Key, extra.Value)));
 
             if (Collisions.Any())
-                rootElem.Add(new XElement("Collisions", Collisions.Select(x => x.SerializeToXml())));
+                rootElem.Add(new XElement("Collision", Collisions.Select(x => x.SerializeToXml())));
 
             if (Connectors.Any())
                 rootElem.Add(new XElement("Connectivity", Connectors.Select(x => x.SerializeToXml())));
@@ -121,6 +121,13 @@ namespace LDDModder.LDD.Primitives
 
             if (DefaultCamera != null)
                 rootElem.Add(XmlHelper.DefaultSerialize(DefaultCamera, "DefaultCamera"));
+
+            foreach (var elem in rootElem.Descendants("Custom2DField"))
+            {
+                int depth = elem.AncestorsAndSelf().Count();
+                elem.Value = elem.Value.Indent(depth, "  ");
+                elem.Value += StringExtensions.Tab(depth - 1, "  "); //fixes the closing tag indentation
+            }
 
             if (ExtraElements != null)
             {
@@ -158,6 +165,7 @@ namespace LDDModder.LDD.Primitives
         private void LoadFromXml(XDocument document)
         {
             var rootElem = document.Root;
+
             if (rootElem.Name != "LEGOPrimitive")
                 throw new InvalidDataException();
 
@@ -279,8 +287,11 @@ namespace LDDModder.LDD.Primitives
 
         public void Save(string filename)
         {
-            var xml = SerializeToXml();
-            xml.Save(filename);
+            var doc = new XDocument(SerializeToXml())
+            {
+                Declaration = new XDeclaration("1.0", "UTF-8", "no")
+            };
+            doc.Save(filename);
         }
     }
 }
