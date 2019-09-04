@@ -1,4 +1,5 @@
-﻿using LDDModder.LDD.Data;
+﻿using LDDModder.BrickEditor.Editing;
+using LDDModder.LDD.Data;
 using LDDModder.LDD.Files;
 using LDDModder.LDD.Meshes;
 using LDDModder.LDD.Primitives;
@@ -36,6 +37,10 @@ namespace LDDModder.BrickEditor
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+
+            string meshDir = Environment.ExpandEnvironmentVariables(@"%appdata%\LEGO Company\LEGO Digital Designer\db\");
+            var project = PartProject.CreateFromLdd(meshDir, 3020);
+            project.Save("3020.lpp");
             InitializeData();
             InitializeUI();
         }

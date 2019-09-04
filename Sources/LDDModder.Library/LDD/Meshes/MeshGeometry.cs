@@ -246,7 +246,7 @@ namespace LDDModder.LDD.Meshes
 
         public void Save(Stream stream)
         {
-            using (var bw = new BinaryWriterEx(stream))
+            using (var bw = new BinaryWriterEx(stream, true))
             {
                 void WriteVector2(Vector2 v)
                 {

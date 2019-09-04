@@ -62,6 +62,7 @@ namespace LDDModder.BrickEditor.Rendering
             Vao.BindAttribute(program.InPosition, VertexBuffer);
             Vao.BindAttribute(program.InNormal, VertexBuffer, 12);
             Vao.BindElementBuffer(IndexBuffer);
+            
         }
 
         //public void BindToShader(TexturedShaderProgram program)

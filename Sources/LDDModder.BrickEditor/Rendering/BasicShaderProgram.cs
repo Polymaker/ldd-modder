@@ -9,7 +9,7 @@ namespace LDDModder.BrickEditor.Rendering
     [VertexShaderSource("BasicShader.Vertex")]
     [GeometryShaderSource("BasicShader.Geometry")]
     [FragmentShaderSource("BasicShader.Fragment")]
-    public class BasicShaderProgram : ObjectTK.Shaders.Program
+    public class BasicShaderProgram : ObjectTK.Shaders.Program, IMeshShaderProgram
     {
         [VertexAttrib(3, VertexAttribPointerType.Float)]
         public VertexAttrib InPosition { get; protected set; }

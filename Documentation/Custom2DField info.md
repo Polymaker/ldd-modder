@@ -119,7 +119,7 @@ Conn. type  | Gender | Description
  15:4:33    |        | 
  15:4:34    |        | 
  15:4:64    |        | 
- 15:4:96    |        | Used for holes where a stud fit be is not primarily made for that (e.g. a tool wrench or a towball hook's)
+ 15:4:96    |        | Used for holes where a stud fit but is not primarily made for that (e.g. a tool wrench or a towball hook's)
 ——————— | —————— |———————————————————————————————————
 **TYPE 16** | Female |
  16:4:64    |        | 

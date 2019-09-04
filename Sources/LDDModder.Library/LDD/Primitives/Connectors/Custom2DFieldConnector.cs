@@ -124,7 +124,6 @@ namespace LDDModder.LDD.Primitives.Connectors
         {
             element.Add(new XAttribute("width", Width));
             element.Add(new XAttribute("height", Height));
-            var values = new List<string>();
             string content = string.Empty;
             for (int y = 0; y <= Height; y++)
             {

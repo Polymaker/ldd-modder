@@ -38,6 +38,9 @@
     <Reference Include="AssimpNet, Version=4.1.0.0, Culture=neutral, PublicKeyToken=0d51b391f59f42a6, processorArchitecture=MSIL">
       <HintPath>..\packages\AssimpNet.4.1.0\lib\net40\AssimpNet.dll</HintPath>
     </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=1.2.0.246, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpZipLib.1.2.0\lib\net45\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
     <Reference Include="ObjectTK">
       <HintPath>..\References\ObjectTK.dll</HintPath>
     </Reference>
@@ -81,7 +84,16 @@
     <Compile Include="DecorationUtil.Designer.cs">
       <DependentUpon>DecorationUtil.cs</DependentUpon>
     </Compile>
+    <Compile Include="Editing\CollisionNode.cs" />
+    <Compile Include="Editing\ConnectionNode.cs" />
+    <Compile Include="Editing\INodeOwner.cs" />
     <Compile Include="Editing\IPartHierarchyNode.cs" />
+    <Compile Include="Editing\ModelMeshNode.cs" />
+    <Compile Include="Editing\PartModelNode.cs" />
+    <Compile Include="Editing\PartNode.cs" />
+    <Compile Include="Editing\PartNodeCollection.cs" />
+    <Compile Include="Editing\PartProject.cs" />
+    <Compile Include="Editing\RootNode.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -93,6 +105,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rendering\BasicShaderProgram.cs" />
     <Compile Include="Rendering\GLMesh.cs" />
+    <Compile Include="Rendering\GLMeshBase.cs" />
+    <Compile Include="Rendering\GLSimpleMesh.cs" />
+    <Compile Include="Rendering\GLTexturedMesh.cs" />
+    <Compile Include="Rendering\IMeshShaderProgram.cs" />
     <Compile Include="Rendering\TexturedShaderProgram.cs" />
     <Compile Include="Rendering\Vertices.cs" />
     <Compile Include="UI\Windows\BrickEditorWindow.cs">

@@ -7,13 +7,14 @@ using System.Text;
 using System.Threading.Tasks;
 using OpenTK.Graphics.OpenGL;
 using ObjectTK.Shaders.Sources;
+using ObjectTK.Textures;
 
 namespace LDDModder.BrickEditor.Rendering
 {
     [VertexShaderSource("TexturedShader.Vertex")]
     [GeometryShaderSource("TexturedShader.Geometry")]
     [FragmentShaderSource("TexturedShader.Fragment")]
-    public class TexturedShaderProgram : ObjectTK.Shaders.Program
+    public class TexturedShaderProgram : ObjectTK.Shaders.Program, IMeshShaderProgram
     {
         [VertexAttrib(3, VertexAttribPointerType.Float)]
         public VertexAttrib InPosition { get; protected set; }
@@ -27,6 +28,8 @@ namespace LDDModder.BrickEditor.Rendering
         public Uniform<Matrix4> ViewMatrix { get; protected set; }
         public Uniform<Matrix4> ModelViewProjectionMatrix { get; protected set; }
         public Uniform<Vector4> MaterialColor { get; protected set; }
+        public TextureUniform<Texture2D> Texture { get; protected set; }
+
         public Uniform<bool> DisplayWireframe { get; protected set; }
     }
 }
