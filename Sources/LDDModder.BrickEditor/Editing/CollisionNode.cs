@@ -23,7 +23,8 @@ namespace LDDModder.BrickEditor.Editing
         {
             var node = new CollisionNode()
             {
-                Collision = collision
+                Collision = collision,
+                Name = $"{collision.CollisionType} Collision"
             };
             node.GenerateID();
             return node;

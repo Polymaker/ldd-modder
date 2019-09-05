@@ -11,6 +11,8 @@ namespace LDDModder.BrickEditor.Editing
     {
         public string ID { get; set; }
 
+        public string Name { get; set; }
+
         public PartNode Parent { get; set; }
 
         public RootNode Root
@@ -25,7 +27,7 @@ namespace LDDModder.BrickEditor.Editing
             }
         }
 
-        public PartProject Project => Root?.Project;
+        public virtual PartProject Project => Root?.Project;
 
         public PartNodeCollection Nodes { get; }
 
@@ -64,7 +66,9 @@ namespace LDDModder.BrickEditor.Editing
 
         public virtual XElement SerializeToXml()
         {
-            return new XElement("Node", new XAttribute("ID", ID));
+            return new XElement("Node",
+                new XAttribute("ID", ID),
+                new XAttribute("Name", Name ?? string.Empty));
         }
 
         public virtual XElement SerializeHierarchy()

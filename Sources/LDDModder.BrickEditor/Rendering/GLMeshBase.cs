@@ -11,7 +11,58 @@ using System.Threading.Tasks;
 
 namespace LDDModder.BrickEditor.Rendering
 {
-    public abstract class GLMeshBase<VT> : IDisposable where VT : struct
+    public abstract class GLMeshBase
+    {
+        public abstract void Draw();
+
+        public abstract void AssignShaderValues();
+
+        public static GLMeshBase CreateFromGeometry(LDD.Meshes.MeshGeometry geometry)
+        {
+            int[] triIndices = geometry.GetTriangleIndices();
+
+            if (geometry.IsTextured)
+            {
+                
+                var verts = new List<VertVNT>();
+                foreach (var v in geometry.Vertices)
+                {
+                    verts.Add(new VertVNT()
+                    {
+                        Position = v.Position.ToGL(),
+                        Normal = v.Normal.ToGL(),
+                        TexCoord = v.TexCoord.ToGL()
+                    });
+                }
+
+                var mesh = new GLTexturedMesh();
+                mesh.UpdateVertices(triIndices, verts);
+
+                return mesh;
+            }
+            else
+            {
+                var verts = new List<VertVN>();
+                foreach (var v in geometry.Vertices)
+                {
+                    verts.Add(new VertVN()
+                    {
+                        Position = v.Position.ToGL(),
+                        Normal = v.Normal.ToGL()
+                    });
+                }
+
+                var mesh = new GLSimpleMesh();
+                mesh.UpdateVertices(triIndices, verts);
+
+                return mesh;
+            }
+        }
+
+        public abstract void BindToProgram(ObjectTK.Shaders.Program program);
+    }
+
+    public abstract class GLMeshBase<VT> : GLMeshBase, IDisposable where VT : struct
     {
         public VertexArray Vao { get; protected set; }
 
@@ -98,16 +149,25 @@ namespace LDDModder.BrickEditor.Rendering
         public void BindVertexAttribute(VertexAttrib attrib, int offset = 0)
         {
             BoundAttributes.Add(new Tuple<VertexAttrib, int>(attrib, offset));
-            if (VertexBuffer != null)
+            if (VertexBuffer != null && Vao != null)
                 Vao.BindAttribute(attrib, VertexBuffer, offset);
         }
 
-        protected void BindToProgram(ObjectTK.Shaders.Program program)
+        public override void BindToProgram(ObjectTK.Shaders.Program program)
         {
             if (BoundProgram != null)
                 UnbindProgram();
-
+            
             BoundProgram = program;
+
+            Vao.Bind();
+            BindShaderAttributes(program);
+            Vao.BindElementBuffer(IndexBuffer);
+        }
+
+        protected virtual void BindShaderAttributes(ObjectTK.Shaders.Program program)
+        {
+
         }
 
         public void Dispose()
@@ -124,8 +184,12 @@ namespace LDDModder.BrickEditor.Rendering
             GC.SuppressFinalize(this);
         }
 
+        public override void AssignShaderValues()
+        {
+            SetProgramUniforms();
+        }
 
-        public virtual void AssignShaderValues()
+        protected virtual void SetProgramUniforms()
         {
             if (BoundProgram is IMeshShaderProgram program)
             {
@@ -140,7 +204,7 @@ namespace LDDModder.BrickEditor.Rendering
 
         }
 
-        public void Draw()
+        public override void Draw()
         {
             if (Disposed)
                 throw new ObjectDisposedException(GetType().Name);

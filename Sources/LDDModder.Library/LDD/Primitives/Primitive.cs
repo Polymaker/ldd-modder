@@ -35,7 +35,7 @@ namespace LDDModder.LDD.Primitives
         public Transform DefaultOrientation { get; set; }
         public Camera DefaultCamera { get; set; }
 
-        public int[] SurfaceMappingTable { get; set; }
+        public int[] SubMaterials { get; set; }
 
         public List<Connector> Connectors { get; }
         public List<Collisions.Collision> Collisions { get; }
@@ -106,11 +106,11 @@ namespace LDDModder.LDD.Primitives
                 boundingElem.Add(XmlHelper.DefaultSerialize(GeometryBounding, "AABB"));
             }
 
-            if (SurfaceMappingTable != null)
+            if (SubMaterials != null)
             {
                 var decorationElem = rootElem.AddElement("Decoration");
-                decorationElem.Add(new XAttribute("faces", SurfaceMappingTable.Length));
-                decorationElem.Add(new XAttribute("subMaterialRedirectLookupTable", string.Join(",", SurfaceMappingTable)));
+                decorationElem.Add(new XAttribute("faces", SubMaterials.Length));
+                decorationElem.Add(new XAttribute("subMaterialRedirectLookupTable", string.Join(",", SubMaterials)));
             }
 
             if (FlexBones.Any())
@@ -254,10 +254,10 @@ namespace LDDModder.LDD.Primitives
 
                     case "Decoration":
                         int surfaceCount = element.ReadAttribute<int>("faces");
-                        SurfaceMappingTable = new int[surfaceCount];
+                        SubMaterials = new int[surfaceCount];
                         var values = element.ReadAttribute<string>("subMaterialRedirectLookupTable").Split(',');
                         for (int i = 0; i < surfaceCount; i++)
-                            SurfaceMappingTable[i] = int.Parse(values[i]);
+                            SubMaterials[i] = int.Parse(values[i]);
                         break;
 
                     case "Flex":

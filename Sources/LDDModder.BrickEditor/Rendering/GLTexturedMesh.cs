@@ -1,4 +1,5 @@
-﻿using ObjectTK.Textures;
+﻿using ObjectTK.Shaders;
+using ObjectTK.Textures;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,19 +13,19 @@ namespace LDDModder.BrickEditor.Rendering
         public Texture2D Texture { get; set; }
         public OpenTK.Graphics.OpenGL.TextureUnit TextureUnit { get; set; }
 
-        public void BindToShader(TexturedShaderProgram shader)
+        protected override void BindShaderAttributes(ObjectTK.Shaders.Program program)
         {
-            BindToProgram(shader);
-            Vao.Bind();
-            BindVertexAttribute(shader.InPosition);
-            BindVertexAttribute(shader.InNormal, 12);
-            BindVertexAttribute(shader.InTexCoord, 24);
-            Vao.BindElementBuffer(IndexBuffer);
+            if (program is TexturedShaderProgram shader)
+            {
+                BindVertexAttribute(shader.InPosition);
+                BindVertexAttribute(shader.InNormal, 12);
+                BindVertexAttribute(shader.InTexCoord, 24);
+            }
         }
 
-        public override void AssignShaderValues()
+        protected override void SetProgramUniforms()
         {
-            base.AssignShaderValues();
+            base.SetProgramUniforms();
 
             if (BoundProgram is TexturedShaderProgram program)
             {

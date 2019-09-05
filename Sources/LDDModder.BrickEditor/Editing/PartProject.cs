@@ -38,7 +38,14 @@ namespace LDDModder.BrickEditor.Editing
                 throw new FileNotFoundException($"Part Mesh not found. ({partID}.g)");
 
             var primitive = Primitive.FromXmlFile(primitiveFile);
+
             var partProject = new PartProject();
+
+            foreach (var coll in primitive.Collisions)
+                partProject.Collisions.Add(CollisionNode.Create(coll));
+
+            foreach (var conn in primitive.Connectors)
+                partProject.Connections.Add(ConnectionNode.Create(conn));
 
             foreach (string meshFilePath in Directory.GetFiles(meshesPath, $"{partID}.g*"))
             {
@@ -50,24 +57,43 @@ namespace LDDModder.BrickEditor.Editing
                 if (!fileExt.EndsWith("g"))
                 {
                     fileExt = fileExt.Substring(fileExt.IndexOf('g') + 1);
-                    modelNode.DecorationNumber = int.Parse(fileExt);
+                    modelNode.SurfaceID = int.Parse(fileExt);
                 }
 
                 foreach (var culling in mesh.Cullings)
                 {
                     var subMesh = mesh.GetCullingGeometry(culling, false);
-                    var meshNode = new ModelMeshNode(subMesh) { MeshType = culling.Type };
+                    var meshNode = new ModelMeshNode(culling, subMesh);
+
+                    if (culling.Studs != null)
+                    {
+                        foreach (var stud in culling.Studs)
+                        {
+                            meshNode.Nodes.Add(new StudReference()
+                            {
+                                ConnectorNode = (ConnectionNode)partProject.Connections.Nodes[stud.ConnectorIndex],
+                                StudIndex = stud.FieldIndices[0].Index
+                            });
+                        }
+                    }
+
                     modelNode.Add(meshNode);
                 }
+
+                if (primitive.SubMaterials != null && 
+                    primitive.SubMaterials.Length < modelNode.SurfaceID)
+                {
+                    modelNode.SubMaterialID = primitive.SubMaterials[modelNode.SurfaceID];
+                }
+
+                modelNode.Name = modelNode.IsMainModel ? 
+                    "Main Model" : 
+                    $"Decoration {modelNode.SurfaceID}";
 
                 partProject.Models.Add(modelNode);
             }
 
-            foreach (var coll in primitive.Collisions)
-                partProject.Collisions.Add(CollisionNode.Create(coll));
-
-            foreach (var conn in primitive.Connectors)
-                partProject.Connections.Add(ConnectionNode.Create(conn));
+            
 
 
             return partProject;
@@ -93,43 +119,18 @@ namespace LDDModder.BrickEditor.Editing
                 rootNode.Add(Connections.SerializeHierarchy());
 
 
-                using (var tmpMS = new MemoryStream())
-                {
-                    projectXml.Save(tmpMS);
-                    tmpMS.Seek(0, SeekOrigin.Begin);
-
-                    zipStream.PutNextEntry(new ZipEntry("Project.xml")
-                    {
-                        DateTime = DateTime.Now,
-                        Size = tmpMS.Length
-                    });
-                    
-                    StreamUtils.Copy(tmpMS, zipStream, buffer);
-
-                    zipStream.CloseEntry();
-                }
+                zipStream.PutNextEntry(new ZipEntry("Project.xml"));
+                projectXml.Save(zipStream);
+                zipStream.CloseEntry();
 
                 foreach (var modelNode in Models.Nodes.OfType<PartModelNode>())
                 {
                     foreach (var meshNode in modelNode.Nodes.OfType<ModelMeshNode>())
                     {
-                        using (var tmpMS = new MemoryStream())
-                        {
-                            meshNode.Mesh.Save(tmpMS);
-                            tmpMS.Seek(0, SeekOrigin.Begin);
-
-                            zipStream.PutNextEntry(new ZipEntry($"Models\\{modelNode.ID}\\{meshNode.ID}.geom")
-                            {
-                                DateTime = DateTime.Now,
-                                Size = tmpMS.Length
-                            });
-
-                            StreamUtils.Copy(tmpMS, zipStream, buffer);
-
-                            zipStream.CloseEntry();
-                        }
+                        zipStream.PutNextEntry(new ZipEntry($"Models\\{modelNode.ID}\\{meshNode.ID}.geom"));
+                        meshNode.Mesh.Save(zipStream);
+                        zipStream.CloseEntry();
                     }
-                    
                 }
             }
         }

@@ -94,6 +94,7 @@
     <Compile Include="Editing\PartNodeCollection.cs" />
     <Compile Include="Editing\PartProject.cs" />
     <Compile Include="Editing\RootNode.cs" />
+    <Compile Include="Editing\StudReference.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>

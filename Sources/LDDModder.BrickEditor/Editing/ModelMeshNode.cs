@@ -12,6 +12,8 @@ namespace LDDModder.BrickEditor.Editing
     {
         public MeshGeometry Mesh { get; set; }
 
+        public string MeshName { get; set; }
+
         public MeshCullingType MeshType { get; set; }
 
         public ModelMeshNode() : base()
@@ -25,10 +27,19 @@ namespace LDDModder.BrickEditor.Editing
             GenerateID();
         }
 
+        public ModelMeshNode(MeshCulling culling, MeshGeometry mesh) : base()
+        {
+            Mesh = mesh;
+            MeshType = culling.Type;
+            
+            GenerateID();
+        }
+
         public override XElement SerializeToXml()
         {
             var elem = new XElement("Mesh", new XAttribute("ID", ID));
             elem.Add(new XAttribute("Type", MeshType.ToString()));
+            //elem.Add(new XAttribute("Type", MeshType.ToString()));
             return elem;
         }
     }

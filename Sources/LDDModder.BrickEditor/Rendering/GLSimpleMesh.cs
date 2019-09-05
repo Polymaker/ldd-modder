@@ -8,14 +8,13 @@ namespace LDDModder.BrickEditor.Rendering
 {
     public class GLSimpleMesh : GLMeshBase<VertVN>
     {
-        public void BindToShader(BasicShaderProgram shader)
+        protected override void BindShaderAttributes(ObjectTK.Shaders.Program program)
         {
-            BindToProgram(shader);
-            Vao.Bind();
-            BindVertexAttribute(shader.InPosition);
-            BindVertexAttribute(shader.InNormal, 12);
-            if (IndexBuffer != null)
-                Vao.BindElementBuffer(IndexBuffer);
+            if (program is BasicShaderProgram shader)
+            {
+                BindVertexAttribute(shader.InPosition);
+                BindVertexAttribute(shader.InNormal, 12);
+            }
         }
     }
 }

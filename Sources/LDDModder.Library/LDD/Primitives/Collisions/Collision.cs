@@ -10,6 +10,8 @@ namespace LDDModder.LDD.Primitives.Collisions
 {
     public abstract class Collision : IXmlObject
     {
+        public string CollisionType => (this is CollisionBox) ? "Box" : "Sphere";
+
         public Transform Transform { get; set; }
 
         public abstract void LoadFromXml(XElement element);

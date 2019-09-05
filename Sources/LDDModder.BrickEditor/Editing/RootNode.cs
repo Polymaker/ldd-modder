@@ -8,12 +8,15 @@ namespace LDDModder.BrickEditor.Editing
 {
     public class RootNode : PartNode
     {
-        public PartProject Project { get; protected set; }
+        private PartProject _Project;
+
+        public override PartProject Project => _Project;
 
         public RootNode(string name, PartProject project)
         {
-            ID = name;
-            Project = project;
+            GenerateID();
+            Name = name;
+            _Project = project;
         }
     }
 }

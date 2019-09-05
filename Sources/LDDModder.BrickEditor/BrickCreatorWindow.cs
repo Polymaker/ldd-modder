@@ -39,8 +39,8 @@ namespace LDDModder.BrickEditor
             base.OnLoad(e);
 
             string meshDir = Environment.ExpandEnvironmentVariables(@"%appdata%\LEGO Company\LEGO Digital Designer\db\");
-            var project = PartProject.CreateFromLdd(meshDir, 3020);
-            project.Save("3020.lpp");
+            var project = PartProject.CreateFromLdd(meshDir, 3004);
+            project.Save("3004.lpp");
             InitializeData();
             InitializeUI();
         }
@@ -280,7 +280,7 @@ namespace LDDModder.BrickEditor
 
             if (partMesh.DecorationMeshes.Any())
             {
-                partMesh.Info.SurfaceMappingTable = Enumerable.Range(0, partMesh.DecorationMeshes.Count + 1).ToArray();
+                partMesh.Info.SubMaterials = Enumerable.Range(0, partMesh.DecorationMeshes.Count + 1).ToArray();
             }
 
             partMesh.Info.Bounding = partMesh.GetBoundingBox();

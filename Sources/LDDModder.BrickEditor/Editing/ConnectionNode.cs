@@ -15,6 +15,11 @@ namespace LDDModder.BrickEditor.Editing
         public override XElement SerializeToXml()
         {
             var elem = base.SerializeToXml();
+            //var conElem = Connection.SerializeToXml();
+            //foreach (var attr in conElem.Attributes())
+            //    elem.Add(new XElement(attr.Name.LocalName, attr.Value));
+            //if (!string.IsNullOrEmpty(conElem.Value))
+            //    elem.Add(new XElement("Content", conElem.Value));
             elem.Add(Connection.SerializeToXml());
             return elem;
         }
