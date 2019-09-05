@@ -83,6 +83,13 @@ namespace LDDModder.LDD.Primitives.Connectors
             Initialize2DArray();
         }
 
+        public FieldNode GetNode(int x, int y)
+        {
+            if (x >= 0 && x <= Width && y >= 0 && y <= Height)
+                return NodeArray[x, y];
+            return null;
+        }
+
         private void Initialize2DArray()
         {
             var oldValues = NodeArray;

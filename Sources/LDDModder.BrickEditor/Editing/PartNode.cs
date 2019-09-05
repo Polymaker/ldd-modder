@@ -31,6 +31,8 @@ namespace LDDModder.BrickEditor.Editing
 
         public PartNodeCollection Nodes { get; }
 
+        public int Index => Parent != null ? Parent.Nodes.IndexOf(this) : -1;
+
         public PartNode()
         {
             Nodes = new PartNodeCollection(this);

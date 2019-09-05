@@ -87,7 +87,6 @@
     <Compile Include="Editing\CollisionNode.cs" />
     <Compile Include="Editing\ConnectionNode.cs" />
     <Compile Include="Editing\INodeOwner.cs" />
-    <Compile Include="Editing\IPartHierarchyNode.cs" />
     <Compile Include="Editing\ModelMeshNode.cs" />
     <Compile Include="Editing\PartModelNode.cs" />
     <Compile Include="Editing\PartNode.cs" />

@@ -16,6 +16,18 @@ namespace LDDModder.LDD.Meshes
             FieldIndices = new List<Custom2DFieldIndex>();
         }
 
+        public Custom2DFieldReference(int connectorIndex, int fieldIndex)
+        {
+            ConnectorIndex = connectorIndex;
+            FieldIndices = new List<Custom2DFieldIndex>
+            {
+                new Custom2DFieldIndex()
+                {
+                    Index = fieldIndex
+                }
+            };
+        }
+
         public Custom2DFieldReference(LDD.Files.MeshStructures.STUD_2DFIELD_REF _2DFieldRef)
         {
             ConnectorIndex = _2DFieldRef.ConnectorIndex;
