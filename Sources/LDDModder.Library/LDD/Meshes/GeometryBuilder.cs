@@ -58,23 +58,24 @@ namespace LDDModder.LDD.Meshes
             _Triangles.Add(new Triangle(_Vertices[v1], _Vertices[v2], _Vertices[v3]));
         }
 
-        public void SortVertices()
-        {
-            var orderDict = new Dictionary<Vertex, int>();
-            int vI = 0;
+        //??? I don't rembemer what I wanted to do with this
+        //public void SortVertices()
+        //{
+        //    var orderDict = new Dictionary<Vertex, int>();
+        //    int vI = 0;
 
-            foreach (var tri in Triangles)
-            {
-                for (int i = 0; i < 3; i++)
-                {
-                    if (!orderDict.ContainsKey(tri.Vertices[i]))
-                        orderDict.Add(tri.Vertices[i], vI++);
-                }
-            }
+        //    foreach (var tri in Triangles)
+        //    {
+        //        for (int i = 0; i < 3; i++)
+        //        {
+        //            if (!orderDict.ContainsKey(tri.Vertices[i]))
+        //                orderDict.Add(tri.Vertices[i], vI++);
+        //        }
+        //    }
 
-            _Vertices.Clear();
-            _Vertices.AddRange(orderDict.OrderBy(kv => kv.Value).Select(kv => kv.Key));
-        }
+        //    _Vertices.Clear();
+        //    _Vertices.AddRange(orderDict.OrderBy(kv => kv.Value).Select(kv => kv.Key));
+        //}
 
         public MeshGeometry GetGeometry()
         {

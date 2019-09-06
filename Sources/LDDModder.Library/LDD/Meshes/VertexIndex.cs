@@ -15,6 +15,10 @@ namespace LDDModder.LDD.Meshes
 
         public Vector3 AverageNormal { get; set; }
 
+        internal int IIndex { get; set; }
+
+        internal int VIndex { get; set; }
+
         public VertexIndex(Vertex vertex)
         {
             Vertex = vertex;

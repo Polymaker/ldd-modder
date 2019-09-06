@@ -11,17 +11,23 @@ using System.Threading.Tasks;
 
 namespace LDDModder.BrickEditor.Rendering
 {
-    public abstract class GLMeshBase
+    public abstract class GLMeshBase : IDisposable
     {
+        public Matrix4 Transform { get; set; }
+
+        public Color4 MaterialColor { get; set; }
+
+        public ObjectTK.Shaders.Program BoundProgram { get; protected set; }
+
         public abstract void Draw();
 
-        public abstract void AssignShaderValues();
+        public abstract void AssignShaderValues(Matrix4 viewMatrix, Matrix4 projection);
 
-        public static GLMeshBase CreateFromGeometry(LDD.Meshes.MeshGeometry geometry)
+        public static GLMeshBase CreateFromGeometry(LDD.Meshes.MeshGeometry geometry, bool removeTexture = false)
         {
             int[] triIndices = geometry.GetTriangleIndices();
 
-            if (geometry.IsTextured)
+            if (geometry.IsTextured && !removeTexture)
             {
                 
                 var verts = new List<VertVNT>();
@@ -60,6 +66,7 @@ namespace LDDModder.BrickEditor.Rendering
         }
 
         public abstract void BindToProgram(ObjectTK.Shaders.Program program);
+        public abstract void Dispose();
     }
 
     public abstract class GLMeshBase<VT> : GLMeshBase, IDisposable where VT : struct
@@ -70,19 +77,14 @@ namespace LDDModder.BrickEditor.Rendering
 
         public Buffer<VT> VertexBuffer { get; private set; }
 
-        public Matrix4 Transform { get; set; }
-
-        public Color4 MaterialColor { get; set; }
-
         public bool Disposed { get; private set; }
-
-        public ObjectTK.Shaders.Program BoundProgram { get; protected set; }
 
         protected List<Tuple<VertexAttrib,int>> BoundAttributes = new List<Tuple<VertexAttrib, int>> ();
 
         public GLMeshBase()
         {
             Vao = new VertexArray();
+            Transform = Matrix4.Identity;
         }
 
         ~GLMeshBase()
@@ -170,7 +172,7 @@ namespace LDDModder.BrickEditor.Rendering
 
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             DisposeBuffers();
 
@@ -184,24 +186,24 @@ namespace LDDModder.BrickEditor.Rendering
             GC.SuppressFinalize(this);
         }
 
-        public override void AssignShaderValues()
+        public override void AssignShaderValues(Matrix4 viewMatrix, Matrix4 projection)
         {
+            if (BoundProgram is IMeshShaderProgram program)
+            {
+                var v = new Vector4(MaterialColor.R, MaterialColor.G, MaterialColor.B, MaterialColor.A);
+                program.MaterialColor.Set(v);
+
+                program.ModelMatrix.Set(Transform);
+                program.ViewMatrix.Set(viewMatrix);
+                program.ModelViewProjectionMatrix.Set(Transform * viewMatrix * projection);
+            }
+
             SetProgramUniforms();
         }
 
         protected virtual void SetProgramUniforms()
         {
-            if (BoundProgram is IMeshShaderProgram program)
-            {
-                program.ModelMatrix.Set(Transform);
-                var v = new Vector4(MaterialColor.R, MaterialColor.G, MaterialColor.B, MaterialColor.A);
-                program.MaterialColor.Set(v);
-            }
-        }
-
-        protected virtual void OnDraw()
-        {
-
+            
         }
 
         public override void Draw()
@@ -210,8 +212,6 @@ namespace LDDModder.BrickEditor.Rendering
                 throw new ObjectDisposedException(GetType().Name);
             
             Vao.Bind();
-
-            OnDraw();
 
             Vao.DrawElements(PrimitiveType.Triangles, IndexBuffer.ElementCount);
         }

@@ -10,7 +10,7 @@ namespace LDDModder.Utilities
 {
     public static class LddMeshExporter
     {
-        public static void ExportLddPart(PartMesh part, string filename, string formatID)
+        public static void ExportLddPart(LDDPartFiles part, string filename, string formatID)
         {
             var scene = new Scene() { RootNode = new Node("Root") };
             scene.Materials.Add(new Assimp.Material() { Name = "BaseMaterial" });
@@ -108,7 +108,7 @@ namespace LDDModder.Utilities
             importer.ExportFile(scene, filename, formatID, PostProcessSteps.ValidateDataStructure);
         }
 
-        private static Node CreateMeshNode(Scene scene, PartMesh part, LDD.Files.MeshFile lddMesh, string name)
+        private static Node CreateMeshNode(Scene scene, LDDPartFiles part, LDD.Files.MeshFile lddMesh, string name)
         {
             var meshNode = new Node() { Name = name };
             var aMesh = LDD.Meshes.MeshConverter.ConvertFromLDD(lddMesh);

@@ -13,6 +13,11 @@ namespace LDDModder.BrickEditor.Rendering
         public Texture2D Texture { get; set; }
         public OpenTK.Graphics.OpenGL.TextureUnit TextureUnit { get; set; }
 
+        public GLTexturedMesh()
+        {
+            TextureUnit = OpenTK.Graphics.OpenGL.TextureUnit.Texture0;
+        }
+
         protected override void BindShaderAttributes(ObjectTK.Shaders.Program program)
         {
             if (program is TexturedShaderProgram shader)
@@ -29,14 +34,9 @@ namespace LDDModder.BrickEditor.Rendering
 
             if (BoundProgram is TexturedShaderProgram program)
             {
-                program.Texture.Set(TextureUnit);
+                if (Texture != null)
+                    program.Texture.BindTexture(TextureUnit, Texture);
             }
-        }
-
-        protected override void OnDraw()
-        {
-            base.OnDraw();
-            Texture.Bind(TextureUnit);
         }
     }
 }

@@ -92,5 +92,10 @@ namespace LDDModder.LDD.Meshes
         {
             return obj.GetHashCode();
         }
+
+        public RoundEdgeData Clone()
+        {
+            return new RoundEdgeData(Coords);
+        }
     }
 }

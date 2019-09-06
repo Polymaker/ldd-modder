@@ -2,7 +2,6 @@
 #version 150
 in vec3 InPosition;
 in vec3 InNormal;
-in vec3 InTexCoord;
 
 struct LightInfo
 {
@@ -12,7 +11,6 @@ struct LightInfo
 	vec3 LightDir;
 };
 out LightInfo vLight;
-smooth out vec2 vTexCoord;
 
 uniform vec3 LightPosition;
 uniform mat4 ModelMatrix;
@@ -23,7 +21,7 @@ void main()
 {
 	// transform vertex position
 	gl_Position = ModelViewProjectionMatrix * vec4(InPosition, 1.0);
-	vTexCoord = InTexCoord;
+
 	vLight.Pos = (ModelMatrix * vec4(InPosition,1.0)).xyz;
 	vLight.EyeDir = vec3(0,0,0) - (ViewMatrix * ModelMatrix * vec4(InPosition, 1.0)).xyz;
 	vLight.LightDir = (ViewMatrix * vec4(LightPosition,1)).xyz + vLight.EyeDir;
@@ -44,10 +42,8 @@ struct LightInfo
 	vec3 LightDir;
 };
 in LightInfo vLight[];
-in vec2 vTexCoord[];
-
 out LightInfo gLight;
-smooth out vec2 gTexCoord;
+
 noperspective out vec3 WireCoord;
 
 void main()
@@ -56,7 +52,6 @@ void main()
 	{
 		gl_Position = gl_in[i].gl_Position;
 		gLight = vLight[i];
-		gTexCoord = vTexCoord[i];
 		WireCoord = vec3(0.0);
 		WireCoord[i] = 1.0;
 		EmitVertex();
@@ -68,7 +63,6 @@ void main()
 #version 150
 out vec4 FragColor;
 in vec3 WireCoord;
-smooth in vec2 gTexCoord;
 
 struct LightInfo
 {
@@ -85,15 +79,9 @@ uniform vec3 LightPosition;
 
 void main()
 {
-	vec4 finalColor = texture(Texture, gTexCoord);
-
-	if (finalColor.a < 1)
-	{
-		finalColor = finalColor + (MaterialColor * (1.0 - finalColor.a));
-	}
-
+	vec4 finalColor = MaterialColor;
 	vec3 LightColor = vec3(1,1,1);
-	float LightPower = 60.0f;
+	float LightPower = 70.0f;
 
 	float distance = length(LightPosition - gLight.Pos);
 
@@ -105,11 +93,22 @@ void main()
 	vec3 R = reflect(-L,N);
 	float cosAlpha = clamp(dot( E,R ), 0,1 );
 
-	vec3 ambiant = vec3(0.3) * MaterialColor.rgb;
+	vec3 ambiant = vec3(0.4) * MaterialColor.rgb;
 	vec3 diffuse = MaterialColor.rgb * LightColor * LightPower * cosTheta / (distance*distance);
 	vec3 specular = vec3(0.3) * LightColor * LightPower * pow(cosAlpha,5) / (distance*distance);
 	
 	finalColor = vec4(ambiant + diffuse + specular, finalColor.a);
+
+	/*
+	float xDist = (floor((gl_FragCoord.x / 10.0) + 0.5) * 10.0) + 0.5;
+	xDist = abs(gl_FragCoord.x - xDist);
+	float yDist = (floor((gl_FragCoord.y / 10.0) + 0.5) * 10.0) + 0.5;
+	yDist = abs(gl_FragCoord.y - yDist);
+	if (xDist <= 1 && yDist <= 1)
+	{
+		finalColor = vec4(mix(vec3(1.0), finalColor.rgb, max(xDist,yDist)), finalColor.a);
+	}
+	*/
 
 	if (DisplayWireframe)
 	{

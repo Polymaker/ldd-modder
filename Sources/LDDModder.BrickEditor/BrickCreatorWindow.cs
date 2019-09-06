@@ -38,9 +38,9 @@ namespace LDDModder.BrickEditor
         {
             base.OnLoad(e);
 
-            string meshDir = Environment.ExpandEnvironmentVariables(@"%appdata%\LEGO Company\LEGO Digital Designer\db\");
-            var project = PartProject.CreateFromLdd(meshDir, 3004);
-            project.Save("3004.lpp");
+            //string meshDir = Environment.ExpandEnvironmentVariables(@"%appdata%\LEGO Company\LEGO Digital Designer\db\");
+            //var project = PartProject.CreateFromLdd(meshDir, 3004);
+            //project.Save("3004.lpp");
             InitializeData();
             InitializeUI();
         }
@@ -174,7 +174,6 @@ namespace LDDModder.BrickEditor
                 ImportExportProgress.Visible = true;
 
                 var scene = AssimpContext.ImportFile(filename, 
-                    Assimp.PostProcessSteps.Triangulate | 
                     Assimp.PostProcessSteps.GenerateNormals | 
                     Assimp.PostProcessSteps.PreTransformVertices);
 
@@ -249,7 +248,7 @@ namespace LDDModder.BrickEditor
                 decorationID++;
             }
 
-            var partMesh = new PartMesh
+            var partMesh = new LDDPartFiles
             {
                 Info = new Primitive()
                 {
@@ -312,11 +311,16 @@ namespace LDDModder.BrickEditor
         private MeshFile CreatePartialMesh(IEnumerable<BrickMeshObject> brickMeshes)
         {
             var builder = new GeometryBuilder();
+
             foreach (var brickMesh in brickMeshes)
             {
                 bool useTexture = brickMesh.IsTextured && !brickMesh.IsMainModel;
+
                 foreach (var face in brickMesh.Mesh.Faces)
                 {
+                    if (face.IndexCount != 3)
+                        continue;
+
                     Vertex[] verts = new Vertex[3];
 
                     for (int i = 0; i < 3; i++)

@@ -98,7 +98,6 @@ namespace LDDModder.LDD.Files
                 var v = Vertices[i + culling.FromVertex];
                 if (!linked)
                     v = v.Clone();
-                //geom.AddVertex(v, false);
                 builder.AddVertex(v, false);
                 vertMatch.Add(culling.FromVertex + i, i);
             }
@@ -109,11 +108,7 @@ namespace LDDModder.LDD.Files
                 int idx1 = triIdx[i + culling.FromIndex];
                 int idx2 = triIdx[i + 1 + culling.FromIndex];
                 int idx3 = triIdx[i + 2 + culling.FromIndex];
-                //idx1 = vertMatch[idx1];
-                //idx2 = vertMatch[idx2];
-                //idx3 = vertMatch[idx3];
                 builder.AddTriangle(idx1 - culling.FromVertex, idx2 - culling.FromVertex, idx3 - culling.FromVertex);
-                //geom.AddTriangle2(geom.Vertices[idx1], geom.Vertices[idx2], geom.Vertices[idx3]);
             }
             return builder.GetGeometry();
             //return geom;

@@ -6,6 +6,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace LDDModder.BrickEditor.Rendering
 {
+    [SourceFile("LDDModder.BrickEditor.Resources.Shaders.BasicShader.glsl", Embedded = true, SourceName = "BasicShader")]
     [VertexShaderSource("BasicShader.Vertex")]
     [GeometryShaderSource("BasicShader.Geometry")]
     [FragmentShaderSource("BasicShader.Fragment")]

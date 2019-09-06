@@ -104,7 +104,6 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rendering\BasicShaderProgram.cs" />
-    <Compile Include="Rendering\GLMesh.cs" />
     <Compile Include="Rendering\GLMeshBase.cs" />
     <Compile Include="Rendering\GLSimpleMesh.cs" />
     <Compile Include="Rendering\GLTexturedMesh.cs" />
@@ -150,10 +149,8 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <None Include="Rendering\BasicShader.glsl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Rendering\TexturedShader.glsl" />
+    <EmbeddedResource Include="Resources\Shaders\BasicShader.glsl" />
+    <EmbeddedResource Include="Resources\Shaders\TexturedShader.glsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -168,6 +165,7 @@
     <Content Include="Data\LddData.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <EmbeddedResource Include="Resources\Textures\DefaultTexture.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="UI\Controls\" />

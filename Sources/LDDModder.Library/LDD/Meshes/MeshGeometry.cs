@@ -158,39 +158,14 @@ namespace LDDModder.LDD.Meshes
             }
         }
 
-        public static MeshGeometry Create(Files.MeshStructures.MESH_DATA mesh)
+        internal void RebuildIndices()
         {
-            var vertices = new List<Vertex>();
-            bool isTextured = mesh.UVs != null && mesh.UVs.Length > 0;
-            bool isFlexible = mesh.Bones != null && mesh.Bones.Length > 0;
-
-            for (int i = 0; i < mesh.Positions.Length; i++)
+            var triIdx = GetTriangleIndices();
+            for (int i = 0; i < IndexCount; i++)
             {
-                vertices.Add(new Vertex(
-                    mesh.Positions[i],
-                    mesh.Normals[i],
-                    isTextured ? mesh.UVs[i] : Vector2.Empty
-                    ));
-
-                if (isFlexible)
-                {
-                    var bones = mesh.Bones[i];
-                    for (int j = 0; j < bones.BoneWeights.Length; j++)
-                        vertices[i].BoneWeights.Add(new BoneWeight(bones.BoneWeights[j].BoneID, bones.BoneWeights[j].Weight));
-                }
+                Indices[i].IIndex = i;
+                Indices[i].VIndex = triIdx[i];
             }
-            var geom = new MeshGeometry();
-            geom.SetVertices(vertices);
-
-            for (int i = 0; i < mesh.Indices.Length; i += 3)
-            {
-                geom.AddTriangleFromIndices(
-                    mesh.Indices[i].VertexIndex,
-                    mesh.Indices[i + 1].VertexIndex,
-                    mesh.Indices[i + 2].VertexIndex);
-            }
-
-            return geom;
         }
 
         public MeshType GetMeshType()
@@ -219,30 +194,7 @@ namespace LDDModder.LDD.Meshes
             return Vertices.Select(v => v.Position).ToArray();
         }
 
-        public MeshGeometry Clone()
-        {
-            var geom = new MeshGeometry();
-
-            geom._Vertices.AddRange(Vertices.Select(x => x.Clone()));
-
-            var triIdx = GetTriangleIndices();
-
-            for (int i = 0; i < triIdx.Length; i += 3)
-            {
-                geom._Triangles.Add(new Triangle(
-                    geom.Vertices[triIdx[i]], 
-                    geom.Vertices[triIdx[i + 1]], 
-                    geom.Vertices[triIdx[i + 2]]));
-            }
-
-            for (int i = 0; i < Indices.Count; i++)
-            {
-                geom.Indices[i].AverageNormal = Indices[i].AverageNormal;
-                geom.Indices[i].RoundEdgeData = new RoundEdgeData(Indices[i].RoundEdgeData.Coords);
-            }
-
-            return geom;
-        }
+        #region Convertion From/To Stream
 
         public void Save(Stream stream)
         {
@@ -307,7 +259,7 @@ namespace LDDModder.LDD.Meshes
         public static MeshGeometry FromStream(Stream stream)
         {
             var geom = new MeshGeometry();
-            using(var br = new BinaryReaderEx(stream))
+            using (var br = new BinaryReaderEx(stream))
             {
                 int vertCount = br.ReadInt32();
                 int idxCount = br.ReadInt32();
@@ -384,6 +336,151 @@ namespace LDDModder.LDD.Meshes
                 geom.SetTriangles(triangles);
             }
             return geom;
+        }
+
+        #endregion
+
+        #region Convertion from binary format
+
+        public static MeshGeometry Create(Files.MeshStructures.MESH_DATA mesh)
+        {
+            var vertices = new List<Vertex>();
+            bool isTextured = mesh.UVs != null && mesh.UVs.Length > 0;
+            bool isFlexible = mesh.Bones != null && mesh.Bones.Length > 0;
+
+            for (int i = 0; i < mesh.Positions.Length; i++)
+            {
+                vertices.Add(new Vertex(
+                    mesh.Positions[i],
+                    mesh.Normals[i],
+                    isTextured ? mesh.UVs[i] : Vector2.Empty
+                    ));
+
+                if (isFlexible)
+                {
+                    var bones = mesh.Bones[i];
+                    for (int j = 0; j < bones.BoneWeights.Length; j++)
+                        vertices[i].BoneWeights.Add(new BoneWeight(bones.BoneWeights[j].BoneID, bones.BoneWeights[j].Weight));
+                }
+            }
+            var geom = new MeshGeometry();
+            geom.SetVertices(vertices);
+
+            for (int i = 0; i < mesh.Indices.Length; i += 3)
+            {
+                geom.AddTriangleFromIndices(
+                    mesh.Indices[i].VertexIndex,
+                    mesh.Indices[i + 1].VertexIndex,
+                    mesh.Indices[i + 2].VertexIndex);
+            }
+
+            return geom;
+        }
+
+        #endregion
+
+        public MeshGeometry Clone()
+        {
+            var geom = new MeshGeometry();
+
+            geom._Vertices.AddRange(Vertices.Select(x => x.Clone()));
+
+            var triIdx = GetTriangleIndices();
+
+            for (int i = 0; i < triIdx.Length; i += 3)
+            {
+                geom._Triangles.Add(new Triangle(
+                    geom.Vertices[triIdx[i]],
+                    geom.Vertices[triIdx[i + 1]],
+                    geom.Vertices[triIdx[i + 2]]));
+            }
+
+            for (int i = 0; i < Indices.Count; i++)
+            {
+                geom.Indices[i].AverageNormal = Indices[i].AverageNormal;
+                geom.Indices[i].RoundEdgeData = Indices[i].RoundEdgeData.Clone();
+            }
+
+            return geom;
+        }
+
+        public void SeparateDistinctSurfaces()
+        {
+            var uniqueEdges = Triangles.SelectMany(t => t.Edges).EqualsDistinct().ToList();
+            var edgeFaces = new Dictionary<Edge, List<Triangle>>();
+            foreach (var tri in Triangles)
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    if (edgeFaces.TryGetValue(tri.Edges[i], out List<Triangle> faces))
+                    {
+                        if (!faces.Contains(tri))
+                            faces.Add(tri);
+                    }
+                    else
+                        edgeFaces.Add(tri.Edges[i], new List<Triangle>() { tri });
+                }
+            }
+
+            var triList = Triangles.ToList();
+
+            void AddConnectedFaces(Triangle tria, List<Triangle> remainingFaces, List<Triangle> currentFaces)
+            {
+                if (!currentFaces.Any())
+                {
+                    remainingFaces.Remove(tria);
+                    currentFaces.Add(tria);
+                }
+
+                var connectedFaces = tria.Edges.SelectMany(x => edgeFaces[x]).Where(y => y != tria);
+                var facesToAdd = connectedFaces.Intersect(remainingFaces).ToList();
+
+                foreach (var face in facesToAdd)
+                {
+                    remainingFaces.Remove(face);
+                    currentFaces.Add(face);
+                }
+
+                foreach (var face in facesToAdd)
+                    AddConnectedFaces(face, remainingFaces, currentFaces);
+            }
+
+            var geomList = new List<MeshGeometry>();
+
+            while (triList.Any())
+            {
+                var curTri = triList[0];
+                var curTriList = new List<Triangle>();
+                AddConnectedFaces(curTri, triList, curTriList);
+                var curGeom = new MeshGeometry();
+                curGeom.SetTriangles(curTriList, true);
+                curGeom.BreakReferences();
+                geomList.Add(curGeom);
+            }
+        }
+
+        private void BreakReferences()
+        {
+            RebuildIndices();
+            var oldIndices = Indices.ToList();
+            _Triangles.Clear();
+            _Vertices = _Vertices.Select(v => v.Clone()).ToList();
+
+            for (int i = 0; i < oldIndices.Count / 3; i++)
+            {
+                Vertex[] verts = new Vertex[3];
+                for (int j = 0; j < 3; j++)
+                    verts[j] = _Vertices[oldIndices[(i * 3) + j].VIndex];
+
+                var newTri = new Triangle(verts[0], verts[1], verts[2]);
+                _Triangles.Add(newTri);
+
+                for (int j = 0; j < 3; j++)
+                {
+                    newTri.Indices[j].AverageNormal = oldIndices[(i * 3) + j].AverageNormal;
+                    newTri.Indices[j].RoundEdgeData = oldIndices[(i * 3) + j].RoundEdgeData.Clone();
+                }
+            }
         }
     }
 }

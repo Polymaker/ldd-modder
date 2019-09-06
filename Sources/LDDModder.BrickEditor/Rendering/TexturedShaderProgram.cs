@@ -11,6 +11,7 @@ using ObjectTK.Textures;
 
 namespace LDDModder.BrickEditor.Rendering
 {
+    [SourceFile("LDDModder.BrickEditor.Resources.Shaders.TexturedShader.glsl", Embedded = true, SourceName = "TexturedShader")]
     [VertexShaderSource("TexturedShader.Vertex")]
     [GeometryShaderSource("TexturedShader.Geometry")]
     [FragmentShaderSource("TexturedShader.Fragment")]
@@ -29,7 +30,6 @@ namespace LDDModder.BrickEditor.Rendering
         public Uniform<Matrix4> ModelViewProjectionMatrix { get; protected set; }
         public Uniform<Vector4> MaterialColor { get; protected set; }
         public TextureUniform<Texture2D> Texture { get; protected set; }
-
         public Uniform<bool> DisplayWireframe { get; protected set; }
     }
 }

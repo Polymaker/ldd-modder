@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace LDDModder.LDD.Data
 {
-    public class PartMesh
+    public class LDDPartFiles
     {
         public MeshFile MainModel { get; set; }
         public List<MeshFile> DecorationMeshes { get; } = new List<MeshFile>();
@@ -20,12 +20,12 @@ namespace LDDModder.LDD.Data
 
         public IEnumerable<MeshFile> AllMeshes => new MeshFile[] { MainModel }.Concat(DecorationMeshes);
 
-        public PartMesh()
+        public LDDPartFiles()
         {
             Info = new Primitive();
         }
 
-        public static PartMesh Read(string lddDbPath, int partID)
+        public static LDDPartFiles Read(string lddDbPath, int partID)
         {
             var primitivesPath = Path.Combine(lddDbPath, "Primitives");
             var meshesPath = Path.Combine(lddDbPath, "Primitives", "LOD0");
@@ -37,7 +37,7 @@ namespace LDDModder.LDD.Data
             if (!File.Exists(Path.Combine(meshesPath, $"{partID}.g")))
                 throw new FileNotFoundException($"Part Mesh not found. ({partID}.g)");
 
-            var meshInfo = new PartMesh()
+            var meshInfo = new LDDPartFiles()
             {
                 Info = Primitive.FromXmlFile(primitiveFile)
             };

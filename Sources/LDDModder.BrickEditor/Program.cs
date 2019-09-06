@@ -15,11 +15,11 @@ namespace LDDModder.BrickEditor
         static void Main()
         {
 
-            //var test = new GLTestWindow();
-            //test.Run();
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new BrickCreatorWindow());
+            var test = new GLTestWindow();
+            test.Run();
+            //Application.EnableVisualStyles();
+            //Application.SetCompatibleTextRenderingDefault(false);
+            //Application.Run(new BrickCreatorWindow());
         }
     }
 }

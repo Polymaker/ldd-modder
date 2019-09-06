@@ -16,7 +16,8 @@ namespace LDDModder.LDD.Meshes
         public override bool Equals(object obj)
         {
             if (obj is Edge edge)
-                return (edge.P1 == P1 && edge.P2 == P2) || (edge.P1 == P2 && edge.P2 == P1);
+                return (edge.P1.Equals(P1) && edge.P2.Equals(P2)) || 
+                    (edge.P1.Equals(P2) && edge.P2.Equals(P1));
             return false;
         }
 

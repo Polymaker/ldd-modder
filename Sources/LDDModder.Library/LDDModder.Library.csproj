@@ -71,7 +71,7 @@
     <Compile Include="LDD\Files\MeshStructures\MESH_HEADER.cs" />
     <Compile Include="LDD\Files\MeshStructures\MESH_INDEX.cs" />
     <Compile Include="LDD\Files\MeshStructures\ROUNDEDGE_SHADER_DATA.cs" />
-    <Compile Include="LDD\Data\PartMesh.cs" />
+    <Compile Include="LDD\Data\LDDPartFiles.cs" />
     <Compile Include="LDD\LDDEnvironment.cs" />
     <Compile Include="LDD\Meshes\BoneWeight.cs" />
     <Compile Include="LDD\Meshes\Custom2DFieldIndex.cs" />

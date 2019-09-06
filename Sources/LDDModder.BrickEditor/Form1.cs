@@ -42,7 +42,7 @@ namespace LDDModder.BrickEditor
         private void TestFlexible()
         {
 
-            var brick = PartMesh.Read(LddDbDirectory, 47996);
+            var brick = LDDPartFiles.Read(LddDbDirectory, 47996);
 
             var yFlexPos = brick.Info.Connectors.OfType<LDD.Primitives.Connectors.AxelConnector>()
                 .Where(x => x.Length < 1).Select(x => x.Transform.Translation.Y).Distinct();

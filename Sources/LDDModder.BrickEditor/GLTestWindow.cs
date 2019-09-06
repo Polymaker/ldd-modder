@@ -12,14 +12,16 @@ using ObjectTK.Shaders;
 using System.ComponentModel;
 using OpenTK.Graphics;
 using System.Diagnostics;
+using ObjectTK.Textures;
 
 namespace LDDModder.BrickEditor
 {
     class GLTestWindow : GameWindow
     {
-        private GLMesh Mesh;
-        private List<GLMesh> MeshList;
-        private BasicShaderProgram ShaderProgram;
+        private List<GLMeshBase> MeshList;
+        private BasicShaderProgram BasicShader;
+        private TexturedShaderProgram TexturedShader;
+        private Texture2D DefaultTexture;
 
         private Matrix4 ViewMatrix;
         private Matrix4 Projection;
@@ -32,7 +34,7 @@ namespace LDDModder.BrickEditor
         {
             VSync = VSyncMode.Off;
             LightPosition = new Vector3(-5, 10, 5);
-            MeshList = new List<GLMesh>();
+            MeshList = new List<GLMeshBase>();
         }
 
         private void SetupPerspective()
@@ -55,7 +57,7 @@ namespace LDDModder.BrickEditor
         {
             base.OnUpdateFrame(e);
 
-            rotation += (float)(Math.PI / 4d * e.Time);
+            rotation += (float)(Math.PI / 6d * e.Time);
             rotation %= ((float)Math.PI * 2f);
             UpdateCamera();
 
@@ -66,99 +68,67 @@ namespace LDDModder.BrickEditor
             }
         }
 
-        private static GLMesh CreateCubeMesh()
-        {
-            var cubeMesh = new GLMesh();
-            var faceNormals = new Vector3[] {
-                Vector3.UnitX, Vector3.UnitY, Vector3.UnitZ,
-                Vector3.UnitX * -1, Vector3.UnitY * -1, Vector3.UnitZ * -1
-            };
-
-            for (int i = 0; i < 6; i++)
-            {
-                var norm = faceNormals[i];
-                var cross = Vector3.Cross(norm, Vector3.UnitY).Normalized();
-                var angle = Vector3.CalculateAngle(norm, Vector3.UnitY);
-                if (float.IsNaN(angle) || float.IsInfinity(angle))
-                    angle = 0;
-                if (float.IsNaN(cross.X))
-                    cross = Vector3.UnitX;
-                var rot = Matrix3.CreateFromAxisAngle(cross, angle);
-                var test = Vector3.TransformNormal(Vector3.UnitY, new Matrix4(rot));
-                if (Vector3.Distance(norm, test) > 0.5f)
-                {
-                    rot = Matrix3.CreateFromAxisAngle(cross, -angle);
-                }
-                var positions = new Vector3[]
-                {
-                    new Vector3(-1, 1, 1),
-                    new Vector3(1, 1, 1),
-                    new Vector3(1, 1, -1),
-                    new Vector3(-1, 1, -1)
-                };
-
-                int curIdx = cubeMesh.Vertices.Count;
-
-                for (int j = 0; j < 4; j++)
-                {
-                    var vert = new VertVN
-                    {
-                        Position = positions[j] * rot,//Vector3.TransformPosition(positions[j], trans),
-                        Normal = norm
-                    };
-                    cubeMesh.Vertices.Add(vert);
-                }
-
-                cubeMesh.Indices.Add(curIdx);
-                cubeMesh.Indices.Add(curIdx + 1);
-                cubeMesh.Indices.Add(curIdx + 2);
-                cubeMesh.Indices.Add(curIdx);
-                cubeMesh.Indices.Add(curIdx + 2);
-                cubeMesh.Indices.Add(curIdx + 3);
-            }
-
-            return cubeMesh;
-        }
-
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
             GL.ClearColor(Color.SkyBlue);
-
-            
-
-            ProgramFactory.BasePath = "Rendering";
-            ShaderProgram = ProgramFactory.Create<BasicShaderProgram>();
-            ShaderProgram.Use();
-            
-            ShaderProgram.MaterialColor.Set(new Vector4(0.7f, 0.7f, 0.7f, 1));
-            ShaderProgram.DisplayWireframe.Set(true);
-            ShaderProgram.LightPosition.Set(LightPosition);
-
-            //Mesh = CreateCubeMesh();
-            //Mesh.Transform = Matrix4.CreateRotationX(OpenTK.MathHelper.PiOver4);
-            //Mesh.UpdateBuffers();
-            var LddDbDirectory = Environment.ExpandEnvironmentVariables(@"%appdata%\LEGO Company\LEGO Digital Designer\db\");
-            var brick = LDD.Data.PartMesh.Read(LddDbDirectory, 3020);
-            //Mesh = GLMesh.FromGeometry(brick.MainModel.Geometry);
-            
-            //float curHue = 0;
-            foreach (var cull in brick.MainModel.Cullings)
-            {
-                
-                var m = GLMesh.FromGeometry(brick.MainModel.GetCullingGeometry(cull));
-                //var color = Color4.FromHsl(new Vector4(curHue, 1, 0.6f, 0.9f));
-                //m.Color = new Vector4(color.R, color.G, color.B, color.A);
-                m.BindToShader(ShaderProgram);
-                MeshList.Add(m);
-
-                //curHue = (curHue + 0.06f) % 1f;
-            }
-
             GL.Enable(EnableCap.ColorMaterial);
             GL.Enable(EnableCap.LineSmooth);
             GL.Enable(EnableCap.DepthTest);
+            GL.Enable(EnableCap.Texture2D);
 
+            var texStream = System.Reflection.Assembly.GetExecutingAssembly()
+                .GetManifestResourceStream("LDDModder.BrickEditor.Resources.Textures.DefaultTexture.png");
+            var texImage = (Bitmap)Image.FromStream(texStream);
+            BitmapTexture.CreateCompatible(texImage, out DefaultTexture, 1);
+            DefaultTexture.LoadBitmap(texImage, 0);
+            DefaultTexture.SetFilter(TextureMinFilter.Nearest, TextureMagFilter.Nearest);
+
+            ProgramFactory.BasePath = "Rendering";
+            BasicShader = ProgramFactory.Create<BasicShaderProgram>();
+            BasicShader.Use();
+            BasicShader.DisplayWireframe.Set(true);
+            BasicShader.LightPosition.Set(LightPosition);
+
+            TexturedShader = ProgramFactory.Create<TexturedShaderProgram>();
+            TexturedShader.Use();
+            TexturedShader.DisplayWireframe.Set(true);
+            TexturedShader.LightPosition.Set(LightPosition);
+
+            var LddDbDirectory = Environment.ExpandEnvironmentVariables(@"%appdata%\LEGO Company\LEGO Digital Designer\db\");
+            var brick = LDD.Data.LDDPartFiles.Read(LddDbDirectory, 99380);
+            //Mesh = GLMesh.FromGeometry(brick.MainModel.Geometry);
+            
+            //float curHue = 0;
+            foreach(var model in brick.AllMeshes)
+            {
+                var shaderToUse = model.IsTextured ? 
+                    (ObjectTK.Shaders.Program)TexturedShader : 
+                    (ObjectTK.Shaders.Program)BasicShader;
+                model.Geometry.SeparateDistinctSurfaces();
+                foreach (var cull in model.Cullings)
+                {
+                    var mesh = GLMeshBase.CreateFromGeometry(model.GetCullingGeometry(cull));
+
+                    mesh.BindToProgram(shaderToUse);
+                    mesh.MaterialColor = new Color4(0.7f, 0.7f, 0.7f, 1);
+
+                    if (mesh is GLTexturedMesh texturedMesh)
+                    {
+                        mesh.MaterialColor = Color4.White;
+                        texturedMesh.Texture = DefaultTexture;
+                    }
+                    //var color = Color4.FromHsl(new Vector4(curHue, 1, 0.6f, 0.9f));
+                    //m.Color = new Vector4(color.R, color.G, color.B, color.A);
+                    //curHue = (curHue + 0.06f) % 1f;
+
+                    MeshList.Add(mesh);
+                }
+
+            }
+            
+
+            
             SetupPerspective();
 
             LogTimer = Stopwatch.StartNew();
@@ -176,47 +146,15 @@ namespace LDDModder.BrickEditor
             base.OnRenderFrame(e);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-            //if (Mesh != null)
-            //{
-            //    //ShaderProgram.Use();
-            //    ShaderProgram.ModelMatrix.Set(Mesh.Transform);
-            //    ShaderProgram.ViewMatrix.Set(ViewMatrix);
-            //    ShaderProgram.ModelViewProjectionMatrix.Set(Mesh.Transform * ViewMatrix * Projection);
-            //    Mesh.Draw();
-            //}
-
             if (MeshList != null && MeshList.Any())
             {
-                foreach(var m in MeshList)
+                foreach (var model in MeshList)
                 {
-                    //ShaderProgram.MaterialColor.Set(m.Color);
-                    ShaderProgram.ModelMatrix.Set(m.Transform);
-                    ShaderProgram.ViewMatrix.Set(ViewMatrix);
-                    ShaderProgram.ModelViewProjectionMatrix.Set(m.Transform * ViewMatrix * Projection);
-                    m.Draw();
+                    model.BoundProgram.Use();
+                    model.AssignShaderValues(ViewMatrix, Projection);
+                    model.Draw();
                 }
             }
-            /*
-            GL.UseProgram(0);
-            GL.MatrixMode(MatrixMode.Projection);
-            GL.LoadMatrix(ref Projection);
-            GL.MatrixMode(MatrixMode.Modelview);
-            GL.LoadMatrix(ref ViewMatrix);
-
-            GL.Begin(PrimitiveType.Lines);
-            GL.Color3(Color.Red);
-            GL.Vertex3(0, 0, 0);
-            GL.Vertex3(10, 0, 0);
-            GL.Color3(Color.Blue);
-            GL.Vertex3(0, 0, 0);
-            GL.Vertex3(0, 10, 0);
-            GL.Color3(Color.Yellow);
-            GL.Vertex3(0, 0, 0);
-            GL.Vertex3(0, 0, 10);
-            GL.Color3(Color.White);
-            GL.Vertex3(0, 0, 0);
-            GL.Vertex3(LightPosition);
-            GL.End();*/
 
             SwapBuffers();
         }
@@ -229,9 +167,10 @@ namespace LDDModder.BrickEditor
                 m.Dispose();
             }
             MeshList.Clear();
-            //Mesh.Dispose();
-            ShaderProgram.Dispose();
-            Mesh = null;
+            BasicShader.Dispose();
+            TexturedShader.Dispose();
+            if (DefaultTexture != null)
+                DefaultTexture.Dispose();
         }
 
     }
