@@ -44,16 +44,24 @@ namespace LDDModder.BrickEditor.Editing
 
             var partProject = new PartProject();
 
-            int colIdx = 1;
+            int collisionCount = 0;
             foreach (var coll in primitive.Collisions)
             {
                 var colNode = CollisionNode.Create(coll);
-                colNode.Description += $" {colIdx++}";
+                colNode.ID = GenerateUUID($"P{partID}_C1{collisionCount}");
+                colNode.Description += $" {collisionCount+1}";
                 partProject.Collisions.Add(colNode);
+                collisionCount++;
             }
 
+            int connectionCount = 0;
             foreach (var conn in primitive.Connectors)
-                partProject.Connections.Add(ConnectionNode.Create(conn));
+            {
+                var conNode = ConnectionNode.Create(conn);
+                conNode.ID = GenerateUUID($"P{partID}_C2{connectionCount}");
+                partProject.Connections.Add(conNode);
+                connectionCount++;
+            }
 
             foreach (string meshFilePath in Directory.GetFiles(meshesPath, $"{partID}.g*"))
             {
@@ -78,17 +86,21 @@ namespace LDDModder.BrickEditor.Editing
 
                 var surface = new PartSurface
                 {
+                    ID = GenerateUUID($"P{partID}_S{surfaceNumber}"),
                     SurfaceID = surfaceNumber,
                     SubMaterialID = materialIndex
                 };
-                surface.GenerateID();
 
                 partProject.Surfaces.Add(surface);
+                int meshCounter = 0;
 
                 foreach (var culling in meshFile.Cullings)
                 {
-                    SurfaceComponent component = new SurfaceComponent() { ComponentType = culling.Type };
-                    component.GenerateID();
+                    SurfaceComponent component = new SurfaceComponent()
+                    {
+                        ID = GenerateUUID($"P{partID}_S{surfaceNumber}_C{surface.Components.Count}"),
+                        ComponentType = culling.Type
+                    };
 
                     //if (culling.Type == LDD.Meshes.MeshCullingType.MainModel &&
                     //    surface.Components.Any(x => x.ComponentType == LDD.Meshes.MeshCullingType.MainModel))
@@ -101,10 +113,18 @@ namespace LDDModder.BrickEditor.Editing
 
                     var subMesh = meshFile.GetCullingGeometry(culling, false);
 
-                    component.Meshes.Add(new MeshElement(subMesh));
+                    component.Meshes.Add(new MeshElement(subMesh)
+                    {
+                        ID = GenerateUUID($"P{partID}_S{surfaceNumber}_C{surface.Components.Count}_M{meshCounter++}")
+                    });
 
                     if (culling.ReplacementMesh != null)
-                        component.AlternateMeshes.Add(new MeshElement(culling.ReplacementMesh));
+                    {
+                        component.AlternateMeshes.Add(new MeshElement(culling.ReplacementMesh)
+                        {
+                            ID = GenerateUUID($"P{partID}_S{surfaceNumber}_C{surface.Components.Count}_M{meshCounter++}")
+                        });
+                    }
 
 
                     if (culling.Studs != null)
@@ -171,6 +191,17 @@ namespace LDDModder.BrickEditor.Editing
         public static PartProject Load(string path)
         {
             return null;
+        }
+
+        internal static string GenerateUUID(string uniqueID)
+        {
+            byte[] stringbytes = Encoding.UTF8.GetBytes(uniqueID);
+            byte[] hashedBytes = new System.Security.Cryptography
+                .SHA1CryptoServiceProvider()
+                .ComputeHash(stringbytes);
+            Array.Resize(ref hashedBytes, 16);
+            var guid = new Guid(hashedBytes);
+            return guid.ToString("N").Substring(0, 10);
         }
     }
 }

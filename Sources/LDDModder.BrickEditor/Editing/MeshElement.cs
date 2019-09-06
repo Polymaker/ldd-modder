@@ -42,7 +42,6 @@ namespace LDDModder.BrickEditor.Editing
             Geometry = geometry;
             IsTextured = geometry.IsTextured;
             IsFlexible = geometry.IsFlexible;
-            GenerateID();
         }
 
         public override XElement SerializeToXml()

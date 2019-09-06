@@ -54,6 +54,17 @@ namespace LDDModder.BrickEditor.Editing
             ID = Guid.NewGuid().ToString("N").Substring(0, 10);
         }
 
+        internal string GenerateUUID(string uniqueID)
+        {
+            byte[] stringbytes = Encoding.UTF8.GetBytes(uniqueID);
+            byte[] hashedBytes = new System.Security.Cryptography
+                .SHA1CryptoServiceProvider()
+                .ComputeHash(stringbytes);
+            Array.Resize(ref hashedBytes, 16);
+            var guid = new Guid(hashedBytes);
+            return guid.ToString("N").Substring(0, 10);
+        }
+
         public void Add(PartNode node)
         {
             Nodes.Add(node);
