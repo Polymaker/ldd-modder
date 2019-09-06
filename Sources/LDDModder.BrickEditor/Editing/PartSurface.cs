@@ -16,6 +16,10 @@ namespace LDDModder.BrickEditor.Editing
 
         public int SubMaterialID { get; set; }
 
+        public bool IsTextured { get; set; }
+
+        public bool IsFlexible { get; set; }
+
         public PartNodeCollection<SurfaceComponent> Components { get; set; }
 
         public PartSurface()
@@ -36,6 +40,8 @@ namespace LDDModder.BrickEditor.Editing
             elem.Add(new XAttribute("ID", ID));
             elem.Add(new XAttribute("Surface", SurfaceID));
             elem.Add(new XAttribute("SubMaterial", SubMaterialID));
+            elem.Add(new XAttribute("Textured", IsTextured));
+            elem.Add(new XAttribute("Flexible", IsFlexible));
 
             if (!string.IsNullOrEmpty(Description))
                 elem.Add(new XAttribute("Description", Description));

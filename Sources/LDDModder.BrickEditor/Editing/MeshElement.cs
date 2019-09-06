@@ -11,11 +11,17 @@ namespace LDDModder.BrickEditor.Editing
 {
     public class MeshElement : PartNode
     {
+        public string Filename { get; set; }
+
         public MeshGeometry Geometry { get; set; }
 
         public bool IsTextured { get; set; }
 
         public bool IsFlexible { get; set; }
+
+        public SurfaceComponent ParentComponent => Parent as SurfaceComponent;
+
+        public PartSurface Surface => ParentComponent?.Parent as PartSurface;
 
         public MeshElement()
         {
@@ -53,6 +59,18 @@ namespace LDDModder.BrickEditor.Editing
             if (!string.IsNullOrEmpty(Description))
                 elem.Add(new XAttribute("Description", Description));
             return elem;
+        }
+
+        public void UpdateFilename()
+        {
+            if (Surface != null)
+            {
+                Filename = $"Meshes\\Surface_{Surface.SurfaceID}\\{ID}.geom";
+            }
+            else
+            {
+                Filename = $"Meshes\\Orphans\\{ID}.geom";
+            }
         }
     }
 }

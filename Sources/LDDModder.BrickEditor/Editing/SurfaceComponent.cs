@@ -55,37 +55,47 @@ namespace LDDModder.BrickEditor.Editing
 
         public override XElement SerializeToXml()
         {
-            var elem = new XElement("Component");
-            elem.Add(new XAttribute("ID", ID));
-            elem.Add(new XAttribute("Type", ComponentType));
+            var rootElem = new XElement("Component");
+            rootElem.Add(new XAttribute("ID", ID));
+            rootElem.Add(new XAttribute("Type", ComponentType));
             if (!string.IsNullOrEmpty(Description))
-                elem.Add(new XAttribute("Description", Description));
+                rootElem.Add(new XAttribute("Description", Description));
             
             if (Meshes.Any())
             {
-                var meshNode = new XElement("Meshes");
+                //var meshNode = new XElement("Meshes");
+                //foreach (var meshElem in Meshes)
+                //    meshNode.Add(new XElement("MainMesh", new XAttribute("MeshID", meshElem.ID)));
+                //rootElem.Add(meshNode);
+
                 foreach (var meshElem in Meshes)
-                    meshNode.Add(meshElem.SerializeHierarchy());
-                elem.Add(meshNode);
+                    rootElem.Add(new XElement("MainMesh", new XAttribute("MeshID", meshElem.ID)));
             }
 
             if (AlternateMeshes.Any())
             {
-                var altMeshNode = new XElement("AlternateMeshes");
+                //var altMeshNode = new XElement("AlternateMeshes");
+                //foreach (var meshElem in AlternateMeshes)
+                //    altMeshNode.Add(meshElem.SerializeHierarchy());
+                //rootElem.Add(altMeshNode);
+
+
                 foreach (var meshElem in AlternateMeshes)
-                    altMeshNode.Add(meshElem.SerializeHierarchy());
-                elem.Add(altMeshNode);
+                    rootElem.Add(new XElement("AltMesh", new XAttribute("MeshID", meshElem.ID)));
             }
 
             if (LinkedStuds.Any())
             {
-                var studNode = new XElement("Studs");
+                //var studNode = new XElement("Studs");
+                //foreach (var studElem in LinkedStuds)
+                //    studNode.Add(studElem.SerializeToXml());
+                //rootElem.Add(studNode);
+
                 foreach (var studElem in LinkedStuds)
-                    studNode.Add(studElem.SerializeHierarchy());
-                elem.Add(studNode);
+                    rootElem.Add(studElem.SerializeToXml());
             }
 
-            return elem;
+            return rootElem;
         }
 
         public override XElement SerializeHierarchy()

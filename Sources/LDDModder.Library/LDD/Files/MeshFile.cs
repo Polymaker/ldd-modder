@@ -84,12 +84,29 @@ namespace LDDModder.LDD.Files
         public static MeshFile Read(string filename)
         {
             using (var fs = File.OpenRead(filename))
-                return Files.GFileReader.ReadMesh(fs);
+                return GFileReader.ReadMesh(fs);
+        }
+
+        public void Save(string filename)
+        {
+            using (var fs = File.Open(filename, FileMode.Create))
+                GFileWriter.WriteMesh(fs, this);
+        }
+
+        public void CreateDefaultCulling()
+        {
+            if (!Cullings.Any(x => x.Type == MeshCullingType.MainModel))
+            {
+                Cullings.Add(new MeshCulling(MeshCullingType.MainModel)
+                {
+                    VertexCount = VertexCount,
+                    IndexCount = IndexCount
+                });
+            }
         }
 
         public MeshGeometry GetCullingGeometry(MeshCulling culling, bool linked = true)
         {
-            //var geom = new MeshGeometry();
             var vertMatch = new Dictionary<int, int>();
             var builder = new GeometryBuilder();
 

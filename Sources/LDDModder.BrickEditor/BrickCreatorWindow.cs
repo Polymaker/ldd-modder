@@ -38,9 +38,9 @@ namespace LDDModder.BrickEditor
         {
             base.OnLoad(e);
 
-            //string meshDir = Environment.ExpandEnvironmentVariables(@"%appdata%\LEGO Company\LEGO Digital Designer\db\");
-            //var project = PartProject.CreateFromLdd(meshDir, 3004);
-            //project.Save("3004.lpp");
+            string meshDir = Environment.ExpandEnvironmentVariables(@"%appdata%\LEGO Company\LEGO Digital Designer\db\");
+            var project = PartProject.CreateFromLdd(meshDir, 10130);
+            project.SaveUncompressed("10130");
 
             InitializeData();
             InitializeUI();
@@ -229,9 +229,10 @@ namespace LDDModder.BrickEditor
             {
                 CreateBrickFiles();
             }
-            catch
+            catch (Exception ex)
             {
-
+                MessageBox.Show("There was a problem creating the brick files.\r\nCheck 'error.log' file for details.");
+                WriteErrorLog($"Error creating the brick files:\r\n{ex.ToString()}");
             }
 
             HideProgressDelayed();
@@ -340,8 +341,9 @@ namespace LDDModder.BrickEditor
                     builder.AddTriangle(verts[0], verts[1], verts[2]);
                 }
             }
-
-            return new MeshFile(builder.GetGeometry());
+            var file = new MeshFile(builder.GetGeometry());
+            file.CreateDefaultCulling();
+            return file;
         }
 
         private bool ValidateBrick()

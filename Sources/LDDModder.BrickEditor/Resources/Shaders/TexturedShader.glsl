@@ -95,7 +95,7 @@ void main()
 	}
 	
 	vec3 LightColor = vec3(1,1,1);
-	float LightPower = 70.0f;
+	float LightPower = 80.0f;
 
 	float distance = length(LightPosition - gLight.Pos);
 
@@ -107,7 +107,7 @@ void main()
 	vec3 R = reflect(-L,N);
 	float cosAlpha = clamp(dot( E,R ), 0,1 );
 
-	vec3 ambiant = vec3(0.4) * finalColor.rgb;
+	vec3 ambiant = vec3(0.5) * finalColor.rgb;
 	vec3 diffuse = finalColor.rgb * LightColor * LightPower * cosTheta / (distance*distance);
 	vec3 specular = vec3(0.3) * LightColor * LightPower * pow(cosAlpha,5) / (distance*distance);
 	

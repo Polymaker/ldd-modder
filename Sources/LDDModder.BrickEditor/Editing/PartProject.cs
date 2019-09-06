@@ -14,6 +14,9 @@ namespace LDDModder.BrickEditor.Editing
 {
     public class PartProject
     {
+        public int PartID { get; set; }
+        public string Description { get; set; }
+
         public List<PartSurface> Surfaces { get; set; }
 
 
@@ -42,7 +45,11 @@ namespace LDDModder.BrickEditor.Editing
 
             var primitive = Primitive.FromXmlFile(primitiveFile);
 
-            var partProject = new PartProject();
+            var partProject = new PartProject()
+            {
+                PartID = partID,
+                Description = primitive.Name
+            };
 
             int collisionCount = 0;
             foreach (var coll in primitive.Collisions)
@@ -88,6 +95,8 @@ namespace LDDModder.BrickEditor.Editing
                 {
                     ID = GenerateUUID($"P{partID}_S{surfaceNumber}"),
                     SurfaceID = surfaceNumber,
+                    IsTextured = meshFile.IsTextured,
+                    IsFlexible = meshFile.IsFlexible,
                     SubMaterialID = materialIndex
                 };
 
@@ -147,7 +156,58 @@ namespace LDDModder.BrickEditor.Editing
             return partProject;
         }
 
-        public void Save(string filename)
+
+        #region Save
+
+        private void UpdateMeshFilenames()
+        {
+            var allMeshes = Surfaces.SelectMany(s => s.Components.SelectMany(c => c.GetAllMeshes()));
+            foreach (var elem in allMeshes)
+                elem.UpdateFilename();
+        }
+
+        private XDocument GenerateXmlHierarchy()
+        {
+            var rootNode = new XElement("LDP");
+            var projectXml = new XDocument(rootNode);
+
+            var infoNode = new XElement("Info");
+            rootNode.Add(infoNode);
+            infoNode.Add(new XElement("PartID", PartID));
+            infoNode.Add(new XElement("Description", Description));
+
+
+            if (Surfaces.Any())
+            {
+                var surfaceElem = new XElement("Surfaces");
+                foreach (var surf in Surfaces)
+                    surfaceElem.Add(surf.SerializeHierarchy());
+
+                rootNode.Add(surfaceElem);
+            }
+
+            UpdateMeshFilenames();
+
+            var allMeshes = Surfaces.SelectMany(s => s.Components.SelectMany(c => c.GetAllMeshes()));
+            if (allMeshes.Any())
+            {
+                var meshesElem = new XElement("Meshes");
+                foreach (var elem in allMeshes)
+                {
+                    meshesElem.Add(new XElement("Mesh", 
+                        new XAttribute("ID", elem.ID),
+                        new XAttribute("File", elem.Filename)
+                        ));
+                }
+                rootNode.Add(meshesElem);
+            }
+
+            rootNode.Add(Collisions.SerializeHierarchy());
+            rootNode.Add(Connections.SerializeHierarchy());
+            return projectXml;
+        }
+
+        public void SaveCompressed(string filename)
         {
             filename = Path.GetFullPath(filename);
             string directory = Path.GetDirectoryName(filename);
@@ -158,16 +218,7 @@ namespace LDDModder.BrickEditor.Editing
             using (var zipStream = new ZipOutputStream(fs))
             {
                 zipStream.SetLevel(3);
-                var rootNode = new XElement("LDP");
-                var projectXml = new XDocument(rootNode);
-                var surfaceElem = new XElement("Surfaces");
-                foreach(var surf in Surfaces)
-                    surfaceElem.Add(surf.SerializeHierarchy());
-                rootNode.Add(surfaceElem);
-
-                rootNode.Add(Collisions.SerializeHierarchy());
-                rootNode.Add(Connections.SerializeHierarchy());
-
+                var projectXml = GenerateXmlHierarchy();
 
                 zipStream.PutNextEntry(new ZipEntry("Project.xml"));
                 projectXml.Save(zipStream);
@@ -179,7 +230,8 @@ namespace LDDModder.BrickEditor.Editing
                     {
                         foreach (var meshElem in component.GetAllMeshes())
                         {
-                            zipStream.PutNextEntry(new ZipEntry($"Meshes\\Surface_{surface.ID}\\{component.ID}_{meshElem.ID}.geom"));
+                            //zipStream.PutNextEntry(new ZipEntry($"Meshes\\Surface_{surface.ID}\\{component.ID}_{meshElem.ID}.geom"));
+                            zipStream.PutNextEntry(new ZipEntry(meshElem.Filename));
                             meshElem.Geometry.Save(zipStream);
                             zipStream.CloseEntry();
                         }
@@ -187,6 +239,27 @@ namespace LDDModder.BrickEditor.Editing
                 }
             }
         }
+
+        public void SaveUncompressed(string directory)
+        {
+            directory = Path.GetFullPath(directory);
+            if (!Directory.Exists(directory))
+                Directory.CreateDirectory(directory);
+
+            var projectXml = GenerateXmlHierarchy();
+            projectXml.Save(Path.Combine(directory, "Project.xml"));
+
+            var allMeshes = Surfaces.SelectMany(s => s.Components.SelectMany(c => c.GetAllMeshes()));
+
+            foreach (var elem in allMeshes)
+            {
+                var fullPath = Path.Combine(directory, elem.Filename);
+                Directory.CreateDirectory(Path.GetDirectoryName(fullPath));
+                elem.Geometry.Save(fullPath);
+            }
+        }
+
+        #endregion
 
         public static PartProject Load(string path)
         {

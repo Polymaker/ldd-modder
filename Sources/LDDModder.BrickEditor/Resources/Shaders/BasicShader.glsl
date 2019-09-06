@@ -81,7 +81,7 @@ void main()
 {
 	vec4 finalColor = MaterialColor;
 	vec3 LightColor = vec3(1,1,1);
-	float LightPower = 70.0f;
+	float LightPower = 80.0f;
 
 	float distance = length(LightPosition - gLight.Pos);
 
@@ -93,7 +93,7 @@ void main()
 	vec3 R = reflect(-L,N);
 	float cosAlpha = clamp(dot( E,R ), 0,1 );
 
-	vec3 ambiant = vec3(0.4) * MaterialColor.rgb;
+	vec3 ambiant = vec3(0.5) * MaterialColor.rgb;
 	vec3 diffuse = MaterialColor.rgb * LightColor * LightPower * cosTheta / (distance*distance);
 	vec3 specular = vec3(0.3) * LightColor * LightPower * pow(cosAlpha,5) / (distance*distance);
 	
@@ -113,7 +113,7 @@ void main()
 	if (DisplayWireframe)
 	{
 		vec3 d = fwidth(WireCoord);
-		vec3 a3 = smoothstep(vec3(0.0), d * 1, WireCoord);
+		vec3 a3 = smoothstep(vec3(0.0), d * 0.75, WireCoord);
 		float edgeFactor = min(min(a3.x, a3.y), a3.z);
 		finalColor = vec4(mix(vec3(0.0), finalColor.rgb, edgeFactor), finalColor.a);
 	}

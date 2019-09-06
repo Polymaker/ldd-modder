@@ -96,10 +96,10 @@ namespace LDDModder.BrickEditor
             TexturedShader.LightPosition.Set(LightPosition);
 
             var LddDbDirectory = Environment.ExpandEnvironmentVariables(@"%appdata%\LEGO Company\LEGO Digital Designer\db\");
-            var brick = LDD.Data.LDDPartFiles.Read(LddDbDirectory, 99380);
+            var brick = LDD.Data.LDDPartFiles.Read(LddDbDirectory, 10130);
             //Mesh = GLMesh.FromGeometry(brick.MainModel.Geometry);
             
-            //float curHue = 0;
+            float curHue = 0;
             foreach(var model in brick.AllMeshes)
             {
                 var shaderToUse = model.IsTextured ? 
@@ -111,16 +111,15 @@ namespace LDDModder.BrickEditor
                     var mesh = GLMeshBase.CreateFromGeometry(model.GetCullingGeometry(cull));
 
                     mesh.BindToProgram(shaderToUse);
-                    mesh.MaterialColor = new Color4(0.7f, 0.7f, 0.7f, 1);
-
+                    //mesh.MaterialColor = new Color4(0.7f, 0.7f, 0.7f, 1);
+                    mesh.MaterialColor = Color4.FromHsl(new Vector4(curHue, 1, 0.6f, 1f));
+                    curHue = (curHue + 0.06f) % 1f;
                     if (mesh is GLTexturedMesh texturedMesh)
                     {
                         mesh.MaterialColor = Color4.White;
                         texturedMesh.Texture = DefaultTexture;
                     }
-                    //var color = Color4.FromHsl(new Vector4(curHue, 1, 0.6f, 0.9f));
-                    //m.Color = new Vector4(color.R, color.G, color.B, color.A);
-                    //curHue = (curHue + 0.06f) % 1f;
+
 
                     MeshList.Add(mesh);
                 }

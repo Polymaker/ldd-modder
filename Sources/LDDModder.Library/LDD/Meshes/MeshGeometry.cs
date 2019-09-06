@@ -196,6 +196,12 @@ namespace LDDModder.LDD.Meshes
 
         #region Convertion From/To Stream
 
+        public void Save(string filename)
+        {
+            using (var fs = File.Open(filename, FileMode.Create))
+                Save(fs);
+        }
+
         public void Save(Stream stream)
         {
             using (var bw = new BinaryWriterEx(stream, true))

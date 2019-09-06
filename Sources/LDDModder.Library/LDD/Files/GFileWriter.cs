@@ -5,6 +5,7 @@ using LDDModder.Simple3D;
 using LDDModder.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -14,6 +15,8 @@ namespace LDDModder.LDD.Files
 {
     public class GFileWriter
     {
+        public static bool Debuger { get; private set; }
+
         public static void WriteMesh(Stream stream, MeshFile mesh)
         {
             try
@@ -272,6 +275,14 @@ namespace LDDModder.LDD.Files
 
         private static MESH_FILE BuildMeshFile(MeshFile mesh)
         {
+            if (!mesh.Cullings.Any(x => x.Type == MeshCullingType.MainModel))
+            {
+                if (Debugger.IsAttached)
+                    throw new InvalidOperationException("Mesh does not contain culling information");
+                else
+                    Debug.WriteLine("Mesh has no culling information!");
+            }
+
             var file = new MESH_FILE
             {
                 Header = MESH_HEADER.Create(mesh)
