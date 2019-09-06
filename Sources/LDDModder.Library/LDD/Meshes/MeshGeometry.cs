@@ -482,5 +482,28 @@ namespace LDDModder.LDD.Meshes
                 }
             }
         }
+
+        public static MeshGeometry Combine(params MeshGeometry[] geometries)
+        {
+            if (geometries.Length == 1)
+                return geometries[0];
+
+            var verts = new List<Vertex>();
+            var triangles = new List<Triangle>();
+
+            foreach (var geom in geometries)
+            {
+                verts.AddRange(geom.Vertices);
+                triangles.AddRange(geom.Triangles);
+            }
+
+            var newGeom = new MeshGeometry();
+            newGeom.SetVertices(verts);
+            newGeom.SetTriangles(triangles);
+            newGeom.BreakReferences();
+            return newGeom;
+        }
+
+
     }
 }

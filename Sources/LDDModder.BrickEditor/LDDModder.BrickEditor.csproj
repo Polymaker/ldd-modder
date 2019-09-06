@@ -87,13 +87,14 @@
     <Compile Include="Editing\CollisionNode.cs" />
     <Compile Include="Editing\ConnectionNode.cs" />
     <Compile Include="Editing\INodeOwner.cs" />
-    <Compile Include="Editing\ModelMeshNode.cs" />
-    <Compile Include="Editing\PartModelNode.cs" />
+    <Compile Include="Editing\MeshElement.cs" />
     <Compile Include="Editing\PartNode.cs" />
     <Compile Include="Editing\PartNodeCollection.cs" />
     <Compile Include="Editing\PartProject.cs" />
     <Compile Include="Editing\RootNode.cs" />
     <Compile Include="Editing\StudReference.cs" />
+    <Compile Include="Editing\PartSurface.cs" />
+    <Compile Include="Editing\SurfaceComponent.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -110,6 +111,11 @@
     <Compile Include="Rendering\IMeshShaderProgram.cs" />
     <Compile Include="Rendering\TexturedShaderProgram.cs" />
     <Compile Include="Rendering\Vertices.cs" />
+    <Compile Include="Resources\PartResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PartResources.resx</DependentUpon>
+    </Compile>
     <Compile Include="UI\Windows\BrickEditorWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -135,6 +141,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Resources\PartResources.fr.resx" />
+    <EmbeddedResource Include="Resources\PartResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>PartResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\Windows\BrickEditorWindow.resx">
       <DependentUpon>BrickEditorWindow.cs</DependentUpon>
     </EmbeddedResource>

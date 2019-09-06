@@ -11,7 +11,7 @@ namespace LDDModder.BrickEditor.Editing
     {
         public string ID { get; set; }
 
-        public string Name { get; set; }
+        public string Description { get; set; }
 
         public PartNode Parent { get; set; }
 
@@ -38,15 +38,15 @@ namespace LDDModder.BrickEditor.Editing
             Nodes = new PartNodeCollection(this);
         }
 
-        public PartNode(string iD)
+        public PartNode(string id)
         {
-            ID = iD;
+            ID = id;
             Nodes = new PartNodeCollection(this);
         }
 
-        public virtual string GetName()
+        public virtual string GetDisplayName()
         {
-            return ID;
+            return Description;
         }
 
         public void GenerateID()
@@ -68,9 +68,10 @@ namespace LDDModder.BrickEditor.Editing
 
         public virtual XElement SerializeToXml()
         {
-            return new XElement("Node",
-                new XAttribute("ID", ID),
-                new XAttribute("Name", Name ?? string.Empty));
+            var elem = new XElement(GetType().Name, new XAttribute("ID", ID));
+            if (!string.IsNullOrEmpty(Description))
+                elem.Add(new XAttribute("Description", Description));
+            return elem;
         }
 
         public virtual XElement SerializeHierarchy()

@@ -7,24 +7,24 @@ using System.Threading.Tasks;
 
 namespace LDDModder.BrickEditor.Editing
 {
-    public class PartNodeCollection : IList<PartNode>
+    public class PartNodeCollection<T> : IList<T> where T : PartNode
     {
         private readonly PartNode Owner;
-        private List<PartNode> Nodes;
+        private List<T> Nodes;
 
         public PartNodeCollection(PartNode owner)
         {
             Owner = owner;
-            Nodes = new List<PartNode>();
+            Nodes = new List<T>();
         }
 
-        public PartNode this[int index] { get => Nodes[index]; set => Nodes[index] = value; }
+        public T this[int index] { get => Nodes[index]; set => Nodes[index] = value; }
 
-        public int Count => ((IList<PartNode>)Nodes).Count;
+        public int Count => ((IList<T>)Nodes).Count;
 
-        public bool IsReadOnly => ((IList<PartNode>)Nodes).IsReadOnly;
+        public bool IsReadOnly => ((IList<T>)Nodes).IsReadOnly;
 
-        public void Add(PartNode item)
+        public void Add(T item)
         {
             Nodes.Add(item);
             item.Parent = Owner;
@@ -36,33 +36,33 @@ namespace LDDModder.BrickEditor.Editing
             Nodes.Clear();
         }
 
-        public bool Contains(PartNode item)
+        public bool Contains(T item)
         {
             return Nodes.Contains(item);
         }
 
-        public void CopyTo(PartNode[] array, int arrayIndex)
+        public void CopyTo(T[] array, int arrayIndex)
         {
             Nodes.CopyTo(array, arrayIndex);
         }
 
-        public IEnumerator<PartNode> GetEnumerator()
+        public IEnumerator<T> GetEnumerator()
         {
             return Nodes.GetEnumerator();
         }
 
-        public int IndexOf(PartNode item)
+        public int IndexOf(T item)
         {
             return Nodes.IndexOf(item);
         }
 
-        public void Insert(int index, PartNode item)
+        public void Insert(int index, T item)
         {
             Nodes.Insert(index, item);
             item.Parent = Owner;
         }
 
-        public bool Remove(PartNode item)
+        public bool Remove(T item)
         {
             bool result = Nodes.Remove(item);
             if (result)
@@ -79,7 +79,15 @@ namespace LDDModder.BrickEditor.Editing
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return ((IList<PartNode>)Nodes).GetEnumerator();
+            return ((IList<T>)Nodes).GetEnumerator();
+        }
+    }
+
+
+    public class PartNodeCollection : PartNodeCollection<PartNode>
+    {
+        public PartNodeCollection(PartNode owner) : base(owner)
+        {
         }
     }
 }

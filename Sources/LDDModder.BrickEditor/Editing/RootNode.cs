@@ -15,7 +15,7 @@ namespace LDDModder.BrickEditor.Editing
         public RootNode(string name, PartProject project)
         {
             GenerateID();
-            Name = name;
+            Description = name;
             _Project = project;
         }
     }

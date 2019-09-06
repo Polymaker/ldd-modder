@@ -38,9 +38,9 @@ namespace LDDModder.BrickEditor
         {
             base.OnLoad(e);
 
-            //string meshDir = Environment.ExpandEnvironmentVariables(@"%appdata%\LEGO Company\LEGO Digital Designer\db\");
-            //var project = PartProject.CreateFromLdd(meshDir, 3004);
-            //project.Save("3004.lpp");
+            string meshDir = Environment.ExpandEnvironmentVariables(@"%appdata%\LEGO Company\LEGO Digital Designer\db\");
+            var project = PartProject.CreateFromLdd(meshDir, 99380);
+            project.Save("99380.lpp");
             InitializeData();
             InitializeUI();
         }

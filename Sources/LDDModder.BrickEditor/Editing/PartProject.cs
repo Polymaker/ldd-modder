@@ -14,13 +14,15 @@ namespace LDDModder.BrickEditor.Editing
 {
     public class PartProject
     {
-        public RootNode Models { get; private set; }
+        public List<PartSurface> Surfaces { get; set; }
+
+
         public RootNode Collisions { get; private set; }
         public RootNode Connections { get; private set; }
 
         public PartProject()
         {
-            Models = new RootNode("Models", this);
+            Surfaces = new List<PartSurface>();
             Collisions = new RootNode("Collisions", this);
             Connections = new RootNode("Connections", this);
         }
@@ -31,6 +33,7 @@ namespace LDDModder.BrickEditor.Editing
             var meshesPath = Path.Combine(lddDbPath, "Primitives", "LOD0");
 
             var primitiveFile = Path.Combine(primitivesPath, $"{partID}.xml");
+
             if (!File.Exists(primitiveFile))
                 throw new FileNotFoundException($"Part Info not found. ({partID}.xml)");
 
@@ -41,59 +44,84 @@ namespace LDDModder.BrickEditor.Editing
 
             var partProject = new PartProject();
 
+            int colIdx = 1;
             foreach (var coll in primitive.Collisions)
-                partProject.Collisions.Add(CollisionNode.Create(coll));
+            {
+                var colNode = CollisionNode.Create(coll);
+                colNode.Description += $" {colIdx++}";
+                partProject.Collisions.Add(colNode);
+            }
 
             foreach (var conn in primitive.Connectors)
                 partProject.Connections.Add(ConnectionNode.Create(conn));
 
             foreach (string meshFilePath in Directory.GetFiles(meshesPath, $"{partID}.g*"))
             {
-                var mesh = MeshFile.Read(meshFilePath);
-
-                var modelNode = PartNode.Create<PartModelNode>();
+                var meshFile = MeshFile.Read(meshFilePath);
                 var fileExt = Path.GetExtension(meshFilePath).ToLower();
-                
+
+                int surfaceNumber = 0;
+                int materialIndex = 0;
+
                 if (!fileExt.EndsWith("g"))
                 {
                     fileExt = fileExt.Substring(fileExt.IndexOf('g') + 1);
-                    modelNode.SurfaceID = int.Parse(fileExt);
+                    if (!int.TryParse(fileExt, out surfaceNumber))
+                        surfaceNumber = partProject.Surfaces.Count;
                 }
 
-                foreach (var culling in mesh.Cullings)
+                if (primitive.SubMaterials != null &&
+                    surfaceNumber < primitive.SubMaterials.Length)
                 {
-                    var subMesh = mesh.GetCullingGeometry(culling, false);
-                    var meshNode = new ModelMeshNode(culling, subMesh);
+                    materialIndex = primitive.SubMaterials[surfaceNumber];
+                }
+
+                var surface = new PartSurface
+                {
+                    SurfaceID = surfaceNumber,
+                    SubMaterialID = materialIndex
+                };
+                surface.GenerateID();
+
+                partProject.Surfaces.Add(surface);
+
+                foreach (var culling in meshFile.Cullings)
+                {
+                    SurfaceComponent component = new SurfaceComponent() { ComponentType = culling.Type };
+                    component.GenerateID();
+
+                    //if (culling.Type == LDD.Meshes.MeshCullingType.MainModel &&
+                    //    surface.Components.Any(x => x.ComponentType == LDD.Meshes.MeshCullingType.MainModel))
+                    //{
+                    //    component = surface.Components
+                    //        .FirstOrDefault(x => x.ComponentType == LDD.Meshes.MeshCullingType.MainModel);
+                    //}
+
+                    surface.Components.Add(component);
+
+                    var subMesh = meshFile.GetCullingGeometry(culling, false);
+
+                    component.Meshes.Add(new MeshElement(subMesh));
+
+                    if (culling.ReplacementMesh != null)
+                        component.AlternateMeshes.Add(new MeshElement(culling.ReplacementMesh));
+
 
                     if (culling.Studs != null)
                     {
                         foreach (var stud in culling.Studs)
                         {
-                            meshNode.Nodes.Add(new StudReference()
+                            component.LinkedStuds.Add(new StudReference()
                             {
                                 ConnectorNode = (ConnectionNode)partProject.Connections.Nodes[stud.ConnectorIndex],
-                                StudIndex = stud.FieldIndices[0].Index
+                                StudIndex = stud.FieldIndices[0].Index,
+                                Value1 = stud.FieldIndices[0].Value2,
+                                Value2 = stud.FieldIndices[0].Value4
                             });
                         }
                     }
-
-                    modelNode.Add(meshNode);
                 }
-
-                if (primitive.SubMaterials != null && 
-                    primitive.SubMaterials.Length < modelNode.SurfaceID)
-                {
-                    modelNode.SubMaterialID = primitive.SubMaterials[modelNode.SurfaceID];
-                }
-
-                modelNode.Name = modelNode.IsMainModel ? 
-                    "Main Model" : 
-                    $"Decoration {modelNode.SurfaceID}";
-
-                partProject.Models.Add(modelNode);
             }
-
-            
 
 
             return partProject;
@@ -106,15 +134,17 @@ namespace LDDModder.BrickEditor.Editing
             if (!Directory.Exists(directory))
                 Directory.CreateDirectory(directory);
 
-            var buffer = new byte[4096];
-
             using (var fs = File.Open(filename, FileMode.Create))
             using (var zipStream = new ZipOutputStream(fs))
             {
                 zipStream.SetLevel(3);
                 var rootNode = new XElement("LDP");
                 var projectXml = new XDocument(rootNode);
-                rootNode.Add(Models.SerializeHierarchy());
+                var surfaceElem = new XElement("Surfaces");
+                foreach(var surf in Surfaces)
+                    surfaceElem.Add(surf.SerializeHierarchy());
+                rootNode.Add(surfaceElem);
+
                 rootNode.Add(Collisions.SerializeHierarchy());
                 rootNode.Add(Connections.SerializeHierarchy());
 
@@ -123,13 +153,16 @@ namespace LDDModder.BrickEditor.Editing
                 projectXml.Save(zipStream);
                 zipStream.CloseEntry();
 
-                foreach (var modelNode in Models.Nodes.OfType<PartModelNode>())
+                foreach (var surface in Surfaces)
                 {
-                    foreach (var meshNode in modelNode.Nodes.OfType<ModelMeshNode>())
+                    foreach (var component in surface.Components)
                     {
-                        zipStream.PutNextEntry(new ZipEntry($"Models\\{modelNode.ID}\\{meshNode.ID}.geom"));
-                        meshNode.Mesh.Save(zipStream);
-                        zipStream.CloseEntry();
+                        foreach (var meshElem in component.GetAllMeshes())
+                        {
+                            zipStream.PutNextEntry(new ZipEntry($"Meshes\\Surface_{surface.ID}\\{component.ID}_{meshElem.ID}.geom"));
+                            meshElem.Geometry.Save(zipStream);
+                            zipStream.CloseEntry();
+                        }
                     }
                 }
             }
