@@ -34,6 +34,7 @@ namespace LDDModder.BrickEditor
         private float CameraRotation = 0;
         private Vector3 LightPosition;
         private Vector3 CameraPosition;
+        private Vector3 SceneCenter;
         private Stopwatch LogTimer;
         private string LddDbDirectory;
 
@@ -58,32 +59,39 @@ namespace LDDModder.BrickEditor
         private void SetupCamera()
         {
             CameraPosition = new Vector3(8, 8, 8);
-
+            SceneCenter = Vector3.Zero;
             if (CurrentBrick != null)
             {
                 if (CurrentBrick.Info.Bounding != null)
                 {
+                    SceneCenter = CurrentBrick.Info.Bounding.Center.ToGL();
+                    SceneCenter.Y = 0;
+
                     var brickSize = CurrentBrick.Info.Bounding.Size;
                     float maxSize = Math.Max(brickSize.X, Math.Max(brickSize.Y, brickSize.Z));
                     CameraPosition = new Vector3(maxSize + 2);
                 }
                 else if (CurrentBrick.Info.GeometryBounding != null)
                 {
+                    SceneCenter = CurrentBrick.Info.GeometryBounding.Center.ToGL();
+                    SceneCenter.Y = 0;
+
                     var brickSize = CurrentBrick.Info.GeometryBounding.Size;
                     float maxSize = Math.Max(brickSize.X, Math.Max(brickSize.Y, brickSize.Z));
                     CameraPosition = new Vector3(maxSize + 2);
                 }
             }
 
-            ViewMatrix = Matrix4.LookAt(CameraPosition, Vector3.Zero, Vector3.UnitY);
+            ViewMatrix = Matrix4.LookAt(CameraPosition, SceneCenter, Vector3.UnitY);
             CameraRotation = 0;
         }
 
         private void UpdateCamera()
         {
             var cameraRot = Matrix3.CreateRotationY(CameraRotation);
-            var cameraPos = CameraPosition * cameraRot;
-            ViewMatrix = Matrix4.LookAt(cameraPos, Vector3.Zero, Vector3.UnitY);
+            
+            var cameraPos = ((CameraPosition - SceneCenter) * cameraRot) + SceneCenter;
+            ViewMatrix = Matrix4.LookAt(cameraPos, SceneCenter, Vector3.UnitY);
         }
 
         protected override void OnUpdateFrame(FrameEventArgs e)
@@ -199,7 +207,7 @@ namespace LDDModder.BrickEditor
 
                     if (mesh is GLTexturedMesh texturedMesh)
                     {
-                        mesh.MaterialColor = Color4.White;
+                        mesh.MaterialColor = new Color4(1, 1, 1, 0.7f);
                         texturedMesh.Texture = DefaultTexture;
                     }
 
