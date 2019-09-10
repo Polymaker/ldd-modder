@@ -13,6 +13,8 @@ namespace LDDModder.LDD.Data
 {
     public class LDDPartFiles
     {
+        public int PartID { get; set; }
+
         public MeshFile MainModel { get; set; }
         public List<MeshFile> DecorationMeshes { get; } = new List<MeshFile>();
         
@@ -39,6 +41,7 @@ namespace LDDModder.LDD.Data
 
             var meshInfo = new LDDPartFiles()
             {
+                PartID = partID,
                 Info = Primitive.FromXmlFile(primitiveFile)
             };
 
