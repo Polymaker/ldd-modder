@@ -14,15 +14,15 @@ namespace LDDModder.LDD.Palettes
         public int SurfaceID { get; set; }
 
         [XmlAttribute("decorationID")]
-        public int DecorationID { get; set; }
+        public string DecorationID { get; set; }
 
         public Decoration()
         {
             SurfaceID = 0;
-            DecorationID = 0;
+            DecorationID = string.Empty;
         }
 
-        public Decoration(int surfaceID, int decorationID)
+        public Decoration(int surfaceID, string decorationID)
         {
             SurfaceID = surfaceID;
             DecorationID = decorationID;

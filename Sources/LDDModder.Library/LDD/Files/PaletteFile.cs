@@ -66,7 +66,8 @@ namespace LDDModder.LDD.Files
         {
             path = Path.GetFullPath(path);
             Directory.CreateDirectory(path);
-
         }
+
+
     }
 }

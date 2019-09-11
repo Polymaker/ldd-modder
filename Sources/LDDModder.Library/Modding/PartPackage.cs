@@ -1,6 +1,7 @@
 ﻿using ICSharpCode.SharpZipLib.Zip;
 using LDDModder.LDD.Files;
 using LDDModder.LDD.Primitives;
+using LDDModder.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -12,7 +13,7 @@ using System.Xml.Linq;
 
 namespace LDDModder.Modding
 {
-    public class PartPackage
+    public class PartPackage : IDisposable
     {
         public const string PACKAGE_XML_FILENAME = "package.xml";
         public const string MESH_FOLDER = "Meshes\\";
@@ -64,10 +65,29 @@ namespace LDDModder.Modding
 
             if (DecorationImages.Any())
             {
-                var decoElem = new XElement("Decorations");
-                packageXml.Root.Add(decoElem);
+                var decoElem = packageXml.Root.AddElement("Decorations");
                 foreach (var decImg in DecorationImages)
                     decoElem.Add(decImg.Serialize());
+            }
+
+            if (Configurations.Any())
+            {
+                var brickElem = packageXml.Root.AddElement("Configurations");
+                foreach(var brick in Configurations)
+                {
+                    var elem = new XElement("Brick",
+                        new XAttribute("ElementID", brick.ElementID),
+                        new XAttribute("MaterialID", brick.MaterialID));
+
+                    
+                    foreach (var dec in brick.Decorations)
+                        elem.Add(XmlHelper.DefaultSerialize(dec));
+
+                    foreach (var subMat in brick.SubMaterials)
+                        elem.Add(XmlHelper.DefaultSerialize(subMat));
+
+                    brickElem.Add(elem);
+                }
             }
 
             using (var zipStream = new ZipOutputStream(stream))
@@ -88,7 +108,12 @@ namespace LDDModder.Modding
                 foreach (var partMesh in Meshes)
                 {
                     zipStream.PutNextEntry(new ZipEntry($"{MESH_FOLDER}{partMesh.GetFileName()}"));
-                    partMesh.Mesh.Save(zipStream);
+                    using (var ms = new MemoryStream())
+                    {
+                        partMesh.Mesh.Save(ms);
+                        ms.Seek(0, SeekOrigin.Begin);
+                        ms.CopyTo(zipStream);
+                    }
                     zipStream.CloseEntry();
                 }
 
@@ -185,6 +210,72 @@ namespace LDDModder.Modding
                     new XAttribute("SurfaceID", SurfaceID), 
                     new XAttribute("File", MESH_FOLDER + GetFileName()));
             }
+        }
+
+
+        public static void CreateLDDPackages()
+        {
+            string lddDir = Environment.ExpandEnvironmentVariables(@"%appdata%\LEGO Company\LEGO Digital Designer\");
+            string primitiveDir = Path.Combine(lddDir, "db\\Primitives");
+            string meshDir = Path.Combine(lddDir, "db\\Primitives\\LOD0");
+            string decorationDir = Path.Combine(lddDir, "db\\Decorations");
+            var lddPalette = PaletteFile.FromLif(Path.Combine(lddDir, "Palettes\\LDD.lif")).Palettes[0];
+            var xmlDecMap = XDocument.Load(Path.Combine(lddDir, "db\\DecorationMapping.xml"));
+            var decMappings = new List<LDD.Data.DecorationMapping>();
+            foreach (var elem in xmlDecMap.Root.Elements("Mapping"))
+                decMappings.Add(XmlHelper.DefaultDeserialize<LDD.Data.DecorationMapping>(elem));
+
+            foreach (var primitivePath in Directory.GetFiles(primitiveDir, "*.xml"))
+            {
+                var primitive = Primitive.Load(primitivePath);
+
+                var package = new PartPackage()
+                {
+                    PartID = int.Parse(Path.GetFileNameWithoutExtension(primitivePath)),
+                    Primitive = primitive
+                };
+                var myDecorations = decMappings.Where(x => x.DesignID == package.PartID);
+
+                if (myDecorations.Any())
+                {
+                    package.DecorationMappings.AddRange(
+                        myDecorations.Select(x =>
+                            new LDD.Palettes.Decoration(x.SurfaceID, x.DecorationID)));
+
+                    foreach (string decID in package.DecorationMappings.Select(x => x.DecorationID).Distinct())
+                    {
+                        var imagePath = Directory.EnumerateFiles(decorationDir, decID + ".*").FirstOrDefault();
+                        var img = Image.FromFile(imagePath);
+                        package.DecorationImages.Add(new DecorationImage(decID, img));
+                    }
+                }
+
+                var myElements = lddPalette.Bricks.Where(x => x.DesignID == package.PartID);
+                if (myElements.Any())
+                {
+                    package.Configurations.AddRange(myElements);
+                }
+
+                int surfaceId = 0;
+                foreach (var meshPath in Directory.GetFiles(meshDir, package.PartID + ".g*").OrderBy(x => x))
+                {
+                    var mesh = MeshFile.Read(meshPath);
+                    package.Meshes.Add(new PartMesh(package.PartID, surfaceId++, mesh));
+                }
+
+                package.Save($"LPI TEST\\{package.PartID}.lpi");
+
+                package.Dispose();
+            }
+        }
+
+        public void Dispose()
+        {
+            Meshes.Clear();
+            DecorationImages.ForEach(x => x.Image.Dispose());
+            DecorationImages.Clear();
+            Configurations.Clear();
+
         }
     }
 }

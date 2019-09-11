@@ -143,13 +143,13 @@ namespace LDDModder.LDD.Primitives
             return rootElem;
         }
 
-        public static Primitive FromXmlFile(string filepath)
+        public static Primitive Load(string filepath)
         {
             using (var fs = File.OpenRead(filepath))
-                return FromXmlFile(fs);
+                return Load(fs);
         }
 
-        public static Primitive FromXmlFile(FileStream fs)
+        public static Primitive Load(FileStream fs)
         {
             var document = XDocument.Load(fs);
             var primitive = new Primitive();

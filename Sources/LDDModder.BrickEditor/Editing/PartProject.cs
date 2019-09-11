@@ -43,7 +43,7 @@ namespace LDDModder.BrickEditor.Editing
             if (!File.Exists(Path.Combine(meshesPath, $"{partID}.g")))
                 throw new FileNotFoundException($"Part Mesh not found. ({partID}.g)");
 
-            var primitive = Primitive.FromXmlFile(primitiveFile);
+            var primitive = Primitive.Load(primitiveFile);
 
             var partProject = new PartProject()
             {

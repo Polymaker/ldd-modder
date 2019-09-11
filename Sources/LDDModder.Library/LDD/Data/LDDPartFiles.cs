@@ -42,7 +42,7 @@ namespace LDDModder.LDD.Data
             var meshInfo = new LDDPartFiles()
             {
                 PartID = partID,
-                Info = Primitive.FromXmlFile(primitiveFile)
+                Info = Primitive.Load(primitiveFile)
             };
 
             foreach (string meshFile in Directory.GetFiles(meshesPath, $"{partID}.g*"))

@@ -7,6 +7,7 @@ using System.Xml.Serialization;
 
 namespace LDDModder.LDD.Data
 {
+    [XmlRoot("Mapping")]
     public class DecorationMapping
     {
         [XmlAttribute("decorationID")]

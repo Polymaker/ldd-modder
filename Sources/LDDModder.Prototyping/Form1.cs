@@ -45,7 +45,7 @@ namespace LDDModder.Prototyping
                 {
                     using (var fs = File.Open(primitiveFile, FileMode.Open, FileAccess.Read))
                     {
-                        var primitive = Primitive.FromXmlFile(fs);
+                        var primitive = Primitive.Load(fs);
                         if (primitive != null)
                             loadedPrimitives.Add(primitive);
                     }

@@ -14,6 +14,7 @@ namespace LDDModder.BrickEditor
         [STAThread]
         static void Main()
         {
+            Modding.PartPackage.CreateLDDPackages();
             var test = new GLTestWindow();
             test.Run();
             //Application.EnableVisualStyles();
