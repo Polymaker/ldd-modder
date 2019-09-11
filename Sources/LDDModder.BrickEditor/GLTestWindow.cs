@@ -65,7 +65,7 @@ namespace LDDModder.BrickEditor
                 if (CurrentBrick.Info.Bounding != null)
                 {
                     SceneCenter = CurrentBrick.Info.Bounding.Center.ToGL();
-                    SceneCenter.Y = 0;
+                    //SceneCenter.Y = 0;
 
                     var brickSize = CurrentBrick.Info.Bounding.Size;
                     float maxSize = Math.Max(brickSize.X, Math.Max(brickSize.Y, brickSize.Z));
@@ -74,7 +74,7 @@ namespace LDDModder.BrickEditor
                 else if (CurrentBrick.Info.GeometryBounding != null)
                 {
                     SceneCenter = CurrentBrick.Info.GeometryBounding.Center.ToGL();
-                    SceneCenter.Y = 0;
+                    //SceneCenter.Y = 0;
 
                     var brickSize = CurrentBrick.Info.GeometryBounding.Size;
                     float maxSize = Math.Max(brickSize.X, Math.Max(brickSize.Y, brickSize.Z));

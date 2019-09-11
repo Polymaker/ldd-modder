@@ -36,8 +36,12 @@
     <Reference Include="AssimpNet, Version=4.1.0.0, Culture=neutral, PublicKeyToken=0d51b391f59f42a6, processorArchitecture=MSIL">
       <HintPath>..\packages\AssimpNet.4.1.0\lib\net40\AssimpNet.dll</HintPath>
     </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=1.2.0.246, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpZipLib.1.2.0\lib\net45\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -52,11 +56,13 @@
     <Compile Include="IO\Endianness.cs" />
     <Compile Include="IO\StreamPortion.cs" />
     <Compile Include="IO\StringMarshalingAttribute.cs" />
+    <Compile Include="LDD\Data\Brand.cs" />
     <Compile Include="LDD\Data\DecorationMapping.cs" />
     <Compile Include="LDD\Data\MainGroup.cs" />
     <Compile Include="LDD\Data\Material.cs" />
     <Compile Include="LDD\Data\MaterialType.cs" />
     <Compile Include="LDD\Data\Platform.cs" />
+    <Compile Include="LDD\Data\VersionInfo.cs" />
     <Compile Include="LDD\Files\GFileReader.cs" />
     <Compile Include="LDD\Files\GFileWriter.cs" />
     <Compile Include="LDD\Files\LifFile.cs" />
@@ -72,6 +78,7 @@
     <Compile Include="LDD\Files\MeshStructures\MESH_INDEX.cs" />
     <Compile Include="LDD\Files\MeshStructures\ROUNDEDGE_SHADER_DATA.cs" />
     <Compile Include="LDD\Data\LDDPartFiles.cs" />
+    <Compile Include="LDD\Files\PaletteFile.cs" />
     <Compile Include="LDD\LDDEnvironment.cs" />
     <Compile Include="LDD\Meshes\BoneWeight.cs" />
     <Compile Include="LDD\Meshes\Custom2DFieldIndex.cs" />
@@ -90,6 +97,13 @@
     <Compile Include="LDD\Meshes\Vertex.cs" />
     <Compile Include="LDD\Meshes\IndexReference.cs" />
     <Compile Include="LDD\Meshes\VertexIndex.cs" />
+    <Compile Include="LDD\Palettes\Bag.cs" />
+    <Compile Include="LDD\Palettes\Decoration.cs" />
+    <Compile Include="LDD\Palettes\Palette.cs" />
+    <Compile Include="LDD\Palettes\Assembly.cs" />
+    <Compile Include="LDD\Palettes\Brick.cs" />
+    <Compile Include="LDD\Palettes\PaletteItem.cs" />
+    <Compile Include="LDD\Palettes\SubMaterial.cs" />
     <Compile Include="LDD\Primitives\BoundingBox.cs" />
     <Compile Include="LDD\Primitives\Camera.cs" />
     <Compile Include="LDD\Primitives\Collisions\Collision.cs" />
@@ -109,6 +123,8 @@
     <Compile Include="LDD\Primitives\PhysicsAttributes.cs" />
     <Compile Include="LDD\Primitives\Primitive.cs" />
     <Compile Include="LDD\Primitives\Transform.cs" />
+    <Compile Include="Modding\PartInstaller.cs" />
+    <Compile Include="Modding\PartPackage.cs" />
     <Compile Include="Serialization\IXmlObject.cs" />
     <Compile Include="Serialization\LinqXmlExtensions.cs" />
     <Compile Include="Serialization\XmlHelper.cs" />
@@ -131,7 +147,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="LDD\Models\" />
-    <Folder Include="LDD\Palettes\" />
     <Folder Include="Rebrickable\" />
   </ItemGroup>
   <ItemGroup>

@@ -293,5 +293,14 @@ namespace LDDModder.LDD.Primitives
             };
             doc.Save(filename);
         }
+
+        public void Save(Stream stream)
+        {
+            var doc = new XDocument(SerializeToXml())
+            {
+                Declaration = new XDeclaration("1.0", "UTF-8", "no")
+            };
+            doc.Save(stream);
+        }
     }
 }

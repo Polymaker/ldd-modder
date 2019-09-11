@@ -14,6 +14,8 @@ namespace LDDModder.LDD.Files
     {
         public MESH_FILE? OriginalData { get; }
 
+        public string Filename { get; internal set; }
+
         public MeshType Type { get; private set; }
 
         public MeshGeometry Geometry { get; private set; }
@@ -91,6 +93,11 @@ namespace LDDModder.LDD.Files
         {
             using (var fs = File.Open(filename, FileMode.Create))
                 GFileWriter.WriteMesh(fs, this);
+        }
+
+        public void Save(Stream stream)
+        {
+            GFileWriter.WriteMesh(stream, this);
         }
 
         public void CreateDefaultCulling()

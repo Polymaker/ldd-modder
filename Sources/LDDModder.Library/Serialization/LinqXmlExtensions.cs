@@ -54,6 +54,13 @@ namespace System.Xml.Linq
             return newElem;
         }
 
+        public static XElement AddElement(this XElement element, string elementName, params object[] content)
+        {
+            var newElem = new XElement(elementName, content);
+            element.Add(newElem);
+            return newElem;
+        }
+
         public enum BooleanXmlRepresentation
         {
             TrueFalse,
@@ -154,6 +161,21 @@ namespace System.Xml.Linq
                         result = (T)(object)false;
                         return true;
                 }
+            }
+            else if (typeof(T).IsEnum)
+            {
+                if (int.TryParse(attr.Value, out int intEnumVal) &&
+                    Enum.IsDefined(typeof(T), intEnumVal))
+                {
+                    result = (T)Enum.ToObject(typeof(T), intEnumVal);
+                    return true;
+                }
+                try
+                {
+                    result = (T)Enum.Parse(typeof(T), attr.Value, true);
+                    return true;
+                }
+                catch { }
             }
 
             return false;

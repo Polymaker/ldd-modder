@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace System
@@ -100,6 +101,15 @@ namespace System
         public static string Capitalize(this string text)
         {
             return char.ToUpper(text[0]) + text.Substring(1);
+        }
+
+        public static bool MatchesWildcard(this string text, string searchPattern)
+        {
+            string regexString = Regex.Escape(searchPattern);
+            regexString = "^" + Regex.Replace(regexString, @"\\\*", ".*");
+            regexString = Regex.Replace(regexString, @"\\\?", ".");
+
+            return Regex.IsMatch(text, regexString);
         }
     }
 }

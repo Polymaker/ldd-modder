@@ -37,6 +37,16 @@ namespace LDDModder.LDD.Files
             return RootFolder.GetEntryHierarchy().OfType<FolderEntry>().FirstOrDefault(x => x.Fullname == fullname);
         }
 
+        public FileEntry GetFile(string filename)
+        {
+            return RootFolder.GetFile(filename);
+        }
+
+        public IEnumerable<FileEntry> GetFiles(string searchFilter)
+        {
+            return RootFolder.GetFiles(searchFilter);
+        }
+
         public FolderEntry CreateFolder(string folderName)
         {
             if (!IsValidPath(folderName) || Path.IsPathRooted(folderName))
@@ -730,6 +740,16 @@ namespace LDDModder.LDD.Files
             public FolderEntry GetFolder(string folderName)
             {
                 return Folders.FirstOrDefault(x => x.Name == folderName);
+            }
+
+            public FileEntry GetFile(string filename)
+            {
+                return Files.FirstOrDefault(x => x.Name == filename);
+            }
+
+            public IEnumerable<FileEntry> GetFiles(string searchFilter)
+            {
+                return Files.Where(x => x.Name.MatchesWildcard(searchFilter));
             }
 
             public IEnumerable<FileEntry> GetAllFiles()

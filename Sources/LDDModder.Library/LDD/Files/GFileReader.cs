@@ -266,6 +266,9 @@ namespace LDDModder.LDD.Files
                 SetShaderData(meshFile, meshFile.Geometry, mainMesh);
 
                 var mesh = new MeshFile(meshFile, (MeshType)meshFile.Header.MeshType);
+                if (stream is FileStream fs)
+                    mesh.Filename = fs.Name;
+
                 mesh.SetGeometry(mainMesh);
 
                 for (int i = 0; i < meshFile.Culling.Length; i++)

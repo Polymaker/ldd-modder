@@ -16,6 +16,8 @@ namespace LDDModder.IO
         private bool forceReadOnly;
         private long localPosition;
 
+        public Stream BaseStream => sourceStream;
+
         public override bool CanRead
         {
             get { return sourceStream.CanRead; }
