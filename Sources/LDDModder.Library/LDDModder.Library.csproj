@@ -61,6 +61,8 @@
     <Compile Include="LDD\Data\MainGroup.cs" />
     <Compile Include="LDD\Data\Material.cs" />
     <Compile Include="LDD\Data\MaterialType.cs" />
+    <Compile Include="LDD\Data\PartSurfaceMesh.cs" />
+    <Compile Include="LDD\Data\PartWrapper.cs" />
     <Compile Include="LDD\Data\Platform.cs" />
     <Compile Include="LDD\Data\VersionInfo.cs" />
     <Compile Include="LDD\Files\GFileReader.cs" />
@@ -93,6 +95,7 @@
     <Compile Include="LDD\Meshes\RoundEdgeData.cs" />
     <Compile Include="LDD\Meshes\MeshCullingType.cs" />
     <Compile Include="LDD\Meshes\Custom2DFieldReference.cs" />
+    <Compile Include="LDD\Meshes\ShaderDataGenerator.cs" />
     <Compile Include="LDD\Meshes\Triangle.cs" />
     <Compile Include="LDD\Meshes\Vertex.cs" />
     <Compile Include="LDD\Meshes\IndexReference.cs" />
@@ -131,6 +134,7 @@
     <Compile Include="Simple3D\ExtensionMethods.cs" />
     <Compile Include="Simple3D\Matrix3.cs" />
     <Compile Include="Simple3D\Matrix4.cs" />
+    <Compile Include="Simple3D\Plane.cs" />
     <Compile Include="Simple3D\Quaternion.cs" />
     <Compile Include="Simple3D\Vector2.cs" />
     <Compile Include="Simple3D\Vector3.cs" />

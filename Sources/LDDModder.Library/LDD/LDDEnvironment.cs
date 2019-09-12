@@ -26,11 +26,6 @@ namespace LDDModder.LDD
 
         public static LDDEnvironment Current { get; private set; }
 
-        //public void CheckLifStatus()
-        //{
-
-        //}
-
         public static void Initialize()
         {
             var lddEnv = new LDDEnvironment()
@@ -38,7 +33,7 @@ namespace LDDModder.LDD
                 ProgramFilesPath = FindInstallFolder(),
                 ApplicationDataPath = FindAppDataFolder()
             };
-
+            lddEnv.CheckLifStatus();
             Current = lddEnv;
         }
 
@@ -65,6 +60,18 @@ namespace LDDModder.LDD
             if (Directory.Exists(localAppData))
                 return localAppData;
             return string.Empty;
+        }
+
+        public void CheckLifStatus()
+        {
+            DatabaseExtracted = false;
+            if (Directory.Exists(Path.Combine(ApplicationDataPath, "db")))
+                DatabaseExtracted = File.Exists(Path.Combine(ApplicationDataPath, "db", "info.xml"));
+
+            AssetsExtracted = false;
+            if (Directory.Exists(Path.Combine(ProgramFilesPath, "Assets")))
+                AssetsExtracted = Directory.EnumerateFiles(Path.Combine(ProgramFilesPath, "Assets"), "*", SearchOption.AllDirectories).Any();
+
         }
     }
 }

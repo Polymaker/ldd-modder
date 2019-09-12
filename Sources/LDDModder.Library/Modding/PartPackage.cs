@@ -43,6 +43,8 @@ namespace LDDModder.Modding
 
         public void Save(string filename)
         {
+            filename = Path.GetFullPath(filename);
+            Directory.CreateDirectory(Path.GetDirectoryName(filename));
             using (var fs = File.Open(filename, FileMode.Create))
                 Save(fs);
         }
@@ -92,7 +94,7 @@ namespace LDDModder.Modding
 
             using (var zipStream = new ZipOutputStream(stream))
             {
-                zipStream.SetLevel(3);
+                zipStream.SetLevel(1);
 
                 zipStream.PutNextEntry(new ZipEntry(PACKAGE_XML_FILENAME));
                 packageXml.Save(zipStream);
@@ -161,11 +163,11 @@ namespace LDDModder.Modding
 
             public string GetFileName()
             {
-                if (Image.RawFormat == System.Drawing.Imaging.ImageFormat.Png)
+                if (Image.RawFormat.Equals(System.Drawing.Imaging.ImageFormat.Png))
                     return $"{DecorationID}.png";
-                else if (Image.RawFormat == System.Drawing.Imaging.ImageFormat.Jpeg)
+                else if (Image.RawFormat.Equals(System.Drawing.Imaging.ImageFormat.Jpeg))
                     return $"{DecorationID}.jpg";
-                else if (Image.RawFormat == System.Drawing.Imaging.ImageFormat.Bmp)
+                else if (Image.RawFormat.Equals(System.Drawing.Imaging.ImageFormat.Bmp))
                     return $"{DecorationID}.bmp";
 
                 return string.Empty;
@@ -225,7 +227,8 @@ namespace LDDModder.Modding
             foreach (var elem in xmlDecMap.Root.Elements("Mapping"))
                 decMappings.Add(XmlHelper.DefaultDeserialize<LDD.Data.DecorationMapping>(elem));
 
-            foreach (var primitivePath in Directory.GetFiles(primitiveDir, "*.xml"))
+            foreach (var primitivePath in Directory.GetFiles(primitiveDir, "*.xml")
+                .OrderBy(x => int.Parse(Path.GetFileNameWithoutExtension(x))))
             {
                 var primitive = Primitive.Load(primitivePath);
 
@@ -245,6 +248,8 @@ namespace LDDModder.Modding
                     foreach (string decID in package.DecorationMappings.Select(x => x.DecorationID).Distinct())
                     {
                         var imagePath = Directory.EnumerateFiles(decorationDir, decID + ".*").FirstOrDefault();
+                        if (string.IsNullOrEmpty(imagePath))
+                            continue;
                         var img = Image.FromFile(imagePath);
                         package.DecorationImages.Add(new DecorationImage(decID, img));
                     }
@@ -263,7 +268,9 @@ namespace LDDModder.Modding
                     package.Meshes.Add(new PartMesh(package.PartID, surfaceId++, mesh));
                 }
 
-                package.Save($"LPI TEST\\{package.PartID}.lpi");
+                string folderName = package.PartID.ToString()[0].ToString().PadRight(package.PartID.ToString().Length, '0');
+
+                package.Save($"LPI TEST\\{folderName}\\{package.PartID}.lpi");
 
                 package.Dispose();
             }

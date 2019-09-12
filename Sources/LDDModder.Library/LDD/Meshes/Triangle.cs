@@ -92,5 +92,10 @@ namespace LDDModder.LDD.Meshes
         {
             return Vertices.Any(x => x.Position.Equals(pos));
         }
+
+        public bool ContainsEdge(Edge edge, bool compareByPos = false)
+        {
+            return Edges.Any(x => x.Equals(edge, compareByPos));
+        }
     }
 }

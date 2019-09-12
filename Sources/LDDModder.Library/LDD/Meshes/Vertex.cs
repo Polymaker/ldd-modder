@@ -76,9 +76,9 @@ namespace LDDModder.LDD.Meshes
         public int GetHash()
         {
             var hashCode = 550714527;
-            hashCode = hashCode * -1521134295 + Position.GetHashCode();
-            hashCode = hashCode * -1521134295 + Normal.GetHashCode();
-            hashCode = hashCode * -1521134295 + TexCoord.GetHashCode();
+            hashCode = hashCode * -1521134295 + Position.Rounded(4).GetHashCode();
+            hashCode = hashCode * -1521134295 + Normal.Rounded(4).GetHashCode();
+            hashCode = hashCode * -1521134295 + TexCoord.Rounded(4).GetHashCode();
             return hashCode;
         }
 

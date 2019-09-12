@@ -12,7 +12,7 @@ namespace LDDModder.LDD.Files
 {
     public class MeshFile
     {
-        public MESH_FILE? OriginalData { get; }
+        //public MESH_FILE? OriginalData { get; }
 
         public string Filename { get; internal set; }
 
@@ -38,12 +38,12 @@ namespace LDDModder.LDD.Files
 
         public bool IsFlexible => Geometry.IsFlexible;
 
-        internal MeshFile(MESH_FILE originalData, MeshType type)
-        {
-            OriginalData = originalData;
-            Type = type;
-            Cullings = new List<MeshCulling>();
-        }
+        //internal MeshFile(MESH_FILE originalData, MeshType type)
+        //{
+        //    OriginalData = originalData;
+        //    Type = type;
+        //    Cullings = new List<MeshCulling>();
+        //}
 
         public MeshFile(MeshType type)
         {

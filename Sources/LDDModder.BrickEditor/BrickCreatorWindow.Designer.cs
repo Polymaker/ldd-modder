@@ -49,6 +49,9 @@
             this.CreateBrickButton = new System.Windows.Forms.Button();
             this.ClearAllButton = new System.Windows.Forms.Button();
             this.ImportExportProgress = new System.Windows.Forms.ProgressBar();
+            this.RemoveAllMeshButton = new System.Windows.Forms.Button();
+            this.CreatePrimitiveCheckBox = new System.Windows.Forms.CheckBox();
+            this.CreateMeshesCheckBox = new System.Windows.Forms.CheckBox();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.BrickMeshGridView)).BeginInit();
             this.SuspendLayout();
@@ -260,7 +263,7 @@
             // 
             // ClearAllButton
             // 
-            this.ClearAllButton.Location = new System.Drawing.Point(341, 40);
+            this.ClearAllButton.Location = new System.Drawing.Point(344, 93);
             this.ClearAllButton.Name = "ClearAllButton";
             this.ClearAllButton.Size = new System.Drawing.Size(90, 23);
             this.ClearAllButton.TabIndex = 5;
@@ -277,11 +280,51 @@
             this.ImportExportProgress.TabIndex = 6;
             this.ImportExportProgress.Visible = false;
             // 
+            // RemoveAllMeshButton
+            // 
+            this.RemoveAllMeshButton.Enabled = false;
+            this.RemoveAllMeshButton.Location = new System.Drawing.Point(204, 341);
+            this.RemoveAllMeshButton.Name = "RemoveAllMeshButton";
+            this.RemoveAllMeshButton.Size = new System.Drawing.Size(90, 23);
+            this.RemoveAllMeshButton.TabIndex = 7;
+            this.RemoveAllMeshButton.Text = "Remove All";
+            this.RemoveAllMeshButton.UseVisualStyleBackColor = true;
+            this.RemoveAllMeshButton.Click += new System.EventHandler(this.RemoveAllMeshButton_Click);
+            // 
+            // CreatePrimitiveCheckBox
+            // 
+            this.CreatePrimitiveCheckBox.AutoSize = true;
+            this.CreatePrimitiveCheckBox.Checked = true;
+            this.CreatePrimitiveCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.CreatePrimitiveCheckBox.Location = new System.Drawing.Point(344, 43);
+            this.CreatePrimitiveCheckBox.Name = "CreatePrimitiveCheckBox";
+            this.CreatePrimitiveCheckBox.Size = new System.Drawing.Size(90, 17);
+            this.CreatePrimitiveCheckBox.TabIndex = 8;
+            this.CreatePrimitiveCheckBox.Text = "Primitive XML";
+            this.CreatePrimitiveCheckBox.UseVisualStyleBackColor = true;
+            this.CreatePrimitiveCheckBox.CheckedChanged += new System.EventHandler(this.CreatePrimitiveCheckBox_CheckedChanged);
+            // 
+            // CreateMeshesCheckBox
+            // 
+            this.CreateMeshesCheckBox.AutoSize = true;
+            this.CreateMeshesCheckBox.Checked = true;
+            this.CreateMeshesCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.CreateMeshesCheckBox.Location = new System.Drawing.Point(344, 66);
+            this.CreateMeshesCheckBox.Name = "CreateMeshesCheckBox";
+            this.CreateMeshesCheckBox.Size = new System.Drawing.Size(73, 17);
+            this.CreateMeshesCheckBox.TabIndex = 9;
+            this.CreateMeshesCheckBox.Text = "Mesh files";
+            this.CreateMeshesCheckBox.UseVisualStyleBackColor = true;
+            this.CreateMeshesCheckBox.CheckedChanged += new System.EventHandler(this.CreateMeshesCheckBox_CheckedChanged);
+            // 
             // BrickCreatorWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(643, 373);
+            this.Controls.Add(this.CreateMeshesCheckBox);
+            this.Controls.Add(this.CreatePrimitiveCheckBox);
+            this.Controls.Add(this.RemoveAllMeshButton);
             this.Controls.Add(this.ImportExportProgress);
             this.Controls.Add(this.ClearAllButton);
             this.Controls.Add(this.CreateBrickButton);
@@ -322,5 +365,8 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn DecorationNumberColumn;
         private System.Windows.Forms.Button ClearAllButton;
         private System.Windows.Forms.ProgressBar ImportExportProgress;
+        private System.Windows.Forms.Button RemoveAllMeshButton;
+        private System.Windows.Forms.CheckBox CreatePrimitiveCheckBox;
+        private System.Windows.Forms.CheckBox CreateMeshesCheckBox;
     }
 }

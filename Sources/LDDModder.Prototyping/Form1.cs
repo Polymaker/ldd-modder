@@ -185,7 +185,7 @@ namespace LDDModder.Prototyping
             }
             
         }
-
+        /*
         private void FixBrick4286()
         {
             string meshDirectory = Environment.ExpandEnvironmentVariables(@"%appdata%\LEGO Company\LEGO Digital Designer\db\Primitives\LOD0\");
@@ -294,7 +294,7 @@ namespace LDDModder.Prototyping
                 }
             }
         }
-
+        */
         //private void TestLddFiles()
         //{
         //    string lddDirectory = Environment.ExpandEnvironmentVariables(@"%appdata%\LEGO Company\LEGO Digital Designer\");

@@ -99,7 +99,7 @@ namespace LDDModder.Simple3D
 
         public bool Equals(Vector3 other)
         {
-            return Equals(other, 0.00001f);
+            return Equals(other, 0.0001f);
         }
 
         public bool Equals(Vector3 other, float tolerence)
@@ -201,6 +201,9 @@ namespace LDDModder.Simple3D
 
         public Vector3 Rounded(int decimals = 4)
         {
+            if (IsEmpty)
+                return this;
+
             return new Vector3(
                 (float)Math.Round(X, decimals), 
                 (float)Math.Round(Y, decimals), 

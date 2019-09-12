@@ -32,14 +32,14 @@ namespace LDDModder.LDD.Files
             return RootFolder.GetAllFiles();
         }
 
-        public FolderEntry GetFolder(string fullname)
+        public FolderEntry GetFolder(string folderName)
         {
-            return RootFolder.GetEntryHierarchy().OfType<FolderEntry>().FirstOrDefault(x => x.Fullname == fullname);
+            return RootFolder.GetFolder(folderName);
         }
 
-        public FileEntry GetFile(string filename)
+        public FileEntry GetFile(string fileName)
         {
-            return RootFolder.GetFile(filename);
+            return RootFolder.GetFile(fileName);
         }
 
         public IEnumerable<FileEntry> GetFiles(string searchFilter)
@@ -739,12 +739,14 @@ namespace LDDModder.LDD.Files
 
             public FolderEntry GetFolder(string folderName)
             {
-                return Folders.FirstOrDefault(x => x.Name == folderName);
+                string fullName = Path.Combine(Fullname, folderName);
+                return GetEntryHierarchy(false).OfType<FolderEntry>().FirstOrDefault(x => x.Fullname.Equals(fullName, StringComparison.InvariantCultureIgnoreCase));
             }
 
             public FileEntry GetFile(string filename)
             {
-                return Files.FirstOrDefault(x => x.Name == filename);
+                string fullName = Path.Combine(Fullname, filename);
+                return GetEntryHierarchy(false).OfType<FileEntry>().FirstOrDefault(x => x.Fullname.Equals(fullName, StringComparison.InvariantCultureIgnoreCase));
             }
 
             public IEnumerable<FileEntry> GetFiles(string searchFilter)
@@ -768,14 +770,23 @@ namespace LDDModder.LDD.Files
                 }
             }
 			
-			public IEnumerable<LifEntry> GetEntryHierarchy()
+			public IEnumerable<LifEntry> GetEntryHierarchy(bool drillDown = true)
             {
                 foreach (var entry in Entries.OrderBy(x => x.Name))
                 {
 					yield return entry;
-                    if (entry is FolderEntry folder)
+                    if (drillDown && entry is FolderEntry folder)
                     {
-                        foreach (var childEntry in folder.GetEntryHierarchy())
+                        foreach (var childEntry in folder.GetEntryHierarchy(drillDown))
+                            yield return childEntry;
+                    }
+                }
+
+                if (!drillDown)
+                {
+                    foreach (var folder in Folders.OrderBy(x => x.Name))
+                    {
+                        foreach (var childEntry in folder.GetEntryHierarchy(drillDown))
                             yield return childEntry;
                     }
                 }

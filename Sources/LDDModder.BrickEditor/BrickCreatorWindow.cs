@@ -30,14 +30,20 @@ namespace LDDModder.BrickEditor
         {
             InitializeComponent();
             BrickMeshes = new BindingList<BrickMeshObject>();
+            BrickMeshes.ListChanged += BrickMeshes_ListChanged;
             Platforms = new List<Platform>();
             Groups = new List<MainGroup>();
         }
-       
+
+        private void BrickMeshes_ListChanged(object sender, ListChangedEventArgs e)
+        {
+            RemoveAllMeshButton.Enabled = BrickMeshes.Any();
+        }
+
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-
+            //Modding.PartPackage.CreateLDDPackages();
             //string meshDir = Environment.ExpandEnvironmentVariables(@"%appdata%\LEGO Company\LEGO Digital Designer\db\");
             //var project = PartProject.CreateFromLdd(meshDir, 10130);
             //project.SaveUncompressed("10130");
@@ -206,6 +212,12 @@ namespace LDDModder.BrickEditor
                         float progress = counter++ / (float)scene.MeshCount;
                         ImportExportProgress.Value = 20 + (int)(progress * 80);
                     }
+
+                    if (string.IsNullOrEmpty(IDTextbox.Text) && 
+                        int.TryParse(Path.GetFileNameWithoutExtension(filename), out int partID))
+                    {
+                        IDTextbox.Text = partID.ToString();
+                    }
                 }
             }
             catch(Exception ex)
@@ -277,6 +289,7 @@ namespace LDDModder.BrickEditor
             }
 
             partMesh.ComputeAverageNormals();
+            partMesh.ComputeRoundEdgeShader();
             ImportExportProgress.Value = 95;
 
             if (partMesh.DecorationMeshes.Any())
@@ -304,7 +317,14 @@ namespace LDDModder.BrickEditor
                         if (res == DialogResult.No)
                             return;
                     }
-                    partMesh.Save(targetDir, baseName);
+
+                    if (CreateMeshesCheckBox.Checked && CreatePrimitiveCheckBox.Checked)
+                        partMesh.SaveAll(targetDir, baseName);
+                    else if (CreateMeshesCheckBox.Checked)
+                        partMesh.SaveMeshes(targetDir, baseName);
+                    else if (CreatePrimitiveCheckBox.Checked)
+                        partMesh.SavePrimitive(targetDir, baseName);
+
                     MessageBox.Show("Brick files created succesfully.");
                 }
             }
@@ -391,6 +411,11 @@ namespace LDDModder.BrickEditor
             BrickMeshes.Clear();
         }
 
+        private void RemoveAllMeshButton_Click(object sender, EventArgs e)
+        {
+            BrickMeshes.Clear();
+        }
+
         private void HideProgressDelayed(int delay = 1500)
         {
             Task.Factory.StartNew(() =>
@@ -412,6 +437,16 @@ namespace LDDModder.BrickEditor
             {
                 sw.WriteLine(message);
             }
+        }
+
+        private void CreatePrimitiveCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            CreateBrickButton.Enabled = CreateMeshesCheckBox.Checked || CreatePrimitiveCheckBox.Checked;
+        }
+
+        private void CreateMeshesCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            CreateBrickButton.Enabled = CreateMeshesCheckBox.Checked || CreatePrimitiveCheckBox.Checked;
         }
     }
 }

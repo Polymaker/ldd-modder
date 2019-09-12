@@ -180,6 +180,15 @@ namespace LDDModder.Simple3D
             return (float)Math.Acos(MathHelper.Clamp(dot / (first.Length * second.Length), -1.0f, 1.0f));
         }
 
+        public Vector2 Rounded(int decimals = 4)
+        {
+            if (IsEmpty)
+                return this;
+            return new Vector2(
+                (float)Math.Round(X, decimals),
+                (float)Math.Round(Y, decimals));
+        }
+
         #endregion
 
         public override string ToString()

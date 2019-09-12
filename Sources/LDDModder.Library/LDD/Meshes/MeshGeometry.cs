@@ -413,6 +413,7 @@ namespace LDDModder.LDD.Meshes
         public void SeparateDistinctSurfaces()
         {
             var uniqueEdges = Triangles.SelectMany(t => t.Edges).EqualsDistinct().ToList();
+            Edge.CompareByPosition = false;
             var edgeFaces = new Dictionary<Edge, List<Triangle>>();
             foreach (var tri in Triangles)
             {
