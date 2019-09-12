@@ -9,7 +9,7 @@ using LDDModder.LDD.Meshes;
 using LDDModder.LDD.Primitives;
 using LDDModder.Simple3D;
 
-namespace LDDModder.LDD.Data
+namespace LDDModder.LDD.Parts
 {
     public class PartWrapper
     {
@@ -51,6 +51,11 @@ namespace LDDModder.LDD.Data
 
         #endregion
 
+        public BoundingBox CalculateBoundingBox()
+        {
+            return BoundingBox.FromVertices(AllMeshes.SelectMany(x => x.Vertices));
+        }
+
         #region Loading
 
         public static PartWrapper Read(LDDEnvironment environment, int partID)
@@ -65,11 +70,13 @@ namespace LDDModder.LDD.Data
                     throw new FileNotFoundException($"Primitive file not found. ({partID}.xml)");
 
                 var surfaces = new List<PartSurfaceMesh>();
+
                 foreach (string meshPath in Directory.GetFiles(meshesDir, $"{partID}.g*"))
                 {
-                    string surfIdStr = Path.GetExtension(meshPath).TrimStart('.').Replace('g', '0');
-                    if (int.TryParse(surfIdStr, out int surfID))
-                        surfaces.Add(new PartSurfaceMesh(partID, surfID, MeshFile.Read(meshPath)));
+                    if (!PartSurfaceMesh.ParseSurfaceID(meshPath, out int surfID))
+                        surfID = surfaces.Count;
+
+                    surfaces.Add(new PartSurfaceMesh(partID, surfID, MeshFile.Read(meshPath)));
                 }
 
                 if (!surfaces.Any())
@@ -82,12 +89,31 @@ namespace LDDModder.LDD.Data
                 using (var lif = LifFile.Open(Path.Combine(environment.ApplicationDataPath, "db.lif")))
                 {
                     var primitiveFolder = lif.GetFolder("Primitives");
+                    var meshesFolder = primitiveFolder.GetFolder("LOD0");
 
+                    var primitiveEntry = primitiveFolder.GetFile($"{partID}.xml");
+                    if (primitiveEntry == null)
+                        throw new FileNotFoundException($"Primitive file not found. ({partID}.xml)");
+
+                    var surfaces = new List<PartSurfaceMesh>();
+
+                    foreach (var meshEntry in meshesFolder.GetFiles($"{partID}.g*"))
+                    {
+                        if (!PartSurfaceMesh.ParseSurfaceID(meshEntry.Name, out int surfID))
+                            surfID = surfaces.Count;
+
+                        surfaces.Add(new PartSurfaceMesh(partID, surfID, MeshFile.Read(meshEntry.GetStream())));
+                    }
+
+                    if (!surfaces.Any())
+                        throw new FileNotFoundException($"Mesh file not found. ({partID}.g)");
+
+                    var primitive = Primitive.Load(primitiveEntry.GetStream());
+                    primitive.ID = partID;
+                    return new PartWrapper(primitive, surfaces);
                 }
             }
-            return null;
         }
-
 
         #endregion
     }

@@ -148,17 +148,16 @@ namespace LDDModder.LDD.Primitives
             using (var fs = File.OpenRead(filepath))
                 return Load(fs);
         }
-
-        public static Primitive Load(FileStream fs)
+        public static Primitive Load(Stream stream)
         {
-            var document = XDocument.Load(fs);
+            var document = XDocument.Load(stream);
             var primitive = new Primitive();
-
-            if (int.TryParse(Path.GetFileNameWithoutExtension(fs.Name), out int primitiveID))
-                primitive.ID = primitiveID;
-
             primitive.LoadFromXml(document);
 
+            if (stream is FileStream fs &&
+                int.TryParse(Path.GetFileNameWithoutExtension(fs.Name), out int primitiveID))
+                primitive.ID = primitiveID;
+            
             return primitive;
         }
 
@@ -283,6 +282,9 @@ namespace LDDModder.LDD.Primitives
                         break;
                 }
             }
+
+            if (ID == 0 && Aliases.Any())
+                ID = Aliases.First();
         }
 
         public void Save(string filename)

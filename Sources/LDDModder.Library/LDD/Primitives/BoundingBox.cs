@@ -77,24 +77,58 @@ namespace LDDModder.LDD.Primitives
 
         public static BoundingBox FromVertices(IEnumerable<Vertex> vertices)
         {
-            var minX = vertices.Select(x => x.Position.X).Min();
-            var minY = vertices.Select(x => x.Position.Y).Min();
-            var minZ = vertices.Select(x => x.Position.Z).Min();
-            var maxX = vertices.Select(x => x.Position.X).Max();
-            var maxY = vertices.Select(x => x.Position.Y).Max();
-            var maxZ = vertices.Select(x => x.Position.Z).Max();
+            //var minX = vertices.Select(x => x.Position.X).Min();
+            //var minY = vertices.Select(x => x.Position.Y).Min();
+            //var minZ = vertices.Select(x => x.Position.Z).Min();
+            //var maxX = vertices.Select(x => x.Position.X).Max();
+            //var maxY = vertices.Select(x => x.Position.Y).Max();
+            //var maxZ = vertices.Select(x => x.Position.Z).Max();
+
+            float minX = 99999999;
+            float minY = 99999999;
+            float minZ = 99999999;
+            float maxX = -99999999;
+            float maxY = -99999999;
+            float maxZ = -99999999;
+
+            foreach (var vert in vertices)
+            {
+                minX = vert.Position.X < minX ? vert.Position.X : minX;
+                minY = vert.Position.Y < minY ? vert.Position.Y : minY;
+                minZ = vert.Position.Z < minZ ? vert.Position.Z : minZ;
+                maxX = vert.Position.X > maxX ? vert.Position.X : maxX;
+                maxY = vert.Position.Y > maxY ? vert.Position.Y : maxY;
+                maxZ = vert.Position.Z > maxZ ? vert.Position.Z : maxZ;
+            }
 
             return new BoundingBox(minX, minY, minZ, maxX, maxY, maxZ);
         }
 
         public static BoundingBox FromVertices(IEnumerable<Vector3> vertices)
         {
-            var minX = vertices.Select(x => x.X).Min();
-            var minY = vertices.Select(x => x.Y).Min();
-            var minZ = vertices.Select(x => x.Z).Min();
-            var maxX = vertices.Select(x => x.X).Max();
-            var maxY = vertices.Select(x => x.Y).Max();
-            var maxZ = vertices.Select(x => x.Z).Max();
+            //var minX = vertices.Select(x => x.X).Min();
+            //var minY = vertices.Select(x => x.Y).Min();
+            //var minZ = vertices.Select(x => x.Z).Min();
+            //var maxX = vertices.Select(x => x.X).Max();
+            //var maxY = vertices.Select(x => x.Y).Max();
+            //var maxZ = vertices.Select(x => x.Z).Max();
+
+            float minX = 99999999;
+            float minY = 99999999;
+            float minZ = 99999999;
+            float maxX = -99999999;
+            float maxY = -99999999;
+            float maxZ = -99999999;
+
+            foreach (var vert in vertices)
+            {
+                minX = vert.X < minX ? vert.X : minX;
+                minY = vert.Y < minY ? vert.Y : minY;
+                minZ = vert.Z < minZ ? vert.Z : minZ;
+                maxX = vert.X > maxX ? vert.X : maxX;
+                maxY = vert.Y > maxY ? vert.Y : maxY;
+                maxZ = vert.Z > maxZ ? vert.Z : maxZ;
+            }
 
             return new BoundingBox(minX, minY, minZ, maxX, maxY, maxZ);
         }

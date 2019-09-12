@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LDDModder.LDD.Data
+namespace LDDModder.LDD.Parts
 {
     public class PartSurfaceMesh
     {
@@ -27,6 +27,21 @@ namespace LDDModder.LDD.Data
             Mesh = mesh;
         }
 
+        public static int ParseSurfaceID(string filename)
+        {
+            string surfIdStr = System.IO.Path.GetExtension(filename).TrimStart('.').Replace('g', '0');
+            if (int.TryParse(surfIdStr, out int surfID))
+                return surfID;
+            return 0;
+        }
 
+        public static bool ParseSurfaceID(string filename, out int surfaceID)
+        {
+            string surfIdStr = System.IO.Path.GetExtension(filename).TrimStart('.').Replace('g', '0');
+            if (int.TryParse(surfIdStr, out surfaceID))
+                return true;
+            surfaceID = 0;
+            return false;
+        }
     }
 }

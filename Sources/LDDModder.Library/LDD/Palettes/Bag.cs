@@ -13,6 +13,7 @@ namespace LDDModder.LDD.Palettes
     [XmlRoot("BAXML")]
     public class Bag
     {
+        public const string EXTENSION = "BAXML";
         public const string FileName = "Info.baxml";
 
         public string Name { get; set; }
@@ -40,7 +41,7 @@ namespace LDDModder.LDD.Palettes
         public void Save(Stream stream)
         {
             var doc = new XDocument(
-                new XElement("BAXML",
+                new XElement(EXTENSION,
                     new XAttribute("versionMajor", FileVersion.Major),
                     new XAttribute("versionMinor", FileVersion.Minor)
                     )

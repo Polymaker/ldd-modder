@@ -15,6 +15,8 @@ namespace LDDModder.LDD.Palettes
     [XmlRoot("PAXML")]
     public partial class Palette
     {
+        public const string EXTENSION = "PAXML";
+
         public List<PaletteItem> Items { get; private set; }
 
         public IEnumerable<Brick> Bricks => Items.OfType<Brick>();
@@ -39,7 +41,7 @@ namespace LDDModder.LDD.Palettes
         public void Save(Stream stream)
         {
             var doc = new XDocument(
-                new XElement("PAXML",
+                new XElement(EXTENSION,
                     new XAttribute("versionMajor", FileVersion.Major),
                     new XAttribute("versionMinor", FileVersion.Minor)
                     )

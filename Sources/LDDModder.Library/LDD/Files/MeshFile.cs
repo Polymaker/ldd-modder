@@ -89,6 +89,11 @@ namespace LDDModder.LDD.Files
                 return GFileReader.ReadMesh(fs);
         }
 
+        public static MeshFile Read(Stream stream)
+        {
+            return GFileReader.ReadMesh(stream);
+        }
+
         public void Save(string filename)
         {
             using (var fs = File.Open(filename, FileMode.Create))
