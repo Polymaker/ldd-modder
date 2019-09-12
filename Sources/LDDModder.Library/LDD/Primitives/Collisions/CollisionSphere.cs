@@ -6,6 +6,16 @@ namespace LDDModder.LDD.Primitives.Collisions
     {
         public float Radius { get; set; }
 
+        public CollisionSphere()
+        {
+        }
+
+        public CollisionSphere(float radius, Transform transform)
+        {
+            Radius = radius;
+            Transform = transform;
+        }
+
         public override XElement SerializeToXml()
         {
             var elem = new XElement("Sphere");

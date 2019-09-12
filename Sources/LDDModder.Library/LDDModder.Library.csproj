@@ -61,8 +61,17 @@
     <Compile Include="LDD\Data\MainGroup.cs" />
     <Compile Include="LDD\Data\Material.cs" />
     <Compile Include="LDD\Data\MaterialType.cs" />
-    <Compile Include="LDD\Data\PartSurfaceMesh.cs" />
-    <Compile Include="LDD\Data\PartWrapper.cs" />
+    <Compile Include="LDD\Models\Bone.cs" />
+    <Compile Include="LDD\Models\Brick.cs" />
+    <Compile Include="LDD\Models\Camera.cs" />
+    <Compile Include="LDD\Models\GroupSystem.cs" />
+    <Compile Include="LDD\Models\Model.cs" />
+    <Compile Include="LDD\Models\ModelItem.cs" />
+    <Compile Include="LDD\Models\Part.cs" />
+    <Compile Include="LDD\Models\RigidItem.cs" />
+    <Compile Include="LDD\Models\RigidSystem.cs" />
+    <Compile Include="LDD\Parts\PartSurfaceMesh.cs" />
+    <Compile Include="LDD\Parts\PartWrapper.cs" />
     <Compile Include="LDD\Data\Platform.cs" />
     <Compile Include="LDD\Data\VersionInfo.cs" />
     <Compile Include="LDD\Files\GFileReader.cs" />
@@ -126,8 +135,17 @@
     <Compile Include="LDD\Primitives\PhysicsAttributes.cs" />
     <Compile Include="LDD\Primitives\Primitive.cs" />
     <Compile Include="LDD\Primitives\Transform.cs" />
-    <Compile Include="Modding\PartInstaller.cs" />
-    <Compile Include="Modding\PartPackage.cs" />
+    <Compile Include="Modding\Editing\ItemTransform.cs" />
+    <Compile Include="Modding\Editing\PartCollision.cs" />
+    <Compile Include="Modding\Editing\PartComponent.cs" />
+    <Compile Include="Modding\Editing\PartConnector.cs" />
+    <Compile Include="Modding\Editing\PartProject.cs" />
+    <Compile Include="Modding\Editing\PartSurface.cs" />
+    <Compile Include="Modding\Editing\StudConnection.cs" />
+    <Compile Include="Modding\Editing\StudReference.cs" />
+    <Compile Include="Modding\Editing\SurfaceComponent.cs" />
+    <Compile Include="Modding\Installing\PartInstaller.cs" />
+    <Compile Include="Modding\Installing\PartPackage.cs" />
     <Compile Include="Serialization\IXmlObject.cs" />
     <Compile Include="Serialization\LinqXmlExtensions.cs" />
     <Compile Include="Serialization\XmlHelper.cs" />
@@ -149,9 +167,9 @@
     <Compile Include="Utilities\LddMeshExporter.cs" />
     <Compile Include="Utilities\ListIndexer.cs" />
     <Compile Include="Utilities\MathHelper.cs" />
+    <Compile Include="Utilities\StringUtils.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="LDD\Models\" />
     <Folder Include="Rebrickable\" />
   </ItemGroup>
   <ItemGroup>

@@ -17,10 +17,8 @@ namespace LDDModder.LDD.Primitives
         public int ID { get; set; }
         public List<int> Aliases { get; }
         public string Name { get; set; }
-
-        public int DesignVersion { get; set; }
-        public int MajorVersion { get; set; }
-        public int MinorVersion { get; set; }
+        public VersionInfo FileVersion { get; set; }
+        public int PartVersion { get; set; }
 
         public Dictionary<string,string> ExtraAnnotations { get; }
 
@@ -48,15 +46,25 @@ namespace LDDModder.LDD.Primitives
             Collisions = new List<Collisions.Collision>();
             ExtraAnnotations = new Dictionary<string, string>();
             FlexBones = new List<FlexBone>();
-            MajorVersion = 1;
-            DesignVersion = 1;
+            FileVersion = new VersionInfo(1, 0);
+            PartVersion = 1;
+        }
+
+        public int GetSurfaceMaterialIndex(int surfaceIndex)
+        {
+            if (SubMaterials != null && 
+                surfaceIndex >= 0 && 
+                surfaceIndex < SubMaterials.Length)
+                return SubMaterials[surfaceIndex];
+
+            return 0;
         }
 
         public XElement SerializeToXml()
         {
             var rootElem = new XElement("LEGOPrimitive",
-                new XAttribute("versionMajor", MajorVersion),
-                new XAttribute("versionMinor", MinorVersion));
+                new XAttribute("versionMajor", FileVersion.Major),
+                new XAttribute("versionMinor", FileVersion.Minor));
             
             var annotations = rootElem.AddElement("Annotations");
 
@@ -80,7 +88,7 @@ namespace LDDModder.LDD.Primitives
                 annotations.Add(new XElement("Annotation", new XAttribute("platformname", Platform.Name)));
             }
 
-            annotations.Add(new XElement("Annotation", new XAttribute("version", DesignVersion)));
+            annotations.Add(new XElement("Annotation", new XAttribute("version", PartVersion)));
 
             foreach (var extra in ExtraAnnotations)
                 annotations.Add(new XElement("Annotation", new XAttribute(extra.Key, extra.Value)));
@@ -148,6 +156,7 @@ namespace LDDModder.LDD.Primitives
             using (var fs = File.OpenRead(filepath))
                 return Load(fs);
         }
+
         public static Primitive Load(Stream stream)
         {
             var document = XDocument.Load(stream);
@@ -167,11 +176,9 @@ namespace LDDModder.LDD.Primitives
 
             if (rootElem.Name != "LEGOPrimitive")
                 throw new InvalidDataException();
-
-            if (rootElem.TryGetIntAttribute("versionMajor", out int vMaj))
-                MajorVersion = vMaj;
-            if (rootElem.TryGetIntAttribute("versionMajor", out int vMin))
-                MinorVersion = vMin;
+            rootElem.TryGetIntAttribute("versionMajor", out int vMaj);
+            rootElem.TryGetIntAttribute("versionMinor", out int vMin);
+            FileVersion = new VersionInfo(vMaj, vMin);
 
             foreach (var element in rootElem.Elements())
             {
@@ -197,7 +204,7 @@ namespace LDDModder.LDD.Primitives
                                     Name = value;
                                     break;
                                 case "version":
-                                    DesignVersion = int.Parse(value);
+                                    PartVersion = int.Parse(value);
                                     break;
                                 case "maingroupid":
                                     if (MainGroup == null)

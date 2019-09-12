@@ -438,6 +438,17 @@ namespace LDDModder.Simple3D
             return result;
         }
 
+        public static Matrix3 FromQuaternion(Quaternion q)
+        {
+            q.ToAxisAngle(out Vector3 axis, out float angle);
+            return FromAngleAxis(angle, axis);
+        }
+
         #endregion
+
+        public override string ToString()
+        {
+            return $"{RowA}\n{RowB}\n{RowC}";
+        }
     }
 }

@@ -339,7 +339,7 @@ namespace LDDModder.Simple3D
             D1 = 0;
             D2 = 0;
             D3 = 0;
-            D4 = 0;
+            D4 = 1;
         }
 
         public static Matrix4 operator *(Matrix4 left, Matrix4 right)
@@ -559,6 +559,12 @@ namespace LDDModder.Simple3D
 
         #region Functions
 
+        public static Matrix4 FromQuaternion(Quaternion q)
+        {
+            q.ToAxisAngle(out Vector3 axis, out float angle);
+            return FromAngleAxis(angle, axis);
+        }
+
         public static Matrix4 FromAngleAxis(float radians, Vector3 axis)
         {
             return new Matrix4(Matrix3.FromAngleAxis(radians, axis));
@@ -570,6 +576,7 @@ namespace LDDModder.Simple3D
             identity.D1 = translation.X;
             identity.D2 = translation.Y;
             identity.D3 = translation.Z;
+
             return identity;
         }
 
@@ -658,5 +665,10 @@ namespace LDDModder.Simple3D
 
 
         #endregion
+
+        public override string ToString()
+        {
+            return $"{RowA}\n{RowB}\n{RowC}\n{RowD}";
+        }
     }
 }

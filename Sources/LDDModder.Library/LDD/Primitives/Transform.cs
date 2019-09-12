@@ -73,7 +73,7 @@ namespace LDDModder.LDD.Primitives
         {
             var rot = Matrix4.FromAngleAxis(Angle * ((float)Math.PI / 180f), Axis);
             var trans = Matrix4.FromTranslation(Translation);
-            return rot * trans;
+            return Matrix4.Identity * rot * trans;
         }
 
         public static Transform FromMatrix(Matrix4 matrix)

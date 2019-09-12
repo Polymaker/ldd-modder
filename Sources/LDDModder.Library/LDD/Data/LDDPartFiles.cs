@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace LDDModder.LDD.Data
 {
+    [Obsolete("User PartWrapper instead.")]
     public class LDDPartFiles
     {
         public int PartID { get; set; }

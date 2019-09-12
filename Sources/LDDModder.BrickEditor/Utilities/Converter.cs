@@ -67,9 +67,45 @@ namespace LDDModder.BrickEditor
                 m.D1, m.D2, m.D3, m.D4);
         }
 
+        public static OpenTK.Quaternion ToGL(this Assimp.Quaternion quaternion)
+        {
+            return OpenTK.Quaternion.FromMatrix(quaternion.GetMatrix().ToGL());
+        }
+
+        public static OpenTK.Quaternion ToGL(this Simple3D.Quaternion quaternion)
+        {
+            var mat = Simple3D.Matrix4.FromQuaternion(quaternion);
+            return mat.ToGL().ExtractRotation();
+        }
+
         #endregion
 
         #region MyRegion
+
+        public static Assimp.Matrix3x3 ToAssimp(this OpenTK.Matrix3 matrix)
+        {
+            var m = matrix;
+            m.Transpose();
+            return new Assimp.Matrix3x3(m.M11, m.M12, m.M13, m.M21, m.M22, m.M23, m.M31, m.M32, m.M33);
+        }
+
+        public static Assimp.Matrix3x3 ToAssimp(this Simple3D.Matrix3 matrix)
+        {
+            return matrix.ToGL().ToAssimp();
+        }
+
+        public static Assimp.Quaternion ToAssimp(this OpenTK.Quaternion quaternion)
+        {
+            var mat = OpenTK.Matrix3.CreateFromQuaternion(quaternion).ToAssimp();
+            return new Assimp.Quaternion(mat);
+        }
+
+
+        public static Assimp.Quaternion ToAssimp(this Simple3D.Quaternion quaternion)
+        {
+            var mat = Simple3D.Matrix3.FromQuaternion(quaternion).ToAssimp();
+            return new Assimp.Quaternion(mat);
+        }
 
         #endregion
 

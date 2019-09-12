@@ -14,8 +14,8 @@ namespace LDDModder.BrickEditor
         [STAThread]
         static void Main()
         {
-            LDDModder.LDD.LDDEnvironment.Initialize();
-            LDDModder.LDD.Parts.PartWrapper.Read(LDDModder.LDD.LDDEnvironment.Current, 3004);
+            LDD.LDDEnvironment.Initialize();
+            var test = Modding.Editing.PartProject.CreateFromLddPart(LDD.LDDEnvironment.Current, 3001);
             //var test = new GLTestWindow();
             //test.Run();
             Application.EnableVisualStyles();

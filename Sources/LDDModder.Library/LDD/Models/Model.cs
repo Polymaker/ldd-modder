@@ -21,6 +21,12 @@ namespace LDDModder.LDD.Models
 
         public int BrickSetVersion { get; set; }
 
+        public List<Camera> Cameras { get; set; }
 
+        public List<Brick> Bricks { get; set; }
+
+        public List<RigidSystem> RigidSystems { get; set; }
+
+        public List<GroupSystem> GroupSystems { get; set; }
     }
 }

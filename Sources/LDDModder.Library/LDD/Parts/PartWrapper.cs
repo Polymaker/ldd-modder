@@ -13,6 +13,7 @@ namespace LDDModder.LDD.Parts
 {
     public class PartWrapper
     {
+        public int PartID { get; set; }
         public Primitives.Primitive Primitive { get; set; }
         public List<PartSurfaceMesh> Surfaces { get; set; }
 
@@ -33,6 +34,7 @@ namespace LDDModder.LDD.Parts
 
         public PartWrapper(Primitive primitive, IEnumerable<PartSurfaceMesh> surfaces)
         {
+            PartID = primitive.ID;
             Primitive = primitive;
             Surfaces = new List<PartSurfaceMesh>(surfaces);
         }
@@ -58,7 +60,7 @@ namespace LDDModder.LDD.Parts
 
         #region Loading
 
-        public static PartWrapper Read(LDDEnvironment environment, int partID)
+        public static PartWrapper LoadPart(LDDEnvironment environment, int partID)
         {
             if (environment.DatabaseExtracted)
             {
@@ -82,7 +84,7 @@ namespace LDDModder.LDD.Parts
                 if (!surfaces.Any())
                     throw new FileNotFoundException($"Mesh file not found. ({partID}.g)");
 
-                return new PartWrapper(Primitive.Load(primitiveFile), surfaces);
+                return new PartWrapper(Primitive.Load(primitiveFile), surfaces) { PartID = partID };
             }
             else
             {
@@ -110,7 +112,7 @@ namespace LDDModder.LDD.Parts
 
                     var primitive = Primitive.Load(primitiveEntry.GetStream());
                     primitive.ID = partID;
-                    return new PartWrapper(primitive, surfaces);
+                    return new PartWrapper(primitive, surfaces) { PartID = partID };
                 }
             }
         }

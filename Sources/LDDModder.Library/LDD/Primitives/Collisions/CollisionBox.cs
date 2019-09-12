@@ -14,6 +14,16 @@ namespace LDDModder.LDD.Primitives.Collisions
     {
         public Vector3 Size { get; set; }
 
+        public CollisionBox()
+        {
+        }
+
+        public CollisionBox(Vector3 size, Transform transform)
+        {
+            Size = size;
+            Transform = transform;
+        }
+
         public override XElement SerializeToXml()
         {
             var elem = new XElement("Box");
