@@ -1,4 +1,5 @@
 ﻿using LDDModder.IO;
+using LDDModder.Utilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -27,14 +28,25 @@ namespace LDDModder.LDD.Files
             RootFolder = new FolderEntry(this);
         }
 
-        public IEnumerable<FileEntry> GetAllFiles()
-        {
-            return RootFolder.GetAllFiles();
-        }
+        #region Folder Methods
 
         public FolderEntry GetFolder(string folderName)
         {
             return RootFolder.GetFolder(folderName);
+        }
+
+        public FolderEntry CreateFolder(string folderName)
+        {
+            return RootFolder.CreateFolder(folderName);
+        }
+
+        #endregion
+
+        #region File Methods
+
+        public IEnumerable<FileEntry> GetAllFiles()
+        {
+            return RootFolder.GetAllFiles();
         }
 
         public FileEntry GetFile(string fileName)
@@ -47,25 +59,39 @@ namespace LDDModder.LDD.Files
             return RootFolder.GetFiles(searchFilter);
         }
 
-        public FolderEntry CreateFolder(string folderName)
+        public FileEntry AddFile(FileStream fileStream)
         {
-            if (!IsValidPath(folderName) || Path.IsPathRooted(folderName))
-                throw new InvalidOperationException("Invalid folder name.");
-
-            string[] subDirs = folderName.Split(Path.PathSeparator);
-
-            var curFolder = RootFolder;
-
-            for (int i = 0; i < subDirs.Length; i++)
-            {
-                var subFolder = curFolder.GetFolder(subDirs[i]);
-                if (subFolder == null)
-                    subFolder = curFolder.CreateFolder(subDirs[i]);
-                curFolder = subFolder;
-            }
-
-            return curFolder;
+            return RootFolder.AddFile(fileStream, Path.GetFileName(fileStream.Name));
         }
+
+        public FileEntry AddFile(Stream fileStream, string fileName)
+        {
+            return RootFolder.AddFile(fileStream, fileName);
+        }
+
+        public FileEntry AddFile(FileInfo fileInfo)
+        {
+            return RootFolder.AddFile(fileInfo);
+        }
+
+        public FileEntry AddFile(FileInfo fileInfo, string fileName)
+        {
+            return RootFolder.AddFile(fileInfo, fileName);
+        }
+
+        public FileEntry AddFile(string filePath)
+        {
+            return RootFolder.AddFile(filePath);
+        }
+
+        public FileEntry AddFile(string filePath, string fileName)
+        {
+            return RootFolder.AddFile(filePath, fileName);
+        }
+
+        #endregion
+
+        #region Extraction Methods
 
         private void ExtractFile(FileEntry entry, Stream target)
         {
@@ -106,6 +132,8 @@ namespace LDDModder.LDD.Files
         {
             ExtractFolder(RootFolder, directoryName);
         }
+
+        #endregion
 
         #region LIF READING
 
@@ -702,14 +730,10 @@ namespace LDDModder.LDD.Files
                 Name = newName;
             }
 
-            protected void ValidateEntryName(string name)
+            protected virtual void ValidateEntryName(string name)
             {
                 if (string.IsNullOrEmpty(name))
                     throw new ArgumentException("Name cannot be empty");
-                //if (name.ContainsAny(Path.GetInvalidPathChars()))
-                //    throw new ArgumentException("Name contains invalid characters");
-                if (name.ContainsAny(Path.GetInvalidFileNameChars()))
-                    throw new ArgumentException("Name contains invalid characters");
             }
         }
 
@@ -802,11 +826,17 @@ namespace LDDModder.LDD.Files
             public FolderEntry CreateFolder(string folderName)
             {
                 ValidateEntryName(folderName);
-                if (Folders.Any(x => x.Name.Equals(folderName, StringComparison.InvariantCultureIgnoreCase)))
-                    throw new ArgumentException("Folder already exist");
-                var newFolder = new FolderEntry(folderName);
-                Entries.Add(newFolder);
-                return newFolder;
+                string[] subDirs = folderName.Split(Path.PathSeparator);
+                var curFolder = this;
+
+                for (int i = 0; i < subDirs.Length; i++)
+                {
+                    var subFolder = curFolder.GetFolder(subDirs[i]);
+                    if (subFolder == null)
+                        subFolder = curFolder.CreateFolder(subDirs[i]);
+                    curFolder = subFolder;
+                }
+                return curFolder;
             }
 			
 /* 			public FolderEntry AddExistingFolder(string folderPath)
@@ -883,6 +913,13 @@ namespace LDDModder.LDD.Files
             {
                 return Entries.GetEnumerator();
             }
+
+            protected override void ValidateEntryName(string name)
+            {
+                base.ValidateEntryName(name);
+                if (!(FileHelper.IsValidDirectory(name) || Path.IsPathRooted(name)))
+                    throw new InvalidOperationException("Name contains invalid character.");
+            }
         }
 
         public sealed class FileEntry : LifEntry, IDisposable
@@ -943,6 +980,13 @@ namespace LDDModder.LDD.Files
                 CreatedDate = createdDate;
                 ModifiedDate = modifiedDate;
                 ModifiedDate2 = modifiedDate2;
+            }
+
+            protected override void ValidateEntryName(string name)
+            {
+                base.ValidateEntryName(name);
+                if (!FileHelper.IsValidFileName(name))
+                    throw new InvalidOperationException("Name contains invalid character.");
             }
         }
 
