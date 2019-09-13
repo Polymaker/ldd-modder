@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace LDDModder.Modding.Editing
 {
@@ -73,19 +74,43 @@ namespace LDDModder.Modding.Editing
 
                         if (culling.AdjacentStuds.Any())
                         {
-
+                            foreach (var fIdx in culling.AdjacentStuds[0].FieldIndices)
+                            {
+                                item.AdjacentStuds.Add(new StudReference(culling.AdjacentStuds[0].ConnectorIndex,
+                                    fIdx.Index, fIdx.Value2, fIdx.Value4));
+                            }
                         }
+
                         return item;
                     }
             }
 
             return null;
         }
+
+        public abstract IEnumerable<StudReference> GetStudReferences();
+
+        public override XElement SerializeToXml()
+        {
+            var elem = SerializeToXmlBase("Component");
+            elem.Add(new XAttribute("Type", ComponentType.ToString()));
+
+            foreach (var stud in GetStudReferences())
+            {
+                elem.Add(stud.SerializeToXml());
+            }
+            return elem;
+        }
     }
 
     public class SurfaceModel : SurfaceComponent
     {
         public override MeshCullingType ComponentType => MeshCullingType.MainModel;
+
+        public override IEnumerable<StudReference> GetStudReferences()
+        {
+            return Enumerable.Empty<StudReference>();
+        }
     }
 
     public class SurfaceStud : SurfaceComponent
@@ -93,6 +118,11 @@ namespace LDDModder.Modding.Editing
         public override MeshCullingType ComponentType => MeshCullingType.Stud;
 
         public StudReference Stud { get; set; }
+
+        public override IEnumerable<StudReference> GetStudReferences()
+        {
+            return new StudReference[] { Stud };
+        }
     }
 
     public class SurfaceFemaleStud : SurfaceComponent
@@ -107,6 +137,11 @@ namespace LDDModder.Modding.Editing
         {
             Studs = new List<StudReference>();
         }
+
+        public override IEnumerable<StudReference> GetStudReferences()
+        {
+            return Studs;
+        }
     }
 
     public class SurfaceTube : SurfaceComponent
@@ -120,6 +155,14 @@ namespace LDDModder.Modding.Editing
         public SurfaceTube()
         {
             AdjacentStuds = new List<StudReference>();
+        }
+
+        public override IEnumerable<StudReference> GetStudReferences()
+        {
+            if (TubeStud != null)
+                yield return TubeStud;
+            foreach (var stud in AdjacentStuds)
+                yield return stud;
         }
     }
 }

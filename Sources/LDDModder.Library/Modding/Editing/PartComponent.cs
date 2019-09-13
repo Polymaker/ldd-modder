@@ -3,11 +3,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace LDDModder.Modding.Editing
 {
-    public class PartComponent
+    public abstract class PartComponent
     {
         public string Comments { get; set; }
+
+        public virtual XElement SerializeToXml()
+        {
+            return SerializeToXmlBase(GetType().Name);
+        }
+
+        protected XElement SerializeToXmlBase(string elementName)
+        {
+            var elem = new XElement(elementName);
+            if (!string.IsNullOrEmpty(Comments))
+                elem.Add(new XElement("Comments", Comments));
+            return elem;
+        }
     }
 }

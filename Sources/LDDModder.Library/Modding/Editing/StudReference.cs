@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace LDDModder.Modding.Editing
 {
@@ -12,7 +13,7 @@ namespace LDDModder.Modding.Editing
         public string RefID { get; set; }
         public int ConnectorIndex { get; set; } = -1;
         public StudConnection Connection { get; set; }
-        public int StudIndex { get; set; }
+        public int FieldIndex { get; set; }
 
         public int Value1 { get; set; }
 
@@ -25,7 +26,7 @@ namespace LDDModder.Modding.Editing
         public StudReference(int connectorIndex, int studIndex, int value1, int value2)
         {
             ConnectorIndex = connectorIndex;
-            StudIndex = studIndex;
+            FieldIndex = studIndex;
             Value1 = value1;
             Value2 = value2;
         }
@@ -33,7 +34,7 @@ namespace LDDModder.Modding.Editing
         public StudReference(string refID, int studIndex, int value1, int value2)
         {
             RefID = refID;
-            StudIndex = studIndex;
+            FieldIndex = studIndex;
             Value1 = value1;
             Value2 = value2;
         }
@@ -42,7 +43,7 @@ namespace LDDModder.Modding.Editing
         {
             RefID = connection.RefID;
             Connection = connection;
-            StudIndex = studIndex;
+            FieldIndex = studIndex;
             Value1 = value1;
             Value2 = value2;
         }
@@ -50,11 +51,19 @@ namespace LDDModder.Modding.Editing
         public StudReference(Custom2DFieldReference fieldReference)
         {
             ConnectorIndex = fieldReference.ConnectorIndex;
-            StudIndex = fieldReference.FieldIndices[0].Index;
+            FieldIndex = fieldReference.FieldIndices[0].Index;
             Value1 = fieldReference.FieldIndices[0].Value2;
             Value2 = fieldReference.FieldIndices[0].Value4;
         }
 
-
+        public XElement SerializeToXml()
+        {
+            return new XElement("Stud",
+                    new XAttribute("ConnectionID", RefID),
+                    new XAttribute("FieldIndex", FieldIndex),
+                    new XAttribute("Value1", Value1),
+                    new XAttribute("Value2", Value2)
+                    );
+        }
     }
 }

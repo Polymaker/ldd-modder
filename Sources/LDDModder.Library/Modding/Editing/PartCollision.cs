@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace LDDModder.Modding.Editing
 {
@@ -34,6 +35,13 @@ namespace LDDModder.Modding.Editing
             }
             return null;
         }
+
+        public override XElement SerializeToXml()
+        {
+            var elem = SerializeToXmlBase("Collision");
+            elem.Add(Transform.SerializeToXml());
+            return elem;
+        }
     }
 
     public class PartBoxCollision : PartCollision
@@ -44,6 +52,16 @@ namespace LDDModder.Modding.Editing
         {
             return new CollisionBox(Size, Transform.ToLDD());
         }
+
+        public override XElement SerializeToXml()
+        {
+            var elem = base.SerializeToXml();
+            elem.Add(new XAttribute("Type", "Box"));
+            elem.AddNumberAttribute("SizeX", Size.X);
+            elem.AddNumberAttribute("SizeY", Size.Y);
+            elem.AddNumberAttribute("SizeZ", Size.Z);
+            return elem;
+        }
     }
 
     public class PartSphereCollision : PartCollision
@@ -53,6 +71,14 @@ namespace LDDModder.Modding.Editing
         public override Collision GenerateLDD()
         {
             return new CollisionSphere(Radius, Transform.ToLDD());
+        }
+
+        public override XElement SerializeToXml()
+        {
+            var elem = base.SerializeToXml();
+            elem.Add(new XAttribute("Type", "Sphere"));
+            elem.AddNumberAttribute("Radius", Radius);
+            return elem;
         }
     }
 }

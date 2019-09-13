@@ -27,6 +27,10 @@ namespace LDDModder.LDD.Parts
 
         public IEnumerable<Files.MeshFile> AllMeshes => Surfaces.Select(x => x.Mesh);
 
+        public bool IsDecorated => DecorationSurfaces.Any();
+
+        public bool IsFlexible => AllMeshes.Any(x=>x.IsFlexible);
+
         public PartWrapper()
         {
             Surfaces = new List<PartSurfaceMesh>();

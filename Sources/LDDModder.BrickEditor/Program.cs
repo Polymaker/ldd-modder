@@ -16,6 +16,7 @@ namespace LDDModder.BrickEditor
         {
             LDD.LDDEnvironment.Initialize();
             var test = Modding.Editing.PartProject.CreateFromLddPart(LDD.LDDEnvironment.Current, 3001);
+            test.Save("project.xml");
             //var test = new GLTestWindow();
             //test.Run();
             Application.EnableVisualStyles();

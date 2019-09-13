@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using LDDModder.LDD.Primitives;
 using LDDModder.LDD.Primitives.Connectors;
 using LDDModder.Utilities;
 
 namespace LDDModder.Modding.Editing
 {
-    public abstract class PartConnector
+    public abstract class PartConnector : PartComponent
     {
         //public abstract LDD.Primitives.Connectors.Connector Connector { get; set; }
         public ItemTransform Transform { get; set; }
@@ -64,6 +65,14 @@ namespace LDDModder.Modding.Editing
         {
             Connector = connector;
             Transform = ItemTransform.FromLDD(connector.Transform);
+        }
+
+        public override XElement SerializeToXml()
+        {
+            var elem = SerializeToXmlBase("Connection");
+            elem.Add(new XAttribute("Type", Connector.Type.ToString()));
+            elem.Add(Transform.SerializeToXml());
+            return elem;
         }
     }
 }

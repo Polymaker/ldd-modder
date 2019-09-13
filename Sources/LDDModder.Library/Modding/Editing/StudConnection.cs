@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace LDDModder.Modding.Editing
 {
@@ -11,5 +12,11 @@ namespace LDDModder.Modding.Editing
     {
         public string RefID { get; set; }
 
+        public override XElement SerializeToXml()
+        {
+            var elem = base.SerializeToXml();
+            elem.Add(new XAttribute("RefID", RefID));
+            return elem;
+        }
     }
 }
