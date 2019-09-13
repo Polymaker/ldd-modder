@@ -10,52 +10,49 @@ using LDDModder.Utilities;
 
 namespace LDDModder.Modding.Editing
 {
-    public abstract class PartConnector : PartComponent
+    public interface IPartConnector
     {
-        //public abstract LDD.Primitives.Connectors.Connector Connector { get; set; }
+        Connector Connector { get; }
+    }
+
+    public abstract class PartConnector : PartComponent, IPartConnector
+    {
+        //public abstract Connector Connector { get; set; }
+
         public ItemTransform Transform { get; set; }
 
-        public static PartConnector FromLDD(Primitive primitive, Connector connector)
+        public Connector Connector => GetConnector();
+
+        public ConnectorType ConnectorType => Connector.Type;
+
+        public PartConnector()
         {
-            if (connector.GetType() == typeof(Custom2DFieldConnector))
-            {
-                var studConn = new StudConnection()
-                {
-                    Transform = ItemTransform.FromLDD(connector.Transform),
-                    Connector = connector as Custom2DFieldConnector,
-                    RefID = StringUtils.GenerateUUID($"{primitive.ID}_{primitive.Connectors.IndexOf(connector)}", 8)
-                };
-                return studConn;
-            }
-            else
-            {
-                var genType = typeof(PartConnector<>).MakeGenericType(connector.GetType());
-                return (PartConnector)Activator.CreateInstance(genType, connector);
-            }
+            Transform = new ItemTransform();
         }
 
         public static PartConnector FromLDD(Connector connector)
         {
-            if (connector.GetType() == typeof(Custom2DFieldConnector))
-            {
-                var studConn = new StudConnection()
-                {
-                    Transform = ItemTransform.FromLDD(connector.Transform),
-                    Connector = connector as Custom2DFieldConnector
-                };
-                return studConn;
-            }
-            else
-            {
-                var genType = typeof(PartConnector<>).MakeGenericType(connector.GetType());
-                return (PartConnector)Activator.CreateInstance(genType, connector);
-            }
+            var genType = typeof(PartConnector<>).MakeGenericType(connector.GetType());
+            return (PartConnector)Activator.CreateInstance(genType, connector);
         }
+
+        public static PartConnector FromXml(XElement element)
+        {
+
+            return null;
+        }
+
+        protected abstract Connector GetConnector();
     }
 
     public class PartConnector<T> : PartConnector where T : Connector
     {
-        public T Connector { get; set; }
+        public new T Connector { get; set; }
+
+        protected override Connector GetConnector()
+        {
+            return Connector;
+        }
 
         public PartConnector()
         {
@@ -72,7 +69,29 @@ namespace LDDModder.Modding.Editing
             var elem = SerializeToXmlBase("Connection");
             elem.Add(new XAttribute("Type", Connector.Type.ToString()));
             elem.Add(Transform.SerializeToXml());
+            elem.Add(SerializeConnector());
             return elem;
+        }
+
+        protected virtual object[] SerializeConnector()
+        {
+            var connElem = Connector.SerializeToXml();
+            var elements = new List<XElement>();
+            string[] toRemove = new string[] { "angle", "ax", "ay", "az", "tx", "ty", "tz" };
+
+            foreach (var connAttr in connElem.Attributes())
+            {
+                if (toRemove.Contains(connAttr.Name.LocalName))
+                    continue;
+                elements.Add(new XElement(connAttr.Name.LocalName.Capitalize(), connAttr.Value));
+            }
+
+            if (!string.IsNullOrEmpty(connElem.Value))
+            {
+                var cleanStr = connElem.Value.Replace("\r\n", string.Empty).Trim();
+                elements.Add(new XElement("Data", cleanStr));
+            }
+            return elements.ToArray();
         }
     }
 }

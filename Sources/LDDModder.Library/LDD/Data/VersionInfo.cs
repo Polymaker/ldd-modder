@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace LDDModder.LDD.Data
 {
@@ -19,6 +20,11 @@ namespace LDDModder.LDD.Data
         {
             Major = major;
             Minor = minor;
+        }
+
+        public XElement ToXmlElement(string elementName = "Version")
+        {
+            return new XElement(elementName, new XAttribute("Major", Major), new XAttribute("Minor", Minor));
         }
     }
 }

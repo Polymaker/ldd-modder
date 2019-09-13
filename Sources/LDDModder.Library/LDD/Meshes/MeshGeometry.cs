@@ -198,6 +198,10 @@ namespace LDDModder.LDD.Meshes
 
         public void Save(string filename)
         {
+            string directory = Path.GetDirectoryName(filename);
+            if (!Directory.Exists(directory))
+                Directory.CreateDirectory(directory);
+
             using (var fs = File.Open(filename, FileMode.Create))
                 Save(fs);
         }

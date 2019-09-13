@@ -71,7 +71,7 @@ namespace LDDModder.LDD.Primitives.Connectors
             get
             {
                 int x = index % (Width + 1);
-                int y = (int)Math.Floor(index / (Height + 1d));
+                int y = (int)Math.Floor(index / (Width + 1d));
                 return NodeArray[x, y];
             }
         }
@@ -87,6 +87,13 @@ namespace LDDModder.LDD.Primitives.Connectors
         {
             if (x >= 0 && x <= Width && y >= 0 && y <= Height)
                 return NodeArray[x, y];
+            return null;
+        }
+
+        public FieldNode GetNode(int index)
+        {
+            if (index >= 0 && index < (Width + 1) * (Height + 1))
+                return this[index];
             return null;
         }
 

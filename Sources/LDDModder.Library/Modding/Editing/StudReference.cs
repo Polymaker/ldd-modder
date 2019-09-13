@@ -1,4 +1,5 @@
 ﻿using LDDModder.LDD.Meshes;
+using LDDModder.LDD.Primitives.Connectors;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,12 +13,16 @@ namespace LDDModder.Modding.Editing
     {
         public string RefID { get; set; }
         public int ConnectorIndex { get; set; } = -1;
-        public StudConnection Connection { get; set; }
+        public PartConnector<Custom2DFieldConnector> Connection { get; set; }
         public int FieldIndex { get; set; }
 
         public int Value1 { get; set; }
 
         public int Value2 { get; set; }
+
+        public Custom2DFieldConnector Connector => Connection.Connector;
+
+        public Custom2DFieldConnector.FieldNode FieldNode => Connector?.GetNode(FieldIndex);
 
         public StudReference()
         {
@@ -39,7 +44,7 @@ namespace LDDModder.Modding.Editing
             Value2 = value2;
         }
 
-        public StudReference(StudConnection connection, int studIndex, int value1, int value2)
+        public StudReference(PartConnector<Custom2DFieldConnector> connection, int studIndex, int value1, int value2)
         {
             RefID = connection.RefID;
             Connection = connection;
@@ -56,9 +61,9 @@ namespace LDDModder.Modding.Editing
             Value2 = fieldReference.FieldIndices[0].Value4;
         }
 
-        public XElement SerializeToXml()
+        public XElement SerializeToXml(string elementName = "Stud")
         {
-            return new XElement("Stud",
+            return new XElement(elementName,
                     new XAttribute("ConnectionID", RefID),
                     new XAttribute("FieldIndex", FieldIndex),
                     new XAttribute("Value1", Value1),

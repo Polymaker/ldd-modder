@@ -44,5 +44,17 @@ namespace System.Collections.Generic
                     return true;
             return false;
         }
+
+        public static int IndexOf<T>(this IEnumerable<T> collection, T item)
+        {
+            int index = 0;
+            foreach (var itm in collection)
+            {
+                if (itm.Equals(item))
+                    return index;
+                index++;
+            }
+            return -1;
+        }
     }
 }

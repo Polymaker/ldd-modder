@@ -22,5 +22,15 @@ namespace LDDModder.Utilities
                 length = 16;
             return guid.ToString("N").Substring(0, length);
         }
+
+        public static string GenerateUID(int length = 16)
+        {
+            var guid = Guid.NewGuid();
+            if (length < 4)
+                length = 4;
+            if (length > 16)
+                length = 16;
+            return guid.ToString("N").Substring(0, length);
+        }
     }
 }

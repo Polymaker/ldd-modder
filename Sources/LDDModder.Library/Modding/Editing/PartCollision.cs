@@ -13,6 +13,11 @@ namespace LDDModder.Modding.Editing
     {
         public ItemTransform Transform { get; set; }
 
+        public PartCollision()
+        {
+            Transform = new ItemTransform();
+        }
+
         public abstract Collision GenerateLDD();
 
         public static PartCollision FromLDD(Collision collision)

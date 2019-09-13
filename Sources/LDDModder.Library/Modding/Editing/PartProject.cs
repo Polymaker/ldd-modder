@@ -1,7 +1,11 @@
 ﻿using LDDModder.LDD.Data;
 using LDDModder.LDD.Primitives;
+using LDDModder.LDD.Primitives.Connectors;
+using LDDModder.Serialization;
+using LDDModder.Utilities;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -28,7 +32,7 @@ namespace LDDModder.Modding.Editing
         public PhysicsAttributes PhysicsAttributes { get; set; }
         public BoundingBox Bounding { get; set; }
         public BoundingBox GeometryBounding { get; set; }
-        public Transform DefaultOrientation { get; set; }
+        public ItemTransform DefaultOrientation { get; set; }
         public Camera DefaultCamera { get; set; }
 
         public VersionInfo PrimitiveFileVersion { get; set; }
@@ -39,6 +43,8 @@ namespace LDDModder.Modding.Editing
         public bool Flexible { get; set; }
 
         #endregion
+
+        public string ProjectPath { get; private set; }
 
         public List<PartSurface> Surfaces { get; set; }
 
@@ -51,19 +57,30 @@ namespace LDDModder.Modding.Editing
             Surfaces = new List<PartSurface>();
             Connectors = new List<PartConnector>();
             Collisions = new List<PartCollision>();
+            PrimitiveFileVersion = new VersionInfo(1, 0);
+            PartVersion = 1;
         }
 
         public void ValidatePart()
         {
             //TODO
 
-            if (Decorated && !Surfaces.Any(x=>x.SurfaceID > 0))
+            if (Decorated != Surfaces.Any(x => x.SurfaceID > 0))
             {
+                //Marked as having decorations but does not have any decoration surfaces
+            }
 
+            foreach (var surf in Surfaces.Where(x => x.SurfaceID > 0))
+            {
+                var allMeshes = surf.Components.SelectMany(c => c.GetAllMeshes());
+                if (!allMeshes.All(m => m.IsTextured))
+                {
+                    //The decoration surface has meshes that does not have UV mapping
+                }
             }
         }
 
-        #region Creation
+        #region Creation From LDD
 
         public static PartProject CreateFromLddPart(LDD.LDDEnvironment environment, int partID)
         {
@@ -78,77 +95,39 @@ namespace LDDModder.Modding.Editing
             foreach (var lddConn in lddPart.Primitive.Connectors)
             {
                 var partConn = PartConnector.FromLDD(lddConn);
-                if (partConn is StudConnection stud)
+                if (partConn.ConnectorType == LDD.Primitives.Connectors.ConnectorType.Custom2DField)
                 {
                     int connIdx = lddPart.Primitive.Connectors.IndexOf(lddConn);
-                    stud.RefID = Utilities.StringUtils.GenerateUUID($"{partID}_{connIdx}", 8);
+                    partConn.RefID = StringUtils.GenerateUUID($"{partID}_{connIdx}", 8);
                 }
                 project.Connectors.Add(partConn);
             }
 
             foreach (var meshSurf in lddPart.Surfaces)
             {
-                var partSurf = new PartSurface()
-                {
-                    SurfaceID = meshSurf.SurfaceID,
-                    SubMaterialIndex = lddPart.Primitive.GetSurfaceMaterialIndex(meshSurf.SurfaceID)
-                };
+                var partSurf = new PartSurface(
+                    meshSurf.SurfaceID,
+                    lddPart.Primitive.GetSurfaceMaterialIndex(meshSurf.SurfaceID)
+                );
+
                 project.Surfaces.Add(partSurf);
 
                 foreach (var culling in meshSurf.Mesh.Cullings)
-                    partSurf.Components.Add(SurfaceComponent.FromLDD(meshSurf.Mesh, culling));
+                {
+                    var cullingComp = SurfaceComponent.FromLDD(meshSurf.Mesh, culling);
+                    partSurf.Components.Add(cullingComp);
+                }
             }
 
+            project.GenerateMeshIDs(true);
+
             project.LinkStudReferences();
+
+            project.GenerateDefaultComments();
 
             return project;
         }
 
-        #endregion
-
-        #region Saving
-
-        public XDocument GenerateProjectXml()
-        {
-            var doc = new XDocument(new XElement("LDDPART"));
-            var partElem = doc.Root.AddElement("PartInfo");
-            partElem.Add(new XElement("PartID", new XAttribute("Value", PartID)));
-            partElem.Add(new XElement("Description", new XAttribute("Value", PartDescription)));
-            if (!string.IsNullOrEmpty(Comments))
-                partElem.Add(new XElement("Comments", Comments));
-
-            var surfacesElem = doc.Root.AddElement("Surfaces");
-
-            foreach (var surf in Surfaces)
-            {
-                var surfElem = surf.SerializeToXml();
-                surfacesElem.Add(surfElem);
-
-                foreach (var comp in surf.Components)
-                {
-                    var compElem = comp.SerializeToXml();
-                    surfElem.Add(compElem);
-                }
-            }
-
-            var collisionsElem = doc.Root.AddElement("Collisions");
-            foreach (var col in Collisions)
-                collisionsElem.Add(col.SerializeToXml());
-
-            var connectionsElem = doc.Root.AddElement("Connections");
-            foreach (var conn in Connectors)
-                connectionsElem.Add(conn.SerializeToXml());
-
-            return doc;
-        }
-
-        public void Save(string path)
-        {
-            var projectXml = GenerateProjectXml();
-            projectXml.Save(path);
-        }
-
-        #endregion
 
         private void SetBaseInfo(LDD.Parts.PartWrapper lddPart)
         {
@@ -163,7 +142,146 @@ namespace LDDModder.Modding.Editing
             PhysicsAttributes = lddPart.Primitive.PhysicsAttributes;
             GeometryBounding = lddPart.Primitive.GeometryBounding;
             Bounding = lddPart.Primitive.Bounding;
+            if (lddPart.Primitive.DefaultOrientation != null)
+                DefaultOrientation = ItemTransform.FromLDD(lddPart.Primitive.DefaultOrientation);
         }
+
+        #endregion
+
+
+        #region Read/Write Xml structure
+
+        public XDocument GenerateProjectXml()
+        {
+            var doc = new XDocument(new XElement("LDDPART"));
+
+            //Part Info
+            {
+                var partElem = doc.Root.AddElement("PartInfo");
+                partElem.Add(new XElement("PartID", PartID));
+
+                if (Aliases.Where(x => x != PartID).Any())
+                    partElem.Add(new XElement("Aliases", string.Join(";", Aliases.Where(x => x != PartID))));
+
+                partElem.Add(new XElement("Description", PartDescription));
+
+                partElem.Add(new XElement("PartVersion", PartVersion));
+                if (PrimitiveFileVersion != null)
+                    partElem.Add(PrimitiveFileVersion.ToXmlElement("PrimitiveVersion"));
+
+                if (Platform != null)
+                    partElem.AddElement("Platform", new XAttribute("ID", Platform.ID), new XAttribute("Name", Platform.Name));
+
+                if (MainGroup != null)
+                    partElem.AddElement("MainGroup", new XAttribute("ID", MainGroup.ID), new XAttribute("Name", MainGroup.Name));
+
+                if (!string.IsNullOrEmpty(Comments))
+                    partElem.Add(new XElement("Comments", Comments));
+            }
+            
+            if (Helper.AnyNotNull(Bounding, GeometryBounding, DefaultCamera, PhysicsAttributes, DefaultOrientation))
+            {
+                var propsElem = doc.Root.AddElement("Properties");
+                if (PhysicsAttributes != null)
+                    propsElem.Add(PhysicsAttributes.SerializeToXml());
+                if (Bounding != null)
+                    propsElem.Add(XmlHelper.DefaultSerialize(Bounding, "Bounding"));
+                if (GeometryBounding != null)
+                    propsElem.Add(XmlHelper.DefaultSerialize(GeometryBounding, "GeometryBounding"));
+                if (DefaultOrientation != null)
+                    propsElem.Add(DefaultOrientation.SerializeToXml("DefaultOrientation"));
+            }
+
+            var surfacesElem = doc.Root.AddElement("Surfaces");
+
+            foreach (var surf in Surfaces)
+            {
+                var surfElem = surf.SerializeToXml();
+                surfacesElem.Add(surfElem);
+            }
+
+            var collisionsElem = doc.Root.AddElement("Collisions");
+            foreach (var col in Collisions)
+                collisionsElem.Add(col.SerializeToXml());
+
+            var connectionsElem = doc.Root.AddElement("Connections");
+            foreach (var conn in Connectors)
+                connectionsElem.Add(conn.SerializeToXml());
+
+            return doc;
+        }
+
+
+        public static PartProject CreateFromXml(XDocument doc)
+        {
+            var project = new PartProject();
+
+            //Part info
+            {
+                var partElem = doc.Root.Element("PartInfo");
+                project.PartID = int.Parse(partElem.Element("PartID").Value);
+            }
+
+            //Part properties
+            var propsElem = doc.Root.Element("Properties");
+            if (propsElem != null)
+            {
+
+            }
+
+            var surfacesElem = doc.Root.Element("Surfaces");
+            if (surfacesElem != null)
+            {
+                foreach (var surfElem in surfacesElem.Elements("Surface"))
+                    project.Surfaces.Add(PartSurface.FromXml(surfacesElem));
+            }
+
+            return null;
+        }
+
+        #endregion
+
+        #region Read/Write from Directory
+
+        public void Save(string directory)
+        {
+            directory = Path.GetFileName(directory);
+            Directory.CreateDirectory(directory);
+
+            LinkStudReferences();
+            GenerateMeshIDs(false);
+            GenerateMeshesNames();
+
+            var projectXml = GenerateProjectXml();
+            projectXml.Save(Path.Combine(directory, "project.xml"));
+
+            string meshDir = Path.Combine(directory, "Meshes");
+
+            if (!Directory.Exists(meshDir))
+                Directory.CreateDirectory(meshDir);
+            else
+            {
+                foreach (var filename in Directory.GetFiles(meshDir, "*", SearchOption.AllDirectories))
+                    File.Delete(filename);
+            }
+
+            var allMeshes = Surfaces.SelectMany(s => s.GetAllMeshes());
+
+            foreach (var mesh in allMeshes)
+            {
+                mesh.Geometry.Save(Path.Combine(directory, mesh.FileName));
+            }
+        }
+
+        #endregion
+
+        #region Read/Write from zip
+
+
+
+        #endregion
+
+        #region Methods
 
         private void LinkStudReferences()
         {
@@ -173,28 +291,139 @@ namespace LDDModder.Modding.Editing
                 {
                     foreach (var stud in comp.GetStudReferences())
                     {
-                        if (stud.ConnectorIndex != -1)
+                        if (stud.Connection == null)
                         {
-                            if (stud.ConnectorIndex < Connectors.Count && Connectors[stud.ConnectorIndex] is StudConnection studConnection)
+                            if (stud.ConnectorIndex != -1)
                             {
-                                stud.Connection = studConnection;
-                                stud.RefID = studConnection.RefID;
+                                if (stud.ConnectorIndex < Connectors.Count &&
+                                    Connectors[stud.ConnectorIndex].ConnectorType == ConnectorType.Custom2DField)
+                                {
+                                    stud.Connection = (PartConnector<Custom2DFieldConnector>)Connectors[stud.ConnectorIndex];
+                                }
+                                else
+                                {
+                                    string refID = Utilities.StringUtils.GenerateUUID($"{PartID}_{stud.ConnectorIndex}", 8);
+                                    stud.Connection = Connectors.OfType<PartConnector<Custom2DFieldConnector>>()
+                                        .FirstOrDefault(x => x.RefID == refID);
+                                }
                             }
-                            else
+                            else if (!string.IsNullOrEmpty(stud.RefID))
                             {
-                                string refID = Utilities.StringUtils.GenerateUUID($"{PartID}_{stud.ConnectorIndex}", 8);
-                                stud.Connection = Connectors.OfType<StudConnection>().FirstOrDefault(x => x.RefID == refID);
-                                stud.RefID = stud.Connection?.RefID;
+                                stud.Connection = Connectors.OfType<PartConnector<Custom2DFieldConnector>>()
+                                    .FirstOrDefault(x => x.RefID == stud.RefID);
                             }
                         }
-                        else if (!string.IsNullOrEmpty(stud.RefID))
+
+                        if (stud.Connection != null)
                         {
-                            stud.Connection = Connectors.OfType<StudConnection>().FirstOrDefault(x => x.RefID == stud.RefID);
+                            stud.RefID = stud.Connection.RefID;
                             stud.ConnectorIndex = Connectors.IndexOf(stud.Connection);
                         }
                     }
                 }
             }
         }
+
+        private void GenerateMeshIDs(bool fromLDD)
+        {
+            //int maxCompCount = Surfaces.Max(s => s.Components.Count);
+            var allMeshes = Surfaces.SelectMany(s => s.Components.SelectMany(c => c.GetAllMeshes()));
+
+            foreach (var surface in Surfaces)
+            {
+                int componentIndex = 0;
+                foreach (var component in surface.Components)
+                {
+                    int meshIndex = 0;
+
+                    foreach (var compMesh in component.GetAllMeshes())
+                    {
+                        if (!string.IsNullOrEmpty(compMesh.RefID))
+                            continue;
+
+                        if (fromLDD)
+                        {
+                            string uniqueStr = $"{PartID}_{surface.SurfaceID}_{componentIndex}_{meshIndex++}";
+                            string refID = StringUtils.GenerateUUID(uniqueStr, 8);
+
+                            while (allMeshes.Any(x => x.RefID == refID))
+                            {
+                                uniqueStr = $"{PartID}_{surface.SurfaceID}_{componentIndex}_{meshIndex++}";
+                                refID = StringUtils.GenerateUUID(uniqueStr, 8);
+                            }
+
+                            compMesh.RefID = refID;
+                        }
+                        else
+                            compMesh.RefID = StringUtils.GenerateUID(8);
+                    }
+
+                    componentIndex++;
+                }
+            }
+        }
+
+        private void GenerateMeshesNames()
+        {
+            foreach (var surface in Surfaces)
+            {
+                foreach (var mesh in surface.GetAllMeshes())
+                {
+                    if (string.IsNullOrEmpty(mesh.FileName) || !mesh.FileName.Contains(mesh.RefID))
+                    {
+                        //mesh.FileName = $"Meshes\\Surface_{surface.SurfaceID}\\{mesh.RefID}.geom";
+                        mesh.FileName = $"Meshes\\{mesh.RefID}.geom";
+                    }
+                }
+            }
+        }
+
+        public void GenerateDefaultComments()
+        {
+            foreach (var surface in Surfaces)
+            {
+                surface.Comments = surface.SurfaceID == 0 ? "Main surface" : $"Decoration surface {surface.SurfaceID}";
+
+                foreach (var component in surface.Components)
+                {
+
+                    switch (component.ComponentType)
+                    {
+                        case LDD.Meshes.MeshCullingType.MainModel:
+                            component.Comments = "Main surface";
+                            break;
+                        case LDD.Meshes.MeshCullingType.FemaleStud:
+                            component.Comments = "Female studs";
+                            break;
+                        default:
+                            component.Comments = component.ComponentType.ToString();
+                            break;
+                    }
+
+                    if (component.ComponentType == LDD.Meshes.MeshCullingType.MainModel)
+                        component.Comments += " geometry";
+
+                    if (surface.Components.Count(x => x.ComponentType == component.ComponentType) > 1)
+                    {
+                        int compIndex = surface.Components.Where(x => x.ComponentType == component.ComponentType).IndexOf(component);
+                        component.Comments += $" {compIndex + 1}";
+                    }
+
+                    if (component.ComponentType != LDD.Meshes.MeshCullingType.MainModel)
+                        component.Comments += " geometry";
+                }
+            }
+        }
+
+        #endregion
+
+        #region LDD File Generation
+
+        public LDD.Parts.PartWrapper GenerateLddPart()
+        {
+            return null;
+        }
+
+        #endregion
     }
 }

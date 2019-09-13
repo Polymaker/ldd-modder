@@ -8,17 +8,17 @@ using System.Xml.Linq;
 
 namespace LDDModder.Modding.Editing
 {
-    public struct ItemTransform
+    public class ItemTransform
     {
         public Vector3 Position { get; set; }
 
         public Vector3 Rotation { get; set; }
 
-        //public ItemTransform()
-        //{
-        //    Position = Vector3.Empty;
-        //    Rotation = Vector3.Empty;
-        //}
+        public ItemTransform()
+        {
+            Position = Vector3.Empty;
+            Rotation = Vector3.Empty;
+        }
 
         public ItemTransform(Vector3 position, Vector3 rotation)
         {
@@ -55,9 +55,9 @@ namespace LDDModder.Modding.Editing
             return LDD.Primitives.Transform.FromMatrix(ToMatrix());
         }
 
-        public XElement SerializeToXml()
+        public XElement SerializeToXml(string elementName = "Transform")
         {
-            var elem = new XElement("Transform");
+            var elem = new XElement(elementName);
             elem.AddNumberAttribute("X", Position.X);
             elem.AddNumberAttribute("Y", Position.Y);
             elem.AddNumberAttribute("Z", Position.Z);
