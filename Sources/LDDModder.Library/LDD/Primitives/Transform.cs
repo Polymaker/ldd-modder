@@ -57,15 +57,15 @@ namespace LDDModder.LDD.Primitives
         {
             return new Transform
             {
-                Angle = element.ReadAttribute<float>("angle"),
+                Angle = element.ReadAttribute<float>("angle", 0f),
                 Axis = new Vector3(
-                    element.ReadAttribute<float>("ax"),
-                    element.ReadAttribute<float>("ay"),
-                    element.ReadAttribute<float>("az")),
+                    element.ReadAttribute<float>("ax", 0f),
+                    element.ReadAttribute<float>("ay", 0f),
+                    element.ReadAttribute<float>("az", 0f)),
                 Translation = new Vector3(
-                    element.ReadAttribute<float>("tx"),
-                    element.ReadAttribute<float>("ty"),
-                    element.ReadAttribute<float>("tz")),
+                    element.ReadAttribute<float>("tx", 0f),
+                    element.ReadAttribute<float>("ty", 0f),
+                    element.ReadAttribute<float>("tz", 0f)),
             };
         }
 

@@ -12,10 +12,10 @@ namespace LDDModder.Modding.Editing
 {
     public abstract class SurfaceComponent : PartComponent
     {
+        public const string NODE_NAME = "Component";
+
         public abstract MeshCullingType ComponentType { get; }
         public List<PartMesh> Geometries { get; set; }
-
-
 
         public SurfaceComponent()
         {
@@ -100,37 +100,64 @@ namespace LDDModder.Modding.Editing
             return Geometries;
         }
 
+        #region Xml Serialization
+
         public override XElement SerializeToXml()
         {
-            var elem = SerializeToXmlBase("Component");
+            var elem = SerializeToXmlBase(NODE_NAME);
             elem.Add(new XAttribute("Type", ComponentType.ToString()));
 
-            //foreach (var stud in GetStudReferences())
-            //{
-            //    elem.Add(stud.SerializeToXml());
-            //}
             var geomElem = elem.AddElement("Geometries");
+
             foreach (var geom in Geometries)
                 geomElem.Add(geom.SerializeToXml());
+
             return elem;
         }
 
-        //protected object[] SerializeStud(StudReference stud, string elementName = "Stud")
-        //{
-        //    if (stud.FieldNode != null)
-        //    {
-        //        return new object[]
-        //        {
-        //            new XComment($"Stud position X: {stud.FieldNode.X} Y: {stud.FieldNode.Y}"),
-        //            stud.SerializeToXml(elementName)
-        //        };
-        //    }
+        protected internal override void LoadFromXml(XElement element)
+        {
+            base.LoadFromXml(element);
+            var geomElem = element.Element("Geometries");
 
-        //    return new object[]
-        //    {
-        //        stud.SerializeToXml(elementName)
-        //    };
-        //}
+            if (geomElem != null)
+            {
+                foreach (var elem in geomElem.Elements(PartMesh.NODE_NAME))
+                {
+                    var mesh = new PartMesh();
+                    mesh.LoadFromXml(elem);
+                    Geometries.Add(mesh);
+                }
+            }
+        }
+
+        public static SurfaceComponent FromXml(XElement element)
+        {
+            SurfaceComponent component = null;
+
+            switch (element.Attribute("Type").Value)
+            {
+                case "MainModel":
+                    component = new SurfaceModel();
+                    break;
+                case "Stud":
+                    component = new SurfaceStud();
+                    break;
+                case "FemaleStud":
+                    component = new SurfaceFemaleStud();
+                    break;
+                case "Tube":
+                    component = new SurfaceTube();
+                    break;
+            }
+
+            if (component != null)
+                component.LoadFromXml(element);
+
+            return component;
+        }
+
+        #endregion
     }
 
     public class SurfaceModel : SurfaceComponent
@@ -162,6 +189,13 @@ namespace LDDModder.Modding.Editing
                 elem.Add(Stud.SerializeToXml());
 
             return elem;
+        }
+
+        protected internal override void LoadFromXml(XElement element)
+        {
+            base.LoadFromXml(element);
+            if (element.Element("Stud") != null)
+                Stud = StudReference.FromXml(element.Element("Stud"));
         }
     }
 
@@ -204,6 +238,28 @@ namespace LDDModder.Modding.Editing
 
             return elem;
         }
+
+        protected internal override void LoadFromXml(XElement element)
+        {
+            base.LoadFromXml(element);
+
+            var geomElem = element.Element("ReplacementGeometries");
+            if (geomElem != null)
+            {
+                foreach (var elem in geomElem.Elements(PartMesh.NODE_NAME))
+                {
+                    var mesh = new PartMesh();
+                    mesh.LoadFromXml(elem);
+                    ReplacementGeometries.Add(mesh);
+                }
+            }
+
+            if (element.Element("Studs") != null)
+            {
+                foreach (var studElem in element.Element("Studs").Elements("Stud"))
+                    Studs.Add(StudReference.FromXml(studElem));
+            }
+        }
     }
 
     public class SurfaceTube : SurfaceComponent
@@ -237,6 +293,19 @@ namespace LDDModder.Modding.Editing
             foreach (var stud in AdjacentStuds)
                 studsElem.Add(stud.SerializeToXml());
             return elem;
+        }
+
+        protected internal override void LoadFromXml(XElement element)
+        {
+            base.LoadFromXml(element);
+            if (element.Element("TubeStud") != null)
+                TubeStud = StudReference.FromXml(element.Element("TubeStud"));
+
+            if (element.Element("AdjacentStuds") != null)
+            {
+                foreach (var studElem in element.Element("AdjacentStuds").Elements("Stud"))
+                    AdjacentStuds.Add(StudReference.FromXml(studElem));
+            }
         }
     }
 }

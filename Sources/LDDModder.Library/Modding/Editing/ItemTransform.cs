@@ -65,16 +65,23 @@ namespace LDDModder.Modding.Editing
             elem.AddNumberAttribute("Yaw", Rotation.Y);
             elem.AddNumberAttribute("Roll", Rotation.Z);
             return elem;
-            //var posElem = new XElement("Position");
-            //posElem.AddNumberAttribute("X", Position.X);
-            //posElem.AddNumberAttribute("Y", Position.Y);
-            //posElem.AddNumberAttribute("Z", Position.Z);
-            //var rotElem = new XElement("Rotation");
-            //rotElem.AddNumberAttribute("Pitch", Rotation.X);
-            //rotElem.AddNumberAttribute("Yaw", Rotation.Y);
-            //rotElem.AddNumberAttribute("Roll", Rotation.Z);
+        }
 
-            //return new XElement("Transform", posElem, rotElem);
+        public static ItemTransform FromXml(XElement element)
+        {
+            var trans = new ItemTransform
+            {
+                Position = new Vector3(
+                    element.ReadAttribute("X", 0f),
+                    element.ReadAttribute("Y", 0f),
+                    element.ReadAttribute("Z", 0f)),
+
+                Rotation = new Vector3(
+                    element.ReadAttribute("Pitch", 0f),
+                    element.ReadAttribute("Yaw", 0f),
+                    element.ReadAttribute("Roll", 0f))
+            };
+            return trans;
         }
     }
 }

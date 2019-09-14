@@ -103,6 +103,11 @@ namespace System
             return char.ToUpper(text[0]) + text.Substring(1);
         }
 
+        public static string Uncapitalize(this string text)
+        {
+            return char.ToLower(text[0]) + text.Substring(1);
+        }
+
         public static bool MatchesWildcard(this string text, string searchPattern)
         {
             string regexString = Regex.Escape(searchPattern);

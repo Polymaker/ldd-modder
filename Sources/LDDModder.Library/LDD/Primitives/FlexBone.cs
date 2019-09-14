@@ -23,6 +23,7 @@ namespace LDDModder.LDD.Primitives
         public Tuple<int,int,int> ConnectionCheck { get; set; }
 
         public List<Connector> Connectors { get; }
+
         public List<Collision> Collisions { get; }
 
         public FlexBone()

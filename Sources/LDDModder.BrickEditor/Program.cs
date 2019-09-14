@@ -18,7 +18,7 @@ namespace LDDModder.BrickEditor
 
             var test = Modding.Editing.PartProject.CreateFromLddPart(LDD.LDDEnvironment.Current, 3001);
             test.Save($"{test.PartID} Project");
-
+            Modding.Editing.PartProject.LoadFromDirectory($"{test.PartID} Project");
 
             //var test = new GLTestWindow();
             //test.Run();

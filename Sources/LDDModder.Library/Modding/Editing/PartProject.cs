@@ -1,4 +1,5 @@
 ﻿using LDDModder.LDD.Data;
+using LDDModder.LDD.Meshes;
 using LDDModder.LDD.Primitives;
 using LDDModder.LDD.Primitives.Connectors;
 using LDDModder.Serialization;
@@ -10,17 +11,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using System.Xml.Serialization;
 
 namespace LDDModder.Modding.Editing
 {
     public class PartProject
     {
+
         #region Part Info
 
-        public int PartID { get; set; }
+        [XmlElement]
+        public int PartID { get; private set; }
 
+        [XmlElement]
         public string PartDescription { get; set; }
 
+        [XmlElement]
         public string Comments { get; set; }
 
         public List<int> Aliases { get; set; }
@@ -29,13 +35,23 @@ namespace LDDModder.Modding.Editing
 
         public MainGroup MainGroup { get; set; }
 
+        [XmlElement]
         public PhysicsAttributes PhysicsAttributes { get; set; }
+
+        [XmlElement]
         public BoundingBox Bounding { get; set; }
+
+        [XmlElement]
         public BoundingBox GeometryBounding { get; set; }
+
+        [XmlElement]
         public ItemTransform DefaultOrientation { get; set; }
+
+        [XmlElement]
         public Camera DefaultCamera { get; set; }
 
         public VersionInfo PrimitiveFileVersion { get; set; }
+
         public int PartVersion { get; set; }
 
         public bool Decorated { get; set; }
@@ -48,16 +64,17 @@ namespace LDDModder.Modding.Editing
 
         public List<PartSurface> Surfaces { get; set; }
 
-        public List<PartConnector> Connectors { get; set; }
+        public List<PartConnector> Connections { get; set; }
 
         public List<PartCollision> Collisions { get; set; }
 
         public PartProject()
         {
             Surfaces = new List<PartSurface>();
-            Connectors = new List<PartConnector>();
+            Connections = new List<PartConnector>();
             Collisions = new List<PartCollision>();
             PrimitiveFileVersion = new VersionInfo(1, 0);
+            Aliases = new List<int>();
             PartVersion = 1;
         }
 
@@ -100,7 +117,7 @@ namespace LDDModder.Modding.Editing
                     int connIdx = lddPart.Primitive.Connectors.IndexOf(lddConn);
                     partConn.RefID = StringUtils.GenerateUUID($"{partID}_{connIdx}", 8);
                 }
-                project.Connectors.Add(partConn);
+                project.Connections.Add(partConn);
             }
 
             foreach (var meshSurf in lddPart.Surfaces)
@@ -205,12 +222,11 @@ namespace LDDModder.Modding.Editing
                 collisionsElem.Add(col.SerializeToXml());
 
             var connectionsElem = doc.Root.AddElement("Connections");
-            foreach (var conn in Connectors)
+            foreach (var conn in Connections)
                 connectionsElem.Add(conn.SerializeToXml());
 
             return doc;
         }
-
 
         public static PartProject CreateFromXml(XDocument doc)
         {
@@ -219,7 +235,8 @@ namespace LDDModder.Modding.Editing
             //Part info
             {
                 var partElem = doc.Root.Element("PartInfo");
-                project.PartID = int.Parse(partElem.Element("PartID").Value);
+                project.PartID = int.Parse(partElem.Element("PartID")?.Value);
+
             }
 
             //Part properties
@@ -230,13 +247,59 @@ namespace LDDModder.Modding.Editing
             }
 
             var surfacesElem = doc.Root.Element("Surfaces");
+
             if (surfacesElem != null)
             {
-                foreach (var surfElem in surfacesElem.Elements("Surface"))
-                    project.Surfaces.Add(PartSurface.FromXml(surfacesElem));
+                foreach (var surfElem in surfacesElem.Elements(PartSurface.NODE_NAME))
+                    project.Surfaces.Add(PartSurface.FromXml(surfElem));
             }
 
             return null;
+        }
+
+        private void LoadFromXml(XDocument doc)
+        {
+            Surfaces.Clear();
+            Connections.Clear();
+            Collisions.Clear();
+
+            //Part info
+            {
+                var partElem = doc.Root.Element("PartInfo");
+                PartID = int.Parse(partElem.Element("PartID")?.Value);
+
+                var test = new
+                {
+                    PartID,
+                    PartDescription,
+                    Platform
+                };
+
+            }
+
+            //Part properties
+            var propsElem = doc.Root.Element("Properties");
+            if (propsElem != null)
+            {
+
+            }
+
+            var surfacesElem = doc.Root.Element("Surfaces");
+            
+            if (surfacesElem != null)
+            {
+                foreach (var surfElem in surfacesElem.Elements(PartSurface.NODE_NAME))
+                    Surfaces.Add(PartSurface.FromXml(surfElem));
+            }
+
+            var connectionsElem = doc.Root.Element("Connections");
+            if (connectionsElem != null)
+            {
+                foreach (var connElem in connectionsElem.Elements(PartConnector.NODE_NAME))
+                    Connections.Add(PartConnector.FromXml(connElem));
+            }
+
+            LinkStudReferences();
         }
 
         #endregion
@@ -273,6 +336,17 @@ namespace LDDModder.Modding.Editing
             }
         }
 
+        public static PartProject LoadFromDirectory(string directory)
+        {
+            var doc = XDocument.Load(Path.Combine(directory, "project.xml"));
+            var project = new PartProject
+            {
+                ProjectPath = directory
+            };
+            project.LoadFromXml(doc);
+            return project;
+        }
+
         #endregion
 
         #region Read/Write from zip
@@ -295,21 +369,21 @@ namespace LDDModder.Modding.Editing
                         {
                             if (stud.ConnectorIndex != -1)
                             {
-                                if (stud.ConnectorIndex < Connectors.Count &&
-                                    Connectors[stud.ConnectorIndex].ConnectorType == ConnectorType.Custom2DField)
+                                if (stud.ConnectorIndex < Connections.Count &&
+                                    Connections[stud.ConnectorIndex].ConnectorType == ConnectorType.Custom2DField)
                                 {
-                                    stud.Connection = (PartConnector<Custom2DFieldConnector>)Connectors[stud.ConnectorIndex];
+                                    stud.Connection = (PartConnector<Custom2DFieldConnector>)Connections[stud.ConnectorIndex];
                                 }
                                 else
                                 {
                                     string refID = Utilities.StringUtils.GenerateUUID($"{PartID}_{stud.ConnectorIndex}", 8);
-                                    stud.Connection = Connectors.OfType<PartConnector<Custom2DFieldConnector>>()
+                                    stud.Connection = Connections.OfType<PartConnector<Custom2DFieldConnector>>()
                                         .FirstOrDefault(x => x.RefID == refID);
                                 }
                             }
                             else if (!string.IsNullOrEmpty(stud.RefID))
                             {
-                                stud.Connection = Connectors.OfType<PartConnector<Custom2DFieldConnector>>()
+                                stud.Connection = Connections.OfType<PartConnector<Custom2DFieldConnector>>()
                                     .FirstOrDefault(x => x.RefID == stud.RefID);
                             }
                         }
@@ -317,7 +391,7 @@ namespace LDDModder.Modding.Editing
                         if (stud.Connection != null)
                         {
                             stud.RefID = stud.Connection.RefID;
-                            stud.ConnectorIndex = Connectors.IndexOf(stud.Connection);
+                            stud.ConnectorIndex = Connections.IndexOf(stud.Connection);
                         }
                     }
                 }
@@ -413,6 +487,18 @@ namespace LDDModder.Modding.Editing
                         component.Comments += " geometry";
                 }
             }
+        }
+
+        public MeshGeometry LoadMesh(PartMesh mesh)
+        {
+            if (string.IsNullOrEmpty(ProjectPath))
+                return null;
+
+            string meshPath = Path.Combine(ProjectPath, mesh.FileName);
+            if (File.Exists(meshPath))
+                return MeshGeometry.FromFile(meshPath);
+
+            return null;
         }
 
         #endregion

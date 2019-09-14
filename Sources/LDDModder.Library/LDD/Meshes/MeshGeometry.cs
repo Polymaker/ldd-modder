@@ -266,6 +266,12 @@ namespace LDDModder.LDD.Meshes
             }
         }
 
+        public static MeshGeometry FromFile(string filename)
+        {
+            using (var fs = File.OpenRead(filename))
+                return FromStream(fs);
+        }
+
         public static MeshGeometry FromStream(Stream stream)
         {
             var geom = new MeshGeometry();
@@ -514,7 +520,6 @@ namespace LDDModder.LDD.Meshes
             newGeom.BreakReferences();
             return newGeom;
         }
-
 
     }
 }

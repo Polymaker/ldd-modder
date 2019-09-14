@@ -20,7 +20,7 @@ namespace LDDModder.Modding.Editing
 
         public int Value2 { get; set; }
 
-        public Custom2DFieldConnector Connector => Connection.Connector;
+        public Custom2DFieldConnector Connector => Connection?.Connector;
 
         public Custom2DFieldConnector.FieldNode FieldNode => Connector?.GetNode(FieldIndex);
 
@@ -69,6 +69,21 @@ namespace LDDModder.Modding.Editing
                     new XAttribute("Value1", Value1),
                     new XAttribute("Value2", Value2)
                     );
+        }
+
+        public static StudReference FromXml(XElement element)
+        {
+            var stud = new StudReference
+            {
+                RefID = element.Attribute("ConnectionID")?.Value
+            };
+            if (element.TryGetIntAttribute("FieldIndex", out int v1))
+                stud.FieldIndex = v1;
+            if (element.TryGetIntAttribute("Value1", out int v2))
+                stud.Value1 = v1;
+            if (element.TryGetIntAttribute("Value2", out int v3))
+                stud.Value2 = v1;
+            return stud;
         }
     }
 }

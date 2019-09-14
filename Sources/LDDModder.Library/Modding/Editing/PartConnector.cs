@@ -17,7 +17,7 @@ namespace LDDModder.Modding.Editing
 
     public abstract class PartConnector : PartComponent, IPartConnector
     {
-        //public abstract Connector Connector { get; set; }
+        public const string NODE_NAME = "Connection";
 
         public ItemTransform Transform { get; set; }
 
@@ -38,8 +38,12 @@ namespace LDDModder.Modding.Editing
 
         public static PartConnector FromXml(XElement element)
         {
-
-            return null;
+            var connectorType = element.ReadAttribute<ConnectorType>("Type");
+            var defaultConnector = Connector.CreateFromType(connectorType);
+            var genType = typeof(PartConnector<>).MakeGenericType(defaultConnector.GetType());
+            var partConn = (PartConnector)Activator.CreateInstance(genType, defaultConnector);
+            partConn.LoadFromXml(element);
+            return partConn;
         }
 
         protected abstract Connector GetConnector();
@@ -66,7 +70,7 @@ namespace LDDModder.Modding.Editing
 
         public override XElement SerializeToXml()
         {
-            var elem = SerializeToXmlBase("Connection");
+            var elem = SerializeToXmlBase(NODE_NAME);
             elem.Add(new XAttribute("Type", Connector.Type.ToString()));
             elem.Add(Transform.SerializeToXml());
             elem.Add(SerializeConnector());
@@ -92,6 +96,26 @@ namespace LDDModder.Modding.Editing
                 elements.Add(new XElement("Data", cleanStr));
             }
             return elements.ToArray();
+        }
+
+        protected internal override void LoadFromXml(XElement element)
+        {
+            base.LoadFromXml(element);
+            Transform = ItemTransform.FromXml(element.Element("Transform"));
+            element.Element("Transform").Remove();
+            var connElem = new XElement(ConnectorType.ToString());
+
+            connElem.Add(Transform.ToLDD().ToXmlAttributes());
+
+            foreach (var elem in element.Elements().ToArray())
+            {
+                if (elem.Name.LocalName == "Data")
+                    connElem.Value = elem.Value;
+                else
+                    connElem.Add(new XAttribute(elem.Name.LocalName, elem.Value));
+            }
+
+            Connector.LoadFromXml(connElem);
         }
     }
 }

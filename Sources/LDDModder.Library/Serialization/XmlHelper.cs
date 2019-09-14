@@ -3,10 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using System.Xml.Serialization;
+using System.Reflection;
 
 namespace LDDModder.Serialization
 {
@@ -83,5 +85,36 @@ namespace LDDModder.Serialization
             rootElem.Name = elementName;
             return rootElem;
         }
+
+        public static XObject ToXml<T>(Expression<Func<T>> expression)
+        {
+            var memberExpr = expression.Body as MemberExpression;
+
+            
+            var itemValue = expression.Compile().Invoke();
+            var itemValueStr = string.Format(CultureInfo.InvariantCulture, "{0}", itemValue);
+
+            var attributeInfo = memberExpr.Member.GetCustomAttribute<XmlAttributeAttribute>();
+            if (attributeInfo != null)
+            {
+                string attributeName = string.IsNullOrEmpty(attributeInfo.AttributeName) ?
+                    memberExpr.Member.Name : attributeInfo.AttributeName;
+                    
+                return new XAttribute(attributeName, itemValueStr);
+            }
+
+            var elementInfo = memberExpr.Member.GetCustomAttribute<XmlElementAttribute>();
+            if (elementInfo != null)
+            {
+                string elementName = string.IsNullOrEmpty(elementInfo.ElementName) ?
+                    memberExpr.Member.Name : elementInfo.ElementName;
+
+                return new XElement(elementName, itemValueStr);
+            }
+
+            return null;
+        }
+
+
     }
 }

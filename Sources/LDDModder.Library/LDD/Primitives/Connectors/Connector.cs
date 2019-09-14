@@ -14,6 +14,11 @@ namespace LDDModder.LDD.Primitives.Connectors
         public int SubType { get; set; }
         public Transform Transform { get; set; }
 
+        public Connector()
+        {
+            Transform = new Transform();
+        }
+
         public virtual XElement SerializeToXml()
         {
             var elem = new XElement(Type.ToString(), new XAttribute("type", SubType));
@@ -75,6 +80,36 @@ namespace LDDModder.LDD.Primitives.Connectors
                 connector.LoadFromXml(element);
 
             return connector;
+        }
+
+        public static Type GetClassType(ConnectorType type)
+        {
+            switch (type)
+            {
+                case ConnectorType.Axel:
+                    return typeof(AxelConnector);
+                case ConnectorType.Ball:
+                    return typeof(BallConnector);
+                case ConnectorType.Custom2DField:
+                    return typeof(Custom2DFieldConnector);
+                case ConnectorType.Fixed:
+                    return typeof(FixedConnector);
+                case ConnectorType.Gear:
+                    return typeof(GearConnector);
+                case ConnectorType.Hinge:
+                    return typeof(HingeConnector);
+                case ConnectorType.Rail:
+                    return typeof(RailConnector);
+                case ConnectorType.Slider:
+                    return typeof(SliderConnector);
+            }
+
+            return null;
+        }
+
+        public static Connector CreateFromType(ConnectorType type)
+        {
+            return (Connector)Activator.CreateInstance(GetClassType(type));
         }
     }
 }

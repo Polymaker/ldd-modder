@@ -27,12 +27,12 @@ namespace System.Xml.Linq
 
         public static bool HasAttribute(this XElement element, string attributeName)
         {
-            return element.Attribute(attributeName) != null; 
+            return GetAttribute(element, attributeName) != null; 
         }
 
         public static bool HasAttribute(this XElement element, string attributeName, out XAttribute attribute)
         {
-            attribute = element.Attribute(attributeName);
+            attribute = GetAttribute(element, attributeName);
             return attribute != null;
         }
 
@@ -68,6 +68,11 @@ namespace System.Xml.Linq
             OneZero
         }
 
+        public static XAttribute GetAttribute(this XElement element, string name)
+        {
+            return element.Attributes().FirstOrDefault(x => x.Name.LocalName.Equals(name, StringComparison.InvariantCultureIgnoreCase));
+        }
+
         public static void AddBooleanAttribute(this XElement element, string attributeName, bool value, BooleanXmlRepresentation representation = BooleanXmlRepresentation.OneZero)
         {
             switch (representation)
@@ -88,7 +93,7 @@ namespace System.Xml.Linq
         public static bool TryGetIntAttribute(this XElement element,  string attributeName, out int value)
         {
             value = 0;
-            var attr = element.Attribute(attributeName);
+            var attr = GetAttribute(element, attributeName);
             return attr != null && int.TryParse(attr.Value, out value);
         }
 
@@ -113,7 +118,7 @@ namespace System.Xml.Linq
         public static bool TryReadAttribute<T>(this XElement element, string attributeName, out T result)
         {
             result = default;
-            var attr = element.Attribute(attributeName);
+            var attr = GetAttribute(element, attributeName);
             if (attr == null)
                 return false;
 
