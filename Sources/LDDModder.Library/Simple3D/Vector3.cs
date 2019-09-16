@@ -236,7 +236,13 @@ namespace LDDModder.Simple3D
         public static float AngleBetween(Vector3 first, Vector3 second)
         {
             var dot = Dot(first, second);
-            return (float)Math.Acos(MathHelper.Clamp(dot / (first.Length * second.Length), -1.0f, 1.0f));
+            float result = (float)Math.Acos(MathHelper.Clamp(dot / (first.Length * second.Length), -1.0f, 1.0f));
+            if (float.IsNaN(result))
+            {
+                if (first.Equals(second))
+                    return 0f;
+            }
+            return result;
         }
 
         public static Vector3 CalculateNormal(Vector3 v1, Vector3 v2, Vector3 v3)

@@ -289,8 +289,8 @@ namespace LDDModder.LDD.Files
             };
 
             var avgNormals = mesh.GetAverageNormals().DistinctValues().ToList();
-            var outlines = mesh.GetRoundEdgeShaderData().EqualsDistinct().ToList();
-            for (int i = 21; i < outlines.Count; i += 21)
+            var outlines = mesh.GetRoundEdgeShaderData().EqualsDistinct().Select(x => x.Clone()).ToList();
+            for (int i = 20; i < outlines.Count; i += 21)
                 outlines[i].PackData();
             var shaderData = new ShaderDataHelper(avgNormals, outlines);
 
@@ -332,8 +332,11 @@ namespace LDDModder.LDD.Files
                 meshData.Indices[i].VertexIndex = vertIndexer.IndexOf(idx.Vertex);
 
                 meshData.Indices[i].AverageNormalIndex = shaderData.AvgNormals.IndexOf(idx.AverageNormal);
+                
                 int reIdx = shaderData.RoundEdgeData.IndexOf(idx.RoundEdgeData);
+
                 int reOffset = reIdx * 12 + ((int)Math.Floor(reIdx / 21d) * 4);
+
                 meshData.Indices[i].REShaderOffset = reOffset;
             }
 

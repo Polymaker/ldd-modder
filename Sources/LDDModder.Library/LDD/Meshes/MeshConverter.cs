@@ -102,5 +102,27 @@ namespace LDDModder.LDD.Meshes
 
             return oMesh;
         }
+
+        public static Assimp.Mesh ConvertFromLDD2(MeshGeometry meshGeom)
+        {
+            var oMesh = new Assimp.Mesh(PrimitiveType.Triangle);
+            //var vertIndexer = new ListIndexer<Vertex>(meshGeom.Vertices);
+
+            for (int i = 0; i < meshGeom.IndexCount; i++)
+            {
+                oMesh.Vertices.Add(meshGeom.Indices[i].Vertex.Position.Convert());
+                oMesh.Normals.Add(meshGeom.Indices[i].Vertex.Normal.Convert());
+
+                for (int j = 0; j < 6; j++)
+                {
+                    var coord = meshGeom.Indices[i].RoundEdgeData.Coords[j];
+                    oMesh.TextureCoordinateChannels[j].Add(new Vector3D(coord.X, coord.Y, 0));
+                }
+
+                if (i % 3 == 0)
+                    oMesh.Faces.Add(new Face(new int[] { i, i + 1, i + 2 }));
+            }
+            return oMesh;
+        }
     }
 }

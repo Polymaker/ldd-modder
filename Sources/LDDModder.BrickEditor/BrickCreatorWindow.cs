@@ -44,9 +44,12 @@ namespace LDDModder.BrickEditor
         {
             base.OnLoad(e);
             //Modding.PartPackage.CreateLDDPackages();
+            //var brick = LDD.Parts.PartWrapper.LoadPart(LDD.LDDEnvironment.Current, 3062);
+            //Utilities.LddMeshExporter.ExportRoundEdge(brick.MainMesh.Geometry, $"C:\\Users\\JWTurner\\Documents\\Development\\Test\\ldd-modder\\LDD Bricks\\{brick.PartID} RE.dae", "collada");
             //string meshDir = Environment.ExpandEnvironmentVariables(@"%appdata%\LEGO Company\LEGO Digital Designer\db\");
             //var project = PartProject.CreateFromLdd(meshDir, 10130);
             //project.SaveUncompressed("10130");
+
 
             InitializeData();
             InitializeUI();
@@ -376,7 +379,7 @@ namespace LDDModder.BrickEditor
             else if(!int.TryParse(IDTextbox.Text, out _))
                 errorMessages.Add("Brick ID must be numeric");
 
-            if (string.IsNullOrWhiteSpace(NameTextbox.Text))
+            if (string.IsNullOrWhiteSpace(NameTextbox.Text) && CreatePrimitiveCheckBox.Checked)
                 errorMessages.Add("Enter a brick name");
 
 

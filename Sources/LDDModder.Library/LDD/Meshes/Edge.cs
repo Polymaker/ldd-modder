@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using LDDModder.Simple3D;
+using System.Collections.Generic;
 
 namespace LDDModder.LDD.Meshes
 {
@@ -61,6 +62,11 @@ namespace LDDModder.LDD.Meshes
             if (checkPosition)
                 return P1.Position.Equals(vertex.Position) || P2.Position.Equals(vertex.Position);
             return P1.Equals(vertex) || P2.Equals(vertex);
+        }
+
+        public bool Contains(Vector3 vertex)
+        {
+            return P1.Position.Equals(vertex) || P2.Position.Equals(vertex);
         }
 
         public bool Equals(Edge x, Edge y)

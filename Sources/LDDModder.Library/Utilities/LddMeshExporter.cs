@@ -108,6 +108,20 @@ namespace LDDModder.Utilities
             importer.ExportFile(scene, filename, formatID, PostProcessSteps.ValidateDataStructure);
         }
 
+        public static void ExportRoundEdge(LDD.Meshes.MeshGeometry geometry, string filename, string formatID)
+        {
+            var scene = new Scene() { RootNode = new Node("Root") };
+            scene.Materials.Add(new Assimp.Material() { Name = "BaseMaterial" });
+            var meshNode = new Node() { Name = "BaseModel" };
+            var aMesh = LDD.Meshes.MeshConverter.ConvertFromLDD2(geometry);
+            aMesh.MaterialIndex = scene.MeshCount;
+            meshNode.MeshIndices.Add(scene.MeshCount);
+            scene.Meshes.Add(aMesh);
+            scene.RootNode.Children.Add(meshNode);
+            AssimpContext importer = new AssimpContext();
+            importer.ExportFile(scene, filename, formatID, PostProcessSteps.ValidateDataStructure);
+        }
+
         private static Node CreateMeshNode(Scene scene, LDDPartFiles part, LDD.Files.MeshFile lddMesh, string name)
         {
             var meshNode = new Node() { Name = name };

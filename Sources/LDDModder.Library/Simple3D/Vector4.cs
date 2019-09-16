@@ -64,7 +64,7 @@ namespace LDDModder.Simple3D
 
         public override int GetHashCode()
         {
-            return X.GetHashCode() ^ Y.GetHashCode() ^ Z.GetHashCode();
+            return X.GetHashCode() ^ Y.GetHashCode() ^ Z.GetHashCode() ^ W.GetHashCode();
         }
 
         public override bool Equals(object obj)

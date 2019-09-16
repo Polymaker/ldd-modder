@@ -12,5 +12,15 @@ namespace LDDModder
         {
             return Math.Max(Math.Min(n, max), min);
         }
+
+        public static float SetSign(float value, float sign)
+        {
+            return Math.Abs(value) * Math.Sign(sign);
+        }
+
+        public static float SetSign(float value, int sign)
+        {
+            return Math.Abs(value) * Math.Sign(sign);
+        }
     }
 }

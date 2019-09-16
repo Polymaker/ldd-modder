@@ -89,6 +89,11 @@ namespace LDDModder.LDD.Meshes
             return v;
         }
 
+        public override string ToString()
+        {
+            return $"{Position.Rounded()}";
+        }
+
         //public bool Equals(Vertex x, Vertex y)
         //{
         //    return x.Equals(y);
