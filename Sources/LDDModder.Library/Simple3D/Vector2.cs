@@ -174,7 +174,7 @@ namespace LDDModder.Simple3D
             return new Vector2(vec.Y, -vec.X);
         }
 
-        public float AngleBetween(Vector2 first, Vector2 second)
+        public static float AngleBetween(Vector2 first, Vector2 second)
         {
             var dot = Dot(first, second);
             return (float)Math.Acos(MathHelper.Clamp(dot / (first.Length * second.Length), -1.0f, 1.0f));

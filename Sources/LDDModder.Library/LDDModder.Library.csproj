@@ -135,6 +135,7 @@
     <Compile Include="LDD\Primitives\PhysicsAttributes.cs" />
     <Compile Include="LDD\Primitives\Primitive.cs" />
     <Compile Include="LDD\Primitives\Transform.cs" />
+    <Compile Include="Maths\Line.cs" />
     <Compile Include="Modding\Editing\ItemTransform.cs" />
     <Compile Include="Modding\Editing\PartCollision.cs" />
     <Compile Include="Modding\Editing\PartComponent.cs" />

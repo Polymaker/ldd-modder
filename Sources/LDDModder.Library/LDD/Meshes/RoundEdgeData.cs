@@ -10,6 +10,8 @@ namespace LDDModder.LDD.Meshes
 {
     public class RoundEdgeData : IEquatable<RoundEdgeData>, IEqualityComparer<RoundEdgeData>
     {
+        public const float COORD_SCALE = 15.5f / 0.8f;
+
         public enum EdgeCombineMode
         {
             Union,
@@ -131,6 +133,37 @@ namespace LDDModder.LDD.Meshes
                 coords.Add(new Vector2(0, 0));
                 Coords = coords.ToArray();
             }
+        }
+
+        public void Set(int pairIndex, Vector2 coords, bool adjust = true)
+        {
+            Set(pairIndex, EmptyCoord, coords, EdgeCombineMode.Union, adjust);
+        }
+
+        public void Set(int pairIndex, Vector2 coord1, Vector2 coord2, EdgeCombineMode mode, bool adjust = true)
+        {
+            if (coord1.IsEmpty)
+                coord1 = EmptyCoord;
+
+            if (coord2.IsEmpty)
+                coord2 = EmptyCoord;
+
+            if (coord1 != EmptyCoord && adjust)
+            {
+                coord1 *= COORD_SCALE;
+                coord1.X += 100;
+            }
+
+            if (coord2 != EmptyCoord && adjust)
+            {
+                coord2 *= COORD_SCALE;
+                coord2.X += 100;
+                if (mode == EdgeCombineMode.Union)
+                    coord2.X *= -1;
+            }
+
+            Coords[(pairIndex * 2)] = coord1;
+            Coords[(pairIndex * 2) + 1] = coord2;
         }
 
         public override string ToString()
