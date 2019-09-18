@@ -44,8 +44,9 @@ namespace LDDModder.BrickEditor
         {
             base.OnLoad(e);
             //Modding.PartPackage.CreateLDDPackages();
-            //var brick = LDD.Parts.PartWrapper.LoadPart(LDD.LDDEnvironment.Current, 3062);
+            //var brick = LDD.Parts.PartWrapper.LoadPart(LDD.LDDEnvironment.Current, 32495);
             //Utilities.LddMeshExporter.ExportRoundEdge(brick.MainMesh.Geometry, $"C:\\Users\\JWTurner\\Documents\\Development\\Test\\ldd-modder\\LDD Bricks\\{brick.PartID} RE.dae", "collada");
+
             //string meshDir = Environment.ExpandEnvironmentVariables(@"%appdata%\LEGO Company\LEGO Digital Designer\db\");
             //var project = PartProject.CreateFromLdd(meshDir, 10130);
             //project.SaveUncompressed("10130");
@@ -183,44 +184,32 @@ namespace LDDModder.BrickEditor
                 ImportExportProgress.Value = 0;
                 ImportExportProgress.Visible = true;
 
-                var scene = AssimpContext.ImportFile(filename, 
-                    Assimp.PostProcessSteps.GenerateNormals | 
-                    Assimp.PostProcessSteps.PreTransformVertices);
-
-                ImportExportProgress.Value = 20;
-
-                if (scene != null)
+                if (filename.EndsWith("g"))
                 {
-                    int counter = 1;
-                    int currentDecID = 1;
-                    if (BrickMeshes.Any(x => x.DecorationID.HasValue))
-                        currentDecID = BrickMeshes.Where(x => x.DecorationID.HasValue).Max(x => x.DecorationID.Value) + 1;
-
-                    foreach (var mesh in scene.Meshes)
+                    var lddMeshFile = MeshFile.Read(filename);
+                    ImportExportProgress.Value = 20;
+                    var assimpMesh = LDD.Meshes.MeshConverter.ConvertFromLDD(lddMeshFile);
+                    var brickMesh = new BrickMeshObject()
                     {
-                        var brickMesh = new BrickMeshObject()
-                        {
-                            Mesh = mesh,
-                            MeshScene = scene,
-                            MeshFile = filename,
-                            MeshName = mesh.Name,
-                            IsMainModel = !mesh.HasTextureCoords(0)
-                        };
+                        Mesh = assimpMesh,
+                        MeshFile = filename,
+                        MeshName = Path.GetFileNameWithoutExtension(filename),
+                        IsMainModel = !assimpMesh.HasTextureCoords(0)
+                    };
 
-                        if (brickMesh.IsTextured)
-                            brickMesh.DecorationID = currentDecID++;
+                    BrickMeshes.Add(brickMesh);
 
-                        BrickMeshes.Add(brickMesh);
+                    ImportExportProgress.Value = 100;
+                }
+                else
+                {
+                    ImportAssimpModel(filename);
+                }
 
-                        float progress = counter++ / (float)scene.MeshCount;
-                        ImportExportProgress.Value = 20 + (int)(progress * 80);
-                    }
-
-                    if (string.IsNullOrEmpty(IDTextbox.Text) && 
-                        int.TryParse(Path.GetFileNameWithoutExtension(filename), out int partID))
-                    {
-                        IDTextbox.Text = partID.ToString();
-                    }
+                if (string.IsNullOrEmpty(IDTextbox.Text) &&
+                    int.TryParse(Path.GetFileNameWithoutExtension(filename), out int partID))
+                {
+                    IDTextbox.Text = partID.ToString();
                 }
             }
             catch(Exception ex)
@@ -230,6 +219,43 @@ namespace LDDModder.BrickEditor
             }
 
             HideProgressDelayed();
+        }
+
+        private void ImportAssimpModel(string filename)
+        {
+            var scene = AssimpContext.ImportFile(filename,
+                    Assimp.PostProcessSteps.GenerateNormals |
+                    Assimp.PostProcessSteps.PreTransformVertices);
+
+            ImportExportProgress.Value = 20;
+
+            if (scene != null)
+            {
+                int counter = 1;
+                int currentDecID = 1;
+                if (BrickMeshes.Any(x => x.DecorationID.HasValue))
+                    currentDecID = BrickMeshes.Where(x => x.DecorationID.HasValue).Max(x => x.DecorationID.Value) + 1;
+
+                foreach (var mesh in scene.Meshes)
+                {
+                    var brickMesh = new BrickMeshObject()
+                    {
+                        Mesh = mesh,
+                        MeshScene = scene,
+                        MeshFile = filename,
+                        MeshName = mesh.Name,
+                        IsMainModel = !mesh.HasTextureCoords(0)
+                    };
+
+                    if (brickMesh.IsTextured)
+                        brickMesh.DecorationID = currentDecID++;
+
+                    BrickMeshes.Add(brickMesh);
+
+                    float progress = counter++ / (float)scene.MeshCount;
+                    ImportExportProgress.Value = 20 + (int)(progress * 80);
+                }
+            }
         }
 
         private void CreateBrickButton_Click(object sender, EventArgs e)

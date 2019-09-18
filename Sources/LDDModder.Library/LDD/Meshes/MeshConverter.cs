@@ -116,6 +116,9 @@ namespace LDDModder.LDD.Meshes
                 for (int j = 0; j < 6; j++)
                 {
                     var coord = meshGeom.Indices[i].RoundEdgeData.Coords[j];
+                    if (RoundEdgeData.EmptyCoord != coord)
+                        coord.X = Math.Abs(coord.X) - 100f;
+                    coord /= 10f;
                     oMesh.TextureCoordinateChannels[j].Add(new Vector3D(coord.X, coord.Y, 0));
                 }
 

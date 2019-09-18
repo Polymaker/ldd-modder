@@ -98,6 +98,12 @@ namespace LDDModder.LDD.Meshes
             Pairs = new PairWrapper(this);
         }
 
+        public void Reset()
+        {
+            Coords = new Vector2[6];
+            for (int i = 0; i < 6; i++)
+                Coords[i] = EmptyCoord;
+        }
 
         //public RoundEdgeData(int offset, float[] values)
         //{
