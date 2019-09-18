@@ -293,6 +293,7 @@ namespace LDDModder.BrickEditor
 
             var partMesh = new LDDPartFiles
             {
+                PartID = int.Parse(IDTextbox.Text),
                 Info = new Primitive()
                 {
                     ID = int.Parse(IDTextbox.Text),
@@ -355,6 +356,8 @@ namespace LDDModder.BrickEditor
                         partMesh.SavePrimitive(targetDir, baseName);
 
                     MessageBox.Show("Brick files created succesfully.");
+
+                    Utilities.LddMeshExporter.ExportRoundEdge(partMesh.MainModel.Geometry, $"C:\\Users\\JWTurner\\Documents\\Development\\Test\\ldd-modder\\LDD Bricks\\{partMesh.PartID} RE.dae", "collada");
                 }
             }
         }

@@ -25,10 +25,6 @@ namespace System.Collections.Generic
                     hashList.Add(v, 1);
                     yield return v;
                 }
-                else
-                {
-
-                }
             }
         }
 

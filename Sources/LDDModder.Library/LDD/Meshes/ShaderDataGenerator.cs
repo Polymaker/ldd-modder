@@ -53,33 +53,90 @@ namespace LDDModder.LDD.Meshes
             }
         }
 
+        
+
+        struct SimpleEdge : IEquatable<SimpleEdge>
+        {
+            public Vector3 P1;
+            public Vector3 P2;
+
+            public SimpleEdge(Vector3 p1, Vector3 p2)
+            {
+                P1 = p1;
+                P2 = p2;
+            }
+
+            public SimpleEdge(Edge edge)
+            {
+                P1 = edge.P1.Position.Rounded();
+                P2 = edge.P2.Position.Rounded();
+            }
+
+            public bool Equals(SimpleEdge other)
+            {
+                return (other.P1.Equals(P1) && other.P2.Equals(P2)) || (other.P1.Equals(P2) && other.P2.Equals(P1));
+            }
+
+            public override bool Equals(object obj)
+            {
+                if (obj is SimpleEdge se)
+                    return Equals(se);
+                return base.Equals(obj);
+            }
+
+
+            public override int GetHashCode()
+            {
+                var hashCode = 162377905;
+                int p1h = P1/*.Rounded(4)*/.GetHashCode();
+                int p2h = P2/*.Rounded(4)*/.GetHashCode();
+
+                if (p1h < p2h)
+                {
+                    hashCode = hashCode * -1521134295 + p1h;
+                    hashCode = hashCode * -1521134295 + p2h;
+                }
+                else
+                {
+                    hashCode = hashCode * -1521134295 + p2h;
+                    hashCode = hashCode * -1521134295 + p1h;
+                }
+                return hashCode;
+            }
+        }
+
         struct FaceEdge : IEquatable<FaceEdge>
         {
             public Vector3 P1;
             public Vector3 P2;
-            public Vector3 Normal;
+            public Vector3 FaceNormal;
+            public Vector3 EdgeNormal;
 
             public Vector3 Direction => (P2 - P1).Normalized();
 
-            public FaceEdge(Vector3 p1, Vector3 p2, Vector3 normal)
+
+            public FaceEdge(Triangle tri, Edge edge)
             {
-                P1 = p1;
-                P2 = p2;
-                Normal = normal;
+                P1 = edge.P1.Position;
+                P2 = edge.P2.Position;
+                FaceNormal = tri.Normal;
+                EdgeNormal = edge.EdgeNormal;
             }
 
             public bool Equals(FaceEdge other)
             {
                 return (
-                        (other.P1.Equals(P1) && other.P2.Equals(P2)) || 
+                        (other.P1.Equals(P1) && other.P2.Equals(P2)) ||
                         (other.P1.Equals(P2) && other.P2.Equals(P1))
-                    ) && other.Normal.Equals(Normal);
+                    ) && 
+                    other.EdgeNormal.Equals(EdgeNormal) && 
+                    other.FaceNormal.Equals(FaceNormal);
             }
 
             public override bool Equals(object obj)
             {
                 if (obj is FaceEdge fe)
-                    return ((fe.P1.Equals(P1) && fe.P2.Equals(P2)) || (fe.P1.Equals(P2) && fe.P2.Equals(P1))) && fe.Normal.Equals(Normal);
+                    return Equals(fe);
                 return base.Equals(obj);
             }
 
@@ -115,7 +172,8 @@ namespace LDDModder.LDD.Meshes
                     hashCode = hashCode * -1521134295 + p1h;
                 }
 
-                hashCode = hashCode * -1521134295 + Normal.GetHashCode();
+                hashCode = hashCode * -1521134295 + EdgeNormal.Rounded().GetHashCode();
+                hashCode = hashCode * -1521134295 + FaceNormal.Rounded().GetHashCode();
 
                 return hashCode;
             }
@@ -176,63 +234,29 @@ namespace LDDModder.LDD.Meshes
             //outline thickness = 0.013 (world space)
 
             var triangleList = triangles is List<Triangle> ? (List<Triangle>)triangles : triangles.ToList();
-            Edge.CompareByPosition = true;
-            var edgeFaces = new Dictionary<Edge, List<Triangle>>();
 
-            foreach (var tri in triangleList)
-            {
-                for (int i = 0; i < 3; i++)
-                {
-                    if (!edgeFaces.ContainsKey(tri.Edges[i]))
-                        edgeFaces.Add(tri.Edges[i], new List<Triangle>());
-                    edgeFaces[tri.Edges[i]].Add(tri);
-                    tri.Indices[i].RoundEdgeData.Reset();
-                }
-            }
+            var edgeFaces = BuildEdgeFacesDictionary(triangleList);
 
-            var hardEdges = new List<FaceEdge>();
+            var hardEdges = ComputeHardEdges(edgeFaces, breakAngle);
 
-            foreach (var kv in edgeFaces)
-            {
-                if (kv.Value.Count == 1)
-                {
-                    hardEdges.Add(new FaceEdge(kv.Key.P1.Position, kv.Key.P2.Position, kv.Value[0].Normal));
-                    continue;
-                }
-
-                if (kv.Value.Count > 2)
-                    continue;
-
-                //TODO: Use normals computed from each edge vertices instead of the face normals
-                //      to accuratly handle low polygon meshes with smoothed vertex normals
-
-                var n1 = kv.Value[0].Normal;
-                var n2 = kv.Value[1].Normal;
-
-                if (n1.Equals(n2))
-                    continue;
-
-                var angleDiff = Vector3.AngleBetween(kv.Value[0].Normal, kv.Value[1].Normal);
-
-                if (float.IsNaN(angleDiff) || float.IsInfinity(angleDiff))
-                    continue;
-                if (angleDiff < 0)
-                    angleDiff = (fPI * 2f + angleDiff) % (fPI * 2f);
-
-                angleDiff = angleDiff / (fPI * 2f) * 360f;
-
-                if (angleDiff >= breakAngle)
-                {
-                    hardEdges.Add(new FaceEdge(kv.Key.P1.Position, kv.Key.P2.Position, kv.Value[0].Normal));
-                    hardEdges.Add(new FaceEdge(kv.Key.P1.Position, kv.Key.P2.Position, kv.Value[1].Normal));
-                }
-            }
+            var edgesPerVert = BuildVertexEdgesDictionary(hardEdges);
 
             foreach (var triangle in triangleList)
             {
-                var nearEdges = hardEdges.Where(x => 
-                    (triangle.ContainsVertex(x.P1) || triangle.ContainsVertex(x.P2)) && 
-                    Vector3.AngleBetween(triangle.Normal, x.Normal) < fPI * 0.4f);
+                //var nearEdges = hardEdges.Where(x => 
+                //    (triangle.ContainsVertex(x.P1) || triangle.ContainsVertex(x.P2)) && 
+                //    Vector3.AngleBetween(triangle.Normal, x.FaceNormal) < fPI * 0.4f);
+
+                var nearEdges = new List<FaceEdge>();
+                for (int i = 0; i < 3; i++)
+                {
+                    if (edgesPerVert.TryGetValue(triangle.Vertices[i].Position, out List<FaceEdge> list))
+                        nearEdges.AddRange(list);
+                }
+  
+                nearEdges = nearEdges.Distinct()
+                    .Where(x => Vector3.AngleBetween(triangle.Normal, x.FaceNormal) < fPI * 0.3f)
+                    .ToList();
 
                 if (!nearEdges.Any())
                     continue;
@@ -265,10 +289,10 @@ namespace LDDModder.LDD.Meshes
 
                     if (vertEdges.Count == 1)
                     {
-                        if (vertEdges[0].UsedInUnion)
-                            continue;
+                        //if (vertEdges[0].UsedInUnion)
+                        //    continue;
 
-                        var edgeCoords = GetEdgeCoords(triangle, vertEdges[0].Edge);
+                        var edgeCoords = GetTexCoordsForEdge(triangle, vertEdges[0].Edge);
                         vertEdges[0].UsedInUnion = true;
 
                         for (int j = 0; j < 3; j++)
@@ -295,8 +319,8 @@ namespace LDDModder.LDD.Meshes
 
                         //TODO: redo union/intersection detection
                         bool isObtuse = crossAngle >= fPI;
-                        var edgeCoords1 = GetEdgeCoords(triangle, vertEdges[0].Edge);
-                        var edgeCoords2 = GetEdgeCoords(triangle, vertEdges[1].Edge);
+                        var edgeCoords1 = GetTexCoordsForEdge(triangle, vertEdges[0].Edge);
+                        var edgeCoords2 = GetTexCoordsForEdge(triangle, vertEdges[1].Edge);
 
                         for (int j = 0; j < 3; j++)
                         {
@@ -305,17 +329,102 @@ namespace LDDModder.LDD.Meshes
                                 isObtuse ? RoundEdgeData.EdgeCombineMode.Intersection : RoundEdgeData.EdgeCombineMode.Union);
                         }
                     }
+                    else
+                    {
+
+                    }
                 }
             }
         }
 
-        private static Vector2[] GetEdgeCoords(Triangle triangle, FaceEdge edge)
+        private static Dictionary<SimpleEdge, List<FaceEdge>> BuildEdgeFacesDictionary(List<Triangle> triangleList)
+        {
+            var edgeFaces = new Dictionary<SimpleEdge, List<FaceEdge>>();
+
+            foreach (var tri in triangleList)
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    var simpleEdge = new SimpleEdge(tri.Edges[i]);
+
+                    if (!edgeFaces.ContainsKey(simpleEdge))
+                        edgeFaces.Add(simpleEdge, new List<FaceEdge>());
+
+                    edgeFaces[simpleEdge].Add(new FaceEdge(tri, tri.Edges[i]));
+
+                    tri.Indices[i].RoundEdgeData.Reset();
+                }
+            }
+
+            return edgeFaces;
+        }
+
+        private static List<FaceEdge> ComputeHardEdges(Dictionary<SimpleEdge, List<FaceEdge>> edgeFaces, float breakAngle)
+        {
+            var hardEdges = new List<FaceEdge>();
+
+            foreach (var kv in edgeFaces)
+            {
+                if (kv.Value.Count == 1)
+                {
+                    hardEdges.Add(kv.Value[0]);
+                    continue;
+                }
+
+                if (kv.Value.Count > 2)
+                    continue;
+
+                var e1Normal = kv.Value[0].EdgeNormal;
+                var e2Normal = kv.Value[1].EdgeNormal;
+
+                if (e1Normal.Equals(e2Normal))
+                    continue;
+
+                var angleDiff = Vector3.AngleBetween(e1Normal, e2Normal);
+
+                if (float.IsNaN(angleDiff) || float.IsInfinity(angleDiff))
+                    continue;
+
+                if (angleDiff < 0)
+                    angleDiff = (fPI * 2f + angleDiff) % (fPI * 2f);
+
+                angleDiff = angleDiff / (fPI * 2f) * 360f;
+
+                if (angleDiff >= breakAngle)
+                {
+                    hardEdges.Add(kv.Value[0]);
+                    hardEdges.Add(kv.Value[1]);
+                }
+            }
+            return hardEdges;
+        }
+
+        private static Dictionary<Vector3, List<FaceEdge>> BuildVertexEdgesDictionary(List<FaceEdge> hardEdges)
+        {
+            var edgesPerVert = new Dictionary<Vector3, List<FaceEdge>>();
+
+            foreach (var hEdge in hardEdges)
+            {
+                var p1 = hEdge.P1.Rounded();
+                if (!edgesPerVert.ContainsKey(p1))
+                    edgesPerVert.Add(p1, new List<FaceEdge>());
+                edgesPerVert[p1].Add(hEdge);
+
+                var p2 = hEdge.P2.Rounded();
+                if (!edgesPerVert.ContainsKey(p2))
+                    edgesPerVert.Add(p2, new List<FaceEdge>());
+                edgesPerVert[p2].Add(hEdge);
+            }
+
+            return edgesPerVert;
+        }
+
+        private static Vector2[] GetTexCoordsForEdge(Triangle triangle, FaceEdge edge)
         {
             var plane = new Plane(triangle.V1.Position, triangle.Normal);
 
             Vector3 axisP1 = edge.P1;
             
-            //Vector3 
             if (edge.IsContained(triangle))
                 axisP1 = triangle.Edges.First(x => edge.Equals(x)).P1.Position;
             else
@@ -347,6 +456,5 @@ namespace LDDModder.LDD.Meshes
             return coords;
         }
 
-        //private static Vec
     }
 }

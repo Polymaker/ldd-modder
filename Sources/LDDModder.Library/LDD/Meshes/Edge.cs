@@ -8,6 +8,8 @@ namespace LDDModder.LDD.Meshes
         public Vertex P1 { get; set; }
         public Vertex P2 { get; set; }
 
+        public Vector3 EdgeNormal => ((P1.Normal + P2.Normal) / 2f).Normalized();
+
         public static bool CompareByPosition = false;
 
         public Edge(Vertex p1, Vertex p2)

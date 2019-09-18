@@ -117,7 +117,7 @@ namespace LDDModder.LDD.Meshes
         {
             for (int i = 0; i < 6; i++)
             {
-                if (!Coords[i].Equals(other.Coords[i]))
+                if (!Coords[i].Equals(other.Coords[i], 0.0001f))
                     return false;
             }
             return true;
@@ -180,9 +180,9 @@ namespace LDDModder.LDD.Meshes
         public override int GetHashCode()
         {
             var hashCode = 550714527;
-            hashCode = hashCode * -1521134295 + Coords[0].GetHashCode();
-            hashCode = hashCode * -1521134295 + Coords[1].GetHashCode();
-            hashCode = hashCode * -1521134295 + Coords[2].GetHashCode();
+            hashCode = hashCode * -1521134295 + Coords[0].Rounded().GetHashCode();
+            hashCode = hashCode * -1521134295 + Coords[1].Rounded().GetHashCode();
+            hashCode = hashCode * -1521134295 + Coords[2].Rounded().GetHashCode();
             return hashCode;
         }
 
