@@ -105,12 +105,13 @@ namespace LDDModder.LDD.Meshes
             }
         }
 
-        struct FaceEdge : IEquatable<FaceEdge>
+        class FaceEdge : IEquatable<FaceEdge>
         {
             public Vector3 P1;
             public Vector3 P2;
             public Vector3 FaceNormal;
             public Vector3 EdgeNormal;
+            public bool IsSingle;
 
             public Vector3 Direction => (P2 - P1).Normalized();
 
@@ -243,20 +244,22 @@ namespace LDDModder.LDD.Meshes
 
             foreach (var triangle in triangleList)
             {
-                //var nearEdges = hardEdges.Where(x => 
-                //    (triangle.ContainsVertex(x.P1) || triangle.ContainsVertex(x.P2)) && 
+                //var nearEdges = hardEdges.Where(x =>
+                //    (triangle.ContainsVertex(x.P1) || triangle.ContainsVertex(x.P2)) &&
                 //    Vector3.AngleBetween(triangle.Normal, x.FaceNormal) < fPI * 0.4f);
 
                 var nearEdges = new List<FaceEdge>();
                 for (int i = 0; i < 3; i++)
                 {
-                    if (edgesPerVert.TryGetValue(triangle.Vertices[i].Position, out List<FaceEdge> list))
+                    if (edgesPerVert.TryGetValue(triangle.Vertices[i].Position.Rounded(), out List<FaceEdge> list))
                         nearEdges.AddRange(list);
                 }
-  
+
                 nearEdges = nearEdges.Distinct()
-                    .Where(x => Vector3.AngleBetween(triangle.Normal, x.FaceNormal) < fPI * 0.3f)
+                    .Where(x => Vector3.AngleBetween(triangle.Normal, x.FaceNormal) < fPI * 0.35f)
                     .ToList();
+
+                //nearEdges.RemoveAll(x => x.IsSingle && !x.IsContained(triangle));
 
                 if (!nearEdges.Any())
                     continue;
@@ -367,6 +370,7 @@ namespace LDDModder.LDD.Meshes
             {
                 if (kv.Value.Count == 1)
                 {
+                    kv.Value[0].IsSingle = true;    
                     hardEdges.Add(kv.Value[0]);
                     continue;
                 }
@@ -374,8 +378,8 @@ namespace LDDModder.LDD.Meshes
                 if (kv.Value.Count > 2)
                     continue;
 
-                var e1Normal = kv.Value[0].EdgeNormal;
-                var e2Normal = kv.Value[1].EdgeNormal;
+                var e1Normal = kv.Value[0].FaceNormal;
+                var e2Normal = kv.Value[1].FaceNormal;
 
                 if (e1Normal.Equals(e2Normal))
                     continue;
