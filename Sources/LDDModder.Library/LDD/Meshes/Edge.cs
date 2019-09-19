@@ -12,6 +12,8 @@ namespace LDDModder.LDD.Meshes
 
         public static bool CompareByPosition = false;
 
+        public Vector3 Vector => (P2.Position - P1.Position).Normalized();
+
         public Edge(Vertex p1, Vertex p2)
         {
             P1 = p1;
@@ -66,9 +68,9 @@ namespace LDDModder.LDD.Meshes
             return P1.Equals(vertex) || P2.Equals(vertex);
         }
 
-        public bool Contains(Vector3 vertex)
+        public bool Contains(Vector3 position)
         {
-            return P1.Position.Equals(vertex) || P2.Position.Equals(vertex);
+            return P1.Position.Equals(position) || P2.Position.Equals(position);
         }
 
         public bool Equals(Edge x, Edge y)

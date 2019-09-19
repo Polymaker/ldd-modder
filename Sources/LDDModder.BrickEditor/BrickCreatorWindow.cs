@@ -44,8 +44,8 @@ namespace LDDModder.BrickEditor
         {
             base.OnLoad(e);
             //Modding.PartPackage.CreateLDDPackages();
-            //var brick = LDD.Parts.PartWrapper.LoadPart(LDD.LDDEnvironment.Current, 32495);
-            //Utilities.LddMeshExporter.ExportRoundEdge(brick.MainMesh.Geometry, $"C:\\Users\\JWTurner\\Documents\\Development\\Test\\ldd-modder\\LDD Bricks\\{brick.PartID} RE.dae", "collada");
+            var brick = LDD.Parts.PartWrapper.LoadPart(LDD.LDDEnvironment.Current, 4589);
+            Utilities.LddMeshExporter.ExportRoundEdge(brick.MainMesh.Geometry, $"D:\\Programming\\C#\\ldd-modder\\LDD Bricks\\{brick.PartID} RE.dae", "collada");
 
             //string meshDir = Environment.ExpandEnvironmentVariables(@"%appdata%\LEGO Company\LEGO Digital Designer\db\");
             //var project = PartProject.CreateFromLdd(meshDir, 10130);
@@ -320,6 +320,7 @@ namespace LDDModder.BrickEditor
 
             partMesh.ComputeAverageNormals();
             partMesh.ComputeRoundEdgeShader();
+
             ImportExportProgress.Value = 95;
 
             if (partMesh.DecorationMeshes.Any())
@@ -332,32 +333,57 @@ namespace LDDModder.BrickEditor
 
             ImportExportProgress.Value = 100;
 
-            using (var sfd = new SaveFileDialog())
+            if (SaveInLddCheckBox.Checked)
             {
-                sfd.FileName = partMesh.Info.ID.ToString();
+                string partName = partMesh.PartID.ToString();
+                var primitiveDir = Path.Combine(LDD.LDDEnvironment.Current.ApplicationDataPath, "db", "Primitives");
+                var meshDir = Path.Combine(LDD.LDDEnvironment.Current.ApplicationDataPath, "db", "Primitives", "LOD0");
 
-                if (sfd.ShowDialog() == DialogResult.OK)
+                if (partMesh.CheckFilesExists(primitiveDir, partName) || partMesh.CheckFilesExists(meshDir, partName))
                 {
-                    string baseName = Path.GetFileNameWithoutExtension(sfd.FileName);
-                    string targetDir = Path.GetDirectoryName(sfd.FileName);
-                    if (partMesh.CheckFilesExists(targetDir, baseName))
+                    var res = MessageBox.Show("Some files already exists. Do you want to override them?", "Confirm save",
+                        MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                    if (res == DialogResult.No)
+                        return;
+                }
+
+                if (CreateMeshesCheckBox.Checked)
+                    partMesh.SaveMeshes(meshDir, partName);
+
+                if (CreatePrimitiveCheckBox.Checked)
+                    partMesh.SavePrimitive(primitiveDir, partName);
+
+                MessageBox.Show("Brick files created succesfully.");
+            }
+            else
+            {
+                using (var sfd = new SaveFileDialog())
+                {
+                    sfd.FileName = partMesh.Info.ID.ToString();
+
+                    if (sfd.ShowDialog() == DialogResult.OK)
                     {
-                        var res = MessageBox.Show("Some files already exists. Do you want to override them?", "Confirm save", 
-                            MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-                        if (res == DialogResult.No)
-                            return;
+                        string baseName = Path.GetFileNameWithoutExtension(sfd.FileName);
+                        string targetDir = Path.GetDirectoryName(sfd.FileName);
+                        if (partMesh.CheckFilesExists(targetDir, baseName))
+                        {
+                            var res = MessageBox.Show("Some files already exists. Do you want to override them?", "Confirm save",
+                                MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                            if (res == DialogResult.No)
+                                return;
+                        }
+
+                        if (CreateMeshesCheckBox.Checked && CreatePrimitiveCheckBox.Checked)
+                            partMesh.SaveAll(targetDir, baseName);
+                        else if (CreateMeshesCheckBox.Checked)
+                            partMesh.SaveMeshes(targetDir, baseName);
+                        else if (CreatePrimitiveCheckBox.Checked)
+                            partMesh.SavePrimitive(targetDir, baseName);
+
+                        MessageBox.Show("Brick files created succesfully.");
+
+                        //Utilities.LddMeshExporter.ExportRoundEdge(partMesh.MainModel.Geometry, $"C:\\Users\\JWTurner\\Documents\\Development\\Test\\ldd-modder\\LDD Bricks\\{partMesh.PartID} RE.dae", "collada");
                     }
-
-                    if (CreateMeshesCheckBox.Checked && CreatePrimitiveCheckBox.Checked)
-                        partMesh.SaveAll(targetDir, baseName);
-                    else if (CreateMeshesCheckBox.Checked)
-                        partMesh.SaveMeshes(targetDir, baseName);
-                    else if (CreatePrimitiveCheckBox.Checked)
-                        partMesh.SavePrimitive(targetDir, baseName);
-
-                    MessageBox.Show("Brick files created succesfully.");
-
-                    Utilities.LddMeshExporter.ExportRoundEdge(partMesh.MainModel.Geometry, $"C:\\Users\\JWTurner\\Documents\\Development\\Test\\ldd-modder\\LDD Bricks\\{partMesh.PartID} RE.dae", "collada");
                 }
             }
         }

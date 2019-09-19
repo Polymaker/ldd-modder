@@ -52,6 +52,7 @@
             this.RemoveAllMeshButton = new System.Windows.Forms.Button();
             this.CreatePrimitiveCheckBox = new System.Windows.Forms.CheckBox();
             this.CreateMeshesCheckBox = new System.Windows.Forms.CheckBox();
+            this.SaveInLddCheckBox = new System.Windows.Forms.CheckBox();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.BrickMeshGridView)).BeginInit();
             this.SuspendLayout();
@@ -263,7 +264,7 @@
             // 
             // ClearAllButton
             // 
-            this.ClearAllButton.Location = new System.Drawing.Point(344, 93);
+            this.ClearAllButton.Location = new System.Drawing.Point(341, 93);
             this.ClearAllButton.Name = "ClearAllButton";
             this.ClearAllButton.Size = new System.Drawing.Size(90, 23);
             this.ClearAllButton.TabIndex = 5;
@@ -317,11 +318,22 @@
             this.CreateMeshesCheckBox.UseVisualStyleBackColor = true;
             this.CreateMeshesCheckBox.CheckedChanged += new System.EventHandler(this.CreateMeshesCheckBox_CheckedChanged);
             // 
+            // SaveInLddCheckBox
+            // 
+            this.SaveInLddCheckBox.AutoSize = true;
+            this.SaveInLddCheckBox.Location = new System.Drawing.Point(437, 17);
+            this.SaveInLddCheckBox.Name = "SaveInLddCheckBox";
+            this.SaveInLddCheckBox.Size = new System.Drawing.Size(131, 17);
+            this.SaveInLddCheckBox.TabIndex = 10;
+            this.SaveInLddCheckBox.Text = "Save to LDD directory";
+            this.SaveInLddCheckBox.UseVisualStyleBackColor = true;
+            // 
             // BrickCreatorWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(643, 373);
+            this.Controls.Add(this.SaveInLddCheckBox);
             this.Controls.Add(this.CreateMeshesCheckBox);
             this.Controls.Add(this.CreatePrimitiveCheckBox);
             this.Controls.Add(this.RemoveAllMeshButton);
@@ -368,5 +380,6 @@
         private System.Windows.Forms.Button RemoveAllMeshButton;
         private System.Windows.Forms.CheckBox CreatePrimitiveCheckBox;
         private System.Windows.Forms.CheckBox CreateMeshesCheckBox;
+        private System.Windows.Forms.CheckBox SaveInLddCheckBox;
     }
 }

@@ -34,6 +34,11 @@ namespace LDDModder.LDD.Meshes
                 Left = left;
                 Right = right;
             }
+
+            public override string ToString()
+            {
+                return $"{Operation} {Left.Rounded()} {Right.Rounded()}";
+            }
         }
 
         public class PairWrapper : IEnumerable<CoordPair>

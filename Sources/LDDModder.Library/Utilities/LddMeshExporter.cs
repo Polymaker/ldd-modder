@@ -133,6 +133,7 @@ namespace LDDModder.Utilities
             scene.Meshes.Add(aMesh);
             scene.RootNode.Children.Add(meshNode);
             AssimpContext importer = new AssimpContext();
+            filename = System.IO.Path.GetFullPath(filename);
             importer.ExportFile(scene, filename, formatID, PostProcessSteps.ValidateDataStructure);
         }
 

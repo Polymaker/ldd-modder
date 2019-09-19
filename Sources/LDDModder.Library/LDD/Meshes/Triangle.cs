@@ -95,6 +95,8 @@ namespace LDDModder.LDD.Meshes
 
         public bool ContainsEdge(Edge edge, bool compareByPos = false)
         {
+            if (compareByPos)
+                return ContainsVertex(edge.P1.Position) && ContainsVertex(edge.P2.Position);
             return Edges.Any(x => x.Equals(edge, compareByPos));
         }
     }
