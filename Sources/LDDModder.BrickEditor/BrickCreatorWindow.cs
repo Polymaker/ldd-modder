@@ -354,6 +354,8 @@ namespace LDDModder.BrickEditor
                     partMesh.SavePrimitive(primitiveDir, partName);
 
                 MessageBox.Show("Brick files created succesfully.");
+
+                Utilities.LddMeshExporter.ExportRoundEdge(partMesh.MainModel.Geometry, $"C:\\Users\\JWTurner\\Documents\\Development\\Test\\ldd-modder\\LDD Bricks\\{partMesh.PartID} RE.dae", "collada");
             }
             else
             {
@@ -382,7 +384,7 @@ namespace LDDModder.BrickEditor
 
                         MessageBox.Show("Brick files created succesfully.");
 
-                        //Utilities.LddMeshExporter.ExportRoundEdge(partMesh.MainModel.Geometry, $"C:\\Users\\JWTurner\\Documents\\Development\\Test\\ldd-modder\\LDD Bricks\\{partMesh.PartID} RE.dae", "collada");
+                        Utilities.LddMeshExporter.ExportRoundEdge(partMesh.MainModel.Geometry, $"C:\\Users\\JWTurner\\Documents\\Development\\Test\\ldd-modder\\LDD Bricks\\{partMesh.PartID} RE.dae", "collada");
                     }
                 }
             }

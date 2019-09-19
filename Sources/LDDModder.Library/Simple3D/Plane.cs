@@ -25,14 +25,26 @@ namespace LDDModder.Simple3D
             return point + (Normal * dist);
         }
 
-        public Vector2 ProjectPoint2D(Vector3 xAxis, Vector3 point)
+        public Vector3 ProjectVector(Vector3 vector)
         {
-            var yAxis = Vector3.Cross(Normal, xAxis);
+            var p2 = ProjectPoint(Origin + vector);
+            return (p2 - Origin).Normalized();
+        }
+
+        public Vector2 ProjectPoint2D(Vector3 axis, Vector3 point)
+        {
+            var perpAxis = Vector3.Cross(Normal, axis);
             var v = point - Origin;
-            var t1 = Vector3.Dot(xAxis, v);
-            var t2 = Vector3.Dot(yAxis, v);
+            var t1 = Vector3.Dot(axis, v);
+            var t2 = Vector3.Dot(perpAxis, v);
 
             return new Vector2(t1, t2);
+        }
+
+        public Vector2 ProjectVector2D(Vector3 axis, Vector3 vector)
+        {
+            var p2 = ProjectPoint2D(axis, Origin + vector);
+            return p2.Normalized();
         }
     }
 }

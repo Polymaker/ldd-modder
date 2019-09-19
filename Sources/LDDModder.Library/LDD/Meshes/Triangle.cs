@@ -99,5 +99,20 @@ namespace LDDModder.LDD.Meshes
                 return ContainsVertex(edge.P1.Position) && ContainsVertex(edge.P2.Position);
             return Edges.Any(x => x.Equals(edge, compareByPos));
         }
+
+        public bool ShareEdge(Triangle other, bool onlyByPos)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                if (other.ContainsEdge(Edges[i], onlyByPos))
+                    return true;
+            }
+            return false;
+        }
+
+        public Edge[] GetVerticeEdges(int vertexIndex)
+        {
+            return new Edge[] { Edges[vertexIndex], Edges[(vertexIndex + 2) % 3] };
+        }
     }
 }

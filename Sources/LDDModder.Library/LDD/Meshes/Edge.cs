@@ -73,6 +73,15 @@ namespace LDDModder.LDD.Meshes
             return P1.Position.Equals(position) || P2.Position.Equals(position);
         }
 
+        public bool IsInside(Vector3 pos)
+        {
+            var maxV = (P2.Position - P1.Position);
+            var diff = (pos - P1.Position);
+            if (diff.Length <= 0.001f)
+                return true;
+            return diff.Normalized() == maxV.Normalized() && diff.Length <= maxV.Length;
+        }
+
         public bool Equals(Edge x, Edge y)
         {
             return x.Equals(y);

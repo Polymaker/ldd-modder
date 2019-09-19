@@ -196,7 +196,9 @@ namespace LDDModder.Simple3D
         {
             if (!IsEmpty)
                 return this / Length;
-            return Vector3.Empty;
+            if (Length == 0)
+                return this;
+            return Empty;
         }
 
         public Vector3 Rounded(int decimals = 4)
@@ -312,10 +314,10 @@ namespace LDDModder.Simple3D
         {
             var dir1 = (v2 - v1).Normalized();
             var dir2 = (point - v1).Normalized();
-            var c = Vector3.Cross(dir1, dir2).Normalized();
-            var perp = Vector3.Cross(c, dir1).Normalized();
-            var d1 = Vector3.Distance(dir2, perp);
-            var d2 = Vector3.Distance(dir2, perp * -1);
+            var c = Cross(dir1, dir2).Normalized();
+            var perp = Cross(c, dir1).Normalized();
+            var d1 = Distance(point, v1 + perp);
+            var d2 = Distance(point, v1 - perp);
             if (d2 < d1)
                 perp *= -1;
             return perp;
@@ -339,6 +341,11 @@ namespace LDDModder.Simple3D
         public static Vector3 Max(Vector3 v1, Vector3 v2)
         {
             return new Vector3(v1.X > v2.X ? v1.X : v2.X, v1.Y > v2.Y ? v1.Y : v2.Y, v1.Z > v2.Z ? v1.Z : v2.Z);
+        }
+
+        public static Vector3 Avg(Vector3 v1, Vector3 v2)
+        {
+            return (v1 + v2) / 2f;
         }
 
         #endregion

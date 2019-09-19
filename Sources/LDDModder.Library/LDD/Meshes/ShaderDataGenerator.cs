@@ -53,8 +53,6 @@ namespace LDDModder.LDD.Meshes
             }
         }
 
-        
-
         struct SimpleEdge : IEquatable<SimpleEdge>
         {
             public Vector3 P1;
@@ -105,23 +103,30 @@ namespace LDDModder.LDD.Meshes
             }
         }
 
-        class FaceEdge : IEquatable<FaceEdge>
+        class FaceEdge// : IEquatable<FaceEdge>
         {
-            public Vector3 P1;
-            public Vector3 P2;
-            public Vector3 FaceNormal;
-            public Vector3 EdgeNormal;
-            public bool IsSingle;
+            public Triangle Face { get; set; }
+            public Edge Edge { get; set; }
+
+            public Vector3 P1 { get; set; }
+            public Vector3 P2 { get; set; }
+            public Vector3 FaceNormal { get; set; }
+            public Vector3 EdgeNormal { get; set; }
+            public Vector3 PerpVec { get; set; }
+            public bool IsShared { get; set; } 
 
             public Vector3 Direction => (P2 - P1).Normalized();
 
 
             public FaceEdge(Triangle tri, Edge edge)
             {
+                Face = tri;
+                Edge = edge;
                 P1 = edge.P1.Position;
                 P2 = edge.P2.Position;
                 FaceNormal = tri.Normal;
                 EdgeNormal = edge.EdgeNormal;
+                IsShared = true;
             }
 
             public bool Equals(FaceEdge other)
@@ -158,25 +163,26 @@ namespace LDDModder.LDD.Meshes
 
             public override int GetHashCode()
             {
-                var hashCode = 162377905;
-                int p1h = P1.Rounded(4).GetHashCode();
-                int p2h = P2.Rounded(4).GetHashCode();
+                return base.GetHashCode();
+                //var hashCode = 162377905;
+                //int p1h = P1.Rounded(4).GetHashCode();
+                //int p2h = P2.Rounded(4).GetHashCode();
 
-                if (p1h < p2h)
-                {
-                    hashCode = hashCode * -1521134295 + p1h;
-                    hashCode = hashCode * -1521134295 + p2h;
-                }
-                else
-                {
-                    hashCode = hashCode * -1521134295 + p2h;
-                    hashCode = hashCode * -1521134295 + p1h;
-                }
+                //if (p1h < p2h)
+                //{
+                //    hashCode = hashCode * -1521134295 + p1h;
+                //    hashCode = hashCode * -1521134295 + p2h;
+                //}
+                //else
+                //{
+                //    hashCode = hashCode * -1521134295 + p2h;
+                //    hashCode = hashCode * -1521134295 + p1h;
+                //}
 
-                hashCode = hashCode * -1521134295 + EdgeNormal.Rounded().GetHashCode();
-                hashCode = hashCode * -1521134295 + FaceNormal.Rounded().GetHashCode();
+                //hashCode = hashCode * -1521134295 + EdgeNormal.Rounded().GetHashCode();
+                //hashCode = hashCode * -1521134295 + FaceNormal.Rounded().GetHashCode();
 
-                return hashCode;
+                //return hashCode;
             }
 
         }
@@ -184,10 +190,12 @@ namespace LDDModder.LDD.Meshes
         class EdgeLine
         {
             public FaceEdge Edge { get; set; }
+            public Edge TriangleEdge => Edge?.Edge;
             public Vector2 P1 { get; set; }
             public Vector2 P2 { get; set; }
             public Vector2 Direction => (P2 - P1).Normalized();
-            public Maths.Line Equation { get; set; }
+            public Vector2 Perpendicular { get; set; }
+            //public Maths.Line Equation { get; set; }
             public bool IsTriangleEdge { get; set; }
             public bool UsedInUnion { get; set; }
 
@@ -196,12 +204,14 @@ namespace LDDModder.LDD.Meshes
                 Edge = edge;
                 P1 = p1;
                 P2 = p2;
-                Equation = Maths.Line.FromPoints(p1, p2);
+                //Equation = Maths.Line.FromPoints(p1, p2);
             }
 
             public bool IsColinear(EdgeLine other)
             {
-                return Equation == other.Equation;
+                var similarDir = Direction.Equals(other.Direction, 0.001f) || Direction.Equals(other.Direction * -1f, 0.001f);
+                return similarDir && (Contains(other.P1) || Contains(other.P2));
+
                 //return Direction.Equals(other.Direction, 0.001f) || Direction.Equals(other.Direction * -1f, 0.001f);
             }
 
@@ -210,7 +220,12 @@ namespace LDDModder.LDD.Meshes
                 return Edge.Contains(position);
             }
 
-            public Vector2 Opposite(Vector3 pt)
+            public bool Contains(Vector2 position)
+            {
+                return P1.Equals(position, 0.001f) || P2.Equals(position, 0.001f);
+            }
+
+            public Vector2 Opposite2D(Vector3 pt)
             {
                 if (Edge.P1.Equals(pt))
                     return P2;
@@ -218,19 +233,7 @@ namespace LDDModder.LDD.Meshes
             }
         }
 
-        private static void RemoveDuplicateEdgeLines(List<EdgeLine> edges)
-        {
-            for (int i = 0; i < edges.Count - 1; i++)
-            {
-                for (int j = edges.Count - 1; j > i; j--)
-                {
-                    if (edges[i].IsColinear(edges[j]))
-                        edges.RemoveAt(j);
-                }
-            }
-        }
-
-        public static void ComputeEdgeOutlines(IEnumerable<Triangle> triangles, float breakAngle = 45f)
+        public static void ComputeEdgeOutlines(IEnumerable<Triangle> triangles, float breakAngle = 35f)
         {
             //outline thickness = 0.013 (world space)
 
@@ -244,10 +247,6 @@ namespace LDDModder.LDD.Meshes
 
             foreach (var triangle in triangleList)
             {
-                //var nearEdges = hardEdges.Where(x =>
-                //    (triangle.ContainsVertex(x.P1) || triangle.ContainsVertex(x.P2)) &&
-                //    Vector3.AngleBetween(triangle.Normal, x.FaceNormal) < fPI * 0.4f);
-
                 var nearEdges = new List<FaceEdge>();
                 for (int i = 0; i < 3; i++)
                 {
@@ -256,10 +255,8 @@ namespace LDDModder.LDD.Meshes
                 }
 
                 nearEdges = nearEdges.Distinct()
-                    .Where(x => Vector3.AngleBetween(triangle.Normal, x.FaceNormal) < fPI * 0.35f)
+                    .Where(x => Vector3.AngleBetween(triangle.Normal, x.FaceNormal) < fPI * 0.30f)
                     .ToList();
-
-                //nearEdges.RemoveAll(x => x.IsSingle && !x.IsContained(triangle));
 
                 if (!nearEdges.Any())
                     continue;
@@ -276,9 +273,17 @@ namespace LDDModder.LDD.Meshes
                         facePlane.ProjectPoint2D(xAxis, edge.P1),
                         facePlane.ProjectPoint2D(xAxis, edge.P2))
                     {
-                        IsTriangleEdge = edge.IsContained(triangle)
+                        IsTriangleEdge = triangle.ContainsEdge(edge.Edge),
+                        Perpendicular = facePlane.ProjectVector2D(xAxis, edge.PerpVec)
                     });
                 }
+
+                //if (triangle.ContainsVertex(new Vector3(-0.31998f, -0.799826f, -0.3503f)) &&
+                //    triangle.ContainsVertex(new Vector3(-0.31998f, -0.799826f, -0.27031f)) &&
+                //    triangle.ContainsVertex(new Vector3(-0.295583f, -0.922212f, -0.27031f)))
+                //{
+
+                //}
 
                 for (int coordPairIdx = 0; coordPairIdx < 3; coordPairIdx++)
                 {
@@ -286,8 +291,10 @@ namespace LDDModder.LDD.Meshes
 
                     var vertEdges = edgeLines.Where(x => x.Contains(idxPos))
                         .OrderByDescending(x => x.IsTriangleEdge)
+                        .ThenBy(x=> Vector3.AngleBetween(x.Edge.FaceNormal, triangle.Normal))
                         .ToList();
-
+                    
+                    RemoveNonIntersectingEdges(facePlane, triangle, coordPairIdx, vertEdges);
                     RemoveDuplicateEdgeLines(vertEdges);
 
                     if (vertEdges.Count == 1)
@@ -306,33 +313,31 @@ namespace LDDModder.LDD.Meshes
                     }
                     else if (vertEdges.Count == 2 )
                     {
-                        var pc = facePlane.ProjectPoint2D(xAxis, idxPos);
-                        var p1 = vertEdges[0].Opposite(idxPos);
-                        var p2 = vertEdges[1].Opposite(idxPos);
+                        var pos2D = facePlane.ProjectPoint2D(xAxis, idxPos);
+                        var centerNormal = Vector2.Avg(pos2D + vertEdges[0].Perpendicular, pos2D + vertEdges[1].Perpendicular);
+                        centerNormal = (centerNormal - pos2D).Normalized();
+                        var dir1 = (vertEdges[0].Opposite2D(idxPos) - pos2D).Normalized();
+                        var dir2 = (vertEdges[1].Opposite2D(idxPos) - pos2D).Normalized();
+                        var totalAngle = Vector2.AngleBetween(centerNormal, dir1) + Vector2.AngleBetween(centerNormal, dir2);
 
-                        var perp1 = vertEdges[0].Equation.GetPerpendicular(pc);
-                        var perp2 = vertEdges[1].Equation.GetPerpendicular(pc);
-
-
-                        var vc = (pc * -1).Normalized();
-                        var v1 = (p1 - pc).Normalized();
-                        var v2 = (p2 - pc).Normalized();
-
-                        var crossAngle = Vector2.AngleBetween(v1, vc) + Vector2.AngleBetween(v2, vc);
-
-                        //TODO: redo union/intersection detection
-                        bool isObtuse = crossAngle >= fPI;
+                        bool isObtuse = totalAngle >= fPI;
                         var edgeCoords1 = GetTexCoordsForEdge(triangle, vertEdges[0].Edge);
                         var edgeCoords2 = GetTexCoordsForEdge(triangle, vertEdges[1].Edge);
-
+                        
                         for (int j = 0; j < 3; j++)
                         {
                             var reData = triangle.Indices[j].RoundEdgeData;
                             reData.Set(coordPairIdx, edgeCoords1[j], edgeCoords2[j],
                                 isObtuse ? RoundEdgeData.EdgeCombineMode.Intersection : RoundEdgeData.EdgeCombineMode.Union);
                         }
+
+                        //if (!isObtuse)
+                        //{
+                        //    vertEdges[0].UsedInUnion = true;
+                        //    vertEdges[1].UsedInUnion = true;
+                        //}
                     }
-                    else
+                    else if (vertEdges.Count > 2)
                     {
 
                     }
@@ -344,18 +349,24 @@ namespace LDDModder.LDD.Meshes
         {
             var edgeFaces = new Dictionary<SimpleEdge, List<FaceEdge>>();
 
-            foreach (var tri in triangleList)
+            foreach (var triangle in triangleList)
             {
+                Vector3 center = triangle.GetCenter();
                 for (int i = 0; i < 3; i++)
                 {
-                    var simpleEdge = new SimpleEdge(tri.Edges[i]);
+                    var simpleEdge = new SimpleEdge(triangle.Edges[i]);
 
                     if (!edgeFaces.ContainsKey(simpleEdge))
                         edgeFaces.Add(simpleEdge, new List<FaceEdge>());
 
-                    edgeFaces[simpleEdge].Add(new FaceEdge(tri, tri.Edges[i]));
+                    var faceEdge = new FaceEdge(triangle, triangle.Edges[i])
+                    {
+                        PerpVec = Vector3.GetPerpendicular(simpleEdge.P1, simpleEdge.P2, center)
+                    };
 
-                    tri.Indices[i].RoundEdgeData.Reset();
+                    edgeFaces[simpleEdge].Add(faceEdge);
+
+                    triangle.Indices[i].RoundEdgeData.Reset();
                 }
             }
 
@@ -370,7 +381,7 @@ namespace LDDModder.LDD.Meshes
             {
                 if (kv.Value.Count == 1)
                 {
-                    kv.Value[0].IsSingle = true;    
+                    kv.Value[0].IsShared = false;    
                     hardEdges.Add(kv.Value[0]);
                     continue;
                 }
@@ -378,8 +389,8 @@ namespace LDDModder.LDD.Meshes
                 if (kv.Value.Count > 2)
                     continue;
 
-                var e1Normal = kv.Value[0].FaceNormal;
-                var e2Normal = kv.Value[1].FaceNormal;
+                var e1Normal = kv.Value[0].EdgeNormal;
+                var e2Normal = kv.Value[1].EdgeNormal;
 
                 if (e1Normal.Equals(e2Normal))
                     continue;
@@ -423,6 +434,72 @@ namespace LDDModder.LDD.Meshes
             return edgesPerVert;
         }
 
+        private static void RemoveDuplicateEdgeLines(List<EdgeLine> edges)
+        {
+            for (int i = 0; i < edges.Count - 1; i++)
+            {
+                for (int j = edges.Count - 1; j > i; j--)
+                {
+                    if (edges[i].IsColinear(edges[j]))
+                        edges.RemoveAt(j);
+                }
+            }
+        }
+
+        private static void RemoveNonIntersectingEdges(Plane facePlane, Triangle triangle, int vertIndex, List<EdgeLine> edges)
+        {
+            var vertPos = triangle.Vertices[vertIndex].Position;
+            var oppEdges = triangle.GetVerticeEdges(vertIndex);
+
+            for (int i = edges.Count - 1; i >= 0; i--)
+            {
+                var curEdge = edges[i];
+                var planarPerp = facePlane.ProjectVector(curEdge.Edge.PerpVec);
+
+                var triCoords = ProjectTriangle(triangle, vertPos, planarPerp, true);
+
+                if (triCoords.All(x => x.Y <= 0.001f))
+                {
+                    edges.RemoveAt(i);
+                    continue;
+                }
+
+                var inter1 = Vector3.GetPerpIntersection(oppEdges[0].P1.Position, oppEdges[0].P2.Position, vertPos + planarPerp * 0.013f);
+                var inter2 = Vector3.GetPerpIntersection(oppEdges[1].P1.Position, oppEdges[1].P2.Position, vertPos + planarPerp * 0.013f);
+
+                if (!(oppEdges[0].IsInside(inter1) || oppEdges[1].IsInside(inter2)))
+                {
+                    edges.RemoveAt(i);
+                    continue;
+                }
+
+                if (!curEdge.Edge.IsShared)
+                {
+                    if (!(triangle.ContainsVertex(curEdge.TriangleEdge.P1) ||
+                        triangle.ContainsVertex(curEdge.TriangleEdge.P2)))
+                    {
+                        edges.RemoveAt(i);
+                        continue;
+                    }
+                }
+            }
+        }
+
+        private static Vector2[] ProjectTriangle(Triangle triangle, Vector3 origin, Vector3 axis, bool inverse)
+        {
+            Vector2[] coords = new Vector2[3];
+            var plane = new Plane(origin, triangle.Normal);
+
+            for (int i = 0; i < 3; i++)
+            {
+                coords[i] = plane.ProjectPoint2D(axis, triangle.Vertices[i].Position);
+                if (inverse)
+                    coords[i] = new Vector2(coords[i].Y, coords[i].X);
+            }
+
+            return coords;
+        }
+
         private static Vector2[] GetTexCoordsForEdge(Triangle triangle, FaceEdge edge)
         {
             var plane = new Plane(triangle.V1.Position, triangle.Normal);
@@ -434,24 +511,18 @@ namespace LDDModder.LDD.Meshes
             else
                 axisP1 = triangle.ContainsVertex(edge.P1) ? edge.P1 : edge.P2;
 
-            Vector3 axisP2 = axisP1.Equals(edge.P1) ? edge.P2 : edge.P1;
             axisP1 = plane.ProjectPoint(axisP1);
-            axisP2 = plane.ProjectPoint(axisP2);
             plane.Origin = axisP1;
 
-            Vector3 xAxis = (axisP2 - axisP1).Normalized();
-            Vector3 yAxis = Vector3.Cross(plane.Normal, xAxis).Normalized();
-
-            var center = triangle.GetCenter();
-            if (Vector3.Distance(center, axisP1 + yAxis) > Vector3.Distance(center, axisP1 + yAxis * -1))
-            {
-                xAxis *= -1;
-            }
+            Vector3 yAxis = plane.ProjectVector(edge.PerpVec); //Flatten perpendicular vector to 2D plane
 
             Vector2[] coords = new Vector2[3];
 
             for (int i = 0; i < 3; i++)
-                coords[i] = plane.ProjectPoint2D(xAxis, triangle.Vertices[i].Position);
+            {
+                var pos = plane.ProjectPoint2D(yAxis, triangle.Vertices[i].Position);
+                coords[i] = new Vector2(pos.Y, pos.X);
+            }
 
             var minX = coords.Min(c => c.X);
             for (int i = 0; i < 3; i++)

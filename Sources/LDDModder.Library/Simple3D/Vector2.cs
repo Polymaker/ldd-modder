@@ -164,14 +164,32 @@ namespace LDDModder.Simple3D
             return result;
         }
 
+        public static float Distance(Vector2 left, Vector2 right)
+        {
+            var dx = left.X - right.X;
+            var dy = left.Y - right.Y;
+            return (float)Math.Sqrt((dx * dx) + (dy * dy));
+        }
+
         public static float Dot(Vector2 left, Vector2 right)
         {
             return (left.X * right.X) + (left.Y * right.Y);
         }
 
-        public Vector2 GetPerpendicular(Vector2 vec)
+        public static Vector2 GetPerpendicular(Vector2 vec)
         {
             return new Vector2(vec.Y, -vec.X);
+        }
+
+        public static Vector2 GetPerpendicular(Vector2 v1, Vector2 v2, Vector2 point)
+        {
+            var vec = (v2 - v1).Normalized();
+            var perp = new Vector2(vec.Y, -vec.X);
+            var d1 = Distance(point, v1 + perp);
+            var d2 = Distance(point, v1 - perp);
+            if (d2 < d1)
+                perp *= -1;
+            return perp;
         }
 
         public static float AngleBetween(Vector2 first, Vector2 second)
@@ -187,6 +205,11 @@ namespace LDDModder.Simple3D
             return new Vector2(
                 (float)Math.Round(X, decimals),
                 (float)Math.Round(Y, decimals));
+        }
+
+        public static Vector2 Avg(Vector2 v1, Vector2 v2)
+        {
+            return (v1 + v2) / 2f;
         }
 
         #endregion
