@@ -148,10 +148,10 @@ namespace LDDModder.LDD.Meshes
 
         public void Set(int pairIndex, Vector2 coords, bool adjust = true)
         {
-            Set(pairIndex, EmptyCoord, coords, EdgeCombineMode.Union, adjust);
+            SetCoordsPair(pairIndex, EmptyCoord, coords, EdgeCombineMode.Union, adjust);
         }
 
-        public void Set(int pairIndex, Vector2 coord1, Vector2 coord2, EdgeCombineMode mode, bool adjust = true)
+        public void SetCoordsPair(int pairIndex, Vector2 coord1, Vector2 coord2, EdgeCombineMode mode, bool adjust = true)
         {
             if (coord1.IsEmpty)
                 coord1 = EmptyCoord;

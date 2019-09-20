@@ -23,6 +23,6 @@
     <AABB minX="-1.009898" minY="-1.119789" minZ="-1.070215" maxX="1.009862" maxY="0.7171937" maxZ="1.489482"/>
   </Bounding>
   <GeometryBounding>
-<!--     <AABB minX="-1.09999" minY="-1.16995" minZ="-1.2" maxX="1.09999" maxY="1.16995" maxZ="0.37"/> -->
+	<AABB minX="-1.009898" minY="-1.119789" minZ="-1.070215" maxX="1.009862" maxY="0.7171937" maxZ="1.489482"/>
   </GeometryBounding>
 </LEGOPrimitive>

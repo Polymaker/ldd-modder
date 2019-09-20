@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<LEGOPrimitive versionMajor="1" versionMinor="0">
+  <Annotations>
+    <Annotation aliases="32195" />
+    <Annotation designname="FORM 6M W. BALL CUP" />
+    <Annotation maingroupid="321" />
+    <Annotation maingroupname="HALF BEAMS, SPECIAL" />
+    <Annotation platformid="300" />
+    <Annotation platformname="TECHNIC" />
+    <Annotation version="1" />
+  </Annotations>
+  <Bounding>
+    <AABB minX="-0.8" minY="-0.4" minZ="-3.6" maxX="0.8" maxY="0.4" maxZ="1.6" />
+  </Bounding>
+  <GeometryBounding>
+    <AABB minX="-0.8" minY="-0.4" minZ="-3.6" maxX="0.8" maxY="0.4" maxZ="1.60002" />
+  </GeometryBounding>
+</LEGOPrimitive>

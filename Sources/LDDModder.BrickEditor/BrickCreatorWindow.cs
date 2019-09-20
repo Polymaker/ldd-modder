@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -25,6 +26,7 @@ namespace LDDModder.BrickEditor
         private BindingList<BrickMeshObject> BrickMeshes;
         private List<Platform> Platforms;
         private List<MainGroup> Groups;
+        private string RepoFolder;
 
         public BrickCreatorWindow()
         {
@@ -50,7 +52,13 @@ namespace LDDModder.BrickEditor
             //string meshDir = Environment.ExpandEnvironmentVariables(@"%appdata%\LEGO Company\LEGO Digital Designer\db\");
             //var project = PartProject.CreateFromLdd(meshDir, 10130);
             //project.SaveUncompressed("10130");
+            var curDir = new DirectoryInfo(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location));
+            int loopCount = 0;
 
+            while (curDir.Name != "Sources" || ++loopCount > 10)
+                curDir = curDir.Parent;
+            if (curDir.Name == "Sources")
+                RepoFolder = curDir.Parent.FullName;
 
             InitializeData();
             InitializeUI();
@@ -355,7 +363,12 @@ namespace LDDModder.BrickEditor
 
                 MessageBox.Show("Brick files created succesfully.");
 
-                Utilities.LddMeshExporter.ExportRoundEdge(partMesh.MainModel.Geometry, $"C:\\Users\\JWTurner\\Documents\\Development\\Test\\ldd-modder\\LDD Bricks\\{partMesh.PartID} RE.dae", "collada");
+                if (!string.IsNullOrEmpty(RepoFolder) && Debugger.IsAttached)
+                {
+                    Utilities.LddMeshExporter.ExportRoundEdge(partMesh.MainModel.Geometry,
+                        Path.Combine(RepoFolder, "LDD Bricks", $"{partMesh.PartID} RE.dae"), "collada");
+                }
+
             }
             else
             {
@@ -384,7 +397,12 @@ namespace LDDModder.BrickEditor
 
                         MessageBox.Show("Brick files created succesfully.");
 
-                        Utilities.LddMeshExporter.ExportRoundEdge(partMesh.MainModel.Geometry, $"C:\\Users\\JWTurner\\Documents\\Development\\Test\\ldd-modder\\LDD Bricks\\{partMesh.PartID} RE.dae", "collada");
+
+                        if (!string.IsNullOrEmpty(RepoFolder) && Debugger.IsAttached)
+                        {
+                            Utilities.LddMeshExporter.ExportRoundEdge(partMesh.MainModel.Geometry,
+                                Path.Combine(RepoFolder, "LDD Bricks", $"{partMesh.PartID} RE.dae"), "collada");
+                        }
                     }
                 }
             }

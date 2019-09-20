@@ -73,6 +73,11 @@ namespace LDDModder.LDD.Meshes
             return P1.Position.Equals(position) || P2.Position.Equals(position);
         }
 
+        public bool Contains(Vector3 position, float precision)
+        {
+            return P1.Position.Equals(position, precision) || P2.Position.Equals(position, precision);
+        }
+
         public bool IsInside(Vector3 pos)
         {
             var maxV = (P2.Position - P1.Position);
