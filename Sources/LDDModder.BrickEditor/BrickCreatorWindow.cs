@@ -45,13 +45,12 @@ namespace LDDModder.BrickEditor
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            //Modding.PartPackage.CreateLDDPackages();
-            var brick = LDD.Parts.PartWrapper.LoadPart(LDD.LDDEnvironment.Current, 4589);
-            Utilities.LddMeshExporter.ExportRoundEdge(brick.MainMesh.Geometry, $"D:\\Programming\\C#\\ldd-modder\\LDD Bricks\\{brick.PartID} RE.dae", "collada");
 
+            //Modding.PartPackage.CreateLDDPackages();
             //string meshDir = Environment.ExpandEnvironmentVariables(@"%appdata%\LEGO Company\LEGO Digital Designer\db\");
             //var project = PartProject.CreateFromLdd(meshDir, 10130);
             //project.SaveUncompressed("10130");
+
             var curDir = new DirectoryInfo(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location));
             int loopCount = 0;
 
@@ -59,6 +58,11 @@ namespace LDDModder.BrickEditor
                 curDir = curDir.Parent;
             if (curDir.Name == "Sources")
                 RepoFolder = curDir.Parent.FullName;
+
+            
+            //57515
+            var part = LDD.Data.LDDPartFiles.Read(LDD.LDDEnvironment.Current.ApplicationDataPath + "\\db", 57515);
+            Utilities.LddMeshExporter.ExportLddPart(part, Path.Combine(RepoFolder, "LDD Bricks", $"{part.PartID}.dae"), "collada");
 
             InitializeData();
             InitializeUI();
