@@ -431,8 +431,8 @@ namespace LDDModder.BrickEditor
                             brickMesh.Mesh.TextureCoordinateChannels[0][face.Indices[i]] : new Assimp.Vector3D();
 
                         verts[i] = new Vertex(
-                            new Simple3D.Vector3(p.X, p.Y, p.Z),
-                            new Simple3D.Vector3(n.X, n.Y, n.Z),
+                            new Simple3D.Vector3(p.X, p.Y, p.Z).Rounded(6),
+                            new Simple3D.Vector3(n.X, n.Y, n.Z).Rounded(6),
                             useTexture ? new Simple3D.Vector2(t.X, t.Y) : Simple3D.Vector2.Empty);
                     }
 

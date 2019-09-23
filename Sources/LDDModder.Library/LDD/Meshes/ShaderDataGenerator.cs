@@ -327,6 +327,8 @@ namespace LDDModder.LDD.Meshes
 
             var edgesPerVert = BuildVertexEdgesDictionary(hardEdges);
 
+            float breakAngleRad = breakAngle / 180f * fPI;
+
             foreach (var triangle in triangleList)
             {
                 triangle.Build2DEdges();
@@ -339,8 +341,15 @@ namespace LDDModder.LDD.Meshes
                         connectedEdges.AddRange(list);
                 }
 
+                if (triangle.Triangle.ContainsVertex(new Vector3(-0.54105f, 0.358637f, -0.990224f), 0.001f) &&
+                    triangle.Triangle.ContainsVertex(new Vector3(-0.471999f, 0.318679f, -0.990257f), 0.001f) &&
+                    triangle.Triangle.ContainsVertex(new Vector3(-0.54105f, 0.358637f, -1.07021f), 0.001f))
+                {
+
+                }
+
                 connectedEdges = connectedEdges.Distinct()
-                    .Where(x => Vector3.AngleBetween(triangle.Normal, x.FaceNormal) < fPI * 0.30f)
+                    .Where(x => Vector3.AngleBetween(triangle.Normal, x.FaceNormal) < breakAngleRad)
                     .ToList();
 
                 if (!connectedEdges.Any())
@@ -353,13 +362,6 @@ namespace LDDModder.LDD.Meshes
 
                 projectedEdges.AddRange(triangle.PlanarEdges.Where(x => x.IsHard));
 
-                if (triangle.Triangle.ContainsVertex(new Vector3(0.56001f, -0.28f, 0.639999f)) &&
-                    triangle.Triangle.ContainsVertex(new Vector3(0.56001f, 0.28f, 0.639999f)) &&
-                    triangle.Triangle.ContainsVertex(new Vector3(0.40001f, 0.28f, 0.799999f)))
-                {
-
-                }
-
                 for (int coordPairIdx = 0; coordPairIdx < 3; coordPairIdx++)
                 {
                     var idxPos = triangle.Vertices[coordPairIdx].Position;
@@ -371,6 +373,11 @@ namespace LDDModder.LDD.Meshes
                     
                     RemoveNonIntersectingEdges(triangle, coordPairIdx, vertEdges);
                     RemoveDuplicateEdgeLines(vertEdges);
+
+                    if (vertEdges.Count > 2)
+                    {
+                        vertEdges = vertEdges.Take(2).ToList();
+                    }
 
                     if (vertEdges.Count == 1)
                     {
@@ -576,15 +583,15 @@ namespace LDDModder.LDD.Meshes
                     continue;
                 }
 
-                if (!curEdge.Edge.IsShared)
-                {
-                    if (!(triangle.ContainsVertex(curEdge.TriangleEdge.P1) ||
-                        triangle.ContainsVertex(curEdge.TriangleEdge.P2)))
-                    {
-                        edges.RemoveAt(i);
-                        continue;
-                    }
-                }
+                //if (!curEdge.Edge.IsShared)
+                //{
+                //    if (!(triangle.ContainsVertex(curEdge.TriangleEdge.P1) ||
+                //        triangle.ContainsVertex(curEdge.TriangleEdge.P2)))
+                //    {
+                //        edges.RemoveAt(i);
+                //        continue;
+                //    }
+                //}
             }
         }
 

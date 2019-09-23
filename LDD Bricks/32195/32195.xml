@@ -9,6 +9,9 @@
     <Annotation platformname="TECHNIC" />
     <Annotation version="1" />
   </Annotations>
+  <Connectivity>
+    <Ball type="2" angle="0" ax="0" ay="0" az="1" tx="0" ty="0" tz="1.2"/>
+  </Connectivity>
   <Bounding>
     <AABB minX="-0.8" minY="-0.4" minZ="-3.6" maxX="0.8" maxY="0.4" maxZ="1.6" />
   </Bounding>

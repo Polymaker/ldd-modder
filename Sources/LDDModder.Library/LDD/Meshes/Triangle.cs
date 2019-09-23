@@ -93,6 +93,11 @@ namespace LDDModder.LDD.Meshes
             return Vertices.Any(x => x.Position.Equals(pos));
         }
 
+        public bool ContainsVertex(Vector3 pos, float tolerance)
+        {
+            return Vertices.Any(x => x.Position.Equals(pos, tolerance));
+        }
+
         public bool ContainsEdge(Edge edge, bool compareByPos = false)
         {
             if (compareByPos)
