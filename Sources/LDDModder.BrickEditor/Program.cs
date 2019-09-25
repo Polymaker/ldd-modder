@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LDDModder.BrickEditor.UI;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -24,7 +25,7 @@ namespace LDDModder.BrickEditor
             //test.Run();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new BrickCreatorWindow());
+            Application.Run(new ModelImportExportWindow());
         }
     }
 }

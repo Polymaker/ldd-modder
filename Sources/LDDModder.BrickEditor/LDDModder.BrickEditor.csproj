@@ -116,6 +116,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>PartResources.resx</DependentUpon>
     </Compile>
+    <Compile Include="UI\ModelImportExportWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\ModelImportExportWindow.Designer.cs">
+      <DependentUpon>ModelImportExportWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\Windows\BrickEditorWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -145,6 +151,9 @@
     <EmbeddedResource Include="Resources\PartResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>PartResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\ModelImportExportWindow.resx">
+      <DependentUpon>ModelImportExportWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Windows\BrickEditorWindow.resx">
       <DependentUpon>BrickEditorWindow.cs</DependentUpon>
