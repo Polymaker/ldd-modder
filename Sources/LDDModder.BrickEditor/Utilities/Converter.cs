@@ -80,7 +80,7 @@ namespace LDDModder.BrickEditor
 
         #endregion
 
-        #region MyRegion
+        #region To Assimp
 
         public static Assimp.Matrix3x3 ToAssimp(this OpenTK.Matrix3 matrix)
         {
@@ -109,6 +109,44 @@ namespace LDDModder.BrickEditor
 
         #endregion
 
+        #region To LDD
+
+        public static LDDModder.Simple3D.Vector3 ToLDD(this OpenTK.Vector3 vector)
+        {
+            return new Simple3D.Vector3(vector.X, vector.Y, vector.Z);
+        }
+
+        public static LDDModder.Simple3D.Vector3 ToLDD(this Assimp.Vector3D vector)
+        {
+            return new Simple3D.Vector3(vector.X, vector.Y, vector.Z);
+        }
+
+        public static LDDModder.Simple3D.Vector4 ToLDD(this OpenTK.Vector4 vector)
+        {
+            return new Simple3D.Vector4(vector.X, vector.Y, vector.Z, vector.W);
+        }
+
+        public static LDDModder.Simple3D.Matrix3 ToLDD(this OpenTK.Matrix3 matrix)
+        {
+            return new Simple3D.Matrix3(matrix.Row0.ToLDD(), matrix.Row1.ToLDD(), matrix.Row2.ToLDD());
+        }
+
+        public static LDDModder.Simple3D.Matrix4 ToLDD(this OpenTK.Matrix4 matrix)
+        {
+            return new Simple3D.Matrix4(matrix.Row0.ToLDD(), matrix.Row1.ToLDD(), matrix.Row2.ToLDD(), matrix.Row3.ToLDD());
+        }
+
+        public static LDDModder.Simple3D.Matrix3 ToLDD(this Assimp.Matrix3x3 matrix)
+        {
+            return ToLDD(matrix.ToGL());
+        }
+
+        public static LDDModder.Simple3D.Matrix4 ToLDD(this Assimp.Matrix4x4 matrix)
+        {
+            return ToLDD(matrix.ToGL());
+        }
+
+        #endregion
 
 
     }

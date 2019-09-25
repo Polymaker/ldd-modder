@@ -25,7 +25,7 @@ namespace LDDModder.BrickEditor
             //test.Run();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new ModelImportExportWindow());
+            Application.Run(new BrickCreatorWindow());
         }
     }
 }

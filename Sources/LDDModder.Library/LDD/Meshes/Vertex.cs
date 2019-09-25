@@ -73,12 +73,12 @@ namespace LDDModder.LDD.Meshes
                    TexCoord.Equals(vertex.TexCoord);
         }
 
-        public int GetHash()
+        public int GetHash(int rounding = 4)
         {
             var hashCode = 550714527;
-            hashCode = hashCode * -1521134295 + Position.Rounded(4).GetHashCode();
-            hashCode = hashCode * -1521134295 + Normal.Rounded(4).GetHashCode();
-            hashCode = hashCode * -1521134295 + TexCoord.Rounded(4).GetHashCode();
+            hashCode = hashCode * -1521134295 + Position.Rounded(rounding).GetHashCode();
+            hashCode = hashCode * -1521134295 + Normal.Rounded(rounding).GetHashCode();
+            hashCode = hashCode * -1521134295 + TexCoord.Rounded(rounding).GetHashCode();
             return hashCode;
         }
 

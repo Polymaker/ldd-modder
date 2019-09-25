@@ -663,6 +663,34 @@ namespace LDDModder.Simple3D
             return RowD.Xyz;
         }
 
+        public static Vector3 TransformPosition(Matrix4 mat, Vector3 pos)
+        {
+            Vector3 result = default;
+            result.X = pos.X * mat.RowA.X + pos.Y * mat.RowB.X + pos.Z * mat.RowC.X + mat.RowD.X;
+            result.Y = pos.X * mat.RowA.Y + pos.Y * mat.RowB.Y + pos.Z * mat.RowC.Y + mat.RowD.Y;
+            result.Z = pos.X * mat.RowA.Z + pos.Y * mat.RowB.Z + pos.Z * mat.RowC.Z + mat.RowD.Z;
+            return result;
+        }
+
+        public Vector3 TransformPosition(Vector3 pos)
+        {
+            return TransformPosition(this, pos);
+        }
+
+        public static Vector3 TransformVector(Matrix4 mat, Vector3 vec)
+        {
+            Vector3 result = default;
+            result.X = vec.X * mat.RowA.X + vec.Y * mat.RowB.X + vec.Z * mat.RowC.X;
+            result.Y = vec.X * mat.RowA.Y + vec.Y * mat.RowB.Y + vec.Z * mat.RowC.Y;
+            result.Z = vec.X * mat.RowA.Z + vec.Y * mat.RowB.Z + vec.Z * mat.RowC.Z;
+            return result;
+        }
+
+        public Vector3 TransformVector(Vector3 pos)
+        {
+            return TransformVector(this, pos);
+        }
+
 
         #endregion
 

@@ -3,6 +3,7 @@ using LDDModder.LDD.Data;
 using LDDModder.LDD.Files;
 using LDDModder.LDD.Meshes;
 using LDDModder.LDD.Primitives;
+using LDDModder.Simple3D;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -59,13 +60,146 @@ namespace LDDModder.BrickEditor
             if (curDir.Name == "Sources")
                 RepoFolder = curDir.Parent.FullName;
 
-            
-            //57515
-            var part = LDD.Data.LDDPartFiles.Read(LDD.LDDEnvironment.Current.ApplicationDataPath + "\\db", 57515);
-            Utilities.LddMeshExporter.ExportLddPart(part, Path.Combine(RepoFolder, "LDD Bricks", $"{part.PartID}.dae"), "collada");
+            //var part = LDD.Data.LDDPartFiles.Read(LDD.LDDEnvironment.Current.ApplicationDataPath + "\\db", 32235);
+            //Utilities.LddMeshExporter.ExportLddPart(part,
+            //            Path.Combine(RepoFolder, "LDD Bricks", $"{part.PartID} flex.dae"), "collada");
 
             InitializeData();
             InitializeUI();
+        }
+        struct BoneInfo
+        {
+            public int Index { get; set; }
+            public Simple3D.Vector3 Pos { get; set; }
+
+            public BoneInfo(int index, Vector3 pos)
+            {
+                Index = index;
+                Pos = pos;
+            }
+        }
+
+        private void MakeFlexible(LDDPartFiles part)
+        {
+            var part2 = LDD.Data.LDDPartFiles.Read(LDD.LDDEnvironment.Current.ApplicationDataPath + "\\db", 32200);
+            //Utilities.LddMeshExporter.ExportLddPart(part,
+            //            Path.Combine(RepoFolder, "LDD Bricks", $"{part.PartID}.dae"), "collada");
+            //var bounding = part.Info.Bounding;
+            //var vPosXs = part.MainModel.Vertices.Select(v => v.Position.Rounded(3).X)
+            //    .Where(x => x > 1.6f && x < bounding.MaxX - 1.62f)
+            //    .Distinct().ToList();
+            //vPosXs.Sort();
+
+
+            //var flexLen = part.Info.Bounding.SizeX - 3.2f;
+            //int nbBones = (int)Math.Round(flexLen / 0.4f);
+            //float boneSpacing = flexLen / (float)nbBones;
+            var bonePositions = new List<BoneInfo>();
+
+            foreach(var flexBone in part2.Info.FlexBones)
+                bonePositions.Add(new BoneInfo(flexBone.ID, flexBone.Transform.GetPosition()));
+
+            //bonePositions.Add(new BoneInfo(bonePositions.Count, new Simple3D.Vector3(bounding.MinX, 0, 0)));
+            //bonePositions.Add(new BoneInfo(bonePositions.Count, new Simple3D.Vector3(bounding.MinX + 0.8f, 0, 0)));
+            //bonePositions.Add(new BoneInfo(bonePositions.Count, new Simple3D.Vector3(bounding.MinX + 1.6f, 0, 0)));
+
+            //for (int i = 0; i < vPosXs.Count; i++)
+            //    bonePositions.Add(new BoneInfo(bonePositions.Count, 
+            //        new Simple3D.Vector3(vPosXs[i], 0, 0)));
+
+            //bonePositions.Add(new BoneInfo(bonePositions.Count, new Simple3D.Vector3(bounding.MaxX - 1.6f, 0, 0)));
+            //bonePositions.Add(new BoneInfo(bonePositions.Count, new Simple3D.Vector3(bounding.MaxX - 0.8f, 0, 0)));
+            //bonePositions.Add(new BoneInfo(bonePositions.Count, new Simple3D.Vector3(bounding.MaxX, 0, 0)));
+            part.Info.FlexBones.AddRange(part2.Info.FlexBones);
+
+
+
+            //for (int i = 0; i < bonePositions.Count; i++)
+            //{
+            //    var curBone = bonePositions[i];
+            //    var flexBone = new FlexBone()
+            //    {
+            //        ID = curBone.Index,
+            //    };
+            //    flexBone.Transform.Translation = curBone.Pos;
+
+            //    if (curBone.Index > 0)
+            //        flexBone.ConnectionCheck = new Tuple<int, int, int>(0, curBone.Index - 1, 2);
+
+            //    if (curBone.Index % 2 == 0)
+            //    {
+            //        if (curBone.Index > 0)
+            //        {
+            //            flexBone.Connectors.Add(new LDD.Primitives.Connectors.BallConnector()
+            //            {
+            //                SubType = 999003,
+            //                FlexAttributes = "-0.06,0.06,20,10,10"
+            //            });
+            //        }
+
+            //        if (i + 1 < bonePositions.Count)
+            //        {
+            //            var conn = new LDD.Primitives.Connectors.BallConnector()
+            //            {
+            //                SubType = 999000
+            //            };
+            //            conn.Transform.Translation = bonePositions[i + 1].Pos - curBone.Pos;
+            //            flexBone.Connectors.Add(conn);
+            //        }
+            //    }
+            //    else
+            //    {
+            //        flexBone.Connectors.Add(new LDD.Primitives.Connectors.BallConnector()
+            //        {
+            //            SubType = 999001,
+            //            FlexAttributes = "-0.06,0.06,20,10,10"
+            //        });
+
+
+            //        if (i + 1 < bonePositions.Count)
+            //        {
+            //            var conn = new LDD.Primitives.Connectors.BallConnector()
+            //            {
+            //                SubType = 999002
+            //            };
+            //            conn.Transform.Translation = bonePositions[i + 1].Pos - curBone.Pos;
+            //            flexBone.Connectors.Add(conn);
+            //        }
+            //    }
+
+            //    part.Info.FlexBones.Add(flexBone);
+            //}
+
+            foreach (var vert in part.MainModel.Vertices)
+            {
+                var prevBones = bonePositions.Where(b => b.Pos.X <= vert.Position.X)
+                    .OrderByDescending(b => b.Pos.X).Take(2);
+                var nextBones = bonePositions.Where(b => b.Pos.X > vert.Position.X)
+                    .OrderBy(b => b.Pos.X).Take(2);
+
+                var vertBones = prevBones.Concat(nextBones).OrderBy(b => b.Pos.X).ToList();
+                var maxDist = vertBones.Max(b => Vector3.Distance(b.Pos, vert.Position));
+                var totalDist = vertBones.Sum(b => Vector3.Distance(b.Pos, vert.Position));
+                float weightSum = 0;
+                var weights = new List<float>();
+                if (vertBones.Count == 0)
+                {
+
+                }
+                foreach (var b in vertBones)
+                {
+                    var vWeight = Vector3.Distance(b.Pos, vert.Position) / maxDist;
+                    vWeight = (1f / (float)vertBones.Count) + (1f - vWeight);
+                    weightSum += vWeight;
+                    weights.Add(vWeight);
+                }
+
+                for (int i = 0; i < vertBones.Count; i++)
+                {
+                    var vWeight = weights[i] / weightSum;
+                    vert.BoneWeights.Add(new BoneWeight(vertBones[i].Index, vWeight));
+                }
+            }
         }
 
         private void InitializeUI()
@@ -156,6 +290,7 @@ namespace LDDModder.BrickEditor
             public Assimp.Mesh Mesh { get; set; }
             public string MeshName { get; set; }
             public bool IsTextured => Mesh?.HasTextureCoords(0) ?? false;
+            public bool IsFlexible => Mesh?.BoneCount > 0;
             public bool IsMainModel { get; set; }
             public int? DecorationID { get; set; }
 
@@ -236,8 +371,7 @@ namespace LDDModder.BrickEditor
         private void ImportAssimpModel(string filename)
         {
             var scene = AssimpContext.ImportFile(filename,
-                    Assimp.PostProcessSteps.GenerateNormals |
-                    Assimp.PostProcessSteps.PreTransformVertices);
+                    Assimp.PostProcessSteps.GenerateNormals /*| Assimp.PostProcessSteps.PreTransformVertices*/);
 
             ImportExportProgress.Value = 20;
 
@@ -258,7 +392,6 @@ namespace LDDModder.BrickEditor
                         MeshName = mesh.Name,
                         IsMainModel = !mesh.HasTextureCoords(0)
                     };
-
                     if (brickMesh.IsTextured)
                         brickMesh.DecorationID = currentDecID++;
 
@@ -315,6 +448,8 @@ namespace LDDModder.BrickEditor
                 }
             };
 
+            var primitive = partMesh.Info;
+
             var validMeshes = BrickMeshes.Where(x => x.IsMainModel || x.DecorationID.HasValue).ToList();
 
             foreach (var meshGroup in validMeshes.GroupBy(x => x.DecorationID).OrderBy(x => x.Key ?? 0))
@@ -343,6 +478,35 @@ namespace LDDModder.BrickEditor
             partMesh.Info.Bounding = partMesh.GetBoundingBox();
             partMesh.Info.GeometryBounding = partMesh.Info.Bounding;
 
+            if (BrickMeshes[0].IsFlexible)
+            {
+                int boneID = 0;
+                var scene = BrickMeshes[0].MeshScene;
+                var meshNode = Assimp.AssimpHelper.GetMeshNode(BrickMeshes[0].MeshScene, BrickMeshes[0].Mesh);
+                var meshTrans = Assimp.AssimpHelper.GetFinalTransform(meshNode).ToLDD();
+
+                foreach (var bone in BrickMeshes[0].Mesh.Bones)
+                {
+                    var boneNode = scene.RootNode.FindNode(bone.Name);
+                    var boneTrans = Assimp.AssimpHelper.GetFinalTransform(boneNode).ToLDD();
+                    //boneTrans = boneTrans * meshTrans;
+                    var bonePos = boneTrans.TransformPosition(Vector3.Zero);
+                    var flexBone = new FlexBone()
+                    {
+                        ID = boneID++,
+                        Transform = Transform.FromMatrix(boneTrans)
+                    };
+                    primitive.FlexBones.Add(flexBone);
+                }
+            }
+
+            if (!string.IsNullOrEmpty(RepoFolder) && Debugger.IsAttached)
+            {
+                Utilities.LddMeshExporter.ExportRoundEdge(partMesh.MainModel.Geometry,
+                    Path.Combine(RepoFolder, "LDD Bricks", $"{partMesh.PartID} RE.dae"), "collada");
+            }
+            //MakeFlexible(partMesh);
+
             ImportExportProgress.Value = 100;
 
             if (SaveInLddCheckBox.Checked)
@@ -366,13 +530,6 @@ namespace LDDModder.BrickEditor
                     partMesh.SavePrimitive(primitiveDir, partName);
 
                 MessageBox.Show("Brick files created succesfully.");
-
-                if (!string.IsNullOrEmpty(RepoFolder) && Debugger.IsAttached)
-                {
-                    Utilities.LddMeshExporter.ExportRoundEdge(partMesh.MainModel.Geometry,
-                        Path.Combine(RepoFolder, "LDD Bricks", $"{partMesh.PartID} RE.dae"), "collada");
-                }
-
             }
             else
             {
@@ -400,13 +557,6 @@ namespace LDDModder.BrickEditor
                             partMesh.SavePrimitive(targetDir, baseName);
 
                         MessageBox.Show("Brick files created succesfully.");
-
-
-                        if (!string.IsNullOrEmpty(RepoFolder) && Debugger.IsAttached)
-                        {
-                            Utilities.LddMeshExporter.ExportRoundEdge(partMesh.MainModel.Geometry,
-                                Path.Combine(RepoFolder, "LDD Bricks", $"{partMesh.PartID} RE.dae"), "collada");
-                        }
                     }
                 }
             }
@@ -419,6 +569,36 @@ namespace LDDModder.BrickEditor
             foreach (var brickMesh in brickMeshes)
             {
                 bool useTexture = brickMesh.IsTextured && !brickMesh.IsMainModel;
+                var meshNode = Assimp.AssimpHelper.GetMeshNode(brickMesh.MeshScene, brickMesh.Mesh);
+                var meshTransform = Assimp.AssimpHelper.GetFinalTransform(meshNode).ToLDD();
+
+                if (brickMesh.Mesh.HasBones)
+                {
+                    var rootBone = brickMesh.Mesh.Bones[0];
+                    var boneNode = brickMesh.MeshScene.RootNode.FindNode(rootBone.Name);
+                    var boneTrans = rootBone.OffsetMatrix.ToLDD().Inverted();
+                    var nodeTrans = boneNode.Transform.ToLDD();
+
+                    var testTrans = meshTransform * nodeTrans * boneTrans;
+                    var testPt = testTrans.TransformPosition(new Vector3(14.41003f, -0.1385641f, -0.07999998f));
+                    //meshTransform = testTrans;
+                    meshTransform = boneTrans * meshTransform * nodeTrans;
+                }
+
+                var boneWeights = new Dictionary<int, List<BoneWeight>>();
+                if (brickMesh.Mesh.HasBones)
+                {
+                    for (int i = 0; i < brickMesh.Mesh.BoneCount; i++)
+                    {
+                        var bone = brickMesh.Mesh.Bones[i];
+                        foreach (var vw in bone.VertexWeights)
+                        {
+                            if (!boneWeights.ContainsKey(vw.VertexID))
+                                boneWeights.Add(vw.VertexID, new List<BoneWeight>());
+                            boneWeights[vw.VertexID].Add(new BoneWeight(i, vw.Weight));
+                        }
+                    }
+                }
 
                 foreach (var face in brickMesh.Mesh.Faces)
                 {
@@ -429,15 +609,21 @@ namespace LDDModder.BrickEditor
 
                     for (int i = 0; i < 3; i++)
                     {
-                        var p = brickMesh.Mesh.Vertices[face.Indices[i]];
-                        var n = brickMesh.Mesh.Normals[face.Indices[i]];
-                        var t = useTexture ?
-                            brickMesh.Mesh.TextureCoordinateChannels[0][face.Indices[i]] : new Assimp.Vector3D();
+                        int vIndex = face.Indices[i];
+                        var vPos = brickMesh.Mesh.Vertices[vIndex].ToLDD();
+                        vPos = meshTransform.TransformPosition(vPos);
 
-                        verts[i] = new Vertex(
-                            new Simple3D.Vector3(p.X, p.Y, p.Z).Rounded(6),
-                            new Simple3D.Vector3(n.X, n.Y, n.Z).Rounded(6),
-                            useTexture ? new Simple3D.Vector2(t.X, t.Y) : Simple3D.Vector2.Empty);
+                        var vNorm = brickMesh.Mesh.Normals[vIndex].ToLDD();
+                        vNorm = meshTransform.TransformVector(vNorm);
+
+                        var vTex = Simple3D.Vector2.Empty;
+                        if (useTexture)
+                            vTex = brickMesh.Mesh.TextureCoordinateChannels[0][vIndex].ToLDD().Xy;
+
+                        verts[i] = new Vertex(vPos, vNorm, vTex);
+
+                        if (brickMesh.Mesh.HasBones)
+                            verts[i].BoneWeights.AddRange(boneWeights[i]);
                     }
 
                     builder.AddTriangle(verts[0], verts[1], verts[2]);
@@ -471,6 +657,16 @@ namespace LDDModder.BrickEditor
             {
                 if (MessageBox.Show("There are some meshes that are neither main meshes or decoration meshes."
                     + Environment.NewLine + "Those meshes will be ignored. Do you want to proceed?", 
+                    "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
+                    return false;
+            }
+
+            if (BrickMeshes.Any(x => x.IsFlexible) &&
+                (!BrickMeshes.All(x => x.IsFlexible) ||
+                BrickMeshes.Select(x => x.MeshScene).Distinct().Count() > 1))
+            {
+                if (MessageBox.Show("To make a part flexible all meshes needs to have bone weights and have the same bones."
+                    + Environment.NewLine + "Those meshes will be ignored. Do you want to proceed?",
                     "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
                     return false;
             }

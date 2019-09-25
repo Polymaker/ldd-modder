@@ -215,6 +215,19 @@ namespace LDDModder.Simple3D
             C3 = c3;
         }
 
+        public Matrix3(Vector3 a, Vector3 b, Vector3 c) : this()
+        {
+            A1 = a.X;
+            A2 = a.Y;
+            A3 = a.Z;
+            B1 = b.X;
+            B2 = b.Y;
+            B3 = b.Z;
+            C1 = c.X;
+            C2 = c.Y;
+            C3 = c.Z;
+        }
+
         public void Normalize()
         {
             float determinant = Determinant;

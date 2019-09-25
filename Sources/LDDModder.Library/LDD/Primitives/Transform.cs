@@ -23,7 +23,10 @@ namespace LDDModder.LDD.Primitives
         public float Ty { get => Translation.Y; set => Translation = new Vector3(Translation.X, value, Translation.Z); }
         public float Tz { get => Translation.Z; set => Translation = new Vector3(Translation.X, Translation.Y, value); }
 
-        public Transform() { }
+        public Transform()
+        {
+            Axis = Vector3.UnitY;
+        }
 
         public Transform(float angle, Vector3 axis, Vector3 translation)
         {
@@ -86,7 +89,7 @@ namespace LDDModder.LDD.Primitives
 
         public Vector3 GetPosition()
         {
-            return ToMatrix4() * Vector3.Zero;
+            return ToMatrix4().TransformPosition(Vector3.Zero);
         }
     }
 }

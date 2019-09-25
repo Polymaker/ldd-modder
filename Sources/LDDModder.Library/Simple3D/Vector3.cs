@@ -59,6 +59,40 @@ namespace LDDModder.Simple3D
             }
         }
 
+        #region Permutation Properties
+
+        public Vector2 Xy
+        {
+            get => new Vector2(X, Y);
+            set
+            {
+                X = value.X;
+                Y = value.Y;
+            }
+        }
+
+        public Vector2 Xz
+        {
+            get => new Vector2(X, Z);
+            set
+            {
+                X = value.X;
+                Z = value.Y;
+            }
+        }
+
+        public Vector2 Yx
+        {
+            get => new Vector2(Y, X);
+            set
+            {
+                Y = value.X;
+                X = value.Y;
+            }
+        }
+
+        #endregion
+
         public bool IsEmpty => float.IsNaN(X);
 
         public float Length
