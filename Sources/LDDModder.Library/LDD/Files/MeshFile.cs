@@ -131,16 +131,25 @@ namespace LDDModder.LDD.Files
                 vertMatch.Add(culling.FromVertex + i, i);
             }
 
-            var triIdx = Geometry.GetTriangleIndices();
+            var triangleIndices = Geometry.GetTriangleIndices();
+
             for (int i = 0; i < culling.IndexCount; i += 3)
             {
-                int idx1 = triIdx[i + culling.FromIndex];
-                int idx2 = triIdx[i + 1 + culling.FromIndex];
-                int idx3 = triIdx[i + 2 + culling.FromIndex];
+                int idx1 = triangleIndices[i + culling.FromIndex];
+                int idx2 = triangleIndices[i + 1 + culling.FromIndex];
+                int idx3 = triangleIndices[i + 2 + culling.FromIndex];
                 builder.AddTriangle(idx1 - culling.FromVertex, idx2 - culling.FromVertex, idx3 - culling.FromVertex);
             }
-            return builder.GetGeometry();
-            //return geom;
+
+            var geom = builder.GetGeometry();
+            for (int i = 0; i < culling.IndexCount; i++)
+            {
+                var originalIndex = Indices[i + culling.FromIndex];
+                geom.Indices[i].RoundEdgeData = originalIndex.RoundEdgeData.Clone();
+                geom.Indices[i].AverageNormal = originalIndex.AverageNormal;
+            }
+
+            return geom;
         }
 
     }
