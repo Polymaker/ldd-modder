@@ -60,7 +60,9 @@ namespace LDDModder.BrickEditor
             if (curDir.Name == "Sources")
                 RepoFolder = curDir.Parent.FullName;
 
-            //var part = LDD.Data.LDDPartFiles.Read(LDD.LDDEnvironment.Current.ApplicationDataPath + "\\db", 32235);
+            var asdf = MeshFile.Read(@"D:\CAD\Blender\Orig\32200.g");
+            asdf.Save(@"C:\Users\james\AppData\Roaming\LEGO Company\LEGO Digital Designer\db\Primitives\LOD0\32200.g");
+            //var part = LDD.Data.LDDPartFiles.Read(LDD.LDDEnvironment.Current.ApplicationDataPath + "\\db", 32200);
             //Utilities.LddMeshExporter.ExportLddPart(part,
             //            Path.Combine(RepoFolder, "LDD Bricks", $"{part.PartID} flex.dae"), "collada");
 
@@ -484,18 +486,65 @@ namespace LDDModder.BrickEditor
                 var scene = BrickMeshes[0].MeshScene;
                 var meshNode = Assimp.AssimpHelper.GetMeshNode(BrickMeshes[0].MeshScene, BrickMeshes[0].Mesh);
                 var meshTrans = Assimp.AssimpHelper.GetFinalTransform(meshNode).ToLDD();
-
+                int boneCount = BrickMeshes[0].Mesh.BoneCount;
                 foreach (var bone in BrickMeshes[0].Mesh.Bones)
                 {
                     var boneNode = scene.RootNode.FindNode(bone.Name);
                     var boneTrans = Assimp.AssimpHelper.GetFinalTransform(boneNode).ToLDD();
                     //boneTrans = boneTrans * meshTrans;
-                    var bonePos = boneTrans.TransformPosition(Vector3.Zero);
                     var flexBone = new FlexBone()
                     {
                         ID = boneID++,
                         Transform = Transform.FromMatrix(boneTrans)
                     };
+                    if (flexBone.ID > 0)
+                    {
+                        flexBone.ConnectionCheck = new Tuple<int, int, int>(0, flexBone.ID - 1, 1);
+                    }
+
+                    //    if (flexBone.ID % 2 == 0)
+                    //    {
+                    //        if (flexBone.ID > 0)
+                    //        {
+                    //            flexBone.Connectors.Add(new LDD.Primitives.Connectors.BallConnector()
+                    //            {
+                    //                SubType = 999003,
+                    //                FlexAttributes = "-0.06,0.06,20,10,10"
+                    //            });
+                    //        }
+
+                    //        if (flexBone.ID + 1 < boneCount)
+                    //        {
+                    //            var conn = new LDD.Primitives.Connectors.BallConnector()
+                    //            {
+                    //                SubType = 999000
+                    //            };
+                    //            conn.Transform.Translation = bonePositions[i + 1].Pos - curBone.Pos;
+                    //            flexBone.Connectors.Add(conn);
+                    //        }
+                    //    }
+                    //    else
+                    //    {
+                    //        flexBone.Connectors.Add(new LDD.Primitives.Connectors.BallConnector()
+                    //        {
+                    //            SubType = 999001,
+                    //            FlexAttributes = "-0.06,0.06,20,10,10"
+                    //        });
+
+
+                    //        if (flexBone.ID + 1 < boneCount
+                    //        {
+                    //            var conn = new LDD.Primitives.Connectors.BallConnector()
+                    //            {
+                    //                SubType = 999002
+                    //            };
+                    //            conn.Transform.Translation = bonePositions[i + 1].Pos - curBone.Pos;
+                    //            flexBone.Connectors.Add(conn);
+                    //        }
+                    //    }
+
+                    //    part.Info.FlexBones.Add(flexBone);
+                    //}
                     primitive.FlexBones.Add(flexBone);
                 }
             }
@@ -572,18 +621,18 @@ namespace LDDModder.BrickEditor
                 var meshNode = Assimp.AssimpHelper.GetMeshNode(brickMesh.MeshScene, brickMesh.Mesh);
                 var meshTransform = Assimp.AssimpHelper.GetFinalTransform(meshNode).ToLDD();
 
-                if (brickMesh.Mesh.HasBones)
-                {
-                    var rootBone = brickMesh.Mesh.Bones[0];
-                    var boneNode = brickMesh.MeshScene.RootNode.FindNode(rootBone.Name);
-                    var boneTrans = rootBone.OffsetMatrix.ToLDD().Inverted();
-                    var nodeTrans = boneNode.Transform.ToLDD();
+                //if (brickMesh.Mesh.HasBones)
+                //{
+                //    var rootBone = brickMesh.Mesh.Bones[0];
+                //    var boneNode = brickMesh.MeshScene.RootNode.FindNode(rootBone.Name);
+                //    var boneTrans = rootBone.OffsetMatrix.ToLDD().Inverted();
+                //    var nodeTrans = boneNode.Transform.ToLDD();
 
-                    var testTrans = meshTransform * nodeTrans * boneTrans;
-                    var testPt = testTrans.TransformPosition(new Vector3(14.41003f, -0.1385641f, -0.07999998f));
-                    //meshTransform = testTrans;
-                    meshTransform = boneTrans * meshTransform * nodeTrans;
-                }
+                //    var testTrans = meshTransform * nodeTrans * boneTrans;
+                //    var testPt = testTrans.TransformPosition(new Vector3(14.41003f, -0.1385641f, -0.07999998f));
+                //    //meshTransform = testTrans;
+                //    meshTransform = boneTrans * meshTransform * nodeTrans;
+                //}
 
                 var boneWeights = new Dictionary<int, List<BoneWeight>>();
                 if (brickMesh.Mesh.HasBones)

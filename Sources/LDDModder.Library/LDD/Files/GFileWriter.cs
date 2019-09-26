@@ -98,6 +98,7 @@ namespace LDDModder.LDD.Files
 
                     var dataOffsets = new List<int>();
                     int totalOffset = 0;
+
                     for (int i = 0; i < meshFile.Header.VertexCount; i++)
                     {
                         var vertexBones = meshFile.Geometry.Bones[i];
@@ -108,8 +109,8 @@ namespace LDDModder.LDD.Files
                             bw.WriteSingle(vertexBones.BoneWeights[j].Weight);
                         }
                         //bone count (4 bytes) + bones data (id + weight = 8 bytes) 
-                        totalOffset += 4 + (vertexBones.BoneWeights.Length * 8);
                         dataOffsets.Add(totalOffset);
+                        totalOffset += 4 + (vertexBones.BoneWeights.Length * 8); 
                     }
 
                     for (int i = 0; i < meshFile.Header.VertexCount; i++)

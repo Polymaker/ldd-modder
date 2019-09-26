@@ -1,4 +1,5 @@
-﻿using LDDModder.LDD.Parts;
+﻿using Assimp;
+using LDDModder.LDD.Parts;
 using LDDModder.Utilities;
 using System;
 using System.Collections.Generic;
@@ -65,8 +66,5 @@ namespace LDDModder.BrickEditor.UI
                     MessageBox.Show("There was an error loading the part.", "Error");
             }
         }
-
-
-        
     }
 }

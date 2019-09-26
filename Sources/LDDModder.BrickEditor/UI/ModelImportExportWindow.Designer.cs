@@ -32,12 +32,12 @@
             this.LddPathTextBox = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.ExportObjRadio = new System.Windows.Forms.RadioButton();
-            this.ExportDaeRadio = new System.Windows.Forms.RadioButton();
-            this.PartIdTextBox = new System.Windows.Forms.TextBox();
-            this.ExportPartButton = new System.Windows.Forms.Button();
             this.IncludeBonesCheckBox = new System.Windows.Forms.CheckBox();
+            this.ExportPartButton = new System.Windows.Forms.Button();
+            this.PartIdTextBox = new System.Windows.Forms.TextBox();
+            this.ExportDaeRadio = new System.Windows.Forms.RadioButton();
+            this.ExportObjRadio = new System.Windows.Forms.RadioButton();
+            this.label2 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -81,24 +81,34 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Export";
             // 
-            // label2
+            // IncludeBonesCheckBox
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 27);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(40, 13);
-            this.label2.TabIndex = 0;
-            this.label2.Text = "Part ID";
+            this.IncludeBonesCheckBox.AutoSize = true;
+            this.IncludeBonesCheckBox.Checked = true;
+            this.IncludeBonesCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.IncludeBonesCheckBox.Location = new System.Drawing.Point(27, 123);
+            this.IncludeBonesCheckBox.Name = "IncludeBonesCheckBox";
+            this.IncludeBonesCheckBox.Size = new System.Drawing.Size(94, 17);
+            this.IncludeBonesCheckBox.TabIndex = 5;
+            this.IncludeBonesCheckBox.Text = "Include Bones";
+            this.IncludeBonesCheckBox.UseVisualStyleBackColor = true;
             // 
-            // ExportObjRadio
+            // ExportPartButton
             // 
-            this.ExportObjRadio.AutoSize = true;
-            this.ExportObjRadio.Location = new System.Drawing.Point(9, 77);
-            this.ExportObjRadio.Name = "ExportObjRadio";
-            this.ExportObjRadio.Size = new System.Drawing.Size(98, 17);
-            this.ExportObjRadio.TabIndex = 1;
-            this.ExportObjRadio.Text = "Wavefront (obj)";
-            this.ExportObjRadio.UseVisualStyleBackColor = true;
+            this.ExportPartButton.Location = new System.Drawing.Point(47, 196);
+            this.ExportPartButton.Name = "ExportPartButton";
+            this.ExportPartButton.Size = new System.Drawing.Size(75, 23);
+            this.ExportPartButton.TabIndex = 4;
+            this.ExportPartButton.Text = "Export";
+            this.ExportPartButton.UseVisualStyleBackColor = true;
+            this.ExportPartButton.Click += new System.EventHandler(this.ExportPartButton_Click);
+            // 
+            // PartIdTextBox
+            // 
+            this.PartIdTextBox.Location = new System.Drawing.Point(47, 24);
+            this.PartIdTextBox.Name = "PartIdTextBox";
+            this.PartIdTextBox.Size = new System.Drawing.Size(100, 20);
+            this.PartIdTextBox.TabIndex = 3;
             // 
             // ExportDaeRadio
             // 
@@ -112,34 +122,24 @@
             this.ExportDaeRadio.Text = "Collada (dae)";
             this.ExportDaeRadio.UseVisualStyleBackColor = true;
             // 
-            // PartIdTextBox
+            // ExportObjRadio
             // 
-            this.PartIdTextBox.Location = new System.Drawing.Point(47, 24);
-            this.PartIdTextBox.Name = "PartIdTextBox";
-            this.PartIdTextBox.Size = new System.Drawing.Size(100, 20);
-            this.PartIdTextBox.TabIndex = 3;
+            this.ExportObjRadio.AutoSize = true;
+            this.ExportObjRadio.Location = new System.Drawing.Point(9, 77);
+            this.ExportObjRadio.Name = "ExportObjRadio";
+            this.ExportObjRadio.Size = new System.Drawing.Size(98, 17);
+            this.ExportObjRadio.TabIndex = 1;
+            this.ExportObjRadio.Text = "Wavefront (obj)";
+            this.ExportObjRadio.UseVisualStyleBackColor = true;
             // 
-            // ExportPartButton
+            // label2
             // 
-            this.ExportPartButton.Location = new System.Drawing.Point(47, 196);
-            this.ExportPartButton.Name = "ExportPartButton";
-            this.ExportPartButton.Size = new System.Drawing.Size(75, 23);
-            this.ExportPartButton.TabIndex = 4;
-            this.ExportPartButton.Text = "Export";
-            this.ExportPartButton.UseVisualStyleBackColor = true;
-            this.ExportPartButton.Click += new System.EventHandler(this.ExportPartButton_Click);
-            // 
-            // IncludeBonesCheckBox
-            // 
-            this.IncludeBonesCheckBox.AutoSize = true;
-            this.IncludeBonesCheckBox.Checked = true;
-            this.IncludeBonesCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.IncludeBonesCheckBox.Location = new System.Drawing.Point(27, 123);
-            this.IncludeBonesCheckBox.Name = "IncludeBonesCheckBox";
-            this.IncludeBonesCheckBox.Size = new System.Drawing.Size(94, 17);
-            this.IncludeBonesCheckBox.TabIndex = 5;
-            this.IncludeBonesCheckBox.Text = "Include Bones";
-            this.IncludeBonesCheckBox.UseVisualStyleBackColor = true;
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(6, 27);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(40, 13);
+            this.label2.TabIndex = 0;
+            this.label2.Text = "Part ID";
             // 
             // ModelImportExportWindow
             // 
