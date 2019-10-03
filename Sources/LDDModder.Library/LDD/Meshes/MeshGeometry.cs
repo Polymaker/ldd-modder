@@ -158,7 +158,7 @@ namespace LDDModder.LDD.Meshes
             }
         }
 
-        internal void RebuildIndices()
+        public void RebuildIndices()
         {
             var triIdx = GetTriangleIndices();
             for (int i = 0; i < IndexCount; i++)

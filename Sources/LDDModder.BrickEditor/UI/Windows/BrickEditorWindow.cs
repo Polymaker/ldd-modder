@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LDDModder.BrickEditor.UI.Panels;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -13,24 +14,73 @@ namespace LDDModder.BrickEditor.UI.Windows
 {
     public partial class BrickEditorWindow : Form
     {
+        private NavigationPanel Navigation;
+        private ViewportPanel Viewport;
+
         public BrickEditorWindow()
         {
             InitializeComponent();
-            visualStudioToolStripExtender1.SetStyle(toolStrip1, VisualStudioToolStripExtender.VsVersion.Vs2015, dockPanel1.Theme);
+            visualStudioToolStripExtender1.SetStyle(menuStrip1, VisualStudioToolStripExtender.VsVersion.Vs2015, DockPanelControl.Theme);
+            
+        }
+
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
             InitializePanels();
         }
 
         private void InitializePanels()
         {
-            var navigation = new DockContent
-            {
-                Text = "Navigation",
-                CloseButtonVisible = false,
-                CloseButton = false,
-                DockAreas = DockAreas.DockLeft | DockAreas.DockRight | DockAreas.Float
-            };
+            Navigation = new NavigationPanel();
+            Viewport = new ViewportPanel();
+            Navigation.Show(DockPanelControl, DockState.DockLeft);
+            Viewport.Show(DockPanelControl, DockState.Document);
+        }
 
-            navigation.Show(dockPanel1, DockState.DockLeft);
+
+        private void LDDEnvironmentToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (var dlg = new LddEnvironmentConfigWindow())
+                dlg.ShowDialog();
+        }
+
+        private void LddLocalizationsMenuItem_Click(object sender, EventArgs e)
+        {
+            var existingPanel = DockPanelControl.Documents.OfType<LocalisationEditorPanel>().FirstOrDefault();
+            if (existingPanel != null)
+            {
+                existingPanel.Activate();
+                return;
+            }
+
+            var locEditPanel = new LocalisationEditorPanel();
+            locEditPanel.Show(DockPanelControl, DockState.Document);
+        }
+
+        private void BrickEditorWindow_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            foreach (var form in DockPanelControl.Documents.OfType<DockContent>().ToList())
+            {
+                form.Close();
+                if (!form.IsDisposed)
+                {
+                    e.Cancel = true;
+                    break;
+                }
+            }
+        }
+
+        private void DockPanelControl_ActiveDocumentChanged(object sender, EventArgs e)
+        {
+            if (!(DockPanelControl.ActiveDocument is ViewportPanel))
+            {
+                Navigation.Hide();
+            }
+            else
+            {
+                Navigation.Show();
+            }
         }
     }
 }

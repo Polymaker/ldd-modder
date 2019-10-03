@@ -40,7 +40,7 @@ namespace LDDModder.LDD
         public static string FindInstallFolder()
         {
             string programFilesPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
-            programFilesPath = programFilesPath.Substring(programFilesPath.IndexOf(Path.VolumeSeparatorChar) + 1);
+            programFilesPath = programFilesPath.Substring(programFilesPath.IndexOf(Path.VolumeSeparatorChar) + 2);
 
             foreach (string volume in Environment.GetLogicalDrives())
             {
