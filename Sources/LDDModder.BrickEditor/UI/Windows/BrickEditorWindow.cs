@@ -82,5 +82,16 @@ namespace LDDModder.BrickEditor.UI.Windows
                 Navigation.Show();
             }
         }
+
+        private void CreateFromBrickToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (var dlg = new SelectBrickDialog())
+            {
+                if (dlg.ShowDialog() == DialogResult.OK)
+                {
+
+                }
+            }
+        }
     }
 }

@@ -37,6 +37,8 @@
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.createFromBrickToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.lDDEnvironmentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.lDDToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -81,7 +83,9 @@
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.newToolStripMenuItem,
-            this.openToolStripMenuItem});
+            this.openToolStripMenuItem,
+            this.toolStripSeparator2,
+            this.createFromBrickToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
@@ -89,14 +93,26 @@
             // newToolStripMenuItem
             // 
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.newToolStripMenuItem.Text = "New";
             // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.openToolStripMenuItem.Text = "Open";
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(177, 6);
+            // 
+            // createFromBrickToolStripMenuItem
+            // 
+            this.createFromBrickToolStripMenuItem.Name = "createFromBrickToolStripMenuItem";
+            this.createFromBrickToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.createFromBrickToolStripMenuItem.Text = "Create from brick...";
+            this.createFromBrickToolStripMenuItem.Click += new System.EventHandler(this.CreateFromBrickToolStripMenuItem_Click);
             // 
             // settingsToolStripMenuItem
             // 
@@ -109,7 +125,7 @@
             // lDDEnvironmentToolStripMenuItem
             // 
             this.lDDEnvironmentToolStripMenuItem.Name = "lDDEnvironmentToolStripMenuItem";
-            this.lDDEnvironmentToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
+            this.lDDEnvironmentToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.lDDEnvironmentToolStripMenuItem.Text = "LDD Environment";
             this.lDDEnvironmentToolStripMenuItem.Click += new System.EventHandler(this.LDDEnvironmentToolStripMenuItem_Click);
             // 
@@ -127,25 +143,25 @@
             // LddPreferencesMenuItem
             // 
             this.LddPreferencesMenuItem.Name = "LddPreferencesMenuItem";
-            this.LddPreferencesMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.LddPreferencesMenuItem.Size = new System.Drawing.Size(142, 22);
             this.LddPreferencesMenuItem.Text = "Preferences";
             // 
             // LddLocalizationsMenuItem
             // 
             this.LddLocalizationsMenuItem.Name = "LddLocalizationsMenuItem";
-            this.LddLocalizationsMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.LddLocalizationsMenuItem.Size = new System.Drawing.Size(142, 22);
             this.LddLocalizationsMenuItem.Text = "Localizations";
             this.LddLocalizationsMenuItem.Click += new System.EventHandler(this.LddLocalizationsMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(139, 6);
             // 
             // StartLddMenuItem
             // 
             this.StartLddMenuItem.Name = "StartLddMenuItem";
-            this.StartLddMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.StartLddMenuItem.Size = new System.Drawing.Size(142, 22);
             this.StartLddMenuItem.Text = "Start LDD";
             // 
             // BrickEditorWindow
@@ -183,5 +199,7 @@
         private System.Windows.Forms.ToolStripMenuItem StartLddMenuItem;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem lDDEnvironmentToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripMenuItem createFromBrickToolStripMenuItem;
     }
 }

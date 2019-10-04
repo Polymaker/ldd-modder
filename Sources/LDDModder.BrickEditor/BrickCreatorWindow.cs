@@ -672,7 +672,7 @@ namespace LDDModder.BrickEditor
                         verts[i] = new Vertex(vPos, vNorm, vTex);
 
                         if (brickMesh.Mesh.HasBones)
-                            verts[i].BoneWeights.AddRange(boneWeights[i]);
+                            verts[i].BoneWeights.AddRange(boneWeights[vIndex]);
                     }
 
                     builder.AddTriangle(verts[0], verts[1], verts[2]);

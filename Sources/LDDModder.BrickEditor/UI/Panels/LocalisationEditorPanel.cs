@@ -76,14 +76,14 @@ namespace LDDModder.BrickEditor.UI.Panels
         #endregion
 
         private LocalizationFile LanguagesConfigFile;
-        private BindingList<LanguageInfo> Languages;
+        private SortableBindingList<LanguageInfo> Languages;
         private Dictionary<string, LocalizationFile> AppLocalizations;
         private Dictionary<string, LocalizationFile> MatLocalizations;
 
         public LocalisationEditorPanel()
         {
             InitializeComponent();
-            Languages = new BindingList<LanguageInfo>();
+            Languages = new SortableBindingList<LanguageInfo>();
             AppLocalizations = new Dictionary<string, LocalizationFile>();
             MatLocalizations = new Dictionary<string, LocalizationFile>();
 

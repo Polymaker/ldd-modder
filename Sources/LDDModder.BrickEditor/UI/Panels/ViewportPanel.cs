@@ -102,7 +102,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             GL.Disable(EnableCap.Texture2D);
             //GL.Enable(EnableCap.ColorMaterial);
             //GL.Enable(EnableCap.LineSmooth);
-            //GL.Enable(EnableCap.DepthTest);
+            GL.Enable(EnableCap.DepthTest);
             //GL.Enable(EnableCap.Blend);
             
             GL.MatrixMode(MatrixMode.Projection);
@@ -112,35 +112,50 @@ namespace LDDModder.BrickEditor.UI.Panels
             var viewMatrix = Matrix4.LookAt(new Vector3(5), Vector3.Zero, Vector3.UnitY);
             GL.LoadMatrix(ref viewMatrix);
 
-  
+            var vertices = new Vector3[]{
+                new Vector3(-1, 1, 1),
+                new Vector3(-1, -1, 1),
+                new Vector3(1, -1, 1),
+                new Vector3(1, 1, 1),
+
+                new Vector3(1, 1, -1),
+                new Vector3(1, -1, -1),
+                new Vector3(1, -1, 1),
+                new Vector3(1, 1, 1),
+
+                new Vector3(-1, 1, -1),
+                new Vector3(-1, -1, -1),
+                new Vector3(-1, -1, 1),
+                new Vector3(-1, 1, 1),
+
+                new Vector3(-1, 1, -1),
+                new Vector3(-1, 1, 1),
+                new Vector3(1, 1, 1),
+                new Vector3(1, 1, -1),
+            };
+
             GL.Color4(Color.FromArgb(80, 80, 220));
             GL.Begin(PrimitiveType.Quads);
-            
-            GL.Vertex3(-1, 1, 1);
-            GL.Vertex3(-1, -1, 1);
-            GL.Vertex3(1, -1, 1);
-            GL.Vertex3(1, 1, 1);
+            for (int i = 0; i < vertices.Length; i++)
+                GL.Vertex3(vertices[i]);
+            GL.End();
 
-            GL.Vertex3(1, 1, -1);
-            GL.Vertex3(1, -1, -1);
-            GL.Vertex3(1, -1, 1);
-            GL.Vertex3(1, 1, 1);
-
-            GL.Vertex3(-1, 1, -1);
-            GL.Vertex3(-1, -1, -1);
-            GL.Vertex3(-1, -1, 1);
-            GL.Vertex3(-1, 1, 1);
-
-            GL.Vertex3(-1, 1, -1);
-            GL.Vertex3(-1, 1, 1);
-            GL.Vertex3(1, 1, 1);
-            GL.Vertex3(1, 1, -1);
+            GL.Color4(Color.Black);
+            GL.LineWidth(2f);
+            GL.Begin(PrimitiveType.Lines);
+            for (int i = 0; i < vertices.Length - 1; i++)
+            {
+                GL.Vertex3(vertices[i]);
+                GL.Vertex3(vertices[i + 1]);
+            }
             GL.End();
         }
 
         private void RenderUI()
         {
             var viewSize = new Vector2(glControl1.Width, glControl1.Height);
+
+            GL.Disable(EnableCap.DepthTest);
 
             GL.MatrixMode(MatrixMode.Projection);
             GL.LoadMatrix(ref UIProjectionMatrix);

@@ -30,11 +30,6 @@
         {
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.AvailableLanguagesGrid = new System.Windows.Forms.DataGridView();
-            this.LanguageKeyColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.LanguageNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.LanguageEnabledColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.LanguageMaterialExistColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.LanguageAppExistColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.UpdateAvailableLanguagesButton = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
@@ -46,6 +41,11 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.MatTextKeyColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.LanguageKeyColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.LanguageNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.LanguageEnabledColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.LanguageMaterialExistColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.LanguageAppExistColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.AvailableLanguagesGrid)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -56,7 +56,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
-            // AvailableLanguageGrid
+            // AvailableLanguagesGrid
             // 
             this.AvailableLanguagesGrid.AllowUserToAddRows = false;
             this.AvailableLanguagesGrid.AllowUserToDeleteRows = false;
@@ -71,51 +71,11 @@
             this.LanguageMaterialExistColumn,
             this.LanguageAppExistColumn});
             this.AvailableLanguagesGrid.Location = new System.Drawing.Point(6, 19);
-            this.AvailableLanguagesGrid.Name = "AvailableLanguageGrid";
+            this.AvailableLanguagesGrid.Name = "AvailableLanguagesGrid";
             this.AvailableLanguagesGrid.RowHeadersVisible = false;
             this.AvailableLanguagesGrid.Size = new System.Drawing.Size(472, 117);
             this.AvailableLanguagesGrid.TabIndex = 1;
             this.AvailableLanguagesGrid.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.AvailableLanguagesGrid_CellContentClick);
-            // 
-            // LanguageKeyColumn
-            // 
-            this.LanguageKeyColumn.DataPropertyName = "Key";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            this.LanguageKeyColumn.DefaultCellStyle = dataGridViewCellStyle1;
-            this.LanguageKeyColumn.HeaderText = "Key";
-            this.LanguageKeyColumn.Name = "LanguageKeyColumn";
-            this.LanguageKeyColumn.ReadOnly = true;
-            this.LanguageKeyColumn.Width = 60;
-            // 
-            // LanguageNameColumn
-            // 
-            this.LanguageNameColumn.DataPropertyName = "Name";
-            this.LanguageNameColumn.HeaderText = "Name";
-            this.LanguageNameColumn.Name = "LanguageNameColumn";
-            this.LanguageNameColumn.Width = 140;
-            // 
-            // LanguageEnabledColumn
-            // 
-            this.LanguageEnabledColumn.DataPropertyName = "Enabled";
-            this.LanguageEnabledColumn.HeaderText = "Enabled";
-            this.LanguageEnabledColumn.Name = "LanguageEnabledColumn";
-            this.LanguageEnabledColumn.Width = 65;
-            // 
-            // LanguageMaterialExistColumn
-            // 
-            this.LanguageMaterialExistColumn.DataPropertyName = "MatFileExist";
-            this.LanguageMaterialExistColumn.HeaderText = "Materials Translated";
-            this.LanguageMaterialExistColumn.Name = "LanguageMaterialExistColumn";
-            this.LanguageMaterialExistColumn.ReadOnly = true;
-            this.LanguageMaterialExistColumn.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.LanguageMaterialExistColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-            // 
-            // LanguageAppExistColumn
-            // 
-            this.LanguageAppExistColumn.DataPropertyName = "AppFileExist";
-            this.LanguageAppExistColumn.HeaderText = "Application Translated";
-            this.LanguageAppExistColumn.Name = "LanguageAppExistColumn";
-            this.LanguageAppExistColumn.ReadOnly = true;
             // 
             // groupBox1
             // 
@@ -239,6 +199,48 @@
             this.MatTextKeyColumn.Name = "MatTextKeyColumn";
             this.MatTextKeyColumn.ReadOnly = true;
             // 
+            // LanguageKeyColumn
+            // 
+            this.LanguageKeyColumn.DataPropertyName = "Key";
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.LanguageKeyColumn.DefaultCellStyle = dataGridViewCellStyle1;
+            this.LanguageKeyColumn.HeaderText = "Key";
+            this.LanguageKeyColumn.Name = "LanguageKeyColumn";
+            this.LanguageKeyColumn.ReadOnly = true;
+            this.LanguageKeyColumn.Width = 60;
+            // 
+            // LanguageNameColumn
+            // 
+            this.LanguageNameColumn.DataPropertyName = "Name";
+            this.LanguageNameColumn.HeaderText = "Name";
+            this.LanguageNameColumn.Name = "LanguageNameColumn";
+            this.LanguageNameColumn.Width = 140;
+            // 
+            // LanguageEnabledColumn
+            // 
+            this.LanguageEnabledColumn.DataPropertyName = "Enabled";
+            this.LanguageEnabledColumn.HeaderText = "Enabled";
+            this.LanguageEnabledColumn.Name = "LanguageEnabledColumn";
+            this.LanguageEnabledColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            this.LanguageEnabledColumn.Width = 65;
+            // 
+            // LanguageMaterialExistColumn
+            // 
+            this.LanguageMaterialExistColumn.DataPropertyName = "MatFileExist";
+            this.LanguageMaterialExistColumn.HeaderText = "Materials Translated";
+            this.LanguageMaterialExistColumn.Name = "LanguageMaterialExistColumn";
+            this.LanguageMaterialExistColumn.ReadOnly = true;
+            this.LanguageMaterialExistColumn.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.LanguageMaterialExistColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            // 
+            // LanguageAppExistColumn
+            // 
+            this.LanguageAppExistColumn.DataPropertyName = "AppFileExist";
+            this.LanguageAppExistColumn.HeaderText = "Application Translated";
+            this.LanguageAppExistColumn.Name = "LanguageAppExistColumn";
+            this.LanguageAppExistColumn.ReadOnly = true;
+            this.LanguageAppExistColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            // 
             // LocalisationEditorPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -271,11 +273,11 @@
         private System.Windows.Forms.DataGridView dataGridView2;
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.DataGridViewTextBoxColumn MatTextKeyColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn AppTextKeyColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn LanguageKeyColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn LanguageNameColumn;
         private System.Windows.Forms.DataGridViewCheckBoxColumn LanguageEnabledColumn;
         private System.Windows.Forms.DataGridViewCheckBoxColumn LanguageMaterialExistColumn;
         private System.Windows.Forms.DataGridViewCheckBoxColumn LanguageAppExistColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn AppTextKeyColumn;
     }
 }
