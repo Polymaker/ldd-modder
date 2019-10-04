@@ -17,6 +17,8 @@ namespace LDDModder.LDD.Files
 
         public FolderEntry RootFolder { get; private set; }
 
+        public string FilePath => BaseStream is FileStream fs ? fs.Name : string.Empty;
+
         internal LifFile(Stream baseStream)
         {
             BaseStream = baseStream;
@@ -473,7 +475,7 @@ namespace LDDModder.LDD.Files
                         Reserved1 = 7,
                         Created = file.CreatedDate.ToFileTime(),
                         Modified = file.ModifiedDate.ToFileTime(),
-                        Accessed = file.ModifiedDate2.ToFileTime()
+                        Accessed = file.AccessedDate.ToFileTime()
                     };
                     bw.WriteStruct(fileEntry);
                 }
@@ -932,7 +934,7 @@ namespace LDDModder.LDD.Files
 
             public DateTime ModifiedDate { get; private set; }
 
-            public DateTime ModifiedDate2 { get; private set; }
+            public DateTime AccessedDate { get; private set; }
 
             internal FileEntry(Stream dataStream, string filename) : base(filename)
             {
@@ -975,11 +977,11 @@ namespace LDDModder.LDD.Files
 				GC.SuppressFinalize(this);
             }
 
-            public void SetFileAttributes(DateTime createdDate, DateTime modifiedDate, DateTime modifiedDate2)
+            public void SetFileAttributes(DateTime createdDate, DateTime modifiedDate, DateTime accessedDate)
             {
                 CreatedDate = createdDate;
                 ModifiedDate = modifiedDate;
-                ModifiedDate2 = modifiedDate2;
+                AccessedDate = accessedDate;
             }
 
             protected override void ValidateEntryName(string name)

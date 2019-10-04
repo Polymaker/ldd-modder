@@ -13,6 +13,10 @@ namespace LDDModder.BrickEditor.Rendering
 {
     public abstract class GLMeshBase : IDisposable
     {
+        public VertexArray Vao { get; protected set; }
+
+        public Buffer<int> IndexBuffer { get; protected set; }
+
         public Matrix4 Transform { get; set; }
 
         public Color4 MaterialColor { get; set; }
@@ -67,14 +71,13 @@ namespace LDDModder.BrickEditor.Rendering
 
         public abstract void BindToProgram(ObjectTK.Shaders.Program program);
         public abstract void Dispose();
+
+        public abstract void BindVertexAttribute(VertexArray vao, VertexAttrib attrib, int offset = 0);
+
     }
 
     public abstract class GLMeshBase<VT> : GLMeshBase, IDisposable where VT : struct
     {
-        public VertexArray Vao { get; protected set; }
-
-        public Buffer<int> IndexBuffer { get; protected set; }
-
         public Buffer<VT> VertexBuffer { get; private set; }
 
         public bool Disposed { get; private set; }
@@ -153,6 +156,12 @@ namespace LDDModder.BrickEditor.Rendering
             BoundAttributes.Add(new Tuple<VertexAttrib, int>(attrib, offset));
             if (VertexBuffer != null && Vao != null)
                 Vao.BindAttribute(attrib, VertexBuffer, offset);
+        }
+
+        public override void BindVertexAttribute(VertexArray vao, VertexAttrib attrib, int offset = 0)
+        {
+            if (VertexBuffer != null)
+                vao.BindAttribute(attrib, VertexBuffer, offset);
         }
 
         public override void BindToProgram(ObjectTK.Shaders.Program program)

@@ -551,7 +551,7 @@ namespace LDDModder.BrickEditor
 
             if (!string.IsNullOrEmpty(RepoFolder) && Debugger.IsAttached)
             {
-                Utilities.LddMeshExporter.ExportRoundEdge(partMesh.MainModel.Geometry,
+                LDDModder.Utilities.LddMeshExporter.ExportRoundEdge(partMesh.MainModel.Geometry,
                     Path.Combine(RepoFolder, "LDD Bricks", $"{partMesh.PartID} RE.dae"), "collada");
             }
             //MakeFlexible(partMesh);

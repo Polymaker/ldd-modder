@@ -23,10 +23,12 @@ namespace LDDModder.BrickEditor
         private int CurrentBrickIndex;
         private List<int> BrickIDList;
         private LDD.Data.LDDPartFiles CurrentBrick;
-        private List<GLMeshBase> MeshList;
+        private List<BrickModel> MeshList;
         private BasicShaderProgram BasicShader;
         private TexturedShaderProgram TexturedShader;
+        private OutlineShaderProgram OutlineShaderProgram;
         private Texture2D DefaultTexture;
+        private Texture2D[] OutlineTexs;
 
         private Matrix4 ViewMatrix;
         private Matrix4 Projection;
@@ -38,11 +40,12 @@ namespace LDDModder.BrickEditor
         private Stopwatch LogTimer;
         private string LddDbDirectory;
 
+
         public GLTestWindow() : base(800,600, new GraphicsMode(GraphicsMode.Default.ColorFormat, 24,8,4))
         {
             VSync = VSyncMode.Off;
             LightPosition = new Vector3(-5, 10, 5);
-            MeshList = new List<GLMeshBase>();
+            MeshList = new List<BrickModel>();
             BrickIDList = new List<int>();
             
         }
@@ -118,6 +121,8 @@ namespace LDDModder.BrickEditor
 
             LoadBrickList();
 
+            CurrentBrickIndex = BrickIDList.IndexOf(3023);
+
             if (BrickIDList.Any() && CurrentBrickIndex >= 0 && CurrentBrickIndex < BrickIDList.Count)
             {
                 LoadBrickModel(BrickIDList[CurrentBrickIndex]);
@@ -125,6 +130,47 @@ namespace LDDModder.BrickEditor
             
             
             LogTimer = Stopwatch.StartNew();
+        }
+
+        private Texture2D CreateOutlineTexture(LDD.Files.MeshFile meshFile)
+        {
+            int h = (int)Math.Ceiling(meshFile.Indices.Count / 21f);
+            var texture = new Texture2D(SizedInternalFormat.Rgba32f, 64, h, 1);
+            
+            var pixels = new List<Vector4>();
+            var pixelRows = new List<Vector4[]>();
+            foreach(var idx in meshFile.Indices)
+            {
+                var pix = new Vector4();
+                for (int i = 0; i < 3; i++)
+                {
+                    pix.Xy = idx.RoundEdgeData.Coords[(i * 2)].ToGL();
+                    pix.Zw = idx.RoundEdgeData.Coords[(i * 2) + 1].ToGL();
+                    pixels.Add(pix);
+                }
+
+                if (pixels.Count == 63)
+                {
+                    pixels.Add(Vector4.Zero);
+                    pixelRows.Add(pixels.ToArray());
+                    pixels.Clear();
+                }
+            }
+
+            
+            if (pixels.Count > 0)
+            {
+                while (pixels.Count < 64)
+                    pixels.Add(Vector4.Zero);
+                pixelRows.Add(pixels.ToArray());
+            }
+            //pixelRows.Reverse();
+            pixels.Clear();
+            pixels.AddRange(pixelRows.SelectMany(x => x));
+
+            GL.TexSubImage2D(texture.TextureTarget, 0, 0, 0, 64, h, PixelFormat.Rgba, PixelType.Float, pixels.ToArray());
+            texture.SetFilter(TextureMinFilter.Nearest, TextureMagFilter.Nearest);
+            return texture;
         }
 
         private void InitializeGL()
@@ -144,6 +190,19 @@ namespace LDDModder.BrickEditor
             DefaultTexture.LoadBitmap(texImage, 0);
             DefaultTexture.SetFilter(TextureMinFilter.Nearest, TextureMagFilter.Nearest);
 
+            OutlineTexs = new Texture2D[3];
+            var imgNames = new string[] { "blue.png", "red.png", "magenta.png" };
+            for (int i = 0; i < 3; i++)
+            {
+                var imgPath = Path.Combine(@"C:\Program Files (x86)\LEGO Company\LEGO Digital Designer\Assets\Shaders", imgNames[i]);
+                texImage = (Bitmap)Image.FromFile(imgPath);
+                BitmapTexture.CreateCompatible(texImage, out Texture2D outTex, 1);
+                OutlineTexs[i] = outTex;
+                OutlineTexs[i].LoadBitmap(texImage, 0);
+                OutlineTexs[i].SetFilter(TextureMinFilter.Nearest, TextureMagFilter.Nearest);
+                OutlineTexs[i].SetWrapMode(TextureWrapMode.Clamp);
+            }
+
             ProgramFactory.BasePath = "Rendering";
             BasicShader = ProgramFactory.Create<BasicShaderProgram>();
             BasicShader.Use();
@@ -154,6 +213,16 @@ namespace LDDModder.BrickEditor
             TexturedShader.Use();
             TexturedShader.DisplayWireframe.Set(true);
             TexturedShader.LightPosition.Set(LightPosition);
+
+
+
+            OutlineShaderProgram = ProgramFactory.Create<OutlineShaderProgram>();
+            OutlineShaderProgram.Use();
+            //OutlineShaderProgram.PackedRoundEdgeDataTexture.Set(TextureUnit.Texture0);
+            //OutlineShaderProgram.Texture0.Set(TextureUnit.Texture1);
+            //OutlineShaderProgram.Texture1.Set(TextureUnit.Texture2);
+            //OutlineShaderProgram.Texture2.Set(TextureUnit.Texture3);
+            
 
             SetupPerspective();
             SetupCamera();
@@ -195,24 +264,71 @@ namespace LDDModder.BrickEditor
                 var shaderToUse = model.IsTextured ?
                     (ObjectTK.Shaders.Program)TexturedShader :
                     (ObjectTK.Shaders.Program)BasicShader;
-                
-                foreach (var cull in model.Cullings)
+
+                model.Geometry.RebuildIndices();
+
+                //var outlineTexture = CreateOutlineTexture(model);
+
+                //var mesh = GLMeshBase.CreateFromGeometry(model.Geometry);
+
+                //if (mesh is GLTexturedMesh texturedMesh)
+                //{
+                //    texturedMesh.TextureUnit = TextureUnit.Texture4;
+                //}
+                //mesh.MaterialColor = new Color4(0.7f, 0.7f, 0.7f, 1);
+                //mesh.BindToProgram(shaderToUse);
+
+                var brickModel = new BrickModel()
                 {
-                    var mesh = GLMeshBase.CreateFromGeometry(model.GetCullingGeometry(cull));
+                    Mesh = model,
+                    MaterialColor = new Color4(0.7f, 0.7f, 0.7f, 1),
+                    //OutlineTexture = outlineTexture,
+                    //OutlineIndices = new List<Vector2>(),
+                    //Positions = new List<Vector3>()
+                };
+                brickModel.InitializeBuffers(OutlineShaderProgram);
+                //foreach (var idx in model.Geometry.Indices)
+                //{
+                //    //int reOffset = idx.IIndex * 3 + (int)Math.Floor(idx.IIndex / 21d);
+                //    float x = (idx.IIndex % 21);
+                //    float y = (int)Math.Floor(idx.IIndex / 21d);
+                //    brickModel.OutlineIndices.Add(new Vector2((x * 3f) / 64f, y / (float)outlineTexture.Height));
+                //    brickModel.Positions.Add(idx.Vertex.Position.ToGL());
+                //}
 
-                    mesh.BindToProgram(shaderToUse);
-                    //mesh.MaterialColor = new Color4(0.7f, 0.7f, 0.7f, 1);
-                    mesh.MaterialColor = Color4.FromHsl(new Vector4(curHue, 1, 0.6f, 0.7f));
-                    curHue = (curHue + hueStep) % 1f;
+                MeshList.Add(brickModel);
+                //foreach (var cull in model.Cullings)
+                //{
+                //    var cullGeom = model.GetCullingGeometry(cull);
+                //    var mesh = GLMeshBase.CreateFromGeometry(cullGeom);
 
-                    if (mesh is GLTexturedMesh texturedMesh)
-                    {
-                        mesh.MaterialColor = new Color4(1, 1, 1, 0.7f);
-                        texturedMesh.Texture = DefaultTexture;
-                    }
+                //    var brickModel = new BrickModel()
+                //    {
+                //        Mesh = mesh,
+                //        OutlineTexture = outlineTexture,
+                //        OutlineIndices = new List<Vector2>()
+                //    };
 
-                    MeshList.Add(mesh);
-                }
+                //    foreach (var idx in cullGeom.Indices)
+                //    {
+                //        int x = (idx.IIndex % 21);
+                //        int y = (idx.IIndex - x) / 21;
+                //        brickModel.OutlineIndices.Add(new Vector2((x * 3f) / 64f, y / (float)outlineTexture.Height));
+                //    }
+
+                //    mesh.BindToProgram(shaderToUse);
+                //    mesh.MaterialColor = new Color4(0.7f, 0.7f, 0.7f, 1);
+                //    //mesh.MaterialColor = Color4.FromHsl(new Vector4(curHue, 1, 0.6f, 0.7f));
+                //    curHue = (curHue + hueStep) % 1f;
+
+                //    if (mesh is GLTexturedMesh texturedMesh)
+                //    {
+                //        mesh.MaterialColor = new Color4(1, 1, 1, 0.7f);
+                //        texturedMesh.Texture = DefaultTexture;
+                //    }
+
+                //    MeshList.Add(brickModel);
+                //}
 
             }
             MeshList.Reverse();
@@ -235,24 +351,32 @@ namespace LDDModder.BrickEditor
             {
                 foreach (var model in MeshList)
                 {
-                    model.BoundProgram.Use();
-                    model.AssignShaderValues(ViewMatrix, Projection);
+                    //model.Mesh.BoundProgram.Use();
+                    //model.Mesh.AssignShaderValues(ViewMatrix, Projection);
+                    var mvpMatrix = Matrix4.Identity * ViewMatrix * Projection;
+                    OutlineShaderProgram.Use();
+                    OutlineShaderProgram.MVPMatrix.Set(mvpMatrix);
 
-                    if (model.MaterialColor.A < 1f)
-                    {
-                        GL.Enable(EnableCap.CullFace);
+                    OutlineShaderProgram.Texture0.BindTexture(TextureUnit.Texture1, OutlineTexs[0]);
+                    OutlineShaderProgram.Texture1.BindTexture(TextureUnit.Texture2, OutlineTexs[1]);
+                    OutlineShaderProgram.Texture2.BindTexture(TextureUnit.Texture3, OutlineTexs[2]);
+                    model.DrawOutline(OutlineShaderProgram);
 
-                        GL.CullFace(CullFaceMode.Front);
-                        model.Draw();
+                    //if (model.Mesh.MaterialColor.A < 1f)
+                    //{
+                    //    GL.Enable(EnableCap.CullFace);
 
-                        GL.CullFace(CullFaceMode.Back);
-                        model.Draw();
-                        GL.Disable(EnableCap.CullFace);
-                    }
-                    else
-                    {
-                        model.Draw();
-                    }
+                    //    GL.CullFace(CullFaceMode.Front);
+                    //    model.Mesh.Draw();
+
+                    //    GL.CullFace(CullFaceMode.Back);
+                    //    model.Mesh.Draw();
+                    //    GL.Disable(EnableCap.CullFace);
+                    //}
+                    //else
+                    //{
+                    //    model.Mesh.Draw();
+                    //}
                 }
             }
 
@@ -262,9 +386,17 @@ namespace LDDModder.BrickEditor
         protected override void OnClosing(CancelEventArgs e)
         {
             base.OnClosing(e);
+            DisposeResources();
+        }
+
+        private void DisposeResources()
+        {
             ClearMeshes();
             BasicShader.Dispose();
             TexturedShader.Dispose();
+            OutlineShaderProgram.Dispose();
+            for (int i = 0; i < 3; i++)
+                OutlineTexs[i].Dispose();
             if (DefaultTexture != null)
                 DefaultTexture.Dispose();
         }
@@ -285,6 +417,13 @@ namespace LDDModder.BrickEditor
                 CurrentBrickIndex = (++CurrentBrickIndex) % BrickIDList.Count;
                 if (CurrentBrickIndex >= 0 && CurrentBrickIndex < BrickIDList.Count)
                     LoadBrickModel(BrickIDList[CurrentBrickIndex]);
+            }
+
+            if (e.Key >= Key.Number0 && e.Key <= Key.Number6)
+            {
+                OutlineShaderProgram.Use();
+                int pair = (int)e.Key - (int)Key.Number0;
+                OutlineShaderProgram.PairToDisplay.Set(pair);
             }
         }
     }

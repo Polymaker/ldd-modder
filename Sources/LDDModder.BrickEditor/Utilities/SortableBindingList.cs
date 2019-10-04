@@ -11,9 +11,10 @@ namespace System.Collections.Generic
     public class SortableBindingList<T> : BindingList<T>
     {
         private readonly Dictionary<Type, PropertyComparer<T>> comparers;
-        private bool isSorted;
-        private ListSortDirection listSortDirection;
-        private PropertyDescriptor propertyDescriptor;
+        public bool IsSorted { get; private set; }
+        public ListSortDirection SortDirection { get; private set; }
+        public PropertyDescriptor PropertyDescriptor { get; private set; }
+
 
         public SortableBindingList()
             : base(new List<T>())
@@ -34,22 +35,27 @@ namespace System.Collections.Generic
 
         protected override bool IsSortedCore
         {
-            get { return this.isSorted; }
+            get { return this.IsSorted; }
         }
 
         protected override PropertyDescriptor SortPropertyCore
         {
-            get { return this.propertyDescriptor; }
+            get { return this.PropertyDescriptor; }
         }
 
         protected override ListSortDirection SortDirectionCore
         {
-            get { return this.listSortDirection; }
+            get { return this.SortDirection; }
         }
 
         protected override bool SupportsSearchingCore
         {
             get { return true; }
+        }
+
+        public void ApplySort(PropertyDescriptor property, ListSortDirection direction)
+        {
+            ApplySortCore(property, direction);
         }
 
         protected override void ApplySortCore(PropertyDescriptor property, ListSortDirection direction)
@@ -67,18 +73,18 @@ namespace System.Collections.Generic
             comparer.SetPropertyAndDirection(property, direction);
             itemsList.Sort(comparer);
 
-            this.propertyDescriptor = property;
-            this.listSortDirection = direction;
-            this.isSorted = true;
+            this.PropertyDescriptor = property;
+            this.SortDirection = direction;
+            this.IsSorted = true;
 
             this.OnListChanged(new ListChangedEventArgs(ListChangedType.Reset, -1));
         }
 
         protected override void RemoveSortCore()
         {
-            this.isSorted = false;
-            this.propertyDescriptor = base.SortPropertyCore;
-            this.listSortDirection = base.SortDirectionCore;
+            this.IsSorted = false;
+            this.PropertyDescriptor = base.SortPropertyCore;
+            this.SortDirection = base.SortDirectionCore;
 
             this.OnListChanged(new ListChangedEventArgs(ListChangedType.Reset, -1));
         }

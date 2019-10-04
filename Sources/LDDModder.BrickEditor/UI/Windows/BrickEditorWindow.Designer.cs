@@ -35,8 +35,8 @@
             this.visualStudioToolStripExtender1 = new WeifenLuo.WinFormsUI.Docking.VisualStudioToolStripExtender(this.components);
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.NewProjectMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.OpenProjectMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.createFromBrickToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -45,7 +45,10 @@
             this.LddPreferencesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.LddLocalizationsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.ToolsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ExportBrickMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.StartLddMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -72,7 +75,8 @@
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.settingsToolStripMenuItem,
-            this.lDDToolStripMenuItem});
+            this.lDDToolStripMenuItem,
+            this.ToolsMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(731, 24);
@@ -82,36 +86,38 @@
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.newToolStripMenuItem,
-            this.openToolStripMenuItem,
+            this.NewProjectMenuItem,
+            this.OpenProjectMenuItem,
             this.toolStripSeparator2,
             this.createFromBrickToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
             // 
-            // newToolStripMenuItem
+            // NewProjectMenuItem
             // 
-            this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.newToolStripMenuItem.Text = "New";
+            this.NewProjectMenuItem.Name = "NewProjectMenuItem";
+            this.NewProjectMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
+            this.NewProjectMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.NewProjectMenuItem.Text = "New Part Project";
             // 
-            // openToolStripMenuItem
+            // OpenProjectMenuItem
             // 
-            this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.openToolStripMenuItem.Text = "Open";
+            this.OpenProjectMenuItem.Name = "OpenProjectMenuItem";
+            this.OpenProjectMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
+            this.OpenProjectMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.OpenProjectMenuItem.Text = "Open Existing...";
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(202, 6);
             // 
             // createFromBrickToolStripMenuItem
             // 
             this.createFromBrickToolStripMenuItem.Name = "createFromBrickToolStripMenuItem";
-            this.createFromBrickToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.createFromBrickToolStripMenuItem.Text = "Create from brick...";
+            this.createFromBrickToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.createFromBrickToolStripMenuItem.Text = "Create From Brick...";
             this.createFromBrickToolStripMenuItem.Click += new System.EventHandler(this.CreateFromBrickToolStripMenuItem_Click);
             // 
             // settingsToolStripMenuItem
@@ -134,8 +140,7 @@
             this.lDDToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.LddPreferencesMenuItem,
             this.LddLocalizationsMenuItem,
-            this.toolStripSeparator1,
-            this.StartLddMenuItem});
+            this.toolStripSeparator1});
             this.lDDToolStripMenuItem.Name = "lDDToolStripMenuItem";
             this.lDDToolStripMenuItem.Size = new System.Drawing.Size(41, 20);
             this.lDDToolStripMenuItem.Text = "LDD";
@@ -143,26 +148,47 @@
             // LddPreferencesMenuItem
             // 
             this.LddPreferencesMenuItem.Name = "LddPreferencesMenuItem";
-            this.LddPreferencesMenuItem.Size = new System.Drawing.Size(142, 22);
+            this.LddPreferencesMenuItem.Size = new System.Drawing.Size(180, 22);
             this.LddPreferencesMenuItem.Text = "Preferences";
             // 
             // LddLocalizationsMenuItem
             // 
             this.LddLocalizationsMenuItem.Name = "LddLocalizationsMenuItem";
-            this.LddLocalizationsMenuItem.Size = new System.Drawing.Size(142, 22);
+            this.LddLocalizationsMenuItem.Size = new System.Drawing.Size(180, 22);
             this.LddLocalizationsMenuItem.Text = "Localizations";
             this.LddLocalizationsMenuItem.Click += new System.EventHandler(this.LddLocalizationsMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(139, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            // 
+            // ToolsMenuItem
+            // 
+            this.ToolsMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ExportBrickMenuItem,
+            this.toolStripSeparator3,
+            this.StartLddMenuItem});
+            this.ToolsMenuItem.Name = "ToolsMenuItem";
+            this.ToolsMenuItem.Size = new System.Drawing.Size(47, 20);
+            this.ToolsMenuItem.Text = "Tools";
+            // 
+            // ExportBrickMenuItem
+            // 
+            this.ExportBrickMenuItem.Name = "ExportBrickMenuItem";
+            this.ExportBrickMenuItem.Size = new System.Drawing.Size(182, 22);
+            this.ExportBrickMenuItem.Text = "Export Brick Model...";
             // 
             // StartLddMenuItem
             // 
             this.StartLddMenuItem.Name = "StartLddMenuItem";
-            this.StartLddMenuItem.Size = new System.Drawing.Size(142, 22);
-            this.StartLddMenuItem.Text = "Start LDD";
+            this.StartLddMenuItem.Size = new System.Drawing.Size(182, 22);
+            this.StartLddMenuItem.Text = "Start LDD...";
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(179, 6);
             // 
             // BrickEditorWindow
             // 
@@ -190,16 +216,19 @@
         private WeifenLuo.WinFormsUI.Docking.VS2015LightTheme vS2015LightTheme1;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem NewProjectMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem OpenProjectMenuItem;
         private System.Windows.Forms.ToolStripMenuItem lDDToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem LddPreferencesMenuItem;
         private System.Windows.Forms.ToolStripMenuItem LddLocalizationsMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.ToolStripMenuItem StartLddMenuItem;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem lDDEnvironmentToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem createFromBrickToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ToolsMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ExportBrickMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.ToolStripMenuItem StartLddMenuItem;
     }
 }

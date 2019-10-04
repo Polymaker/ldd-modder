@@ -7,14 +7,17 @@ using System.Threading.Tasks;
 
 namespace LDDModder.BrickEditor.Rendering
 {
+    public interface IVertexData
+    {
 
-    public struct VertVN
+    }
+    public struct VertVN : IVertexData
     {
         public Vector3 Position;
         public Vector3 Normal;
     }
 
-    public struct VertVNT
+    public struct VertVNT : IVertexData
     {
         public Vector3 Position;
         public Vector3 Normal;
