@@ -100,7 +100,7 @@ namespace LDDModder.LDD.Files
             byte[] buffer = new byte[4096];
             int bytesRead = 0;
             var dataStream = entry.GetStream();
-
+            dataStream.Seek(0, SeekOrigin.Begin);
             while (bytesRead < dataStream.Length)
             {
                 int bytesToRead = Math.Min(buffer.Length, (int)(dataStream.Length - bytesRead));

@@ -32,7 +32,32 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ObjectListView, Version=2.9.1.1072, Culture=neutral, PublicKeyToken=b1c5bf581481bcd4, processorArchitecture=MSIL">
+      <HintPath>..\packages\ObjectListView.Official.2.9.1\lib\net20\ObjectListView.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -46,21 +71,34 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LifExtractionWindow.cs">
+    <Compile Include="Windows\LifExtractionWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="LifExtractionWindow.Designer.cs">
+    <Compile Include="Windows\LifExtractionWindow.Designer.cs">
       <DependentUpon>LifExtractionWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="LifViewerWindow.cs">
+    <Compile Include="Models\LifFileInfo.cs" />
+    <Compile Include="Models\LifFolderInfo.cs" />
+    <Compile Include="Models\ILifItemInfo.cs" />
+    <Compile Include="Windows\LifViewerWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="LifViewerWindow.Designer.cs">
+    <Compile Include="Windows\LifViewerWindow.Designer.cs">
       <DependentUpon>LifViewerWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="NativeMethods.cs" />
+    <Compile Include="Native\Shell32.cs" />
+    <Compile Include="Native\SHFILEINFO.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="LifViewerWindow.resx">
+    <Compile Include="Utilities\FileTypeInfoHelper.cs" />
+    <Compile Include="Windows\SelectDestinationDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Windows\SelectDestinationDialog.Designer.cs">
+      <DependentUpon>SelectDestinationDialog.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Windows\LifViewerWindow.resx">
       <DependentUpon>LifViewerWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -73,6 +111,10 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="Windows\SelectDestinationDialog.resx">
+      <DependentUpon>SelectDestinationDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -98,6 +140,7 @@
     <Content Include="Resources\Arrow_Right_16x16_Black.png" />
     <Content Include="Resources\Arrow_Up_16x16_Black.png" />
     <Content Include="Resources\Folder_16x16.png" />
+    <Content Include="Resources\Folder_32x32.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
