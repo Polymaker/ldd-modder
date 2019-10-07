@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LDDModder.LifExtractor.Native;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -77,5 +78,46 @@ namespace LDDModder.LifExtractor
         public const int UISF_HIDEFOCUS = 0x1;
 
         #endregion
+
+        public static bool CopyFiles(IEnumerable<string> items, string destination)
+        {
+            try
+            {
+                var fs = new Shell32.SHFILEOPSTRUCT
+                {
+                    wFunc = Shell32.FileOperationType.FO_COPY,
+                    pFrom = string.Join("\0", items.ToArray()) + '\0' + '\0',
+                    pTo = destination + '\0' + '\0'
+                };
+                int result = Shell32.SHFileOperation(ref fs);
+                
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public static bool DeleteFileOrFolder(string destination)
+        {
+            try
+            {
+                var fs = new Shell32.SHFILEOPSTRUCT
+                {
+                    wFunc = Shell32.FileOperationType.FO_DELETE,
+                    pFrom = destination + '\0' + '\0',
+                    fFlags = Shell32.FileOperationFlags.FOF_NOCONFIRMATION | 
+                    Shell32.FileOperationFlags.FOF_NOERRORUI | 
+                    Shell32.FileOperationFlags.FOF_SILENT
+                };
+                Shell32.SHFileOperation(ref fs);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
     }
 }

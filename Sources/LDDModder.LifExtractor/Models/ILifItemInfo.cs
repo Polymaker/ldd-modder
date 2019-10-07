@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LDDModder.LDD.Files;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,10 @@ namespace LDDModder.LifExtractor.Models
 {
     interface ILifItemInfo
     {
+        LifFile.LifEntry Entry { get; }
         string Name { get; }
+
+        string FullName { get; }
 
         string Description { get; }
 

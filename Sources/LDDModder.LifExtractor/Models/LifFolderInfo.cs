@@ -7,19 +7,15 @@ using System.Threading.Tasks;
 
 namespace LDDModder.LifExtractor.Models
 {
-    class LifFolderInfo : ILifItemInfo
+    class LifFolderInfo : LifItemInfo<LifFile.FolderEntry>
     {
-        public LifFile.FolderEntry Folder { get; }
+        public LifFile.FolderEntry Folder => Entry as LifFile.FolderEntry;
 
-        public string Name => Folder.Name;
+        public override string Name => Folder.IsRootDirectory ? LifName : base.Name;
 
-        public string Description => string.Empty;
-
-        public string ItemImageKey => "folder";
-
-        public LifFolderInfo(LifFile.FolderEntry folder)
+        public LifFolderInfo(LifFile.FolderEntry folder) : base(folder)
         {
-            Folder = folder;
+            ItemImageKey = "folder";
         }
     }
 }

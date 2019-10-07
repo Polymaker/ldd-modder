@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 
 namespace LDDModder.LDD.Files
 {
@@ -19,6 +20,8 @@ namespace LDDModder.LDD.Files
 
         public string FilePath => BaseStream is FileStream fs ? fs.Name : string.Empty;
 
+        public string Name => !string.IsNullOrEmpty(FilePath) ? Path.GetFileNameWithoutExtension(FilePath) : string.Empty;
+
         internal LifFile(Stream baseStream)
         {
             BaseStream = baseStream;
@@ -28,6 +31,14 @@ namespace LDDModder.LDD.Files
         public LifFile()
         {
             RootFolder = new FolderEntry(this);
+        }
+
+        public IEnumerable<LifEntry> GetEntryHierarchy(bool drillDown = true)
+        {
+            yield return RootFolder;
+
+            foreach (var entry in RootFolder.GetEntryHierarchy(drillDown))
+                yield return entry;
         }
 
         #region Folder Methods
@@ -95,44 +106,74 @@ namespace LDDModder.LDD.Files
 
         #region Extraction Methods
 
-        private void ExtractFile(FileEntry entry, Stream target)
+        private void WriteFileToStream(FileEntry entry, Stream target) => WriteFileToStream(entry, target, CancellationToken.None);
+
+        private void WriteFileToStream(FileEntry entry, Stream target, CancellationToken cancellationToken)
         {
             byte[] buffer = new byte[4096];
             int bytesRead = 0;
             var dataStream = entry.GetStream();
             dataStream.Seek(0, SeekOrigin.Begin);
+
             while (bytesRead < dataStream.Length)
             {
+                if (cancellationToken.IsCancellationRequested)
+                    return;
+
                 int bytesToRead = Math.Min(buffer.Length, (int)(dataStream.Length - bytesRead));
                 bytesRead += dataStream.Read(buffer, 0, bytesToRead);
                 target.Write(buffer, 0, bytesToRead);
+
+                if (bytesRead == 0)
+                {
+                    if (bytesToRead > 0)
+                        throw new EndOfStreamException();
+                    break;
+                }
             }
+
         }
 
-        private void ExtractFile(FileEntry entry, string destinationPath)
+        private void ExtractFile(FileEntry entry, string destinationPath, CancellationToken cancellationToken)
         {
             using (var fs = File.Open(destinationPath, FileMode.Create))
-                ExtractFile(entry, fs);
+                WriteFileToStream(entry, fs, cancellationToken);
+
+            if (cancellationToken.IsCancellationRequested)
+                return;
 
             File.SetCreationTime(destinationPath, entry.CreatedDate);
             File.SetLastWriteTime(destinationPath, entry.ModifiedDate);
         }
 
-        private void ExtractFolder(FolderEntry folder, string destinationPath)
+        private void ExtractFolder(FolderEntry folder, string destinationPath, CancellationToken cancellationToken)
         {
             if (!Directory.Exists(destinationPath))
                 Directory.CreateDirectory(destinationPath);
 
             foreach (var file in folder.Files)
-                ExtractFile(file, Path.Combine(destinationPath, file.Name));
+            {
+                ExtractFile(file, Path.Combine(destinationPath, file.Name), cancellationToken);
+                if (cancellationToken.IsCancellationRequested)
+                    return;
+            }
 
             foreach (var subFolder in folder.Folders)
-                ExtractFolder(subFolder, Path.Combine(destinationPath, subFolder.Name));
+            {
+                ExtractFolder(subFolder, Path.Combine(destinationPath, subFolder.Name), cancellationToken);
+                if (cancellationToken.IsCancellationRequested)
+                    return;
+            }
         }
 
         public void ExtractTo(string directoryName)
         {
-            ExtractFolder(RootFolder, directoryName);
+            ExtractFolder(RootFolder, directoryName, CancellationToken.None);
+        }
+
+        public void ExtractTo(string directoryName, CancellationToken cancellationToken)
+        {
+            ExtractFolder(RootFolder, directoryName, cancellationToken);
         }
 
         #endregion
@@ -737,6 +778,23 @@ namespace LDDModder.LDD.Files
                 if (string.IsNullOrEmpty(name))
                     throw new ArgumentException("Name cannot be empty");
             }
+
+            public int GetLevel()
+            {
+                if (Parent != null)
+                    return Parent.GetLevel() + 1;
+                return 0;
+            }
+
+            public void ExtractToDirectory(string directory) => ExtractToDirectory(directory, CancellationToken.None);
+
+            public virtual void ExtractToDirectory(string directory, CancellationToken cancellationToken)
+            {
+                if (this is FolderEntry folder)
+                    Lif.ExtractFolder(folder, Path.Combine(directory, Name), cancellationToken);
+                else if (this is FileEntry file)
+                    Lif.ExtractFile(file, Path.Combine(directory, Name), cancellationToken);
+            }
         }
 
         public class FolderEntry : LifEntry, IEnumerable<LifEntry>
@@ -946,20 +1004,25 @@ namespace LDDModder.LDD.Files
 				Dispose();
 			}
 
-            public void ExtractTo(Stream targetStream)
+            public void ExtractToStream(Stream targetStream)
             {
-                Lif.ExtractFile(this, targetStream);
+                Lif.WriteFileToStream(this, targetStream);
             }
 
             public void ExtractTo(string filename)
             {
-                using (var fs = File.Open(filename, FileMode.Create))
-                    ExtractTo(fs);
+                ExtractTo(filename, CancellationToken.None);
             }
 
-            public void ExtractToDirectory(string directory)
+            public void ExtractTo(string filename, CancellationToken cancellationToken)
             {
-                ExtractTo(Path.Combine(directory, Name));
+                Lif.ExtractFile(this, filename, cancellationToken);
+            }
+
+            public override void ExtractToDirectory(string directory, CancellationToken cancellationToken)
+            {
+                Directory.CreateDirectory(directory);
+                base.ExtractToDirectory(directory, cancellationToken);
             }
 
             public Stream GetStream()
@@ -994,12 +1057,5 @@ namespace LDDModder.LDD.Files
 
         #endregion
 
-
-        private static bool IsValidPath(string path)
-        {
-            if (path.ContainsAny(Path.GetInvalidFileNameChars()))
-                return false;
-            return true;
-        }
     }
 }

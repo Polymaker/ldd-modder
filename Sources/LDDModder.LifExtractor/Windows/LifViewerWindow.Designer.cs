@@ -1,4 +1,4 @@
-﻿namespace LDDModder.LifExtractor
+﻿namespace LDDModder.LifExtractor.Windows
 {
     partial class LifViewerWindow
     {
@@ -34,13 +34,13 @@
             this.MainMenuStrip = new System.Windows.Forms.MenuStrip();
             this.FileMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.FileMenu_OpenItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.newLIFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.FileMenu_ExtractItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ViewMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.ViewModeDetailsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ViewModeSmallMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ViewModeLargeMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.LifTreeView = new System.Windows.Forms.TreeView();
             this.SmallIconImageList = new System.Windows.Forms.ImageList(this.components);
@@ -101,6 +101,7 @@
             // 
             this.FileMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.FileMenu_OpenItem,
+            this.newLIFToolStripMenuItem,
             this.toolStripSeparator2,
             this.FileMenu_ExtractItem});
             this.FileMenu.Name = "FileMenu";
@@ -111,29 +112,36 @@
             // 
             this.FileMenu_OpenItem.Name = "FileMenu_OpenItem";
             this.FileMenu_OpenItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.FileMenu_OpenItem.Size = new System.Drawing.Size(146, 22);
+            this.FileMenu_OpenItem.Size = new System.Drawing.Size(159, 22);
             this.FileMenu_OpenItem.Text = "Open";
             this.FileMenu_OpenItem.Click += new System.EventHandler(this.FileOpenMenuItem_Click);
+            // 
+            // newLIFToolStripMenuItem
+            // 
+            this.newLIFToolStripMenuItem.Name = "newLIFToolStripMenuItem";
+            this.newLIFToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
+            this.newLIFToolStripMenuItem.Size = new System.Drawing.Size(159, 22);
+            this.newLIFToolStripMenuItem.Text = "New LIF";
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(143, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(156, 6);
             // 
             // FileMenu_ExtractItem
             // 
             this.FileMenu_ExtractItem.Enabled = false;
             this.FileMenu_ExtractItem.Name = "FileMenu_ExtractItem";
-            this.FileMenu_ExtractItem.Size = new System.Drawing.Size(146, 22);
+            this.FileMenu_ExtractItem.Size = new System.Drawing.Size(159, 22);
             this.FileMenu_ExtractItem.Text = "Extract to...";
+            this.FileMenu_ExtractItem.Click += new System.EventHandler(this.FileMenu_ExtractItem_Click);
             // 
             // ViewMenu
             // 
             this.ViewMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ViewModeDetailsMenuItem,
             this.ViewModeSmallMenuItem,
-            this.ViewModeLargeMenuItem,
-            this.toolStripSeparator1});
+            this.ViewModeLargeMenuItem});
             this.ViewMenu.Name = "ViewMenu";
             this.ViewMenu.Size = new System.Drawing.Size(44, 20);
             this.ViewMenu.Text = "View";
@@ -160,11 +168,6 @@
             this.ViewModeLargeMenuItem.Size = new System.Drawing.Size(134, 22);
             this.ViewModeLargeMenuItem.Text = "Large Icons";
             this.ViewModeLargeMenuItem.Click += new System.EventHandler(this.ViewModeMenuItems_Click);
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(131, 6);
             // 
             // splitContainer1
             // 
@@ -214,6 +217,7 @@
             this.FolderListView.AllColumns.Add(this.FlvSizeColumn);
             this.FolderListView.AllColumns.Add(this.FlvCreatedColumn);
             this.FolderListView.AllColumns.Add(this.FlvModifiedColumn);
+            this.FolderListView.AllowDrop = true;
             this.FolderListView.AutoGenerateColumns = false;
             this.FolderListView.CellEditUseWholeCell = false;
             this.FolderListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
@@ -283,21 +287,22 @@
             this.ListMenu_OpenItem,
             this.ListMenu_ExtractItem});
             this.FolderListContextMenu.Name = "FolderListContextMenu";
-            this.FolderListContextMenu.Size = new System.Drawing.Size(110, 48);
+            this.FolderListContextMenu.Size = new System.Drawing.Size(119, 48);
             this.FolderListContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.FolderListContextMenu_Opening);
             // 
             // ListMenu_OpenItem
             // 
             this.ListMenu_OpenItem.Name = "ListMenu_OpenItem";
-            this.ListMenu_OpenItem.Size = new System.Drawing.Size(109, 22);
+            this.ListMenu_OpenItem.Size = new System.Drawing.Size(118, 22);
             this.ListMenu_OpenItem.Text = "Open";
             this.ListMenu_OpenItem.Click += new System.EventHandler(this.ListMenu_OpenItem_Click);
             // 
             // ListMenu_ExtractItem
             // 
             this.ListMenu_ExtractItem.Name = "ListMenu_ExtractItem";
-            this.ListMenu_ExtractItem.Size = new System.Drawing.Size(109, 22);
-            this.ListMenu_ExtractItem.Text = "Extract";
+            this.ListMenu_ExtractItem.Size = new System.Drawing.Size(118, 22);
+            this.ListMenu_ExtractItem.Text = "Extract…";
+            this.ListMenu_ExtractItem.Click += new System.EventHandler(this.ListMenu_ExtractItem_Click);
             // 
             // LargeIconImageList
             // 
@@ -358,10 +363,10 @@
             // ToolBarFolderCombo
             // 
             this.ToolBarFolderCombo.AutoSize = false;
+            this.ToolBarFolderCombo.MaxDropDownItems = 10;
             this.ToolBarFolderCombo.Name = "ToolBarFolderCombo";
             this.ToolBarFolderCombo.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
             this.ToolBarFolderCombo.Size = new System.Drawing.Size(150, 23);
-            this.ToolBarFolderCombo.Text = "DB";
             // 
             // LifViewerWindow
             // 
@@ -416,12 +421,12 @@
         private System.Windows.Forms.ToolStripMenuItem ViewModeDetailsMenuItem;
         private System.Windows.Forms.ToolStripMenuItem ViewModeSmallMenuItem;
         private System.Windows.Forms.ToolStripMenuItem ViewModeLargeMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem FileMenu_OpenItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem FileMenu_ExtractItem;
         private System.Windows.Forms.ContextMenuStrip FolderListContextMenu;
         private System.Windows.Forms.ToolStripMenuItem ListMenu_OpenItem;
         private System.Windows.Forms.ToolStripMenuItem ListMenu_ExtractItem;
+        private System.Windows.Forms.ToolStripMenuItem newLIFToolStripMenuItem;
     }
 }

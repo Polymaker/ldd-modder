@@ -1,6 +1,7 @@
 ﻿using LDDModder.LDD.Files;
 using LDDModder.LifExtractor.Models;
 using LDDModder.LifExtractor.Utilities;
+using LDDModder.LifExtractor.Windows;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,10 +12,11 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace LDDModder.LifExtractor
+namespace LDDModder.LifExtractor.Windows
 {
     public partial class LifViewerWindow : Form
     {
@@ -26,13 +28,20 @@ namespace LDDModder.LifExtractor
 
         private List<ILifItemInfo> CurrentFolderItems;
 
+        private List<LifFolderInfo> CurrentLifFolders;
+
         public LifViewerWindow()
         {
             InitializeComponent();
             BackHistory = new List<LifFile.FolderEntry>();
             FwrdHistory = new List<LifFile.FolderEntry>();
             CurrentFolderItems = new List<ILifItemInfo>();
+            CurrentLifFolders = new List<LifFolderInfo>();
             NativeMethods.SetWindowTheme(LifTreeView.Handle, "Explorer", null);
+
+            ToolBarFolderCombo.ComboBox.DrawMode = DrawMode.OwnerDrawVariable;
+            ToolBarFolderCombo.ComboBox.DrawItem += ComboBox_DrawItem;
+            ToolBarFolderCombo.ComboBox.SelectedIndexChanged += ComboBox_SelectedIndexChanged;
         }
 
         protected override void OnLoad(EventArgs e)
@@ -43,6 +52,7 @@ namespace LDDModder.LifExtractor
 
             InitializeFolderListView();
 
+            ToolBarFolderCombo.ComboBox.ItemHeight = LifTreeView.ItemHeight;
         }
 
         #region TreeView & ListView Icon Handling
@@ -103,28 +113,6 @@ namespace LDDModder.LifExtractor
             AdjustFolderComboWidth();
         }
 
-        private void AdjustFolderComboWidth()
-        {
-            var remainingWidth = NavigationToolStrip.Width - 
-                NavigationToolStrip.Padding.Horizontal - 3;
-
-            if (NavigationToolStrip.OverflowButton.Visible)
-            {
-                remainingWidth -= NavigationToolStrip.OverflowButton.Width + 
-                    NavigationToolStrip.OverflowButton.Margin.Horizontal;
-            }
-
-            foreach (ToolStripItem item in NavigationToolStrip.Items)
-            {
-                if (item.IsOnOverflow || item == ToolBarFolderCombo)
-                    continue;
-                remainingWidth -= item.Width + item.Margin.Horizontal;
-            }
-
-            ToolBarFolderCombo.Width = remainingWidth - ToolBarFolderCombo.Margin.Horizontal;
-        }
-
-        
         private void FileOpenMenuItem_Click(object sender, EventArgs e)
         {
             using (var ofd = new OpenFileDialog())
@@ -155,13 +143,18 @@ namespace LDDModder.LifExtractor
         {
             LifTreeView.Nodes.Clear();
             FolderListView.DataSource = null;
+            ToolBarFolderCombo.ComboBox.DataSource = null;
             CurrentFolderItems.Clear();
 
             CurrentFile = file;
-            FileMenu_ExtractItem.Enabled = true;
-            CurrentFileStripLabel.Text = file.FilePath;
-
+            CurrentFolder = null;
+            FileMenu_ExtractItem.Enabled = !string.IsNullOrEmpty(file.FilePath);
+            CurrentFileStripLabel.Text = file?.FilePath;
+            
             FillTreeView();
+
+            ToolBarFolderCombo.ComboBox.DisplayMember = "FullName";
+            ToolBarFolderCombo.ComboBox.DataSource = CurrentLifFolders;
 
             NavigateToFolder(file.RootFolder);
         }
@@ -172,15 +165,20 @@ namespace LDDModder.LifExtractor
         {
             IsLoadingTreeView = true;
             LifTreeView.Nodes.Clear();
+            CurrentLifFolders.Clear();
 
-            string rootName = Path.GetFileNameWithoutExtension(CurrentFile.FilePath);
+            string lifRootName = !string.IsNullOrEmpty(CurrentFile.FilePath) ? 
+                Path.GetFileNameWithoutExtension(CurrentFile.FilePath) : "LIF";
 
             void AddFolderNodes(LifFile.FolderEntry folder, TreeNode parentNode)
             {
+                var folderInfo = new LifFolderInfo(folder) { LifName = lifRootName };
+                CurrentLifFolders.Add(folderInfo);
+
                 var node = new TreeNode
                 {
                     Name = folder.Fullname,
-                    Text = folder.IsRootDirectory ? rootName : folder.Name,
+                    Text = folderInfo.Name,
                     Tag = folder
                 };
 
@@ -206,6 +204,19 @@ namespace LDDModder.LifExtractor
 
             if (e.Node.Tag is LifFile.FolderEntry selectedFolder && selectedFolder != CurrentFolder)
                 NavigateToFolder(selectedFolder);
+        }
+
+        private TreeNode FindFolderNode(LifFile.FolderEntry folder)
+        {
+            var result = LifTreeView.Nodes.Find(folder.Fullname, true);
+            return result?.Length > 0 ? result[0] : null;
+        }
+
+        private void SelectFolderNode(LifFile.FolderEntry folder)
+        {
+            LifTreeView.AfterSelect -= LifTreeView_AfterSelect;
+            LifTreeView.SelectedNode = FindFolderNode(folder);
+            LifTreeView.AfterSelect += LifTreeView_AfterSelect;
         }
 
         #endregion
@@ -291,24 +302,75 @@ namespace LDDModder.LifExtractor
 
         #endregion
 
+        #region Folder ComboBox Handling
+
+        private void AdjustFolderComboWidth()
+        {
+            var remainingWidth = NavigationToolStrip.Width -
+                NavigationToolStrip.Padding.Horizontal - 3;
+
+            if (NavigationToolStrip.OverflowButton.Visible)
+            {
+                remainingWidth -= NavigationToolStrip.OverflowButton.Width +
+                    NavigationToolStrip.OverflowButton.Margin.Horizontal;
+            }
+
+            foreach (ToolStripItem item in NavigationToolStrip.Items)
+            {
+                if (item.IsOnOverflow || item == ToolBarFolderCombo)
+                    continue;
+                remainingWidth -= item.Width + item.Margin.Horizontal;
+            }
+
+            ToolBarFolderCombo.Width = remainingWidth - ToolBarFolderCombo.Margin.Horizontal;
+        }
+
+        private void SelectFolderCombo(LifFile.FolderEntry folder)
+        {
+            var foundFolder = CurrentLifFolders.FirstOrDefault(x => x.Folder == folder);
+            ToolBarFolderCombo.ComboBox.SelectedIndexChanged -= ComboBox_SelectedIndexChanged;
+            ToolBarFolderCombo.SelectedItem = foundFolder;
+            ToolBarFolderCombo.ComboBox.SelectedIndexChanged += ComboBox_SelectedIndexChanged;
+        }
+
+        private void ComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (CurrentFolder != null && ToolBarFolderCombo.SelectedItem is LifFolderInfo folderInfo)
+                NavigateToFolder(folderInfo.Folder);
+        }
+
+        private void ComboBox_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            if (e.Index < 0)
+                return;
+            e.DrawBackground();
+
+            var folderInfo = ToolBarFolderCombo.Items[e.Index] as LifFolderInfo;
+            var folderImage = SmallIconImageList.Images["folder"];
+
+            var xOffset = folderInfo.Entry.GetLevel() * LifTreeView.Indent;
+            var yOffset = (int)((e.Bounds.Height - folderImage.Height) / 2f);
+
+            e.Graphics.DrawImage(folderImage, e.Bounds.X + xOffset, e.Bounds.Y + yOffset);
+
+            var textBounds = new RectangleF(e.Bounds.X + xOffset + folderImage.Width + 3, e.Bounds.Y, 
+                e.Bounds.Width, e.Bounds.Height);
+            textBounds.Width -= (textBounds.X - e.Bounds.X);
+
+            using (var brush = new SolidBrush(e.ForeColor))
+            using (var sf = new StringFormat() { Alignment = StringAlignment.Near, LineAlignment = StringAlignment.Center })
+            {
+                e.Graphics.DrawString(folderInfo.Name, e.Font, brush, textBounds, sf);
+            }
+        }
+
+        #endregion
+
         #region Navigation Handling
 
         private List<LifFile.FolderEntry> BackHistory;
 
         private List<LifFile.FolderEntry> FwrdHistory;
-
-        private TreeNode FindFolderNode(LifFile.FolderEntry folder)
-        {
-            var result = LifTreeView.Nodes.Find(folder.Fullname, true);
-            return result?.Length > 0 ? result[0] : null;
-        }
-
-        private void SelectFolderNode(LifFile.FolderEntry folder)
-        {
-            LifTreeView.AfterSelect -= LifTreeView_AfterSelect;
-            LifTreeView.SelectedNode = FindFolderNode(folder);
-            LifTreeView.AfterSelect += LifTreeView_AfterSelect;
-        }
 
         private void NavigateToFolder(LifFile.FolderEntry folder, bool fromHistory = false)
         {
@@ -316,17 +378,10 @@ namespace LDDModder.LifExtractor
             CurrentFolder = folder;
 
             SelectFolderNode(folder);
+            SelectFolderCombo(folder);
 
             if (oldFolder != null && !fromHistory)
                 BackHistory.Add(oldFolder);
-
-            if (folder != null)
-            {
-                string rootName = Path.GetFileNameWithoutExtension(CurrentFile.FilePath);
-                ToolBarFolderCombo.Text = Path.Combine(rootName, folder.Fullname);
-
-                
-            }
 
             if (!fromHistory)
                 FwrdHistory.Clear();
@@ -378,6 +433,8 @@ namespace LDDModder.LifExtractor
             if (CurrentFolder?.Parent != null)
                 NavigateToFolder(CurrentFolder.Parent);
         }
+
+        
 
         #endregion
 
@@ -433,19 +490,81 @@ namespace LDDModder.LifExtractor
             }
         }
 
+        private void ListMenu_ExtractItem_Click(object sender, EventArgs e)
+        {
+            var itemsToExtract = FolderListView.SelectedObjects
+                .Cast<ILifItemInfo>().Select(x => x.Entry).ToList();
+
+            if (itemsToExtract.Any())
+            {
+                using (var eid = new ExtractItemsDialog())
+                {
+                    eid.TargetDirectory = Path.GetDirectoryName(CurrentFile.FilePath);
+                    eid.ItemsToExtract.AddRange(itemsToExtract);
+                    eid.ShowDialog();
+                }
+            }
+        }
+
+        private void FileMenu_ExtractItem_Click(object sender, EventArgs e)
+        {
+            using (var eid = new ExtractItemsDialog())
+            {
+                eid.TargetDirectory = Path.Combine(
+                    Path.GetDirectoryName(CurrentFile.FilePath), 
+                    Path.GetFileNameWithoutExtension(CurrentFile.FilePath));
+                eid.ItemsToExtract.Add(CurrentFile.RootFolder);
+                eid.ShowDialog();
+            }
+        }
+
+
         private void FolderListView_ItemDrag(object sender, ItemDragEventArgs e)
         {
-            if (e.Item is BrightIdeasSoftware.OLVListItem listItem && listItem.RowObject is LifFileInfo fileInfo)
+            if (e.Item is BrightIdeasSoftware.OLVListItem listItem && listItem.RowObject is ILifItemInfo entryInfo)
             {
-                string tmpPath = Path.Combine(Path.GetTempPath(), Path.GetFileNameWithoutExtension(Path.GetRandomFileName()), fileInfo.Name);
-                Directory.CreateDirectory(Path.GetDirectoryName(tmpPath));
-                fileInfo.File.ExtractTo(tmpPath);
-                var files = new string[] { tmpPath };
-                FolderListView.DoDragDrop(
-                    new DataObject(DataFormats.FileDrop, files), 
-                    DragDropEffects.Copy);
+                string tmpDir = Path.Combine(Path.GetTempPath(),
+                    Path.GetFileNameWithoutExtension(Path.GetRandomFileName()));
+
+                string tmpPath = Path.Combine(tmpDir, entryInfo.Name);
+                var cancelSource = new CancellationTokenSource();
+                var dropHelper = new FileDropHelper();
+                bool entryExtracted = false;
+                bool entryExtracting = false;
+
+                dropHelper.GetDataOverride = (frm, auto) =>
+                {
+                    if (!entryExtracting)
+                    {
+                        entryExtracting = true;
+                        Task.Factory.StartNew(() =>
+                        {
+                            Directory.CreateDirectory(tmpDir);
+                            entryInfo.Entry.ExtractToDirectory(tmpDir, cancelSource.Token);
+                            entryExtracted = true;
+                        });
+                        
+                    }
+                    return new string[] { tmpPath };
+                };
+
+                var result = FolderListView.DoDragDrop(dropHelper, DragDropEffects.Copy);
+
+                if (!entryExtracted)
+                {
+                    if (result != DragDropEffects.Copy)
+                        cancelSource.Cancel();
+
+                }
+
+                try
+                {
+                    NativeMethods.DeleteFileOrFolder(tmpDir);
+                }
+                catch { }
             }
-            
         }
+
+        
     }
 }
