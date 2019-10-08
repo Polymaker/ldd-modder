@@ -10,7 +10,7 @@ namespace LDDModder.LifExtractor.Native
     static class Shell32
     {
 
-        [DllImport("shell32", CharSet = CharSet.Auto)]
+        [DllImport("shell32")]
         public static extern IntPtr SHGetFileInfo(string pszPath, FILE_ATTRIBUTE dwFileAttributes, out SHFILEINFO psfi, uint cbFileInfo, SHGFI flags);
 
         [DllImport("shell32.dll", CharSet = CharSet.Auto)]

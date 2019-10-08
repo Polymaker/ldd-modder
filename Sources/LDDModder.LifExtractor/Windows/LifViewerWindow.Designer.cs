@@ -31,7 +31,7 @@
             this.components = new System.ComponentModel.Container();
             this.StatusToolStrip = new System.Windows.Forms.StatusStrip();
             this.CurrentFileStripLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.MainMenuStrip = new System.Windows.Forms.MenuStrip();
+            this.MainMenuToolStrip = new System.Windows.Forms.MenuStrip();
             this.FileMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.FileMenu_OpenItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newLIFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -60,7 +60,7 @@
             this.UpToolbarButton = new System.Windows.Forms.ToolStripButton();
             this.ToolBarFolderCombo = new System.Windows.Forms.ToolStripComboBox();
             this.StatusToolStrip.SuspendLayout();
-            this.MainMenuStrip.SuspendLayout();
+            this.MainMenuToolStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -86,16 +86,16 @@
             this.CurrentFileStripLabel.Size = new System.Drawing.Size(168, 17);
             this.CurrentFileStripLabel.Text = "...\\LEGO Digital Designer\\db.lif";
             // 
-            // MainMenuStrip
+            // MainMenuToolStrip
             // 
-            this.MainMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.MainMenuToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.FileMenu,
             this.ViewMenu});
-            this.MainMenuStrip.Location = new System.Drawing.Point(0, 0);
-            this.MainMenuStrip.Name = "MainMenuStrip";
-            this.MainMenuStrip.Size = new System.Drawing.Size(784, 24);
-            this.MainMenuStrip.TabIndex = 1;
-            this.MainMenuStrip.Text = "menuStrip1";
+            this.MainMenuToolStrip.Location = new System.Drawing.Point(0, 0);
+            this.MainMenuToolStrip.Name = "MainMenuToolStrip";
+            this.MainMenuToolStrip.Size = new System.Drawing.Size(784, 24);
+            this.MainMenuToolStrip.TabIndex = 1;
+            this.MainMenuToolStrip.Text = "menuStrip1";
             // 
             // FileMenu
             // 
@@ -376,13 +376,13 @@
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.StatusToolStrip);
             this.Controls.Add(this.NavigationToolStrip);
-            this.Controls.Add(this.MainMenuStrip);
+            this.Controls.Add(this.MainMenuToolStrip);
             this.Name = "LifViewerWindow";
             this.Text = "Lif Viewer";
             this.StatusToolStrip.ResumeLayout(false);
             this.StatusToolStrip.PerformLayout();
-            this.MainMenuStrip.ResumeLayout(false);
-            this.MainMenuStrip.PerformLayout();
+            this.MainMenuToolStrip.ResumeLayout(false);
+            this.MainMenuToolStrip.PerformLayout();
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
@@ -399,7 +399,7 @@
         #endregion
 
         private System.Windows.Forms.StatusStrip StatusToolStrip;
-        private System.Windows.Forms.MenuStrip MainMenuStrip;
+        private System.Windows.Forms.MenuStrip MainMenuToolStrip;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.TreeView LifTreeView;
         private System.Windows.Forms.ToolStripStatusLabel CurrentFileStripLabel;

@@ -107,7 +107,7 @@ namespace LDDModder.LDD.Meshes
         {
             var oMesh = new Assimp.Mesh(PrimitiveType.Triangle);
             //var vertIndexer = new ListIndexer<Vertex>(meshGeom.Vertices);
-            float edgeWidthRatio = 15.5f / 0.8f;
+            //float edgeWidthRatio = 15.5f / 0.8f;
             for (int i = 0; i < meshGeom.IndexCount; i++)
             {
                 oMesh.Vertices.Add(meshGeom.Indices[i].Vertex.Position.Convert());

@@ -9,6 +9,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace LDDModder.LDD.Files
 {
@@ -106,9 +107,44 @@ namespace LDDModder.LDD.Files
 
         #region Extraction Methods
 
-        private void WriteFileToStream(FileEntry entry, Stream target) => WriteFileToStream(entry, target, CancellationToken.None);
+        public class ExtractionProgress
+        {
+            public int ExtractedFiles { get; }
+            public int TotalFiles { get; }
+            public long BytesExtracted { get; set; }
+            public long TotalBytes { get; set; }
 
-        private void WriteFileToStream(FileEntry entry, Stream target, CancellationToken cancellationToken)
+            public string CurrentFileName { get; }
+            public string TargetPath { get; }
+
+            public static ExtractionProgress Default => new ExtractionProgress();
+
+            private ExtractionProgress()
+            {
+            }
+
+            internal ExtractionProgress(ProgressCounter progress, string currentFileName, string targetPath)
+            {
+                ExtractedFiles = progress.ExtractedFiles;
+                TotalFiles = progress.TotalFiles;
+                BytesExtracted = progress.BytesExtracted;
+                TotalBytes = progress.TotalBytes;
+                CurrentFileName = currentFileName;
+                TargetPath = targetPath;
+            }
+        }
+
+        protected internal struct ProgressCounter
+        {
+            public int ExtractedFiles;
+            public int TotalFiles;
+            public long BytesExtracted;
+            public long TotalBytes;
+        }
+
+        private static void WriteFileToStream(FileEntry entry, Stream target) => WriteFileToStream(entry, target, CancellationToken.None);
+
+        private static void WriteFileToStream(FileEntry entry, Stream target, CancellationToken cancellationToken)
         {
             byte[] buffer = new byte[4096];
             int bytesRead = 0;
@@ -117,10 +153,11 @@ namespace LDDModder.LDD.Files
 
             while (bytesRead < dataStream.Length)
             {
-                if (cancellationToken.IsCancellationRequested)
-                    return;
+                cancellationToken.ThrowIfCancellationRequested();
 
-                int bytesToRead = Math.Min(buffer.Length, (int)(dataStream.Length - bytesRead));
+                int bytesRemaining = (int)(dataStream.Length - bytesRead);
+                int bytesToRead = buffer.Length < bytesRemaining ? buffer.Length : bytesRemaining;
+
                 bytesRead += dataStream.Read(buffer, 0, bytesToRead);
                 target.Write(buffer, 0, bytesToRead);
 
@@ -131,49 +168,93 @@ namespace LDDModder.LDD.Files
                     break;
                 }
             }
-
         }
 
-        private void ExtractFile(FileEntry entry, string destinationPath, CancellationToken cancellationToken)
-        {
-            using (var fs = File.Open(destinationPath, FileMode.Create))
-                WriteFileToStream(entry, fs, cancellationToken);
+        public void ExtractTo(string directoryName) => ExtractTo(directoryName, CancellationToken.None, null);
 
-            if (cancellationToken.IsCancellationRequested)
+        public void ExtractTo(string directoryName, CancellationToken cancellationToken) => ExtractTo(directoryName, cancellationToken, null);
+
+        public void ExtractTo(string destination, CancellationToken cancellationToken, Action<ExtractionProgress> progressReport)
+        {
+            ExtractEntry(RootFolder, destination, cancellationToken, progressReport);
+        }
+
+        public static void ExtractEntry(LifEntry entry,
+            string destination,
+            CancellationToken cancellationToken,
+            Action<ExtractionProgress> progressReport)
+        {
+            ExtractEntries(new LifEntry[] { entry }, destination, cancellationToken, progressReport);
+        }
+
+        public static void ExtractEntries(
+            IEnumerable<LifEntry> entries, 
+            string destination, 
+            CancellationToken cancellationToken, 
+            Action<ExtractionProgress> progressReport)
+        {
+            if (!entries.Any())
                 return;
 
-            File.SetCreationTime(destinationPath, entry.CreatedDate);
-            File.SetLastWriteTime(destinationPath, entry.ModifiedDate);
+            var topLevel = entries.Max(x => x.GetLevel());
+            var entryList = entries.Where(x => x.GetLevel() == topLevel).Distinct().ToList();
+
+            if (!Directory.Exists(destination))
+                Directory.CreateDirectory(destination);
+
+            var allFileEntries = entryList.OfType<FolderEntry>().SelectMany(x => x.GetAllFiles())
+                .Concat(entryList.OfType<FileEntry>());
+
+            int totalFiles = allFileEntries.Count();
+            long totalBytes = allFileEntries.Sum(x => x.FileSize);
+            var counters = new ProgressCounter()
+            {
+                TotalFiles = totalFiles,
+                TotalBytes = totalBytes
+            };
+
+            progressReport?.Invoke(new ExtractionProgress(counters, string.Empty, string.Empty));
+
+            foreach (var fileEntry in entryList.OfType<FileEntry>())
+                ExtractFileEntry(fileEntry, destination, ref counters, cancellationToken, progressReport);
+
+            foreach (var folderEntry in entryList.OfType<FolderEntry>())
+                ExtractFolderEntry(folderEntry, destination, ref counters, cancellationToken, progressReport);
         }
 
-        private void ExtractFolder(FolderEntry folder, string destinationPath, CancellationToken cancellationToken)
+        private static void ExtractFileEntry(FileEntry fileEntry, string destination, 
+            ref ProgressCounter currentProgress, 
+            CancellationToken cancellationToken,
+            Action<ExtractionProgress> progress)
         {
+            string destinationPath = Path.Combine(destination, fileEntry.Name);
+            progress?.Invoke(new ExtractionProgress(currentProgress, fileEntry.Name, destinationPath));
+
+            using (var fs = File.Open(destinationPath, FileMode.Create))
+                WriteFileToStream(fileEntry, fs, cancellationToken);
+            
+            File.SetCreationTime(destinationPath, fileEntry.CreatedDate);
+            File.SetLastWriteTime(destinationPath, fileEntry.ModifiedDate);
+
+            currentProgress.ExtractedFiles++;
+            currentProgress.BytesExtracted += fileEntry.FileSize;
+            progress?.Invoke(new ExtractionProgress(currentProgress, fileEntry.Name, destinationPath));
+        }
+
+        private static void ExtractFolderEntry(FolderEntry folderEntry, string destination,
+            ref ProgressCounter currentProgress,
+            CancellationToken cancellationToken,
+            Action<ExtractionProgress> progress)
+        {
+            string destinationPath = Path.Combine(destination, folderEntry.Name);
             if (!Directory.Exists(destinationPath))
                 Directory.CreateDirectory(destinationPath);
 
-            foreach (var file in folder.Files)
-            {
-                ExtractFile(file, Path.Combine(destinationPath, file.Name), cancellationToken);
-                if (cancellationToken.IsCancellationRequested)
-                    return;
-            }
+            foreach (var file in folderEntry.Files)
+                ExtractFileEntry(file, destinationPath, ref currentProgress, cancellationToken, progress);
 
-            foreach (var subFolder in folder.Folders)
-            {
-                ExtractFolder(subFolder, Path.Combine(destinationPath, subFolder.Name), cancellationToken);
-                if (cancellationToken.IsCancellationRequested)
-                    return;
-            }
-        }
-
-        public void ExtractTo(string directoryName)
-        {
-            ExtractFolder(RootFolder, directoryName, CancellationToken.None);
-        }
-
-        public void ExtractTo(string directoryName, CancellationToken cancellationToken)
-        {
-            ExtractFolder(RootFolder, directoryName, cancellationToken);
+            foreach (var folder in folderEntry.Folders)
+                ExtractFolderEntry(folder, destinationPath, ref currentProgress, cancellationToken, progress);
         }
 
         #endregion
@@ -769,14 +850,23 @@ namespace LDDModder.LDD.Files
 
             public virtual void Rename(string newName)
             {
-                ValidateEntryName(newName);
-                Name = newName;
+                if (!Name.Equals(newName, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    ValidateEntryName(newName);
+                    Name = newName;
+                }
             }
 
             protected virtual void ValidateEntryName(string name)
             {
+                if (Parent != null)
+                {
+                    if (Parent.Any(x => x.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase)))
+                        throw new ArgumentException("A file or folder with the same name already exist.");
+                }
+
                 if (string.IsNullOrEmpty(name))
-                    throw new ArgumentException("Name cannot be empty");
+                    throw new ArgumentException("Name cannot be empty.");
             }
 
             public int GetLevel()
@@ -786,14 +876,24 @@ namespace LDDModder.LDD.Files
                 return 0;
             }
 
-            public void ExtractToDirectory(string directory) => ExtractToDirectory(directory, CancellationToken.None);
+            /// <summary>
+            /// Extract a file or folder, including its children, to a specified directory.
+            /// </summary>
+            /// <param name="destination"></param>
+            public void ExtractToDirectory(string destination) => ExtractToDirectory(destination, CancellationToken.None, null);
 
-            public virtual void ExtractToDirectory(string directory, CancellationToken cancellationToken)
+            /// <summary>
+            /// Extract a file or folder, including its children, to a specified directory.
+            /// </summary>
+            /// <param name="destination"></param>
+            /// <param name="cancellationToken"></param>
+            /// <param name="progressReport"></param>
+            public virtual void ExtractToDirectory(
+                string destination, 
+                CancellationToken cancellationToken, 
+                Action<ExtractionProgress> progressReport)
             {
-                if (this is FolderEntry folder)
-                    Lif.ExtractFolder(folder, Path.Combine(directory, Name), cancellationToken);
-                else if (this is FileEntry file)
-                    Lif.ExtractFile(file, Path.Combine(directory, Name), cancellationToken);
+                ExtractEntry(this, destination, cancellationToken, progressReport);
             }
         }
 
@@ -807,6 +907,7 @@ namespace LDDModder.LDD.Files
             public LifEntryCollection Entries { get; }
 
             public IEnumerable<FolderEntry> Folders => Entries.OfType<FolderEntry>();
+
             public IEnumerable<FileEntry> Files => Entries.OfType<FileEntry>();
 
             internal FolderEntry(LifFile lif) : base(string.Empty)
@@ -821,6 +922,8 @@ namespace LDDModder.LDD.Files
                 Entries = new LifEntryCollection(this);
             }
 
+            #region Entry Handling
+
             public FolderEntry GetFolder(string folderName)
             {
                 string fullName = Path.Combine(Fullname, folderName);
@@ -830,7 +933,8 @@ namespace LDDModder.LDD.Files
             public FileEntry GetFile(string filename)
             {
                 string fullName = Path.Combine(Fullname, filename);
-                return GetEntryHierarchy(false).OfType<FileEntry>().FirstOrDefault(x => x.Fullname.Equals(fullName, StringComparison.InvariantCultureIgnoreCase));
+                return GetEntryHierarchy(false).OfType<FileEntry>()
+                    .FirstOrDefault(x => x.Fullname.Equals(fullName, StringComparison.InvariantCultureIgnoreCase));
             }
 
             public IEnumerable<FileEntry> GetFiles(string searchFilter)
@@ -853,12 +957,12 @@ namespace LDDModder.LDD.Files
                     }
                 }
             }
-			
-			public IEnumerable<LifEntry> GetEntryHierarchy(bool drillDown = true)
+
+            public IEnumerable<LifEntry> GetEntryHierarchy(bool drillDown = true)
             {
                 foreach (var entry in Entries.OrderBy(x => x.Name))
                 {
-					yield return entry;
+                    yield return entry;
                     if (drillDown && entry is FolderEntry folder)
                     {
                         foreach (var childEntry in folder.GetEntryHierarchy(drillDown))
@@ -875,6 +979,18 @@ namespace LDDModder.LDD.Files
                     }
                 }
             }
+
+            public IEnumerator<LifEntry> GetEnumerator()
+            {
+                return Entries.GetEnumerator();
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return Entries.GetEnumerator();
+            }
+
+            #endregion
 
             public override void Rename(string newName)
             {
@@ -898,25 +1014,8 @@ namespace LDDModder.LDD.Files
                 }
                 return curFolder;
             }
-			
-/* 			public FolderEntry AddExistingFolder(string folderPath)
-            {
-				return AddExistingFolder(folderPath, Path.GetDirectoryName(folderPath));
-            }
-			
-			public FolderEntry AddExistingFolder(string folderPath, string folderName)
-            {
-				if (!Directory.Exists(folderPath))
-					throw new FileNotFoundException();
-				
-                ValidateEntryName(folderName);
-                if (Folders.Any(x => x.Name.Equals(folderName, StringComparison.InvariantCultureIgnoreCase)))
-                    throw new ArgumentException("Folder already exist");
-                var newFolder = new FolderEntry(folderName);
-                Entries.Add(newFolder);
-				foreach (var filePath in Directory.GetFiles
-                return newFolder;
-            } */
+
+            #region File Management
 
             public FileEntry AddFile(FileStream fileStream)
             {
@@ -964,15 +1063,22 @@ namespace LDDModder.LDD.Files
                 return AddFile(File.OpenRead(filePath), fileName);
             }
 
-            public IEnumerator<LifEntry> GetEnumerator()
+            #endregion
+
+            #region Extraction
+
+            /// <summary>
+            /// Extract the contained entries to a destination folder
+            /// </summary>
+            /// <param name="destination"></param>
+            /// <param name="cancellationToken"></param>
+            /// <param name="progressReport"></param>
+            public void ExtractContent(string destination, CancellationToken cancellationToken, Action<ExtractionProgress> progressReport)
             {
-                return Entries.GetEnumerator();
+                ExtractEntries(Entries, destination , cancellationToken, progressReport);
             }
 
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                return Entries.GetEnumerator();
-            }
+            #endregion
 
             protected override void ValidateEntryName(string name)
             {
@@ -1004,25 +1110,9 @@ namespace LDDModder.LDD.Files
 				Dispose();
 			}
 
-            public void ExtractToStream(Stream targetStream)
+            public void CopyToStream(Stream targetStream)
             {
-                Lif.WriteFileToStream(this, targetStream);
-            }
-
-            public void ExtractTo(string filename)
-            {
-                ExtractTo(filename, CancellationToken.None);
-            }
-
-            public void ExtractTo(string filename, CancellationToken cancellationToken)
-            {
-                Lif.ExtractFile(this, filename, cancellationToken);
-            }
-
-            public override void ExtractToDirectory(string directory, CancellationToken cancellationToken)
-            {
-                Directory.CreateDirectory(directory);
-                base.ExtractToDirectory(directory, cancellationToken);
+                WriteFileToStream(this, targetStream);
             }
 
             public Stream GetStream()

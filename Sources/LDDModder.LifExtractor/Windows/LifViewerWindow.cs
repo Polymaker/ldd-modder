@@ -249,9 +249,9 @@ namespace LDDModder.LifExtractor.Windows
             
             if (CurrentFolder != null)
             {
-                foreach (var entry in CurrentFolder.Entries.OrderBy(x => x is LifFile.FileEntry))
+                foreach (var entry in CurrentFolder.Entries
+                    .OrderBy(x => x is LifFile.FileEntry))
                 {
-
                     if (entry is LifFile.FileEntry file)
                     {
                         var fileInfo = new LifFileInfo(file)
@@ -483,11 +483,25 @@ namespace LDDModder.LifExtractor.Windows
         {
             if (FolderListView.SelectedObject is LifFileInfo fileInfo)
             {
-                string tmpPath = Path.Combine(Path.GetTempPath(), Path.GetFileNameWithoutExtension(Path.GetRandomFileName()), fileInfo.Name);
-                Directory.CreateDirectory(Path.GetDirectoryName(tmpPath));
-                fileInfo.File.ExtractTo(tmpPath);
-                Process.Start(tmpPath);
+                string tmpDir = GetTmpExtractionDirectory();
+                string tmpPath = Path.Combine(tmpDir, fileInfo.Name);
+                try
+                {
+                    fileInfo.File.ExtractToDirectory(tmpDir);
+                    Process.Start(tmpPath);
+                }
+                catch
+                {
+
+                }
+                
             }
+        }
+
+        private string GetTmpExtractionDirectory()
+        {
+            string tmpFolderName = "LIF" + LDDModder.Utilities.StringUtils.GenerateUID(8);
+            return Path.Combine(Path.GetTempPath(), tmpFolderName);
         }
 
         private void ListMenu_ExtractItem_Click(object sender, EventArgs e)
@@ -499,7 +513,7 @@ namespace LDDModder.LifExtractor.Windows
             {
                 using (var eid = new ExtractItemsDialog())
                 {
-                    eid.TargetDirectory = Path.GetDirectoryName(CurrentFile.FilePath);
+                    //eid.TargetDirectory = Path.GetDirectoryName(CurrentFile.FilePath);
                     eid.ItemsToExtract.AddRange(itemsToExtract);
                     eid.ShowDialog();
                 }
@@ -510,9 +524,8 @@ namespace LDDModder.LifExtractor.Windows
         {
             using (var eid = new ExtractItemsDialog())
             {
-                eid.TargetDirectory = Path.Combine(
-                    Path.GetDirectoryName(CurrentFile.FilePath), 
-                    Path.GetFileNameWithoutExtension(CurrentFile.FilePath));
+                if (!string.IsNullOrEmpty(CurrentFile.FilePath))
+                    eid.SelectedDirectory = Path.GetDirectoryName(CurrentFile.FilePath);
                 eid.ItemsToExtract.Add(CurrentFile.RootFolder);
                 eid.ShowDialog();
             }
@@ -521,45 +534,47 @@ namespace LDDModder.LifExtractor.Windows
 
         private void FolderListView_ItemDrag(object sender, ItemDragEventArgs e)
         {
-            if (e.Item is BrightIdeasSoftware.OLVListItem listItem && listItem.RowObject is ILifItemInfo entryInfo)
+            var selectedItems = FolderListView.SelectedObjects
+                .Cast<ILifItemInfo>().Select(x => x.Entry).ToList();
+
+            if (selectedItems.Any())
             {
-                string tmpDir = Path.Combine(Path.GetTempPath(),
-                    Path.GetFileNameWithoutExtension(Path.GetRandomFileName()));
+                string tmpDirectory = GetTmpExtractionDirectory();
 
-                string tmpPath = Path.Combine(tmpDir, entryInfo.Name);
-                var cancelSource = new CancellationTokenSource();
-                var dropHelper = new FileDropHelper();
-                bool entryExtracted = false;
-                bool entryExtracting = false;
+                var filenames = selectedItems.Select(x => Path.Combine(tmpDirectory, x.Name)).ToArray();
 
-                dropHelper.GetDataOverride = (frm, auto) =>
+                using (var cancelSource = new CancellationTokenSource())
                 {
-                    if (!entryExtracting)
+                    var dropHelper = new FileDropHelper(filenames);
+                    
+                    Task extractionThread = null;
+
+                    dropHelper.GetDataOverride = (frm, auto) =>
                     {
-                        entryExtracting = true;
-                        Task.Factory.StartNew(() =>
+                        if (extractionThread == null)
                         {
-                            Directory.CreateDirectory(tmpDir);
-                            entryInfo.Entry.ExtractToDirectory(tmpDir, cancelSource.Token);
-                            entryExtracted = true;
-                        });
-                        
-                    }
-                    return new string[] { tmpPath };
-                };
+                            extractionThread = Task.Factory.StartNew(() =>
+                            {
+                                try
+                                {
+                                    LifFile.ExtractEntries(selectedItems, tmpDirectory, cancelSource.Token, null);
+                                }
+                                catch { }
+                            });
 
-                var result = FolderListView.DoDragDrop(dropHelper, DragDropEffects.Copy);
+                        }
+                        return filenames;
+                    };
 
-                if (!entryExtracted)
-                {
-                    if (result != DragDropEffects.Copy)
+                    var result = FolderListView.DoDragDrop(dropHelper, DragDropEffects.Copy);
+
+                    if (extractionThread != null && !extractionThread.IsCompleted)
                         cancelSource.Cancel();
-
                 }
 
                 try
                 {
-                    NativeMethods.DeleteFileOrFolder(tmpDir);
+                    NativeMethods.DeleteFileOrFolder(tmpDirectory);
                 }
                 catch { }
             }
