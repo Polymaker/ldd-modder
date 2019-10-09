@@ -96,7 +96,9 @@ namespace LDDModder.LifExtractor.Windows
             if (ItemsToExtract.Count() == 1 &&
                 ItemsToExtract[0] is LifFile.FolderEntry folderEntry)
             {
-                if (folderEntry.IsRootDirectory)
+                if (folderEntry.IsRootDirectory && !string.IsNullOrEmpty(folderEntry.Lif.Name))
+                    Text = $"Extract - {Path.GetFileName(folderEntry.Lif.FilePath)}";
+                else if (folderEntry.IsRootDirectory)
                     Text = $"Extract Lif";
                 else
                     Text = $"Extract folder - {folderEntry.Name}";
