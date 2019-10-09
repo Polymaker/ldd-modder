@@ -73,6 +73,12 @@
   <ItemGroup>
     <Compile Include="Models\LifItemInfo.cs" />
     <Compile Include="Utilities\FileDropHelper.cs" />
+    <Compile Include="Windows\CreateFolderDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Windows\CreateFolderDialog.Designer.cs">
+      <DependentUpon>CreateFolderDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Windows\LifExtractionWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -100,6 +106,9 @@
     <Compile Include="Windows\ExtractItemsDialog.Designer.cs">
       <DependentUpon>ExtractItemsDialog.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Windows\CreateFolderDialog.resx">
+      <DependentUpon>CreateFolderDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Windows\LifViewerWindow.resx">
       <DependentUpon>LifViewerWindow.cs</DependentUpon>
     </EmbeddedResource>

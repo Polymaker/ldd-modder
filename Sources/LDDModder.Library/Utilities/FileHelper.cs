@@ -50,6 +50,17 @@ namespace LDDModder.Utilities
             return true;
         }
 
+        public static bool IsValidDirectoryName(string directory)
+        {
+            if (directory.ContainsAny(Path.GetInvalidPathChars()))
+                return false;
+            if (directory.Contains(Path.PathSeparator))
+                return false;
+            if (directory.Contains(Path.VolumeSeparatorChar))
+                return false;
+            return true;
+        }
+
         public static string GetSafeFileName(string fileName)
         {
             return FileNameCleaner.Replace(fileName, string.Empty);

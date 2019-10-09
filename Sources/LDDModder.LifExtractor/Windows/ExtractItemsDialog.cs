@@ -46,7 +46,9 @@ namespace LDDModder.LifExtractor.Windows
         {
             base.OnLoad(e);
 
-            UpdateExtractionProgress(LifFile.ExtractionProgress.Default);
+            SetupWindowSize();
+
+            UpdateExtractionProgress(LifFile.ExtractionProgress.Default);//Clear UI
 
             if (ItemsToExtract.Count() == 1 && 
                 ItemsToExtract[0] is LifFile.FolderEntry folderEntry)
@@ -62,13 +64,31 @@ namespace LDDModder.LifExtractor.Windows
                 SubDirectoryTextBox.Enabled = false;
             }
 
-            SetWindowTitle();
+            ProgressGroupBox.Enabled = false;
 
+            SetWindowTitle();
 
             if (string.IsNullOrEmpty(SelectedDirectory))
                 SelectedDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
             SetDestinationPath(SelectedDirectory);
+            
+        }
+
+        private void SetupWindowSize()
+        {
+            var formBorderSize = Height - ClientRectangle.Height;
+            var minimumHeight =
+                DestinationGroupBox.Height +
+                DestinationGroupBox.Margin.Vertical +
+                ProgressGroupBox.Height +
+                ProgressGroupBox.Margin.Vertical +
+                Padding.Vertical +
+                ExtractButton.Height +
+                ExtractButton.Margin.Vertical +
+                ButtonsTableLayout.Padding.Vertical + formBorderSize;
+
+            MinimumSize = new Size(MinimumSize.Width, minimumHeight);
         }
 
         private void SetWindowTitle()
@@ -137,23 +157,16 @@ namespace LDDModder.LifExtractor.Windows
             }
             else
             {
-                CancellationSource.Cancel();
-                ExtractionTask.Wait();
+                CancelExtraction();
             }
         }
 
-
-
         private void ExtractButton_Click(object sender, EventArgs e)
         {
-            if (ExtractionTask == null)
+            if (!IsExtracting())
             {
                 if (ValidateTargetPath())
                     StartExtraction();
-            }
-            else
-            {
-                CancelExtraction();
             }
         }
 
@@ -191,6 +204,7 @@ namespace LDDModder.LifExtractor.Windows
 
             ExtractButton.Enabled = false;
             DestinationGroupBox.Enabled = false;
+            ProgressGroupBox.Enabled = true;
 
             ExtractionTask = Task.Factory.StartNew(() =>
             {
@@ -234,6 +248,7 @@ namespace LDDModder.LifExtractor.Windows
         {
             if (ExtractionTask != null && ExtractionTask.Status == TaskStatus.Running)
             {
+                //TODO: Ask Confirmation
                 CancellationSource.Cancel();
                 ExtractionTask.Wait(2000);
             }
@@ -267,7 +282,6 @@ namespace LDDModder.LifExtractor.Windows
             FileProgressValueLabel.Text = $"{progress.ExtractedFiles} / {progress.TotalFiles}";
             ProgressPercentValueLabel.Text = $"{percentage:0}%";
 
-
             var timeElapsed = TimeSpan.Zero; // (DateTime.Now - ExtractionStart);
             if (ExtractionStart != default(DateTime))
                 timeElapsed = (DateTime.Now - ExtractionStart);
@@ -287,14 +301,12 @@ namespace LDDModder.LifExtractor.Windows
 
             CurrentFileLabel.Text = progress.TargetPath;
         }
-
-        
+  
         private string GetTmpExtractionDirectory()
         {
             string tmpFolderName = "LIF" + LDDModder.Utilities.StringUtils.GenerateUID(8);
             return Path.Combine(Path.GetTempPath(), tmpFolderName);
         }
-
-        
+ 
     }
 }

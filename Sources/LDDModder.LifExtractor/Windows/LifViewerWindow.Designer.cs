@@ -51,8 +51,12 @@
             this.FlvCreatedColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.FlvModifiedColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.FolderListContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.ListMenu_OpenItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ListMenu_ExtractItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.ListMenu_CreateFolderItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ListMenu_AddFileItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ListMenu_RenameItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ListMenu_DeleteItem = new System.Windows.Forms.ToolStripMenuItem();
             this.LargeIconImageList = new System.Windows.Forms.ImageList(this.components);
             this.NavigationToolStrip = new System.Windows.Forms.ToolStrip();
             this.BackToolbarButton = new System.Windows.Forms.ToolStripButton();
@@ -188,6 +192,7 @@
             // 
             // LifTreeView
             // 
+            this.LifTreeView.ContextMenuStrip = this.FolderListContextMenu;
             this.LifTreeView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.LifTreeView.FullRowSelect = true;
             this.LifTreeView.HideSelection = false;
@@ -219,6 +224,7 @@
             this.FolderListView.AllColumns.Add(this.FlvModifiedColumn);
             this.FolderListView.AllowDrop = true;
             this.FolderListView.AutoGenerateColumns = false;
+            this.FolderListView.CellEditActivation = BrightIdeasSoftware.ObjectListView.CellEditActivateMode.F2Only;
             this.FolderListView.CellEditUseWholeCell = false;
             this.FolderListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.FlvNameColumn,
@@ -245,12 +251,16 @@
             this.FolderListView.UseExplorerTheme = true;
             this.FolderListView.View = System.Windows.Forms.View.Details;
             this.FolderListView.BeforeSorting += new System.EventHandler<BrightIdeasSoftware.BeforeSortingEventArgs>(this.FolderListView_BeforeSorting);
+            this.FolderListView.CellEditFinished += new BrightIdeasSoftware.CellEditEventHandler(this.FolderListView_CellEditFinished);
+            this.FolderListView.CellEditValidating += new BrightIdeasSoftware.CellEditEventHandler(this.FolderListView_CellEditValidating);
             this.FolderListView.ItemActivate += new System.EventHandler(this.FolderListView_ItemActivate);
             this.FolderListView.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.FolderListView_ItemDrag);
             // 
             // FlvNameColumn
             // 
             this.FlvNameColumn.AspectName = "Name";
+            this.FlvNameColumn.AutoCompleteEditor = false;
+            this.FlvNameColumn.AutoCompleteEditorMode = System.Windows.Forms.AutoCompleteMode.None;
             this.FlvNameColumn.ImageAspectName = "ItemImageKey";
             this.FlvNameColumn.Text = "Name";
             this.FlvNameColumn.Width = 150;
@@ -258,6 +268,7 @@
             // FlvTypeColumn
             // 
             this.FlvTypeColumn.AspectName = "Description";
+            this.FlvTypeColumn.IsEditable = false;
             this.FlvTypeColumn.Text = "Type";
             this.FlvTypeColumn.Width = 130;
             // 
@@ -265,6 +276,7 @@
             // 
             this.FlvSizeColumn.AspectName = "Size";
             this.FlvSizeColumn.HeaderTextAlign = System.Windows.Forms.HorizontalAlignment.Left;
+            this.FlvSizeColumn.IsEditable = false;
             this.FlvSizeColumn.Text = "Size";
             this.FlvSizeColumn.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.FlvSizeColumn.Width = 85;
@@ -272,37 +284,68 @@
             // FlvCreatedColumn
             // 
             this.FlvCreatedColumn.AspectName = "CreatedDate";
+            this.FlvCreatedColumn.IsEditable = false;
             this.FlvCreatedColumn.Text = "Date created";
             this.FlvCreatedColumn.Width = 130;
             // 
             // FlvModifiedColumn
             // 
             this.FlvModifiedColumn.AspectName = "ModifiedDate";
+            this.FlvModifiedColumn.IsEditable = false;
             this.FlvModifiedColumn.Text = "Date modified";
             this.FlvModifiedColumn.Width = 130;
             // 
             // FolderListContextMenu
             // 
             this.FolderListContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ListMenu_OpenItem,
-            this.ListMenu_ExtractItem});
+            this.ListMenu_ExtractItem,
+            this.toolStripSeparator1,
+            this.ListMenu_CreateFolderItem,
+            this.ListMenu_AddFileItem,
+            this.ListMenu_RenameItem,
+            this.ListMenu_DeleteItem});
             this.FolderListContextMenu.Name = "FolderListContextMenu";
-            this.FolderListContextMenu.Size = new System.Drawing.Size(119, 48);
+            this.FolderListContextMenu.Size = new System.Drawing.Size(181, 142);
             this.FolderListContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.FolderListContextMenu_Opening);
-            // 
-            // ListMenu_OpenItem
-            // 
-            this.ListMenu_OpenItem.Name = "ListMenu_OpenItem";
-            this.ListMenu_OpenItem.Size = new System.Drawing.Size(118, 22);
-            this.ListMenu_OpenItem.Text = "Open";
-            this.ListMenu_OpenItem.Click += new System.EventHandler(this.ListMenu_OpenItem_Click);
             // 
             // ListMenu_ExtractItem
             // 
             this.ListMenu_ExtractItem.Name = "ListMenu_ExtractItem";
-            this.ListMenu_ExtractItem.Size = new System.Drawing.Size(118, 22);
+            this.ListMenu_ExtractItem.Size = new System.Drawing.Size(180, 22);
             this.ListMenu_ExtractItem.Text = "Extract…";
             this.ListMenu_ExtractItem.Click += new System.EventHandler(this.ListMenu_ExtractItem_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            // 
+            // ListMenu_CreateFolderItem
+            // 
+            this.ListMenu_CreateFolderItem.Name = "ListMenu_CreateFolderItem";
+            this.ListMenu_CreateFolderItem.Size = new System.Drawing.Size(180, 22);
+            this.ListMenu_CreateFolderItem.Text = "Create Folder…";
+            this.ListMenu_CreateFolderItem.Click += new System.EventHandler(this.ListMenu_CreateFolderItem_Click);
+            // 
+            // ListMenu_AddFileItem
+            // 
+            this.ListMenu_AddFileItem.Name = "ListMenu_AddFileItem";
+            this.ListMenu_AddFileItem.Size = new System.Drawing.Size(180, 22);
+            this.ListMenu_AddFileItem.Text = "Add File…";
+            // 
+            // ListMenu_RenameItem
+            // 
+            this.ListMenu_RenameItem.Name = "ListMenu_RenameItem";
+            this.ListMenu_RenameItem.Size = new System.Drawing.Size(180, 22);
+            this.ListMenu_RenameItem.Text = "Rename";
+            this.ListMenu_RenameItem.Click += new System.EventHandler(this.ListMenu_RenameItem_Click);
+            // 
+            // ListMenu_DeleteItem
+            // 
+            this.ListMenu_DeleteItem.Name = "ListMenu_DeleteItem";
+            this.ListMenu_DeleteItem.Size = new System.Drawing.Size(180, 22);
+            this.ListMenu_DeleteItem.Text = "Delete";
+            this.ListMenu_DeleteItem.Click += new System.EventHandler(this.ListMenu_DeleteItem_Click);
             // 
             // LargeIconImageList
             // 
@@ -425,8 +468,12 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem FileMenu_ExtractItem;
         private System.Windows.Forms.ContextMenuStrip FolderListContextMenu;
-        private System.Windows.Forms.ToolStripMenuItem ListMenu_OpenItem;
         private System.Windows.Forms.ToolStripMenuItem ListMenu_ExtractItem;
         private System.Windows.Forms.ToolStripMenuItem newLIFToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripMenuItem ListMenu_CreateFolderItem;
+        private System.Windows.Forms.ToolStripMenuItem ListMenu_AddFileItem;
+        private System.Windows.Forms.ToolStripMenuItem ListMenu_RenameItem;
+        private System.Windows.Forms.ToolStripMenuItem ListMenu_DeleteItem;
     }
 }

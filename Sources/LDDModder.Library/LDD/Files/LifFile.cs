@@ -850,23 +850,50 @@ namespace LDDModder.LDD.Files
 
             public virtual void Rename(string newName)
             {
+                newName = newName.Trim();
                 if (!Name.Equals(newName, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    ValidateEntryName(newName);
+                    ValidateRename(newName, true);
                     Name = newName;
                 }
             }
 
-            protected virtual void ValidateEntryName(string name)
+            public bool ValidateRename(string newname, bool throwError = false)
             {
-                if (Parent != null)
+                if (Parent != null && Parent.ContainsEntryName(newname))
                 {
-                    if (Parent.Any(x => x.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase)))
+                    if (throwError)
                         throw new ArgumentException("A file or folder with the same name already exist.");
+                    return false;
                 }
 
+                return ValidateEntryName(newname, throwError);
+            }
+
+            public bool ValidateEntryName(string name, bool throwError = false)
+            {
                 if (string.IsNullOrEmpty(name))
-                    throw new ArgumentException("Name cannot be empty.");
+                {
+                    if (throwError)
+                        throw new ArgumentException("Name cannot be empty.", "name");
+                    return false;
+                }
+
+                if (this is FolderEntry && !FileHelper.IsValidDirectoryName(name))
+                {
+                    if (throwError)
+                        throw new ArgumentException("Name contains invalid charaters.", "name");
+                    return false;
+                }
+
+                if (this is FileEntry && !FileHelper.IsValidFileName(name))
+                {
+                    if (throwError)
+                        throw new ArgumentException("Name contains invalid charaters.", "name");
+                    return false;
+                }
+
+                return true;
             }
 
             public int GetLevel()
@@ -958,6 +985,18 @@ namespace LDDModder.LDD.Files
                 }
             }
 
+            public IEnumerable<FolderEntry> GetFolderHierarchy()
+            {
+                foreach (var folder in Folders)
+                    yield return folder;
+
+                foreach (var folder in Folders)
+                {
+                    foreach (var subFolder in folder.GetFolderHierarchy())
+                        yield return subFolder;
+                }
+            }
+
             public IEnumerable<LifEntry> GetEntryHierarchy(bool drillDown = true)
             {
                 foreach (var entry in Entries.OrderBy(x => x.Name))
@@ -978,6 +1017,11 @@ namespace LDDModder.LDD.Files
                             yield return childEntry;
                     }
                 }
+            }
+
+            public bool ContainsEntryName(string entryName)
+            {
+                return Entries.Any(x => x.Name.Equals(entryName.Trim(), StringComparison.InvariantCultureIgnoreCase));
             }
 
             public IEnumerator<LifEntry> GetEnumerator()
@@ -1001,18 +1045,36 @@ namespace LDDModder.LDD.Files
 
             public FolderEntry CreateFolder(string folderName)
             {
-                ValidateEntryName(folderName);
-                string[] subDirs = folderName.Split(Path.PathSeparator);
-                var curFolder = this;
+                folderName = folderName.Trim();
+                
 
-                for (int i = 0; i < subDirs.Length; i++)
+                string[] subDirs = folderName.Split(Path.PathSeparator);
+
+                if (subDirs.Length == 1)
                 {
-                    var subFolder = curFolder.GetFolder(subDirs[i]);
-                    if (subFolder == null)
-                        subFolder = curFolder.CreateFolder(subDirs[i]);
-                    curFolder = subFolder;
+                    ValidateEntryName(folderName, true);
+
+                    var newFolder = new FolderEntry(folderName);
+                    Entries.Add(newFolder);
+                    return newFolder;
                 }
-                return curFolder;
+                else if (subDirs.Length > 1)
+                {
+                    var curFolder = this;
+
+                    for (int i = 0; i < subDirs.Length; i++)
+                    {
+                        ValidateEntryName(subDirs[i], true);
+
+                        var subFolder = curFolder.GetFolder(subDirs[i]);
+                        if (subFolder == null)
+                            subFolder = curFolder.CreateFolder(subDirs[i]);
+                        curFolder = subFolder;
+                    }
+                    return curFolder;
+                }
+
+                return null;
             }
 
             #region File Management
@@ -1080,12 +1142,6 @@ namespace LDDModder.LDD.Files
 
             #endregion
 
-            protected override void ValidateEntryName(string name)
-            {
-                base.ValidateEntryName(name);
-                if (!(FileHelper.IsValidDirectory(name) || Path.IsPathRooted(name)))
-                    throw new InvalidOperationException("Name contains invalid character.");
-            }
         }
 
         public sealed class FileEntry : LifEntry, IDisposable
@@ -1135,13 +1191,6 @@ namespace LDDModder.LDD.Files
                 CreatedDate = createdDate;
                 ModifiedDate = modifiedDate;
                 AccessedDate = accessedDate;
-            }
-
-            protected override void ValidateEntryName(string name)
-            {
-                base.ValidateEntryName(name);
-                if (!FileHelper.IsValidFileName(name))
-                    throw new InvalidOperationException("Name contains invalid character.");
             }
         }
 
