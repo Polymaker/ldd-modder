@@ -1,4 +1,6 @@
-﻿using OpenTK;
+﻿using LDDModder.BrickEditor.Rendering.Shaders;
+using ObjectTK.Shaders;
+using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using QuickFont;
@@ -21,10 +23,16 @@ namespace LDDModder.BrickEditor.UI.Panels
         private Matrix4 WorldProjectionMatrix;
         private bool IsClosing;
         private bool RenderLoopEnabled;
+        private GLControl glControl1;
+        private GridShaderProgram GridShader;
 
         public ViewportPanel()
         {
             InitializeComponent();
+            glControl1 = new GLControl(new GraphicsMode(32, 24, 0, 8));
+            glControl1.BackColor = Color.FromArgb(204, 204, 204);
+            Controls.Add(glControl1);
+            glControl1.Dock = DockStyle.Fill;
             //CloseButtonVisible = false;
             //CloseButton = false;
             DockAreas = DockAreas.Document;
@@ -44,7 +52,16 @@ namespace LDDModder.BrickEditor.UI.Panels
                 new QFontBuilderConfiguration(true));
             TextRenderer = new QFontDrawing();
 
-
+            GridShader = ProgramFactory.Create<GridShaderProgram>();
+            GridShader.Use();
+            GridShader.MajorGridColor.Set(Color4.White);
+            GridShader.MinorGridColor.Set(Color4.Silver);
+            GridShader.MajorLineSpacing = 0.8f;
+            GridShader.MajorLineOffcenter = true;
+            GridShader.MajorLineThickness = 1f;
+            GridShader.MinorLineSpacing = 0.4f;
+            GridShader.MinorLineOffcenter = false;
+            GridShader.MinorLineThickness = 0.5f;
         }
 
         protected override void OnActivated(EventArgs e)
@@ -100,17 +117,19 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             GL.UseProgram(0);
             GL.Disable(EnableCap.Texture2D);
-            //GL.Enable(EnableCap.ColorMaterial);
-            //GL.Enable(EnableCap.LineSmooth);
+            GL.Enable(EnableCap.LineSmooth);
             GL.Enable(EnableCap.DepthTest);
-            //GL.Enable(EnableCap.Blend);
-            
+            GL.Enable(EnableCap.AlphaTest);
+            GL.Enable(EnableCap.Blend);
+            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
             GL.MatrixMode(MatrixMode.Projection);
             GL.LoadMatrix(ref WorldProjectionMatrix);
-
+            
             GL.MatrixMode(MatrixMode.Modelview);
             var viewMatrix = Matrix4.LookAt(new Vector3(5), Vector3.Zero, Vector3.UnitY);
             GL.LoadMatrix(ref viewMatrix);
+
+            var mvp = viewMatrix * WorldProjectionMatrix;
 
             var vertices = new Vector3[]{
                 new Vector3(-1, 1, 1),
@@ -134,6 +153,11 @@ namespace LDDModder.BrickEditor.UI.Panels
                 new Vector3(1, 1, -1),
             };
 
+            for (int i = 0; i < vertices.Length; i++)
+            {
+                vertices[i] = new Vector3(vertices[i].X * 0.4f, (1f + vertices[i].Y) * 0.48f, vertices[i].Z * 0.4f);
+            }
+            /*
             GL.Color4(Color.FromArgb(80, 80, 220));
             GL.Begin(PrimitiveType.Quads);
             for (int i = 0; i < vertices.Length; i++)
@@ -149,6 +173,17 @@ namespace LDDModder.BrickEditor.UI.Panels
                 GL.Vertex3(vertices[i + 1]);
             }
             GL.End();
+            */
+            GridShader.Use();
+            GridShader.MVPMatrix.Set(mvp);
+
+            GL.Begin(PrimitiveType.Quads);
+            GL.Vertex3(-10, 0, -10);
+            GL.Vertex3(-10, 0, 10);
+            GL.Vertex3(10, 0, 10);
+            GL.Vertex3(10, 0, -10);
+            GL.End();
+            GL.UseProgram(0);
         }
 
         private void RenderUI()
@@ -194,7 +229,6 @@ namespace LDDModder.BrickEditor.UI.Panels
             TextRenderer.DisableShader();
         }
 
-
         private void OnRenderFrame()
         {
             if (IsDisposed || IsClosing)
@@ -204,8 +238,8 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             RenderWorld();
-            GL.Clear(ClearBufferMask.DepthBufferBit);
-            RenderUI();
+            //GL.Clear(ClearBufferMask.DepthBufferBit);
+            //RenderUI();
 
             glControl1.SwapBuffers();
         }
@@ -219,6 +253,12 @@ namespace LDDModder.BrickEditor.UI.Panels
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
             IsClosing = true;
+            DisposeGLResources();
+        }
+
+        private void DisposeGLResources()
+        {
+            GridShader.Dispose();
         }
     }
 }
