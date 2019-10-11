@@ -54,14 +54,22 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             GridShader = ProgramFactory.Create<GridShaderProgram>();
             GridShader.Use();
-            GridShader.MajorGridColor.Set(Color4.White);
-            GridShader.MinorGridColor.Set(Color4.Silver);
-            GridShader.MajorLineSpacing = 0.8f;
-            GridShader.MajorLineOffcenter = true;
-            GridShader.MajorLineThickness = 1f;
-            GridShader.MinorLineSpacing = 0.4f;
-            GridShader.MinorLineOffcenter = false;
-            GridShader.MinorLineThickness = 0.5f;
+
+            GridShader.MajorGridLine.Set(new GridShaderProgram.GridLineInfo()
+            {
+                Color = new Color4(1, 1, 1, 0.8f),
+                Spacing = 0.8f,
+                Thickness = 1f,
+                OffCenter = true
+            });
+
+            GridShader.MinorGridLine.Set(new GridShaderProgram.GridLineInfo()
+            {
+                Color = new Color4(0.6f, 0.6f, 0.6f, 0.8f),
+                Spacing = 0.4f,
+                Thickness = 0.75f,
+                OffCenter = false
+            });
         }
 
         protected override void OnActivated(EventArgs e)
@@ -126,6 +134,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             GL.LoadMatrix(ref WorldProjectionMatrix);
             
             GL.MatrixMode(MatrixMode.Modelview);
+            //var viewMatrix = Matrix4.LookAt(new Vector3(0,5,0), Vector3.Zero, Vector3.UnitZ * -1);//top-down
             var viewMatrix = Matrix4.LookAt(new Vector3(5), Vector3.Zero, Vector3.UnitY);
             GL.LoadMatrix(ref viewMatrix);
 
@@ -157,7 +166,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             {
                 vertices[i] = new Vector3(vertices[i].X * 0.4f, (1f + vertices[i].Y) * 0.48f, vertices[i].Z * 0.4f);
             }
-            /*
+            
             GL.Color4(Color.FromArgb(80, 80, 220));
             GL.Begin(PrimitiveType.Quads);
             for (int i = 0; i < vertices.Length; i++)
@@ -173,15 +182,16 @@ namespace LDDModder.BrickEditor.UI.Panels
                 GL.Vertex3(vertices[i + 1]);
             }
             GL.End();
-            */
+            
             GridShader.Use();
-            GridShader.MVPMatrix.Set(mvp);
+            GridShader.MVMatrix.Set(viewMatrix);
+            GridShader.PMatrix.Set(WorldProjectionMatrix);
 
             GL.Begin(PrimitiveType.Quads);
-            GL.Vertex3(-10, 0, -10);
-            GL.Vertex3(-10, 0, 10);
-            GL.Vertex3(10, 0, 10);
-            GL.Vertex3(10, 0, -10);
+            GL.Vertex3(-20, 0, -20);
+            GL.Vertex3(-20, 0, 20);
+            GL.Vertex3(20, 0, 20);
+            GL.Vertex3(20, 0, -20);
             GL.End();
             GL.UseProgram(0);
         }

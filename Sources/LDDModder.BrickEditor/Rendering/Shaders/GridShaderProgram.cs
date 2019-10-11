@@ -19,78 +19,28 @@ namespace LDDModder.BrickEditor.Rendering.Shaders
         [VertexAttrib(3, VertexAttribPointerType.Float)]
         public VertexAttrib Position { get; protected set; }
 
-        //public Uniform<bool> CenteredOrigin { get; protected set; }
-        public Uniform<Color4> MajorGridColor { get; protected set; }
-        public Uniform<Color4> MinorGridColor { get; protected set; }
+        public StructUniform<GridLineInfo> MajorGridLine { get; protected set; }
 
-        public float MajorLineSpacing
+        public StructUniform<GridLineInfo> MinorGridLine { get; protected set; }
+
+        public Uniform<Matrix4> MVMatrix { get; protected set; }
+
+        public Uniform<Matrix4> PMatrix { get; protected set; }
+
+        public struct GridLineInfo
         {
-            get => MajorSettings.Value.X;
-            set
+            public float Spacing;
+            public Color4 Color;
+            public float Thickness;
+            public bool OffCenter;
+
+            public GridLineInfo(float spacing, Color4 color, float thickness, bool offCenter)
             {
-                var val = MajorSettings.Value;
-                MajorSettings.Set(new Vector3(value, val.Y, val.Z));
+                Spacing = spacing;
+                Color = color;
+                Thickness = thickness;
+                OffCenter = offCenter;
             }
         }
-
-        public float MajorLineThickness
-        {
-            get => MajorSettings.Value.Y;
-            set
-            {
-                var val = MajorSettings.Value;
-                MajorSettings.Set(new Vector3(val.X, value, val.Z));
-            }
-        }
-
-        public bool MajorLineOffcenter
-        {
-            get => MajorSettings.Value.Z > 0;
-            set
-            {
-                var val = MajorSettings.Value;
-                MajorSettings.Set(new Vector3(val.X, val.Y, value ? 1f : 0f));
-            }
-        }
-
-        public float MinorLineSpacing
-        {
-            get => MinorSettings.Value.X;
-            set
-            {
-                var val = MajorSettings.Value;
-                MinorSettings.Set(new Vector3(value, val.Y, val.Z));
-            }
-        }
-
-        public float MinorLineThickness
-        {
-            get => MinorSettings.Value.Y;
-            set
-            {
-                var val = MinorSettings.Value;
-                MinorSettings.Set(new Vector3(val.X, value, val.Z));
-            }
-        }
-
-        public bool MinorLineOffcenter
-        {
-            get => MinorSettings.Value.Z > 0;
-            set
-            {
-                var val = MinorSettings.Value;
-                MinorSettings.Set(new Vector3(val.X, val.Y, value ? 1f : 0f));
-            }
-        }
-
-        //public Uniform<float> MajorSpacing { get; protected set; }
-        //public Uniform<float> MinorSpacing { get; protected set; }
-        public Uniform<Matrix4> MVPMatrix { get; protected set; }
-
-        public Uniform<Vector3> MajorSettings { get; protected set; }
-        public Uniform<Vector3> MinorSettings { get; protected set; }
-
-
-
     }
 }

@@ -130,6 +130,8 @@
     <Compile Include="Rendering\IMeshShaderProgram.cs" />
     <Compile Include="Rendering\OutlineShaderProgram.cs" />
     <Compile Include="Rendering\Shaders\GridShaderProgram.cs" />
+    <Compile Include="Rendering\Shaders\LightInfo.cs" />
+    <Compile Include="Rendering\Shaders\MaterialInfo.cs" />
     <Compile Include="Rendering\TextRenderingExtensions.cs" />
     <Compile Include="Rendering\TexturedShaderProgram.cs" />
     <Compile Include="Rendering\Vertices.cs" />
