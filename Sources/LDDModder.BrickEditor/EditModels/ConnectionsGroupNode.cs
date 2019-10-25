@@ -23,5 +23,12 @@ namespace LDDModder.BrickEditor.EditModels
             Connections = connections;
             Name = ModelLocalizations.Label_Connections;
         }
+
+        public override void RebuildChildrens()
+        {
+            Childrens.Clear();
+            foreach (var conn in Connections)
+                Childrens.Add(new PartConnectionNode(conn));
+        }
     }
 }

@@ -95,6 +95,7 @@
             this.NewProjectMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
             this.NewProjectMenuItem.Size = new System.Drawing.Size(205, 22);
             this.NewProjectMenuItem.Text = "New Part Project";
+            this.NewProjectMenuItem.Click += new System.EventHandler(this.NewProjectMenuItem_Click);
             // 
             // OpenProjectMenuItem
             // 
@@ -145,6 +146,7 @@
             this.ExportBrickMenuItem.Name = "ExportBrickMenuItem";
             this.ExportBrickMenuItem.Size = new System.Drawing.Size(182, 22);
             this.ExportBrickMenuItem.Text = "Export Brick Model...";
+            this.ExportBrickMenuItem.Click += new System.EventHandler(this.ExportBrickMenuItem_Click);
             // 
             // toolStripSeparator3
             // 

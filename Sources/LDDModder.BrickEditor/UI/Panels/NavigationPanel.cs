@@ -16,7 +16,7 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace LDDModder.BrickEditor.UI.Panels
 {
-    public partial class NavigationPanel : DockContent
+    public partial class NavigationPanel : ProjectDocumentPanel
     {
         public NavigationPanel()
         {

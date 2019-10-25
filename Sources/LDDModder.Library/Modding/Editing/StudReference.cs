@@ -1,25 +1,37 @@
 ﻿using LDDModder.LDD.Meshes;
 using LDDModder.LDD.Primitives.Connectors;
+using LDDModder.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using System.Xml.Serialization;
 
 namespace LDDModder.Modding.Editing
 {
-    public class StudReference
+    public class StudReference : PartComponent
     {
-        public string RefID { get; set; }
+        public const string NODE_NAME = "StudRef";
+
+        //public string RefID { get; set; }
+
+        [XmlAttribute]
+        public string ConnectionID { get; set; }
+
+        [XmlAttribute]
         public int ConnectorIndex { get; set; } = -1;
 
         public PartConnector<Custom2DFieldConnector> Connection { get; set; }
 
+        [XmlAttribute]
         public int FieldIndex { get; set; }
 
+        [XmlAttribute]
         public int Value1 { get; set; }
 
+        [XmlAttribute]
         public int Value2 { get; set; }
 
         public Custom2DFieldConnector Connector => Connection?.Connector;
@@ -63,28 +75,35 @@ namespace LDDModder.Modding.Editing
             Value2 = fieldReference.FieldIndices[0].Value4;
         }
 
-        public XElement SerializeToXml(string elementName = "Stud")
+        protected internal override void LoadFromXml(XElement element)
         {
-            return new XElement(elementName,
-                    new XAttribute("ConnectionID", RefID),
-                    new XAttribute("FieldIndex", FieldIndex),
-                    new XAttribute("Value1", Value1),
-                    new XAttribute("Value2", Value2)
-                    );
+            base.LoadFromXml(element);
+            ConnectionID = element.ReadAttribute("ConnectionID", "");
+
+            if (element.TryGetIntAttribute("FieldIndex", out int v1))
+                FieldIndex = v1;
+            if (element.TryGetIntAttribute("Value1", out int v2))
+                Value1 = v2;
+            if (element.TryGetIntAttribute("Value2", out int v3))
+                Value2 = v3;
+        }
+
+        public override XElement SerializeToXml()
+        {
+            var elem = SerializeToXmlBase(NODE_NAME);
+            elem.Add(XmlHelper.ToXml(() => ConnectionID));
+            //elem.Add(XmlHelper.ToXml(() => ConnectorIndex));
+            elem.Add(XmlHelper.ToXml(() => FieldIndex));
+            elem.Add(XmlHelper.ToXml(() => Value1));
+            elem.Add(XmlHelper.ToXml(() => Value2));
+
+            return elem;
         }
 
         public static StudReference FromXml(XElement element)
         {
-            var stud = new StudReference
-            {
-                RefID = element.Attribute("ConnectionID")?.Value
-            };
-            if (element.TryGetIntAttribute("FieldIndex", out int v1))
-                stud.FieldIndex = v1;
-            if (element.TryGetIntAttribute("Value1", out int v2))
-                stud.Value1 = v1;
-            if (element.TryGetIntAttribute("Value2", out int v3))
-                stud.Value2 = v1;
+            var stud = new StudReference();
+            stud.LoadFromXml(element);
             return stud;
         }
     }

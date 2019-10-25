@@ -32,7 +32,6 @@ namespace LDDModder.Modding.Editing
 
         public PartComponent Parent { get; internal set; }
 
-
         public virtual XElement SerializeToXml()
         {
             return SerializeToXmlBase(GetType().Name);
@@ -46,17 +45,24 @@ namespace LDDModder.Modding.Editing
                 elem.Add(new XAttribute("RefID", RefID));
 
             if (!string.IsNullOrEmpty(Comments))
-                elem.Add(XmlHelper.ToXml(() => Comments));
+            {
+                elem.Add(new XComment(Comments));
+                //elem.Add(XmlHelper.ToXml(() => Comments));
+            }
 
             return elem;
         }
 
         protected internal virtual void LoadFromXml(XElement element)
         {
+            
             if (element.Attribute("RefID") != null)
                 RefID = element.Attribute("RefID").Value;
 
-            if (element.Element("Comments") != null)
+            var commentElem = element.Elements().FirstOrDefault(x => x.NodeType == System.Xml.XmlNodeType.Comment);
+            if (commentElem != null)
+                Comments = commentElem.Value;
+            else if (element.Element("Comments") != null)
                 Comments = element.Element("Comments").Value;
         }
 

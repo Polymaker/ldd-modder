@@ -68,6 +68,10 @@ namespace LDDModder.Modding.Editing
 
         public ComponentCollection<PartCollision> Collisions { get; }
 
+        public ComponentCollection<PartBone> Bones { get; }
+
+        public ComponentCollection<PartMesh> UnassignedMeshes { get; }
+
         public bool IsLoading { get; internal set; }
 
         public event EventHandler<PropertyChangedEventArgs> ComponentPropertyChanged;
@@ -77,6 +81,9 @@ namespace LDDModder.Modding.Editing
             Surfaces = new ComponentCollection<PartSurface>(this);
             Connections = new ComponentCollection<PartConnector>(this);
             Collisions = new ComponentCollection<PartCollision>(this);
+            Bones = new ComponentCollection<PartBone>(this);
+            UnassignedMeshes = new ComponentCollection<PartMesh>(this);
+
             PrimitiveFileVersion = new VersionInfo(1, 0);
             Aliases = new List<int>();
             PartVersion = 1;
@@ -136,6 +143,9 @@ namespace LDDModder.Modding.Editing
                 project.Connections.Add(partConn);
             }
 
+            foreach (var flexBone in lddPart.Primitive.FlexBones)
+                project.Bones.Add(PartBone.FromLDD(flexBone));
+
             foreach (var meshSurf in lddPart.Surfaces)
             {
                 var partSurf = new PartSurface(
@@ -182,6 +192,15 @@ namespace LDDModder.Modding.Editing
 
         #endregion
 
+
+        public static PartProject CreateEmptyProject()
+        {
+            var project = new PartProject();
+            project.IsLoading = true;
+            project.Surfaces.Add(new PartSurface(0, 0));
+            project.IsLoading = false;
+            return project;
+        }
 
         #region Read/Write Xml structure
 
@@ -241,6 +260,13 @@ namespace LDDModder.Modding.Editing
             var connectionsElem = doc.Root.AddElement("Connections");
             foreach (var conn in Connections)
                 connectionsElem.Add(conn.SerializeToXml());
+
+            if (Bones.Any())
+            {
+                var bonesElem = doc.Root.AddElement("Bones");
+                foreach (var bone in Bones)
+                    bonesElem.Add(bone.SerializeToXml());
+            }
 
             return doc;
         }
@@ -407,7 +433,7 @@ namespace LDDModder.Modding.Editing
 
                         if (stud.Connection != null)
                         {
-                            stud.RefID = stud.Connection.RefID;
+                            stud.ConnectionID = stud.Connection.RefID;
                             stud.ConnectorIndex = Connections.IndexOf(stud.Connection);
                         }
                     }

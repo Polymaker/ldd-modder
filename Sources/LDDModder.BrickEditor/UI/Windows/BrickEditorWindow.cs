@@ -55,9 +55,28 @@ namespace LDDModder.BrickEditor.UI.Windows
                 {
                     var selectedBrick = dlg.SelectedBrick;
                     var project = PartProject.CreateFromLddPart(selectedBrick.PartId);
+                    //project.GenerateProjectXml().Save("poject.xml");
                     LoadPartProject(project);
                 }
             }
+        }
+
+        private void NewProjectMenuItem_Click(object sender, EventArgs e)
+        {
+            var project = PartProject.CreateEmptyProject();
+            LoadPartProject(project);
+        }
+
+        private void LDDEnvironmentToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (var dlg = new LddEnvironmentConfigWindow())
+                dlg.ShowDialog();
+        }
+
+        private void ExportBrickMenuItem_Click(object sender, EventArgs e)
+        {
+            using (var frm = new ModelImportExportWindow())
+                frm.ShowDialog();
         }
 
         #endregion
@@ -65,22 +84,24 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         #region Project Handling
 
-
-
         private void LoadPartProject(PartProject project)
         {
-            CurrentProject = project;
-            Navigation.LoadPartProject(project);
-            Viewport.LoadPartProject(project);
+            if (CurrentProject != project)
+            {
+                if (CurrentProject != null)
+                {
+                    //todo ask for confirmation
+                }
+
+                CurrentProject = project;
+                Navigation.LoadPartProject(project);
+                Viewport.LoadPartProject(project);
+            }
         }
 
         #endregion
 
-        private void LDDEnvironmentToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            using (var dlg = new LddEnvironmentConfigWindow())
-                dlg.ShowDialog();
-        }
+        
 
         private void BrickEditorWindow_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -97,14 +118,7 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         private void DockPanelControl_ActiveDocumentChanged(object sender, EventArgs e)
         {
-            if (!(DockPanelControl.ActiveDocument is ViewportPanel))
-            {
-                Navigation.Hide();
-            }
-            else
-            {
-                Navigation.Show();
-            }
+            
         }
 
         

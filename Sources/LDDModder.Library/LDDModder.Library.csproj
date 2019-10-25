@@ -157,8 +157,10 @@
     <Compile Include="LDD\Primitives\Primitive.cs" />
     <Compile Include="LDD\Primitives\Transform.cs" />
     <Compile Include="Maths\Line.cs" />
+    <Compile Include="Modding\Editing\CollectionChangedEventArgs.cs" />
     <Compile Include="Modding\Editing\ComponentCollection.cs" />
     <Compile Include="Modding\Editing\ItemTransform.cs" />
+    <Compile Include="Modding\Editing\PartBone.cs" />
     <Compile Include="Modding\Editing\PartCollision.cs" />
     <Compile Include="Modding\Editing\PartComponent.cs" />
     <Compile Include="Modding\Editing\PartConnector.cs" />

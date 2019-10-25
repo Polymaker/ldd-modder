@@ -210,13 +210,13 @@ namespace LDDModder.Modding.Editing
         //public MeshGeometry ReplacementGeometry { get; set; }
         public ComponentCollection<PartMesh> ReplacementGeometries { get; set; }
 
-        public List<StudReference> Studs { get; set; }
+        public ComponentCollection<StudReference> Studs { get; set; }
 
         public PartConnector<Custom2DFieldConnector> LinkedConnection => Studs.FirstOrDefault()?.Connection;
 
         public SurfaceFemaleStud()
         {
-            Studs = new List<StudReference>();
+            Studs = new ComponentCollection<StudReference>(this);
             ReplacementGeometries = new ComponentCollection<PartMesh>(this);
         }
 
@@ -262,7 +262,7 @@ namespace LDDModder.Modding.Editing
 
             if (element.Element("Studs") != null)
             {
-                foreach (var studElem in element.Element("Studs").Elements("Stud"))
+                foreach (var studElem in element.Element("Studs").Elements(StudReference.NODE_NAME))
                     Studs.Add(StudReference.FromXml(studElem));
             }
         }
@@ -274,11 +274,11 @@ namespace LDDModder.Modding.Editing
 
         public StudReference TubeStud { get; set; }
 
-        public List<StudReference> AdjacentStuds { get; set; }
+        public ComponentCollection<StudReference> AdjacentStuds { get; set; }
 
         public SurfaceTube()
         {
-            AdjacentStuds = new List<StudReference>();
+            AdjacentStuds = new ComponentCollection<StudReference>(this);
         }
 
         public override IEnumerable<StudReference> GetStudReferences()
@@ -293,7 +293,8 @@ namespace LDDModder.Modding.Editing
         {
             var elem = base.SerializeToXml();
             if (TubeStud != null)
-                elem.Add(TubeStud.SerializeToXml("TubeStud"));
+                elem.Add(TubeStud.SerializeToXml());
+
             elem.Add(new XComment("The following 4 studs are adjacent to the tube"));
             var studsElem = elem.AddElement("AdjacentStuds");
             foreach (var stud in AdjacentStuds)
@@ -304,8 +305,8 @@ namespace LDDModder.Modding.Editing
         protected internal override void LoadFromXml(XElement element)
         {
             base.LoadFromXml(element);
-            if (element.Element("TubeStud") != null)
-                TubeStud = StudReference.FromXml(element.Element("TubeStud"));
+            if (element.Element(StudReference.NODE_NAME) != null)
+                TubeStud = StudReference.FromXml(element.Element(StudReference.NODE_NAME));
 
             if (element.Element("AdjacentStuds") != null)
             {

@@ -11,6 +11,23 @@ namespace LDDModder.BrickEditor.EditModels
     {
         public PartProject Project { get; set; }
 
+        private PartComponent _SelectedComponent;
+
+        public PartComponent SelectedComponent
+        {
+            get => _SelectedComponent;
+            set
+            {
+                if (value != _SelectedComponent)
+                {
+                    _SelectedComponent = value;
+                    SelectedComponentChanged?.Invoke(this, EventArgs.Empty);
+                }
+            }
+        }
+
+        public event EventHandler SelectedComponentChanged;
+
         public ProjectDocument(PartProject project)
         {
             Project = project;
@@ -21,5 +38,7 @@ namespace LDDModder.BrickEditor.EditModels
         {
             
         }
+
+
     }
 }

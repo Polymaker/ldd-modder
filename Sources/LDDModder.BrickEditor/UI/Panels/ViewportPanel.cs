@@ -17,7 +17,7 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace LDDModder.BrickEditor.UI.Panels
 {
-    public partial class ViewportPanel : DockContent
+    public partial class ViewportPanel : ProjectDocumentPanel
     {
         private bool ViewInitialized;
         private QFontDrawing TextRenderer;

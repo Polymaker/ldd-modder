@@ -117,6 +117,7 @@
     <Compile Include="EditModels\ComponentGroupNode.cs" />
     <Compile Include="EditModels\ComponentTypeGroupNode.cs" />
     <Compile Include="EditModels\ConnectionsGroupNode.cs" />
+    <Compile Include="EditModels\PartConnectionNode.cs" />
     <Compile Include="EditModels\PartGeometryNode.cs" />
     <Compile Include="EditModels\PartSurfaceNode.cs" />
     <Compile Include="EditModels\ProjectComponentNode.cs" />
@@ -174,6 +175,9 @@
     </Compile>
     <Compile Include="UI\Panels\NavigationPanel.Designer.cs">
       <DependentUpon>NavigationPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Panels\ProjectDocumentPanel.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="UI\Panels\ViewportPanel.cs">
       <SubType>Form</SubType>
