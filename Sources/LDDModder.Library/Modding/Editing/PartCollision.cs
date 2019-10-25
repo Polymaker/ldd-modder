@@ -13,6 +13,8 @@ namespace LDDModder.Modding.Editing
     {
         public ItemTransform Transform { get; set; }
 
+        public abstract CollisionType CollisionType { get; }
+
         public PartCollision()
         {
             Transform = new ItemTransform();
@@ -51,7 +53,16 @@ namespace LDDModder.Modding.Editing
 
     public class PartBoxCollision : PartCollision
     {
-        public Vector3 Size { get; set; }
+        private Vector3 _Size;
+
+
+        public Vector3 Size
+        {
+            get => _Size;
+            set => SetPropertyValue(ref _Size, value);
+        }
+
+        public override CollisionType CollisionType => CollisionType.Box;
 
         public override Collision GenerateLDD()
         {
@@ -71,7 +82,15 @@ namespace LDDModder.Modding.Editing
 
     public class PartSphereCollision : PartCollision
     {
-        public float Radius { get; set; }
+        private float _Radius;
+
+        public float Radius
+        {
+            get => _Radius;
+            set => SetPropertyValue(ref _Radius, value);
+        }
+
+        public override CollisionType CollisionType => CollisionType.Sphere;
 
         public override Collision GenerateLDD()
         {

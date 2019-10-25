@@ -62,20 +62,28 @@ namespace LDDModder.Modding.Editing
 
         public string ProjectPath { get; private set; }
 
-        public List<PartSurface> Surfaces { get; set; }
+        public ComponentCollection<PartSurface> Surfaces { get; }
 
-        public List<PartConnector> Connections { get; set; }
+        public ComponentCollection<PartConnector> Connections { get; }
 
-        public List<PartCollision> Collisions { get; set; }
+        public ComponentCollection<PartCollision> Collisions { get; }
+
+        public bool IsLoading { get; internal set; }
+
+        public event EventHandler<PropertyChangedEventArgs> ComponentPropertyChanged;
 
         public PartProject()
         {
-            Surfaces = new List<PartSurface>();
-            Connections = new List<PartConnector>();
-            Collisions = new List<PartCollision>();
+            Surfaces = new ComponentCollection<PartSurface>(this);
+            Connections = new ComponentCollection<PartConnector>(this);
+            Collisions = new ComponentCollection<PartCollision>(this);
             PrimitiveFileVersion = new VersionInfo(1, 0);
             Aliases = new List<int>();
             PartVersion = 1;
+
+            Surfaces.CollectionChanged += Surfaces_CollectionChanged;
+            Connections.CollectionChanged += Connections_CollectionChanged;
+            Collisions.CollectionChanged += Collisions_CollectionChanged;
         }
 
         public void ValidatePart()
@@ -99,11 +107,19 @@ namespace LDDModder.Modding.Editing
 
         #region Creation From LDD
 
+        public static PartProject CreateFromLddPart(int partID)
+        {
+            return CreateFromLddPart(LDD.LDDEnvironment.Current, partID);
+        }
+
         public static PartProject CreateFromLddPart(LDD.LDDEnvironment environment, int partID)
         {
             var lddPart = LDD.Parts.PartWrapper.LoadPart(environment, partID);
 
-            var project = new PartProject();
+            var project = new PartProject()
+            {
+                IsLoading = true
+            };
             project.SetBaseInfo(lddPart);
 
             foreach (var collision in lddPart.Primitive.Collisions)
@@ -142,6 +158,7 @@ namespace LDDModder.Modding.Editing
 
             project.GenerateDefaultComments();
 
+            project.IsLoading = false;
             return project;
         }
 
@@ -185,7 +202,7 @@ namespace LDDModder.Modding.Editing
                 partElem.Add(new XElement("PartVersion", PartVersion));
                 if (PrimitiveFileVersion != null)
                     partElem.Add(PrimitiveFileVersion.ToXmlElement("PrimitiveVersion"));
-
+                
                 if (Platform != null)
                     partElem.AddElement("Platform", new XAttribute("ID", Platform.ID), new XAttribute("Name", Platform.Name));
 
@@ -502,6 +519,31 @@ namespace LDDModder.Modding.Editing
         }
 
         #endregion
+
+        #region Change tracking 
+
+        private void Collisions_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+
+        }
+
+        private void Connections_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+
+        }
+
+        private void Surfaces_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+
+        }
+
+        internal void OnComponentPropertyChanged(PropertyChangedEventArgs pcea)
+        {
+            ComponentPropertyChanged?.Invoke(this, pcea);
+        }
+
+        #endregion
+
 
         #region LDD File Generation
 

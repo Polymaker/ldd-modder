@@ -1,4 +1,6 @@
-﻿using LDDModder.BrickEditor.Rendering.Shaders;
+﻿using LDDModder.BrickEditor.Rendering;
+using LDDModder.BrickEditor.Rendering.Shaders;
+using LDDModder.Modding.Editing;
 using ObjectTK.Shaders;
 using OpenTK;
 using OpenTK.Graphics;
@@ -6,8 +8,9 @@ using OpenTK.Graphics.OpenGL;
 using QuickFont;
 using QuickFont.Configuration;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
+using System.Linq;
 using System.Drawing;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
@@ -25,6 +28,9 @@ namespace LDDModder.BrickEditor.UI.Panels
         private bool RenderLoopEnabled;
         private GLControl glControl1;
         private GridShaderProgram GridShader;
+        private BasicShaderProgram BrickShader;
+
+        private List<GLMeshBase> PartMeshes;
 
         public ViewportPanel()
         {
@@ -36,6 +42,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             //CloseButtonVisible = false;
             //CloseButton = false;
             DockAreas = DockAreas.Document;
+            PartMeshes = new List<GLMeshBase>();
         }
 
         protected override void OnLoad(EventArgs e)
@@ -70,6 +77,10 @@ namespace LDDModder.BrickEditor.UI.Panels
                 Thickness = 0.75f,
                 OffCenter = false
             });
+
+            BrickShader = ProgramFactory.Create<BasicShaderProgram>();
+            BrickShader.Use();
+            BrickShader.LightPosition.Set(new Vector3(-5, 10, 5));
         }
 
         protected override void OnActivated(EventArgs e)
@@ -135,54 +146,23 @@ namespace LDDModder.BrickEditor.UI.Panels
             
             GL.MatrixMode(MatrixMode.Modelview);
             //var viewMatrix = Matrix4.LookAt(new Vector3(0,5,0), Vector3.Zero, Vector3.UnitZ * -1);//top-down
-            var viewMatrix = Matrix4.LookAt(new Vector3(5), Vector3.Zero, Vector3.UnitY);
+            var viewMatrix = Matrix4.LookAt(new Vector3(10), Vector3.Zero, Vector3.UnitY);
             GL.LoadMatrix(ref viewMatrix);
 
-            var mvp = viewMatrix * WorldProjectionMatrix;
-
-            var vertices = new Vector3[]{
-                new Vector3(-1, 1, 1),
-                new Vector3(-1, -1, 1),
-                new Vector3(1, -1, 1),
-                new Vector3(1, 1, 1),
-
-                new Vector3(1, 1, -1),
-                new Vector3(1, -1, -1),
-                new Vector3(1, -1, 1),
-                new Vector3(1, 1, 1),
-
-                new Vector3(-1, 1, -1),
-                new Vector3(-1, -1, -1),
-                new Vector3(-1, -1, 1),
-                new Vector3(-1, 1, 1),
-
-                new Vector3(-1, 1, -1),
-                new Vector3(-1, 1, 1),
-                new Vector3(1, 1, 1),
-                new Vector3(1, 1, -1),
-            };
-
-            for (int i = 0; i < vertices.Length; i++)
+            foreach (var mesh in PartMeshes)
             {
-                vertices[i] = new Vector3(vertices[i].X * 0.4f, (1f + vertices[i].Y) * 0.48f, vertices[i].Z * 0.4f);
+                BrickShader.Use();
+                mesh.AssignShaderValues(viewMatrix, WorldProjectionMatrix);
+                mesh.Draw();
             }
-            
-            GL.Color4(Color.FromArgb(80, 80, 220));
-            GL.Begin(PrimitiveType.Quads);
-            for (int i = 0; i < vertices.Length; i++)
-                GL.Vertex3(vertices[i]);
-            GL.End();
 
-            GL.Color4(Color.Black);
-            GL.LineWidth(2f);
-            GL.Begin(PrimitiveType.Lines);
-            for (int i = 0; i < vertices.Length - 1; i++)
-            {
-                GL.Vertex3(vertices[i]);
-                GL.Vertex3(vertices[i + 1]);
-            }
-            GL.End();
-            
+            DrawGrid(viewMatrix);
+
+            GL.UseProgram(0);
+        }
+
+        private void DrawGrid(Matrix4 viewMatrix)
+        {
             GridShader.Use();
             GridShader.MVMatrix.Set(viewMatrix);
             GridShader.PMatrix.Set(WorldProjectionMatrix);
@@ -193,7 +173,6 @@ namespace LDDModder.BrickEditor.UI.Panels
             GL.Vertex3(20, 0, 20);
             GL.Vertex3(20, 0, -20);
             GL.End();
-            GL.UseProgram(0);
         }
 
         private void RenderUI()
@@ -260,6 +239,22 @@ namespace LDDModder.BrickEditor.UI.Panels
                 InitializeView();
         }
 
+        public void LoadPartProject(PartProject project)
+        {
+            PartMeshes.ForEach(x => x.Dispose());
+            PartMeshes.Clear();
+
+            var partMeshes = project.Surfaces.SelectMany(x => x.GetAllMeshes()).ToList();
+            BrickShader.Use();
+            foreach (var partMesh in partMeshes)
+            {
+                var glMesh = GLMeshBase.CreateFromGeometry(partMesh.Geometry, true);
+                glMesh.MaterialColor = new Color4(0.6f, 0.6f, 0.6f, 1f);
+                glMesh.BindToProgram(BrickShader);
+                PartMeshes.Add(glMesh);
+            }
+        }
+
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
             IsClosing = true;
@@ -268,7 +263,11 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void DisposeGLResources()
         {
+            PartMeshes.ForEach(x => x.Dispose());
+            PartMeshes.Clear();
             GridShader.Dispose();
+            
+            BrickShader.Dispose();
         }
     }
 }

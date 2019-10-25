@@ -1,4 +1,6 @@
-﻿using LDDModder.LDD.Primitives;
+﻿using LDDModder.BrickEditor.Settings;
+using LDDModder.LDD.Primitives;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -18,29 +20,70 @@ namespace LDDModder.BrickEditor.UI.Windows
 {
     public partial class SelectBrickDialog : Form
     {
+        private const string BRICK_LIST_CACHE_FILENAME = "BrickList.json";
+
+        #region Classes
+
         public class BrickInfo
         {
-            public int PartId { get; private set; }
-            public string Platform { get; private set; }
-            public string Category { get; private set; }
-            public string Description { get; private set; }
-            public string PrimitivePath { get; private set; }
-            public string[] MeshPaths { get; private set; }
-            public bool Decorated { get; private set; }
-            public bool Flexible { get; private set; }
+            [JsonProperty]
+            public int PartId { get; set; }
+            [JsonProperty]
+            public string Platform { get; set; }
+            [JsonProperty]
+            public string Category { get; set; }
+            [JsonProperty]
+            public string Description { get; set; }
+            [JsonProperty]
+            public string PrimitiveFilename { get; set; }
+            [JsonProperty]
+            public string[] MeshFilenames { get; set; }
+            [JsonProperty]
+            public bool Decorated { get; set; }
+            [JsonProperty]
+            public bool Flexible { get; set; }
+            [JsonProperty]
+            public DateTime LastUpdate { get; set; }
+
+            public BrickInfo()
+            {
+            }
 
             public BrickInfo(Primitive primitive, string primitivePath, string[] meshPaths)
             {
                 PartId = primitive.ID;
                 Description = primitive.Name;
-                PrimitivePath = primitivePath;
+                PrimitiveFilename = primitivePath;
                 Platform = primitive.Platform.Name;
                 Category = primitive.MainGroup.Name;
-                MeshPaths = meshPaths;
+                MeshFilenames = meshPaths;
                 Flexible = primitive.FlexBones.Any();
                 Decorated = meshPaths.Length > 1;
             }
         }
+
+        private class BrickListCache
+        {
+            [JsonProperty]
+            public string PrimitivesPath { get; set; }
+            [JsonProperty]
+            public string MeshesPath { get; set; }
+            [JsonProperty]
+            public List<BrickInfo> Bricks { get; set; }
+            //[JsonProperty]
+            //public DateTime LastUpdate { get; set; }
+
+            public bool ContainsBrick(int id, out BrickInfo foundBrick)
+            {
+                foundBrick = Bricks.FirstOrDefault(x => x.PartId == id);
+                return foundBrick != null;
+            }
+        }
+
+        #endregion
+
+
+        private BrickListCache CachedBrickList { get; set; }
 
         private SortableBindingList<BrickInfo> BrickList { get; }
 
@@ -72,6 +115,8 @@ namespace LDDModder.BrickEditor.UI.Windows
             base.OnLoad(e);
             GenerateColumnContextMenu();
             SendMessage(SearchTextBox.Handle, EM_SETCUEBANNER, 0, "Search a part");
+
+            SettingsManager.Initialize();
         }
 
         protected override void OnShown(EventArgs e)
@@ -95,42 +140,101 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         #region Brick Loading
 
+        private int TotalBricksToLoad;
+
+        private int TotalBricksLoaded;
+
         private void StartLoadingBricks()
         {
             LoadingProgressBar.Visible = true;
             LoadingProgressBar.Style = ProgressBarStyle.Marquee;
+            TotalBricksLoaded = 0;
+
+            LoadCachedBrickList();
+
             CTS = new CancellationTokenSource();
             BrickLoadingTask = Task.Factory.StartNew(() => LoadBricksFromDirectory());
-
             RefreshTimer.Start();
+        }
+
+        private void OnBrickLoadingFinished()
+        {
+            RefreshTimer.Stop();
+
+            SaveLoadedBricks();
+
+            Task.Factory.StartNew(() =>
+            {
+                Thread.Sleep(1200);
+                UpdateProgress(-1);
+            });
+        }
+
+        private void LoadCachedBrickList()
+        {
+            string brickListCache = Path.Combine(SettingsManager.AppDataFolder, BRICK_LIST_CACHE_FILENAME);
+            if (File.Exists(brickListCache))
+            {
+                try
+                {
+                    CachedBrickList = JsonConvert.DeserializeObject<BrickListCache>(File.ReadAllText(brickListCache));
+                }
+                catch { }
+            }
         }
 
         private void LoadBricksFromDirectory()
         {
-            var primitivePath = Path.Combine(LDD.LDDEnvironment.Current.ApplicationDataPath, "db\\Primitives");
-            var meshPath = Path.Combine(LDD.LDDEnvironment.Current.ApplicationDataPath, "db\\Primitives\\LOD0");
+            var primitiveDir = LDD.LDDEnvironment.Current.GetAppDataSubDirInfo("db\\Primitives");
+            var meshesDir = LDD.LDDEnvironment.Current.GetAppDataSubDirInfo("db\\Primitives\\LOD0");
 
-            var primitiveFiles = Directory.EnumerateFiles(primitivePath, "*.xml").ToList();
-            int processed = 0;
+            var primitiveFiles = primitiveDir.EnumerateFiles("*.xml").ToList();
+            //int processed = 0;
+            TotalBricksToLoad = primitiveFiles.Count;
 
-            foreach (var xmlFilePath in primitiveFiles)
+            foreach (var primitiveFi in primitiveFiles)
             {
                 if (CTS.IsCancellationRequested)
                     return;
-                if (int.TryParse(Path.GetFileNameWithoutExtension(xmlFilePath), out int partID))
+                
+                if (int.TryParse(Path.GetFileNameWithoutExtension(primitiveFi.Name), out int partID))
                 {
-                    var primitive = Primitive.Load(xmlFilePath);
-                    var meshFiles = Directory.EnumerateFiles(meshPath, $"{partID}.g*").ToArray();
-                    var brick = new BrickInfo(primitive, xmlFilePath, meshFiles);
+                    var meshFileInfos = meshesDir.EnumerateFiles($"{partID}.g*");
+
+                    DateTime partLastUpdate = primitiveFi.LastWriteTime;
+
+                    foreach(var meshFi in meshFileInfos)
+                    {
+                        if (meshFi.LastWriteTime > partLastUpdate)
+                            partLastUpdate = meshFi.LastWriteTime;
+                    }
+
+                    if (CachedBrickList != null &&
+                        CachedBrickList.ContainsBrick(partID, out BrickInfo foundBrick))
+                    {
+                        if (foundBrick.LastUpdate >= partLastUpdate/* &&
+                            foundBrick.MeshFilenames.Length == meshFileInfos.Count()*/)
+                        {
+                            BrickLoadingQueue.Enqueue(foundBrick);
+                            continue;
+                        }
+                    }
+
+                    var primitive = Primitive.Load(primitiveFi.FullName);
+                    var meshFilenames = meshFileInfos.Select(x => x.Name).ToArray();
+
+                    var brick = new BrickInfo(primitive, primitiveFi.Name, meshFilenames)
+                    {
+                        LastUpdate = partLastUpdate
+                    };
+
                     BrickLoadingQueue.Enqueue(brick);
                 }
-
-                UpdateProgress((int)((++processed / (float)primitiveFiles.Count) * 100f));
             }
 
+            CachedBrickList.Bricks.Clear();
+            CachedBrickList = null;//free memory
             GC.Collect();
-            Thread.Sleep(1000);
-            UpdateProgress(-1);
         }
 
         private void UpdateProgress(int value)
@@ -148,7 +252,6 @@ namespace LDDModder.BrickEditor.UI.Windows
                 else
                 {
                     LoadingProgressBar.Visible = false;
-                    RefreshTimer.Stop();
                 }
             }
         }
@@ -173,13 +276,35 @@ namespace LDDModder.BrickEditor.UI.Windows
         private void RefreshTimer_Tick(object sender, EventArgs e)
         {
             RefreshTimer.Stop();
+            ProcessLoadingQueue();
+
+            if (TotalBricksLoaded >= TotalBricksToLoad)
+                OnBrickLoadingFinished();
+            else
+                RefreshTimer.Start();
+        }
+
+        private void ProcessLoadingQueue()
+        {
+            const int MaxToProcessPerCycle = 150;
+
+            int processed = 0;
+
             while (BrickLoadingQueue.TryDequeue(out BrickInfo brick))
             {
                 BrickList.Add(brick);
+
                 if (IsListFiltered && IsBrickVisible(brick))
                     FilteredBrickList.Add(brick);
+
+                UpdateProgress((int)((++TotalBricksLoaded / (float)TotalBricksToLoad) * 100f));
+
+                if (++processed >= MaxToProcessPerCycle)
+                {
+                    Application.DoEvents();
+                    processed = 0;
+                }
             }
-            RefreshTimer.Start();
         }
 
         #endregion
@@ -222,6 +347,22 @@ namespace LDDModder.BrickEditor.UI.Windows
         }
 
         #endregion
+
+        private void SaveLoadedBricks()
+        {
+            var primitivePath = Path.Combine(LDD.LDDEnvironment.Current.ApplicationDataPath, "db\\Primitives");
+            var meshPath = Path.Combine(LDD.LDDEnvironment.Current.ApplicationDataPath, "db\\Primitives\\LOD0");
+
+            var item = new BrickListCache() 
+            { 
+                PrimitivesPath = primitivePath,
+                MeshesPath = meshPath,
+                Bricks = BrickList.ToList(),
+            };
+
+            File.WriteAllText(Path.Combine(SettingsManager.AppDataFolder, "BrickList.json"), 
+                JsonConvert.SerializeObject(item));
+        }
 
         private void BrickGridView_SelectionChanged(object sender, EventArgs e)
         {
@@ -293,7 +434,11 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         private void SelectBrickDialog_FormClosing(object sender, FormClosingEventArgs e)
         {
-            EndLoadingTask();
+            if (BrickLoadingTask != null && 
+                BrickLoadingTask.Status == TaskStatus.Running)
+            {
+                EndLoadingTask();
+            }
         }
     }
 }

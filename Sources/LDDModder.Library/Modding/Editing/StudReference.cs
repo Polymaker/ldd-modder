@@ -13,7 +13,9 @@ namespace LDDModder.Modding.Editing
     {
         public string RefID { get; set; }
         public int ConnectorIndex { get; set; } = -1;
+
         public PartConnector<Custom2DFieldConnector> Connection { get; set; }
+
         public int FieldIndex { get; set; }
 
         public int Value1 { get; set; }

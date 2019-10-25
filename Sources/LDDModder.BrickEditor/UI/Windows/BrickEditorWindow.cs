@@ -1,4 +1,5 @@
 ﻿using LDDModder.BrickEditor.UI.Panels;
+using LDDModder.Modding.Editing;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,6 +18,9 @@ namespace LDDModder.BrickEditor.UI.Windows
         private NavigationPanel Navigation;
         private ViewportPanel Viewport;
 
+        public PartProject CurrentProject { get; private set; }
+        //private string TemporaryFolder;
+
         public BrickEditorWindow()
         {
             InitializeComponent();
@@ -34,28 +38,48 @@ namespace LDDModder.BrickEditor.UI.Windows
         {
             Navigation = new NavigationPanel();
             Viewport = new ViewportPanel();
-            Navigation.Show(DockPanelControl, DockState.DockLeft);
+            
             Viewport.Show(DockPanelControl, DockState.Document);
+            DockPanelControl.DockLeftPortion = 250d / Width;
+            Navigation.Show(DockPanelControl, DockState.DockLeft);
+            
         }
 
+        #region Main menu
+
+        private void CreateFromBrickToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (var dlg = new SelectBrickDialog())
+            {
+                if (dlg.ShowDialog() == DialogResult.OK)
+                {
+                    var selectedBrick = dlg.SelectedBrick;
+                    var project = PartProject.CreateFromLddPart(selectedBrick.PartId);
+                    LoadPartProject(project);
+                }
+            }
+        }
+
+        #endregion
+
+
+        #region Project Handling
+
+
+
+        private void LoadPartProject(PartProject project)
+        {
+            CurrentProject = project;
+            Navigation.LoadPartProject(project);
+            Viewport.LoadPartProject(project);
+        }
+
+        #endregion
 
         private void LDDEnvironmentToolStripMenuItem_Click(object sender, EventArgs e)
         {
             using (var dlg = new LddEnvironmentConfigWindow())
                 dlg.ShowDialog();
-        }
-
-        private void LddLocalizationsMenuItem_Click(object sender, EventArgs e)
-        {
-            var existingPanel = DockPanelControl.Documents.OfType<LocalisationEditorPanel>().FirstOrDefault();
-            if (existingPanel != null)
-            {
-                existingPanel.Activate();
-                return;
-            }
-
-            var locEditPanel = new LocalisationEditorPanel();
-            locEditPanel.Show(DockPanelControl, DockState.Document);
         }
 
         private void BrickEditorWindow_FormClosing(object sender, FormClosingEventArgs e)
@@ -83,15 +107,6 @@ namespace LDDModder.BrickEditor.UI.Windows
             }
         }
 
-        private void CreateFromBrickToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            using (var dlg = new SelectBrickDialog())
-            {
-                if (dlg.ShowDialog() == DialogResult.OK)
-                {
-
-                }
-            }
-        }
+        
     }
 }

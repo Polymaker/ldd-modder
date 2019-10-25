@@ -73,5 +73,15 @@ namespace LDDModder.LDD
                 AssetsExtracted = Directory.EnumerateFiles(Path.Combine(ProgramFilesPath, "Assets"), "*", SearchOption.AllDirectories).Any();
 
         }
+
+        public string GetAppDataSubDir(string path)
+        {
+            return Path.Combine(ApplicationDataPath, path);
+        }
+
+        public DirectoryInfo GetAppDataSubDirInfo(string path)
+        {
+            return new DirectoryInfo(GetAppDataSubDir(path));
+        }
     }
 }

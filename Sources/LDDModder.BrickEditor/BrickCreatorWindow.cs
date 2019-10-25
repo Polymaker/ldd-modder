@@ -1,5 +1,4 @@
-﻿using LDDModder.BrickEditor.Editing;
-using LDDModder.LDD.Data;
+﻿using LDDModder.LDD.Data;
 using LDDModder.LDD.Files;
 using LDDModder.LDD.Meshes;
 using LDDModder.LDD.Primitives;

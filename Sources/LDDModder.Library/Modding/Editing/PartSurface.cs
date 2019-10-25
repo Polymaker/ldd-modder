@@ -16,22 +16,28 @@ namespace LDDModder.Modding.Editing
         [XmlAttribute]
         public int SurfaceID { get; set; }
 
+        private int _SubMaterialIndex;
+
         [XmlAttribute]
-        public int SubMaterialIndex { get; set; }
+        public int SubMaterialIndex
+        {
+            get => _SubMaterialIndex;
+            set => SetPropertyValue(ref _SubMaterialIndex, value);
+        }
 
         [XmlArray("Components")]
-        public List<SurfaceComponent> Components { get; set; }
+        public ComponentCollection<SurfaceComponent> Components { get; set; }
 
         public PartSurface()
         {
-            Components = new List<SurfaceComponent>();
+            Components = new ComponentCollection<SurfaceComponent>(this);
         }
 
         public PartSurface(int surfaceID, int subMaterialIndex)
         {
             SurfaceID = surfaceID;
             SubMaterialIndex = subMaterialIndex;
-            Components = new List<SurfaceComponent>();
+            Components = new ComponentCollection<SurfaceComponent>(this);
         }
 
         public IEnumerable<PartMesh> GetAllMeshes()

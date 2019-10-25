@@ -1,5 +1,6 @@
 ﻿using LDDModder.LDD.Files;
 using LDDModder.LDD.Meshes;
+using LDDModder.LDD.Primitives.Connectors;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -15,11 +16,12 @@ namespace LDDModder.Modding.Editing
         public const string NODE_NAME = "Component";
 
         public abstract MeshCullingType ComponentType { get; }
-        public List<PartMesh> Geometries { get; set; }
+
+        public ComponentCollection<PartMesh> Geometries { get; }
 
         public SurfaceComponent()
         {
-            Geometries = new List<PartMesh>();
+            Geometries = new ComponentCollection<PartMesh>(this);
         }
 
         public static SurfaceComponent FromLDD(MeshFile mesh, MeshCulling culling)
@@ -176,6 +178,8 @@ namespace LDDModder.Modding.Editing
 
         public StudReference Stud { get; set; }
 
+        public PartConnector<Custom2DFieldConnector> LinkedConnection => Stud?.Connection;
+
         public override IEnumerable<StudReference> GetStudReferences()
         {
             if (Stud != null)
@@ -204,14 +208,16 @@ namespace LDDModder.Modding.Editing
         public override MeshCullingType ComponentType => MeshCullingType.FemaleStud;
 
         //public MeshGeometry ReplacementGeometry { get; set; }
-        public List<PartMesh> ReplacementGeometries { get; set; }
+        public ComponentCollection<PartMesh> ReplacementGeometries { get; set; }
 
         public List<StudReference> Studs { get; set; }
+
+        public PartConnector<Custom2DFieldConnector> LinkedConnection => Studs.FirstOrDefault()?.Connection;
 
         public SurfaceFemaleStud()
         {
             Studs = new List<StudReference>();
-            ReplacementGeometries = new List<PartMesh>();
+            ReplacementGeometries = new ComponentCollection<PartMesh>(this);
         }
 
         public override IEnumerable<StudReference> GetStudReferences()

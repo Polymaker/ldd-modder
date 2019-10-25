@@ -41,14 +41,10 @@
             this.createFromBrickToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.lDDEnvironmentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.lDDToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.LddPreferencesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.LddLocalizationsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.ToolsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ExportBrickMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.StartLddMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.StartLddMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -75,7 +71,6 @@
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.settingsToolStripMenuItem,
-            this.lDDToolStripMenuItem,
             this.ToolsMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
@@ -131,37 +126,9 @@
             // lDDEnvironmentToolStripMenuItem
             // 
             this.lDDEnvironmentToolStripMenuItem.Name = "lDDEnvironmentToolStripMenuItem";
-            this.lDDEnvironmentToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.lDDEnvironmentToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
             this.lDDEnvironmentToolStripMenuItem.Text = "LDD Environment";
             this.lDDEnvironmentToolStripMenuItem.Click += new System.EventHandler(this.LDDEnvironmentToolStripMenuItem_Click);
-            // 
-            // lDDToolStripMenuItem
-            // 
-            this.lDDToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.LddPreferencesMenuItem,
-            this.LddLocalizationsMenuItem,
-            this.toolStripSeparator1});
-            this.lDDToolStripMenuItem.Name = "lDDToolStripMenuItem";
-            this.lDDToolStripMenuItem.Size = new System.Drawing.Size(41, 20);
-            this.lDDToolStripMenuItem.Text = "LDD";
-            // 
-            // LddPreferencesMenuItem
-            // 
-            this.LddPreferencesMenuItem.Name = "LddPreferencesMenuItem";
-            this.LddPreferencesMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.LddPreferencesMenuItem.Text = "Preferences";
-            // 
-            // LddLocalizationsMenuItem
-            // 
-            this.LddLocalizationsMenuItem.Name = "LddLocalizationsMenuItem";
-            this.LddLocalizationsMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.LddLocalizationsMenuItem.Text = "Localizations";
-            this.LddLocalizationsMenuItem.Click += new System.EventHandler(this.LddLocalizationsMenuItem_Click);
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
             // 
             // ToolsMenuItem
             // 
@@ -179,16 +146,16 @@
             this.ExportBrickMenuItem.Size = new System.Drawing.Size(182, 22);
             this.ExportBrickMenuItem.Text = "Export Brick Model...";
             // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(179, 6);
+            // 
             // StartLddMenuItem
             // 
             this.StartLddMenuItem.Name = "StartLddMenuItem";
             this.StartLddMenuItem.Size = new System.Drawing.Size(182, 22);
             this.StartLddMenuItem.Text = "Start LDD...";
-            // 
-            // toolStripSeparator3
-            // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(179, 6);
             // 
             // BrickEditorWindow
             // 
@@ -218,10 +185,6 @@
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem NewProjectMenuItem;
         private System.Windows.Forms.ToolStripMenuItem OpenProjectMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem lDDToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem LddPreferencesMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem LddLocalizationsMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem lDDEnvironmentToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;

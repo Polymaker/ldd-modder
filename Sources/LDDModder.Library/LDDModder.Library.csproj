@@ -141,6 +141,7 @@
     <Compile Include="LDD\Primitives\Collisions\Collision.cs" />
     <Compile Include="LDD\Primitives\Collisions\CollisionBox.cs" />
     <Compile Include="LDD\Primitives\Collisions\CollisionSphere.cs" />
+    <Compile Include="LDD\Primitives\Collisions\CollisionType.cs" />
     <Compile Include="LDD\Primitives\Connectors\AxelConnector.cs" />
     <Compile Include="LDD\Primitives\Connectors\BallConnector.cs" />
     <Compile Include="LDD\Primitives\Connectors\Connector.cs" />
@@ -156,6 +157,7 @@
     <Compile Include="LDD\Primitives\Primitive.cs" />
     <Compile Include="LDD\Primitives\Transform.cs" />
     <Compile Include="Maths\Line.cs" />
+    <Compile Include="Modding\Editing\ComponentCollection.cs" />
     <Compile Include="Modding\Editing\ItemTransform.cs" />
     <Compile Include="Modding\Editing\PartCollision.cs" />
     <Compile Include="Modding\Editing\PartComponent.cs" />
@@ -163,6 +165,7 @@
     <Compile Include="Modding\Editing\PartMesh.cs" />
     <Compile Include="Modding\Editing\PartProject.cs" />
     <Compile Include="Modding\Editing\PartSurface.cs" />
+    <Compile Include="Modding\Editing\PropertyChangedEventArgs.cs" />
     <Compile Include="Modding\Editing\StudReference.cs" />
     <Compile Include="Modding\Editing\SurfaceComponent.cs" />
     <Compile Include="Modding\Installing\PartInstaller.cs" />
