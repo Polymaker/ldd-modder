@@ -13,27 +13,27 @@ namespace LDDModder.BrickEditor.EditModels
     {
         public PartSurface Surface { get; }
 
-        public MeshCullingType ComponentType { get; }
+        public ModelComponentType ComponentType { get; }
 
         public IEnumerable<SurfaceComponent> Components => Surface.Components.Where(x => x.ComponentType == ComponentType);
 
-        public ComponentTypeGroupNode(PartSurface surface, MeshCullingType componentType)
+        public ComponentTypeGroupNode(PartSurface surface, ModelComponentType componentType)
         {
             Surface = surface;
             ComponentType = componentType;
 
             switch (componentType)
             {
-                case MeshCullingType.MainModel:
+                case ModelComponentType.Part:
                     Name = ModelLocalizations.Label_Models;
                     break;
-                case MeshCullingType.Stud:
+                case ModelComponentType.MaleStud:
                     Name = ModelLocalizations.Label_MaleStuds;
                     break;
-                case MeshCullingType.FemaleStud:
+                case ModelComponentType.FemaleStud:
                     Name = ModelLocalizations.Label_FemaleStuds;
                     break;
-                case MeshCullingType.Tube:
+                case ModelComponentType.BrickTube:
                     Name = ModelLocalizations.Label_BrickTubes;
                     break;
             }

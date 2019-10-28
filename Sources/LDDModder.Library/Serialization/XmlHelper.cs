@@ -14,6 +14,11 @@ namespace LDDModder.Serialization
 {
     public static class XmlHelper
     {
+        public static XAttribute[] ToXmlAttributes(this Vector3 vector)
+        {
+            return ToXmlAttributes(vector, "X", "Y", "Z");
+        }
+
         public static XAttribute[] ToXmlAttributes(this Vector3 vector, string name1, string name2, string name3)
         {
             return new XAttribute[]
@@ -23,6 +28,7 @@ namespace LDDModder.Serialization
                 new XAttribute(name3, vector.Z.ToString(NumberFormatInfo.InvariantInfo))
             };
         }
+
         internal static string GetTypeXmlRootName(Type xmlObjType)
         {
             var xmlRootAttr = (XmlRootAttribute[])xmlObjType.GetCustomAttributes(typeof(XmlRootAttribute), false);

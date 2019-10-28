@@ -27,7 +27,7 @@ namespace LDDModder.Modding
 
         public List<PartMesh> Meshes { get; set; }
 
-        public List<LDD.Palettes.Palette.Brick> Configurations { get; set; }
+        public List<LDD.Palettes.Brick> Configurations { get; set; }
 
         public List<DecorationImage> DecorationImages { get; set; }
 
@@ -36,7 +36,7 @@ namespace LDDModder.Modding
         public PartPackage()
         {
             Meshes = new List<PartMesh>();
-            Configurations = new List<LDD.Palettes.Palette.Brick>();
+            Configurations = new List<LDD.Palettes.Brick>();
             DecorationMappings = new List<LDD.Palettes.Decoration>();
             DecorationImages = new List<DecorationImage>();
         }

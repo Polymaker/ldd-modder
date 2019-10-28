@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace LDDModder.BrickEditor.EditModels
 {
-    public class PartConnectionNode : ProjectComponentNode<PartConnector>
+    public class PartConnectionNode : ProjectComponentNode<PartConnection>
     {
-        public PartConnector Connection => Component;
+        public PartConnection Connection => Component;
 
-        public PartConnectionNode(PartConnector connection) : base(connection)
+        public PartConnectionNode(PartConnection connection) : base(connection)
         {
             Name = $"{connection.ConnectorType}";
         }

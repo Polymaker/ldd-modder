@@ -17,13 +17,14 @@ namespace LDDModder.Modding.Editing
 
         //public string RefID { get; set; }
 
-        [XmlAttribute]
+        [XmlIgnore]
         public string ConnectionID { get; set; }
 
-        [XmlAttribute]
+        [XmlIgnore]
         public int ConnectorIndex { get; set; } = -1;
 
-        public PartConnector<Custom2DFieldConnector> Connection { get; set; }
+        [XmlIgnore]
+        public PartConnection Connection => (Parent as PartCullingModel)?.GetLinkedConnection();
 
         [XmlAttribute]
         public int FieldIndex { get; set; }
@@ -34,8 +35,10 @@ namespace LDDModder.Modding.Editing
         [XmlAttribute]
         public int Value2 { get; set; }
 
-        public Custom2DFieldConnector Connector => Connection?.Connector;
+        [XmlIgnore]
+        public Custom2DFieldConnector Connector => Connection?.GetConnector< Custom2DFieldConnector>();
 
+        [XmlIgnore]
         public Custom2DFieldConnector.FieldNode FieldNode => Connector?.GetNode(FieldIndex);
 
         public StudReference()
@@ -58,14 +61,14 @@ namespace LDDModder.Modding.Editing
             Value2 = value2;
         }
 
-        public StudReference(PartConnector<Custom2DFieldConnector> connection, int studIndex, int value1, int value2)
-        {
-            RefID = connection.RefID;
-            Connection = connection;
-            FieldIndex = studIndex;
-            Value1 = value1;
-            Value2 = value2;
-        }
+        //public StudReference(PartConnection/*<Custom2DFieldConnector>*/ connection, int studIndex, int value1, int value2)
+        //{
+        //    RefID = connection.RefID;
+        //    Connection = connection;
+        //    FieldIndex = studIndex;
+        //    Value1 = value1;
+        //    Value2 = value2;
+        //}
 
         public StudReference(Custom2DFieldReference fieldReference)
         {

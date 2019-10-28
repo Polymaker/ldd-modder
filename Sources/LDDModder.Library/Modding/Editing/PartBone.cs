@@ -15,18 +15,21 @@ namespace LDDModder.Modding.Editing
     {
         public const string NODE_NAME = "Bone";
 
-        [XmlAttribute]
         public int BoneID { get; set; }
 
         public ItemTransform Transform { get; set; }
 
-        public ComponentCollection<PartConnector> Connections { get; }
+        public PhysicsAttributes PhysicsAttributes { get; set; }
+
+        public BoundingBox Bounding { get; set; }
+
+        public ComponentCollection<PartConnection> Connections { get; }
 
         public ComponentCollection<PartCollision> Collisions { get; }
 
         public PartBone()
         {
-            Connections = new ComponentCollection<PartConnector>(this);
+            Connections = new ComponentCollection<PartConnection>(this);
             Collisions = new ComponentCollection<PartCollision>(this);
             Transform = new ItemTransform();
         }
@@ -44,7 +47,7 @@ namespace LDDModder.Modding.Editing
 
             foreach (var lddConn in flexBone.Connectors)
             {
-                var partConn = PartConnector.FromLDD(lddConn);
+                var partConn = PartConnection.FromLDD(lddConn);
                 if (partConn.ConnectorType == LDD.Primitives.Connectors.ConnectorType.Custom2DField)
                 {
                     int connIdx = flexBone.Connectors.IndexOf(lddConn);
@@ -62,7 +65,14 @@ namespace LDDModder.Modding.Editing
             elem.Add(XmlHelper.ToXml(() => BoneID));
             elem.Add(Transform.SerializeToXml());
 
-            var componentsElem = elem.AddElement("Components");
+            if (PhysicsAttributes != null || Bounding != null)
+            {
+                var propsElem = elem.AddElement("Properties");
+                if (PhysicsAttributes != null)
+                    propsElem.Add(PhysicsAttributes.SerializeToXml());
+                if (Bounding != null)
+                    propsElem.Add(XmlHelper.DefaultSerialize(Bounding, "Bounding"));
+            }
 
             if (Connections.Any())
             {
@@ -85,8 +95,33 @@ namespace LDDModder.Modding.Editing
         {
             base.LoadFromXml(element);
             BoneID = element.ReadAttribute<int>("BoneID");
-            Transform = ItemTransform.FromXml(element.Element("Transform"));
 
+            if (element.HasElement("Transform", out XElement transElem))
+                Transform = ItemTransform.FromXml(transElem);
+
+            if (element.HasElement("Properties", out XElement propsElem))
+            {
+                if (propsElem.HasElement("PhysicsAttributes", out XElement pA))
+                {
+                    PhysicsAttributes = new PhysicsAttributes();
+                    PhysicsAttributes.LoadFromXml(pA);
+                }
+
+                if (propsElem.HasElement("Bounding", out XElement gb))
+                    Bounding = XmlHelper.DefaultDeserialize<BoundingBox>(gb);
+            }
+
+            if (element.HasElement("Connections", out XElement connectionsElem))
+            {
+                foreach (var connElem in connectionsElem.Elements(PartConnection.NODE_NAME))
+                    Connections.Add(PartConnection.FromXml(connElem));
+            }
+
+            if (element.HasElement("Collisions", out XElement collisionsElem))
+            {
+                foreach (var connElem in collisionsElem.Elements(PartCollision.NODE_NAME))
+                    Collisions.Add(PartCollision.FromXml(connElem));
+            }
         }
     }
 }

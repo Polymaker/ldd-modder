@@ -86,9 +86,9 @@ namespace LDDModder.LDD.Palettes
             foreach (var itemElem in doc.Root.Element("Bag").Elements())
             {
                 if (itemElem.Name.LocalName == "Brick")
-                    palette.Items.Add(XmlHelper.DefaultDeserialize<Palette.Brick>(itemElem));
+                    palette.Items.Add(XmlHelper.DefaultDeserialize<Brick>(itemElem));
                 else if (itemElem.Name.LocalName == "Assembly")
-                    palette.Items.Add(XmlHelper.DefaultDeserialize<Palette.Assembly>(itemElem));
+                    palette.Items.Add(XmlHelper.DefaultDeserialize<Assembly>(itemElem));
             }
 
             return palette;

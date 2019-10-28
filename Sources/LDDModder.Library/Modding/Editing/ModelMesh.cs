@@ -10,10 +10,11 @@ using System.Xml.Serialization;
 
 namespace LDDModder.Modding.Editing
 {
-    public class PartMesh : PartComponent
+    public class ModelMesh : PartComponent
     {
         public const string NODE_NAME = "Mesh";
 
+        [XmlIgnore]
         public MeshGeometry Geometry { get; set; }
 
         [XmlAttribute]
@@ -25,12 +26,12 @@ namespace LDDModder.Modding.Editing
         [XmlAttribute]
         public string FileName { get; set; }
 
-        public PartMesh()
+        public ModelMesh()
         {
             RefID = Utilities.StringUtils.GenerateUID(8);
         }
 
-        public PartMesh(MeshGeometry geometry)
+        public ModelMesh(MeshGeometry geometry)
         {
             Geometry = geometry;
             IsTextured = geometry.IsTextured;

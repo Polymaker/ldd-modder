@@ -7,35 +7,31 @@ using System.Xml.Serialization;
 
 namespace LDDModder.LDD.Palettes
 {
-    public partial class Palette
+    [XmlRoot("Assembly")]
+    public class Assembly : PaletteItem
     {
-        [XmlRoot("Assembly")]
-        public class Assembly : PaletteItem
+        [XmlElement("Part")]
+        public List<Part> Parts { get; set; }
+
+        public override bool HasDecorations => Parts.Any(p => p.HasDecorations);
+
+        [XmlRoot("Part")]
+        public class Part
         {
-            [XmlElement("Part")]
-            public List<Part> Parts { get; set; }
+            [XmlAttribute("designID")]
+            public int DesignID { get; set; }
 
-            public override bool HasDecorations => Parts.Any(p => p.HasDecorations);
+            [XmlAttribute("materialID")]
+            public int MaterialID { get; set; }
 
-            [XmlRoot("Part")]
-            public class Part
-            {
-                [XmlAttribute("designID")]
-                public int DesignID { get; set; }
+            [XmlElement("SubMaterial")]
+            public List<SubMaterial> SubMaterials { get; set; }
 
-                [XmlAttribute("materialID")]
-                public int MaterialID { get; set; }
+            [XmlElement("Decoration")]
+            public List<Decoration> Decorations { get; set; }
 
-                [XmlElement("SubMaterial")]
-                public List<SubMaterial> SubMaterials { get; set; }
-
-                [XmlElement("Decoration")]
-                public List<Decoration> Decorations { get; set; }
-
-                [XmlIgnore]
-                public bool HasDecorations => Decorations.Any();
-            }
+            [XmlIgnore]
+            public bool HasDecorations => Decorations.Any();
         }
     }
-    
 }

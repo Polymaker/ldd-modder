@@ -14,6 +14,7 @@ namespace LDDModder.Modding.Editing
 
     }
 
+    [Serializable]
     public class ComponentCollection<T> : ObservableCollection<T>, IList<T>, IComponentCollection 
         where T : PartComponent
     {

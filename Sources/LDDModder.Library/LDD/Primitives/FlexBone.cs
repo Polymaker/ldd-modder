@@ -16,7 +16,7 @@ namespace LDDModder.LDD.Primitives
         public BoundingBox Bounding { get; set; }
 
         /// <summary>
-        /// Item 1: Number of Connectivity elements excluding types 99900X
+        /// Item 1: Number of Connectivity elements (excluding types 99900X)
         /// Item 2: The previous bone ID (the one it connects to)
         /// Item 3: No clue
         /// </summary>

@@ -1,14 +1,19 @@
 ﻿using LDDModder.Simple3D;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 using System.Xml.Linq;
+using System.Xml.Schema;
+using System.Xml.Serialization;
 
 namespace LDDModder.Modding.Editing
 {
-    public class ItemTransform
+    [XmlRoot("Transform")]
+    public class ItemTransform : IXmlSerializable
     {
         public Vector3 Position { get; set; }
 
@@ -16,8 +21,8 @@ namespace LDDModder.Modding.Editing
 
         public ItemTransform()
         {
-            Position = Vector3.Empty;
-            Rotation = Vector3.Empty;
+            Position = Vector3.Zero;
+            Rotation = Vector3.Zero;
         }
 
         public ItemTransform(Vector3 position, Vector3 rotation)
@@ -82,6 +87,34 @@ namespace LDDModder.Modding.Editing
                     element.ReadAttribute("Roll", 0f))
             };
             return trans;
+        }
+
+        public XmlSchema GetSchema()
+        {
+            return null;
+        }
+
+        public void ReadXml(XmlReader reader)
+        {
+            reader.MoveToContent();
+            float x = float.Parse(reader.GetAttribute("X"), CultureInfo.InvariantCulture);
+            float y = float.Parse(reader.GetAttribute("Y"), CultureInfo.InvariantCulture);
+            float z = float.Parse(reader.GetAttribute("Z"), CultureInfo.InvariantCulture);
+            Position = new Vector3(x, y, z);
+            x = float.Parse(reader.GetAttribute("Pitch"), CultureInfo.InvariantCulture);
+            y = float.Parse(reader.GetAttribute("Yaw"), CultureInfo.InvariantCulture);
+            z = float.Parse(reader.GetAttribute("Roll"), CultureInfo.InvariantCulture);
+            Rotation = new Vector3(x, y, z);
+        }
+
+        public void WriteXml(XmlWriter writer)
+        {
+            writer.WriteAttributeString("X", Position.X.ToString(CultureInfo.InvariantCulture));
+            writer.WriteAttributeString("Y", Position.Y.ToString(CultureInfo.InvariantCulture));
+            writer.WriteAttributeString("Z", Position.Z.ToString(CultureInfo.InvariantCulture));
+            writer.WriteAttributeString("Pitch", Rotation.X.ToString(CultureInfo.InvariantCulture));
+            writer.WriteAttributeString("Yaw", Rotation.Y.ToString(CultureInfo.InvariantCulture));
+            writer.WriteAttributeString("Roll", Rotation.Z.ToString(CultureInfo.InvariantCulture));
         }
     }
 }

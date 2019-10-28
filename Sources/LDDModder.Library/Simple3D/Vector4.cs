@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace LDDModder.Simple3D
 {
@@ -11,6 +12,7 @@ namespace LDDModder.Simple3D
         public float Z { get; set; }
         public float W { get; set; }
 
+        [XmlIgnore]
         public Vector3 Xyz
         {
             get => new Vector3(X, Y, Z);

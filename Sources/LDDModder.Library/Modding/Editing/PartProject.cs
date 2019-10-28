@@ -15,18 +15,16 @@ using System.Xml.Serialization;
 
 namespace LDDModder.Modding.Editing
 {
+    [XmlRoot("LDDPart")]
     public class PartProject
     {
 
         #region Part Info
 
-        [XmlElement]
         public int PartID { get; private set; }
 
-        [XmlElement]
         public string PartDescription { get; set; }
 
-        [XmlElement]
         public string Comments { get; set; }
 
         public List<int> Aliases { get; set; }
@@ -35,43 +33,45 @@ namespace LDDModder.Modding.Editing
 
         public MainGroup MainGroup { get; set; }
 
-        [XmlElement]
         public PhysicsAttributes PhysicsAttributes { get; set; }
 
-        [XmlElement]
         public BoundingBox Bounding { get; set; }
 
-        [XmlElement]
         public BoundingBox GeometryBounding { get; set; }
 
-        [XmlElement]
         public ItemTransform DefaultOrientation { get; set; }
 
-        [XmlElement]
         public Camera DefaultCamera { get; set; }
 
         public VersionInfo PrimitiveFileVersion { get; set; }
 
         public int PartVersion { get; set; }
-
+ 
         public bool Decorated { get; set; }
 
         public bool Flexible { get; set; }
 
         #endregion
 
+        [XmlIgnore]
         public string ProjectPath { get; private set; }
 
+        [XmlArray("ModelSurfaces")]
         public ComponentCollection<PartSurface> Surfaces { get; }
 
-        public ComponentCollection<PartConnector> Connections { get; }
+        [XmlArray("Connections")]
+        public ComponentCollection<PartConnection> Connections { get; }
 
+        [XmlArray("Collisions")]
         public ComponentCollection<PartCollision> Collisions { get; }
 
+        [XmlArray("Bones")]
         public ComponentCollection<PartBone> Bones { get; }
-
-        public ComponentCollection<PartMesh> UnassignedMeshes { get; }
-
+        
+        [XmlIgnore]
+        public ComponentCollection<ModelMesh> UnassignedMeshes { get; }
+        
+        [XmlIgnore]
         public bool IsLoading { get; internal set; }
 
         public event EventHandler<PropertyChangedEventArgs> ComponentPropertyChanged;
@@ -79,10 +79,10 @@ namespace LDDModder.Modding.Editing
         public PartProject()
         {
             Surfaces = new ComponentCollection<PartSurface>(this);
-            Connections = new ComponentCollection<PartConnector>(this);
+            Connections = new ComponentCollection<PartConnection>(this);
             Collisions = new ComponentCollection<PartCollision>(this);
             Bones = new ComponentCollection<PartBone>(this);
-            UnassignedMeshes = new ComponentCollection<PartMesh>(this);
+            UnassignedMeshes = new ComponentCollection<ModelMesh>(this);
 
             PrimitiveFileVersion = new VersionInfo(1, 0);
             Aliases = new List<int>();
@@ -134,7 +134,7 @@ namespace LDDModder.Modding.Editing
 
             foreach (var lddConn in lddPart.Primitive.Connectors)
             {
-                var partConn = PartConnector.FromLDD(lddConn);
+                var partConn = PartConnection.FromLDD(lddConn);
                 if (partConn.ConnectorType == LDD.Primitives.Connectors.ConnectorType.Custom2DField)
                 {
                     int connIdx = lddPart.Primitive.Connectors.IndexOf(lddConn);
@@ -206,52 +206,59 @@ namespace LDDModder.Modding.Editing
 
         public XDocument GenerateProjectXml()
         {
+            //XmlSerializer serializer = new XmlSerializer(typeof(PartProject));
+            //var doc = new XDocument();
+            //var ns = new XmlSerializerNamespaces();
+            //ns.Add("", "");
+            //using (var docWriter = doc.CreateWriter())
+            //    serializer.Serialize(docWriter, this, ns);
+            //return doc;
+
             var doc = new XDocument(new XElement("LDDPART"));
 
             //Part Info
             {
-                var partElem = doc.Root.AddElement("PartInfo");
-                partElem.Add(new XElement("PartID", PartID));
+                var propsElem = doc.Root.AddElement("Properties");
+                propsElem.Add(new XElement("PartID", PartID));
 
                 if (Aliases.Where(x => x != PartID).Any())
-                    partElem.Add(new XElement("Aliases", string.Join(";", Aliases.Where(x => x != PartID))));
+                    propsElem.Add(new XElement("Aliases", string.Join(";", Aliases.Where(x => x != PartID))));
 
-                partElem.Add(new XElement("Description", PartDescription));
+                propsElem.Add(new XElement("Description", PartDescription));
 
-                partElem.Add(new XElement("PartVersion", PartVersion));
+                propsElem.Add(new XElement("PartVersion", PartVersion));
+
                 if (PrimitiveFileVersion != null)
-                    partElem.Add(PrimitiveFileVersion.ToXmlElement("PrimitiveVersion"));
-                
+                    propsElem.Add(PrimitiveFileVersion.ToXmlElement("PrimitiveVersion"));
+
                 if (Platform != null)
-                    partElem.AddElement("Platform", new XAttribute("ID", Platform.ID), new XAttribute("Name", Platform.Name));
+                    propsElem.AddElement("Platform", new XAttribute("ID", Platform.ID), new XAttribute("Name", Platform.Name));
 
                 if (MainGroup != null)
-                    partElem.AddElement("MainGroup", new XAttribute("ID", MainGroup.ID), new XAttribute("Name", MainGroup.Name));
+                    propsElem.AddElement("MainGroup", new XAttribute("ID", MainGroup.ID), new XAttribute("Name", MainGroup.Name));
 
-                if (!string.IsNullOrEmpty(Comments))
-                    partElem.Add(new XElement("Comments", Comments));
-            }
-            
-            if (Helper.AnyNotNull(Bounding, GeometryBounding, DefaultCamera, PhysicsAttributes, DefaultOrientation))
-            {
-                var propsElem = doc.Root.AddElement("Properties");
                 if (PhysicsAttributes != null)
                     propsElem.Add(PhysicsAttributes.SerializeToXml());
+
                 if (Bounding != null)
                     propsElem.Add(XmlHelper.DefaultSerialize(Bounding, "Bounding"));
+
                 if (GeometryBounding != null)
                     propsElem.Add(XmlHelper.DefaultSerialize(GeometryBounding, "GeometryBounding"));
+
                 if (DefaultOrientation != null)
                     propsElem.Add(DefaultOrientation.SerializeToXml("DefaultOrientation"));
+
+                if (DefaultCamera != null)
+                    propsElem.Add(XmlHelper.DefaultSerialize(DefaultCamera, "DefaultCamera"));
+
+                if (!string.IsNullOrEmpty(Comments))
+                    propsElem.Add(new XElement("Comments", Comments));
             }
 
-            var surfacesElem = doc.Root.AddElement("Surfaces");
-
+            var surfacesElem = doc.Root.AddElement("ModelSurfaces");
             foreach (var surf in Surfaces)
-            {
-                var surfElem = surf.SerializeToXml();
-                surfacesElem.Add(surfElem);
-            }
+                surfacesElem.Add(surf.SerializeToXml());
 
             var collisionsElem = doc.Root.AddElement("Collisions");
             foreach (var col in Collisions)
@@ -305,30 +312,46 @@ namespace LDDModder.Modding.Editing
             Surfaces.Clear();
             Connections.Clear();
             Collisions.Clear();
+            Bones.Clear();
+            Aliases.Clear();
 
             //Part info
+            if (doc.Root.HasElement("Properties", out XElement propsElem))
             {
-                var partElem = doc.Root.Element("PartInfo");
-                PartID = int.Parse(partElem.Element("PartID")?.Value);
+                PartID = int.Parse(propsElem.Element("PartID")?.Value);
 
-                var test = new
+                if (propsElem.HasElement("Aliases", out XElement aliasElem))
                 {
-                    PartID,
-                    PartDescription,
-                    Platform
-                };
+                    foreach(string partAlias in aliasElem.Value.Split(';'))
+                    {
+                        if (int.TryParse(partAlias, out int aliasID))
+                            Aliases.Add(aliasID);
+                    }
+                }
 
+                PartDescription = propsElem.ReadElement("Description", string.Empty);
+                PartVersion = propsElem.ReadElement("PartVersion", 1);
+                
+                if (propsElem.HasElement("PhysicsAttributes", out XElement pA))
+                {
+                    PhysicsAttributes = new PhysicsAttributes();
+                    PhysicsAttributes.LoadFromXml(pA);
+                }
+                
+                if (propsElem.HasElement("GeometryBounding", out XElement gb))
+                    GeometryBounding = XmlHelper.DefaultDeserialize<BoundingBox>(gb);
+
+                if (propsElem.HasElement("Bounding", out XElement bb))
+                    Bounding = XmlHelper.DefaultDeserialize<BoundingBox>(bb);
+
+                if (propsElem.HasElement("DefaultOrientation", out XElement defori))
+                    DefaultOrientation = ItemTransform.FromXml(defori);
+
+                if (propsElem.HasElement("DefaultCamera", out XElement camElem))
+                    DefaultCamera = XmlHelper.DefaultDeserialize<Camera>(camElem);
             }
 
-            //Part properties
-            var propsElem = doc.Root.Element("Properties");
-            if (propsElem != null)
-            {
-
-            }
-
-            var surfacesElem = doc.Root.Element("Surfaces");
-            
+            var surfacesElem = doc.Root.Element("ModelSurfaces");
             if (surfacesElem != null)
             {
                 foreach (var surfElem in surfacesElem.Elements(PartSurface.NODE_NAME))
@@ -338,8 +361,15 @@ namespace LDDModder.Modding.Editing
             var connectionsElem = doc.Root.Element("Connections");
             if (connectionsElem != null)
             {
-                foreach (var connElem in connectionsElem.Elements(PartConnector.NODE_NAME))
-                    Connections.Add(PartConnector.FromXml(connElem));
+                foreach (var connElem in connectionsElem.Elements(PartConnection.NODE_NAME))
+                    Connections.Add(PartConnection.FromXml(connElem));
+            }
+
+            var collisionsElem = doc.Root.Element("Collisions");
+            if (collisionsElem != null)
+            {
+                foreach (var connElem in collisionsElem.Elements(PartCollision.NODE_NAME))
+                    Collisions.Add(PartCollision.FromXml(connElem));
             }
 
             LinkStudReferences();
@@ -404,39 +434,61 @@ namespace LDDModder.Modding.Editing
         {
             foreach (var surf in Surfaces)
             {
-                foreach (var comp in surf.Components)
+                foreach (var comp in surf.Components.OfType<PartCullingModel>())
                 {
-                    foreach (var stud in comp.GetStudReferences())
-                    {
-                        if (stud.Connection == null)
-                        {
-                            if (stud.ConnectorIndex != -1)
-                            {
-                                if (stud.ConnectorIndex < Connections.Count &&
-                                    Connections[stud.ConnectorIndex].ConnectorType == ConnectorType.Custom2DField)
-                                {
-                                    stud.Connection = (PartConnector<Custom2DFieldConnector>)Connections[stud.ConnectorIndex];
-                                }
-                                else
-                                {
-                                    string refID = Utilities.StringUtils.GenerateUUID($"{PartID}_{stud.ConnectorIndex}", 8);
-                                    stud.Connection = Connections.OfType<PartConnector<Custom2DFieldConnector>>()
-                                        .FirstOrDefault(x => x.RefID == refID);
-                                }
-                            }
-                            else if (!string.IsNullOrEmpty(stud.RefID))
-                            {
-                                stud.Connection = Connections.OfType<PartConnector<Custom2DFieldConnector>>()
-                                    .FirstOrDefault(x => x.RefID == stud.RefID);
-                            }
-                        }
+                    PartConnection linkedConnection = null;
 
-                        if (stud.Connection != null)
-                        {
-                            stud.ConnectionID = stud.Connection.RefID;
-                            stud.ConnectorIndex = Connections.IndexOf(stud.Connection);
-                        }
+                    if (comp.ConnectionIndex != -1 &&
+                        comp.ConnectionIndex < Connections.Count &&
+                        Connections[comp.ConnectionIndex].ConnectorType == ConnectorType.Custom2DField)
+                    {
+                        linkedConnection = Connections[comp.ConnectionIndex];
                     }
+
+                    if (linkedConnection == null && !string.IsNullOrEmpty(comp.ConnectionID))
+                    {
+                        linkedConnection = Connections
+                            .FirstOrDefault(x => x.RefID == comp.ConnectionID);
+                    }
+
+                    comp.ConnectionID = linkedConnection?.RefID;
+                    comp.ConnectionIndex = linkedConnection != null ? Connections.IndexOf(linkedConnection) : -1;
+
+                    //foreach (var stud in comp.GetStudReferences())
+                    //{
+                        
+                    //    if (stud.Connection == null)
+                    //    {
+                    //        if (stud.ConnectorIndex != -1)
+                    //        {
+                    //            if (stud.ConnectorIndex < Connections.Count &&
+                    //                Connections[stud.ConnectorIndex].ConnectorType == ConnectorType.Custom2DField)
+                    //            {
+                    //                stud.Connection = (PartConnection/*<Custom2DFieldConnector>*/)Connections[stud.ConnectorIndex];
+                    //            }
+                    //            else
+                    //            {
+                    //                string refID = Utilities.StringUtils.GenerateUUID($"{PartID}_{stud.ConnectorIndex}", 8);
+                    //                stud.Connection = Connections.OfType<PartConnection/*<Custom2DFieldConnector>*/>()
+                    //                    .FirstOrDefault(x => x.RefID == refID);
+                    //            }
+                    //        }
+                    //        else if (!string.IsNullOrEmpty(stud.ConnectionID))
+                    //        {
+                    //            stud.Connection = Connections.OfType<PartConnection/*<Custom2DFieldConnector>*/>()
+                    //                .FirstOrDefault(x => x.RefID == stud.ConnectionID);
+                    //        }
+                    //    }
+
+                    //    if (stud.Connection != null)
+                    //    {
+                            
+                    //        stud.ConnectionID = stud.Connection.RefID;
+                    //        stud.ConnectorIndex = Connections.IndexOf(stud.Connection);
+                    //    }
+                    //}
+                
+                
                 }
             }
         }
@@ -473,6 +525,8 @@ namespace LDDModder.Modding.Editing
                         }
                         else
                             compMesh.RefID = StringUtils.GenerateUID(8);
+
+                        compMesh.FileName = $"{compMesh.RefID}.geom";
                     }
 
                     componentIndex++;
@@ -506,10 +560,10 @@ namespace LDDModder.Modding.Editing
 
                     switch (component.ComponentType)
                     {
-                        case LDD.Meshes.MeshCullingType.MainModel:
+                        case ModelComponentType.Part:
                             component.Comments = "Main surface";
                             break;
-                        case LDD.Meshes.MeshCullingType.FemaleStud:
+                        case ModelComponentType.FemaleStud:
                             component.Comments = "Female studs";
                             break;
                         default:
@@ -517,7 +571,7 @@ namespace LDDModder.Modding.Editing
                             break;
                     }
 
-                    if (component.ComponentType == LDD.Meshes.MeshCullingType.MainModel)
+                    if (component.ComponentType == ModelComponentType.Part)
                         component.Comments += " geometry";
 
                     if (surface.Components.Count(x => x.ComponentType == component.ComponentType) > 1)
@@ -526,13 +580,13 @@ namespace LDDModder.Modding.Editing
                         component.Comments += $" {compIndex + 1}";
                     }
 
-                    if (component.ComponentType != LDD.Meshes.MeshCullingType.MainModel)
+                    if (component.ComponentType != ModelComponentType.Part)
                         component.Comments += " geometry";
                 }
             }
         }
 
-        public MeshGeometry LoadMesh(PartMesh mesh)
+        public MeshGeometry LoadMesh(ModelMesh mesh)
         {
             if (string.IsNullOrEmpty(ProjectPath))
                 return null;

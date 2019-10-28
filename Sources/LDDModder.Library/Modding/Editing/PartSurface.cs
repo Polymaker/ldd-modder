@@ -25,7 +25,11 @@ namespace LDDModder.Modding.Editing
             set => SetPropertyValue(ref _SubMaterialIndex, value);
         }
 
-        [XmlArray("Components")]
+        [XmlArray("Components"), 
+            XmlArrayItem(Type = typeof(PartModel), ElementName = "SurfaceModel"),
+            XmlArrayItem(Type = typeof(BrickTubeModel), ElementName = "SurfaceTube"),
+            XmlArrayItem(Type = typeof(MaleStudModel), ElementName = "SurfaceStud"),
+            XmlArrayItem(Type = typeof(FemaleStudModel), ElementName = "SurfaceFemaleStud")]
         public ComponentCollection<SurfaceComponent> Components { get; set; }
 
         public PartSurface()
@@ -40,7 +44,7 @@ namespace LDDModder.Modding.Editing
             Components = new ComponentCollection<SurfaceComponent>(this);
         }
 
-        public IEnumerable<PartMesh> GetAllMeshes()
+        public IEnumerable<ModelMesh> GetAllMeshes()
         {
             return Components.SelectMany(c => c.GetAllMeshes());
         }
@@ -52,10 +56,14 @@ namespace LDDModder.Modding.Editing
             var elem = SerializeToXmlBase(NODE_NAME);
             elem.Add(XmlHelper.ToXml(() => SurfaceID));
             elem.Add(XmlHelper.ToXml(() => SubMaterialIndex));
-            var componentsElem = elem.AddElement("Components");
+
+            if (Project != null)
+                elem.Add(new XAttribute("OutputFile", GetTargetFilename()));
+
+            //var componentsElem = elem.AddElement("Components");
 
             foreach (var comp in Components)
-                componentsElem.Add(comp.SerializeToXml());
+                elem.Add(comp.SerializeToXml());
 
             return elem;
         }
@@ -70,22 +78,31 @@ namespace LDDModder.Modding.Editing
             if (element.TryGetIntAttribute("SubMaterialIndex", out int matIDX))
                 SubMaterialIndex = matIDX;
 
+            //if (element.Element("Components") != null)
+            {
+                foreach (var compElem in element/*.Element("Components")*/.Elements(SurfaceComponent.NODE_NAME))
+                    Components.Add(SurfaceComponent.FromXml(compElem));
+            }
         }
 
         public static PartSurface FromXml(XElement element)
         {
             var surface = new PartSurface();
             surface.LoadFromXml(element);
-
-            if (element.Element("Components") != null)
-            {
-                foreach (var compElem in element.Element("Components").Elements(SurfaceComponent.NODE_NAME))
-                    surface.Components.Add(SurfaceComponent.FromXml(compElem));
-            }
-
             return surface;
         }
 
         #endregion
+
+        public string GetTargetFilename()
+        {
+            if (Project != null)
+            {
+                if (SurfaceID > 0)
+                    return $"{Project.PartID}.g{SurfaceID}";
+                return $"{Project.PartID}.g";
+            }
+            return string.Empty;
+        }
     }
 }

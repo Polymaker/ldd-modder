@@ -17,15 +17,15 @@ namespace LDDModder.BrickEditor.EditModels
         {
             switch (component.ComponentType)
             {
-                case MeshCullingType.MainModel:
+                case ModelComponentType.Part:
                     {
                         Name = ModelLocalizations.Label_Models;
 
                     }
                     break;
-                case MeshCullingType.Stud:
+                case ModelComponentType.MaleStud:
                     {
-                        if (component is SurfaceStud surfaceStud &&
+                        if (component is MaleStudModel surfaceStud &&
                             surfaceStud.Stud != null &&
                             surfaceStud.Stud.FieldNode != null)
                         {
@@ -38,7 +38,7 @@ namespace LDDModder.BrickEditor.EditModels
 
                             if (maleConnectors.Count > 1)
                             {
-                                int myIndex = maleConnectors.IndexOf(surfaceStud.LinkedConnection);
+                                int myIndex = maleConnectors.IndexOf(surfaceStud.GetLinkedConnection());
 
                                 Name = $"{ModelLocalizations.Label_Studs} {myIndex} [{studX}, {studY}]";
                             }
@@ -49,9 +49,9 @@ namespace LDDModder.BrickEditor.EditModels
                         }
                     }
                     break;
-                case MeshCullingType.FemaleStud:
+                case ModelComponentType.FemaleStud:
                     {
-                        if (component is SurfaceFemaleStud surfaceStud)
+                        if (component is FemaleStudModel surfaceStud)
                         {
                             var femmaleConnectors = Project.Connections.Where(x =>
                                 x.ConnectorType == ConnectorType.Custom2DField &&
@@ -59,7 +59,7 @@ namespace LDDModder.BrickEditor.EditModels
 
                             if (femmaleConnectors.Count > 1)
                             {
-                                int myIndex = femmaleConnectors.IndexOf(surfaceStud.LinkedConnection);
+                                int myIndex = femmaleConnectors.IndexOf(surfaceStud.GetLinkedConnection());
 
                                 Name = $"{ModelLocalizations.Label_FemaleStud} {myIndex + 1}";
                             }
@@ -70,7 +70,7 @@ namespace LDDModder.BrickEditor.EditModels
                         }
                     }
                     break;
-                case MeshCullingType.Tube:
+                case ModelComponentType.BrickTube:
                     Name = ModelLocalizations.Label_BrickTubes;
                     break;
             }
@@ -86,7 +86,7 @@ namespace LDDModder.BrickEditor.EditModels
             foreach(var mesh in Component.Geometries)
                 Childrens.Add(new PartGeometryNode(mesh));
 
-            if (Component is SurfaceFemaleStud femaleStud && femaleStud.ReplacementGeometries.Any())
+            if (Component is FemaleStudModel femaleStud && femaleStud.ReplacementGeometries.Any())
             {
                 foreach(var mesh in femaleStud.ReplacementGeometries)
                     Childrens.Add(new PartGeometryNode(mesh, true));

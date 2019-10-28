@@ -7,21 +7,18 @@ using System.Xml.Serialization;
 
 namespace LDDModder.LDD.Palettes
 {
-    public partial class Palette
+    [XmlRoot("Brick")]
+    public class Brick : PaletteItem
     {
-        [XmlRoot("Brick")]
-        public class Brick : PaletteItem
-        {
-            [XmlAttribute("materialID")]
-            public int MaterialID { get; set; }
+        [XmlAttribute("materialID")]
+        public int MaterialID { get; set; }
 
-            [XmlElement("SubMaterial")]
-            public List<SubMaterial> SubMaterials { get; set; }
+        [XmlElement("SubMaterial")]
+        public List<SubMaterial> SubMaterials { get; set; }
 
-            [XmlElement("Decoration")]
-            public List<Decoration> Decorations { get; set; }
+        [XmlElement("Decoration")]
+        public List<Decoration> Decorations { get; set; }
 
-            public override bool HasDecorations => Decorations.Any();
-        }
+        public override bool HasDecorations => Decorations.Any();
     }
 }

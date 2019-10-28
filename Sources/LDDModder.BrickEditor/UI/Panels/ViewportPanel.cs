@@ -246,9 +246,12 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             var partMeshes = project.Surfaces.SelectMany(x => x.GetAllMeshes()).ToList();
             BrickShader.Use();
+            float curHue = 0;
             foreach (var partMesh in partMeshes)
             {
                 var glMesh = GLMeshBase.CreateFromGeometry(partMesh.Geometry, true);
+                //glMesh.MaterialColor = Color4.FromHsl(new Vector4(curHue, 1, 0.6f, 1f));
+                //curHue += 0.1f;
                 glMesh.MaterialColor = new Color4(0.6f, 0.6f, 0.6f, 1f);
                 glMesh.BindToProgram(BrickShader);
                 PartMeshes.Add(glMesh);

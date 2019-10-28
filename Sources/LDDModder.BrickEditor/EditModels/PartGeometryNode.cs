@@ -8,15 +8,15 @@ using System.Threading.Tasks;
 
 namespace LDDModder.BrickEditor.EditModels
 {
-    public class PartGeometryNode : ProjectComponentNode<PartMesh>
+    public class PartGeometryNode : ProjectComponentNode<ModelMesh>
     {
-        public PartMesh Geometry => Component;
+        public ModelMesh Geometry => Component;
 
-        public PartGeometryNode(PartMesh geometry, bool isReplacement = false) : base(geometry)
+        public PartGeometryNode(ModelMesh geometry, bool isReplacement = false) : base(geometry)
         {
             if (isReplacement)
             {
-                var allGeoms = (geometry.Parent as SurfaceFemaleStud).ReplacementGeometries;
+                var allGeoms = (geometry.Parent as FemaleStudModel).ReplacementGeometries;
                 int myIndex = allGeoms.IndexOf(geometry);
                 if (allGeoms.Count > 1)
                     Name = $"{ModelLocalizations.Label_ReplacementMesh} {myIndex + 1}"; 

@@ -25,7 +25,7 @@ namespace LDDModder.LDD.Palettes
         {
             DesignID = 0;
             Quantity = 0;
-            ElementID = String.Empty;
+            ElementID = string.Empty;
         }
 
         public PaletteItem(int designID, int quantity, string elementID)

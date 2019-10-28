@@ -17,20 +17,30 @@ namespace LDDModder.Modding.Editing
 
         private string _Comments;
 
-        [XmlElement]
+        [XmlIgnore]
         public string Comments
         {
             get => _Comments;
             set => SetPropertyValue(ref _Comments, value);
         }
 
+        public PropertyCollection Properties { get; }
+
         internal bool IsLoading => Project?.IsLoading ?? false;
 
         internal PartProject _Project;
 
+        [XmlIgnore]
         public PartProject Project => _Project ?? Parent?.Project;
 
+        [XmlIgnore]
         public PartComponent Parent { get; internal set; }
+
+        public PartComponent()
+        {
+            Properties = new PropertyCollection(this);
+            DefineProperties();
+        }
 
         public virtual XElement SerializeToXml()
         {
@@ -79,6 +89,11 @@ namespace LDDModder.Modding.Editing
                 return true;
             }
             return false;
+        }
+    
+        protected virtual void DefineProperties()
+        {
+
         }
     }
 }

@@ -43,7 +43,7 @@ namespace System.Xml.Linq
 
         public static bool HasElement(this XElement baseElement, string elementName, out XElement element)
         {
-            element = baseElement.Element(elementName);
+            element = GetElement(baseElement, elementName);
             return element != null;
         }
 
@@ -71,6 +71,11 @@ namespace System.Xml.Linq
         public static XAttribute GetAttribute(this XElement element, string name)
         {
             return element.Attributes().FirstOrDefault(x => x.Name.LocalName.Equals(name, StringComparison.InvariantCultureIgnoreCase));
+        }
+
+        public static XElement GetElement(this XElement element, string name)
+        {
+            return element.Elements().FirstOrDefault(x => x.Name.LocalName.Equals(name, StringComparison.InvariantCultureIgnoreCase));
         }
 
         public static void AddBooleanAttribute(this XElement element, string attributeName, bool value, BooleanXmlRepresentation representation = BooleanXmlRepresentation.OneZero)
@@ -152,6 +157,84 @@ namespace System.Xml.Linq
                 return true;
             }
             else if(typeof(T) == typeof(bool))
+            {
+                switch (attr.Value.Trim().ToLower())
+                {
+                    case "1":
+                    case "true":
+                    case "yes":
+                        result = (T)(object)true;
+                        return true;
+                    case "0":
+                    case "false":
+                    case "no":
+                        result = (T)(object)false;
+                        return true;
+                }
+            }
+            else if (typeof(T).IsEnum)
+            {
+                if (int.TryParse(attr.Value, out int intEnumVal) &&
+                    Enum.IsDefined(typeof(T), intEnumVal))
+                {
+                    result = (T)Enum.ToObject(typeof(T), intEnumVal);
+                    return true;
+                }
+                try
+                {
+                    result = (T)Enum.Parse(typeof(T), attr.Value, true);
+                    return true;
+                }
+                catch { }
+            }
+
+            return false;
+        }
+
+        public static T ReadElement<T>(this XElement element, string elementName, T defaultValue)
+        {
+            if (TryReadElement(element, elementName, out T result))
+                return result;
+            return defaultValue;
+        }
+
+        public static bool TryReadElement<T>(this XElement element, string elementName, out T result)
+        {
+            result = default;
+            var attr = GetElement(element, elementName);
+            if (attr == null)
+                return false;
+
+            if (typeof(T) == typeof(int) &&
+                int.TryParse(attr.Value, out int intVal))
+            {
+                result = (T)(object)intVal;
+                return true;
+            }
+            else if (typeof(T) == typeof(float) &&
+                float.TryParse(attr.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out float floatVal))
+            {
+                result = (T)(object)floatVal;
+                return true;
+            }
+            else if (typeof(T) == typeof(double) &&
+                double.TryParse(attr.Value, NumberStyles.Number, CultureInfo.InvariantCulture, out double dblVal))
+            {
+                result = (T)(object)dblVal;
+                return true;
+            }
+            else if (typeof(T) == typeof(decimal) &&
+                decimal.TryParse(attr.Value, NumberStyles.Number, CultureInfo.InvariantCulture, out decimal decVal))
+            {
+                result = (T)(object)decVal;
+                return true;
+            }
+            else if (typeof(T) == typeof(string))
+            {
+                result = (T)(object)attr.Value;
+                return true;
+            }
+            else if (typeof(T) == typeof(bool))
             {
                 switch (attr.Value.Trim().ToLower())
                 {

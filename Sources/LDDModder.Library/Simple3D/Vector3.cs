@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Xml.Serialization;
 
 namespace LDDModder.Simple3D
 {
+    [Serializable]
     public struct Vector3 : IEquatable<Vector3>, IEqualityComparer<Vector3>
     {
 
@@ -61,6 +63,7 @@ namespace LDDModder.Simple3D
 
         #region Permutation Properties
 
+        [XmlIgnore]
         public Vector2 Xy
         {
             get => new Vector2(X, Y);
@@ -71,6 +74,7 @@ namespace LDDModder.Simple3D
             }
         }
 
+        [XmlIgnore]
         public Vector2 Xz
         {
             get => new Vector2(X, Z);
@@ -81,6 +85,7 @@ namespace LDDModder.Simple3D
             }
         }
 
+        [XmlIgnore]
         public Vector2 Yx
         {
             get => new Vector2(Y, X);
