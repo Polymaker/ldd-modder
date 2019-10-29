@@ -11,6 +11,8 @@ namespace LDDModder.LDD.Primitives
 {
     public class Transform
     {
+        public static readonly string[] AttributeNames = new string[] { "angle", "ax", "ay", "az", "tx", "ty", "tz" };
+
         public float Angle { get; set; }
         public Vector3 Axis { get; set; }
         public Vector3 Translation { get; set; }

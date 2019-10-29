@@ -8,7 +8,7 @@ namespace LDDModder.Modding.Editing
 {
     public class PropertyChangedEventArgs : EventArgs
     {
-        public PartComponent Component { get; }
+        public PartElement Component { get; }
 
         public string PropertyName { get; }
 
@@ -16,7 +16,7 @@ namespace LDDModder.Modding.Editing
 
         public object NewValue { get; }
 
-        public PropertyChangedEventArgs(PartComponent component, string propertyName, object oldValue, object newValue)
+        public PropertyChangedEventArgs(PartElement component, string propertyName, object oldValue, object newValue)
         {
             Component = component;
             PropertyName = propertyName;

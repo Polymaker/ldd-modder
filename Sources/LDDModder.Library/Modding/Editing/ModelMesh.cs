@@ -10,7 +10,7 @@ using System.Xml.Serialization;
 
 namespace LDDModder.Modding.Editing
 {
-    public class ModelMesh : PartComponent
+    public class ModelMesh : PartElement
     {
         public const string NODE_NAME = "Mesh";
 
@@ -26,9 +26,11 @@ namespace LDDModder.Modding.Editing
         [XmlAttribute]
         public string FileName { get; set; }
 
+        public PartSurface Surface => (Parent as SurfaceComponent)?.Parent as PartSurface;
+
         public ModelMesh()
         {
-            RefID = Utilities.StringUtils.GenerateUID(8);
+            ID = Utilities.StringUtils.GenerateUID(8);
         }
 
         public ModelMesh(MeshGeometry geometry)

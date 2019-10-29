@@ -11,7 +11,7 @@ using System.Xml.Serialization;
 
 namespace LDDModder.Modding.Editing
 {
-    public class StudReference : PartComponent
+    public class StudReference : PartElement
     {
         public const string NODE_NAME = "StudRef";
 
@@ -55,7 +55,7 @@ namespace LDDModder.Modding.Editing
 
         public StudReference(string refID, int studIndex, int value1, int value2)
         {
-            RefID = refID;
+            ID = refID;
             FieldIndex = studIndex;
             Value1 = value1;
             Value2 = value2;

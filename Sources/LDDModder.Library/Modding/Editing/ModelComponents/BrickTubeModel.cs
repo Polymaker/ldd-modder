@@ -1,6 +1,7 @@
 ﻿using LDDModder.LDD.Meshes;
 using System.Collections.Generic;
 using System.Xml.Linq;
+using System.Linq;
 
 namespace LDDModder.Modding.Editing
 {
@@ -28,11 +29,11 @@ namespace LDDModder.Modding.Editing
             }
         }
 
-        public ComponentCollection<StudReference> AdjacentStuds { get; set; }
+        public ElementCollection<StudReference> AdjacentStuds { get; set; }
 
         public BrickTubeModel()
         {
-            AdjacentStuds = new ComponentCollection<StudReference>(this);
+            AdjacentStuds = new ElementCollection<StudReference>(this);
         }
 
         public override IEnumerable<StudReference> GetStudReferences()
@@ -41,6 +42,11 @@ namespace LDDModder.Modding.Editing
                 yield return TubeStud;
             foreach (var stud in AdjacentStuds)
                 yield return stud;
+        }
+
+        protected override IEnumerable<PartElement> GetAllChilds()
+        {
+            return base.GetAllChilds().Concat(AdjacentStuds);
         }
 
         public override XElement SerializeToXml()

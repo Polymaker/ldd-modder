@@ -10,9 +10,9 @@ namespace LDDModder.Modding.Editing
         public override ModelComponentType ComponentType => ModelComponentType.FemaleStud;
 
         //public MeshGeometry ReplacementGeometry { get; set; }
-        public ComponentCollection<ModelMesh> ReplacementGeometries { get; set; }
+        public ElementCollection<ModelMesh> ReplacementGeometries { get; set; }
 
-        public ComponentCollection<StudReference> Studs
+        public ElementCollection<StudReference> Studs
         {
             get => StudReferences;
             set => StudReferences = value;
@@ -21,13 +21,18 @@ namespace LDDModder.Modding.Editing
         public FemaleStudModel()
         {
             //Studs = new ComponentCollection<StudReference>(this);
-            ReplacementGeometries = new ComponentCollection<ModelMesh>(this);
+            ReplacementGeometries = new ElementCollection<ModelMesh>(this);
         }
 
         //public override IEnumerable<StudReference> GetStudReferences()
         //{
         //    return Studs;
         //}
+
+        protected override IEnumerable<PartElement> GetAllChilds()
+        {
+            return base.GetAllChilds().Concat(ReplacementGeometries);
+        }
 
         public override IEnumerable<ModelMesh> GetAllMeshes()
         {

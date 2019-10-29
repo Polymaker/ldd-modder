@@ -10,7 +10,7 @@ namespace LDDModder.BrickEditor.EditModels
 {
     public class ConnectionsGroupNode : ComponentGroupNode
     {
-        public ComponentCollection<PartConnection> Connections { get; }
+        public ElementCollection<PartConnection> Connections { get; }
 
         public ConnectionsGroupNode(PartProject project) : base(project.Connections)
         {
@@ -18,7 +18,7 @@ namespace LDDModder.BrickEditor.EditModels
             Name = ModelLocalizations.Label_Connections;
         }
 
-        public ConnectionsGroupNode(ComponentCollection<PartConnection> connections) : base (connections)
+        public ConnectionsGroupNode(ElementCollection<PartConnection> connections) : base (connections)
         {
             Connections = connections;
             Name = ModelLocalizations.Label_Connections;

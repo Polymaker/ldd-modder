@@ -11,7 +11,7 @@ using System.Xml.Serialization;
 
 namespace LDDModder.Modding.Editing
 {
-    public class PartBone : PartComponent
+    public class PartBone : PartElement
     {
         public const string NODE_NAME = "Bone";
 
@@ -23,15 +23,20 @@ namespace LDDModder.Modding.Editing
 
         public BoundingBox Bounding { get; set; }
 
-        public ComponentCollection<PartConnection> Connections { get; }
+        public ElementCollection<PartConnection> Connections { get; }
 
-        public ComponentCollection<PartCollision> Collisions { get; }
+        public ElementCollection<PartCollision> Collisions { get; }
 
         public PartBone()
         {
-            Connections = new ComponentCollection<PartConnection>(this);
-            Collisions = new ComponentCollection<PartCollision>(this);
+            Connections = new ElementCollection<PartConnection>(this);
+            Collisions = new ElementCollection<PartCollision>(this);
             Transform = new ItemTransform();
+        }
+
+        protected override IEnumerable<PartElement> GetAllChilds()
+        {
+            return Connections.AsEnumerable<PartElement>().Concat(Collisions);
         }
 
         public static PartBone FromLDD(FlexBone flexBone)
@@ -51,7 +56,7 @@ namespace LDDModder.Modding.Editing
                 if (partConn.ConnectorType == LDD.Primitives.Connectors.ConnectorType.Custom2DField)
                 {
                     int connIdx = flexBone.Connectors.IndexOf(lddConn);
-                    partConn.RefID = StringUtils.GenerateUUID($"Bone{flexBone.ID}_{connIdx}", 8);
+                    partConn.ID = StringUtils.GenerateUUID($"Bone{flexBone.ID}_{connIdx}", 8);
                 }
                 bone.Connections.Add(partConn);
             }

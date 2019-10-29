@@ -16,17 +16,17 @@ namespace LDDModder.Modding.Editing
         XmlInclude(typeof(MaleStudModel)), 
         XmlInclude(typeof(FemaleStudModel)), 
         XmlInclude(typeof(BrickTubeModel))]
-    public abstract class SurfaceComponent : PartComponent
+    public abstract class SurfaceComponent : PartElement
     {
         public const string NODE_NAME = "Component";
 
         public abstract ModelComponentType ComponentType { get; }
 
-        public ComponentCollection<ModelMesh> Geometries { get; }
+        public ElementCollection<ModelMesh> Geometries { get; }
 
         public SurfaceComponent()
         {
-            Geometries = new ComponentCollection<ModelMesh>(this);
+            Geometries = new ElementCollection<ModelMesh>(this);
         }
 
         public static SurfaceComponent FromLDD(MeshFile mesh, MeshCulling culling)
@@ -112,6 +112,11 @@ namespace LDDModder.Modding.Editing
         }
 
         public virtual IEnumerable<ModelMesh> GetAllMeshes()
+        {
+            return Geometries;
+        }
+
+        protected override IEnumerable<PartElement> GetAllChilds()
         {
             return Geometries;
         }

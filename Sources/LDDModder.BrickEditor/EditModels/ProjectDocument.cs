@@ -11,9 +11,9 @@ namespace LDDModder.BrickEditor.EditModels
     {
         public PartProject Project { get; set; }
 
-        private PartComponent _SelectedComponent;
+        private PartElement _SelectedComponent;
 
-        public PartComponent SelectedComponent
+        public PartElement SelectedComponent
         {
             get => _SelectedComponent;
             set
@@ -31,7 +31,7 @@ namespace LDDModder.BrickEditor.EditModels
         public ProjectDocument(PartProject project)
         {
             Project = project;
-            Project.ComponentPropertyChanged += Project_ComponentPropertyChanged;
+            Project.ElementPropertyChanged += Project_ComponentPropertyChanged;
         }
 
         private void Project_ComponentPropertyChanged(object sender, PropertyChangedEventArgs e)

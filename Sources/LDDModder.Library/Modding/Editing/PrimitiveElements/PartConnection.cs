@@ -14,7 +14,7 @@ using LDDModder.Utilities;
 namespace LDDModder.Modding.Editing
 {
     [XmlRoot("Connection")]
-    public /*abstract*/ class PartConnection : PartComponent
+    public /*abstract*/ class PartConnection : PartElement
     {
         public const string NODE_NAME = "Connection";
 
@@ -51,23 +51,9 @@ namespace LDDModder.Modding.Editing
             Transform = ItemTransform.FromLDD(connector.Transform);
         }
 
-        //protected override void DefineProperties()
-        //{
-        //    base.DefineProperties();
-        //    var defaultConnector = Connector.CreateFromType(ConnectorType);
-        //    switch (ConnectorType)
-        //    {
-        //        case ConnectorType.Axel:
-        //            break;
-        //    }
-        //}
-
         public static PartConnection FromLDD(Connector connector)
         {
             return new PartConnection(connector);
-
-            //var genType = typeof(PartConnection<>).MakeGenericType(connector.GetType());
-            //return (PartConnection)Activator.CreateInstance(genType, connector);
         }
 
         public static PartConnection FromXml(XElement element)
@@ -76,11 +62,6 @@ namespace LDDModder.Modding.Editing
             var partConn = new PartConnection(connectorType);
             partConn.LoadFromXml(element);
             return partConn;
-            //var defaultConnector = Connector.CreateFromType(connectorType);
-            //var genType = typeof(PartConnection<>).MakeGenericType(defaultConnector.GetType());
-            //var partConn = (PartConnection)Activator.CreateInstance(genType, defaultConnector);
-            //partConn.LoadFromXml(element);
-            //return partConn;
         }
 
         protected internal override void LoadFromXml(XElement element)
@@ -92,13 +73,13 @@ namespace LDDModder.Modding.Editing
 
             connElem.Add(Transform.ToLDD().ToXmlAttributes());
 
-            foreach (var elem in element.Element("Properties").Elements().ToArray())
-            {
-                if (elem.Name.LocalName == "Data")
-                    connElem.Value = elem.Value;
-                else
-                    connElem.Add(new XAttribute(elem.Name.LocalName, elem.Value));
-            }
+            //foreach (var elem in element.Element("Properties").Elements().ToArray())
+            //{
+            //    if (elem.Name.LocalName == "Data")
+            //        connElem.Value = elem.Value;
+            //    else
+            //        connElem.Add(new XAttribute(elem.Name.LocalName, elem.Value));
+            //}
 
             Connector.LoadFromXml(connElem);
 
@@ -116,19 +97,21 @@ namespace LDDModder.Modding.Editing
             if (Connector != null)
             {
                 var connectorXml = Connector.SerializeToXml();
-                string[] toRemove = new string[] { "angle", "ax", "ay", "az", "tx", "ty", "tz" };
+
                 var propElem = elem.AddElement("Properties");
 
                 foreach (var attr in connectorXml.Attributes())
                 {
-                    if (toRemove.Contains(attr.Name.LocalName))
+                    if (LDD.Primitives.Transform.AttributeNames.Contains(attr.Name.LocalName))
                         continue;
-                    propElem.AddElement(attr.Name.LocalName.Capitalize(), attr.Value);
+
+                    propElem.Add(new XAttribute(attr.Name.LocalName.Capitalize(), attr.Value));
+                    //propElem.AddElement(attr.Name.LocalName.Capitalize(), attr.Value);
                 }
 
                 if (!string.IsNullOrEmpty(connectorXml.Value))//Custom2DField
                 {
-                    propElem.AddElement("Data", connectorXml.Value
+                    elem.AddElement("StudsArray", connectorXml.Value
                         .Replace("\r", string.Empty)
                         .Replace("\n", string.Empty)
                         .Trim()

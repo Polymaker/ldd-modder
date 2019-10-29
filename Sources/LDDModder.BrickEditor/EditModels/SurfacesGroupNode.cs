@@ -10,7 +10,7 @@ namespace LDDModder.BrickEditor.EditModels
 {
     public class SurfacesGroupNode : ComponentGroupNode
     {
-        public ComponentCollection<PartSurface> Surfaces { get; }
+        public ElementCollection<PartSurface> Surfaces { get; }
 
         public SurfacesGroupNode(PartProject project) : base (project.Surfaces)
         {

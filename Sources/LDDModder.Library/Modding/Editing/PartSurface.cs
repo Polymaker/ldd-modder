@@ -9,39 +9,32 @@ using System.Xml.Serialization;
 
 namespace LDDModder.Modding.Editing
 {
-    public class PartSurface : PartComponent
+    public class PartSurface : PartElement
     {
         public const string NODE_NAME = "Surface";
 
-        [XmlAttribute]
         public int SurfaceID { get; set; }
 
         private int _SubMaterialIndex;
 
-        [XmlAttribute]
         public int SubMaterialIndex
         {
             get => _SubMaterialIndex;
             set => SetPropertyValue(ref _SubMaterialIndex, value);
         }
 
-        [XmlArray("Components"), 
-            XmlArrayItem(Type = typeof(PartModel), ElementName = "SurfaceModel"),
-            XmlArrayItem(Type = typeof(BrickTubeModel), ElementName = "SurfaceTube"),
-            XmlArrayItem(Type = typeof(MaleStudModel), ElementName = "SurfaceStud"),
-            XmlArrayItem(Type = typeof(FemaleStudModel), ElementName = "SurfaceFemaleStud")]
-        public ComponentCollection<SurfaceComponent> Components { get; set; }
+        public ElementCollection<SurfaceComponent> Components { get; set; }
 
         public PartSurface()
         {
-            Components = new ComponentCollection<SurfaceComponent>(this);
+            Components = new ElementCollection<SurfaceComponent>(this);
         }
 
         public PartSurface(int surfaceID, int subMaterialIndex)
         {
             SurfaceID = surfaceID;
             SubMaterialIndex = subMaterialIndex;
-            Components = new ComponentCollection<SurfaceComponent>(this);
+            Components = new ElementCollection<SurfaceComponent>(this);
         }
 
         public IEnumerable<ModelMesh> GetAllMeshes()
@@ -49,13 +42,20 @@ namespace LDDModder.Modding.Editing
             return Components.SelectMany(c => c.GetAllMeshes());
         }
 
+        protected override IEnumerable<PartElement> GetAllChilds()
+        {
+            return Components;
+        }
+
         #region Xml Serialization
 
         public override XElement SerializeToXml()
         {
             var elem = SerializeToXmlBase(NODE_NAME);
-            elem.Add(XmlHelper.ToXml(() => SurfaceID));
-            elem.Add(XmlHelper.ToXml(() => SubMaterialIndex));
+            elem.RemoveAttributes();
+
+            elem.Add(new XAttribute("SurfaceID", SurfaceID));
+            elem.Add(new XAttribute("SubMaterialIndex", SubMaterialIndex));
 
             if (Project != null)
                 elem.Add(new XAttribute("OutputFile", GetTargetFilename()));
@@ -71,9 +71,11 @@ namespace LDDModder.Modding.Editing
         protected internal override void LoadFromXml(XElement element)
         {
             base.LoadFromXml(element);
-
+            
             if (element.TryGetIntAttribute("SurfaceID", out int surfID))
                 SurfaceID = surfID;
+
+            Name = $"Surface{SurfaceID}";
 
             if (element.TryGetIntAttribute("SubMaterialIndex", out int matIDX))
                 SubMaterialIndex = matIDX;

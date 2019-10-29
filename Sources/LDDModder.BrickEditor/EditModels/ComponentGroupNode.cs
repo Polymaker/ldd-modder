@@ -9,9 +9,9 @@ namespace LDDModder.BrickEditor.EditModels
 {
     public class ComponentGroupNode : ProjectItemNode
     {
-        public IComponentCollection Collection { get; }
+        public IElementCollection Collection { get; }
 
-        public ComponentGroupNode(IComponentCollection collections)
+        public ComponentGroupNode(IElementCollection collections)
         {
             Collection = collections;
         }

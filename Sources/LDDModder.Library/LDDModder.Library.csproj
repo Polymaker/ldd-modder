@@ -158,14 +158,14 @@
     <Compile Include="LDD\Primitives\Transform.cs" />
     <Compile Include="Maths\Line.cs" />
     <Compile Include="Modding\Editing\ChangeTracking\CollectionChangedEventArgs.cs" />
-    <Compile Include="Modding\Editing\ChangeTracking\ComponentCollection.cs" />
+    <Compile Include="Modding\Editing\ChangeTracking\ElementCollection.cs" />
     <Compile Include="Modding\Editing\ModelComponents\PartCullingModel.cs" />
     <Compile Include="Modding\Editing\ItemTransform.cs" />
     <Compile Include="Modding\Editing\ModelComponents\ModelComponentType.cs" />
     <Compile Include="Modding\Editing\PartBone.cs" />
     <Compile Include="Modding\Editing\PrimitiveElements\PartBoxCollision.cs" />
     <Compile Include="Modding\Editing\PrimitiveElements\PartCollision.cs" />
-    <Compile Include="Modding\Editing\PartComponent.cs" />
+    <Compile Include="Modding\Editing\PartElement.cs" />
     <Compile Include="Modding\Editing\PrimitiveElements\PartConnection.cs" />
     <Compile Include="Modding\Editing\ModelMesh.cs" />
     <Compile Include="Modding\Editing\PartProject.cs" />

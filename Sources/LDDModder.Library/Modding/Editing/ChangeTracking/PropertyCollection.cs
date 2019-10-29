@@ -14,7 +14,7 @@ namespace LDDModder.Modding.Editing
 {
     public class PropertyCollection : IList<PartProperty>//, IXmlSerializable
     {
-        public PartComponent Owner { get; }
+        public PartElement Owner { get; }
 
         public int Count => ((IList<PartProperty>)Properties).Count;
 
@@ -29,7 +29,7 @@ namespace LDDModder.Modding.Editing
             Properties = new List<PartProperty>();
         }
 
-        public PropertyCollection(PartComponent owner)
+        public PropertyCollection(PartElement owner)
         {
             Owner = owner;
             Properties = new List<PartProperty>();

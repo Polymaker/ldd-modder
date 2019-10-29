@@ -10,7 +10,7 @@ using System.Xml.Serialization;
 namespace LDDModder.Modding.Editing
 {
     [XmlInclude(typeof(PartBoxCollision)), XmlInclude(typeof(PartSphereCollision))]
-    public abstract class PartCollision : PartComponent
+    public abstract class PartCollision : PartElement
     {
         public const string NODE_NAME = "Collision";
 

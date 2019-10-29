@@ -14,23 +14,28 @@ namespace LDDModder.Modding.Editing
         internal int ConnectionIndex { get; set; } = -1;
 
         [XmlIgnore]
-        protected ComponentCollection<StudReference> StudReferences { get; set; }
+        protected ElementCollection<StudReference> StudReferences { get; set; }
 
         public PartCullingModel()
         {
-            StudReferences = new ComponentCollection<StudReference>(this);
+            StudReferences = new ElementCollection<StudReference>(this);
         }
 
         public PartConnection GetLinkedConnection()
         {
             if (Project != null)
-                return Project.Connections.FirstOrDefault(x => x.RefID == ConnectionID);
+                return Project.Connections.FirstOrDefault(x => x.ID == ConnectionID);
             return null;
         }
 
         public virtual IEnumerable<StudReference> GetStudReferences()
         {
             return StudReferences;
+        }
+
+        protected override IEnumerable<PartElement> GetAllChilds()
+        {
+            return base.GetAllChilds().Concat(StudReferences);
         }
 
         public override XElement SerializeToXml()

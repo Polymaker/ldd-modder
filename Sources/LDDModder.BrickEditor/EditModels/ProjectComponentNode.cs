@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace LDDModder.BrickEditor.EditModels
 {
-    public abstract class ProjectComponentNode<T> : ProjectItemNode where T : PartComponent
+    public abstract class ProjectComponentNode<T> : ProjectItemNode where T : PartElement
     {
         public T Component { get; }
 
