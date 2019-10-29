@@ -55,7 +55,7 @@ namespace LDDModder.BrickEditor.UI.Windows
                 {
                     var selectedBrick = dlg.SelectedBrick;
                     var project = PartProject.CreateFromLddPart(selectedBrick.PartId);
-                    project.GenerateProjectXml().Save("poject.xml");
+                    project.Save("poject.lpp");
                     LoadPartProject(project);
                 }
             }

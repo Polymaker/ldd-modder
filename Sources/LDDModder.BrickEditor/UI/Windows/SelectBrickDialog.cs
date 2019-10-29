@@ -231,9 +231,12 @@ namespace LDDModder.BrickEditor.UI.Windows
                     BrickLoadingQueue.Enqueue(brick);
                 }
             }
-
-            CachedBrickList.Bricks.Clear();
-            CachedBrickList = null;//free memory
+            if (CachedBrickList != null)
+            {
+                CachedBrickList.Bricks.Clear();
+                CachedBrickList = null;//free memory
+            }
+            
             GC.Collect();
         }
 

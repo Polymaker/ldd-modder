@@ -75,7 +75,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             GridShader.MinorGridLine.Set(new GridShaderProgram.GridLineInfo()
             {
-                Color = new Color4(0.8f, 0.6f, 0.6f, 0.8f),
+                Color = new Color4(0.6f, 0.6f, 0.6f, 0.8f),
                 Spacing = 0.4f,
                 Thickness = 0.75f,
                 OffCenter = false
@@ -83,7 +83,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             BrickShader = ProgramFactory.Create<BasicShaderProgram>();
             BrickShader.Use();
-            BrickShader.LightPosition.Set(new Vector3(5, 10, 5));
+            BrickShader.LightPosition.Set(new Vector3(-8, 12, 4));
 
             CameraPosition = new Vector3(5);
         }
@@ -132,9 +132,11 @@ namespace LDDModder.BrickEditor.UI.Panels
    
             var aspectRatio = glControl1.Width / (float)glControl1.Height;
             WorldProjectionMatrix = Matrix4.CreatePerspectiveFieldOfView(OpenTK.MathHelper.PiOver4, aspectRatio, 0.1f, 1000);
-            CameraMatrix = Matrix4.LookAt(CameraPosition, SceneCenter, Vector3.UnitY);
-
             ViewInitialized = true;
+
+            //CameraMatrix = Matrix4.LookAt(new Vector3(0,5,0), Vector3.Zero, Vector3.UnitZ * -1);//top-down
+            CameraMatrix = Matrix4.LookAt(CameraPosition, SceneCenter, Vector3.UnitY);
+             
             OnRenderFrame();
         }
 
@@ -151,9 +153,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             GL.LoadMatrix(ref WorldProjectionMatrix);
             
             GL.MatrixMode(MatrixMode.Modelview);
-            //var viewMatrix = Matrix4.LookAt(new Vector3(0,5,0), Vector3.Zero, Vector3.UnitZ * -1);//top-down
-            //var viewMatrix = Matrix4.LookAt(new Vector3(10), Vector3.Zero, Vector3.UnitY);
-
+            
             GL.LoadMatrix(ref CameraMatrix);
 
             foreach (var mesh in PartMeshes)
@@ -175,10 +175,10 @@ namespace LDDModder.BrickEditor.UI.Panels
             GridShader.PMatrix.Set(WorldProjectionMatrix);
 
             GL.Begin(PrimitiveType.Quads);
-            GL.Vertex3(-40, 0, -40);
-            GL.Vertex3(-40, 0, 40);
-            GL.Vertex3(40, 0, 40);
-            GL.Vertex3(40, 0, -40);
+            GL.Vertex3(-20, 0, -20);
+            GL.Vertex3(-20, 0, 20);
+            GL.Vertex3(20, 0, 20);
+            GL.Vertex3(20, 0, -20);
             GL.End();
         }
 
@@ -253,12 +253,9 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             var partMeshes = project.Surfaces.SelectMany(x => x.GetAllMeshes()).ToList();
             BrickShader.Use();
-            float curHue = 0;
             foreach (var partMesh in partMeshes)
             {
                 var glMesh = GLMeshBase.CreateFromGeometry(partMesh.Geometry, true);
-                //glMesh.MaterialColor = Color4.FromHsl(new Vector4(curHue, 1, 0.6f, 1f));
-                //curHue += 0.1f;
                 glMesh.MaterialColor = new Color4(0.6f, 0.6f, 0.6f, 1f);
                 glMesh.BindToProgram(BrickShader);
                 PartMeshes.Add(glMesh);
@@ -269,8 +266,9 @@ namespace LDDModder.BrickEditor.UI.Panels
             var brickSize = project.Bounding.Size;
             float maxSize = Math.Max(brickSize.X, Math.Max(brickSize.Y, brickSize.Z));
             CameraPosition = new Vector3(maxSize + 2);
-            CameraPosition.Y = Math.Max(project.Bounding.MaxY + 2, 6);
+            CameraPosition.Y = project.Bounding.MaxY + 2;
             CameraMatrix = Matrix4.LookAt(CameraPosition, SceneCenter, Vector3.UnitY);
+
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)

@@ -39,7 +39,7 @@ namespace LDDModder.Modding.Editing
         public PartComponent()
         {
             Properties = new PropertyCollection(this);
-            DefineProperties();
+            //DefineProperties();
         }
 
         public virtual XElement SerializeToXml()
@@ -54,11 +54,11 @@ namespace LDDModder.Modding.Editing
             if (!string.IsNullOrEmpty(RefID))
                 elem.Add(new XAttribute("RefID", RefID));
 
-            if (!string.IsNullOrEmpty(Comments))
-            {
-                elem.Add(new XComment(Comments));
-                //elem.Add(XmlHelper.ToXml(() => Comments));
-            }
+            //if (!string.IsNullOrEmpty(Comments))
+            //{
+            //    elem.Add(new XComment(Comments));
+            //    //elem.Add(XmlHelper.ToXml(() => Comments));
+            //}
 
             return elem;
         }
@@ -69,11 +69,11 @@ namespace LDDModder.Modding.Editing
             if (element.Attribute("RefID") != null)
                 RefID = element.Attribute("RefID").Value;
 
-            var commentElem = element.Elements().FirstOrDefault(x => x.NodeType == System.Xml.XmlNodeType.Comment);
-            if (commentElem != null)
-                Comments = commentElem.Value;
-            else if (element.Element("Comments") != null)
-                Comments = element.Element("Comments").Value;
+            //var commentElem = element.Elements().FirstOrDefault(x => x.NodeType == System.Xml.XmlNodeType.Comment);
+            //if (commentElem != null)
+            //    Comments = commentElem.Value;
+            //else if (element.Element("Comments") != null)
+            //    Comments = element.Element("Comments").Value;
         }
 
         protected bool SetPropertyValue<T>(ref T property, T value, [CallerMemberName] string propertyName = null)
@@ -91,9 +91,9 @@ namespace LDDModder.Modding.Editing
             return false;
         }
     
-        protected virtual void DefineProperties()
-        {
+        //protected virtual void DefineProperties()
+        //{
 
-        }
+        //}
     }
 }

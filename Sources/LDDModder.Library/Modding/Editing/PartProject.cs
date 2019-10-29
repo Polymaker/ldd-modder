@@ -1,4 +1,5 @@
-﻿using LDDModder.LDD.Data;
+﻿using ICSharpCode.SharpZipLib.Zip;
+using LDDModder.LDD.Data;
 using LDDModder.LDD.Meshes;
 using LDDModder.LDD.Primitives;
 using LDDModder.LDD.Primitives.Connectors;
@@ -166,7 +167,7 @@ namespace LDDModder.Modding.Editing
 
             project.LinkStudReferences();
 
-            project.GenerateDefaultComments();
+            //project.GenerateDefaultComments();
 
             project.IsLoading = false;
             return project;
@@ -281,30 +282,8 @@ namespace LDDModder.Modding.Editing
         public static PartProject CreateFromXml(XDocument doc)
         {
             var project = new PartProject();
-
-            //Part info
-            {
-                var partElem = doc.Root.Element("PartInfo");
-                project.PartID = int.Parse(partElem.Element("PartID")?.Value);
-
-            }
-
-            //Part properties
-            var propsElem = doc.Root.Element("Properties");
-            if (propsElem != null)
-            {
-
-            }
-
-            var surfacesElem = doc.Root.Element("Surfaces");
-
-            if (surfacesElem != null)
-            {
-                foreach (var surfElem in surfacesElem.Elements(PartSurface.NODE_NAME))
-                    project.Surfaces.Add(PartSurface.FromXml(surfElem));
-            }
-
-            return null;
+            project.LoadFromXml(doc);
+            return project;
         }
 
         private void LoadFromXml(XDocument doc)
@@ -379,7 +358,7 @@ namespace LDDModder.Modding.Editing
 
         #region Read/Write from Directory
 
-        public void Save(string directory)
+        public void SaveExtracted(string directory)
         {
             directory = Path.GetFileName(directory);
             Directory.CreateDirectory(directory);
@@ -424,7 +403,38 @@ namespace LDDModder.Modding.Editing
 
         #region Read/Write from zip
 
+        public void Save(string filename)
+        {
+            using (var fs = File.Open(filename, FileMode.Create))
+            using (var zipStream = new ZipOutputStream(fs))
+            {
+                zipStream.SetLevel(1);
 
+                
+                zipStream.PutNextEntry(new ZipEntry("project.xml"));
+
+                GenerateMeshesNames();
+                var projectXml = GenerateProjectXml();
+
+                projectXml.Save(zipStream);
+
+                zipStream.CloseEntry();
+
+                var allMeshes = Surfaces.SelectMany(s => s.GetAllMeshes());
+
+                foreach (var mesh in allMeshes)
+                {
+                    using(var ms = new MemoryStream())
+                    {
+                        mesh.Geometry.Save(ms);
+                        ms.Position = 0;
+                        zipStream.PutNextEntry(new ZipEntry(mesh.FileName));
+                        ms.CopyTo(zipStream);
+                        zipStream.CloseEntry();
+                    }
+                }
+            }
+        }
 
         #endregion
 
@@ -526,7 +536,7 @@ namespace LDDModder.Modding.Editing
                         else
                             compMesh.RefID = StringUtils.GenerateUID(8);
 
-                        compMesh.FileName = $"{compMesh.RefID}.geom";
+                        //compMesh.FileName = $"{compMesh.RefID}.geom";
                     }
 
                     componentIndex++;
