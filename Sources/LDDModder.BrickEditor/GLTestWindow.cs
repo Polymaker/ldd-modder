@@ -189,7 +189,7 @@ namespace LDDModder.BrickEditor
             BitmapTexture.CreateCompatible(texImage, out DefaultTexture, 1);
             DefaultTexture.LoadBitmap(texImage, 0);
             DefaultTexture.SetFilter(TextureMinFilter.Nearest, TextureMagFilter.Nearest);
-
+            
             OutlineTexs = new Texture2D[3];
             var imgNames = new string[] { "blue.png", "red.png", "magenta.png" };
             for (int i = 0; i < 3; i++)

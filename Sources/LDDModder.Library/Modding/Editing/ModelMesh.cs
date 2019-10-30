@@ -28,6 +28,8 @@ namespace LDDModder.Modding.Editing
 
         public PartSurface Surface => (Parent as SurfaceComponent)?.Parent as PartSurface;
 
+        public bool IsModelLoaded => Geometry != null;
+
         public ModelMesh()
         {
             ID = Utilities.StringUtils.GenerateUID(8);
@@ -58,6 +60,13 @@ namespace LDDModder.Modding.Editing
             IsTextured = element.ReadAttribute("IsTextured", false);
             IsFlexible = element.ReadAttribute("IsFlexible", false);
             FileName = element.ReadAttribute("FileName", string.Empty);
+        }
+
+        public bool LoadModel()
+        {
+            if (Geometry == null && Project != null && !string.IsNullOrEmpty(FileName))
+                Geometry = Project.ReadModelMesh(FileName);
+            return Geometry != null;
         }
     }
 }

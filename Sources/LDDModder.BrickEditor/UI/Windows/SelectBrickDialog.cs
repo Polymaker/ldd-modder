@@ -115,7 +115,7 @@ namespace LDDModder.BrickEditor.UI.Windows
             base.OnLoad(e);
             GenerateColumnContextMenu();
             SendMessage(SearchTextBox.Handle, EM_SETCUEBANNER, 0, "Search a part");
-
+            
             SettingsManager.Initialize();
         }
 
@@ -393,7 +393,11 @@ namespace LDDModder.BrickEditor.UI.Windows
         private const int EM_SETCUEBANNER = 0x1501;
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        private static extern Int32 SendMessage(IntPtr hWnd, int msg, int wParam, [MarshalAs(UnmanagedType.LPWStr)]string lParam);
+        private static extern int SendMessage(IntPtr hWnd, int msg, int wParam, [MarshalAs(UnmanagedType.LPWStr)]string lParam);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern int SendMessage(IntPtr hWnd, int msg, int wParam, int lParam);
+
 
         private void SearchTextBox_TextChanged(object sender, EventArgs e)
         {

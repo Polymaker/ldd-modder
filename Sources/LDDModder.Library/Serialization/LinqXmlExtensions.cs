@@ -271,8 +271,9 @@ namespace System.Xml.Linq
 
         public static bool GetBoolAttribute(this XElement element, string attributeName, BooleanXmlRepresentation representation = BooleanXmlRepresentation.OneZero)
         {
-            var attr = element.Attribute(attributeName);
-
+            var attr = GetAttribute(element, attributeName);
+            if (attr == null)
+                return false;
             switch (representation)
             {
                 default:

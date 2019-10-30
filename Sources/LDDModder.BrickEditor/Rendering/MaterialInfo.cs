@@ -1,11 +1,11 @@
 ﻿using System;
 using OpenTK;
 
-namespace LDDModder.BrickEditor.Rendering.Shaders
+namespace LDDModder.BrickEditor.Rendering
 {
     public struct MaterialInfo
     {
-        public Vector4 Albedo;
+        public Vector4 Diffuse;
         public Vector4 Specular;
         public float Shininess;
     }

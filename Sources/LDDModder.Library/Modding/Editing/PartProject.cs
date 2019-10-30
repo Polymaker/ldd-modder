@@ -19,6 +19,7 @@ namespace LDDModder.Modding.Editing
     [XmlRoot("LDDPart")]
     public class PartProject
     {
+        public const string ProjectFileName = "project.xml";
 
         #region Part Info
 
@@ -54,8 +55,10 @@ namespace LDDModder.Modding.Editing
 
         #endregion
 
-        [XmlIgnore]
-        public string ProjectPath { get; private set; }
+
+        public string ProjectPath { get; set; }
+
+        public string ProjectWorkingDir { get; set; }
 
         [XmlArray("ModelSurfaces")]
         public ElementCollection<PartSurface> Surfaces { get; }
@@ -230,6 +233,10 @@ namespace LDDModder.Modding.Editing
                 if (PrimitiveFileVersion != null)
                     propsElem.Add(PrimitiveFileVersion.ToXmlElement("PrimitiveVersion"));
 
+                propsElem.Add(new XElement("Flexible", Flexible));
+
+                propsElem.Add(new XElement("Decorated", Decorated));
+
                 if (Platform != null)
                     propsElem.AddElement("Platform", new XAttribute("ID", Platform.ID), new XAttribute("Name", Platform.Name));
 
@@ -358,40 +365,41 @@ namespace LDDModder.Modding.Editing
 
         public void SaveExtracted(string directory)
         {
-            directory = Path.GetFileName(directory);
+            directory = Path.GetFullPath(directory);
             Directory.CreateDirectory(directory);
 
-            LinkStudReferences();
+            //LinkStudReferences();
             //GenerateMeshIDs(false);
             GenerateMeshesNames();
 
             var projectXml = GenerateProjectXml();
-            projectXml.Save(Path.Combine(directory, "project.xml"));
+            projectXml.Save(Path.Combine(directory, ProjectFileName));
 
             string meshDir = Path.Combine(directory, "Meshes");
-
-            if (!Directory.Exists(meshDir))
-                Directory.CreateDirectory(meshDir);
-            else
-            {
-                foreach (var filename in Directory.GetFiles(meshDir, "*", SearchOption.AllDirectories))
-                    File.Delete(filename);
-            }
+            Directory.CreateDirectory(meshDir);
+            //if (!Directory.Exists(meshDir))
+            //    Directory.CreateDirectory(meshDir);
+            //else
+            //{
+            //    foreach (var filename in Directory.GetFiles(meshDir, "*", SearchOption.AllDirectories))
+            //        File.Delete(filename);
+            //}
 
             var allMeshes = Surfaces.SelectMany(s => s.GetAllMeshes());
 
             foreach (var mesh in allMeshes)
             {
-                mesh.Geometry.Save(Path.Combine(directory, mesh.FileName));
+                string meshPath = Path.Combine(directory, mesh.FileName);
+                mesh.Geometry.Save(meshPath);
             }
         }
 
         public static PartProject LoadFromDirectory(string directory)
         {
-            var doc = XDocument.Load(Path.Combine(directory, "project.xml"));
+            var doc = XDocument.Load(Path.Combine(directory, ProjectFileName));
             var project = new PartProject
             {
-                ProjectPath = directory
+                ProjectWorkingDir = directory
             };
             project.LoadFromXml(doc);
             return project;
@@ -407,9 +415,8 @@ namespace LDDModder.Modding.Editing
             using (var zipStream = new ZipOutputStream(fs))
             {
                 zipStream.SetLevel(1);
-
                 
-                zipStream.PutNextEntry(new ZipEntry("project.xml"));
+                zipStream.PutNextEntry(new ZipEntry(ProjectFileName));
 
                 GenerateMeshesNames();
                 var projectXml = GenerateProjectXml();
@@ -432,6 +439,46 @@ namespace LDDModder.Modding.Editing
                     }
                 }
             }
+
+            ProjectPath = filename;
+        }
+
+        public static PartProject ExtractAndOpen(Stream stream, string targetPath)
+        {
+            using (var zipFile = new ZipFile(stream))
+            {
+                if (zipFile.GetEntry(ProjectFileName) == null)
+                    return null;
+
+                foreach (ZipEntry entry in zipFile)
+                {
+                    if (!entry.IsFile)
+                        continue;
+                    string fullPath = Path.Combine(targetPath, entry.Name);
+                    string dirName = Path.GetDirectoryName(fullPath);
+                    if (dirName.Length > 0)
+                        Directory.CreateDirectory(dirName);
+
+                    var buffer = new byte[4096];
+
+                    using (var zipStream = zipFile.GetInputStream(entry))
+                    using (Stream fsOutput = File.Create(fullPath))
+                    {
+                        zipStream.CopyTo(fsOutput, 4096);
+                    }
+                }
+            }
+
+            string projectFilePath = Path.Combine(targetPath, ProjectFileName);
+
+            var projectXml = XDocument.Load(projectFilePath);
+            var project = new PartProject()
+            {
+                //ProjectPath = projectFilePath,
+                ProjectWorkingDir = targetPath
+            };
+            project.LoadFromXml(projectXml);
+            return project;
         }
 
         #endregion
@@ -712,19 +759,21 @@ namespace LDDModder.Modding.Editing
             }
         }
 
-        public MeshGeometry LoadMesh(ModelMesh mesh)
+        public MeshGeometry ReadModelMesh(string meshFilename)
         {
-            if (string.IsNullOrEmpty(ProjectPath))
+            if (string.IsNullOrEmpty(ProjectWorkingDir))
                 return null;
 
-            string meshPath = Path.Combine(ProjectPath, mesh.FileName);
-            if (File.Exists(meshPath))
-                return MeshGeometry.FromFile(meshPath);
+            string meshPath = Path.Combine(ProjectWorkingDir, meshFilename);
+            try
+            {
+                if (File.Exists(meshPath))
+                    return MeshGeometry.FromFile(meshPath);
+            }
+            catch { }
 
             return null;
         }
-
-        
 
         #endregion
 

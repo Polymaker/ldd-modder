@@ -1,4 +1,6 @@
-﻿using System;
+﻿using LDDModder.Modding.Editing;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,6 +13,10 @@ namespace LDDModder.BrickEditor.Settings
     {
         public static string AppDataFolder { get; set; }
 
+        public const string AppSettingsFileName = "settings.json";
+
+        public static AppSettings Current { get; private set; }
+
         static SettingsManager()
         {
             AppDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
@@ -22,6 +28,55 @@ namespace LDDModder.BrickEditor.Settings
         {
             if (!Directory.Exists(AppDataFolder))
                 Directory.CreateDirectory(AppDataFolder);
+
+            LoadSettings();
         }
+
+        public static void LoadSettings()
+        {
+            string settingsPath = Path.Combine(AppDataFolder, AppSettingsFileName);
+            if (File.Exists(settingsPath))
+            {
+                Current = JsonConvert.DeserializeObject<AppSettings>(File.ReadAllText(settingsPath));
+            }
+            else
+            {
+                var currEnv = LDD.LDDEnvironment.Current;
+                Current = new AppSettings()
+                {
+                    LddApplicationDataPath = currEnv.ApplicationDataPath,
+                    LddProgramFilesPath = currEnv.ProgramFilesPath
+                };
+                SaveSettings();
+            }
+        }
+
+        public static void SaveSettings()
+        {
+            string settingsPath = Path.Combine(AppDataFolder, AppSettingsFileName);
+            using (var fs = File.Open(settingsPath, FileMode.Create))
+            using (var sw = new StreamWriter(fs))
+                sw.Write(JsonConvert.SerializeObject(Current, Formatting.Indented));
+        }
+
+        public static void AddRecentProject(PartProject project, bool isSavedFile = false)
+        {
+            if (Current.RecentProjectFiles == null)
+                Current.RecentProjectFiles = new List<RecentFileInfo>();
+
+            if (isSavedFile && !Current.RecentProjectFiles.Any(x => x.ProjectFile == project.ProjectPath))
+            {
+                Current.RecentProjectFiles.Insert(0, new RecentFileInfo(project));
+                SaveSettings();
+            }
+            else if (!isSavedFile)
+            {
+                Current.RecentProjectFiles.RemoveAll(x => x.ProjectFile == project.ProjectPath);
+                Current.RecentProjectFiles.Insert(0, new RecentFileInfo(project));
+                SaveSettings();
+            }
+        }
+
+        public static bool IsWorkspaceDefined => !string.IsNullOrEmpty(Current.ProjectWorkspace);
     }
 }

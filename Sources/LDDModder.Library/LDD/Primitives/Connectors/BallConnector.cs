@@ -19,7 +19,7 @@ namespace LDDModder.LDD.Primitives.Connectors
         public override void LoadFromXml(XElement element)
         {
             base.LoadFromXml(element);
-            FlexAttributes = element.Attribute("flexAttributes")?.Value ?? string.Empty;
+            FlexAttributes = element.ReadAttribute("flexAttributes", string.Empty);
         }
 
         protected override void SerializeBeforeTransform(XElement element)

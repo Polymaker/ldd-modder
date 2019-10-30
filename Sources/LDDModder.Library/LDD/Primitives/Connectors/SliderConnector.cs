@@ -52,9 +52,9 @@ namespace LDDModder.LDD.Primitives.Connectors
             EndCapped = element.ReadAttribute("endCapped", false);
             Tag = element.ReadAttribute("tag", string.Empty);
 
-            if (element.HasAttribute("spring"))
+            if (element.HasAttribute("spring", out XAttribute springAttr))
             {
-                var springValues = element.Attribute("spring").Value.Split(',');
+                var springValues = springAttr.Value.Split(',');
                 Spring = new Vector3(
                     float.Parse(springValues[0].Trim(), CultureInfo.InvariantCulture),
                     float.Parse(springValues[1].Trim(), CultureInfo.InvariantCulture),

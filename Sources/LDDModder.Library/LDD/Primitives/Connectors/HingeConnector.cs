@@ -61,7 +61,7 @@ namespace LDDModder.LDD.Primitives.Connectors
             if (element.TryReadAttribute("FlipLimMax", out float FlipLimMax))
                 FlipLimitMax = FlipLimMax;
 
-            Tag = element.Attribute("tag")?.Value ?? string.Empty;
+            Tag = element.ReadAttribute("tag", string.Empty);
         }
 
     }

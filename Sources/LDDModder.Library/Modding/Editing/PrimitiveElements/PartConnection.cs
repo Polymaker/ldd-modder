@@ -72,7 +72,6 @@ namespace LDDModder.Modding.Editing
             var connElem = new XElement(ConnectorType.ToString());
 
             connElem.Add(Transform.ToLDD().ToXmlAttributes());
-
             //foreach (var elem in element.Element("Properties").Elements().ToArray())
             //{
             //    if (elem.Name.LocalName == "Data")
@@ -80,7 +79,11 @@ namespace LDDModder.Modding.Editing
             //    else
             //        connElem.Add(new XAttribute(elem.Name.LocalName, elem.Value));
             //}
-
+            foreach (var attr in element.Element("Properties").Attributes())
+                connElem.Add(new XAttribute(attr.Name.LocalName, attr.Value));
+            if (element.HasElement("StudsArray", out XElement studs))
+                connElem.Value = studs.Value;
+            Connector = Connector.CreateFromType(ConnectorType);
             Connector.LoadFromXml(connElem);
 
         }

@@ -29,7 +29,7 @@ namespace LDDModder.LDD.Primitives.Connectors
             base.LoadFromXml(element);
             if (element.TryReadAttribute("axes", out int axes))
                 Axes = axes;
-            Tag = element.Attribute("tag")?.Value ?? string.Empty;
+            Tag = element.ReadAttribute("tag", string.Empty);
         }
     }
 }

@@ -29,21 +29,21 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.CancelDialogButton = new System.Windows.Forms.Button();
             this.OpenButton = new System.Windows.Forms.Button();
             this.LoadingProgressBar = new System.Windows.Forms.ProgressBar();
             this.BrickGridView = new System.Windows.Forms.DataGridView();
-            this.SearchTextBox = new System.Windows.Forms.TextBox();
-            this.RefreshTimer = new System.Windows.Forms.Timer(this.components);
-            this.GridColumnsContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.PartIdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.DescriptionColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.PlatformColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.CategoryColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.DecoratedColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.FlexibleColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.SearchTextBox = new System.Windows.Forms.TextBox();
+            this.RefreshTimer = new System.Windows.Forms.Timer(this.components);
+            this.GridColumnsContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.BrickGridView)).BeginInit();
             this.SuspendLayout();
@@ -76,7 +76,7 @@
             this.CancelDialogButton.Location = new System.Drawing.Point(550, 379);
             this.CancelDialogButton.Name = "CancelDialogButton";
             this.CancelDialogButton.Size = new System.Drawing.Size(75, 23);
-            this.CancelDialogButton.TabIndex = 2;
+            this.CancelDialogButton.TabIndex = 0;
             this.CancelDialogButton.Text = "Cancel";
             this.CancelDialogButton.UseVisualStyleBackColor = true;
             // 
@@ -106,8 +106,8 @@
             this.BrickGridView.AllowUserToAddRows = false;
             this.BrickGridView.AllowUserToDeleteRows = false;
             this.BrickGridView.AllowUserToResizeRows = false;
-            dataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(235)))), ((int)(((byte)(235)))), ((int)(((byte)(235)))));
-            this.BrickGridView.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(235)))), ((int)(((byte)(235)))), ((int)(((byte)(235)))));
+            this.BrickGridView.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle7;
             this.BrickGridView.BackgroundColor = System.Drawing.SystemColors.Window;
             this.BrickGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.BrickGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
@@ -129,23 +129,6 @@
             this.BrickGridView.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.BrickGridView_CellMouseDoubleClick);
             this.BrickGridView.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.BrickGridView_ColumnHeaderMouseClick);
             this.BrickGridView.SelectionChanged += new System.EventHandler(this.BrickGridView_SelectionChanged);
-            // 
-            // SearchTextBox
-            // 
-            this.SearchTextBox.Location = new System.Drawing.Point(3, 3);
-            this.SearchTextBox.Name = "SearchTextBox";
-            this.SearchTextBox.Size = new System.Drawing.Size(200, 22);
-            this.SearchTextBox.TabIndex = 5;
-            this.SearchTextBox.TextChanged += new System.EventHandler(this.SearchTextBox_TextChanged);
-            // 
-            // RefreshTimer
-            // 
-            this.RefreshTimer.Tick += new System.EventHandler(this.RefreshTimer_Tick);
-            // 
-            // GridColumnsContextMenu
-            // 
-            this.GridColumnsContextMenu.Name = "GridColumnsContextMenu";
-            this.GridColumnsContextMenu.Size = new System.Drawing.Size(61, 4);
             // 
             // PartIdColumn
             // 
@@ -198,10 +181,28 @@
             this.FlexibleColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
             this.FlexibleColumn.Width = 80;
             // 
+            // SearchTextBox
+            // 
+            this.SearchTextBox.Location = new System.Drawing.Point(3, 3);
+            this.SearchTextBox.Name = "SearchTextBox";
+            this.SearchTextBox.Size = new System.Drawing.Size(200, 22);
+            this.SearchTextBox.TabIndex = 2;
+            this.SearchTextBox.TextChanged += new System.EventHandler(this.SearchTextBox_TextChanged);
+            // 
+            // RefreshTimer
+            // 
+            this.RefreshTimer.Tick += new System.EventHandler(this.RefreshTimer_Tick);
+            // 
+            // GridColumnsContextMenu
+            // 
+            this.GridColumnsContextMenu.Name = "GridColumnsContextMenu";
+            this.GridColumnsContextMenu.Size = new System.Drawing.Size(61, 4);
+            // 
             // SelectBrickDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.CancelButton = this.CancelDialogButton;
             this.ClientSize = new System.Drawing.Size(634, 411);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Font = new System.Drawing.Font("Segoe UI", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
