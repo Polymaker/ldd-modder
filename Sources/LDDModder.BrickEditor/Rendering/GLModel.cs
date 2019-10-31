@@ -97,11 +97,12 @@ namespace LDDModder.BrickEditor.Rendering
             Vao.BindAttribute(modelShader.Position, VertexBuffer, 0);
             Vao.BindAttribute(modelShader.Normal, VertexBuffer, 12);
             Vao.BindAttribute(modelShader.TexCoord, VertexBuffer, 24);
+            Vao.BindElementBuffer(IndexBuffer);
         }
 
         public void UpdateShaderUniforms(ModelShaderProgram modelShader)
         {
-            modelShader.Use();
+            //modelShader.Use();
             modelShader.ModelMatrix.Set(Transform);
             modelShader.Material.Set(Material);
         }

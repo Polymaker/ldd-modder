@@ -31,10 +31,8 @@ namespace LDDModder.BrickEditor.UI.Panels
         private bool RenderLoopEnabled;
         private GLControl glControl1;
         private GridShaderProgram GridShader;
-        private BasicShaderProgram BrickShader;
         private ModelShaderProgram ModelShader;
 
-        private List<GLMeshBase> PartMeshes;
         private List<GLModel> LoadedModels;
 
         public ViewportPanel()
@@ -47,7 +45,6 @@ namespace LDDModder.BrickEditor.UI.Panels
             //CloseButtonVisible = false;
             //CloseButton = false;
             DockAreas = DockAreas.Document;
-            PartMeshes = new List<GLMeshBase>();
 
             LoadedModels = new List<GLModel>();
         }
@@ -85,16 +82,12 @@ namespace LDDModder.BrickEditor.UI.Panels
                 OffCenter = false
             });
 
-            BrickShader = ProgramFactory.Create<BasicShaderProgram>();
-            BrickShader.Use();
-            BrickShader.LightPosition.Set(new Vector3(5, 10, 5));
-
             ModelShader = ProgramFactory.Create<ModelShaderProgram>();
             ModelShader.Use();
 
             var lights = new LightInfo[]
             {
-                new LightInfo { Position = new Vector3(10), Color = new Vector3(1), Power = 100}
+                new LightInfo { Position = new Vector3(5, 10, 10), Color = new Vector3(1), Power = 100}
             };
             ModelShader.Lights.Set(lights);
             ModelShader.LightCount.Set(1);
@@ -163,29 +156,15 @@ namespace LDDModder.BrickEditor.UI.Panels
             GL.Enable(EnableCap.AlphaTest);
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
-            GL.MatrixMode(MatrixMode.Projection);
-            GL.LoadMatrix(ref WorldProjectionMatrix);
-            
-            GL.MatrixMode(MatrixMode.Modelview);
-            //var viewMatrix = Matrix4.LookAt(new Vector3(0,5,0), Vector3.Zero, Vector3.UnitZ * -1);//top-down
-            //var viewMatrix = Matrix4.LookAt(new Vector3(10), Vector3.Zero, Vector3.UnitY);
-
-            GL.LoadMatrix(ref CameraMatrix);
 
             ModelShader.Use();
-            foreach( var model in LoadedModels)
+            ModelShader.ViewMatrix.Set(CameraMatrix);
+            ModelShader.Projection.Set(WorldProjectionMatrix);
+
+            foreach ( var model in LoadedModels)
             {
                 model.UpdateShaderUniforms(ModelShader);
-                ModelShader.ViewMatrix.Set(CameraMatrix);
-                ModelShader.Projection.Set(WorldProjectionMatrix);
                 model.Draw();
-            }
-
-            foreach (var mesh in PartMeshes)
-            {
-                BrickShader.Use();
-                mesh.AssignShaderValues(CameraMatrix, WorldProjectionMatrix);
-                mesh.Draw();
             }
 
             DrawGrid(CameraMatrix);
@@ -273,11 +252,11 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         public void LoadPartProject(PartProject project)
         {
-            PartMeshes.ForEach(x => x.Dispose());
-            PartMeshes.Clear();
+            LoadedModels.ForEach(x => x.Dispose());
+            LoadedModels.Clear();
 
             var partMeshes = project.Surfaces.SelectMany(x => x.GetAllMeshes()).ToList();
-            BrickShader.Use();
+
             float curHue = 0;
 
             foreach (var partMesh in partMeshes)
@@ -285,17 +264,17 @@ namespace LDDModder.BrickEditor.UI.Panels
                 if (!partMesh.IsModelLoaded && !partMesh.LoadModel())
                     continue;
 
-                var glMesh = new GLModel();
-                glMesh.LoadFromLDD(partMesh.Geometry);
-                glMesh.Material = new MaterialInfo { Diffuse = new Vector4(0.6f, 0.6f, 0.6f, 1f) };
-                glMesh.BindToShader(ModelShader);
-                LoadedModels.Add(glMesh);
-                //var glMesh = GLMeshBase.CreateFromGeometry(partMesh.Geometry, true);
-                ////glMesh.MaterialColor = Color4.FromHsl(new Vector4(curHue, 1, 0.6f, 1f));
-                ////curHue += 0.1f;
-                //glMesh.MaterialColor = new Color4(0.6f, 0.6f, 0.6f, 1f);
-                //glMesh.BindToProgram(BrickShader);
-                //PartMeshes.Add(glMesh);
+                var glModel = new GLModel();
+                glModel.LoadFromLDD(partMesh.Geometry);
+                glModel.Material = new MaterialInfo 
+                { 
+                    
+                    Diffuse = new Vector4(0.6f, 0.6f, 0.6f, 1f), 
+                    Specular = new Vector4(1f)
+                };
+
+                glModel.BindToShader(ModelShader);
+                LoadedModels.Add(glModel);
             }
 
             if (project.Bounding != null)
@@ -327,11 +306,8 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             LoadedModels.ForEach(x => x.Dispose());
             LoadedModels.Clear();
-            PartMeshes.ForEach(x => x.Dispose());
-            PartMeshes.Clear();
             GridShader.Dispose();
-            
-            BrickShader.Dispose();
+            ModelShader.Dispose();
         }
     }
 }
