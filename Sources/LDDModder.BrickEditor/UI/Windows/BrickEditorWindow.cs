@@ -62,7 +62,7 @@ namespace LDDModder.BrickEditor.UI.Windows
             Viewport = new ViewportPanel();
             
             Viewport.Show(DockPanelControl, DockState.Document);
-            DockPanelControl.DockLeftPortion = 250d / Width;
+            DockPanelControl.DockLeftPortion = 250;
             Navigation.Show(DockPanelControl, DockState.DockLeft);
             
         }

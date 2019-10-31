@@ -18,6 +18,8 @@ namespace LDDModder.BrickEditor.Rendering.Shaders
         [VertexAttrib(2, VertexAttribPointerType.Float)]
         public VertexAttrib TexCoord { get; protected set; }
 
+        public Uniform<Vector3> ViewPosition { get; protected set; }
+
         public ArrayUniform<LightInfo> Lights { get; protected set; }
 
         public Uniform<int> LightCount { get; protected set; }

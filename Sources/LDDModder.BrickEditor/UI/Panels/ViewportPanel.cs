@@ -14,6 +14,9 @@ using System.Linq;
 using System.Drawing;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
+using System.Threading;
+using System.Diagnostics;
+using OpenTK.Input;
 
 namespace LDDModder.BrickEditor.UI.Panels
 {
@@ -23,17 +26,21 @@ namespace LDDModder.BrickEditor.UI.Panels
         private QFontDrawing TextRenderer;
         private QFont RenderFont;
         private Matrix4 UIProjectionMatrix;
-        private Matrix4 WorldProjectionMatrix;
-        private Matrix4 CameraMatrix;
-        private Vector3 CameraPosition;
-        private Vector3 SceneCenter;
         private bool IsClosing;
         private bool RenderLoopEnabled;
         private GLControl glControl1;
+
         private GridShaderProgram GridShader;
         private ModelShaderProgram ModelShader;
-
+        private WireframeShaderProgram WireframeShader;
+        
         private List<GLModel> LoadedModels;
+
+        private Thread UpdateThread;
+
+        private Camera Camera;
+        private InputManager InputManager;
+        private CameraManipulator CameraManipulator;
 
         public ViewportPanel()
         {
@@ -45,8 +52,10 @@ namespace LDDModder.BrickEditor.UI.Panels
             //CloseButtonVisible = false;
             //CloseButton = false;
             DockAreas = DockAreas.Document;
-
+            InputManager = new InputManager();
             LoadedModels = new List<GLModel>();
+            glControl1.MouseEnter += GlControl1_MouseEnter;
+            glControl1.MouseLeave += GlControl1_MouseLeave;
         }
 
         protected override void OnLoad(EventArgs e)
@@ -55,10 +64,22 @@ namespace LDDModder.BrickEditor.UI.Panels
             InitializeBase();
             InitializeView();
             StartRenderLoop();
+
+            UpdateThread = new Thread(UpdateLoop);
+            UpdateThread.Start();
         }
 
         private void InitializeBase()
         {
+            Camera = new Camera
+            {
+                Position = new Vector3(5)
+            };
+            Camera.LookAt(Vector3.Zero, Vector3.UnitY);
+
+            CameraManipulator = new CameraManipulator(Camera);
+
+
             RenderFont = new QFont("C:\\Windows\\Fonts\\segoeui.ttf", 10,
                 new QFontBuilderConfiguration(true));
             TextRenderer = new QFontDrawing();
@@ -87,14 +108,33 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             var lights = new LightInfo[]
             {
-                new LightInfo { Position = new Vector3(5, 10, 10), Color = new Vector3(1), Power = 100}
+                new LightInfo { 
+                    Position = new Vector3(10, 10, 10), 
+                    Ambient = new Vector3(0.3f),
+                    Diffuse = new Vector3(0.8f),
+                    Specular = new Vector3(1f),
+                    Constant = 1f,
+                    Linear = 0.09f,
+                    Quadratic = 0.032f
+                },
+                new LightInfo {
+                    Position = new Vector3(0, 30, 0),
+                    Ambient = new Vector3(0.5f),
+                    Diffuse = new Vector3(0.8f),
+                    Specular = new Vector3(0.8f),
+                    Constant = 1f,
+                    Linear = 0.07f,
+                    Quadratic = 0.017f
+                },
             };
             ModelShader.Lights.Set(lights);
-            ModelShader.LightCount.Set(1);
+            ModelShader.LightCount.Set(lights.Length);
             ModelShader.UseTexture.Set(false);
 
-
-            CameraPosition = new Vector3(5);
+            WireframeShader = ProgramFactory.Create<WireframeShaderProgram>();
+            WireframeShader.Use();
+            WireframeShader.Color.Set(new Vector4(0,0,0,1));
+            WireframeShader.Thickness.Set(1f);
         }
 
         protected override void OnActivated(EventArgs e)
@@ -133,19 +173,24 @@ namespace LDDModder.BrickEditor.UI.Panels
             if (IsDisposed || IsClosing)
                 return;
 
-            glControl1.MakeCurrent();
-            GL.Viewport(0, 0, glControl1.Width, glControl1.Height);
+            UpdateViewport();
+
             GL.ClearColor(glControl1.BackColor);
-
-            UIProjectionMatrix = Matrix4.CreateOrthographicOffCenter(0, glControl1.Width, 0, glControl1.Height, -1.0f, 1.0f);
-   
-            var aspectRatio = glControl1.Width / (float)glControl1.Height;
-            WorldProjectionMatrix = Matrix4.CreatePerspectiveFieldOfView(OpenTK.MathHelper.PiOver4, aspectRatio, 0.1f, 1000);
-            CameraMatrix = Matrix4.LookAt(CameraPosition, SceneCenter, Vector3.UnitY);
-
+            
             ViewInitialized = true;
             OnRenderFrame();
         }
+
+        private void UpdateViewport()
+        {
+            glControl1.MakeCurrent();
+            GL.Viewport(0, 0, glControl1.Width, glControl1.Height);
+            Camera.Viewport = new RectangleF(0, 0, glControl1.Width, glControl1.Height);
+
+            UIProjectionMatrix = Matrix4.CreateOrthographicOffCenter(0, glControl1.Width, 0, glControl1.Height, -1.0f, 1.0f);
+        }
+
+        #region Rendering
 
         private void RenderWorld()
         {
@@ -157,26 +202,39 @@ namespace LDDModder.BrickEditor.UI.Panels
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
 
-            ModelShader.Use();
-            ModelShader.ViewMatrix.Set(CameraMatrix);
-            ModelShader.Projection.Set(WorldProjectionMatrix);
+            var viewMatrix = Camera.GetViewMatrix();
+            var projection = Camera.GetProjectionMatrix();
 
-            foreach ( var model in LoadedModels)
+            WireframeShader.Use();
+            WireframeShader.ViewMatrix.Set(viewMatrix);
+            WireframeShader.Projection.Set(projection);
+
+            ModelShader.Use();
+            ModelShader.ViewMatrix.Set(viewMatrix);
+            ModelShader.Projection.Set(projection);
+            ModelShader.ViewPosition.Set(Camera.Position);
+
+            foreach (var model in LoadedModels)
             {
-                model.UpdateShaderUniforms(ModelShader);
+                model.BindToShader(WireframeShader);
                 model.Draw();
+                model.UnbindShader(WireframeShader);
+
+                model.BindToShader(ModelShader);
+                model.Draw();
+                model.UnbindShader(ModelShader);
             }
 
-            DrawGrid(CameraMatrix);
+            DrawGrid(viewMatrix, projection);
 
             GL.UseProgram(0);
         }
 
-        private void DrawGrid(Matrix4 viewMatrix)
+        private void DrawGrid(Matrix4 viewMatrix, Matrix4 projection)
         {
             GridShader.Use();
             GridShader.MVMatrix.Set(viewMatrix);
-            GridShader.PMatrix.Set(WorldProjectionMatrix);
+            GridShader.PMatrix.Set(projection);
 
             GL.Begin(PrimitiveType.Quads);
             GL.Vertex3(-40, 0, -40);
@@ -206,8 +264,8 @@ namespace LDDModder.BrickEditor.UI.Panels
                 (viewSize.X - winSize.X) / 2f,
                 viewSize.Y - ((viewSize.Y - winSize.Y) / 2f));
             GL.Begin(PrimitiveType.Quads);
-            GL.Color4(Color.FromArgb(120, 80,80,80));
-            
+            GL.Color4(Color.FromArgb(120, 80, 80, 80));
+
             GL.Vertex2(winPos.X, winPos.Y);
             GL.Vertex2(winPos.X, winPos.Y - winSize.Y);
             GL.Vertex2(winPos.X + winSize.X, winPos.Y - winSize.Y);
@@ -238,16 +296,61 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             RenderWorld();
+
             //GL.Clear(ClearBufferMask.DepthBufferBit);
             //RenderUI();
 
             glControl1.SwapBuffers();
         }
 
+        #endregion
+
+        private void UpdateLoop()
+        {
+            var sw = Stopwatch.StartNew();
+            double lastTime = 0;
+            const double MaxTimer = 1000000;
+
+            while (!IsClosing)
+            {
+                double curTime = sw.Elapsed.TotalMilliseconds;
+                if (curTime > MaxTimer)
+                {
+                    lastTime -= curTime;
+                    sw.Restart();
+                    curTime = 0;
+                }
+
+                double delta = curTime - lastTime;
+                lastTime = curTime;
+
+                OnUpdateFrame(delta);
+            }
+        }
+
+        private void GlControl1_MouseEnter(object sender, EventArgs e)
+        {
+            InputManager.ContainsMouse = true;
+        }
+
+        private void GlControl1_MouseLeave(object sender, EventArgs e)
+        {
+            InputManager.ContainsMouse = false;
+        }
+
+        private void OnUpdateFrame(double deltaTime)
+        {
+            InputManager.UpdateInputStates();
+            CameraManipulator.HandleCamera(InputManager);
+        }
+
         private void ViewportPanel_SizeChanged(object sender, EventArgs e)
         {
             if (ViewInitialized && !Disposing)
-                InitializeView();
+            {
+                UpdateViewport();
+                OnRenderFrame();
+            }
         }
 
         public void LoadPartProject(PartProject project)
@@ -266,34 +369,35 @@ namespace LDDModder.BrickEditor.UI.Panels
 
                 var glModel = new GLModel();
                 glModel.LoadFromLDD(partMesh.Geometry);
+
                 glModel.Material = new MaterialInfo 
-                { 
-                    
-                    Diffuse = new Vector4(0.6f, 0.6f, 0.6f, 1f), 
-                    Specular = new Vector4(1f)
+                {
+                    Diffuse = new Vector4(0.6f, 0.6f, 0.6f, 1f),
+                    Specular = new Vector3(1f),
+                    Shininess = 8f
                 };
 
-                glModel.BindToShader(ModelShader);
+                //glModel.BindToShader(ModelShader);
+                
                 LoadedModels.Add(glModel);
             }
 
             if (project.Bounding != null)
             {
-                SceneCenter = project.Bounding.Center.ToGL();
-                SceneCenter.Y = 0;
+                var partCenter = project.Bounding.Center.ToGL();
+                partCenter.Y = 0;
                 var brickSize = project.Bounding.Size;
                 float maxSize = Math.Max(brickSize.X, Math.Max(brickSize.Y, brickSize.Z));
-                CameraPosition = new Vector3(maxSize + 2);
-                CameraPosition.Y = Math.Max(project.Bounding.MaxY + 2, 6);
+                var camPos = new Vector3(maxSize + 2);
+                camPos.Y = Math.Max(project.Bounding.MaxY + 2, 6);
+                Camera.Position = camPos;
+                CameraManipulator.Gimbal = partCenter;
             }
             else
             {
-                SceneCenter = Vector3.Zero;
-                CameraPosition = new Vector3(5);
+                Camera.Position = new Vector3(5);
+                CameraManipulator.Gimbal = Vector3.Zero;
             }
-            
-            
-            CameraMatrix = Matrix4.LookAt(CameraPosition, SceneCenter, Vector3.UnitY);
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
@@ -308,6 +412,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             LoadedModels.Clear();
             GridShader.Dispose();
             ModelShader.Dispose();
+            WireframeShader.Dispose();
         }
     }
 }

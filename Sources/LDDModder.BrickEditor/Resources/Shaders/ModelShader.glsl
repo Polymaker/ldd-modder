@@ -4,39 +4,13 @@ in vec3 Position;
 in vec3 Normal;
 in vec2 TexCoord;
 
-#define MAX_NUM_TOTAL_LIGHTS 20
-
-struct LightInfo
-{
-	vec3 Position;
-	vec3 Color;
-	float Power;
-};
-
-struct LightData
-{
-	vec3 EyeDir;
-	vec3 LightDir;
-};
-
-uniform LightInfo Lights[MAX_NUM_TOTAL_LIGHTS];
-uniform int LightCount;
 uniform mat4 ModelMatrix;
 uniform mat4 ViewMatrix;
 uniform mat4 Projection;
 
-out LightData vLights[MAX_NUM_TOTAL_LIGHTS];
-out vec3 VertPos;
-out vec3 VertNorm;
+out vec3 FragPos;
+out vec3 FragNorm;
 smooth out vec2 vTexCoord;
-
-void ComputeLight(int i)
-{
-	vec4 lPos = vec4(Lights[i].Position, 1.0);
-	vec3 eyeDir = vec3(0,0,0) - (ViewMatrix * ModelMatrix * lPos).xyz;
-	vLights[i].EyeDir = eyeDir;
-	vLights[i].LightDir = (ViewMatrix * lPos).xyz + eyeDir;
-}
 
 void main()
 {
@@ -46,57 +20,34 @@ void main()
 	
 	vTexCoord = TexCoord;
 	
-	VertPos = (ModelMatrix * vec4(Position,1.0)).xyz;
-	VertNorm = (ModelMatrix * ViewMatrix * vec4(Normal,0)).xyz;
-	
-	if ( LightCount > 0)
-	{
-		vec4 lPos = vec4(Lights[0].Position, 1.0);
-		vec3 eyeDir = vec3(0,0,0) - (ViewMatrix * ModelMatrix * vec4(Position,1.0)).xyz;
-		vLights[0].EyeDir = eyeDir;
-		vLights[0].LightDir = (ViewMatrix * lPos).xyz + eyeDir;
-	}
-
-	/*
-	for(int i = 0; i < MAX_NUM_TOTAL_LIGHTS; i++)
-	{
-		if (i >= LightCount)
-			break;
-		LightInfo curLight = Lights[i];
-		vec4 lPos = vec4(curLight.Position, 1.0);
-		vec3 eyeDir = vec3(0,0,0) - (ViewMatrix * ModelMatrix * lPos).xyz;
-		vLights[i].EyeDir = eyeDir;
-		vLights[i].LightDir = (ViewMatrix * lPos).xyz + eyeDir;
-	}*/
+	FragPos = (ModelMatrix * vec4(Position,1.0)).xyz;
+	FragNorm = mat3(transpose(inverse(ModelMatrix))) * Normal;//(ViewMatrix * ModelMatrix * vec4(Normal,0)).xyz; 
 }
 
 -- Fragment
 #version 150
-#define MAX_NUM_TOTAL_LIGHTS 20
+#define MAX_NUM_TOTAL_LIGHTS 10
 
 struct LightInfo
 {
 	vec3 Position;
-	vec3 Color;
-	float Power;
-};
-
-struct LightData
-{
-	vec3 EyeDir;
-	vec3 LightDir;
+	float Constant;
+	float Linear;
+	float Quadratic;
+	vec3 Ambient;
+	vec3 Diffuse;
+	vec3 Specular;
 };
 
 struct MaterialInfo
 {
 	vec4 Diffuse;
-	vec4 Specular;
+	vec3 Specular;
 	float Shininess;
 };
 
-in LightData vLights[MAX_NUM_TOTAL_LIGHTS];
-in vec3 VertPos;
-in vec3 VertNorm;
+in vec3 FragPos;
+in vec3 FragNorm;
 smooth in vec2 vTexCoord;
 
 uniform LightInfo Lights[MAX_NUM_TOTAL_LIGHTS];
@@ -104,6 +55,7 @@ uniform int LightCount;
 uniform bool UseTexture;
 uniform sampler2D Texture;
 uniform MaterialInfo Material;
+uniform vec3 ViewPosition;
 
 out vec4 FragColor;
 
@@ -119,33 +71,59 @@ vec4 blendColors(vec4 color1, vec4 color2)
 }
 
 
+vec3 CalcPointLight(LightInfo light, vec3 diffuseColor, vec3 normal, vec3 fragPos, vec3 viewDir)
+{
+    vec3 lightDir = normalize(light.Position - fragPos);
+	
+    // diffuse shading
+    float diff = max(dot(normal, lightDir), 0.0);
+	
+    // specular shading
+    vec3 reflectDir = reflect(-lightDir, normal);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), Material.Shininess);
+	
+    // attenuation
+    float distance    = length(light.Position - fragPos);
+	float test = max(light.Quadratic, 1.0);//tmp fix
+    float attenuation = test / (light.Constant + (light.Linear * distance)/* + 
+  			     light.Quadratic * (distance * distance)*/);    
+    // combine results
+    vec3 ambient  = light.Ambient  * diffuseColor;
+    vec3 diffuse  = light.Diffuse  * diff * diffuseColor;
+    vec3 specular = light.Specular * spec * Material.Specular;
+    ambient  *= attenuation;
+    diffuse  *= attenuation;
+    specular *= attenuation;
+    return (ambient + diffuse + specular);
+} 
+
 void main()
 {
-	vec4 finalColor = Material.Diffuse;
+	
+	vec3 norm = normalize(FragNorm);
+    vec3 viewDir = normalize(ViewPosition - FragPos);
+	
+	vec4 baseColor = Material.Diffuse;
 	
 	if (UseTexture)
 	{
 		vec4 texColor = texture2D(Texture, vTexCoord);
-		finalColor = blendColors(finalColor, texColor);
+		baseColor = blendColors(baseColor, texColor);
 	}
 	
+	vec3 finalColor = vec3(0);
+	
 	if ( LightCount > 0)
-	{
-		float lightDist = length(Lights[0].Position - VertPos);
-		float distSquared = lightDist * lightDist;
-		vec3 N = normalize(VertNorm);
-		vec3 L = normalize(vLights[0].LightDir);
-		float cosTheta = clamp(dot(N, L ), 0, 1);
+		finalColor += CalcPointLight(Lights[0], baseColor.rgb, norm, FragPos, viewDir);  
+	
+	if ( LightCount > 1)
+		finalColor += CalcPointLight(Lights[1], baseColor.rgb, norm, FragPos, viewDir);
 
-		vec3 E = normalize(vLights[0].EyeDir);
-		vec3 R = reflect(-L,N);
-		float cosAlpha = clamp(dot( E,R ), 0,1 );
+	if ( LightCount > 2)
+		finalColor += CalcPointLight(Lights[2], baseColor.rgb, norm, FragPos, viewDir);  	
 
-		vec3 ambient = vec3(0.5) * finalColor.rgb;
-		vec3 diffuse = finalColor.rgb * Lights[0].Color * Lights[0].Power * cosTheta / distSquared;
-		vec3 specular = vec3(0.3) * Lights[0].Color * Lights[0].Power * pow(cosAlpha,5) / distSquared;
-		finalColor = vec4(ambient + diffuse + specular, finalColor.a);
-	}
+	if ( LightCount > 3)
+		finalColor += CalcPointLight(Lights[3], baseColor.rgb, norm, FragPos, viewDir);  
 		
-	FragColor = finalColor;
+	FragColor = vec4(finalColor, baseColor.a);
 }

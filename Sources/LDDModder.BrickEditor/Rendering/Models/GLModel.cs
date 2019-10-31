@@ -93,19 +93,40 @@ namespace LDDModder.BrickEditor.Rendering
 
         public void BindToShader(ModelShaderProgram modelShader)
         {
+            modelShader.Use();
             Vao.Bind();
             Vao.BindAttribute(modelShader.Position, VertexBuffer, 0);
             Vao.BindAttribute(modelShader.Normal, VertexBuffer, 12);
             Vao.BindAttribute(modelShader.TexCoord, VertexBuffer, 24);
-            Vao.BindElementBuffer(IndexBuffer);
-        }
 
-        public void UpdateShaderUniforms(ModelShaderProgram modelShader)
-        {
-            //modelShader.Use();
             modelShader.ModelMatrix.Set(Transform);
             modelShader.Material.Set(Material);
         }
+
+        public void UnbindShader(ModelShaderProgram modelShader)
+        {
+            Vao.Bind();
+            Vao.UnbindAttribute(modelShader.Position);
+            Vao.UnbindAttribute(modelShader.Normal);
+            Vao.UnbindAttribute(modelShader.TexCoord);
+        }
+
+        public void BindToShader(WireframeShaderProgram wireframeShader)
+        {
+            wireframeShader.Use();
+
+            Vao.Bind();
+            Vao.BindAttribute(wireframeShader.Position, VertexBuffer, 0);
+
+            wireframeShader.ModelMatrix.Set(Transform);
+        }
+
+        public void UnbindShader(WireframeShaderProgram wireframeShader)
+        {
+            Vao.Bind();
+            Vao.UnbindAttribute(wireframeShader.Position);
+        }
+
 
         public void Draw()
         {
