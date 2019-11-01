@@ -45,8 +45,9 @@ namespace LDDModder.BrickEditor.Rendering
             if (!input.ContainsMouse)
                 return;
 
-            var viewSize = new Vector2(Camera.Viewport.Width, Camera.Viewport.Height);
+            //var viewSize = new Vector2(Camera.Viewport.Width, Camera.Viewport.Height);
             var mouseDelta = input.MousePos - input.LastMousePos;
+
 
             if (mouseDelta.LengthFast > 1)
             {
@@ -67,8 +68,9 @@ namespace LDDModder.BrickEditor.Rendering
                                 newPos = Gimbal + (Camera.Forward * MinimumZoom * -1f);
                             Camera.Position = newPos;
                         }
-                        
 
+                        //var rollRotation = Matrix4.CreateFromAxisAngle(Camera.Forward, scaledMouseDelta.X * (float)Math.PI);
+                        //Camera.Transform = localTrans * rollRotation;
                     }
                     else if (input.IsKeyDown(Key.ShiftLeft) || input.IsKeyDown(Key.ShiftRight))
                     {
@@ -85,10 +87,11 @@ namespace LDDModder.BrickEditor.Rendering
                         var pitchRotation = Matrix4.CreateFromAxisAngle(Camera.Right, scaledMouseDelta.Y * (float)Math.PI);
                         var yawRotation = Matrix4.CreateFromAxisAngle(Vector3.UnitY, scaledMouseDelta.X * (float)Math.PI * -1f);
 
-                        var combinedRot = yawRotation * pitchRotation;
-                        combinedRot = combinedRot * gimbalTrans;
-                     
-                        Camera.Transform = localTrans * combinedRot;
+                        var combinedRot = pitchRotation * yawRotation; //!Important, this order is less prone to induce roll
+
+                        var finalTranform = localTrans * (combinedRot * gimbalTrans);
+
+                        Camera.Transform = finalTranform;
 
                         //var newPos = Vector3.TransformPosition(camOffset, yawRotation);
                         //newPos = Vector3.TransformPosition(newPos, pitchRotation);

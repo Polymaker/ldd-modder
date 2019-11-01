@@ -21,7 +21,7 @@ void main()
 	vTexCoord = TexCoord;
 	
 	FragPos = (ModelMatrix * vec4(Position,1.0)).xyz;
-	FragNorm = mat3(transpose(inverse(ModelMatrix))) * Normal;//(ViewMatrix * ModelMatrix * vec4(Normal,0)).xyz; 
+	FragNorm = mat3(transpose(inverse(ModelMatrix))) * Normal;
 }
 
 -- Fragment
@@ -76,17 +76,18 @@ vec3 CalcPointLight(LightInfo light, vec3 diffuseColor, vec3 normal, vec3 fragPo
     vec3 lightDir = normalize(light.Position - fragPos);
 	
     // diffuse shading
-    float diff = max(dot(normal, lightDir), 0.0);
+    float diff = clamp(dot(normal, lightDir), 0, 1);
 	
     // specular shading
     vec3 reflectDir = reflect(-lightDir, normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), Material.Shininess);
+    float spec = pow(clamp(dot(viewDir, reflectDir), 0, 1), Material.Shininess);
 	
     // attenuation
     float distance    = length(light.Position - fragPos);
-	float test = max(light.Quadratic, 1.0);//tmp fix
-    float attenuation = test / (light.Constant + (light.Linear * distance)/* + 
-  			     light.Quadratic * (distance * distance)*/);    
+
+    float attenuation = light.Constant + (light.Linear * distance) + (light.Quadratic * (distance * distance));
+	attenuation =  clamp(1.0 / (attenuation * 0.4), 0, 1);
+	
     // combine results
     vec3 ambient  = light.Ambient  * diffuseColor;
     vec3 diffuse  = light.Diffuse  * diff * diffuseColor;
@@ -111,7 +112,7 @@ void main()
 		baseColor = blendColors(baseColor, texColor);
 	}
 	
-	vec3 finalColor = vec3(0);
+	vec3 finalColor = baseColor.rgb * 0.1;
 	
 	if ( LightCount > 0)
 		finalColor += CalcPointLight(Lights[0], baseColor.rgb, norm, FragPos, viewDir);  

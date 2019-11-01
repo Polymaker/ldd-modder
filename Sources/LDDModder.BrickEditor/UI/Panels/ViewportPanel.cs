@@ -108,26 +108,39 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             var lights = new LightInfo[]
             {
+                //Key Light
                 new LightInfo { 
                     Position = new Vector3(10, 10, 10), 
                     Ambient = new Vector3(0.3f),
                     Diffuse = new Vector3(0.8f),
                     Specular = new Vector3(1f),
                     Constant = 1f,
-                    Linear = 0.09f,
-                    Quadratic = 0.032f
+                    Linear = 0.07f,
+                    Quadratic = 0.017f
                 },
+                //Fill Light
                 new LightInfo {
-                    Position = new Vector3(0, 30, 0),
-                    Ambient = new Vector3(0.5f),
-                    Diffuse = new Vector3(0.8f),
+                    Position = new Vector3(-10, 6, 10),
+                    Ambient = new Vector3(0.2f),
+                    Diffuse = new Vector3(0.6f),
                     Specular = new Vector3(0.8f),
                     Constant = 1f,
                     Linear = 0.07f,
                     Quadratic = 0.017f
                 },
+                //Back Light
+                new LightInfo {
+                    Position = new Vector3(3, 10, -10),
+                    Ambient = new Vector3(0.3f),
+                    Diffuse = new Vector3(0.7f),
+                    Specular = new Vector3(0.7f),
+                    Constant = 1f,
+                    Linear = 0.045f,
+                    Quadratic = 0.075f
+                },
             };
             ModelShader.Lights.Set(lights);
+
             ModelShader.LightCount.Set(lights.Length);
             ModelShader.UseTexture.Set(false);
 
@@ -242,6 +255,8 @@ namespace LDDModder.BrickEditor.UI.Panels
             GL.Vertex3(40, 0, 40);
             GL.Vertex3(40, 0, -40);
             GL.End();
+
+
         }
 
         private void RenderUI()
@@ -255,7 +270,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             GL.MatrixMode(MatrixMode.Modelview);
             GL.LoadIdentity();
 
-            GL.Disable(EnableCap.Texture2D);
+            //GL.Disable(EnableCap.Texture2D);
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
 
@@ -263,25 +278,25 @@ namespace LDDModder.BrickEditor.UI.Panels
             var winPos = new Vector2(
                 (viewSize.X - winSize.X) / 2f,
                 viewSize.Y - ((viewSize.Y - winSize.Y) / 2f));
-            GL.Begin(PrimitiveType.Quads);
-            GL.Color4(Color.FromArgb(120, 80, 80, 80));
+            //GL.Begin(PrimitiveType.Quads);
+            //GL.Color4(Color.FromArgb(120, 80, 80, 80));
 
-            GL.Vertex2(winPos.X, winPos.Y);
-            GL.Vertex2(winPos.X, winPos.Y - winSize.Y);
-            GL.Vertex2(winPos.X + winSize.X, winPos.Y - winSize.Y);
-            GL.Vertex2(winPos.X + winSize.X, winPos.Y);
-            GL.End();
+            //GL.Vertex2(winPos.X, winPos.Y);
+            //GL.Vertex2(winPos.X, winPos.Y - winSize.Y);
+            //GL.Vertex2(winPos.X + winSize.X, winPos.Y - winSize.Y);
+            //GL.Vertex2(winPos.X + winSize.X, winPos.Y);
+            //GL.End();
 
             GL.Enable(EnableCap.Texture2D);
-
+            GL.UseProgram(0);
             TextRenderer.ProjectionMatrix = UIProjectionMatrix;
             TextRenderer.DrawingPrimitives.Clear();
             //var textHeight = RenderFont.Measure("Wasd").Height;
-
-            //TextRenderer.AddText("Hello World!", RenderFont, Color.White,
-            //    winPos, QFontAlignment.Left);
-            TextRenderer.AddText("LDD Modder Splash Screen", RenderFont, Color.White,
-                new Vector4(winPos.X, winPos.Y, winSize.X, winSize.Y), StringAlignment.Center, StringAlignment.Center);
+            TextRenderer.AddText("Hello", RenderFont, Color.White, new Vector2(0.5f, 20f), QFontAlignment.Left);
+            TextRenderer.AddText("Hello World!", RenderFont, Color.White,
+                winPos, QFontAlignment.Left);
+            //TextRenderer.AddText("LDD Modder Splash Screen", RenderFont, Color.White,
+            //    new Vector4(winPos.X, winPos.Y, winSize.X, winSize.Y), StringAlignment.Center, StringAlignment.Center);
             TextRenderer.RefreshBuffers();
             TextRenderer.Draw();
             TextRenderer.DisableShader();
@@ -358,28 +373,29 @@ namespace LDDModder.BrickEditor.UI.Panels
             LoadedModels.ForEach(x => x.Dispose());
             LoadedModels.Clear();
 
-            var partMeshes = project.Surfaces.SelectMany(x => x.GetAllMeshes()).ToList();
-
             float curHue = 0;
 
-            foreach (var partMesh in partMeshes)
+            foreach (var surface in project.Surfaces)
             {
-                if (!partMesh.IsModelLoaded && !partMesh.LoadModel())
-                    continue;
-
-                var glModel = new GLModel();
-                glModel.LoadFromLDD(partMesh.Geometry);
-
-                glModel.Material = new MaterialInfo 
+                foreach (var model in surface.Components.SelectMany(x => x.Geometries))
                 {
-                    Diffuse = new Vector4(0.6f, 0.6f, 0.6f, 1f),
-                    Specular = new Vector3(1f),
-                    Shininess = 8f
-                };
+                    if (!model.IsModelLoaded && !model.LoadModel())
+                        continue;
 
-                //glModel.BindToShader(ModelShader);
-                
-                LoadedModels.Add(glModel);
+                    var glModel = new GLModel();
+                    glModel.LoadFromLDD(model.Geometry);
+
+                    glModel.Material = new MaterialInfo
+                    {
+                        Diffuse = new Vector4(0.6f, 0.6f, 0.6f, 1f),
+                        Specular = new Vector3(1f),
+                        Shininess = 8f
+                    };
+
+                    model.Geometry = null;//unload
+
+                    LoadedModels.Add(glModel);
+                }
             }
 
             if (project.Bounding != null)
