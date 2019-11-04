@@ -134,7 +134,6 @@ namespace LDDModder.BrickEditor.UI.Windows
             {
                 string tmpProjectDir = GetTemporaryWorkingDir();
                 project.SaveExtracted(tmpProjectDir);
-                project.ProjectWorkingDir = tmpProjectDir;
                 SettingsManager.Current.LastOpenProject = new RecentFileInfo(project, true);
                 SettingsManager.SaveSettings();
                 LoadPartProject(project);

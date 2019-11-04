@@ -131,6 +131,10 @@
     <Compile Include="Rendering\Camera.cs" />
     <Compile Include="Rendering\CameraManipulator.cs" />
     <Compile Include="Rendering\CameraMovement.cs" />
+    <Compile Include="Rendering\Models\GLPartialModel.cs" />
+    <Compile Include="Rendering\Models\LddMeshModel.cs" />
+    <Compile Include="Rendering\Models\GLSurfaceModel.cs" />
+    <Compile Include="Rendering\Models\IndexedVertexBuffer.cs" />
     <Compile Include="Rendering\Models\GLModel.cs" />
     <Compile Include="Rendering\InputManager.cs" />
     <Compile Include="Rendering\Shaders\ModelShaderProgram.cs" />

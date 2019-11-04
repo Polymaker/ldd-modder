@@ -167,7 +167,7 @@
     <Compile Include="Modding\Editing\PrimitiveElements\PartCollision.cs" />
     <Compile Include="Modding\Editing\PartElement.cs" />
     <Compile Include="Modding\Editing\PrimitiveElements\PartConnection.cs" />
-    <Compile Include="Modding\Editing\ModelMesh.cs" />
+    <Compile Include="Modding\Editing\ModelComponents\ModelMesh.cs" />
     <Compile Include="Modding\Editing\PartProject.cs" />
     <Compile Include="Modding\Editing\PrimitiveElements\PartSphereCollision.cs" />
     <Compile Include="Modding\Editing\ChangeTracking\PartProperty.cs" />

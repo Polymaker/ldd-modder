@@ -24,11 +24,6 @@ namespace LDDModder.Modding.Editing
             ReplacementGeometries = new ElementCollection<ModelMesh>(this);
         }
 
-        //public override IEnumerable<StudReference> GetStudReferences()
-        //{
-        //    return Studs;
-        //}
-
         protected override IEnumerable<PartElement> GetAllChilds()
         {
             return base.GetAllChilds().Concat(ReplacementGeometries);

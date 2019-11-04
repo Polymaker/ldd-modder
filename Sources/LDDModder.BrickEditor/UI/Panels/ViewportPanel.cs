@@ -34,7 +34,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         private ModelShaderProgram ModelShader;
         private WireframeShaderProgram WireframeShader;
         
-        private List<GLModel> LoadedModels;
+        private List<GLSurfaceModel> SurfaceModels;
 
         private Thread UpdateThread;
 
@@ -53,7 +53,8 @@ namespace LDDModder.BrickEditor.UI.Panels
             //CloseButton = false;
             DockAreas = DockAreas.Document;
             InputManager = new InputManager();
-            LoadedModels = new List<GLModel>();
+
+            SurfaceModels = new List<GLSurfaceModel>();
             glControl1.MouseEnter += GlControl1_MouseEnter;
             glControl1.MouseLeave += GlControl1_MouseLeave;
         }
@@ -73,12 +74,12 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             Camera = new Camera
             {
-                Position = new Vector3(5)
+                Position = new Vector3(5),
             };
             Camera.LookAt(Vector3.Zero, Vector3.UnitY);
 
             CameraManipulator = new CameraManipulator(Camera);
-
+            CameraManipulator.RotationButton = MouseButton.Right;
 
             RenderFont = new QFont("C:\\Windows\\Fonts\\segoeui.ttf", 10,
                 new QFontBuilderConfiguration(true));
@@ -227,15 +228,18 @@ namespace LDDModder.BrickEditor.UI.Panels
             ModelShader.Projection.Set(projection);
             ModelShader.ViewPosition.Set(Camera.Position);
 
-            foreach (var model in LoadedModels)
+            foreach (var surfaceModel in SurfaceModels)
             {
-                model.BindToShader(WireframeShader);
-                model.Draw();
-                model.UnbindShader(WireframeShader);
+                var visibleMeshes = surfaceModel.MeshModels.Where(x => x.Visible).ToList();
+                surfaceModel.BindToShader(WireframeShader);
+                foreach (var mesh in visibleMeshes)
+                    surfaceModel.DrawMesh(mesh);
+                surfaceModel.UnbindShader(WireframeShader);
 
-                model.BindToShader(ModelShader);
-                model.Draw();
-                model.UnbindShader(ModelShader);
+                surfaceModel.BindToShader(ModelShader);
+                foreach (var mesh in visibleMeshes)
+                    surfaceModel.DrawMesh(mesh);
+                surfaceModel.UnbindShader(ModelShader);
             }
 
             DrawGrid(viewMatrix, projection);
@@ -341,6 +345,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
                 OnUpdateFrame(delta);
             }
+            sw.Stop();
         }
 
         private void GlControl1_MouseEnter(object sender, EventArgs e)
@@ -370,32 +375,32 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         public void LoadPartProject(PartProject project)
         {
-            LoadedModels.ForEach(x => x.Dispose());
-            LoadedModels.Clear();
+            UnloadModels();
 
             float curHue = 0;
 
             foreach (var surface in project.Surfaces)
             {
-                foreach (var model in surface.Components.SelectMany(x => x.Geometries))
+                var surfModel = new GLSurfaceModel(surface);
+                surfModel.Material = new MaterialInfo
                 {
-                    if (!model.IsModelLoaded && !model.LoadModel())
-                        continue;
+                    Diffuse = new Vector4(0.6f, 0.6f, 0.6f, 1f),
+                    Specular = new Vector3(1f),
+                    Shininess = 8f
+                };
 
-                    var glModel = new GLModel();
-                    glModel.LoadFromLDD(model.Geometry);
-
-                    glModel.Material = new MaterialInfo
+                if (surface.SurfaceID > 0)
+                {
+                    var matColor = Color4.FromHsv(new Vector4((surface.SurfaceID * 0.2f) % 1f, 0.9f, 0.8f, 1f));
+                    surfModel.Material = new MaterialInfo
                     {
-                        Diffuse = new Vector4(0.6f, 0.6f, 0.6f, 1f),
+                        Diffuse = new Vector4(matColor.R, matColor.G, matColor.B, matColor.A),
                         Specular = new Vector3(1f),
                         Shininess = 8f
                     };
-
-                    model.Geometry = null;//unload
-
-                    LoadedModels.Add(glModel);
                 }
+                surfModel.RebuildPartModels();
+                SurfaceModels.Add(surfModel);
             }
 
             if (project.Bounding != null)
@@ -422,10 +427,15 @@ namespace LDDModder.BrickEditor.UI.Panels
             DisposeGLResources();
         }
 
+        private void UnloadModels()
+        {
+            SurfaceModels.ForEach(x => x.Dispose());
+            SurfaceModels.Clear();
+        }
+
         private void DisposeGLResources()
         {
-            LoadedModels.ForEach(x => x.Dispose());
-            LoadedModels.Clear();
+            UnloadModels();
             GridShader.Dispose();
             ModelShader.Dispose();
             WireframeShader.Dispose();

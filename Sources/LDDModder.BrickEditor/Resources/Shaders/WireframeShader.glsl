@@ -17,17 +17,17 @@ void main()
 #version 150
 
 layout(triangles) in;
-layout(line_strip, max_vertices =3) out;
+layout(line_strip, max_vertices =4) out;
 
 noperspective out vec3 WireCoord;
 
 void main()
 {
-	for(int i = 0; i < 3; i++)
+	for(int i = 0; i < 4; i++)
 	{
-		gl_Position = gl_in[i].gl_Position;
+		gl_Position = gl_in[i%3].gl_Position;
 		WireCoord = vec3(0.0);
-		WireCoord[i] = 1.0;
+		WireCoord[i%3] = 1.0;
 		EmitVertex();
 	}
 	EndPrimitive();

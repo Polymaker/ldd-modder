@@ -168,8 +168,6 @@ namespace LDDModder.Modding.Editing
             project.GenerateElementsNames();
             project.LinkStudReferences();
 
-            //project.GenerateDefaultComments();
-
             project.IsLoading = false;
             return project;
         }
@@ -363,11 +361,12 @@ namespace LDDModder.Modding.Editing
 
         #region Read/Write from Directory
 
-        public void SaveExtracted(string directory)
+        public void SaveExtracted(string directory, bool setWorkingDir = true)
         {
             directory = Path.GetFullPath(directory);
             Directory.CreateDirectory(directory);
-
+            if (setWorkingDir)
+                ProjectWorkingDir = directory;
             //LinkStudReferences();
             //GenerateMeshIDs(false);
             GenerateMeshesNames();
@@ -377,13 +376,7 @@ namespace LDDModder.Modding.Editing
 
             string meshDir = Path.Combine(directory, "Meshes");
             Directory.CreateDirectory(meshDir);
-            //if (!Directory.Exists(meshDir))
-            //    Directory.CreateDirectory(meshDir);
-            //else
-            //{
-            //    foreach (var filename in Directory.GetFiles(meshDir, "*", SearchOption.AllDirectories))
-            //        File.Delete(filename);
-            //}
+
 
             var allMeshes = Surfaces.SelectMany(s => s.GetAllMeshes());
 
@@ -429,13 +422,24 @@ namespace LDDModder.Modding.Editing
 
                 foreach (var mesh in allMeshes)
                 {
-                    using(var ms = new MemoryStream())
+                    if (!string.IsNullOrEmpty(mesh.WorkingFilePath) && 
+                        File.Exists(mesh.WorkingFilePath))
                     {
-                        mesh.Geometry.Save(ms);
-                        ms.Position = 0;
                         zipStream.PutNextEntry(new ZipEntry(mesh.FileName));
-                        ms.CopyTo(zipStream);
-                        zipStream.CloseEntry();
+                        using (var meshFs = File.OpenRead(mesh.WorkingFilePath))
+                            meshFs.CopyTo(zipStream);
+                    }
+                    else if (mesh.IsModelLoaded)
+                    {
+                        using (var ms = new MemoryStream())
+                        {
+                            //if (!mesh.IsModelLoaded && mesh.fi)
+                            mesh.Geometry.Save(ms);
+                            ms.Position = 0;
+                            zipStream.PutNextEntry(new ZipEntry(mesh.FileName));
+                            ms.CopyTo(zipStream);
+                            zipStream.CloseEntry();
+                        }
                     }
                 }
             }
@@ -754,6 +758,9 @@ namespace LDDModder.Modding.Editing
 
                         if (mesh.Surface != null)
                             mesh.FileName = $"Meshes\\Surface{mesh.Surface.SurfaceID}_{mesh.ID}.geom";
+
+                        if (!string.IsNullOrEmpty(ProjectWorkingDir))
+                            mesh.WorkingFilePath = Path.Combine(ProjectWorkingDir, mesh.FileName);
                     }
                 }
             }

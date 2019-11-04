@@ -12,6 +12,7 @@ namespace LDDModder.Modding.Editing
 {
     public abstract class PartElement
     {
+
         [XmlAttribute]
         public string ID { get; set; }
 
@@ -98,6 +99,8 @@ namespace LDDModder.Modding.Editing
             return false;
         }
 
+
+
         protected virtual IEnumerable<PartElement> GetAllChilds()
         {
             return Enumerable.Empty<PartElement>();
@@ -112,6 +115,8 @@ namespace LDDModder.Modding.Editing
                     yield return subChild;
             }
         }
+
+        
 
         public Type GetElementType()
         {

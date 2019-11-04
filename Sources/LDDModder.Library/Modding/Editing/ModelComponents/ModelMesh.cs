@@ -26,9 +26,14 @@ namespace LDDModder.Modding.Editing
         [XmlAttribute]
         public string FileName { get; set; }
 
+        [XmlIgnore]
+        public string WorkingFilePath { get; set; }
+
         public PartSurface Surface => (Parent as SurfaceComponent)?.Parent as PartSurface;
 
         public bool IsModelLoaded => Geometry != null;
+
+        public bool CanUnloadModel => !string.IsNullOrEmpty(WorkingFilePath);
 
         public ModelMesh()
         {
