@@ -17,6 +17,7 @@ using WeifenLuo.WinFormsUI.Docking;
 using System.Threading;
 using System.Diagnostics;
 using OpenTK.Input;
+using ObjectTK.Textures;
 
 namespace LDDModder.BrickEditor.UI.Panels
 {
@@ -29,6 +30,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         private bool IsClosing;
         private bool RenderLoopEnabled;
         private GLControl glControl1;
+        private Texture2D CheckboardTexture;
 
         private GridShaderProgram GridShader;
         private ModelShaderProgram ModelShader;
@@ -104,9 +106,17 @@ namespace LDDModder.BrickEditor.UI.Panels
                 OffCenter = false
             });
 
+            var checkboardImage = (Bitmap)Bitmap.FromStream(System.Reflection.Assembly.GetExecutingAssembly()
+                .GetManifestResourceStream("LDDModder.BrickEditor.Resources.Textures.DefaultTexture.png"));
+            BitmapTexture.CreateCompatible(checkboardImage, out CheckboardTexture, 1);
+            CheckboardTexture.LoadBitmap(checkboardImage, 0);
+            CheckboardTexture.SetFilter(TextureMinFilter.Linear, TextureMagFilter.Nearest);
+            CheckboardTexture.SetWrapMode(TextureWrapMode.Repeat);
+            //CheckboardTexture.Bind(TextureUnit.Texture4);
+
             ModelShader = ProgramFactory.Create<ModelShaderProgram>();
             ModelShader.Use();
-
+            
             var lights = new LightInfo[]
             {
                 //Key Light
@@ -132,7 +142,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                 //Back Light
                 new LightInfo {
                     Position = new Vector3(3, 10, -10),
-                    Ambient = new Vector3(0.3f),
+                    Ambient = new Vector3(0.4f),
                     Diffuse = new Vector3(0.7f),
                     Specular = new Vector3(0.7f),
                     Constant = 1f,
@@ -144,7 +154,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             ModelShader.LightCount.Set(lights.Length);
             ModelShader.UseTexture.Set(false);
-
+            
             WireframeShader = ProgramFactory.Create<WireframeShaderProgram>();
             WireframeShader.Use();
             WireframeShader.Color.Set(new Vector4(0,0,0,1));
@@ -209,7 +219,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         private void RenderWorld()
         {
             GL.UseProgram(0);
-            GL.Disable(EnableCap.Texture2D);
+            GL.Enable(EnableCap.Texture2D);
             GL.Enable(EnableCap.LineSmooth);
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.AlphaTest);
@@ -222,21 +232,29 @@ namespace LDDModder.BrickEditor.UI.Panels
             WireframeShader.Use();
             WireframeShader.ViewMatrix.Set(viewMatrix);
             WireframeShader.Projection.Set(projection);
+            
 
             ModelShader.Use();
             ModelShader.ViewMatrix.Set(viewMatrix);
             ModelShader.Projection.Set(projection);
             ModelShader.ViewPosition.Set(Camera.Position);
+            
 
             foreach (var surfaceModel in SurfaceModels)
             {
+                
+
                 var visibleMeshes = surfaceModel.MeshModels.Where(x => x.Visible).ToList();
                 surfaceModel.BindToShader(WireframeShader);
                 foreach (var mesh in visibleMeshes)
                     surfaceModel.DrawMesh(mesh);
                 surfaceModel.UnbindShader(WireframeShader);
-
+                
                 surfaceModel.BindToShader(ModelShader);
+                ModelShader.UseTexture.Set(surfaceModel.Surface.SurfaceID > 0);
+                CheckboardTexture.Bind(TextureUnit.Texture4);
+                ModelShader.Texture.BindTexture(TextureUnit.Texture4, CheckboardTexture);
+
                 foreach (var mesh in visibleMeshes)
                     surfaceModel.DrawMesh(mesh);
                 surfaceModel.UnbindShader(ModelShader);
@@ -386,7 +404,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                 {
                     Diffuse = new Vector4(0.6f, 0.6f, 0.6f, 1f),
                     Specular = new Vector3(1f),
-                    Shininess = 8f
+                    Shininess = 6f
                 };
 
                 if (surface.SurfaceID > 0)
@@ -396,7 +414,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                     {
                         Diffuse = new Vector4(matColor.R, matColor.G, matColor.B, matColor.A),
                         Specular = new Vector3(1f),
-                        Shininess = 8f
+                        Shininess = 6f
                     };
                 }
                 surfModel.RebuildPartModels();
@@ -439,6 +457,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             GridShader.Dispose();
             ModelShader.Dispose();
             WireframeShader.Dispose();
+            CheckboardTexture.Dispose();
         }
     }
 }

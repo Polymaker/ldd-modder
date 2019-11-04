@@ -84,9 +84,9 @@ vec3 CalcPointLight(LightInfo light, vec3 diffuseColor, vec3 normal, vec3 fragPo
 	
     // attenuation
     float distance    = length(light.Position - fragPos);
-
-    float attenuation = light.Constant + (light.Linear * distance) + (light.Quadratic * (distance * distance));
-	attenuation =  clamp(1.0 / (attenuation * 0.4), 0, 1);
+	float quadAtt = (light.Quadratic * (distance * distance)) * 0.5;
+    float attenuation = light.Constant + (light.Linear * distance) + quadAtt;
+	attenuation =  clamp(1.0 / (attenuation * 0.5), 0, 1);
 	
     // combine results
     vec3 ambient  = light.Ambient  * diffuseColor;
@@ -109,7 +109,7 @@ void main()
 	if (UseTexture)
 	{
 		vec4 texColor = texture2D(Texture, vTexCoord);
-		baseColor = blendColors(baseColor, texColor);
+		baseColor = blendColors(texColor, baseColor);
 	}
 	
 	vec3 finalColor = baseColor.rgb * 0.1;
@@ -125,6 +125,6 @@ void main()
 
 	if ( LightCount > 3)
 		finalColor += CalcPointLight(Lights[3], baseColor.rgb, norm, FragPos, viewDir);  
-		
+	
 	FragColor = vec4(finalColor, baseColor.a);
 }
