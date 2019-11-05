@@ -41,6 +41,7 @@ in vec3 WireCoord;
 uniform vec4 Color;
 uniform float Thickness;
 /*
+#extension GL_OES_standard_derivatives : enable
 float edgeFactor(){
     vec3 d = fwidth(WireCoord);
     vec3 a3 = smoothstep(vec3(0.0), d*Thickness, WireCoord);
@@ -50,5 +51,8 @@ float edgeFactor(){
 void main()
 {
 	FragColor = Color;
-    //FragColor = vec4(Color.rgb, (1.0-edgeFactor())*0.5);
+	/*float edgeDist = 1.0 - edgeFactor();
+	if (edgeDist <= 0)
+		discard;
+    FragColor = mix(vec4(0), Color, edgeDist);*/
 }

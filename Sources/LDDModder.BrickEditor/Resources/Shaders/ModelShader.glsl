@@ -87,7 +87,7 @@ vec3 CalcPointLight(LightInfo light, vec3 diffuseColor, vec3 normal, vec3 fragPo
     float attenuation = light.Constant + 
 		(light.Linear * distance) + 
 		(light.Quadratic * (distance * distance));
-	attenuation =  clamp(1.0 / (attenuation * 0.8), 0, 1);
+	attenuation =  clamp(1.0 / (attenuation * 0.7), 0, 1);
 	
     // combine results
     vec3 ambient  = light.Ambient  * diffuseColor;

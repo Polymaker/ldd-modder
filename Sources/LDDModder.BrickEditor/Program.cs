@@ -3,6 +3,7 @@ using LDDModder.BrickEditor.UI.Windows;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -17,6 +18,8 @@ namespace LDDModder.BrickEditor
         static void Main()
         {
             LDD.LDDEnvironment.Initialize();
+
+            //Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("fr-CA");
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

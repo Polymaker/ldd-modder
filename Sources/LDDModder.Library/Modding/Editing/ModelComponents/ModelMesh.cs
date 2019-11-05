@@ -14,19 +14,18 @@ namespace LDDModder.Modding.Editing
     {
         public const string NODE_NAME = "Mesh";
 
-        [XmlIgnore]
         public MeshGeometry Geometry { get; set; }
 
-        [XmlAttribute]
         public bool IsTextured { get; set; }
 
-        [XmlAttribute]
         public bool IsFlexible { get; set; }
 
-        [XmlAttribute]
+        public int VertexCount { get; set; }
+
+        public int IndexCount { get; set; }
+
         public string FileName { get; set; }
 
-        [XmlIgnore]
         public string WorkingFilePath { get; set; }
 
         public PartSurface Surface => (Parent as SurfaceComponent)?.Parent as PartSurface;
@@ -45,6 +44,8 @@ namespace LDDModder.Modding.Editing
             Geometry = geometry;
             IsTextured = geometry.IsTextured;
             IsFlexible = geometry.IsFlexible;
+            VertexCount = geometry.VertexCount;
+            IndexCount = geometry.IndexCount;
         }
 
         public IEnumerable<ModelMeshReference> GetReferences()
@@ -57,11 +58,10 @@ namespace LDDModder.Modding.Editing
         public override XElement SerializeToXml()
         {
             var elem = SerializeToXmlBase(NODE_NAME);
-            elem.Add(XmlHelper.ToXml(() => IsTextured));
-            elem.Add(XmlHelper.ToXml(() => IsFlexible));
-
+            elem.Add(new XAttribute(nameof(IsTextured), IsTextured));
+            elem.Add(new XAttribute(nameof(IsFlexible), IsFlexible));
             if (!string.IsNullOrEmpty(FileName))
-                elem.Add(XmlHelper.ToXml(() => FileName));
+                elem.Add(new XAttribute(nameof(FileName), FileName));
 
             return elem;
         }
@@ -84,7 +84,11 @@ namespace LDDModder.Modding.Editing
         public bool LoadModel()
         {
             if (Geometry == null && Project != null)
+            {
                 Project.LoadModelMesh(this);
+                VertexCount = Geometry?.VertexCount ?? 0;
+                IndexCount = Geometry?.IndexCount ?? 0;
+            }
             return Geometry != null;
         }
 

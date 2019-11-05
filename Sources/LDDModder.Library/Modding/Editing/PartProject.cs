@@ -194,7 +194,6 @@ namespace LDDModder.Modding.Editing
                     var cullingComp = SurfaceComponent.CreateFromLDD(culling, surfaceMesh, replacementMesh);
                     cullingComp.ID = StringUtils.GenerateUUID($"Part{partID}_Surface{surfaceElement.SurfaceID}_Culling{elementIndex}", 8);
                     surfaceElement.Components.Add(cullingComp);
-                    cullingComp.LoadCullingInformation(culling);
                     elementIndex++;
                 }
             }
@@ -324,10 +323,11 @@ namespace LDDModder.Modding.Editing
             }
 
             var meshesElem = doc.Root.AddElement(nameof(Meshes));
+
             foreach(var mesh in Meshes)
             {
-                if (mesh.IsModelLoaded)
-                    meshesElem.Add(new XComment($"Vertex count: {mesh.Geometry.VertexCount} Triangle count: {mesh.Geometry.TriangleCount}"));
+                if (mesh.VertexCount > 0)
+                    meshesElem.Add(new XComment($"Vertex count: {mesh.VertexCount} Triangle count: {mesh.IndexCount / 3}"));
                 meshesElem.Add(mesh.SerializeToXml());
             }
 
@@ -761,15 +761,14 @@ namespace LDDModder.Modding.Editing
         {
             foreach (var mesh in Meshes)
             {
+                string meshName = string.IsNullOrEmpty(mesh.Name) ? mesh.ID : mesh.Name;
 
-                if (string.IsNullOrEmpty(mesh.FileName) || !mesh.FileName.Contains(mesh.ID))
+                if (string.IsNullOrEmpty(mesh.FileName) || !mesh.FileName.Contains(meshName))
                 {
+                    mesh.FileName = $"Meshes\\{meshName}.geom";
 
-                    //mesh.FileName = $"Meshes\\Surface_{surface.SurfaceID}\\{mesh.RefID}.geom";
-                    mesh.FileName = $"Meshes\\{mesh.ID}.geom";
-
-                    if (mesh.Surface != null)
-                        mesh.FileName = $"Meshes\\Surface{mesh.Surface.SurfaceID}_{mesh.ID}.geom";
+                    //if (mesh.Surface != null)
+                    //    mesh.FileName = $"Meshes\\Surface{mesh.Surface.SurfaceID}_{meshName}.geom";
                 }
 
                 if (IsLoadedFromDisk)
