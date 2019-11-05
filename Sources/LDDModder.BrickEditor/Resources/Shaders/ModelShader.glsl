@@ -84,15 +84,16 @@ vec3 CalcPointLight(LightInfo light, vec3 diffuseColor, vec3 normal, vec3 fragPo
 	
     // attenuation
     float distance    = length(light.Position - fragPos);
-	float quadAtt = (light.Quadratic * (distance * distance)) * 0.5;
-    float attenuation = light.Constant + (light.Linear * distance) + quadAtt;
-	attenuation =  clamp(1.0 / (attenuation * 0.5), 0, 1);
+    float attenuation = light.Constant + 
+		(light.Linear * distance) + 
+		(light.Quadratic * (distance * distance));
+	attenuation =  clamp(1.0 / (attenuation * 0.8), 0, 1);
 	
     // combine results
     vec3 ambient  = light.Ambient  * diffuseColor;
     vec3 diffuse  = light.Diffuse  * diff * diffuseColor;
     vec3 specular = light.Specular * spec * Material.Specular;
-    ambient  *= attenuation;
+    ambient  *= min(0.5 + attenuation, 1.0);
     diffuse  *= attenuation;
     specular *= attenuation;
     return (ambient + diffuse + specular);

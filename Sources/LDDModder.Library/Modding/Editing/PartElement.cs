@@ -12,13 +12,13 @@ namespace LDDModder.Modding.Editing
 {
     public abstract class PartElement
     {
+        private string _Comments;
+        private string _Name;
+        internal PartProject _Project;
 
         [XmlAttribute]
         public string ID { get; set; }
-
-        private string _Comments;
-        private string _Name;
-
+        
         [XmlAttribute]
         public string Name
         {
@@ -33,11 +33,11 @@ namespace LDDModder.Modding.Editing
             set => SetPropertyValue(ref _Comments, value);
         }
 
-        public PropertyCollection Properties { get; }
+        internal List<PartElement> OwnedElements { get; }
+
+        internal List<IElementCollection> Collections { get; }
 
         internal bool IsLoading => Project?.IsLoading ?? false;
-
-        internal PartProject _Project;
 
         [XmlIgnore]
         public PartProject Project => _Project ?? Parent?.Project;
@@ -47,8 +47,13 @@ namespace LDDModder.Modding.Editing
 
         public PartElement()
         {
-            Properties = new PropertyCollection(this);
-            //DefineProperties();
+            Collections = new List<IElementCollection>();
+            OwnedElements = new List<PartElement>();
+        }
+
+        internal void AssignParent(PartElement parent)
+        {
+            Parent = parent;
         }
 
         public virtual XElement SerializeToXml()
@@ -88,6 +93,17 @@ namespace LDDModder.Modding.Editing
         {
             if (!EqualityComparer<T>.Default.Equals(property, value))
             {
+                if (property is PartElement oldElem)
+                {
+                    oldElem.AssignParent(null);
+                    OwnedElements.Remove(oldElem);
+                }
+                if (value is PartElement newElem)
+                {
+                    newElem.AssignParent(this);
+                    OwnedElements.Add(newElem);
+                }
+
                 if (Project != null && !IsLoading)
                 {
                     Project.OnElementPropertyChanged(
@@ -103,7 +119,7 @@ namespace LDDModder.Modding.Editing
 
         protected virtual IEnumerable<PartElement> GetAllChilds()
         {
-            return Enumerable.Empty<PartElement>();
+            return OwnedElements.Concat(Collections.SelectMany(x => x.GetElements()));
         }
 
         public virtual IEnumerable<PartElement> GetChildsHierarchy()
@@ -134,10 +150,5 @@ namespace LDDModder.Modding.Editing
                 return typeof(StudReference);
             return typeof(PartElement);
         }
-
-        //protected virtual void DefineProperties()
-        //{
-
-        //}
     }
 }

@@ -15,6 +15,10 @@ namespace LDDModder.LDD.Meshes
         public IList<Vertex> Vertices => _Vertices.AsReadOnly();
         public IList<Triangle> Triangles => _Triangles.AsReadOnly();
 
+        public int VertexCount => Vertices.Count;
+
+        public int IndexCount => Triangles.Count * 3;
+
         public GeometryBuilder()
         {
             VertexDict = new Dictionary<int, List<Vertex>>();
@@ -56,6 +60,22 @@ namespace LDDModder.LDD.Meshes
         public void AddTriangle(int v1, int v2, int v3)
         {
             _Triangles.Add(new Triangle(_Vertices[v1], _Vertices[v2], _Vertices[v3]));
+        }
+
+        public void AddTriangle(Triangle triangle, bool checkDuplicate = false)
+        {
+            var newTriangle = new Triangle(
+                AddVertex(triangle.V1, checkDuplicate),
+                AddVertex(triangle.V2, checkDuplicate),
+                AddVertex(triangle.V3, checkDuplicate));
+
+            for (int i = 0; i < 3; i++)
+            {
+                newTriangle.Indices[i].AverageNormal = triangle.Indices[i].AverageNormal;
+                newTriangle.Indices[i].RoundEdgeData = triangle.Indices[i].RoundEdgeData.Clone();
+            }
+
+            _Triangles.Add(newTriangle);
         }
 
         //??? I don't rembemer what I wanted to do with this

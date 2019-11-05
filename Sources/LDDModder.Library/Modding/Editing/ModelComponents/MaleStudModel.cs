@@ -1,5 +1,6 @@
 ﻿using LDDModder.LDD.Meshes;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
 
@@ -8,24 +9,22 @@ namespace LDDModder.Modding.Editing
     public class MaleStudModel : PartCullingModel
     {
         public override ModelComponentType ComponentType => ModelComponentType.MaleStud;
+        private StudReference _Stud;
 
         public StudReference Stud
         {
-            get => StudReferences.FirstOrDefault();
-            set
-            {
-                if (StudReferences.Any() && StudReferences[0] != value)
-                    StudReferences.Clear();
-
-                if (value != null)
-                    StudReferences.Add(value);
-            }
+            get => _Stud;
+            set => SetPropertyValue(ref _Stud, value);
         }
 
-        public override IEnumerable<StudReference> GetStudReferences()
+        internal override void LoadCullingInformation(MeshCulling culling)
         {
-            if (Stud != null)
-                yield return Stud;
+            base.LoadCullingInformation(culling);
+
+            if (culling.Studs.Count >= 1)
+                Stud = new StudReference(culling.Studs[0]);
+            else
+                Debug.WriteLine("Stud culling does not reference a stud!");
         }
 
         public override XElement SerializeToXml()

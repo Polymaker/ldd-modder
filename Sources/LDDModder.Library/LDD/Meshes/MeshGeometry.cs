@@ -521,5 +521,35 @@ namespace LDDModder.LDD.Meshes
             return newGeom;
         }
 
+        public MeshGeometry GetPartialGeometry(int startIndex, int indexCount, int startVertex, int vertexCount)
+        {
+            var builder = new GeometryBuilder();
+
+            for (int i = 0; i < vertexCount; i++)
+            {
+                var v = Vertices[i + startVertex];
+                builder.AddVertex(v.Clone(), false);
+            }
+
+            var triangleIndices = GetTriangleIndices();
+
+            for (int i = 0; i < indexCount; i += 3)
+            {
+                int idx1 = triangleIndices[i + startIndex];
+                int idx2 = triangleIndices[i + 1 + startIndex];
+                int idx3 = triangleIndices[i + 2 + startIndex];
+                builder.AddTriangle(idx1 - startVertex, idx2 - startVertex, idx3 - startVertex);
+            }
+
+            var geom = builder.GetGeometry();
+            for (int i = 0; i < indexCount; i++)
+            {
+                var originalIndex = Indices[i + startIndex];
+                geom.Indices[i].RoundEdgeData = originalIndex.RoundEdgeData.Clone();
+                geom.Indices[i].AverageNormal = originalIndex.AverageNormal;
+            }
+
+            return geom;
+        }
     }
 }

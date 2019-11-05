@@ -47,6 +47,13 @@ namespace LDDModder.Modding.Editing
             IsFlexible = geometry.IsFlexible;
         }
 
+        public IEnumerable<ModelMeshReference> GetReferences()
+        {
+            if (Project != null)
+                return Project.Surfaces.SelectMany(x => x.GetAllMeshReferences()).Where(y => y.MeshID == ID);
+            return Enumerable.Empty<ModelMeshReference>();
+        }
+
         public override XElement SerializeToXml()
         {
             var elem = SerializeToXmlBase(NODE_NAME);
@@ -67,11 +74,24 @@ namespace LDDModder.Modding.Editing
             FileName = element.ReadAttribute("FileName", string.Empty);
         }
 
+        public static ModelMesh FromXml(XElement element)
+        {
+            var model = new ModelMesh();
+            model.LoadFromXml(element);
+            return model;
+        }
+
         public bool LoadModel()
         {
-            if (Geometry == null && Project != null && !string.IsNullOrEmpty(FileName))
-                Geometry = Project.ReadModelMesh(FileName);
+            if (Geometry == null && Project != null)
+                Project.LoadModelMesh(this);
             return Geometry != null;
+        }
+
+        public void UnloadModel()
+        {
+            if (CanUnloadModel)
+                Geometry = null;
         }
     }
 }

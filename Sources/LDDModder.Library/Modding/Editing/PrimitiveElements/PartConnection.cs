@@ -28,11 +28,6 @@ namespace LDDModder.Modding.Editing
         [XmlAttribute]
         public ConnectorType ConnectorType { get; set; }
 
-        public T GetConnector<T>() where T : Connector
-        {
-            return Connector as T;
-        }
-
         public PartConnection()
         {
             Transform = new ItemTransform();
@@ -62,6 +57,17 @@ namespace LDDModder.Modding.Editing
             var partConn = new PartConnection(connectorType);
             partConn.LoadFromXml(element);
             return partConn;
+        }
+
+        public T GetConnector<T>() where T : Connector
+        {
+            return Connector as T;
+        }
+
+        public Connector GenerateLDD()
+        {
+            Connector.Transform = Transform.ToLDD();
+            return Connector;
         }
 
         protected internal override void LoadFromXml(XElement element)

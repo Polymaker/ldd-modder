@@ -37,8 +37,6 @@ namespace LDDModder.BrickEditor.UI.Windows
             SettingsManager.Initialize();
             InitializePanels();
             RebuildRecentFilesMenu();
-
-            
         }
 
         protected override void OnShown(EventArgs e)

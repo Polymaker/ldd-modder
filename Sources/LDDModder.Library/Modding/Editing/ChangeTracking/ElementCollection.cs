@@ -14,23 +14,8 @@ namespace LDDModder.Modding.Editing
         PartProject Project { get; }
         PartElement Owner { get; }
 
+        int Count { get; }
         IEnumerable<PartElement> GetElements();
-    }
-
-    public abstract class ElementCollectionBase : IEnumerable<PartElement>
-    {
-
-        protected abstract IEnumerator<PartElement> GetEnumeratorBase();
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumeratorBase();
-        }
-
-        IEnumerator<PartElement> IEnumerable<PartElement>.GetEnumerator()
-        {
-            return GetEnumeratorBase();
-        }
     }
 
     [Serializable]
@@ -45,13 +30,9 @@ namespace LDDModder.Modding.Editing
 
         private List<T> InnerList;
 
-        PartProject IElementCollection.Project => throw new NotImplementedException();
-
         public int Count => InnerList.Count;
 
         public bool IsReadOnly => ((IList<T>)InnerList).IsReadOnly;
-
-        PartElement IElementCollection.Owner => throw new NotImplementedException();
 
         public T this[int index] { get => InnerList[index]; set => InnerList[index] = value; }
 
@@ -62,6 +43,7 @@ namespace LDDModder.Modding.Editing
         public ElementCollection(PartElement owner)
         {
             Owner = owner;
+            Owner.Collections.Add(this);
             InnerList = new List<T>();
         }
 

@@ -16,8 +16,6 @@ namespace LDDModder.Modding.Editing
         public const string NODE_NAME = "StudRef";
 
         //public string RefID { get; set; }
-
-        [XmlIgnore]
         public string ConnectionID { get; set; }
 
         [XmlIgnore]

@@ -39,29 +39,29 @@ namespace LDDModder.Modding.Editing
             return Connections.AsEnumerable<PartElement>().Concat(Collisions);
         }
 
-        public static PartBone FromLDD(FlexBone flexBone)
+        internal void LoadFromLDD(FlexBone flexBone)
         {
-            var bone = new PartBone()
-            {
-                BoneID = flexBone.ID,
-                Transform = ItemTransform.FromLDD(flexBone.Transform)
-            };
+            BoneID = flexBone.ID;
+            Transform = ItemTransform.FromLDD(flexBone.Transform);
+            Bounding = flexBone.Bounding;
+            PhysicsAttributes = flexBone.PhysicsAttributes;
+
+            int elementIndex = 0;
 
             foreach (var collision in flexBone.Collisions)
-                bone.Collisions.Add(PartCollision.FromLDD(collision));
-
-            foreach (var lddConn in flexBone.Connectors)
             {
-                var partConn = PartConnection.FromLDD(lddConn);
-                if (partConn.ConnectorType == LDD.Primitives.Connectors.ConnectorType.Custom2DField)
-                {
-                    int connIdx = flexBone.Connectors.IndexOf(lddConn);
-                    partConn.ID = StringUtils.GenerateUUID($"Bone{flexBone.ID}_{connIdx}", 8);
-                }
-                bone.Connections.Add(partConn);
+                var collisionElem = PartCollision.FromLDD(collision);
+                collisionElem.ID = StringUtils.GenerateUUID($"Part{Project.PartID}_Bone{BoneID}_Collision{elementIndex++}", 8);
+                Collisions.Add(collisionElem);
             }
 
-            return bone;
+            elementIndex = 0;
+            foreach (var lddConn in flexBone.Connectors)
+            {
+                var connectionElem = PartConnection.FromLDD(lddConn);
+                connectionElem.ID = StringUtils.GenerateUUID($"Part{Project.PartID}_Bone{BoneID}_Connection{elementIndex++}", 8);
+                Connections.Add(connectionElem);
+            }
         }
 
         public override XElement SerializeToXml()
@@ -81,14 +81,14 @@ namespace LDDModder.Modding.Editing
 
             if (Connections.Any())
             {
-                var connectionsElem = elem.AddElement("Connections");
+                var connectionsElem = elem.AddElement(nameof(Connections));
                 foreach (var conn in Connections)
                     connectionsElem.Add(conn.SerializeToXml());
             }
 
             if (Collisions.Any())
             {
-                var collisionsElem = elem.AddElement("Collisions");
+                var collisionsElem = elem.AddElement(nameof(Collisions));
                 foreach (var col in Collisions)
                     collisionsElem.Add(col.SerializeToXml());
             }
@@ -116,13 +116,13 @@ namespace LDDModder.Modding.Editing
                     Bounding = XmlHelper.DefaultDeserialize<BoundingBox>(gb);
             }
 
-            if (element.HasElement("Connections", out XElement connectionsElem))
+            if (element.HasElement(nameof(Connections), out XElement connectionsElem))
             {
                 foreach (var connElem in connectionsElem.Elements(PartConnection.NODE_NAME))
                     Connections.Add(PartConnection.FromXml(connElem));
             }
 
-            if (element.HasElement("Collisions", out XElement collisionsElem))
+            if (element.HasElement(nameof(Collisions), out XElement collisionsElem))
             {
                 foreach (var connElem in collisionsElem.Elements(PartCollision.NODE_NAME))
                     Collisions.Add(PartCollision.FromXml(connElem));

@@ -15,9 +15,9 @@ namespace LDDModder.BrickEditor.Rendering
         public int IndexCount { get; set; }
         public bool Visible { get; set; }
         public Matrix4 Transform { get; set; }
-        public ModelMesh Mesh { get; set; }
+        public ModelMeshReference Mesh { get; set; }
 
-        public LddMeshModel(ModelMesh mesh, int startIndex, int indexCount)
+        public LddMeshModel(ModelMeshReference mesh, int startIndex, int indexCount)
         {
             Mesh = mesh;
             StartIndex = startIndex;
@@ -25,7 +25,7 @@ namespace LDDModder.BrickEditor.Rendering
             Transform = Matrix4.Identity;
         }
 
-        public LddMeshModel(ModelMesh mesh, int startIndex, int indexCount, int startVertex)
+        public LddMeshModel(ModelMeshReference mesh, int startIndex, int indexCount, int startVertex)
         {
             Mesh = mesh;
             StartIndex = startIndex;

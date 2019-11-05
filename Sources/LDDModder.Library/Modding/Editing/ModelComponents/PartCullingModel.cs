@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Xml.Linq;
 using System.Xml.Serialization;
+using LDDModder.LDD.Meshes;
 
 namespace LDDModder.Modding.Editing
 {
@@ -13,12 +14,14 @@ namespace LDDModder.Modding.Editing
         [XmlIgnore]
         internal int ConnectionIndex { get; set; } = -1;
 
-        [XmlIgnore]
-        protected ElementCollection<StudReference> StudReferences { get; set; }
-
         public PartCullingModel()
         {
-            StudReferences = new ElementCollection<StudReference>(this);
+        }
+
+        internal override void LoadCullingInformation(MeshCulling culling)
+        {
+            var connectorRef = culling.Studs.FirstOrDefault() ?? culling.AdjacentStuds.FirstOrDefault();
+            ConnectionIndex = connectorRef != null ? connectorRef.ConnectorIndex : -1;
         }
 
         public PartConnection GetLinkedConnection()
@@ -30,20 +33,22 @@ namespace LDDModder.Modding.Editing
 
         public virtual IEnumerable<StudReference> GetStudReferences()
         {
-            return StudReferences;
-        }
-
-        protected override IEnumerable<PartElement> GetAllChilds()
-        {
-            return base.GetAllChilds().Concat(StudReferences);
+            return OwnedElements.OfType<StudReference>()
+                .Concat(Collections.SelectMany(x => x.GetElements()).OfType<StudReference>());
         }
 
         public override XElement SerializeToXml()
         {
             var elem = base.SerializeToXml();
             if (!string.IsNullOrEmpty(ConnectionID))
-                elem.Add(new XAttribute("ConnectionID", ConnectionID));
+                elem.Add(new XAttribute(nameof(ConnectionID), ConnectionID));
             return elem;
+        }
+
+        protected internal override void LoadFromXml(XElement element)
+        {
+            base.LoadFromXml(element);
+            ConnectionID = element.ReadAttribute(nameof(ConnectionID), string.Empty);
         }
     }
 }

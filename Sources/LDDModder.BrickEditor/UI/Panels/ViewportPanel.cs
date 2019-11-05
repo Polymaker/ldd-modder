@@ -39,24 +39,32 @@ namespace LDDModder.BrickEditor.UI.Panels
         private List<GLSurfaceModel> SurfaceModels;
 
         private Thread UpdateThread;
+        private bool ExitUpdateLoop;
 
-        private Camera Camera;
         private InputManager InputManager;
         private CameraManipulator CameraManipulator;
+        private Camera Camera => CameraManipulator.Camera;
 
         public ViewportPanel()
         {
             InitializeComponent();
+            
+            //CloseButtonVisible = false;
+            //CloseButton = false;
+            DockAreas = DockAreas.Document;
+            
+
+            SurfaceModels = new List<GLSurfaceModel>();
+            CreateGLControl();
+        }
+
+        private void CreateGLControl()
+        {
             glControl1 = new GLControl(new GraphicsMode(32, 24, 0, 8));
             glControl1.BackColor = Color.FromArgb(204, 204, 204);
             Controls.Add(glControl1);
             glControl1.Dock = DockStyle.Fill;
-            //CloseButtonVisible = false;
-            //CloseButton = false;
-            DockAreas = DockAreas.Document;
-            InputManager = new InputManager();
 
-            SurfaceModels = new List<GLSurfaceModel>();
             glControl1.MouseEnter += GlControl1_MouseEnter;
             glControl1.MouseLeave += GlControl1_MouseLeave;
         }
@@ -64,29 +72,50 @@ namespace LDDModder.BrickEditor.UI.Panels
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            InitializeBase();
-            InitializeView();
-            StartRenderLoop();
 
-            UpdateThread = new Thread(UpdateLoop);
-            UpdateThread.Start();
+            InitializeBase();
+            UpdateViewport();
+
+            StartRenderLoop();
+            StartUpdateLoop();
         }
+
+        #region Initialization
 
         private void InitializeBase()
         {
-            Camera = new Camera
-            {
-                Position = new Vector3(5),
-            };
-            Camera.LookAt(Vector3.Zero, Vector3.UnitY);
+            InputManager = new InputManager();
 
-            CameraManipulator = new CameraManipulator(Camera);
-            CameraManipulator.RotationButton = MouseButton.Right;
+            //Camera = new Camera();
+            CameraManipulator = new CameraManipulator(new Camera());
+            CameraManipulator.Initialize(new Vector3(5), Vector3.Zero);
+            //CameraManipulator.RotationButton = MouseButton.Right;
 
+            
+
+
+
+            var checkboardImage = (Bitmap)Bitmap.FromStream(System.Reflection.Assembly.GetExecutingAssembly()
+                .GetManifestResourceStream("LDDModder.BrickEditor.Resources.Textures.DefaultTexture.png"));
+            BitmapTexture.CreateCompatible(checkboardImage, out CheckboardTexture, 1);
+            CheckboardTexture.LoadBitmap(checkboardImage, 0);
+            CheckboardTexture.SetFilter(TextureMinFilter.Linear, TextureMagFilter.Linear);
+            CheckboardTexture.SetWrapMode(TextureWrapMode.Repeat);
+
+
+            InitializeShaders();
+
+        }
+
+        private void InitializeFonts()
+        {
             RenderFont = new QFont("C:\\Windows\\Fonts\\segoeui.ttf", 10,
                 new QFontBuilderConfiguration(true));
             TextRenderer = new QFontDrawing();
+        }
 
+        private void InitializeShaders()
+        {
             GridShader = ProgramFactory.Create<GridShaderProgram>();
             GridShader.Use();
 
@@ -106,22 +135,14 @@ namespace LDDModder.BrickEditor.UI.Panels
                 OffCenter = false
             });
 
-            var checkboardImage = (Bitmap)Bitmap.FromStream(System.Reflection.Assembly.GetExecutingAssembly()
-                .GetManifestResourceStream("LDDModder.BrickEditor.Resources.Textures.DefaultTexture.png"));
-            BitmapTexture.CreateCompatible(checkboardImage, out CheckboardTexture, 1);
-            CheckboardTexture.LoadBitmap(checkboardImage, 0);
-            CheckboardTexture.SetFilter(TextureMinFilter.Linear, TextureMagFilter.Nearest);
-            CheckboardTexture.SetWrapMode(TextureWrapMode.Repeat);
-            //CheckboardTexture.Bind(TextureUnit.Texture4);
-
             ModelShader = ProgramFactory.Create<ModelShaderProgram>();
             ModelShader.Use();
-            
+
             var lights = new LightInfo[]
             {
                 //Key Light
-                new LightInfo { 
-                    Position = new Vector3(10, 10, 10), 
+                new LightInfo {
+                    Position = new Vector3(10, 10, 10),
                     Ambient = new Vector3(0.3f),
                     Diffuse = new Vector3(0.8f),
                     Specular = new Vector3(1f),
@@ -150,23 +171,39 @@ namespace LDDModder.BrickEditor.UI.Panels
                     Quadratic = 0.075f
                 },
             };
-            ModelShader.Lights.Set(lights);
 
+            ModelShader.Lights.Set(lights);
             ModelShader.LightCount.Set(lights.Length);
             ModelShader.UseTexture.Set(false);
-            
+
             WireframeShader = ProgramFactory.Create<WireframeShaderProgram>();
             WireframeShader.Use();
-            WireframeShader.Color.Set(new Vector4(0,0,0,1));
+            WireframeShader.Color.Set(new Vector4(0, 0, 0, 1));
             WireframeShader.Thickness.Set(1f);
         }
 
-        protected override void OnActivated(EventArgs e)
-        {
-            base.OnActivated(e);
 
-            StartRenderLoop();
+        #endregion
+
+        private void UpdateViewport()
+        {
+            if (IsDisposed || IsClosing)
+                return;
+
+            glControl1.MakeCurrent();
+            if (!ViewInitialized)
+                GL.ClearColor(glControl1.BackColor);
+
+            GL.Viewport(0, 0, glControl1.Width, glControl1.Height);
+            Camera.Viewport = new RectangleF(0, 0, glControl1.Width, glControl1.Height);
+
+            UIProjectionMatrix = Matrix4.CreateOrthographicOffCenter(0, glControl1.Width, 0, glControl1.Height, -1.0f, 1.0f);
+
+            if (!ViewInitialized)
+                ViewInitialized = true;
         }
+
+        #region Render Loop
 
         private void StartRenderLoop()
         {
@@ -177,9 +214,8 @@ namespace LDDModder.BrickEditor.UI.Panels
             }
         }
 
-        protected override void OnDeactivate(EventArgs e)
+        private void StopRenderLoop()
         {
-            base.OnDeactivate(e);
             if (RenderLoopEnabled)
             {
                 Application.Idle -= Application_Idle;
@@ -187,34 +223,22 @@ namespace LDDModder.BrickEditor.UI.Panels
             }
         }
 
+        protected override void OnActivated(EventArgs e)
+        {
+            base.OnActivated(e);
+            StartRenderLoop();
+        }
+
+        protected override void OnDeactivate(EventArgs e)
+        {
+            base.OnDeactivate(e);
+            StopRenderLoop();
+        }
+
         private void Application_Idle(object sender, EventArgs e)
         {
             OnRenderFrame();
         }
-
-        private void InitializeView()
-        {
-            if (IsDisposed || IsClosing)
-                return;
-
-            UpdateViewport();
-
-            GL.ClearColor(glControl1.BackColor);
-            
-            ViewInitialized = true;
-            OnRenderFrame();
-        }
-
-        private void UpdateViewport()
-        {
-            glControl1.MakeCurrent();
-            GL.Viewport(0, 0, glControl1.Width, glControl1.Height);
-            Camera.Viewport = new RectangleF(0, 0, glControl1.Width, glControl1.Height);
-
-            UIProjectionMatrix = Matrix4.CreateOrthographicOffCenter(0, glControl1.Width, 0, glControl1.Height, -1.0f, 1.0f);
-        }
-
-        #region Rendering
 
         private void RenderWorld()
         {
@@ -238,12 +262,12 @@ namespace LDDModder.BrickEditor.UI.Panels
             ModelShader.ViewMatrix.Set(viewMatrix);
             ModelShader.Projection.Set(projection);
             ModelShader.ViewPosition.Set(Camera.Position);
-            
 
+            CheckboardTexture.Bind(TextureUnit.Texture4);
+            ModelShader.Texture.BindTexture(TextureUnit.Texture4, CheckboardTexture);
+            
             foreach (var surfaceModel in SurfaceModels)
             {
-                
-
                 var visibleMeshes = surfaceModel.MeshModels.Where(x => x.Visible).ToList();
                 surfaceModel.BindToShader(WireframeShader);
                 foreach (var mesh in visibleMeshes)
@@ -252,14 +276,14 @@ namespace LDDModder.BrickEditor.UI.Panels
                 
                 surfaceModel.BindToShader(ModelShader);
                 ModelShader.UseTexture.Set(surfaceModel.Surface.SurfaceID > 0);
-                CheckboardTexture.Bind(TextureUnit.Texture4);
-                ModelShader.Texture.BindTexture(TextureUnit.Texture4, CheckboardTexture);
+                
 
                 foreach (var mesh in visibleMeshes)
                     surfaceModel.DrawMesh(mesh);
                 surfaceModel.UnbindShader(ModelShader);
             }
 
+            CheckboardTexture.Bind(TextureUnit.Texture0);
             DrawGrid(viewMatrix, projection);
 
             GL.UseProgram(0);
@@ -342,6 +366,31 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         #endregion
 
+        #region Update Loop
+
+        private void StartUpdateLoop()
+        {
+            if (UpdateThread == null || !UpdateThread.IsAlive)
+            {
+                UpdateThread = new Thread(UpdateLoop);
+                UpdateThread.Start();
+            }
+        }
+
+        private void StopUpdateLoop()
+        {
+            if (UpdateThread != null)
+            {
+                if (UpdateThread.IsAlive)
+                {
+                    ExitUpdateLoop = true;
+                    UpdateThread.Join();
+                }
+                UpdateThread = null;
+                ExitUpdateLoop = false;
+            }
+        }
+
         private void UpdateLoop()
         {
             var sw = Stopwatch.StartNew();
@@ -350,6 +399,9 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             while (!IsClosing)
             {
+                if (ExitUpdateLoop)
+                    break;
+
                 double curTime = sw.Elapsed.TotalMilliseconds;
                 if (curTime > MaxTimer)
                 {
@@ -362,8 +414,15 @@ namespace LDDModder.BrickEditor.UI.Panels
                 lastTime = curTime;
 
                 OnUpdateFrame(delta);
+                Thread.Sleep(15);
             }
             sw.Stop();
+        }
+
+        private void OnUpdateFrame(double deltaTime)
+        {
+            InputManager.UpdateInputStates();
+            CameraManipulator.HandleCamera(InputManager);
         }
 
         private void GlControl1_MouseEnter(object sender, EventArgs e)
@@ -376,11 +435,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             InputManager.ContainsMouse = false;
         }
 
-        private void OnUpdateFrame(double deltaTime)
-        {
-            InputManager.UpdateInputStates();
-            CameraManipulator.HandleCamera(InputManager);
-        }
+        #endregion
 
         private void ViewportPanel_SizeChanged(object sender, EventArgs e)
         {
@@ -442,6 +497,8 @@ namespace LDDModder.BrickEditor.UI.Panels
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
             IsClosing = true;
+            StopUpdateLoop();
+            StopRenderLoop();
             DisposeGLResources();
         }
 
@@ -449,6 +506,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             SurfaceModels.ForEach(x => x.Dispose());
             SurfaceModels.Clear();
+            GC.Collect();
         }
 
         private void DisposeGLResources()

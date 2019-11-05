@@ -83,14 +83,14 @@ namespace LDDModder.BrickEditor.EditModels
         public override void RebuildChildrens()
         {
             //base.RebuildChildrens();
-            foreach(var mesh in Component.Geometries)
-                Childrens.Add(new PartGeometryNode(mesh));
+            //foreach(var mesh in Component.Meshes)
+            //    Childrens.Add(new PartGeometryNode(mesh));
 
-            if (Component is FemaleStudModel femaleStud && femaleStud.ReplacementGeometries.Any())
-            {
-                foreach(var mesh in femaleStud.ReplacementGeometries)
-                    Childrens.Add(new PartGeometryNode(mesh, true));
-            }
+            //if (Component is FemaleStudModel femaleStud && femaleStud.ReplacementMeshes.Any())
+            //{
+            //    foreach(var mesh in femaleStud.ReplacementGeometries)
+            //        Childrens.Add(new PartGeometryNode(mesh, true));
+            //}
         }
     }
 }

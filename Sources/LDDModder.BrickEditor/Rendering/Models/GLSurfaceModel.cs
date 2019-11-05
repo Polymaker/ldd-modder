@@ -41,39 +41,40 @@ namespace LDDModder.BrickEditor.Rendering
             var indexList = new List<int>();
             var vertexList = new List<VertVNT>();
 
+            var distinctMeshes = new List<ModelMesh>();
             foreach (var surfComp in Surface.Components)
             {
-                foreach (var surfaceGeom in surfComp.Geometries)
+                foreach (var meshRef in surfComp.Meshes)
                 {
-                    if (!surfaceGeom.IsModelLoaded && !surfaceGeom.LoadModel())
-                        continue;
-
-                    var addedModel = AddMeshGeometry(surfaceGeom, indexList, vertexList);
+                    var addedModel = AddMeshGeometry(meshRef, indexList, vertexList);
                     addedModel.Visible = true;
-                    surfaceGeom.Geometry = null;
+
+                    if (!distinctMeshes.Contains(meshRef.ModelMesh))
+                        distinctMeshes.Add(meshRef.ModelMesh);
                 }
 
                 if (surfComp is FemaleStudModel femaleStud)
                 {
-                    foreach (var surfaceGeom in femaleStud.ReplacementGeometries)
+                    foreach (var meshRef in femaleStud.ReplacementMeshes)
                     {
-                        if (!surfaceGeom.IsModelLoaded && !surfaceGeom.LoadModel())
-                            continue;
-
-                        var addedModel = AddMeshGeometry(surfaceGeom, indexList, vertexList);
+                        var addedModel = AddMeshGeometry(meshRef, indexList, vertexList);
                         addedModel.Visible = false;
-                        surfaceGeom.Geometry = null;
+
+                        if (!distinctMeshes.Contains(meshRef.ModelMesh))
+                            distinctMeshes.Add(meshRef.ModelMesh);
                     }
                 }
             }
+
+            distinctMeshes.ForEach(x => x.UnloadModel());
 
             VertexBuffer.SetIndices(indexList);
             VertexBuffer.SetVertices(vertexList);
         }
 
-        private LddMeshModel AddMeshGeometry(ModelMesh modelMesh, List<int> indexList, List<VertVNT> vertexList)
+        private LddMeshModel AddMeshGeometry(ModelMeshReference modelMesh, List<int> indexList, List<VertVNT> vertexList)
         {
-            var geometry = modelMesh.Geometry;
+            var geometry = modelMesh.GetGeometry();
             int indexOffset = indexList.Count;
             int vertexOffset = vertexList.Count;
             var triangleIndices = geometry.GetTriangleIndices();

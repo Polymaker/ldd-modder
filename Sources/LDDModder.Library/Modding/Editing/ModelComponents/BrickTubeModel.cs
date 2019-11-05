@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Xml.Linq;
 using System.Linq;
+using System.Diagnostics;
 
 namespace LDDModder.Modding.Editing
 {
@@ -14,19 +15,7 @@ namespace LDDModder.Modding.Editing
         public StudReference TubeStud
         {
             get => _TubeStud;
-            set
-            {
-                if (_TubeStud != value)
-                {
-                    if (_TubeStud != null)
-                        StudReferences.Remove(_TubeStud);
-
-                    if (value != null)
-                        StudReferences.Add(value);
-
-                    _TubeStud = value;
-                }
-            }
+            set => SetPropertyValue(ref _TubeStud, value);
         }
 
         public ElementCollection<StudReference> AdjacentStuds { get; set; }
@@ -36,17 +25,27 @@ namespace LDDModder.Modding.Editing
             AdjacentStuds = new ElementCollection<StudReference>(this);
         }
 
-        public override IEnumerable<StudReference> GetStudReferences()
+        internal override void LoadCullingInformation(MeshCulling culling)
         {
-            if (TubeStud != null)
-                yield return TubeStud;
-            foreach (var stud in AdjacentStuds)
-                yield return stud;
-        }
+            base.LoadCullingInformation(culling);
+            if (culling.Studs.Count == 1)
+            {
+                TubeStud = new StudReference(culling.Studs[0]);
+            }
+            else
+                Debug.WriteLine("Tube culling does not reference a stud!");
 
-        protected override IEnumerable<PartElement> GetAllChilds()
-        {
-            return base.GetAllChilds().Concat(AdjacentStuds);
+            if (culling.AdjacentStuds.Any())
+            {
+                foreach (var fIdx in culling.AdjacentStuds[0].FieldIndices)
+                {
+                    var studRef = new StudReference(
+                        culling.AdjacentStuds[0].ConnectorIndex,
+                        fIdx.Index, fIdx.Value2, fIdx.Value4
+                    );
+                    AdjacentStuds.Add(studRef);
+                }
+            }
         }
 
         public override XElement SerializeToXml()

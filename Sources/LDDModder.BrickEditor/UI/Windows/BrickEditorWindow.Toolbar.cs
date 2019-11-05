@@ -47,15 +47,25 @@ namespace LDDModder.BrickEditor.UI.Windows
         {
             File_OpenRecentMenu.DropDownItems.Clear();
 
-            foreach (var recentProjectInfo in SettingsManager.Current.RecentProjectFiles.ToArray())
+            foreach (var recentProject in SettingsManager.Current.RecentProjectFiles.ToArray())
             {
-                if (!File.Exists(recentProjectInfo.ProjectFile))
+                if (!File.Exists(recentProject.ProjectFile))
                 {
-                    SettingsManager.Current.RecentProjectFiles.Remove(recentProjectInfo);
+                    SettingsManager.Current.RecentProjectFiles.Remove(recentProject);
                     continue;
                 }
-                var recentFileMenuEntry = File_OpenRecentMenu.DropDownItems.Add(Path.GetFileName(recentProjectInfo.ProjectFile));
-                recentFileMenuEntry.Tag = recentProjectInfo;
+                string projectName = string.Empty;
+
+                if (recentProject.PartID > 0)
+                    projectName = recentProject.PartID.ToString();
+                else
+                    projectName = Path.GetFileName(recentProject.ProjectFile);
+
+                if (!string.IsNullOrEmpty(recentProject.PartName))
+                    projectName += $" - {recentProject.PartName}";
+
+                var recentFileMenuEntry = File_OpenRecentMenu.DropDownItems.Add(projectName);
+                recentFileMenuEntry.Tag = recentProject;
                 recentFileMenuEntry.Click += RecentFileMenuEntry_Click;
             }
 

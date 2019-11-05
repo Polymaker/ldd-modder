@@ -32,11 +32,20 @@ namespace LDDModder.BrickEditor.Rendering
 
         public MouseButton RotationButton { get; set; }
 
+
         public CameraManipulator(Camera camera)
         {
             Camera = camera;
             MinimumZoom = 0.1f;
             RotationButton = MouseButton.Middle;
+        }
+
+
+        public void Initialize(Vector3 cameraPosition, Vector3 gimbalPosition)
+        {
+            Camera.Position = cameraPosition;
+            Camera.LookAt(gimbalPosition, Vector3.UnitY);
+            _Gimbal = gimbalPosition;
         }
 
         public void HandleCamera(InputManager input)

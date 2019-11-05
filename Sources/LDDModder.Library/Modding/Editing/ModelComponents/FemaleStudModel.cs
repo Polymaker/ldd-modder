@@ -9,40 +9,37 @@ namespace LDDModder.Modding.Editing
     {
         public override ModelComponentType ComponentType => ModelComponentType.FemaleStud;
 
-        //public MeshGeometry ReplacementGeometry { get; set; }
-        public ElementCollection<ModelMesh> ReplacementGeometries { get; set; }
+        public ElementCollection<ModelMeshReference> ReplacementMeshes { get; set; }
 
-        public ElementCollection<StudReference> Studs
-        {
-            get => StudReferences;
-            set => StudReferences = value;
-        }
+        public ElementCollection<StudReference> Studs { get; set; }
 
         public FemaleStudModel()
         {
-            //Studs = new ComponentCollection<StudReference>(this);
-            ReplacementGeometries = new ElementCollection<ModelMesh>(this);
+            Studs = new ElementCollection<StudReference>(this);
+            ReplacementMeshes = new ElementCollection<ModelMeshReference>(this);
         }
 
-        protected override IEnumerable<PartElement> GetAllChilds()
+        internal override void LoadCullingInformation(MeshCulling culling)
         {
-            return base.GetAllChilds().Concat(ReplacementGeometries);
+            base.LoadCullingInformation(culling);
+            foreach (var studInfo in culling.Studs)
+                Studs.Add(new StudReference(studInfo));
         }
 
-        public override IEnumerable<ModelMesh> GetAllMeshes()
+        public override IEnumerable<ModelMeshReference> GetAllMeshReferences()
         {
-            return base.GetAllMeshes().Concat(ReplacementGeometries);
+            return base.GetAllMeshReferences().Concat(ReplacementMeshes);
         }
 
         public override XElement SerializeToXml()
         {
             var elem = base.SerializeToXml();
-            elem.Add(new XComment("This geometry is used when all the studs (defined bellow) are connected"));
-            var geomElem = elem.AddElement("ReplacementGeometries");
-            foreach (var geom in ReplacementGeometries)
+            //elem.Add(new XComment("This geometry is used when all the studs (defined bellow) are connected"));
+            var geomElem = elem.AddElement(nameof(ReplacementMeshes));
+            foreach (var geom in ReplacementMeshes)
                 geomElem.Add(geom.SerializeToXml());
 
-            var studsElem = elem.AddElement("Studs");
+            var studsElem = elem.AddElement(nameof(Studs));
             foreach (var stud in Studs)
                 studsElem.Add(stud.SerializeToXml());
 
@@ -53,20 +50,19 @@ namespace LDDModder.Modding.Editing
         {
             base.LoadFromXml(element);
 
-            var geomElem = element.Element("ReplacementGeometries");
-            if (geomElem != null)
+            if (element.HasElement(nameof(ReplacementMeshes), out XElement geomElem))
             {
-                foreach (var elem in geomElem.Elements(ModelMesh.NODE_NAME))
+                foreach (var elem in geomElem.Elements(ModelMeshReference.NODE_NAME))
                 {
-                    var mesh = new ModelMesh();
+                    var mesh = new ModelMeshReference();
                     mesh.LoadFromXml(elem);
-                    ReplacementGeometries.Add(mesh);
+                    ReplacementMeshes.Add(mesh);
                 }
             }
 
-            if (element.Element("Studs") != null)
+            if (element.HasElement(nameof(Studs), out XElement studsElem))
             {
-                foreach (var studElem in element.Element("Studs").Elements(StudReference.NODE_NAME))
+                foreach (var studElem in studsElem.Elements(StudReference.NODE_NAME))
                     Studs.Add(StudReference.FromXml(studElem));
             }
         }

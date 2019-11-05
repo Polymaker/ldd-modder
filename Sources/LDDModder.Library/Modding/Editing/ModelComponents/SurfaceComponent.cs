@@ -12,113 +12,62 @@ using System.Xml.Serialization;
 
 namespace LDDModder.Modding.Editing
 {
-    [XmlInclude(typeof(PartModel)), 
-        XmlInclude(typeof(MaleStudModel)), 
-        XmlInclude(typeof(FemaleStudModel)), 
-        XmlInclude(typeof(BrickTubeModel))]
     public abstract class SurfaceComponent : PartElement
     {
         public const string NODE_NAME = "Component";
 
         public abstract ModelComponentType ComponentType { get; }
 
-        public ElementCollection<ModelMesh> Geometries { get; }
+        public ElementCollection<ModelMeshReference> Meshes { get; }
 
         public SurfaceComponent()
         {
-            Geometries = new ElementCollection<ModelMesh>(this);
+            Meshes = new ElementCollection<ModelMeshReference>(this);
         }
 
-        public static SurfaceComponent FromLDD(MeshFile mesh, MeshCulling culling)
+        internal virtual void LoadCullingInformation(MeshCulling culling)
         {
-            var geom = mesh.GetCullingGeometry(culling, false);
-            SurfaceComponent component = null;
+            
+        }
 
-
+        public static SurfaceComponent CreateFromLDD(MeshCulling culling, ModelMesh mainModel, ModelMesh replacement)
+        {
+            SurfaceComponent modelComponent = null;
             switch (culling.Type)
             {
                 case MeshCullingType.MainModel:
-                    {
-                        component = new PartModel();
-                        break;
-                    }
-
+                    modelComponent = new PartModel();
+                    break;
                 case MeshCullingType.Stud:
-                    {
-                        var item = new MaleStudModel();
-
-                        if (culling.Studs.Count == 1)
-                        {
-                            item.Stud = new StudReference(culling.Studs[0]);
-                            //item.ConnectionIndex = culling.Studs[0].ConnectorIndex;
-                        }
-                        else
-                            Debug.WriteLine("Stud culling does not reference a stud!");
-
-                        component = item;
-                        break;
-                    }
-
+                    modelComponent = new MaleStudModel();
+                    break;
                 case MeshCullingType.FemaleStud:
-                    {
-                        var item = new FemaleStudModel();
-
-                        if (culling.ReplacementMesh != null)
-                            item.ReplacementGeometries.Add(new ModelMesh(culling.ReplacementMesh));
-                        
-                        foreach (var studInfo in culling.Studs)
-                            item.Studs.Add(new StudReference(studInfo));
-
-                        component = item;
-                        break;
-                    }
-
+                    modelComponent = new FemaleStudModel();
+                    break;
                 case MeshCullingType.Tube:
-                    {
-                        var item = new BrickTubeModel();
-
-                        if (culling.Studs.Count == 1)
-                        {
-                            item.TubeStud = new StudReference(culling.Studs[0]);
-                        }
-                        else
-                            Debug.WriteLine("Tube culling does not reference a stud!");
-
-                        if (culling.AdjacentStuds.Any())
-                        {
-                            foreach (var fIdx in culling.AdjacentStuds[0].FieldIndices)
-                            {
-                                item.AdjacentStuds.Add(new StudReference(culling.AdjacentStuds[0].ConnectorIndex,
-                                    fIdx.Index, fIdx.Value2, fIdx.Value4));
-                            }
-                        }
-
-                        component = item;
-                        break;
-                    }
+                    modelComponent = new BrickTubeModel();
+                    break;
             }
-            
-            if (component is PartCullingModel cullingComponent)
+
+            if (modelComponent != null)
             {
-                var connectorRef = culling.Studs.FirstOrDefault() ?? culling.AdjacentStuds.FirstOrDefault();
-                cullingComponent.ConnectionIndex = connectorRef != null ? connectorRef.ConnectorIndex : -1;
+                modelComponent.LoadCullingInformation(culling);
+                modelComponent.Meshes.Add(new ModelMeshReference(mainModel, culling));
+                if (modelComponent is FemaleStudModel femaleStud && replacement != null)
+                    femaleStud.ReplacementMeshes.Add(new ModelMeshReference(replacement.ID));
             }
 
-            if (component != null)
-            {
-                component.Geometries.Add(new ModelMesh(geom));
-            }
-            return component;
+            return modelComponent;
         }
 
-        public virtual IEnumerable<ModelMesh> GetAllMeshes()
+        public virtual IEnumerable<ModelMeshReference> GetAllMeshReferences()
         {
-            return Geometries;
+            return Meshes;
         }
 
-        protected override IEnumerable<PartElement> GetAllChilds()
+        public virtual IEnumerable<ModelMesh> GetAllModelMeshes()
         {
-            return Geometries;
+            return GetAllMeshReferences().Select(s => s.ModelMesh).Distinct();
         }
 
         #region Xml Serialization
@@ -128,9 +77,9 @@ namespace LDDModder.Modding.Editing
             var elem = SerializeToXmlBase(NODE_NAME);
             elem.Add(new XAttribute("Type", ComponentType.ToString()));
 
-            var geomElem = elem.AddElement("Geometries");
+            var geomElem = elem.AddElement(nameof(Meshes));
 
-            foreach (var geom in Geometries)
+            foreach (var geom in Meshes)
                 geomElem.Add(geom.SerializeToXml());
 
             return elem;
@@ -139,15 +88,15 @@ namespace LDDModder.Modding.Editing
         protected internal override void LoadFromXml(XElement element)
         {
             base.LoadFromXml(element);
-            var geomElem = element.Element("Geometries");
+            var geomElem = element.Element(nameof(Meshes));
 
             if (geomElem != null)
             {
-                foreach (var elem in geomElem.Elements(ModelMesh.NODE_NAME))
+                foreach (var elem in geomElem.Elements(ModelMeshReference.NODE_NAME))
                 {
-                    var mesh = new ModelMesh();
+                    var mesh = new ModelMeshReference();
                     mesh.LoadFromXml(elem);
-                    Geometries.Add(mesh);
+                    Meshes.Add(mesh);
                 }
             }
         }

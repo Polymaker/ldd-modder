@@ -1,4 +1,6 @@
-﻿using LDDModder.Serialization;
+﻿using LDDModder.LDD.Files;
+using LDDModder.LDD.Meshes;
+using LDDModder.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,14 +39,14 @@ namespace LDDModder.Modding.Editing
             Components = new ElementCollection<SurfaceComponent>(this);
         }
 
-        public IEnumerable<ModelMesh> GetAllMeshes()
+        public IEnumerable<ModelMeshReference> GetAllMeshReferences()
         {
-            return Components.SelectMany(c => c.GetAllMeshes());
+            return Components.SelectMany(c => c.GetAllMeshReferences());
         }
 
-        protected override IEnumerable<PartElement> GetAllChilds()
+        public IEnumerable<ModelMesh> GetAllModelMeshes()
         {
-            return Components;
+            return Components.SelectMany(c => c.GetAllModelMeshes());
         }
 
         #region Xml Serialization
@@ -54,8 +56,8 @@ namespace LDDModder.Modding.Editing
             var elem = SerializeToXmlBase(NODE_NAME);
             elem.RemoveAttributes();
 
-            elem.Add(new XAttribute("SurfaceID", SurfaceID));
-            elem.Add(new XAttribute("SubMaterialIndex", SubMaterialIndex));
+            elem.Add(new XAttribute(nameof(SurfaceID), SurfaceID));
+            elem.Add(new XAttribute(nameof(SubMaterialIndex), SubMaterialIndex));
 
             if (Project != null)
                 elem.Add(new XAttribute("OutputFile", GetTargetFilename()));
@@ -72,19 +74,16 @@ namespace LDDModder.Modding.Editing
         {
             base.LoadFromXml(element);
             
-            if (element.TryGetIntAttribute("SurfaceID", out int surfID))
+            if (element.TryGetIntAttribute(nameof(SurfaceID), out int surfID))
                 SurfaceID = surfID;
 
             Name = $"Surface{SurfaceID}";
 
-            if (element.TryGetIntAttribute("SubMaterialIndex", out int matIDX))
+            if (element.TryGetIntAttribute(nameof(SubMaterialIndex), out int matIDX))
                 SubMaterialIndex = matIDX;
 
-            //if (element.Element("Components") != null)
-            {
-                foreach (var compElem in element/*.Element("Components")*/.Elements(SurfaceComponent.NODE_NAME))
-                    Components.Add(SurfaceComponent.FromXml(compElem));
-            }
+            foreach (var compElem in element.Elements(SurfaceComponent.NODE_NAME))
+                Components.Add(SurfaceComponent.FromXml(compElem));
         }
 
         public static PartSurface FromXml(XElement element)
@@ -105,6 +104,45 @@ namespace LDDModder.Modding.Editing
                 return $"{Project.PartID}.g";
             }
             return string.Empty;
+        }
+
+        public MeshFile GenerateMeshFile()
+        {
+            var builder = new GeometryBuilder();
+
+            void CombineMeshes(IEnumerable<ModelMeshReference> models,
+                MeshCullingType cullingType, out MeshCulling culling)
+            {
+                int fromIndex = builder.IndexCount;
+                int fromVertex = builder.VertexCount;
+
+                foreach (var meshRef in models)
+                {
+                    foreach (var tri in meshRef.GetGeometry().Triangles)
+                        builder.AddTriangle(tri);
+                }
+
+                int indexCount = builder.IndexCount - fromIndex;
+                int vertexCount = builder.VertexCount - fromVertex;
+
+                culling = new MeshCulling(cullingType)
+                {
+                    FromIndex = fromIndex,
+                    FromVertex = fromVertex,
+                    IndexCount = indexCount,
+                    VertexCount = vertexCount,
+                };
+            }
+
+            CombineMeshes(Components.OfType<PartModel>().SelectMany(x => x.Meshes), 
+                MeshCullingType.MainModel, out MeshCulling modelCulling);
+
+            foreach (var cullingComp in Components.OfType<PartCullingModel>())
+            {
+
+            }
+
+            return null;
         }
     }
 }

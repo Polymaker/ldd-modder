@@ -117,40 +117,14 @@ namespace LDDModder.LDD.Files
             }
         }
 
-        public MeshGeometry GetCullingGeometry(MeshCulling culling, bool linked = true)
+        public MeshGeometry GetCullingGeometry(MeshCulling culling)
         {
-            var vertMatch = new Dictionary<int, int>();
-            var builder = new GeometryBuilder();
-
-            for (int i = 0; i < culling.VertexCount; i++)
-            {
-                var v = Vertices[i + culling.FromVertex];
-                if (!linked)
-                    v = v.Clone();
-                builder.AddVertex(v, false);
-                vertMatch.Add(culling.FromVertex + i, i);
-            }
-
-            var triangleIndices = Geometry.GetTriangleIndices();
-
-            for (int i = 0; i < culling.IndexCount; i += 3)
-            {
-                int idx1 = triangleIndices[i + culling.FromIndex];
-                int idx2 = triangleIndices[i + 1 + culling.FromIndex];
-                int idx3 = triangleIndices[i + 2 + culling.FromIndex];
-                builder.AddTriangle(idx1 - culling.FromVertex, idx2 - culling.FromVertex, idx3 - culling.FromVertex);
-            }
-
-            var geom = builder.GetGeometry();
-            for (int i = 0; i < culling.IndexCount; i++)
-            {
-                var originalIndex = Indices[i + culling.FromIndex];
-                geom.Indices[i].RoundEdgeData = originalIndex.RoundEdgeData.Clone();
-                geom.Indices[i].AverageNormal = originalIndex.AverageNormal;
-            }
-
-            return geom;
+            return Geometry.GetPartialGeometry(culling.FromIndex, culling.IndexCount, culling.FromVertex, culling.VertexCount);
         }
 
+        public MeshGeometry GetPartialGeometry(int startIndex, int indexCount, int startVertex, int vertexCount)
+        {
+            return Geometry.GetPartialGeometry(startIndex, indexCount, startVertex, vertexCount);
+        }
     }
 }

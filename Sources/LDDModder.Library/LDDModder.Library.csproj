@@ -127,7 +127,6 @@
     <Compile Include="LDD\Meshes\ShaderDataGenerator.cs" />
     <Compile Include="LDD\Meshes\Triangle.cs" />
     <Compile Include="LDD\Meshes\Vertex.cs" />
-    <Compile Include="LDD\Meshes\IndexReference.cs" />
     <Compile Include="LDD\Meshes\VertexIndex.cs" />
     <Compile Include="LDD\Palettes\Bag.cs" />
     <Compile Include="LDD\Palettes\Decoration.cs" />
@@ -162,6 +161,7 @@
     <Compile Include="Modding\Editing\ModelComponents\PartCullingModel.cs" />
     <Compile Include="Modding\Editing\ItemTransform.cs" />
     <Compile Include="Modding\Editing\ModelComponents\ModelComponentType.cs" />
+    <Compile Include="Modding\Editing\ModelComponents\ModelMeshReference.cs" />
     <Compile Include="Modding\Editing\PartBone.cs" />
     <Compile Include="Modding\Editing\PrimitiveElements\PartBoxCollision.cs" />
     <Compile Include="Modding\Editing\PrimitiveElements\PartCollision.cs" />
@@ -174,7 +174,7 @@
     <Compile Include="Modding\Editing\PartSurface.cs" />
     <Compile Include="Modding\Editing\ChangeTracking\PropertyChangedEventArgs.cs" />
     <Compile Include="Modding\Editing\ChangeTracking\PropertyCollection.cs" />
-    <Compile Include="Modding\Editing\StudReference.cs" />
+    <Compile Include="Modding\Editing\PrimitiveElements\StudReference.cs" />
     <Compile Include="Modding\Editing\ModelComponents\SurfaceComponent.cs" />
     <Compile Include="Modding\Editing\ModelComponents\FemaleStudModel.cs" />
     <Compile Include="Modding\Editing\ModelComponents\PartModel.cs" />
