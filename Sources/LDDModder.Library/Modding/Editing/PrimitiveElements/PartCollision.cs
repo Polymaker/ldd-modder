@@ -72,6 +72,7 @@ namespace LDDModder.Modding.Editing
         {
             var elem = SerializeToXmlBase(NODE_NAME);
             elem.Add(new XAttribute("Type", CollisionType));
+            elem.Add(new XComment(Transform.GetLddXml().ToString()));
             elem.Add(Transform.SerializeToXml());
             return elem;
         }

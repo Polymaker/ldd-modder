@@ -64,5 +64,7 @@ namespace Assimp
             invTrans.Inverse();
             return parentTrans * invTrans;
         }
+
+
     }
 }

@@ -154,11 +154,11 @@ namespace LDDModder.Prototyping
                         mesh = GFileReader.ReadMesh(fs);
 
 
-                    var studIndices1 = mesh.Cullings.Where(x => x.Type == MeshCullingType.Stud).SelectMany(x => x.Studs).SelectMany(x => x.FieldIndices)
+                    var studIndices1 = mesh.Cullings.Where(x => x.Type == MeshCullingType.MaleStud).SelectMany(x => x.Studs).SelectMany(x => x.FieldIndices)
                         .Select(x => new Tuple<int, int>(x.Value2, x.Value4)).Distinct().ToList();
                     var studIndices2 = mesh.Cullings.Where(x => x.Type == MeshCullingType.FemaleStud).SelectMany(x => x.Studs).SelectMany(x => x.FieldIndices)
                         .Select(x => new Tuple<int, int>(x.Value2, x.Value4)).Distinct().ToList();
-                    var studIndices3 = mesh.Cullings.Where(x => x.Type == MeshCullingType.Tube).SelectMany(x => x.Studs).SelectMany(x => x.FieldIndices)
+                    var studIndices3 = mesh.Cullings.Where(x => x.Type == MeshCullingType.BrickTube).SelectMany(x => x.Studs).SelectMany(x => x.FieldIndices)
                         .Select(x => new Tuple<int, int>(x.Value2, x.Value4)).Distinct().ToList();
                     var studIndices4 = mesh.Cullings.SelectMany(x => x.AdjacentStuds).SelectMany(x => x.FieldIndices)
                         .Select(x => new Tuple<int, int>(x.Value2, x.Value4)).Distinct().ToList();
@@ -167,7 +167,7 @@ namespace LDDModder.Prototyping
                     studIndices2.ForEach(x => { if (!femaleStuds.Contains(x)) femaleStuds.Add(x); });
                     studIndices3.ForEach(x => { if (!tubeStuds.Contains(x)) tubeStuds.Add(x); });
                     studIndices4.ForEach(x => { if (!tubeStuds2.Contains(x)) tubeStuds2.Add(x); });
-                    var test = mesh.Cullings.Where(x => x.Type == MeshCullingType.Tube && x.Studs.Any() && !x.AdjacentStuds.Any());
+                    var test = mesh.Cullings.Where(x => x.Type == MeshCullingType.BrickTube && x.Studs.Any() && !x.AdjacentStuds.Any());
                     if (test.Any() && studIndices3.Any(x=>x.Item1 == 2))
                     {
 

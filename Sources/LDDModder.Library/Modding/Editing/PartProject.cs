@@ -55,12 +55,7 @@ namespace LDDModder.Modding.Editing
 
         #endregion
 
-
-        public string ProjectPath { get; set; }
-
-        public string ProjectWorkingDir { get; set; }
-
-        public bool IsLoadedFromDisk => !string.IsNullOrEmpty(ProjectWorkingDir);
+        #region Element Collections
 
         [XmlArray("ModelSurfaces")]
         public ElementCollection<PartSurface> Surfaces { get; }
@@ -76,7 +71,19 @@ namespace LDDModder.Modding.Editing
 
         [XmlArray("Meshes")]
         public ElementCollection<ModelMesh> Meshes { get; }
-        
+
+        #endregion
+
+        #region Project File Properties
+
+        public string ProjectPath { get; set; }
+
+        public string ProjectWorkingDir { get; set; }
+
+        public bool IsLoadedFromDisk => !string.IsNullOrEmpty(ProjectWorkingDir);
+
+        #endregion
+
         [XmlIgnore]
         public bool IsLoading { get; internal set; }
 
@@ -95,25 +102,6 @@ namespace LDDModder.Modding.Editing
             PrimitiveFileVersion = new VersionInfo(1, 0);
             Aliases = new List<int>();
             PartVersion = 1;
-        }
-
-        public void ValidatePart()
-        {
-            //TODO
-
-            if (Decorated != Surfaces.Any(x => x.SurfaceID > 0))
-            {
-                //Marked as having decorations but does not have any decoration surfaces
-            }
-
-            foreach (var surf in Surfaces.Where(x => x.SurfaceID > 0))
-            {
-                var allMeshes = surf.Components.SelectMany(c => c.GetAllMeshReferences());
-                if (!allMeshes.All(m => m.IsTextured))
-                {
-                    //The decoration surface has meshes that does not have UV mapping
-                }
-            }
         }
 
         #region Creation From LDD
@@ -172,7 +160,7 @@ namespace LDDModder.Modding.Editing
                 surfaceElement.ID = StringUtils.GenerateUUID($"Part{partID}_Surface{surfaceElement.SurfaceID}", 8);
                 project.Surfaces.Add(surfaceElement);
 
-                var surfaceMesh = project.AddLddGeometry(
+                var surfaceMesh = project.AddMeshGeometry(
                     meshSurf.Mesh.Geometry,
                     StringUtils.GenerateUUID($"Part{partID}_SurfaceMesh{surfaceElement.SurfaceID}", 8),
                     $"Surface{surfaceElement.SurfaceID}_Mesh"
@@ -184,10 +172,9 @@ namespace LDDModder.Modding.Editing
                     ModelMesh replacementMesh = null;
                     if (culling.ReplacementMesh != null)
                     {
-                        replacementMesh = project.AddLddGeometry(
+                        replacementMesh = project.AddMeshGeometry(
                             culling.ReplacementMesh,
-                            StringUtils.GenerateUUID($"Part{partID}_SurfaceMesh{surfaceElement.SurfaceID}_Culling{elementIndex}", 8),
-                            null//$"Surface{surfaceElement.SurfaceID}_Mesh"
+                            StringUtils.GenerateUUID($"Part{partID}_SurfaceMesh{surfaceElement.SurfaceID}_Culling{elementIndex}", 8)
                         );
                     }
 
@@ -198,29 +185,13 @@ namespace LDDModder.Modding.Editing
                 }
             }
 
-            project.GenerateElementsIDs(true);
+            project.GenerateElementIDs(true);
             project.GenerateElementsNames();
             project.LinkStudReferences();
 
             project.IsLoading = false;
             return project;
         }
-
-        internal ModelMesh AddLddGeometry(MeshGeometry geometry, string id = null, string name = null)
-        {
-            var modelMesh = new ModelMesh(geometry)
-            {
-                ID = id,
-                Name = name
-            };
-
-            if (string.IsNullOrEmpty(id))
-                GenerateElementID(modelMesh);
-            Meshes.Add(modelMesh);
-            return modelMesh;
-        } 
-
-
 
         private void SetBaseInfo(LDD.Parts.PartWrapper lddPart)
         {
@@ -243,13 +214,19 @@ namespace LDDModder.Modding.Editing
 
         #endregion
 
-
         public static PartProject CreateEmptyProject()
         {
             var project = new PartProject();
             //project.IsLoading = true;
             project.Surfaces.Add(new PartSurface(0, 0));
             //project.IsLoading = false;
+            return project;
+        }
+
+        public static PartProject CreateFromXml(XDocument doc)
+        {
+            var project = new PartProject();
+            project.LoadFromXml(doc);
             return project;
         }
 
@@ -294,7 +271,10 @@ namespace LDDModder.Modding.Editing
                     propsElem.Add(XmlHelper.DefaultSerialize(GeometryBounding, "GeometryBounding"));
 
                 if (DefaultOrientation != null)
+                {
+                    //propsElem.Add(new XComment(DefaultOrientation.GetLddXml().ToString()));
                     propsElem.Add(DefaultOrientation.SerializeToXml("DefaultOrientation"));
+                }
 
                 if (DefaultCamera != null)
                     propsElem.Add(XmlHelper.DefaultSerialize(DefaultCamera, "DefaultCamera"));
@@ -332,13 +312,6 @@ namespace LDDModder.Modding.Editing
             }
 
             return doc;
-        }
-
-        public static PartProject CreateFromXml(XDocument doc)
-        {
-            var project = new PartProject();
-            project.LoadFromXml(doc);
-            return project;
         }
 
         private void LoadFromXml(XDocument doc)
@@ -385,6 +358,22 @@ namespace LDDModder.Modding.Editing
 
                 if (propsElem.HasElement("DefaultCamera", out XElement camElem))
                     DefaultCamera = XmlHelper.DefaultDeserialize<Camera>(camElem);
+
+                if (propsElem.HasElement("Platform", out XElement platformElem))
+                {
+                    Platform = new Platform(
+                        platformElem.ReadAttribute("ID", 0),
+                        platformElem.ReadAttribute("Name", string.Empty)
+                    );
+                }
+
+                if (propsElem.HasElement("MainGroup", out XElement groupElem))
+                {
+                    MainGroup = new MainGroup(
+                        groupElem.ReadAttribute("ID", 0),
+                        groupElem.ReadAttribute("Name", string.Empty)
+                    );
+                }
             }
 
             var surfacesElem = doc.Root.Element("ModelSurfaces");
@@ -450,6 +439,7 @@ namespace LDDModder.Modding.Editing
                 ProjectWorkingDir = directory
             };
             project.LoadFromXml(doc);
+            project.CheckFiles();
             return project;
         }
 
@@ -531,10 +521,10 @@ namespace LDDModder.Modding.Editing
             var projectXml = XDocument.Load(projectFilePath);
             var project = new PartProject()
             {
-                //ProjectPath = projectFilePath,
                 ProjectWorkingDir = targetPath
             };
             project.LoadFromXml(projectXml);
+            project.CheckFiles();
             return project;
         }
 
@@ -547,7 +537,8 @@ namespace LDDModder.Modding.Editing
             IEnumerable<PartElement> elems = Surfaces;
             elems = elems.Concat(Connections)
                 .Concat(Collisions)
-                .Concat(Bones);
+                .Concat(Bones)
+                .Concat(Meshes);
 
             foreach (var elem in elems)
             {
@@ -557,17 +548,49 @@ namespace LDDModder.Modding.Editing
             }
         }
 
-        public IEnumerable<ModelMesh> GetAllMeshes()
+        public IEnumerable<T> GetAllElements<T>() where T : PartElement
         {
-            return GetAllElements().OfType<ModelMesh>();
-            //return Surfaces.SelectMany(s => s.GetAllMeshes());
+            return GetAllElements().OfType<T>();
+        }
+
+        private void CheckFiles()
+        {
+            foreach (var mesh in Meshes)
+            {
+                if (IsLoadedFromDisk && !string.IsNullOrEmpty(mesh.FileName))
+                {
+                    var meshPath = Path.Combine(ProjectWorkingDir, mesh.FileName);
+                    if (File.Exists(meshPath))
+                        mesh.WorkingFilePath = meshPath;
+                }
+            }
+        }
+
+        public ModelMesh AddMeshGeometry(MeshGeometry geometry)
+        {
+            return AddMeshGeometry(geometry, null, null);
+        }
+
+        private ModelMesh AddMeshGeometry(MeshGeometry geometry, string id, string name = null)
+        {
+            var modelMesh = new ModelMesh(geometry)
+            {
+                ID = id,
+                Name = name
+            };
+            Meshes.Add(modelMesh);
+            if (string.IsNullOrEmpty(id))
+                GenerateElementID(modelMesh);
+            if (string.IsNullOrEmpty(name))
+                GenerateElementName(modelMesh);
+            return modelMesh;
         }
 
         #endregion
 
         #region Element ID Handling
 
-        private void GenerateElementsIDs(bool deterministicIDs)
+        private void GenerateElementIDs(bool deterministicIDs)
         {
             var allElements = GetAllElements().ToList();
             int elemCount = 0;
@@ -596,7 +619,7 @@ namespace LDDModder.Modding.Editing
             element.ID = elementID;
         }
 
-        private void GenerateElementsIDs(IEnumerable<PartElement> elements)
+        private void GenerateElementIDs(IEnumerable<PartElement> elements)
         {
             var existingIDs = GetAllElements()
                 .Where(x => !elements.Contains(x) && !string.IsNullOrEmpty(x.ID))
@@ -619,74 +642,97 @@ namespace LDDModder.Modding.Editing
 
         private void GenerateElementsNames()
         {
-            GenerateElementNames(GetAllElements().OfType<PartSurface>());
-            GenerateElementNames(GetAllElements().OfType<ModelMesh>());
-            GenerateElementNames(GetAllElements().OfType<ModelMeshReference>());
-            GenerateElementNames(GetAllElements().OfType<SurfaceComponent>());
-            GenerateElementNames(GetAllElements().OfType<PartConnection>());
-            GenerateElementNames(GetAllElements().OfType<PartCollision>());
+            GenerateElementNames(GetAllElements<PartSurface>());
+            GenerateElementNames(GetAllElements<ModelMesh>());
+            GenerateElementNames(GetAllElements<ModelMeshReference>());
+            GenerateElementNames(GetAllElements<SurfaceComponent>());
+            GenerateElementNames(GetAllElements<PartConnection>());
+            GenerateElementNames(GetAllElements<PartCollision>());
         }
 
-        private void GenerateElementsNames(Type elementType, IEnumerable<PartElement> elements)
+        private void GenerateElementNames(IEnumerable<PartElement> allElements)
         {
-            var allElements = GetAllElements().Where(x => x.GetType().IsSubclassOf(elementType));
-
-            int elementIndex = allElements.Count(x => !string.IsNullOrEmpty(x.Name));
-
-            foreach (var element in elements)
+            foreach (var elemByType in allElements.GroupBy(x => x.GetFullElementType()))
             {
-                string elementID = element.Name;
+                var elemList = elemByType.ToList();
+                int nameCount = elemList.Count(x => !string.IsNullOrEmpty(x.Name));
 
-                while (string.IsNullOrEmpty(elementID) ||
-                            allElements.Any(x => x.Name == elementID && x != element))
+                foreach(var element in elemList)
                 {
-                    elementID = GenerateElementName(elementType, elementIndex++);
-                    if (elementID == null)
-                        break;
-                }
 
-                element.Name = elementID;
+                    string elementName = element.Name;
+
+                    while (string.IsNullOrEmpty(elementName) ||
+                                elemList.Any(x => x.Name == elementName && x != element))
+                    {
+                        elementName = GenerateElementName(element, nameCount++);
+                        if (elementName == null)
+                            break;
+                    }
+
+                    element.Name = elementName;
+                }
             }
         }
 
-        private void GenerateElementNames<T>(IEnumerable<T> allElements) where T : PartElement
+        public void GenerateElementName(PartElement element)
         {
-            var elementType = typeof(T);
+            var elemList = GetAllElements().Where(x => x.GetFullElementType() == element.GetFullElementType()).ToList();
+            int nameCount = elemList.Count(x => !string.IsNullOrEmpty(x.Name));
 
-            int elementIndex = allElements.Count(x => !string.IsNullOrEmpty(x.Name));
+            string elementName = element.Name;
 
-            foreach (var element in allElements)
+            while (string.IsNullOrEmpty(elementName) ||
+                        elemList.Any(x => x.Name == elementName && x != element))
             {
-                string elementName = element.Name;
-
-                while (string.IsNullOrEmpty(elementName) ||
-                            allElements.Any(x => x.Name == elementName && x != element))
-                {
-                    elementName = GenerateElementName(elementType, elementIndex++);
-                    if (elementName == null)
-                        break;
-                }
-
-                element.Name = elementName;
+                elementName = GenerateElementName(element, nameCount++);
+                if (elementName == null)
+                    break;
             }
+
+            element.Name = elementName;
         }
 
-        private string GenerateElementName(Type elementType, int elementIndex)
+        private string GenerateElementName(PartElement element, int number)
         {
-            if (elementType == typeof(PartSurface))
-                return $"Surface{elementIndex}";
-            else if (elementType == typeof(SurfaceComponent))
-                return $"Component{elementIndex++}";
-            else if (elementType == typeof(PartConnection))
-                return $"Connection{elementIndex++}";
-            else if (elementType == typeof(PartCollision))
-                return $"Collision{elementIndex++}";
-            else if (elementType == typeof(ModelMesh))
-                return $"Mesh{elementIndex++}";
-            else if (elementType == typeof(ModelMeshReference))
-                return $"Mesh{elementIndex++}";
-            else if (elementType == typeof(StudReference))
-                return $"Stud{elementIndex++}";
+            if (element is SurfaceComponent component)
+            {
+                return $"{component.ComponentType}{number}";
+            }
+            else if (element is ModelMesh)
+            {
+                return $"Mesh{number}";
+            }
+            else if (element is PartConnection connection)
+            {
+                return $"{connection.ConnectorType}{number}";
+            }
+            else if (element is PartCollision collision)
+            {
+                return $"{collision.CollisionType}{number}";
+            }
+            else if (element is ModelMeshReference meshReference)
+            {
+                if (meshReference.ModelMesh != null)
+                {
+                    if (string.IsNullOrEmpty(meshReference.ModelMesh.Name))
+                        GenerateElementName(meshReference.ModelMesh);
+
+                    var allRefs = meshReference.ModelMesh.GetReferences();
+                    
+                    if (allRefs.Count() == 1)
+                    {
+                        return $"{meshReference.ModelMesh.Name}";
+                    }
+                    else
+                    {
+                        int refCount = meshReference.ModelMesh.GetReferences().Count(x => !string.IsNullOrEmpty(x.Name));
+                        return $"{meshReference.ModelMesh.Name}_{refCount}";
+                    }
+                }
+
+                return $"MeshRef{number}";
+            }
             return null;
         }
 
@@ -774,25 +820,7 @@ namespace LDDModder.Modding.Editing
                 if (IsLoadedFromDisk)
                     mesh.WorkingFilePath = Path.Combine(ProjectWorkingDir, mesh.FileName);
             }
-            //foreach (var surface in Surfaces)
-            //{
-            //    foreach (var mesh in surface.GetAllModelMeshes())
-            //    {
 
-            //        if (string.IsNullOrEmpty(mesh.FileName) || !mesh.FileName.Contains(mesh.ID))
-            //        {
-
-            //            //mesh.FileName = $"Meshes\\Surface_{surface.SurfaceID}\\{mesh.RefID}.geom";
-            //            mesh.FileName = $"Meshes\\{mesh.ID}.geom";
-
-            //            if (mesh.Surface != null)
-            //                mesh.FileName = $"Meshes\\Surface{mesh.Surface.SurfaceID}_{mesh.ID}.geom";
-            //        }
-
-            //        if (IsLoadedFromDisk)
-            //            mesh.WorkingFilePath = Path.Combine(ProjectWorkingDir, mesh.FileName);
-            //    }
-            //}
         }
 
         public MeshGeometry LoadModelMesh(ModelMesh modelMesh)
@@ -829,22 +857,14 @@ namespace LDDModder.Modding.Editing
                     var elementHierarchy = ccea.AddedElements
                         .Concat(ccea.AddedElements.SelectMany(x => x.GetChildsHierarchy()));
 
-                    GenerateElementsIDs(elementHierarchy);
-
-                    GenerateElementsNames(ccea.ElementType, ccea.AddedElements);
-
-                    //var allChilds = ccea.AddedElements.SelectMany(x => x.GetChildsHierarchy());
-                    //var childMeshes = allChilds.OfType<ModelMesh>();
-                    //if (childMeshes.Any())
-                    //    GenerateElementsIDs(typeof(ModelMesh), childMeshes);
+                    GenerateElementIDs(elementHierarchy);
+                    GenerateElementNames(elementHierarchy);
                 }
             }
 
             if (!IsLoading)
                 ElementCollectionChanged?.Invoke(this, ccea);
         }
-
-        
 
         internal void OnElementPropertyChanged(PropertyChangedEventArgs pcea)
         {
@@ -856,6 +876,42 @@ namespace LDDModder.Modding.Editing
 
 
         #region LDD File Generation
+
+
+        public void ValidatePart()
+        {
+            if (Decorated != Surfaces.Any(x => x.SurfaceID > 0))
+            {
+                //Marked as having decorations but does not have any decoration surfaces
+            }
+
+            foreach (var surface in Surfaces)
+            {
+                var surfaceModels = surface.GetAllModelMeshes();
+                if (surface.SurfaceID == 0 && surfaceModels.Any(x => x.IsTextured))
+                {
+
+                }
+                else if (surface.SurfaceID > 0 && surfaceModels.Any(x => !x.IsTextured))
+                {
+
+                }
+                else if (!surfaceModels.Any())
+                {
+
+                }
+            }
+
+            foreach (var mesh in Meshes)
+            {
+                bool isReferenced = mesh.GetReferences().Any();
+                if (isReferenced)
+                {
+                    //if (mesh.IsFlexible)
+                }
+            }
+        }
+
 
         public Primitive GeneratePrimitive()
         {
@@ -872,8 +928,11 @@ namespace LDDModder.Modding.Editing
                 PhysicsAttributes = PhysicsAttributes,
                 PartVersion = PartVersion,
                 FileVersion = PrimitiveFileVersion,
-                SubMaterials = Surfaces.Select(x=>x.SubMaterialIndex).ToArray()
+                //SubMaterials = Surfaces.Select(x => x.SubMaterialIndex).ToArray()
             };
+
+            if (Surfaces.Count > 1)
+                primitive.SubMaterials = Surfaces.Select(x => x.SubMaterialIndex).ToArray();
 
             primitive.Aliases.Add(PartID);
 
@@ -889,11 +948,21 @@ namespace LDDModder.Modding.Editing
             return primitive;
         }
 
-
-
         public LDD.Parts.PartWrapper GenerateLddPart()
         {
-            return null;
+            var part = new LDD.Parts.PartWrapper()
+            {
+                PartID = PartID,
+                Primitive = GeneratePrimitive()
+            };
+
+            foreach (var surface in Surfaces)
+            {
+                var surfaceMesh = surface.GenerateMeshFile();
+                part.AddSurfaceMesh(surface.SurfaceID, surfaceMesh);
+            }
+
+            return part;
         }
 
         #endregion

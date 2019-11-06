@@ -57,9 +57,11 @@ namespace LDDModder.LDD.Meshes
             _Triangles.Add(new Triangle(AddVertex(v1), AddVertex(v2), AddVertex(v3)));
         }
 
-        public void AddTriangle(int v1, int v2, int v3)
+        public Triangle AddTriangle(int v1, int v2, int v3)
         {
-            _Triangles.Add(new Triangle(_Vertices[v1], _Vertices[v2], _Vertices[v3]));
+            var newTriangle = new Triangle(_Vertices[v1], _Vertices[v2], _Vertices[v3]);
+            _Triangles.Add(newTriangle);
+            return newTriangle;
         }
 
         public void AddTriangle(Triangle triangle, bool checkDuplicate = false)
@@ -76,6 +78,25 @@ namespace LDDModder.LDD.Meshes
             }
 
             _Triangles.Add(newTriangle);
+        }
+
+        public void CombineGeometry(MeshGeometry geometry)
+        {
+            var triangleIndices = geometry.GetTriangleIndices();
+            var addedVertices = geometry.Vertices.Select(x => x.Clone()).ToList();
+            
+            int vertexOffset = VertexCount;
+            addedVertices.ForEach(x => AddVertex(x, false));
+
+            for (int i = 0; i < geometry.IndexCount; i += 3)
+            {
+                var triangle = AddTriangle(
+                    triangleIndices[i] + vertexOffset,
+                    triangleIndices[i + 1] + vertexOffset,
+                    triangleIndices[i + 2] + vertexOffset);
+
+                triangle.CopyIndexData(geometry.Triangles[i / 3]);
+            }
         }
 
         //??? I don't rembemer what I wanted to do with this
@@ -100,8 +121,8 @@ namespace LDDModder.LDD.Meshes
         public MeshGeometry GetGeometry()
         {
             var geom = new MeshGeometry();
-            var verts = VertexDict.Values.SelectMany(x => x);
-            geom.SetVertices(verts);
+            //var verts = VertexDict.Values.SelectMany(x => x);
+            geom.SetVertices(_Vertices);
             geom.SetTriangles(_Triangles);
             return geom;
         }

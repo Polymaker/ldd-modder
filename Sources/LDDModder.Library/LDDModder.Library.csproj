@@ -199,7 +199,6 @@
     <Compile Include="Utilities\ExtensionMethods\StreamExtensions.cs" />
     <Compile Include="Utilities\ExtensionMethods\StringExtensions.cs" />
     <Compile Include="Utilities\FileHelper.cs" />
-    <Compile Include="Utilities\Helper.cs" />
     <Compile Include="Utilities\LddMeshExporter.cs" />
     <Compile Include="Utilities\ListIndexer.cs" />
     <Compile Include="Utilities\MathHelper.cs" />

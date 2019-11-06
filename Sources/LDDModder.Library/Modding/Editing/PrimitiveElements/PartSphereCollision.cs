@@ -30,8 +30,8 @@ namespace LDDModder.Modding.Editing
         protected internal override void LoadFromXml(XElement element)
         {
             base.LoadFromXml(element);
-            if (element.Element("Size") != null)
-                Radius = element.Element("Size").ReadAttribute("Radius", 1f);
+            if (element.HasElement("Size", out XElement sizeElem))
+                Radius = sizeElem.ReadAttribute("Radius", 1f);
         }
     }
 }

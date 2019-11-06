@@ -186,4 +186,7 @@
   <data name="Label_ReplacementMesh" xml:space="preserve">
     <value>Géometrie de remplacement</value>
   </data>
+  <data name="Label_DecorationSurfaceNumber" xml:space="preserve">
+    <value>Surface de décoration {0}</value>
+  </data>
 </root>

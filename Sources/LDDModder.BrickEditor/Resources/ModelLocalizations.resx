@@ -166,4 +166,7 @@
   <data name="Label_ReplacementMesh" xml:space="preserve">
     <value>Replacement mesh</value>
   </data>
+  <data name="Label_DecorationSurfaceNumber" xml:space="preserve">
+    <value>Decoration surface {0}</value>
+  </data>
 </root>

@@ -1,4 +1,5 @@
-﻿using LDDModder.Simple3D;
+﻿using LDDModder.Serialization;
+using LDDModder.Simple3D;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -58,6 +59,12 @@ namespace LDDModder.Modding.Editing
         public LDD.Primitives.Transform ToLDD()
         {
             return LDD.Primitives.Transform.FromMatrix(ToMatrix());
+        }
+
+        public XElement GetLddXml()
+        {
+            var lddTrans = ToLDD();
+            return new XElement("Transform", lddTrans.ToXmlAttributes());
         }
 
         public XElement SerializeToXml(string elementName = "Transform")

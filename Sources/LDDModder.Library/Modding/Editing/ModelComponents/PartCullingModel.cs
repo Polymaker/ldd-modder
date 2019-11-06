@@ -50,5 +50,29 @@ namespace LDDModder.Modding.Editing
             base.LoadFromXml(element);
             ConnectionID = element.ReadAttribute(nameof(ConnectionID), string.Empty);
         }
+
+        protected Custom2DFieldReference GetFieldReference(StudReference studReference)
+        {
+            var fieldRef = new Custom2DFieldReference(ConnectionIndex);
+            fieldRef.FieldIndices.Add(new Custom2DFieldIndex()
+            {
+                Index = studReference.FieldIndex,
+                Value2 = studReference.Value1,
+                Value4 = studReference.Value2
+            });
+            return fieldRef;
+        }
+
+        protected Custom2DFieldReference GetFieldReference(IEnumerable<StudReference> studReferences)
+        {
+            var fieldRef = new Custom2DFieldReference(ConnectionIndex);
+            fieldRef.FieldIndices.AddRange(studReferences.Select(x => new Custom2DFieldIndex()
+            {
+                Index = x.FieldIndex,
+                Value2 = x.Value1,
+                Value4 = x.Value2
+            }));
+            return fieldRef;
+        }
     }
 }

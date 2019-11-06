@@ -341,12 +341,12 @@ namespace LDDModder.LDD.Meshes
                         connectedEdges.AddRange(list);
                 }
 
-                if (triangle.Triangle.ContainsVertex(new Vector3(-0.54105f, 0.358637f, -0.990224f), 0.001f) &&
-                    triangle.Triangle.ContainsVertex(new Vector3(-0.471999f, 0.318679f, -0.990257f), 0.001f) &&
-                    triangle.Triangle.ContainsVertex(new Vector3(-0.54105f, 0.358637f, -1.07021f), 0.001f))
-                {
+                //if (triangle.Triangle.ContainsVertex(new Vector3(-0.54105f, 0.358637f, -0.990224f), 0.001f) &&
+                //    triangle.Triangle.ContainsVertex(new Vector3(-0.471999f, 0.318679f, -0.990257f), 0.001f) &&
+                //    triangle.Triangle.ContainsVertex(new Vector3(-0.54105f, 0.358637f, -1.07021f), 0.001f))
+                //{
 
-                }
+                //}
 
                 connectedEdges = connectedEdges.Distinct()
                     .Where(x => Vector3.AngleBetween(triangle.Normal, x.FaceNormal) < breakAngleRad)

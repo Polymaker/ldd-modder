@@ -53,15 +53,8 @@ namespace LDDModder.LDD.Files
 
         public MeshFile(MeshGeometry geometry)
         {
-            bool isTextured = geometry.Vertices.Any(x => !x.TexCoord.IsEmpty);
-            bool isFlexible = geometry.Vertices.Any(x => x.BoneWeights.Any());
-
-            if (isFlexible)
-                Type = isTextured ? MeshType.FlexibleTextured : MeshType.Flexible;
-            else
-                Type = isTextured ? MeshType.StandardTextured : MeshType.Standard;
-
             Geometry = geometry;
+            Type = geometry.GetMeshType();
             Cullings = new List<MeshCulling>();
         }
 

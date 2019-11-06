@@ -77,6 +77,8 @@ namespace LDDModder.BrickEditor.Settings
             }
         }
 
+
+
         public static bool IsWorkspaceDefined => !string.IsNullOrEmpty(Current.ProjectWorkspace);
     }
 }

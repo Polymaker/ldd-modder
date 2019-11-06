@@ -26,6 +26,18 @@ namespace LDDModder.Modding.Editing
                 Studs.Add(new StudReference(studInfo));
         }
 
+        internal override void FillCullingInformation(MeshCulling culling)
+        {
+            culling.Studs.AddRange(Studs.Select(x => GetFieldReference(x)));
+            if (ReplacementMeshes.Any())
+            {
+                var builder = new GeometryBuilder();
+                foreach(var meshRef in ReplacementMeshes)
+                    builder.CombineGeometry(meshRef.GetGeometry());
+                culling.ReplacementMesh = builder.GetGeometry();
+            }
+        }
+
         public override IEnumerable<ModelMeshReference> GetAllMeshReferences()
         {
             return base.GetAllMeshReferences().Concat(ReplacementMeshes);

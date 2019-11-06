@@ -9,6 +9,7 @@ namespace LDDModder.Modding.Editing
     public class MaleStudModel : PartCullingModel
     {
         public override ModelComponentType ComponentType => ModelComponentType.MaleStud;
+
         private StudReference _Stud;
 
         public StudReference Stud
@@ -25,6 +26,12 @@ namespace LDDModder.Modding.Editing
                 Stud = new StudReference(culling.Studs[0]);
             else
                 Debug.WriteLine("Stud culling does not reference a stud!");
+        }
+
+        internal override void FillCullingInformation(MeshCulling culling)
+        {
+            if (Stud != null)
+                culling.Studs.Add(GetFieldReference(Stud));
         }
 
         public override XElement SerializeToXml()

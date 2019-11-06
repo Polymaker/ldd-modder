@@ -18,6 +18,7 @@ using System.Threading;
 using System.Diagnostics;
 using OpenTK.Input;
 using ObjectTK.Textures;
+using LDDModder.BrickEditor.EditModels;
 
 namespace LDDModder.BrickEditor.UI.Panels
 {
@@ -46,6 +47,11 @@ namespace LDDModder.BrickEditor.UI.Panels
         private Camera Camera => CameraManipulator.Camera;
 
         public ViewportPanel()
+        {
+            InitializeComponent();
+        }
+
+        public ViewportPanel(ProjectManager projectManager) : base(projectManager)
         {
             InitializeComponent();
             
@@ -446,12 +452,9 @@ namespace LDDModder.BrickEditor.UI.Panels
             }
         }
 
-        public void LoadPartProject(PartProject project)
+        protected override void OnProjectLoaded(PartProject project)
         {
-            UnloadModels();
-
-            float curHue = 0;
-
+            base.OnProjectLoaded(project);
             foreach (var surface in project.Surfaces)
             {
                 var surfModel = new GLSurfaceModel(surface);
@@ -493,6 +496,13 @@ namespace LDDModder.BrickEditor.UI.Panels
                 CameraManipulator.Gimbal = Vector3.Zero;
             }
         }
+
+        protected override void OnProjectClosed()
+        {
+            base.OnProjectClosed();
+            UnloadModels();
+        }
+
 
         protected override void OnFormClosing(FormClosingEventArgs e)
         {

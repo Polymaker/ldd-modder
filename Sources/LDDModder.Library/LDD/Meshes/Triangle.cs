@@ -119,5 +119,14 @@ namespace LDDModder.LDD.Meshes
         {
             return new Edge[] { Edges[vertexIndex], Edges[(vertexIndex + 2) % 3] };
         }
+
+        public void CopyIndexData(Triangle triangle)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                Indices[i].AverageNormal = triangle.Indices[i].AverageNormal;
+                Indices[i].RoundEdgeData = triangle.Indices[i].RoundEdgeData.Clone();
+            }
+        }
     }
 }

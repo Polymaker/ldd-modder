@@ -54,11 +54,15 @@ namespace LDDModder.Modding.Editing
         protected internal override void LoadFromXml(XElement element)
         {
             base.LoadFromXml(element);
-            Size = new Vector3(
-                element.ReadAttribute("X", 0f),
-                element.ReadAttribute("Y", 0f),
-                element.ReadAttribute("Z", 0f)
-            );
+            if (element.HasElement("Size", out XElement sizeElem))
+            {
+                Size = new Vector3(
+                    sizeElem.ReadAttribute("X", 0f),
+                    sizeElem.ReadAttribute("Y", 0f),
+                    sizeElem.ReadAttribute("Z", 0f)
+                );
+            }
+            
         }
     }
 }

@@ -44,12 +44,19 @@
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.File_SaveMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.File_SaveAsMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.Edit_ImportMeshMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            this.Edit_ValidatePartMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.Edit_GenerateFilesMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.lDDEnvironmentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ExportBrickMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.StartLddMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.File_CloseProjectMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -61,7 +68,6 @@
             this.DockPanelControl.Name = "DockPanelControl";
             this.DockPanelControl.ShowAutoHideContentOnHover = false;
             this.DockPanelControl.Theme = this.vS2015LightTheme1;
-            this.DockPanelControl.ActiveDocumentChanged += new System.EventHandler(this.DockPanelControl_ActiveDocumentChanged);
             // 
             // visualStudioToolStripExtender1
             // 
@@ -71,6 +77,7 @@
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
+            this.editToolStripMenuItem,
             this.settingsToolStripMenuItem,
             this.ToolsMenuItem});
             resources.ApplyResources(this.menuStrip1, "menuStrip1");
@@ -86,7 +93,9 @@
             this.File_OpenRecentMenu,
             this.toolStripSeparator1,
             this.File_SaveMenu,
-            this.File_SaveAsMenu});
+            this.File_SaveAsMenu,
+            this.toolStripSeparator5,
+            this.File_CloseProjectMenu});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             resources.ApplyResources(this.fileToolStripMenuItem, "fileToolStripMenuItem");
             // 
@@ -135,6 +144,38 @@
             this.File_SaveAsMenu.Name = "File_SaveAsMenu";
             this.File_SaveAsMenu.Click += new System.EventHandler(this.File_SaveAsMenu_Click);
             // 
+            // editToolStripMenuItem
+            // 
+            this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.Edit_ImportMeshMenu,
+            this.toolStripSeparator4,
+            this.Edit_ValidatePartMenu,
+            this.Edit_GenerateFilesMenu});
+            this.editToolStripMenuItem.Name = "editToolStripMenuItem";
+            resources.ApplyResources(this.editToolStripMenuItem, "editToolStripMenuItem");
+            // 
+            // Edit_ImportMeshMenu
+            // 
+            this.Edit_ImportMeshMenu.Name = "Edit_ImportMeshMenu";
+            resources.ApplyResources(this.Edit_ImportMeshMenu, "Edit_ImportMeshMenu");
+            this.Edit_ImportMeshMenu.Click += new System.EventHandler(this.Edit_ImportMeshMenu_Click);
+            // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            resources.ApplyResources(this.toolStripSeparator4, "toolStripSeparator4");
+            // 
+            // Edit_ValidatePartMenu
+            // 
+            this.Edit_ValidatePartMenu.Name = "Edit_ValidatePartMenu";
+            resources.ApplyResources(this.Edit_ValidatePartMenu, "Edit_ValidatePartMenu");
+            // 
+            // Edit_GenerateFilesMenu
+            // 
+            this.Edit_GenerateFilesMenu.Name = "Edit_GenerateFilesMenu";
+            resources.ApplyResources(this.Edit_GenerateFilesMenu, "Edit_GenerateFilesMenu");
+            this.Edit_GenerateFilesMenu.Click += new System.EventHandler(this.Edit_GenerateFilesMenu_Click);
+            // 
             // settingsToolStripMenuItem
             // 
             this.settingsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -173,6 +214,17 @@
             this.StartLddMenuItem.Name = "StartLddMenuItem";
             resources.ApplyResources(this.StartLddMenuItem, "StartLddMenuItem");
             // 
+            // File_CloseProjectMenu
+            // 
+            this.File_CloseProjectMenu.Name = "File_CloseProjectMenu";
+            resources.ApplyResources(this.File_CloseProjectMenu, "File_CloseProjectMenu");
+            this.File_CloseProjectMenu.Click += new System.EventHandler(this.File_CloseProjectMenu_Click);
+            // 
+            // toolStripSeparator5
+            // 
+            this.toolStripSeparator5.Name = "toolStripSeparator5";
+            resources.ApplyResources(this.toolStripSeparator5, "toolStripSeparator5");
+            // 
             // BrickEditorWindow
             // 
             resources.ApplyResources(this, "$this");
@@ -210,5 +262,12 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem File_SaveMenu;
         private System.Windows.Forms.ToolStripMenuItem File_SaveAsMenu;
+        private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem Edit_ImportMeshMenu;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+        private System.Windows.Forms.ToolStripMenuItem Edit_ValidatePartMenu;
+        private System.Windows.Forms.ToolStripMenuItem Edit_GenerateFilesMenu;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
+        private System.Windows.Forms.ToolStripMenuItem File_CloseProjectMenu;
     }
 }

@@ -37,6 +37,7 @@ namespace LDDModder.Modding.Editing
             SurfaceID = surfaceID;
             SubMaterialIndex = subMaterialIndex;
             Components = new ElementCollection<SurfaceComponent>(this);
+            Name = $"Surface{surfaceID}";
         }
 
         public IEnumerable<ModelMeshReference> GetAllMeshReferences()
@@ -59,10 +60,8 @@ namespace LDDModder.Modding.Editing
             elem.Add(new XAttribute(nameof(SurfaceID), SurfaceID));
             elem.Add(new XAttribute(nameof(SubMaterialIndex), SubMaterialIndex));
 
-            if (Project != null)
-                elem.Add(new XAttribute("OutputFile", GetTargetFilename()));
-
-            //var componentsElem = elem.AddElement("Components");
+            //if (Project != null)
+            //    elem.Add(new XAttribute("OutputFile", GetTargetFilename()));
 
             foreach (var comp in Components)
                 elem.Add(comp.SerializeToXml());
@@ -109,40 +108,41 @@ namespace LDDModder.Modding.Editing
         public MeshFile GenerateMeshFile()
         {
             var builder = new GeometryBuilder();
+            var cullings = new List<MeshCulling>();
+            var notLoadedModels = GetAllModelMeshes().Where(x => !x.IsModelLoaded).ToList();
 
-            void CombineMeshes(IEnumerable<ModelMeshReference> models,
-                MeshCullingType cullingType, out MeshCulling culling)
+            foreach (var meshComp in Components)
             {
-                int fromIndex = builder.IndexCount;
-                int fromVertex = builder.VertexCount;
-
-                foreach (var meshRef in models)
-                {
-                    foreach (var tri in meshRef.GetGeometry().Triangles)
-                        builder.AddTriangle(tri);
-                }
-
-                int indexCount = builder.IndexCount - fromIndex;
-                int vertexCount = builder.VertexCount - fromVertex;
-
-                culling = new MeshCulling(cullingType)
-                {
-                    FromIndex = fromIndex,
-                    FromVertex = fromVertex,
-                    IndexCount = indexCount,
-                    VertexCount = vertexCount,
-                };
+                var cullingInfo = CombineMeshes(builder, meshComp.Meshes, meshComp.GetCullingType());
+                meshComp.FillCullingInformation(cullingInfo);
+                cullings.Add(cullingInfo);
             }
 
-            CombineMeshes(Components.OfType<PartModel>().SelectMany(x => x.Meshes), 
-                MeshCullingType.MainModel, out MeshCulling modelCulling);
+            notLoadedModels.ForEach(x => x.UnloadModel());
 
-            foreach (var cullingComp in Components.OfType<PartCullingModel>())
+            var file = new MeshFile(builder.GetGeometry());
+            file.Cullings.AddRange(cullings);
+            return file;
+        }
+    
+        private static MeshCulling CombineMeshes(GeometryBuilder builder, IEnumerable<ModelMeshReference> models, MeshCullingType cullingType)
+        {
+            int fromIndex = builder.IndexCount;
+            int fromVertex = builder.VertexCount;
+
+            foreach (var meshRef in models)
+                builder.CombineGeometry(meshRef.GetGeometry());
+
+            int indexCount = builder.IndexCount - fromIndex;
+            int vertexCount = builder.VertexCount - fromVertex;
+
+            return new MeshCulling(cullingType)
             {
-
-            }
-
-            return null;
+                FromIndex = fromIndex,
+                FromVertex = fromVertex,
+                IndexCount = indexCount,
+                VertexCount = vertexCount
+            };
         }
     }
 }

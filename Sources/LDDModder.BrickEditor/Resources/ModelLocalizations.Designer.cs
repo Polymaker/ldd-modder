@@ -124,6 +124,15 @@ namespace LDDModder.BrickEditor.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Decoration surface {0}.
+        /// </summary>
+        internal static string Label_DecorationSurfaceNumber {
+            get {
+                return ResourceManager.GetString("Label_DecorationSurfaceNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Female stud.
         /// </summary>
         internal static string Label_FemaleStud {

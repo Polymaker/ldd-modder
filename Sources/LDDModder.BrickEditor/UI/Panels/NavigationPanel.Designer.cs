@@ -29,14 +29,25 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(NavigationPanel));
             this.treeListView1 = new BrightIdeasSoftware.TreeListView();
             this.olvColumn1 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.addElementToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.surfaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.studToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.label1 = new System.Windows.Forms.Label();
+            this.ViewModeComboBox = new System.Windows.Forms.ComboBox();
+            this.LocalizedStrings = new LDDModder.BrickEditor.Localization.LocalizableStringList(this.components);
+            this.ViewModeSurfaces = new LDDModder.BrickEditor.Localization.LocalizableString(this.components);
+            this.ViewModeCollisions = new LDDModder.BrickEditor.Localization.LocalizableString(this.components);
+            this.ViewModeConnections = new LDDModder.BrickEditor.Localization.LocalizableString(this.components);
+            this.ViewModeBones = new LDDModder.BrickEditor.Localization.LocalizableString(this.components);
+            this.ViewModeAll = new LDDModder.BrickEditor.Localization.LocalizableString(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.treeListView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
+            this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // treeListView1
@@ -46,30 +57,26 @@
             this.treeListView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.olvColumn1});
             this.treeListView1.Cursor = System.Windows.Forms.Cursors.Default;
-            this.treeListView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            resources.ApplyResources(this.treeListView1, "treeListView1");
             this.treeListView1.HideSelection = false;
-            this.treeListView1.Location = new System.Drawing.Point(0, 0);
             this.treeListView1.Name = "treeListView1";
             this.treeListView1.ShowGroups = false;
-            this.treeListView1.Size = new System.Drawing.Size(288, 383);
-            this.treeListView1.TabIndex = 0;
             this.treeListView1.UseCompatibleStateImageBehavior = false;
             this.treeListView1.View = System.Windows.Forms.View.Details;
             this.treeListView1.VirtualMode = true;
             // 
             // olvColumn1
             // 
-            this.olvColumn1.AspectName = "Name";
+            this.olvColumn1.AspectName = "Text";
             this.olvColumn1.FillsFreeSpace = true;
             this.olvColumn1.IsEditable = false;
-            this.olvColumn1.Text = "";
             // 
             // contextMenuStrip1
             // 
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.addElementToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(143, 26);
+            resources.ApplyResources(this.contextMenuStrip1, "contextMenuStrip1");
             // 
             // addElementToolStripMenuItem
             // 
@@ -77,31 +84,77 @@
             this.surfaceToolStripMenuItem,
             this.studToolStripMenuItem});
             this.addElementToolStripMenuItem.Name = "addElementToolStripMenuItem";
-            this.addElementToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
-            this.addElementToolStripMenuItem.Text = "Add Element";
+            resources.ApplyResources(this.addElementToolStripMenuItem, "addElementToolStripMenuItem");
             // 
             // surfaceToolStripMenuItem
             // 
             this.surfaceToolStripMenuItem.Name = "surfaceToolStripMenuItem";
-            this.surfaceToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.surfaceToolStripMenuItem.Text = "Model";
+            resources.ApplyResources(this.surfaceToolStripMenuItem, "surfaceToolStripMenuItem");
             // 
             // studToolStripMenuItem
             // 
             this.studToolStripMenuItem.Name = "studToolStripMenuItem";
-            this.studToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.studToolStripMenuItem.Text = "Stud";
+            resources.ApplyResources(this.studToolStripMenuItem, "studToolStripMenuItem");
+            // 
+            // tableLayoutPanel1
+            // 
+            resources.ApplyResources(this.tableLayoutPanel1, "tableLayoutPanel1");
+            this.tableLayoutPanel1.Controls.Add(this.label1, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.treeListView1, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this.ViewModeComboBox, 0, 1);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            // 
+            // label1
+            // 
+            resources.ApplyResources(this.label1, "label1");
+            this.label1.Name = "label1";
+            // 
+            // ViewModeComboBox
+            // 
+            resources.ApplyResources(this.ViewModeComboBox, "ViewModeComboBox");
+            this.ViewModeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.ViewModeComboBox.FormattingEnabled = true;
+            this.ViewModeComboBox.Name = "ViewModeComboBox";
+            this.ViewModeComboBox.SelectedIndexChanged += new System.EventHandler(this.ViewModeComboBox_SelectedIndexChanged);
+            // 
+            // LocalizedStrings
+            // 
+            this.LocalizedStrings.Items.Add(this.ViewModeSurfaces);
+            this.LocalizedStrings.Items.Add(this.ViewModeCollisions);
+            this.LocalizedStrings.Items.Add(this.ViewModeConnections);
+            this.LocalizedStrings.Items.Add(this.ViewModeBones);
+            this.LocalizedStrings.Items.Add(this.ViewModeAll);
+            // 
+            // ViewModeSurfaces
+            // 
+            resources.ApplyResources(this.ViewModeSurfaces, "ViewModeSurfaces");
+            // 
+            // ViewModeCollisions
+            // 
+            resources.ApplyResources(this.ViewModeCollisions, "ViewModeCollisions");
+            // 
+            // ViewModeConnections
+            // 
+            resources.ApplyResources(this.ViewModeConnections, "ViewModeConnections");
+            // 
+            // ViewModeBones
+            // 
+            resources.ApplyResources(this.ViewModeBones, "ViewModeBones");
+            // 
+            // ViewModeAll
+            // 
+            resources.ApplyResources(this.ViewModeAll, "ViewModeAll");
             // 
             // NavigationPanel
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(288, 383);
-            this.Controls.Add(this.treeListView1);
+            this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "NavigationPanel";
-            this.Text = "Navigation";
             ((System.ComponentModel.ISupportInitialize)(this.treeListView1)).EndInit();
             this.contextMenuStrip1.ResumeLayout(false);
+            this.tableLayoutPanel1.ResumeLayout(false);
+            this.tableLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -114,5 +167,14 @@
         private System.Windows.Forms.ToolStripMenuItem addElementToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem surfaceToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem studToolStripMenuItem;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ComboBox ViewModeComboBox;
+        private Localization.LocalizableStringList LocalizedStrings;
+        private Localization.LocalizableString ViewModeSurfaces;
+        private Localization.LocalizableString ViewModeCollisions;
+        private Localization.LocalizableString ViewModeConnections;
+        private Localization.LocalizableString ViewModeBones;
+        private Localization.LocalizableString ViewModeAll;
     }
 }

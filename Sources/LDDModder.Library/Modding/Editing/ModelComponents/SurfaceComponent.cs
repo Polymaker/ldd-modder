@@ -30,6 +30,11 @@ namespace LDDModder.Modding.Editing
             
         }
 
+        internal virtual void FillCullingInformation(MeshCulling culling)
+        {
+
+        }
+
         public static SurfaceComponent CreateFromLDD(MeshCulling culling, ModelMesh mainModel, ModelMesh replacement)
         {
             SurfaceComponent modelComponent = null;
@@ -38,13 +43,13 @@ namespace LDDModder.Modding.Editing
                 case MeshCullingType.MainModel:
                     modelComponent = new PartModel();
                     break;
-                case MeshCullingType.Stud:
+                case MeshCullingType.MaleStud:
                     modelComponent = new MaleStudModel();
                     break;
                 case MeshCullingType.FemaleStud:
                     modelComponent = new FemaleStudModel();
                     break;
-                case MeshCullingType.Tube:
+                case MeshCullingType.BrickTube:
                     modelComponent = new BrickTubeModel();
                     break;
             }
@@ -58,6 +63,22 @@ namespace LDDModder.Modding.Editing
             }
 
             return modelComponent;
+        }
+
+        public MeshCullingType GetCullingType()
+        {
+            switch (ComponentType)
+            {
+                default:
+                case ModelComponentType.Part:
+                    return MeshCullingType.MainModel;
+                case ModelComponentType.MaleStud:
+                    return MeshCullingType.MaleStud;
+                case ModelComponentType.FemaleStud:
+                    return MeshCullingType.FemaleStud;
+                case ModelComponentType.BrickTube:
+                    return MeshCullingType.BrickTube;
+            }
         }
 
         public virtual IEnumerable<ModelMeshReference> GetAllMeshReferences()

@@ -16,6 +16,8 @@ namespace LDDModder.Modding.Editing
 
         public MeshGeometry Geometry { get; set; }
 
+        #region Geometry Attributes
+
         public bool IsTextured { get; set; }
 
         public bool IsFlexible { get; set; }
@@ -23,6 +25,12 @@ namespace LDDModder.Modding.Editing
         public int VertexCount { get; set; }
 
         public int IndexCount { get; set; }
+
+        public int BoneCount { get; set; }
+
+        #endregion
+
+
 
         public string FileName { get; set; }
 
@@ -42,10 +50,7 @@ namespace LDDModder.Modding.Editing
         public ModelMesh(MeshGeometry geometry)
         {
             Geometry = geometry;
-            IsTextured = geometry.IsTextured;
-            IsFlexible = geometry.IsFlexible;
-            VertexCount = geometry.VertexCount;
-            IndexCount = geometry.IndexCount;
+            UpdateMeshProperties();
         }
 
         public IEnumerable<ModelMeshReference> GetReferences()
@@ -54,6 +59,8 @@ namespace LDDModder.Modding.Editing
                 return Project.Surfaces.SelectMany(x => x.GetAllMeshReferences()).Where(y => y.MeshID == ID);
             return Enumerable.Empty<ModelMeshReference>();
         }
+
+        #region Xml Serialization
 
         public override XElement SerializeToXml()
         {
@@ -81,13 +88,32 @@ namespace LDDModder.Modding.Editing
             return model;
         }
 
+        #endregion
+
+
+        public void UpdateMeshProperties()
+        {
+            bool wasLoaded = IsModelLoaded;
+
+            if (LoadModel())
+            {
+                VertexCount = Geometry.VertexCount;
+                IndexCount = Geometry.IndexCount;
+                IsFlexible = Geometry.IsFlexible;
+                IsTextured = Geometry.IsTextured;
+                BoneCount = IsFlexible ? Geometry.Vertices.Max(x => x.BoneWeights.Max(y => y.BoneID)) : 0;
+            }
+
+            if (!wasLoaded)
+                UnloadModel();
+        }
+
         public bool LoadModel()
         {
             if (Geometry == null && Project != null)
             {
                 Project.LoadModelMesh(this);
-                VertexCount = Geometry?.VertexCount ?? 0;
-                IndexCount = Geometry?.IndexCount ?? 0;
+                UpdateMeshProperties();
             }
             return Geometry != null;
         }

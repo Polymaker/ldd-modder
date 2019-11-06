@@ -8,6 +8,36 @@ namespace LDDModder.BrickEditor.UI.Windows
 {
     public partial class BrickEditorWindow
     {
+
+        public void UpdateMenuItemStates()
+        {
+            File_SaveMenu.Enabled = ProjectManager.IsProjectOpen;
+            File_SaveAsMenu.Enabled = ProjectManager.IsProjectOpen;
+            File_CloseProjectMenu.Enabled = ProjectManager.IsProjectOpen;
+            Edit_ImportMeshMenu.Enabled = ProjectManager.IsProjectOpen;
+            Edit_ValidatePartMenu.Enabled = ProjectManager.IsProjectOpen;
+            Edit_GenerateFilesMenu.Enabled = ProjectManager.IsProjectOpen;
+
+        }
+
+        #region Main menu
+
+        private void LDDEnvironmentToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (var dlg = new LddEnvironmentConfigWindow())
+                dlg.ShowDialog();
+        }
+
+        private void ExportBrickMenuItem_Click(object sender, EventArgs e)
+        {
+            using (var frm = new ModelImportExportWindow())
+                frm.ShowDialog();
+        }
+
+        #endregion
+
+        #region File Menu
+
         private void File_NewProjectMenu_Click(object sender, EventArgs e)
         {
             var project = PartProject.CreateEmptyProject();
@@ -90,6 +120,36 @@ namespace LDDModder.BrickEditor.UI.Windows
         {
             if (CurrentProject != null)
                 SaveProject(CurrentProject, true);
+        }
+
+        private void File_CloseProjectMenu_Click(object sender, EventArgs e)
+        {
+            CloseCurrentProject();
+        }
+
+        #endregion
+
+        private void Edit_ImportMeshMenu_Click(object sender, EventArgs e)
+        {
+            ImportGeometry(null);
+        }
+
+        private void Edit_GenerateFilesMenu_Click(object sender, EventArgs e)
+        {
+            if (CurrentProject != null)
+            {
+                try
+                {
+                    var lddPart = CurrentProject.GenerateLddPart();
+                    lddPart.Primitive.Save($"{lddPart.PartID}.xml");
+                    foreach (var surface in lddPart.Surfaces)
+                        surface.Mesh.Save(surface.GetFileName());
+                }
+                catch (Exception ex)
+                {
+
+                }
+            }
         }
     }
 }

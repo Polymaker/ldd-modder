@@ -48,6 +48,12 @@ namespace LDDModder.Modding.Editing
             }
         }
 
+        internal override void FillCullingInformation(MeshCulling culling)
+        {
+            culling.Studs.Add(GetFieldReference(TubeStud));
+            culling.AdjacentStuds.Add(GetFieldReference(AdjacentStuds));
+        }
+
         public override XElement SerializeToXml()
         {
             var elem = base.SerializeToXml();

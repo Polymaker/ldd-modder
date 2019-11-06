@@ -67,7 +67,8 @@ namespace LDDModder.Modding.Editing
         public override XElement SerializeToXml()
         {
             var elem = SerializeToXmlBase(NODE_NAME);
-            elem.Add(XmlHelper.ToXml(() => BoneID));
+
+            elem.Add(new XAttribute(nameof(BoneID), BoneID));
             elem.Add(Transform.SerializeToXml());
 
             if (PhysicsAttributes != null || Bounding != null)
@@ -99,7 +100,7 @@ namespace LDDModder.Modding.Editing
         protected internal override void LoadFromXml(XElement element)
         {
             base.LoadFromXml(element);
-            BoneID = element.ReadAttribute<int>("BoneID");
+            BoneID = element.ReadAttribute<int>(nameof(BoneID));
 
             if (element.HasElement("Transform", out XElement transElem))
                 Transform = ItemTransform.FromXml(transElem);

@@ -11,7 +11,7 @@ namespace LDDModder.LDD.Meshes
         /// <summary>
         /// Specifies which vertices and indices are part of a stud.
         /// </summary>
-        Stud = 1,
+        MaleStud = 1,
         /// <summary>
         /// Defines which vertices and indices are part of the main model.
         /// </summary>
@@ -25,6 +25,6 @@ namespace LDDModder.LDD.Meshes
         /// Specifies which vertices and indices are part of the tubes where other bricks connects.
         /// Sometimes includes 3D data.
         /// </summary>
-        Tube = 8,
+        BrickTube = 8,
     }
 }

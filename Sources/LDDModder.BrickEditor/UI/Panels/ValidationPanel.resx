@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -117,49 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="File_NewProjectMenu.Text" xml:space="preserve">
-    <value>Nouveau projet</value>
-  </data>
-  <data name="File_CreateFromBrickMenu.Text" xml:space="preserve">
-    <value>Créer depuis une brique...</value>
-  </data>
-  <data name="File_OpenProjectMenu.Text" xml:space="preserve">
-    <value>Ouvrir un projet...</value>
-  </data>
-  <data name="File_OpenRecentMenu.Text" xml:space="preserve">
-    <value>Projet recents</value>
-  </data>
-  <data name="File_SaveMenu.Text" xml:space="preserve">
-    <value>Sauvegarder</value>
-  </data>
-  <data name="File_SaveAsMenu.Text" xml:space="preserve">
-    <value>Sauvegarder sous...</value>
-  </data>
-  <data name="fileToolStripMenuItem.Text" xml:space="preserve">
-    <value>Fichier</value>
-  </data>
-  <data name="settingsToolStripMenuItem.Text" xml:space="preserve">
-    <value>Paramètres</value>
-  </data>
-  <data name="ToolsMenuItem.Text" xml:space="preserve">
-    <value>Outils</value>
-  </data>
-  <data name="editToolStripMenuItem.Text" xml:space="preserve">
-    <value>Édition</value>
-  </data>
-  <data name="Edit_ValidatePartMenu.Text" xml:space="preserve">
-    <value>Valider la pièce</value>
-  </data>
-  <data name="Edit_GenerateFilesMenu.Text" xml:space="preserve">
-    <value>Générer les fichiers LDD</value>
-  </data>
-  <data name="File_CloseProjectMenu.Text" xml:space="preserve">
-    <value>Fermer le projet</value>
-  </data>
-  <data name="StartLddMenuItem.Text" xml:space="preserve">
-    <value>Démarrer LDD...</value>
-  </data>
-  <data name="Edit_ImportMeshMenu.Text" xml:space="preserve">
-    <value>Importer un modèle 3D...</value>
-  </data>
 </root>

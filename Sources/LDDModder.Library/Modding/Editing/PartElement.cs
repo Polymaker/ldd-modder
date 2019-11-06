@@ -150,5 +150,12 @@ namespace LDDModder.Modding.Editing
                 return typeof(StudReference);
             return typeof(PartElement);
         }
+
+        public string GetFullElementType()
+        {
+            if (this is PartConnection conn)
+                return "Connection" + conn.ConnectorType.ToString();
+            return GetType().Name;
+        }
     }
 }

@@ -14,14 +14,14 @@ namespace LDDModder.LDD.Parts
     public class PartWrapper
     {
         public int PartID { get; set; }
-        public Primitives.Primitive Primitive { get; set; }
+        public Primitive Primitive { get; set; }
         public List<PartSurfaceMesh> Surfaces { get; set; }
 
         public PartSurfaceMesh MainSurface => Surfaces.FirstOrDefault(x => x.SurfaceID == 0);
 
         public IEnumerable<PartSurfaceMesh> DecorationSurfaces => Surfaces.Where(x => x.SurfaceID > 0);
 
-        public Files.MeshFile MainMesh => MainSurface?.Mesh;
+        public MeshFile MainMesh => MainSurface?.Mesh;
 
         public IEnumerable<Files.MeshFile> DecorationMeshes => DecorationSurfaces.Select(x => x.Mesh);
 
@@ -41,6 +41,11 @@ namespace LDDModder.LDD.Parts
             PartID = primitive.ID;
             Primitive = primitive;
             Surfaces = new List<PartSurfaceMesh>(surfaces);
+        }
+
+        public void AddSurfaceMesh(int surfaceID, MeshFile meshFile)
+        {
+            Surfaces.Add(new PartSurfaceMesh(PartID, surfaceID, meshFile));
         }
 
         #region Shader Data Generation
@@ -122,5 +127,7 @@ namespace LDDModder.LDD.Parts
         }
 
         #endregion
+
+
     }
 }
