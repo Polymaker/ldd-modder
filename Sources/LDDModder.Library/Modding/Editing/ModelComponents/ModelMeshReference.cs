@@ -67,6 +67,12 @@ namespace LDDModder.Modding.Editing
             VertexCount = culling.VertexCount;
         }
 
+        public ModelMeshReference(ModelMesh model)
+        {
+            MeshID = model.ID;
+            _ModelMesh = model;
+        }
+
         public ModelMesh GetModelMesh()
         {
             if (_ModelMesh != null && string.IsNullOrEmpty(MeshID))

@@ -677,6 +677,30 @@ namespace LDDModder.Simple3D
             return TransformPosition(this, pos);
         }
 
+        public static Vector3 TransformNormalInverse(Matrix4 invMat, Vector3 vec)
+        {
+            Vector3 result = default;
+            result.X = vec.X * invMat.RowA.X + vec.Y * invMat.RowA.Y + vec.Z * invMat.RowA.Z;
+            result.Y = vec.X * invMat.RowB.X + vec.Y * invMat.RowB.Y + vec.Z * invMat.RowB.Z;
+            result.Z = vec.X * invMat.RowC.X + vec.Y * invMat.RowC.Y + vec.Z * invMat.RowC.Z;
+            return result;
+        }
+
+        public Vector3 TransformNormalInverse(Vector3 pos)
+        {
+            return TransformNormalInverse(this, pos);
+        }
+
+        public static Vector3 TransformNormal(Matrix4 mat, Vector3 vec)
+        {
+            return TransformNormalInverse(mat.Inverted(), vec);
+        }
+
+        public Vector3 TransformNormal(Vector3 pos)
+        {
+            return TransformNormal(this, pos);
+        }
+
         public static Vector3 TransformVector(Matrix4 mat, Vector3 vec)
         {
             Vector3 result = default;

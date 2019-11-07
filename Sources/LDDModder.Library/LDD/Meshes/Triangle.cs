@@ -13,11 +13,11 @@ namespace LDDModder.LDD.Meshes
 
         public Vertex[] Vertices { get; private set; }
 
-        public Vertex V1 => Vertices[0];
+        public Vertex V1 => Indices[0].Vertex;
 
-        public Vertex V2 => Vertices[1];
+        public Vertex V2 => Indices[1].Vertex;
 
-        public Vertex V3 => Vertices[2];
+        public Vertex V3 => Indices[2].Vertex;
 
         public Edge[] Edges { get; private set; }
 
@@ -61,6 +61,17 @@ namespace LDDModder.LDD.Meshes
 
         internal void RebuildEdges()
         {
+            Edges = new Edge[]
+            {
+                new Edge(Vertices[0],Vertices[1]),
+                new Edge(Vertices[1],Vertices[2]),
+                new Edge(Vertices[2],Vertices[0])
+            };
+        }
+
+        internal void RebuildIndices()
+        {
+            Vertices = new Vertex[] { Indices[0].Vertex, Indices[1].Vertex, Indices[2].Vertex };
             Edges = new Edge[]
             {
                 new Edge(Vertices[0],Vertices[1]),

@@ -34,10 +34,10 @@ namespace LDDModder.Modding.Editing
             Transform = new ItemTransform();
         }
 
-        protected override IEnumerable<PartElement> GetAllChilds()
-        {
-            return Connections.AsEnumerable<PartElement>().Concat(Collisions);
-        }
+        //public override IEnumerable<PartElement> GetAllChilds()
+        //{
+        //    return Connections.AsEnumerable<PartElement>().Concat(Collisions);
+        //}
 
         internal void LoadFromLDD(FlexBone flexBone)
         {

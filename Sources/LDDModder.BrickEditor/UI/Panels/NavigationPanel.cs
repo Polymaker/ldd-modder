@@ -46,22 +46,18 @@ namespace LDDModder.BrickEditor.UI.Panels
             CloseButtonVisible = false;
             CloseButton = false;
             DockAreas = DockAreas.DockLeft | DockAreas.DockRight | DockAreas.Float;
-
+            
             treeListView1.CanExpandGetter += (model) =>
             {
-                if (model is ProjectItemNode node)
+                if (model is BaseProjectNode node)
                     return node.HasChildrens();
-                else if (model is PartElementTreeNode treeNode)
-                    return treeNode.HasChildrens();
                 return false;
             };
 
             treeListView1.ChildrenGetter += (model) =>
             {
-                if (model is ProjectItemNode node)
-                    return new ArrayList(node.Childrens);
-                else if (model is PartElementTreeNode treeNode)
-                    return treeNode.Childrens;
+                if (model is BaseProjectNode node)
+                    return node.Childrens;
                 return new ArrayList();
             };
         }
@@ -85,186 +81,88 @@ namespace LDDModder.BrickEditor.UI.Panels
         protected override void OnProjectChanged()
         {
             base.OnProjectChanged();
-            RebuildNavigation();
+            RebuildNavigation(true);
         }
 
         private void ViewModeComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (ProjectManager.IsProjectOpen)
-                RebuildNavigation();
+                FilterNavigation();
         }
 
         #region TreeListView Handling
 
-        private void RebuildNavigation()
+        private void RebuildNavigation(bool recreate)
         {
-            treeListView1.ClearObjects();
+            if (recreate)
+                treeListView1.ClearObjects();
 
             if (ProjectManager.IsProjectOpen)
             {
-                switch (CurrentViewMode)
+                if (recreate)
                 {
-                    case NavigationViewMode.All:
-                        {
-                            var surfacesNode = new PartElementTreeNode()
-                            {
-                                Text = ModelLocalizations.Label_Surfaces
-                            };
-                            surfacesNode.SetChildrens(GenerateSurfaceNodes());
-                            treeListView1.AddObject(surfacesNode);
+                    treeListView1.AddObject(new ProjectGroupNode(
+                        CurrentProject.Surfaces,
+                        ModelLocalizations.Label_Surfaces));
 
-                            var collisionsNode = new PartElementTreeNode()
-                            {
-                                Text = ModelLocalizations.Label_Collisions
-                            };
-                            collisionsNode.SetChildrens(GenerateCollisionNodes());
-                            treeListView1.AddObject(collisionsNode);
-                        }
-                        break;
-                    case NavigationViewMode.Surfaces:
-                        treeListView1.AddObjects(GenerateSurfaceNodes().ToList());
-                        break;
-                    case NavigationViewMode.Collisions:
-                        treeListView1.AddObjects(GenerateCollisionNodes().ToList());
-                        break;
-                    case NavigationViewMode.Connections:
-                        break;
-                    case NavigationViewMode.Bones:
-                        break;
+                    treeListView1.AddObject(new ProjectGroupNode(
+                        CurrentProject.Collisions,
+                        ModelLocalizations.Label_Collisions));
+
+                    treeListView1.AddObject(new ProjectGroupNode(
+                        CurrentProject.Connections,
+                        ModelLocalizations.Label_Connections));
+
+                    foreach (ProjectGroupNode node in treeListView1.Roots)
+                        treeListView1.Expand(node);
                 }
-            }
-        }
-
-        private IEnumerable<PartElementTreeNode> GenerateSurfaceNodes()
-        {
-            if (CurrentProject != null)
-            {
-                foreach (var surface in CurrentProject.Surfaces)
+                else
                 {
-                    string nodeText = surface.SurfaceID == 0 ? ModelLocalizations.Label_MainSurface :
-                            string.Format(ModelLocalizations.Label_DecorationSurfaceNumber, surface.SurfaceID);
+                    var expandedNodes = treeListView1.ExpandedObjects
+                        .OfType<BaseProjectNode>().Select(x => x.NodeID).ToList();
 
-                    yield return new PartElementTreeNode(surface, nodeText);
-                }
-            }
-            yield break;
-        }
-
-        private IEnumerable<PartElementTreeNode> GenerateCollisionNodes()
-        {
-            if (CurrentProject != null)
-            {
-                foreach (var collision in CurrentProject.Collisions)
-                {
-                    var collisionNode = new PartElementTreeNode()
+                    foreach (BaseProjectNode node in treeListView1.Roots)
                     {
-                        Project = CurrentProject,
-                        Element = collision,
-                        Text = collision.Name
-                    };
-                    yield return collisionNode;
+                        node.IsDirty = true;
+                        treeListView1.UpdateObject(node);
+                    }
+
+                    ExpandNodes(treeListView1.Roots, expandedNodes);
                 }
+
+                //treeListView1.AddObject(new ProjectGroupNode(
+                //    CurrentProject.Bones,
+                //    ModelLocalizations.Label_Bones));
             }
-            yield break;
+
+            FilterNavigation();
         }
 
-        //private static 
+        private void ExpandNodes(IEnumerable nodes, List<string> nodeIDs)
+        {
+            foreach (BaseProjectNode node in nodes)
+            {
+                if(nodeIDs.Contains(node.NodeID))
+                {
+                    treeListView1.Expand(node);
+                    ExpandNodes(node.Childrens, nodeIDs);
+                }
+            }
+        }
+
+        private void FilterNavigation()
+        {
+
+        }
+
 
         #endregion
 
         protected override void OnProjectElementsChanged(CollectionChangedEventArgs e)
         {
             base.OnProjectElementsChanged(e);
-            switch (CurrentViewMode)
-            {
-                case NavigationViewMode.All:
-                    break;
-                case NavigationViewMode.Surfaces:
-                    
-                    break;
-                case NavigationViewMode.Collisions:
-                    if (e.ElementType == typeof(PartBoxCollision) ||
-                        e.ElementType == typeof(PartSphereCollision))
-                        RebuildNavigation();
-                    break;
-                case NavigationViewMode.Connections:
-                    if (e.ElementType == typeof(PartConnection))
-                        RebuildNavigation();
-                    break;
-                case NavigationViewMode.Bones:
-                    break;
-            }
+            RebuildNavigation(false);
         }
 
-        class PartElementTreeNode
-        {
-            public PartProject Project { get; set; }
-            public PartElement Element { get; set; }
-
-            public string Text { get; set; }
-
-            public bool IsDirty { get; set; } = true;
-
-            public List<PartElementTreeNode> Childrens { get; set; } = new List<PartElementTreeNode>();
-
-            public PartElementTreeNode()
-            {
-            }
-
-            public PartElementTreeNode(PartElement element, string text)
-            {
-                Element = element;
-                Project = element.Project;
-                Text = text;
-            }
-
-            public void SetChildrens(IEnumerable<PartElementTreeNode> childrens)
-            {
-                Childrens.Clear();
-                Childrens.AddRange(childrens);
-                IsDirty = false;
-            }
-
-            public bool HasChildrens()
-            {
-                if (IsDirty)
-                    RebuildChildrens();
-                return Childrens.Any();
-            }
-
-            public void RebuildChildrens()
-            {
-                if (Element != null)
-                {
-                    Childrens.Clear();
-
-                    if (Element is PartSurface surface)
-                    {
-                        foreach (ModelComponentType componentType in Enum.GetValues(typeof(ModelComponentType)))
-                        {
-                            var components = surface.Components.Where(x => x.ComponentType == componentType);
-                            var compNodes = components.Select(x =>
-                                new PartElementTreeNode(x, x.Name)
-                            ).ToList();
-
-                            if (compNodes.Count <= 4)
-                            {
-                                Childrens.AddRange(compNodes);
-                            }
-                            else
-                            {
-                                var typeNode = new PartElementTreeNode()
-                                {
-                                    Text = componentType.ToString()
-                                };
-                                typeNode.SetChildrens(compNodes);
-                                Childrens.Add(typeNode);
-                            }
-                        }
-                    }
-                }
-                IsDirty = false;
-            }
-        }
     }
 }

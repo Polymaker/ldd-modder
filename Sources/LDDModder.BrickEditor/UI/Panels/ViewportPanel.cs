@@ -455,29 +455,9 @@ namespace LDDModder.BrickEditor.UI.Panels
         protected override void OnProjectLoaded(PartProject project)
         {
             base.OnProjectLoaded(project);
-            foreach (var surface in project.Surfaces)
-            {
-                var surfModel = new GLSurfaceModel(surface);
-                surfModel.Material = new MaterialInfo
-                {
-                    Diffuse = new Vector4(0.6f, 0.6f, 0.6f, 1f),
-                    Specular = new Vector3(1f),
-                    Shininess = 6f
-                };
 
-                if (surface.SurfaceID > 0)
-                {
-                    var matColor = Color4.FromHsv(new Vector4((surface.SurfaceID * 0.2f) % 1f, 0.9f, 0.8f, 1f));
-                    surfModel.Material = new MaterialInfo
-                    {
-                        Diffuse = new Vector4(matColor.R, matColor.G, matColor.B, matColor.A),
-                        Specular = new Vector3(1f),
-                        Shininess = 6f
-                    };
-                }
-                surfModel.RebuildPartModels();
-                SurfaceModels.Add(surfModel);
-            }
+            foreach (var surface in project.Surfaces)
+                AddPartSurfaceModel(surface);
 
             if (project.Bounding != null)
             {
@@ -495,6 +475,30 @@ namespace LDDModder.BrickEditor.UI.Panels
                 Camera.Position = new Vector3(5);
                 CameraManipulator.Gimbal = Vector3.Zero;
             }
+        }
+
+        private void AddPartSurfaceModel(PartSurface surface)
+        {
+            var surfModel = new GLSurfaceModel(surface);
+            surfModel.Material = new MaterialInfo
+            {
+                Diffuse = new Vector4(0.6f, 0.6f, 0.6f, 1f),
+                Specular = new Vector3(1f),
+                Shininess = 6f
+            };
+
+            if (surface.SurfaceID > 0)
+            {
+                var matColor = Color4.FromHsv(new Vector4((surface.SurfaceID * 0.2f) % 1f, 0.9f, 0.8f, 1f));
+                surfModel.Material = new MaterialInfo
+                {
+                    Diffuse = new Vector4(matColor.R, matColor.G, matColor.B, matColor.A),
+                    Specular = new Vector3(1f),
+                    Shininess = 6f
+                };
+            }
+            surfModel.RebuildPartModels();
+            SurfaceModels.Add(surfModel);
         }
 
         protected override void OnProjectClosed()
@@ -526,6 +530,47 @@ namespace LDDModder.BrickEditor.UI.Panels
             ModelShader.Dispose();
             WireframeShader.Dispose();
             CheckboardTexture.Dispose();
+        }
+
+        protected override void OnProjectElementsChanged(CollectionChangedEventArgs e)
+        {
+            base.OnProjectElementsChanged(e);
+
+            if (e.ElementType == typeof(PartSurface))
+            {
+                if (e.Action == CollectionChangeAction.Add)
+                {
+                    foreach (PartSurface surface in e.AddedElements)
+                        AddPartSurfaceModel(surface);
+                }
+                else
+                {
+                    foreach (PartSurface surface in e.RemovedElements)
+                    {
+                        var model = SurfaceModels.FirstOrDefault(x => x.Surface == surface);
+                        if (model != null)
+                        {
+                            SurfaceModels.Remove(model);
+                            model.Dispose();
+                        }
+                    }
+                }
+            }
+            else if (e.ElementType == typeof(ModelMeshReference))
+            {
+                var addedMeshes = e.AddedElements.OfType<ModelMeshReference>();
+                var changedSurfaces = addedMeshes.Select(x => (x.Parent as SurfaceComponent)?.Surface).Distinct().ToList();
+
+                foreach(var surface in changedSurfaces)
+                {
+                    var model = SurfaceModels.FirstOrDefault(x => x.Surface == surface);
+                    if (model != null)
+                        model.RebuildPartModels();
+                    else
+                        AddPartSurfaceModel(surface);
+                }
+
+            }
         }
     }
 }

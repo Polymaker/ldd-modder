@@ -13,6 +13,7 @@ namespace LDDModder.Modding.Editing
     {
         PartProject Project { get; }
         PartElement Owner { get; }
+        Type ElementType { get; }
 
         int Count { get; }
         IEnumerable<PartElement> GetElements();
@@ -27,6 +28,8 @@ namespace LDDModder.Modding.Editing
         private PartProject _Project;
 
         public PartProject Project => _Project ?? Owner?.Project;
+
+        public Type ElementType => typeof(T);
 
         private List<T> InnerList;
 

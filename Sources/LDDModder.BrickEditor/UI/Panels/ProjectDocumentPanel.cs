@@ -52,7 +52,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void ProjectManager_ProjectElementsChanged(object sender, CollectionChangedEventArgs e)
         {
-            
+            OnProjectElementsChanged(e);
         }
 
         protected virtual void OnProjectElementsChanged(CollectionChangedEventArgs e)

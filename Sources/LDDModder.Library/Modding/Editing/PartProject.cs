@@ -568,7 +568,16 @@ namespace LDDModder.Modding.Editing
 
         public ModelMesh AddMeshGeometry(MeshGeometry geometry)
         {
-            return AddMeshGeometry(geometry, null, null);
+            ModelMesh modelMesh = AddMeshGeometry(geometry, null, null);
+
+            if (IsLoadedFromDisk)
+            {
+                modelMesh.WorkingFilePath = Path.Combine(ProjectWorkingDir, modelMesh.FileName);
+                Directory.CreateDirectory(Path.GetDirectoryName(modelMesh.WorkingFilePath));
+                modelMesh.Geometry.Save(modelMesh.WorkingFilePath);
+            }
+
+            return modelMesh;
         }
 
         private ModelMesh AddMeshGeometry(MeshGeometry geometry, string id, string name = null)
@@ -579,10 +588,16 @@ namespace LDDModder.Modding.Editing
                 Name = name
             };
             Meshes.Add(modelMesh);
+            
             if (string.IsNullOrEmpty(id))
                 GenerateElementID(modelMesh);
             if (string.IsNullOrEmpty(name))
                 GenerateElementName(modelMesh);
+
+            modelMesh.UpdateMeshProperties();
+            modelMesh.FileName = $"Meshes\\{modelMesh.Name}.geom";
+            
+
             return modelMesh;
         }
 
@@ -642,15 +657,15 @@ namespace LDDModder.Modding.Editing
 
         private void GenerateElementsNames()
         {
-            GenerateElementNames(GetAllElements<PartSurface>());
-            GenerateElementNames(GetAllElements<ModelMesh>());
-            GenerateElementNames(GetAllElements<ModelMeshReference>());
-            GenerateElementNames(GetAllElements<SurfaceComponent>());
-            GenerateElementNames(GetAllElements<PartConnection>());
-            GenerateElementNames(GetAllElements<PartCollision>());
+            GenerateAllElementNames(GetAllElements<PartSurface>());
+            GenerateAllElementNames(GetAllElements<ModelMesh>());
+            GenerateAllElementNames(GetAllElements<ModelMeshReference>());
+            GenerateAllElementNames(GetAllElements<SurfaceComponent>());
+            GenerateAllElementNames(GetAllElements<PartConnection>());
+            GenerateAllElementNames(GetAllElements<PartCollision>());
         }
 
-        private void GenerateElementNames(IEnumerable<PartElement> allElements)
+        private void GenerateAllElementNames(IEnumerable<PartElement> allElements)
         {
             foreach (var elemByType in allElements.GroupBy(x => x.GetFullElementType()))
             {
@@ -664,6 +679,33 @@ namespace LDDModder.Modding.Editing
 
                     while (string.IsNullOrEmpty(elementName) ||
                                 elemList.Any(x => x.Name == elementName && x != element))
+                    {
+                        elementName = GenerateElementName(element, nameCount++);
+                        if (elementName == null)
+                            break;
+                    }
+
+                    element.Name = elementName;
+                }
+            }
+        }
+
+        private void GenerateElementsNames(IEnumerable<PartElement> elements)
+        {
+            foreach (var elemByType in elements.GroupBy(x => x.GetFullElementType()))
+            {
+                var allElems = GetAllElements().Where(x => x.GetFullElementType() == elemByType.Key);
+
+                var elemList = elemByType.ToList();
+                int nameCount = allElems.Count(x => !string.IsNullOrEmpty(x.Name));
+
+                foreach (var element in elemList)
+                {
+
+                    string elementName = element.Name;
+
+                    while (string.IsNullOrEmpty(elementName) ||
+                                allElems.Any(x => x.Name == elementName && x != element))
                     {
                         elementName = GenerateElementName(element, nameCount++);
                         if (elementName == null)
@@ -858,7 +900,7 @@ namespace LDDModder.Modding.Editing
                         .Concat(ccea.AddedElements.SelectMany(x => x.GetChildsHierarchy()));
 
                     GenerateElementIDs(elementHierarchy);
-                    GenerateElementNames(elementHierarchy);
+                    GenerateElementsNames(elementHierarchy);
                 }
             }
 

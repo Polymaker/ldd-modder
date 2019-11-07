@@ -36,6 +36,8 @@ namespace LDDModder.BrickEditor.EditModels
 
         public event EventHandler<CollectionChangedEventArgs> ProjectElementsChanged;
 
+        private bool PreventProjectChange;
+
         public ProjectManager()
         {
             
@@ -45,7 +47,9 @@ namespace LDDModder.BrickEditor.EditModels
         {
             if (CurrentProject != project)
             {
+                PreventProjectChange = true;
                 CloseCurrentProject();
+                PreventProjectChange = false;
 
                 CurrentProject = project;
 
@@ -63,6 +67,9 @@ namespace LDDModder.BrickEditor.EditModels
                 DettachPartProject(CurrentProject);
                 ProjectClosed?.Invoke(this, EventArgs.Empty);
                 CurrentProject = null;
+
+                if (!PreventProjectChange)
+                    ProjectChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -75,20 +82,8 @@ namespace LDDModder.BrickEditor.EditModels
         {
             project.ElementCollectionChanged -= Project_ElementCollectionChanged;
         }
-
-        private void Project_ElementCollectionChanged(object sender, CollectionChangedEventArgs e)
+                private void Project_ElementCollectionChanged(object sender, CollectionChangedEventArgs e)
         {
-            //if (e.Action == System.ComponentModel.CollectionChangeAction.Add)
-            //{
-            //    foreach (var elem in e.AddedElements)
-            //        OnProjectElementAdded(elem);
-            //}
-            //else if (e.Action == System.ComponentModel.CollectionChangeAction.Remove)
-            //{
-            //    foreach (var elem in e.RemovedElements)
-            //        OnProjectElementRemoved(elem);
-            //}
-
             ProjectElementsChanged?.Invoke(this, e);
         }
     }

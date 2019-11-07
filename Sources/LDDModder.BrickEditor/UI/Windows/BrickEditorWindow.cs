@@ -258,16 +258,28 @@ namespace LDDModder.BrickEditor.UI.Windows
                 ofd.Filter = "Mesh files (*.dae, *.obj, *.stl)|*.dae;*.obj;*.stl|Wavefront (*.obj)|*.obj|Collada (*.dae)|*.dae|STL (*.stl)|*.stl|All files (*.*)|*.*";
                 if (ofd.ShowDialog() == DialogResult.OK)
                 {
+                    Assimp.Scene fileScene = null;
                     try
                     {
-                        var scene = AssimpContext.ImportFile(ofd.FileName, 
+                        fileScene = AssimpContext.ImportFile(ofd.FileName, 
                             Assimp.PostProcessSteps.Triangulate | 
                             Assimp.PostProcessSteps.GenerateNormals);
-                        ImportAssimpModel(scene, preferredSurface);
+                        
                     }
                     catch 
                     {
                         MessageBox.Show("Invalid file.");
+                    }
+                    if (fileScene != null)
+                    {
+                        try
+                        {
+                            ImportAssimpModel(fileScene, preferredSurface);
+                        }
+                        catch (Exception ex)
+                        {
+
+                        }
                     }
                 }
             }
@@ -284,6 +296,29 @@ namespace LDDModder.BrickEditor.UI.Windows
                 if (imd.ShowDialog() == DialogResult.OK)
                 {
 
+                    foreach (var model in imd.ModelsToImport)
+                    {
+                        var geom = Meshes.MeshConverter.AssimpToLdd(imd.SceneToImport, model.Mesh);
+                        var surface = CurrentProject.Surfaces.FirstOrDefault(x => x.SurfaceID == model.SurfaceID);
+
+                        if (surface == null)
+                        {
+                            surface = new PartSurface(model.SurfaceID, CurrentProject.Surfaces.Max(x=>x.SubMaterialIndex) + 1);
+                            CurrentProject.Surfaces.Add(surface);
+                        }
+
+                        var partModel = surface.Components.FirstOrDefault(x=>x.ComponentType == ModelComponentType.Part);
+
+                        if (partModel == null)
+                        {
+                            partModel = new PartModel();
+                            surface.Components.Add(partModel);
+                        }
+
+                        var modelMesh = CurrentProject.AddMeshGeometry(geom);
+                        partModel.Meshes.Add(new ModelMeshReference(modelMesh));
+
+                    }
                 }
             }
         }

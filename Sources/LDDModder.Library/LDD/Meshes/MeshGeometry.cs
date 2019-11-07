@@ -77,6 +77,7 @@ namespace LDDModder.LDD.Meshes
             var distinctVert = new Dictionary<int, List<Vertex>>();
             var vertIndices = new Dictionary<Vertex, List<VertexIndex>>();
 
+
             foreach (var idx in Indices)
             {
                 if (!vertIndices.ContainsKey(idx.Vertex))
@@ -88,13 +89,16 @@ namespace LDDModder.LDD.Meshes
             {
                 var v = _Vertices[i];
                 var vh = v.GetHash();
-                if (!distinctVert.ContainsKey(vh))
-                    distinctVert.Add(vh, new List<Vertex>());
-                distinctVert[vh].Add(v);
+
+                if (distinctVert.TryGetValue(vh, out List<Vertex> verts))
+                    verts.Add(v);
+                else
+                    distinctVert.Add(vh, new List<Vertex>() { v });
             }
 
             bool hasUnusedVerts = false;
             var simplifiedVerts = new List<Vertex>();
+
             foreach (var kv in distinctVert)
             {
                 var vList = kv.Value;
@@ -124,7 +128,7 @@ namespace LDDModder.LDD.Meshes
             _Vertices.AddRange(simplifiedVerts);
 
             for (int i = 0; i < Triangles.Count; i++)
-                Triangles[i].RebuildEdges();
+                Triangles[i].RebuildIndices();
         }
 
         public void CalculateAverageNormals()

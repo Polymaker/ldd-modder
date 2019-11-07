@@ -81,7 +81,8 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         private void ValidateSelection()
         {
-
+            ModelsToImport.RemoveAll(x => !x.Selected);
+            DialogResult = DialogResult.OK;
         }
 
         #region Classes

@@ -25,6 +25,8 @@ namespace LDDModder.Modding.Editing
             Meshes = new ElementCollection<ModelMeshReference>(this);
         }
 
+        public PartSurface Surface => Parent as PartSurface;
+
         internal virtual void LoadCullingInformation(MeshCulling culling)
         {
             

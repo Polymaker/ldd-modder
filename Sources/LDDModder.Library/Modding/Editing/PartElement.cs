@@ -35,7 +35,11 @@ namespace LDDModder.Modding.Editing
 
         internal List<PartElement> OwnedElements { get; }
 
+        public IList<PartElement> ChildElements => OwnedElements.AsReadOnly();
+
         internal List<IElementCollection> Collections { get; }
+
+        public IList<IElementCollection> ElementCollections => Collections.AsReadOnly();
 
         internal bool IsLoading => Project?.IsLoading ?? false;
 
@@ -117,7 +121,7 @@ namespace LDDModder.Modding.Editing
 
 
 
-        protected virtual IEnumerable<PartElement> GetAllChilds()
+        public virtual IEnumerable<PartElement> GetAllChilds()
         {
             return OwnedElements.Concat(Collections.SelectMany(x => x.GetElements()));
         }
