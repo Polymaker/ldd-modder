@@ -129,14 +129,16 @@
     <Compile Include="Native\Shell32.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rendering\BBox.cs" />
     <Compile Include="Rendering\Camera.cs" />
     <Compile Include="Rendering\CameraManipulator.cs" />
     <Compile Include="Rendering\CameraMovement.cs" />
-    <Compile Include="Rendering\Models\LddMeshModel.cs" />
+    <Compile Include="Rendering\Models\SurfaceModelMesh.cs" />
     <Compile Include="Rendering\Models\GLSurfaceModel.cs" />
     <Compile Include="Rendering\Models\IndexedVertexBuffer.cs" />
     <Compile Include="Rendering\Models\GLModel.cs" />
     <Compile Include="Rendering\InputManager.cs" />
+    <Compile Include="Rendering\Ray.cs" />
     <Compile Include="Rendering\Shaders\ModelShaderProgram.cs" />
     <Compile Include="Rendering\Shaders\GridShaderProgram.cs" />
     <Compile Include="Rendering\Shaders\LightInfo.cs" />
@@ -190,6 +192,7 @@
     <Compile Include="UI\Panels\ValidationPanel.Designer.cs">
       <DependentUpon>ValidationPanel.cs</DependentUpon>
     </Compile>
+    <Compile Include="Rendering\CameraAlignment.cs" />
     <Compile Include="UI\Panels\ViewportPanel.cs">
       <SubType>Form</SubType>
     </Compile>

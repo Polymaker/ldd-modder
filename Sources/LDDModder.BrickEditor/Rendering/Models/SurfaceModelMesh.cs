@@ -8,16 +8,25 @@ using System.Threading.Tasks;
 
 namespace LDDModder.BrickEditor.Rendering
 {
-    public class LddMeshModel
+    public class SurfaceModelMesh
     {
         public int StartIndex { get; set; }
         public int StartVertex { get; set; }
         public int IndexCount { get; set; }
         public bool Visible { get; set; }
         public Matrix4 Transform { get; set; }
+
+        public SurfaceComponent Component { get; set; }
+
+        public PartSurface Surface => Component?.Surface;
+
         public ModelMeshReference Mesh { get; set; }
 
-        public LddMeshModel(ModelMeshReference mesh, int startIndex, int indexCount)
+        public bool IsSelected { get; set; }
+
+        public BBox BoundingBox { get; set; }
+
+        public SurfaceModelMesh(ModelMeshReference mesh, int startIndex, int indexCount)
         {
             Mesh = mesh;
             StartIndex = startIndex;
@@ -25,7 +34,7 @@ namespace LDDModder.BrickEditor.Rendering
             Transform = Matrix4.Identity;
         }
 
-        public LddMeshModel(ModelMeshReference mesh, int startIndex, int indexCount, int startVertex)
+        public SurfaceModelMesh(ModelMeshReference mesh, int startIndex, int indexCount, int startVertex)
         {
             Mesh = mesh;
             StartIndex = startIndex;
@@ -33,5 +42,6 @@ namespace LDDModder.BrickEditor.Rendering
             StartVertex = startVertex;
             Transform = Matrix4.Identity;
         }
+
     }
 }

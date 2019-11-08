@@ -886,6 +886,29 @@ namespace LDDModder.Modding.Editing
             return modelMesh.Geometry;
         }
 
+        public BoundingBox CalculateBoundingBox()
+        {
+            var meshRefs = Surfaces.SelectMany(x => x.GetAllMeshReferences()).ToList();
+            //var meshes = meshRefs.Select(x => x.ModelMesh).Distinct().ToList();
+            var unloadedMeshes = meshRefs.Select(x => x.ModelMesh).Where(x => !x.IsModelLoaded).Distinct().ToList();
+
+            try
+            {
+                var vertices = new List<Vertex>();
+                foreach(var meshRef in meshRefs)
+                {
+                    var meshGeom = meshRef.GetGeometry();
+                    if (meshGeom != null)
+                        vertices.AddRange(meshGeom.Vertices);
+                }
+                return BoundingBox.FromVertices(vertices);
+            }
+            finally
+            {
+                unloadedMeshes.ForEach(x => x.UnloadModel());
+            }
+        }
+
         #endregion
 
         #region Change tracking 

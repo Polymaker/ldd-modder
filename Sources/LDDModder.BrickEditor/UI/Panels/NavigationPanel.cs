@@ -27,6 +27,8 @@ namespace LDDModder.BrickEditor.UI.Panels
             Bones
         }
 
+        private bool InternalSelection;
+
         //private class ViewModeModel
         //{
         //    public NavigationViewMode Value { get; set; }
@@ -150,6 +152,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             }
         }
 
+
         private void FilterNavigation()
         {
 
@@ -164,5 +167,22 @@ namespace LDDModder.BrickEditor.UI.Panels
             RebuildNavigation(false);
         }
 
+        private void treeListView1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!InternalSelection && treeListView1.SelectedObject is ProjectElementNode elementNode)
+            {
+
+                ProjectManager.SelectedElement = elementNode.Element;
+            }
+        }
+
+        protected override void OnSelectedElementChanged(PartElement selectedElement)
+        {
+            base.OnSelectedElementChanged(selectedElement);
+            InternalSelection = true;
+
+            
+            InternalSelection = false;
+        }
     }
 }

@@ -57,6 +57,9 @@ namespace LDDModder.BrickEditor.UI.Windows
         {
             foreach (var mesh in SceneToImport.Meshes)
             {
+                if (!mesh.Faces.Any(x => x.IndexCount == 3))
+                    continue;
+
                 var modelInfo = new ImportModelInfo()
                 {
                     Selected = true,

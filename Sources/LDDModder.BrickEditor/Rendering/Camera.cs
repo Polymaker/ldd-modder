@@ -202,12 +202,85 @@ namespace LDDModder.BrickEditor.Rendering
             return _ProjectionMatrix;
         }
 
+        /// <summary>
+        /// Transforms position from screen space into viewport space.
+        /// </summary>
+        /// <param name="screenPoint"></param>
+        /// <returns></returns>
+        public Vector2 ScreenPointToViewport(Vector2 screenPoint)
+        {
+            return new Vector2(
+                (screenPoint.X - Viewport.X) / Viewport.Width, //left to right = 0 to 1
+                (Viewport.Height - (screenPoint.Y - Viewport.Y)) / Viewport.Height);//up to bottom = 0 to 1 (invert Y)
+        }
+
+        #region Viewport 
+
+        public static Vector4 ViewportPointToFrustum(Vector3 viewportPoint)
+        {
+            return new Vector4(
+                viewportPoint.X * 2f - 1f,
+                viewportPoint.Y * 2f - 1f,
+                viewportPoint.Z * 2f - 1f,
+                1f);
+        }
+
+        private static Vector3 FrustumPointToWorld(Vector4 frustumPoint, Matrix4 cameraMatrix)
+        {
+            var result = Vector4.Transform(frustumPoint, cameraMatrix);
+            if (result.W == 0)
+                throw new Exception("Problems");
+            return result.Xyz / result.W;
+        }
+
+        public Ray RaycastFromScreen(Vector2 point)
+        {
+            var viewPoint = ScreenPointToViewport(point);
+
+            var cameraMatrix = Matrix4.Mult(GetViewMatrix(), GetProjectionMatrix()).Inverted();
+
+            try
+            {
+                var nearFrustumPoint = ViewportPointToFrustum(new Vector3(viewPoint.X, viewPoint.Y, 0));
+                var farFrustumPoint = ViewportPointToFrustum(new Vector3(viewPoint.X, viewPoint.Y, 1));
+
+                var origin = FrustumPointToWorld(nearFrustumPoint, cameraMatrix);
+                var target = FrustumPointToWorld(farFrustumPoint, cameraMatrix);
+
+                return Ray.FromPoints(origin, target);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        #endregion
+
+
         public float GetViewHeight(float distFromCamera)
         {
             if (IsPerspective)
                 return (float)Math.Tan(FieldOfView / 2f) * distFromCamera * 2f;
 
             return OrthographicSize;
+        }
+
+        public float GetDistanceForSize(Vector2 size)
+        {
+            float value1 = (size.Y / 2f) / (float)Math.Tan(FieldOfView / 2f);
+            float value2 = (size.X / AspectRatio / 2f) / (float)Math.Tan(FieldOfView / 2f);
+            return Math.Max(value1, value2);
+        }
+
+        public void FitOrtographicSize(Vector2 size)
+        {
+            float width = size.Y * AspectRatio;
+            if (width < size.X)
+                OrthographicSize = size.X / AspectRatio;
+            else
+                OrthographicSize = size.Y;
+
         }
 
         public Vector2 GetViewSize(float distFromCamera)

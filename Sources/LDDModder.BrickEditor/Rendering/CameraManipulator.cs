@@ -48,6 +48,13 @@ namespace LDDModder.BrickEditor.Rendering
             _Gimbal = gimbalPosition;
         }
 
+        public void Initialize(Vector3 cameraPosition, Vector3 gimbalPosition, Vector3 upVector)
+        {
+            Camera.Position = cameraPosition;
+            Camera.LookAt(gimbalPosition, upVector);
+            _Gimbal = gimbalPosition;
+        }
+
         public void HandleCamera(InputManager input)
         {
             if (!input.ContainsMouse)
@@ -110,7 +117,8 @@ namespace LDDModder.BrickEditor.Rendering
             }
             else
             {
-
+                float zoomAmount = mouseDelta.Y * (Camera.OrthographicSize / 2f);
+                Camera.OrthographicSize += zoomAmount;
             }
         }
 

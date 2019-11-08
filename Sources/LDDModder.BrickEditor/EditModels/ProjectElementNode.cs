@@ -37,7 +37,6 @@ namespace LDDModder.BrickEditor.EditModels
                 foreach (var elemGroup in surface.Components.GroupBy(x => x.ComponentType))
                     AddGrouppedChildrens(elemGroup, elemGroup.Key.ToString(), 5, 50);
             }
-            
             else
             {
 

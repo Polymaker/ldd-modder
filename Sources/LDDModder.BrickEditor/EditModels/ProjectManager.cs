@@ -13,22 +13,22 @@ namespace LDDModder.BrickEditor.EditModels
 
         public bool IsProjectOpen => CurrentProject != null;
 
-        private PartElement _SelectedComponent;
+        private PartElement _SelectedElement;
 
-        public PartElement SelectedComponent
+        public PartElement SelectedElement
         {
-            get => _SelectedComponent;
+            get => _SelectedElement;
             set
             {
-                if (value != _SelectedComponent)
+                if (value != _SelectedElement)
                 {
-                    _SelectedComponent = value;
-                    SelectedComponentChanged?.Invoke(this, EventArgs.Empty);
+                    _SelectedElement = value;
+                    SelectedElementChanged?.Invoke(this, EventArgs.Empty);
                 }
             }
         }
 
-        public event EventHandler SelectedComponentChanged;
+        public event EventHandler SelectedElementChanged;
 
         public event EventHandler ProjectClosed;
 
@@ -84,6 +84,7 @@ namespace LDDModder.BrickEditor.EditModels
         }
                 private void Project_ElementCollectionChanged(object sender, CollectionChangedEventArgs e)
         {
+            _SelectedElement = null;
             ProjectElementsChanged?.Invoke(this, e);
         }
     }

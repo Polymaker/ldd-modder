@@ -26,6 +26,8 @@ namespace LDDModder.BrickEditor.Rendering
 
         public bool BufferInitialized { get; protected set; }
 
+        public BBox BoundingBox { get; set; }
+
         public GLModel()
         {
             Transform = Matrix4.Identity;
@@ -59,6 +61,7 @@ namespace LDDModder.BrickEditor.Rendering
                 CreateBuffers();
             VertexBuffer.Clear(BufferTarget.ArrayBuffer);
             VertexBuffer.Init(BufferTarget.ArrayBuffer, vertices.ToArray());
+            BoundingBox = BBox.Calculate(vertices.Select(x => x.Position));
         }
 
         public void SetVertices(IEnumerable<VertVN> vertices)
@@ -72,6 +75,7 @@ namespace LDDModder.BrickEditor.Rendering
                 Normal = x.Normal,
                 TexCoord = Vector2.Zero
             }).ToArray());
+            BoundingBox = BBox.Calculate(vertices.Select(x => x.Position));
         }
 
         public void LoadFromLDD(LDD.Meshes.MeshGeometry geometry)

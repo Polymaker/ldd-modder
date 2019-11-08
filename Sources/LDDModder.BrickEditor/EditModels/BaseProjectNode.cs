@@ -71,6 +71,7 @@ namespace LDDModder.BrickEditor.EditModels
                 {
                     int remaining = totalElements;
                     int currIdx = 0;
+
                     while (remaining > 0)
                     {
                         int takeCount = Math.Min(remaining, maxGroupSize);
