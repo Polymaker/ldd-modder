@@ -183,6 +183,11 @@ namespace LDDModder.Simple3D
             return new Vector3(vec.X * number, vec.Y * number, vec.Z * number);
         }
 
+        public static Vector3 operator *(float number, Vector3 vec)
+        {
+            return new Vector3(vec.X * number, vec.Y * number, vec.Z * number);
+        }
+
         public static Vector3 operator /(Vector3 vec, float number)
         {
             return new Vector3(vec.X / number, vec.Y / number, vec.Z / number);

@@ -171,7 +171,6 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             if (!InternalSelection && treeListView1.SelectedObject is ProjectElementNode elementNode)
             {
-
                 ProjectManager.SelectedElement = elementNode.Element;
             }
         }

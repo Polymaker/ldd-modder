@@ -38,6 +38,7 @@
             this.ExportDaeRadio = new System.Windows.Forms.RadioButton();
             this.ExportObjRadio = new System.Windows.Forms.RadioButton();
             this.label2 = new System.Windows.Forms.Label();
+            this.ExportFbxRadio = new System.Windows.Forms.RadioButton();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -68,6 +69,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.ExportFbxRadio);
             this.groupBox1.Controls.Add(this.IncludeBonesCheckBox);
             this.groupBox1.Controls.Add(this.ExportPartButton);
             this.groupBox1.Controls.Add(this.PartIdTextBox);
@@ -118,7 +120,6 @@
             this.ExportDaeRadio.Name = "ExportDaeRadio";
             this.ExportDaeRadio.Size = new System.Drawing.Size(87, 17);
             this.ExportDaeRadio.TabIndex = 2;
-            this.ExportDaeRadio.TabStop = true;
             this.ExportDaeRadio.Text = "Collada (dae)";
             this.ExportDaeRadio.UseVisualStyleBackColor = true;
             // 
@@ -140,6 +141,16 @@
             this.label2.Size = new System.Drawing.Size(40, 13);
             this.label2.TabIndex = 0;
             this.label2.Text = "Part ID";
+            // 
+            // ExportFbxRadio
+            // 
+            this.ExportFbxRadio.AutoSize = true;
+            this.ExportFbxRadio.Location = new System.Drawing.Point(9, 146);
+            this.ExportFbxRadio.Name = "ExportFbxRadio";
+            this.ExportFbxRadio.Size = new System.Drawing.Size(93, 17);
+            this.ExportFbxRadio.TabIndex = 6;
+            this.ExportFbxRadio.Text = "Autodesk (fbx)";
+            this.ExportFbxRadio.UseVisualStyleBackColor = true;
             // 
             // ModelImportExportWindow
             // 
@@ -171,5 +182,6 @@
         private System.Windows.Forms.RadioButton ExportObjRadio;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.CheckBox IncludeBonesCheckBox;
+        private System.Windows.Forms.RadioButton ExportFbxRadio;
     }
 }

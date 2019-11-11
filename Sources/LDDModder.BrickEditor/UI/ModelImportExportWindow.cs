@@ -1,4 +1,5 @@
 ﻿using Assimp;
+using LDDModder.BrickEditor.Meshes;
 using LDDModder.LDD.Parts;
 using LDDModder.Utilities;
 using System;
@@ -16,6 +17,8 @@ namespace LDDModder.BrickEditor.UI
 {
     public partial class ModelImportExportWindow : Form
     {
+        private AssimpContext AssimpContext { get; set; }
+
         public ModelImportExportWindow()
         {
             InitializeComponent();
@@ -25,12 +28,36 @@ namespace LDDModder.BrickEditor.UI
         {
             base.OnLoad(e);
 
+            AssimpContext = new AssimpContext();
+
             if (LDD.LDDEnvironment.Current == null)
                 LDD.LDDEnvironment.Initialize();
 
             if (LDD.LDDEnvironment.Current != null)
             {
                 LddPathTextBox.Text = LDD.LDDEnvironment.Current.ApplicationDataPath;
+            }
+        }
+
+        private void GetFileFormatExtID(out string formatID, out string fileExt)
+        {
+            formatID = null;
+            fileExt = null;
+
+            if (ExportObjRadio.Checked)
+            {
+                formatID = "obj";
+                fileExt = "obj";
+            }
+            else if (ExportDaeRadio.Checked)
+            {
+                formatID = "collada";
+                fileExt = "dae";
+            }
+            else if (ExportFbxRadio.Checked)
+            {
+                formatID = "collada";
+                fileExt = "dae";
             }
         }
 
@@ -44,15 +71,15 @@ namespace LDDModder.BrickEditor.UI
             try
             {
                 var part = PartWrapper.LoadPart(LDD.LDDEnvironment.Current, partID);
-                string formatID = ExportDaeRadio.Checked ? "collada" : "obj";
-                string formatExt = ExportDaeRadio.Checked ? "dae" : "obj";
+                GetFileFormatExtID(out string formatID, out string formatExt);
 
                 using (var sfd = new SaveFileDialog())
                 {
                     sfd.FileName = $"{part.PartID}.{formatExt}";
                     if (sfd.ShowDialog() == DialogResult.OK)
                     {
-                        LddMeshExporter.ExportLddPart(part, sfd.FileName, formatID, IncludeBonesCheckBox.Checked);
+                        var assimpScene = MeshConverter.LddPartToAssimp(part);
+                        AssimpContext.ExportFile(assimpScene, sfd.FileName, formatID);
                         MessageBox.Show("Part exported");
 
                     }

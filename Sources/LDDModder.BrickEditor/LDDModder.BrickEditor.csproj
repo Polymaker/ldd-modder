@@ -133,6 +133,8 @@
     <Compile Include="Rendering\Camera.cs" />
     <Compile Include="Rendering\CameraManipulator.cs" />
     <Compile Include="Rendering\CameraMovement.cs" />
+    <Compile Include="Rendering\ModelDisplayMode.cs" />
+    <Compile Include="Rendering\Models\CollisionModel.cs" />
     <Compile Include="Rendering\Models\SurfaceModelMesh.cs" />
     <Compile Include="Rendering\Models\GLSurfaceModel.cs" />
     <Compile Include="Rendering\Models\IndexedVertexBuffer.cs" />
@@ -156,6 +158,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>PartResources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Resources\ResourceHelper.cs" />
     <Compile Include="Settings\AppSettings.cs" />
     <Compile Include="Settings\RecentFileInfo.cs" />
     <Compile Include="Settings\SettingsManager.cs" />
@@ -296,6 +299,8 @@
     <EmbeddedResource Include="Resources\Shaders\GridShader.glsl" />
     <EmbeddedResource Include="Resources\Shaders\ModelShader.glsl" />
     <EmbeddedResource Include="Resources\Shaders\WireframeShader.glsl" />
+    <EmbeddedResource Include="Resources\Models\Cube.obj" />
+    <EmbeddedResource Include="Resources\Models\Sphere.obj" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -312,9 +317,7 @@
     </Content>
     <EmbeddedResource Include="Resources\Textures\DefaultTexture.png" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Resources\Models\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\AssimpNet.4.1.0\build\AssimpNet.targets" Condition="Exists('..\packages\AssimpNet.4.1.0\build\AssimpNet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

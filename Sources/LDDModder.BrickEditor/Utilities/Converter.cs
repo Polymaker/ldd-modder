@@ -82,11 +82,47 @@ namespace LDDModder.BrickEditor
 
         #region To Assimp
 
+        public static Assimp.Vector2D ToAssimp(this OpenTK.Vector2 vector)
+        {
+            return new Assimp.Vector2D(vector.X, vector.Y);
+        }
+
+        public static Assimp.Vector2D ToAssimp(this Simple3D.Vector2 vector)
+        {
+            return new Assimp.Vector2D(vector.X, vector.Y);
+        }
+
+        public static Assimp.Vector3D ToAssimp(this OpenTK.Vector3 vector)
+        {
+            return new Assimp.Vector3D(vector.X, vector.Y, vector.Z);
+        }
+
+        public static Assimp.Vector3D ToAssimp(this Simple3D.Vector3 vector)
+        {
+            return new Assimp.Vector3D(vector.X, vector.Y, vector.Z);
+        }
+
         public static Assimp.Matrix3x3 ToAssimp(this OpenTK.Matrix3 matrix)
         {
             var m = matrix;
             m.Transpose();
             return new Assimp.Matrix3x3(m.M11, m.M12, m.M13, m.M21, m.M22, m.M23, m.M31, m.M32, m.M33);
+        }
+
+        public static Assimp.Matrix4x4 ToAssimp(this Simple3D.Matrix4 matrix)
+        {
+            return matrix.ToGL().ToAssimp();
+        }
+
+        public static Assimp.Matrix4x4 ToAssimp(this OpenTK.Matrix4 matrix)
+        {
+            var m = matrix;
+            m.Transpose();
+            return new Assimp.Matrix4x4(
+                m.M11, m.M12, m.M13, m.M14, 
+                m.M21, m.M22, m.M23, m.M24, 
+                m.M31, m.M32, m.M33, m.M34,
+                m.M41, m.M42, m.M43, m.M44);
         }
 
         public static Assimp.Matrix3x3 ToAssimp(this Simple3D.Matrix3 matrix)

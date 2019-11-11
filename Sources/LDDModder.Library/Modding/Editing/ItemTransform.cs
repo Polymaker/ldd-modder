@@ -36,7 +36,8 @@ namespace LDDModder.Modding.Editing
         {
             var rot = matrix.ExtractRotation();
 
-            return new ItemTransform(matrix.ExtractTranslation(), Quaternion.ToEuler(rot) * (180f / (float)Math.PI));
+            return new ItemTransform(matrix.ExtractTranslation(), 
+                Quaternion.ToEuler(rot) * (180f / (float)Math.PI));
         }
 
         public static ItemTransform FromLDD(LDD.Primitives.Transform transform)

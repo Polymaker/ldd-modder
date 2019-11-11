@@ -38,18 +38,21 @@
             this.TexturedColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.FlexibleColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.SurfaceColumn = new System.Windows.Forms.DataGridViewComboBoxColumn();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ModelsGridView)).BeginInit();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
             // 
-            this.tableLayoutPanel1.ColumnCount = 2;
+            this.tableLayoutPanel1.ColumnCount = 3;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel1.Controls.Add(this.button1, 1, 2);
-            this.tableLayoutPanel1.Controls.Add(this.ImportButton, 0, 2);
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel1.Controls.Add(this.button1, 2, 2);
             this.tableLayoutPanel1.Controls.Add(this.ModelsGridView, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.ImportButton, 1, 2);
+            this.tableLayoutPanel1.Controls.Add(this.progressBar1, 0, 2);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -57,13 +60,13 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(554, 204);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(557, 234);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // button1
             // 
             this.button1.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button1.Location = new System.Drawing.Point(476, 178);
+            this.button1.Location = new System.Drawing.Point(479, 208);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 0;
@@ -73,7 +76,7 @@
             // ImportButton
             // 
             this.ImportButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.ImportButton.Location = new System.Drawing.Point(395, 178);
+            this.ImportButton.Location = new System.Drawing.Point(398, 208);
             this.ImportButton.Name = "ImportButton";
             this.ImportButton.Size = new System.Drawing.Size(75, 23);
             this.ImportButton.TabIndex = 1;
@@ -94,12 +97,12 @@
             this.TexturedColumn,
             this.FlexibleColumn,
             this.SurfaceColumn});
-            this.tableLayoutPanel1.SetColumnSpan(this.ModelsGridView, 2);
+            this.tableLayoutPanel1.SetColumnSpan(this.ModelsGridView, 3);
             this.ModelsGridView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ModelsGridView.Location = new System.Drawing.Point(3, 33);
             this.ModelsGridView.Name = "ModelsGridView";
             this.ModelsGridView.RowHeadersVisible = false;
-            this.ModelsGridView.Size = new System.Drawing.Size(548, 139);
+            this.ModelsGridView.Size = new System.Drawing.Size(551, 169);
             this.ModelsGridView.TabIndex = 2;
             this.ModelsGridView.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.ModelsGridView_CellEnter);
             this.ModelsGridView.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.ModelsGridView_CellValueChanged);
@@ -148,11 +151,19 @@
             this.SurfaceColumn.Name = "SurfaceColumn";
             this.SurfaceColumn.Width = 150;
             // 
+            // progressBar1
+            // 
+            this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.progressBar1.Location = new System.Drawing.Point(3, 209);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(389, 21);
+            this.progressBar1.TabIndex = 3;
+            // 
             // ImportModelsDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(554, 204);
+            this.ClientSize = new System.Drawing.Size(557, 234);
             this.Controls.Add(this.tableLayoutPanel1);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -176,5 +187,6 @@
         private System.Windows.Forms.DataGridViewCheckBoxColumn TexturedColumn;
         private System.Windows.Forms.DataGridViewCheckBoxColumn FlexibleColumn;
         private System.Windows.Forms.DataGridViewComboBoxColumn SurfaceColumn;
+        private System.Windows.Forms.ProgressBar progressBar1;
     }
 }

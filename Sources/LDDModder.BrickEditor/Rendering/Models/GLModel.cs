@@ -95,6 +95,38 @@ namespace LDDModder.BrickEditor.Rendering
             SetIndices(triIndices);
         }
 
+        public static GLModel CreatFromAssimp(Assimp.Mesh mesh)
+        {
+            var model = new GLModel();
+            model.LoadFromAssimp(mesh);
+            return model;
+        }
+
+        public void LoadFromAssimp(Assimp.Mesh mesh)
+        {
+            var verts = new List<VertVNT>();
+            bool isTextured = mesh.HasTextureCoords(0);
+
+            for (int i = 0; i < mesh.VertexCount; i++)
+            {
+                verts.Add(new VertVNT()
+                {
+                    Position = mesh.Vertices[i].ToGL(),
+                    Normal = mesh.Normals[i].ToGL(),
+                    TexCoord = isTextured ? mesh.TextureCoordinateChannels[0][i].ToGL().Xy : Vector2.Zero
+                });
+            }
+
+            SetVertices(verts);
+
+            var indices = new List<int>();
+            int indexPerFace = mesh.Faces[0].IndexCount;
+            foreach (var face in mesh.Faces)
+                if (face.IndexCount == indexPerFace)
+                    indices.AddRange(face.Indices);
+            SetIndices(indices);
+        }
+
         public void BindToShader(ModelShaderProgram modelShader)
         {
             modelShader.Use();
@@ -132,10 +164,10 @@ namespace LDDModder.BrickEditor.Rendering
         }
 
 
-        public void Draw()
+        public void Draw(PrimitiveType drawMode = PrimitiveType.Triangles)
         {
             Vao.Bind();
-            Vao.DrawElements(PrimitiveType.Triangles, IndexBuffer.ElementCount);
+            Vao.DrawElements(drawMode, IndexBuffer.ElementCount);
         }
 
         public void Dispose()

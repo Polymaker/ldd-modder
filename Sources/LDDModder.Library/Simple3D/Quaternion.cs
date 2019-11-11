@@ -8,6 +8,8 @@ namespace LDDModder.Simple3D
 {
     public struct Quaternion
     {
+        public static readonly Quaternion Identity = new Quaternion(0f, 0f, 0f, 1f);
+
         public float X { get; set; }
         public float Y { get; set; }
         public float Z { get; set; }
@@ -61,6 +63,13 @@ namespace LDDModder.Simple3D
             W *= scale;
         }
 
+        public static Quaternion operator *(Quaternion left, Quaternion right)
+        {
+            float w = left.W * right.W - Vector3.Dot(left.Xyz, right.Xyz);
+            var xyz = right.W * left.Xyz + left.W * right.Xyz + Vector3.Cross(left.Xyz, right.Xyz);
+            return new Quaternion(xyz.X, xyz.Y, xyz.Z, w);
+        }
+
         public void ToAxisAngle(out Vector3 axis, out float angle)
         {
             Quaternion q = this;
@@ -80,37 +89,35 @@ namespace LDDModder.Simple3D
             }
         }
 
+        public static Quaternion FromAxisAngle(Vector3 axis, float angle)
+        {
+            if (axis.Length == 0f)
+            {
+                return Identity;
+            }
+            Quaternion result = Identity;
+            angle *= 0.5f;
+            axis.Normalize();
+            result.Xyz = axis * (float)Math.Sin((double)angle);
+            result.W = (float)Math.Cos((double)angle);
+            result.Normalize();
+            return result;
+        }
+
         public static Quaternion FromEuler(Vector3 angles)
         {
-            return new Quaternion(angles.X, angles.Y, angles.Z);
+            var roll = FromAxisAngle(Vector3.UnitZ * -1f, angles.Z);
+            var pitch = FromAxisAngle(Vector3.UnitX * -1f, angles.X);
+            var yaw = FromAxisAngle(Vector3.UnitY * -1f, angles.Y);
+            return yaw * pitch * roll;
+            //return new Quaternion(angles.X, angles.Y, angles.Z);
         }
 
         public static Vector3 ToEuler(Quaternion quat)
         {
-
             Vector3 pitchYawRoll = new Vector3();
 
-            // roll (x-axis rotation)
-            float sinr_cosp = +2.0f * (quat.W * quat.X + quat.Y * quat.Z);
-            float cosr_cosp = +1.0f - 2.0f * (quat.X * quat.X + quat.Y * quat.Y);
-            pitchYawRoll.Z = (float)Math.Atan2(sinr_cosp, cosr_cosp);
-
-            // pitch (y-axis rotation)
-            float sinp = 2.0f * (quat.W * quat.Y - quat.Z * quat.X);
-            
-            if (Math.Abs(sinp) >= 1)
-                pitchYawRoll.X = (float)((Math.PI / 2f) * Math.Sign(sinp)); // use 90 degrees if out of range
-            else
-                pitchYawRoll.X = (float)Math.Asin(sinp);
-
-            // yaw (z-axis rotation)
-            float siny_cosp = 2.0f * (quat.W * quat.Z + quat.X * quat.Y);
-            float cosy_cosp = 1.0f - 2.0f * (quat.Y * quat.Y + quat.Z * quat.Z);
-            pitchYawRoll.Y = (float)Math.Atan2(siny_cosp, cosy_cosp);
-
-            return pitchYawRoll;
-            /*
-            //don't ask me why, but after a million tries, doing this will return the result I expected, and can convert back and forth from euler to quat
+            //don't ask me why, but after a million tries, doing this will return the result I expect, and can convert back and forth from euler to quat
             quat = new Quaternion(-quat.Z, -quat.Y, -quat.X, quat.W);
 
             float sqw = quat.W * quat.W;
@@ -143,7 +150,7 @@ namespace LDDModder.Simple3D
             pitchYawRoll.X = (float)Math.Asin(2 * test / unit);                                             // Pitch
             pitchYawRoll.Z = (float)Math.Atan2(2 * quat.X * quat.W - 2 * quat.Y * quat.Z, -sqx + sqy - sqz + sqw);      // Roll
 
-            return pitchYawRoll;*/
+            return pitchYawRoll;
         }
 
         public override string ToString()

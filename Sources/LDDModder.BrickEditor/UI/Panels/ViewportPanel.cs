@@ -19,6 +19,7 @@ using System.Diagnostics;
 using OpenTK.Input;
 using ObjectTK.Textures;
 using LDDModder.BrickEditor.EditModels;
+using LDDModder.BrickEditor.Resources;
 
 namespace LDDModder.BrickEditor.UI.Panels
 {
@@ -31,6 +32,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         private bool IsClosing;
         private bool RenderLoopEnabled;
         private GLControl glControl1;
+
         private Texture2D CheckboardTexture;
 
         private GridShaderProgram GridShader;
@@ -38,6 +40,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         private WireframeShaderProgram WireframeShader;
         
         private List<GLSurfaceModel> SurfaceModels;
+        private List<CollisionModel> CollisionModels;
 
         private Thread UpdateThread;
         private bool ExitUpdateLoop;
@@ -46,9 +49,14 @@ namespace LDDModder.BrickEditor.UI.Panels
         private CameraManipulator CameraManipulator;
         private Camera Camera => CameraManipulator.Camera;
 
+        private GLModel BoxCollisionModel;
+        private GLModel SphereCollisionModel;
+
         public ViewportPanel()
         {
             InitializeComponent();
+            SurfaceModels = new List<GLSurfaceModel>();
+            CollisionModels = new List<CollisionModel>();
         }
 
         public ViewportPanel(ProjectManager projectManager) : base(projectManager)
@@ -60,6 +68,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             DockAreas = DockAreas.Document;
 
             SurfaceModels = new List<GLSurfaceModel>();
+            CollisionModels = new List<CollisionModel>();
             CreateGLControl();
         }
 
@@ -101,20 +110,44 @@ namespace LDDModder.BrickEditor.UI.Panels
             CameraManipulator.Initialize(new Vector3(5), Vector3.Zero);
             //CameraManipulator.RotationButton = MouseButton.Right;
 
-            
+            InitializeTextures();
 
+            InitializeShaders();
 
+            InitializeModels();
 
+            //InitializeFonts();
+        }
+
+        private void InitializeTextures()
+        {
             var checkboardImage = (Bitmap)Bitmap.FromStream(System.Reflection.Assembly.GetExecutingAssembly()
                 .GetManifestResourceStream("LDDModder.BrickEditor.Resources.Textures.DefaultTexture.png"));
             BitmapTexture.CreateCompatible(checkboardImage, out CheckboardTexture, 1);
             CheckboardTexture.LoadBitmap(checkboardImage, 0);
             CheckboardTexture.SetFilter(TextureMinFilter.Linear, TextureMagFilter.Linear);
             CheckboardTexture.SetWrapMode(TextureWrapMode.Repeat);
+        }
 
+        private void InitializeModels()
+        {
+            var modelScene = ResourceHelper.GetResourceModel("Models.Cube.obj", "obj");
+            BoxCollisionModel = GLModel.CreatFromAssimp(modelScene.Meshes[0]);
+            BoxCollisionModel.Material = new MaterialInfo
+            {
+                Diffuse = new Vector4(1f, 0.1f, 0.1f, 1f),
+                Specular = new Vector3(1f),
+                Shininess = 2f
+            };
 
-            InitializeShaders();
-
+            modelScene = ResourceHelper.GetResourceModel("Models.Sphere.obj", "obj");
+            SphereCollisionModel = GLModel.CreatFromAssimp(modelScene.Meshes[0]);
+            SphereCollisionModel.Material = new MaterialInfo
+            {
+                Diffuse = new Vector4(1f, 0.1f, 0.1f, 1f),
+                Specular = new Vector3(1f),
+                Shininess = 2f
+            };
         }
 
         private void InitializeFonts()
@@ -269,15 +302,55 @@ namespace LDDModder.BrickEditor.UI.Panels
             WireframeShader.ViewMatrix.Set(viewMatrix);
             WireframeShader.Projection.Set(projection);
             
-
             ModelShader.Use();
             ModelShader.ViewMatrix.Set(viewMatrix);
             ModelShader.Projection.Set(projection);
             ModelShader.ViewPosition.Set(Camera.Position);
 
+
+            DrawCollisions();
+
+            DrawConnections();
+
+            DrawPartModels();
+
+            DrawGrid();
+
+            GL.UseProgram(0);
+
+            //GL.MatrixMode(MatrixMode.Projection);
+            //GL.LoadMatrix(ref projection);
+            //GL.MatrixMode(MatrixMode.Modelview);
+            //GL.LoadMatrix(ref viewMatrix);
+        }
+
+        private void DrawConnections()
+        {
+
+        }
+
+        private void DrawCollisions()
+        {
+            if (CollisionModels.Any())
+            {
+                ModelShader.Texture.Set(TextureUnit.Texture0);
+                ModelShader.UseTexture.Set(false);
+
+                foreach (var colModel in CollisionModels)
+                {
+                    colModel.BaseModel.BindToShader(ModelShader);
+                    ModelShader.ModelMatrix.Set(colModel.Transform);
+                    colModel.Draw();
+                    colModel.BaseModel.UnbindShader(ModelShader);
+                }
+            }
+        }
+
+        private void DrawPartModels()
+        {
             CheckboardTexture.Bind(TextureUnit.Texture4);
             ModelShader.Texture.BindTexture(TextureUnit.Texture4, CheckboardTexture);
-            
+
             foreach (var surfaceModel in SurfaceModels)
             {
                 var visibleMeshes = surfaceModel.MeshModels.Where(x => x.Visible).ToList();
@@ -288,7 +361,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                     surfaceModel.DrawModelMesh(mesh, WireframeShader);
 
                 surfaceModel.UnbindShader(WireframeShader);
-                
+
                 surfaceModel.BindToShader(ModelShader);
                 ModelShader.UseTexture.Set(surfaceModel.Surface.SurfaceID > 0);
                 foreach (var mesh in visibleMeshes)
@@ -297,21 +370,13 @@ namespace LDDModder.BrickEditor.UI.Panels
             }
 
             CheckboardTexture.Bind(TextureUnit.Texture0);
-            DrawGrid(viewMatrix, projection);
-
-            GL.UseProgram(0);
-
-            //GL.MatrixMode(MatrixMode.Projection);
-            //GL.LoadMatrix(ref projection);
-            //GL.MatrixMode(MatrixMode.Modelview);
-            //GL.LoadMatrix(ref viewMatrix);
         }
 
-        private void DrawGrid(Matrix4 viewMatrix, Matrix4 projection)
+        private void DrawGrid()
         {
             GridShader.Use();
-            GridShader.MVMatrix.Set(viewMatrix);
-            GridShader.PMatrix.Set(projection);
+            GridShader.MVMatrix.Set(Camera.GetViewMatrix());
+            GridShader.PMatrix.Set(Camera.GetProjectionMatrix());
 
             GL.Begin(PrimitiveType.Quads);
             GL.Vertex3(-40, 0, -40);
@@ -474,12 +539,18 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             SurfaceModels.ForEach(x => x.Dispose());
             SurfaceModels.Clear();
+            CollisionModels.Clear();
             GC.Collect();
         }
 
         private void DisposeGLResources()
         {
             UnloadModels();
+
+            if (BoxCollisionModel != null)
+                BoxCollisionModel.Dispose();
+            if (SphereCollisionModel != null)
+                SphereCollisionModel.Dispose();
             GridShader.Dispose();
             ModelShader.Dispose();
             WireframeShader.Dispose();
@@ -492,8 +563,8 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             base.OnProjectLoaded(project);
 
-            foreach (var surface in project.Surfaces)
-                AddPartSurfaceModel(surface);
+            RebuildSurfaceModels();
+            RebuildCollisionModels();
 
             SetupDefaultCamera();
         }
@@ -503,14 +574,14 @@ namespace LDDModder.BrickEditor.UI.Panels
             var surfModel = new GLSurfaceModel(surface);
             surfModel.Material = new MaterialInfo
             {
-                Diffuse = new Vector4(0.6f, 0.6f, 0.6f, 1f),
+                Diffuse = new Vector4(0.6f, 0.6f, 0.6f, 0.7f),
                 Specular = new Vector3(1f),
                 Shininess = 6f
             };
 
             if (surface.SurfaceID > 0)
             {
-                var matColor = Color4.FromHsv(new Vector4((surface.SurfaceID * 0.2f) % 1f, 0.9f, 0.8f, 1f));
+                var matColor = Color4.FromHsv(new Vector4((surface.SurfaceID * 0.2f) % 1f, 0.9f, 0.8f, 0.8f));
                 surfModel.Material = new MaterialInfo
                 {
                     Diffuse = new Vector4(matColor.R, matColor.G, matColor.B, matColor.A),
@@ -522,7 +593,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             surfModel.SelectedMaterial = new MaterialInfo
             {
-                Diffuse = new Vector4(surfModel.Material.Diffuse.Xyz * 1.2f, 1f),
+                Diffuse = new Vector4(surfModel.Material.Diffuse.Xyz * 1.2f, surfModel.Material.Diffuse.W),
                 Specular = surfModel.Material.Specular,
                 Shininess = surfModel.Material.Shininess
             };
@@ -576,6 +647,10 @@ namespace LDDModder.BrickEditor.UI.Panels
 
                 UpdateSurfacesModels(changedSurfaces);
             }
+            else if (e.ElementType == typeof(PartCollision))
+            {
+                RebuildCollisionModels();
+            }
         }
 
         private void UpdateSurfacesModels(IEnumerable<PartSurface> changedSurfaces)
@@ -595,6 +670,38 @@ namespace LDDModder.BrickEditor.UI.Panels
                         model.RebuildPartModels();
                     else
                         AddPartSurfaceModel(surface);
+                }
+            }
+        }
+
+        private void RebuildSurfaceModels()
+        {
+            if (SurfaceModels.Any())
+            {
+                SurfaceModels.ForEach(x => x.Dispose());
+                SurfaceModels.Clear();
+            }
+
+            if (CurrentProject != null)
+            {
+                foreach (var surface in CurrentProject.Surfaces)
+                    AddPartSurfaceModel(surface);
+            }
+        }
+
+        private void RebuildCollisionModels()
+        {
+            CollisionModels.Clear();
+            if (CurrentProject != null)
+            {
+                foreach (var col in CurrentProject.Collisions)
+                {
+                    if (col is PartBoxCollision boxCollision)
+                        CollisionModels.Add(new CollisionModel(col, BoxCollisionModel,
+                            col.Transform.ToMatrix().ToGL(), boxCollision.Size.ToGL() * 2f));
+                    else if (col is PartSphereCollision sphereCollision)
+                        CollisionModels.Add(new CollisionModel(col, SphereCollisionModel,
+                            col.Transform.ToMatrix().ToGL(), new Vector3(sphereCollision.Radius * 2f)));
                 }
             }
         }
