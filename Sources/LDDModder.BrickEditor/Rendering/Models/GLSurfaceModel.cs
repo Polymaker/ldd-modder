@@ -103,6 +103,7 @@ namespace LDDModder.BrickEditor.Rendering
 
             var model = new SurfaceModelMesh(modelMesh, indexOffset, geometry.IndexCount, vertexOffset);
             model.BoundingBox = new BBox(minPos, maxPos);
+            model.SurfaceModel = this;
             MeshModels.Add(model);
             return model;
         }
@@ -176,6 +177,29 @@ namespace LDDModder.BrickEditor.Rendering
             DrawMesh(model);
         }
 
+
+        public bool RayIntersects(Ray ray, SurfaceModelMesh model, out float distance)
+        {
+            distance = float.NaN;
+            var vertices = VertexBuffer.VertexBuffer.Content;
+            var indices = VertexBuffer.IndexBuffer.Content;
+
+            for (int i = 0; i < model.IndexCount; i += 3)
+            {
+                var idx1 = indices[i + model.StartIndex];
+                var idx2 = indices[i + 1 + model.StartIndex];
+                var idx3 = indices[i + 2 + model.StartIndex];
+
+                var v1 = vertices[idx1 + model.StartVertex];
+                var v2= vertices[idx2 + model.StartVertex];
+                var v3 = vertices[idx3 + model.StartVertex];
+
+                if (Ray.IntersectsTriangle(ray, v1.Position, v2.Position, v3.Position, out float hitDist))
+                    distance = float.IsNaN(distance) ? hitDist : Math.Min(hitDist, distance);
+            }
+
+            return !float.IsNaN(distance);
+        }
 
         public void Dispose()
         {

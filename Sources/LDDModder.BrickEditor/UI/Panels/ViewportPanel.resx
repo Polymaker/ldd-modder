@@ -122,55 +122,55 @@
   </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="Camera_ResetCameraMenu.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>145, 22</value>
   </data>
   <data name="Camera_ResetCameraMenu.Text" xml:space="preserve">
     <value>Reset</value>
   </data>
   <data name="AlignToMenu_Top.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>114, 22</value>
   </data>
   <data name="AlignToMenu_Top.Text" xml:space="preserve">
     <value>Top</value>
   </data>
   <data name="AlignToMenu_Bottom.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>114, 22</value>
   </data>
   <data name="AlignToMenu_Bottom.Text" xml:space="preserve">
     <value>Bottom</value>
   </data>
   <data name="AlignToMenu_Front.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>114, 22</value>
   </data>
   <data name="AlignToMenu_Front.Text" xml:space="preserve">
     <value>Front</value>
   </data>
   <data name="AlignToMenu_Back.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>114, 22</value>
   </data>
   <data name="AlignToMenu_Back.Text" xml:space="preserve">
     <value>Back</value>
   </data>
   <data name="AlignToMenu_Left.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>114, 22</value>
   </data>
   <data name="AlignToMenu_Left.Text" xml:space="preserve">
     <value>Left</value>
   </data>
   <data name="AlignToMenu_Right.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>114, 22</value>
   </data>
   <data name="AlignToMenu_Right.Text" xml:space="preserve">
     <value>Right</value>
   </data>
   <data name="CameraMenu_AlignTo.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>145, 22</value>
   </data>
   <data name="CameraMenu_AlignTo.Text" xml:space="preserve">
     <value>Align to</value>
   </data>
   <data name="CameraMenu_Orthographic.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>145, 22</value>
   </data>
   <data name="CameraMenu_Orthographic.Text" xml:space="preserve">
     <value>Orthographic</value>
@@ -198,6 +198,36 @@
   </data>
   <data name="CameraMenuDropDown.Text" xml:space="preserve">
     <value>Camera</value>
+  </data>
+  <data name="deleteToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>180, 22</value>
+  </data>
+  <data name="deleteToolStripMenuItem.Text" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="toolStripDropDownButton1.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAIDSURBVDhPpZLrS5NhGMb3j4SWh0oRQVExD4gonkDpg4hG
+        YKxG6WBogkMZKgPNCEVJFBGdGETEvgwyO9DJE5syZw3PIlPEE9pgBCLZ5XvdMB8Ew8gXbl54nuf63dd9
+        0OGSnwCahxbPRNPAPMw9Xpg6ZmF46kZZ0xSKzJPIrhpDWsVnpBhGkKx3nAX8Pv7z1zg8OoY/cITdn4fw
+        bf/C0kYAN3Ma/w3gWfZL5kzTKBxjWyK2DftwI9tyMYCZKXbNHaD91bLYJrDXsYbrWfUKwJrPE9M2M1Oc
+        VzOOpHI7Jr376Hi9ogHqFIANO0/MmmmbmSmm9a8ze+I4MrNWAdjtoJgWcx+PSzg166yZZ8xM8XvXDix9
+        c4jIqFYAjoriBV9AhEPv1mH/sonogha0afbZMMZz+yreTGyhpusHwtNNCsA5U1zS4BLxzJIfg299qO32
+        Ir7UJtZfftyATqeT+8o2D8JSjQrAJblrncYL7ZJ2+bfaFnC/1S1NjL3diRat7qrO7wLRP3HjWsojBeCo
+        mDEo5mNjuweFGvjWg2EBhCbpkW78htSHHwRyNdmgAFzPEee2iFkzayy2OLXzT4gr6UdUnlXrullsxxQ+
+        kx0g8BTA3aZlButjSTyjODq/WcQcW/B/Je4OQhLvKQDnzN1mp0nnkvAhR8VuMzNrpm1mpjgkoVwB/v8D
+        TgDQASA1MVpwzwAAAABJRU5ErkJggg==
+</value>
+  </data>
+  <data name="toolStripDropDownButton1.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
+    <value>Magenta</value>
+  </data>
+  <data name="toolStripDropDownButton1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>60, 22</value>
+  </data>
+  <data name="toolStripDropDownButton1.Text" xml:space="preserve">
+    <value>Meshes</value>
   </data>
   <data name="toolStrip1.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 0</value>
@@ -257,18 +287,6 @@
   <data name="&gt;&gt;CameraMenu_AlignTo.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;AlignToMenu_Front.Name" xml:space="preserve">
-    <value>AlignToMenu_Front</value>
-  </data>
-  <data name="&gt;&gt;AlignToMenu_Front.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;AlignToMenu_Back.Name" xml:space="preserve">
-    <value>AlignToMenu_Back</value>
-  </data>
-  <data name="&gt;&gt;AlignToMenu_Back.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="&gt;&gt;AlignToMenu_Top.Name" xml:space="preserve">
     <value>AlignToMenu_Top</value>
   </data>
@@ -279,6 +297,18 @@
     <value>AlignToMenu_Bottom</value>
   </data>
   <data name="&gt;&gt;AlignToMenu_Bottom.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;AlignToMenu_Front.Name" xml:space="preserve">
+    <value>AlignToMenu_Front</value>
+  </data>
+  <data name="&gt;&gt;AlignToMenu_Front.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;AlignToMenu_Back.Name" xml:space="preserve">
+    <value>AlignToMenu_Back</value>
+  </data>
+  <data name="&gt;&gt;AlignToMenu_Back.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;AlignToMenu_Left.Name" xml:space="preserve">
@@ -304,6 +334,18 @@
   </data>
   <data name="&gt;&gt;visualStudioToolStripExtender1.Type" xml:space="preserve">
     <value>WeifenLuo.WinFormsUI.Docking.VisualStudioToolStripExtender, WeifenLuo.WinFormsUI.Docking, Version=3.0.6.0, Culture=neutral, PublicKeyToken=5cded1a1a0a7b481</value>
+  </data>
+  <data name="&gt;&gt;toolStripDropDownButton1.Name" xml:space="preserve">
+    <value>toolStripDropDownButton1</value>
+  </data>
+  <data name="&gt;&gt;toolStripDropDownButton1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripDropDownButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;deleteToolStripMenuItem.Name" xml:space="preserve">
+    <value>deleteToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;deleteToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>ViewportPanel</value>

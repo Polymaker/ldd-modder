@@ -36,7 +36,7 @@ namespace LDDModder.BrickEditor.Rendering
             return new Ray(origin, dir);
         }
 
-        public static bool RayIntersectsBox(Ray ray, BBox box, out float distance, bool forwardOnly = true)
+        public static bool IntersectsBox(Ray ray, BBox box, out float distance, bool forwardOnly = true)
         {
             var rayInv = Vector3.Divide(Vector3.One, ray.Direction);
             var t1 = Vector3.Multiply(box.Min - ray.Origin, rayInv);
@@ -51,6 +51,43 @@ namespace LDDModder.BrickEditor.Rendering
 
             if (max >= min)
                 distance = forwardOnly & min < 0 ? max : min;
+
+            return !float.IsNaN(distance);
+        }
+
+        public static bool IntersectsTriangle(Ray ray, Vector3 v1, Vector3 v2, Vector3 v3, out float distance)
+        {
+            distance = float.NaN;
+
+            var edge1 = Vector3.Subtract(v2, v1);
+            var edge2 = Vector3.Subtract(v3, v1);
+            var vP = Vector3.Cross(ray.Direction, edge2);
+            //if determinant is near zero, ray lies in plane of triangle or ray is parallel to plane of triangle
+            var determinant = Vector3.Dot(edge1, vP);
+
+            if (determinant > -float.Epsilon && determinant < float.Epsilon)
+                return false;
+
+            var inverseDet = 1f / determinant;
+
+            //calculate distance from V1 to ray origin
+            var vT = Vector3.Subtract(ray.Origin, v1);
+
+            var u = Vector3.Dot(vT, vP) * inverseDet;
+            //The intersection lies outside of the triangle
+            if (u < 0f || u > 1f)
+                return false;
+
+            var vQ = Vector3.Cross(vT, edge1);
+
+            var v = Vector3.Dot(ray.Direction, vQ) * inverseDet;
+            //The intersection lies outside of the triangle
+            if (v < 0f || u + v > 1f)
+                return false;
+
+            var t = Vector3.Dot(edge2, vQ) * inverseDet;
+            if (t > float.Epsilon)
+                distance = t;
 
             return !float.IsNaN(distance);
         }

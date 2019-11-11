@@ -372,6 +372,14 @@ namespace LDDModder.LDD.Meshes
                         .ToList();
                     
                     RemoveNonIntersectingEdges(triangle, coordPairIdx, vertEdges);
+
+                    int edgeCount = vertEdges.Count;
+
+                    if (edgeCount == 1)
+                    {
+
+                    }
+
                     RemoveDuplicateEdgeLines(vertEdges);
 
                     if (vertEdges.Count > 2)
@@ -387,6 +395,11 @@ namespace LDDModder.LDD.Meshes
                         //var edgeCoords = GetTexCoordsForEdge(triangle, vertEdges[0].Edge);
                         var edgeCoords = ProjectTriangle(triangle, idxPos, vertEdges[0].Edge);
                         vertEdges[0].UsedInUnion = true;
+
+                        if (edgeCoords.Max(p=>p.Y) < 0.013f)
+                        {
+
+                        }
 
                         for (int j = 0; j < 3; j++)
                         {
@@ -417,6 +430,11 @@ namespace LDDModder.LDD.Meshes
                         //var edgeCoords2 = GetTexCoordsForEdge(triangle, vertEdges[1].Edge);
                         var edgeCoords1 = ProjectTriangle(triangle, idxPos, vertEdges[0].Edge);
                         var edgeCoords2 = ProjectTriangle(triangle, idxPos, vertEdges[1].Edge);
+
+                        //if (edgeCoords1.Max(p => p.Y) < 0.013f || edgeCoords2.Max(p => p.Y) < 0.013f)
+                        //{
+
+                        //}
 
                         for (int j = 0; j < 3; j++)
                         {

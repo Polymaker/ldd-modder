@@ -160,8 +160,6 @@ namespace LDDModder.Modding.Editing
         public void Clear()
         {
             var oldItems = this.ToArray();
-            foreach (var itm in oldItems)
-                UpdateItemParent(itm, false);
 
             InnerList.Clear();
 
@@ -169,6 +167,9 @@ namespace LDDModder.Modding.Editing
             {
                 OnCollectionChanged(new CollectionChangedEventArgs(this,
                     System.ComponentModel.CollectionChangeAction.Remove, oldItems));
+
+                foreach (var itm in oldItems)
+                    UpdateItemParent(itm, false);
             }
         }
 

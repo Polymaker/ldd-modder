@@ -141,6 +141,7 @@ namespace LDDModder.BrickEditor.UI.Windows
                 try
                 {
                     var lddPart = CurrentProject.GenerateLddPart();
+                    lddPart.ComputeEdgeOutlines();
                     lddPart.Primitive.Save($"{lddPart.PartID}.xml");
                     foreach (var surface in lddPart.Surfaces)
                         surface.Mesh.Save(surface.GetFileName());

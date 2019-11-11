@@ -566,15 +566,36 @@ namespace LDDModder.BrickEditor.UI.Panels
                 var addedMeshes = e.AddedElements.OfType<ModelMeshReference>();
                 var changedSurfaces = addedMeshes.Select(x => (x.Parent as SurfaceComponent)?.Surface).Distinct().ToList();
 
-                foreach (var surface in changedSurfaces)
+                UpdateSurfacesModels(changedSurfaces);
+
+            }
+            else if (e.ElementType == typeof(SurfaceComponent))
+            {
+                var changedSurfaces = e.AddedElements.OfType<SurfaceComponent>()
+                    .Concat(e.RemovedElements.OfType<SurfaceComponent>()).Select(x=>x.Surface).Distinct();
+
+                UpdateSurfacesModels(changedSurfaces);
+            }
+        }
+
+        private void UpdateSurfacesModels(IEnumerable<PartSurface> changedSurfaces)
+        {
+            foreach (var surface in changedSurfaces)
+            {
+                bool isRemoved = !CurrentProject.Surfaces.Contains(surface);
+                var model = SurfaceModels.FirstOrDefault(x => x.Surface == surface);
+                if (isRemoved && model != null)
                 {
-                    var model = SurfaceModels.FirstOrDefault(x => x.Surface == surface);
+                    SurfaceModels.Remove(model);
+                    model.Dispose();
+                }
+                else if (!isRemoved)
+                {
                     if (model != null)
                         model.RebuildPartModels();
                     else
                         AddPartSurfaceModel(surface);
                 }
-
             }
         }
 
@@ -618,8 +639,8 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             foreach (var model in modelMeshes)
             {
-                minPos = Vector3.ComponentMin(minPos, model.BoundingBox.Max);
-                maxPos = Vector3.ComponentMax(maxPos, model.BoundingBox.Min);
+                minPos = Vector3.ComponentMin(minPos, model.BoundingBox.Min);
+                maxPos = Vector3.ComponentMax(maxPos, model.BoundingBox.Max);
             }
 
             return new BBox(minPos, maxPos);
@@ -690,12 +711,13 @@ namespace LDDModder.BrickEditor.UI.Panels
                         break;
                 }
 
-                if (Ray.RayIntersectsBox(viewRay, bounding, out float distance))
-                {
+                if (Ray.IntersectsBox(viewRay, bounding, out float distance))
                     distanceToTarget = Math.Abs(distance);
-                }
+
             }
-            Camera.FitOrtographicSize(targetSize);
+
+            Camera.FitOrtographicSize(targetSize + new Vector2(0.1f));
+
             distanceToTarget += Camera.GetDistanceForSize(targetSize);
             var cameraPos = bounding.Center + cameraDirection * distanceToTarget;
             CameraManipulator.Initialize(cameraPos, bounding.Center, upVector);
@@ -706,19 +728,23 @@ namespace LDDModder.BrickEditor.UI.Panels
             if (e.Button == MouseButtons.Left)
             {
                 var ray = Camera.RaycastFromScreen(new Vector2(e.X, e.Y));
-                var meshes = GetVisibleModels();
+                var visibleModels = GetVisibleModels();
 
-                if (ray != null && meshes.Any())
+                if (ray != null && visibleModels.Any())
                 {
-                    var hits = new List<Tuple<SurfaceModelMesh, float>>();
-                    foreach(var model in meshes)
+                    var intersectingModels = new List<Tuple<SurfaceModelMesh, float>>();
+
+                    foreach (var model in visibleModels)
                     {
-                        if (Ray.RayIntersectsBox(ray, model.BoundingBox, out float dist))
-                            hits.Add(new Tuple<SurfaceModelMesh, float>(model, dist));
+                        if (Ray.IntersectsBox(ray, model.BoundingBox, out float boxDist))
+                        {
+                            if (model.SurfaceModel.RayIntersects(ray, model, out float triangleDist))
+                                intersectingModels.Add(new Tuple<SurfaceModelMesh, float>(model, triangleDist));
+                        }
                     }
 
-                    var closest = hits.OrderBy(x => x.Item2).FirstOrDefault();
-                    ProjectManager.SelectedElement = closest != null ? closest.Item1.Mesh : null;
+                    var closest = intersectingModels.OrderBy(x => x.Item2).FirstOrDefault();
+                    ProjectManager.SelectedElement = closest?.Item1.Mesh;
                 }
             }
         }
@@ -740,6 +766,17 @@ namespace LDDModder.BrickEditor.UI.Panels
         private void CameraMenu_Orthographic_CheckedChanged(object sender, EventArgs e)
         {
             Camera.IsPerspective = !CameraMenu_Orthographic.Checked;
+        }
+
+        private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var components = CurrentProject.Surfaces[0].Components.ToList();
+            var meshes = components.SelectMany(x => x.GetAllModelMeshes()).Distinct().ToList();
+            meshes.ForEach(x => CurrentProject.Meshes.Remove(x));
+            CurrentProject.Surfaces[0].Components.Clear();
+
+            var noRefMeshes = CurrentProject.Meshes.Where(x => !x.GetReferences().Any()).ToList();
+            noRefMeshes.ForEach(x => CurrentProject.Meshes.Remove(x));
         }
     }
 }
