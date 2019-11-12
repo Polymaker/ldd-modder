@@ -18,6 +18,8 @@ namespace LDDModder.BrickEditor.Rendering
 
         public List<SurfaceModelMesh> MeshModels { get; private set; }
 
+        public bool IsTransparent => Material.Diffuse.W < 1f;
+
         public MaterialInfo Material { get; set; }
 
         public MaterialInfo SelectedMaterial { get; set; }
@@ -102,7 +104,7 @@ namespace LDDModder.BrickEditor.Rendering
             }
 
             var model = new SurfaceModelMesh(modelMesh, indexOffset, geometry.IndexCount, vertexOffset);
-            model.BoundingBox = new BBox(minPos, maxPos);
+            model.BoundingBox = BBox.FromMinMax(minPos, maxPos); //new BBox { Extents = (maxPos - minPos) * 0.5f };
             model.SurfaceModel = this;
             MeshModels.Add(model);
             return model;
@@ -164,7 +166,7 @@ namespace LDDModder.BrickEditor.Rendering
 
         public void DrawModelMesh(SurfaceModelMesh model, WireframeShaderProgram wireframeShader)
         {
-            wireframeShader.Color.Set(model.IsSelected ? new Vector4(1f, 0.75f, 0.2f, 1f) : new Vector4(0f, 0f, 0f, 1f));
+            wireframeShader.Color.Set(model.IsSelected ? new Vector4(1f, 1f, 1f, 1f) : new Vector4(0f, 0f, 0f, 1f));
             wireframeShader.ModelMatrix.Set(model.Transform);
             DrawMesh(model);
         }
@@ -175,6 +177,34 @@ namespace LDDModder.BrickEditor.Rendering
             modelShader.ModelMatrix.Set(model.Transform);
             //modelShader.Color.Set(model.IsSelected ? new Vector4(1f) : new Vector4(0f, 0f, 0f, 1f));
             DrawMesh(model);
+        }
+
+        public void Draw(WireframeShaderProgram wireframeShader, ModelShaderProgram modelShader)
+        {
+            var visibleMeshes = MeshModels.Where(x => x.Visible).ToList();
+            BindToShader(wireframeShader);
+
+            foreach (var mesh in visibleMeshes)
+                DrawModelMesh(mesh, wireframeShader);
+
+            UnbindShader(wireframeShader);
+
+            BindToShader(modelShader);
+            modelShader.UseTexture.Set(Surface.SurfaceID > 0);
+            foreach (var mesh in visibleMeshes)
+                DrawModelMesh(mesh, modelShader);
+            UnbindShader(modelShader);
+        }
+
+        public void Draw(ModelShaderProgram modelShader)
+        {
+            var visibleMeshes = MeshModels.Where(x => x.Visible).ToList();
+
+            BindToShader(modelShader);
+            modelShader.UseTexture.Set(Surface.SurfaceID > 0);
+            foreach (var mesh in visibleMeshes)
+                DrawModelMesh(mesh, modelShader);
+            UnbindShader(modelShader);
         }
 
 

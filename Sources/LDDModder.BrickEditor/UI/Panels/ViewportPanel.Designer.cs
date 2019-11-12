@@ -41,9 +41,13 @@
             this.AlignToMenu_Left = new System.Windows.Forms.ToolStripMenuItem();
             this.AlignToMenu_Right = new System.Windows.Forms.ToolStripMenuItem();
             this.CameraMenu_Orthographic = new System.Windows.Forms.ToolStripMenuItem();
-            this.visualStudioToolStripExtender1 = new WeifenLuo.WinFormsUI.Docking.VisualStudioToolStripExtender(this.components);
             this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.visualStudioToolStripExtender1 = new WeifenLuo.WinFormsUI.Docking.VisualStudioToolStripExtender(this.components);
+            this.DisplayMenuDropDown = new System.Windows.Forms.ToolStripDropDownButton();
+            this.DisplayMenu_Collisions = new System.Windows.Forms.ToolStripMenuItem();
+            this.connectionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.DisplayMenu_Meshes = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -52,6 +56,7 @@
             this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.CameraMenuDropDown,
+            this.DisplayMenuDropDown,
             this.toolStripDropDownButton1});
             resources.ApplyResources(this.toolStrip1, "toolStrip1");
             this.toolStrip1.Name = "toolStrip1";
@@ -128,10 +133,6 @@
             resources.ApplyResources(this.CameraMenu_Orthographic, "CameraMenu_Orthographic");
             this.CameraMenu_Orthographic.CheckedChanged += new System.EventHandler(this.CameraMenu_Orthographic_CheckedChanged);
             // 
-            // visualStudioToolStripExtender1
-            // 
-            this.visualStudioToolStripExtender1.DefaultRenderer = null;
-            // 
             // toolStripDropDownButton1
             // 
             this.toolStripDropDownButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
@@ -145,6 +146,41 @@
             this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
             resources.ApplyResources(this.deleteToolStripMenuItem, "deleteToolStripMenuItem");
             this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
+            // 
+            // visualStudioToolStripExtender1
+            // 
+            this.visualStudioToolStripExtender1.DefaultRenderer = null;
+            // 
+            // DisplayMenuDropDown
+            // 
+            this.DisplayMenuDropDown.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.DisplayMenuDropDown.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.DisplayMenu_Collisions,
+            this.connectionsToolStripMenuItem,
+            this.DisplayMenu_Meshes});
+            resources.ApplyResources(this.DisplayMenuDropDown, "DisplayMenuDropDown");
+            this.DisplayMenuDropDown.Name = "DisplayMenuDropDown";
+            // 
+            // DisplayMenu_Collisions
+            // 
+            this.DisplayMenu_Collisions.CheckOnClick = true;
+            this.DisplayMenu_Collisions.Name = "DisplayMenu_Collisions";
+            resources.ApplyResources(this.DisplayMenu_Collisions, "DisplayMenu_Collisions");
+            this.DisplayMenu_Collisions.CheckedChanged += new System.EventHandler(this.DisplayMenu_Collisions_CheckedChanged);
+            // 
+            // connectionsToolStripMenuItem
+            // 
+            this.connectionsToolStripMenuItem.Name = "connectionsToolStripMenuItem";
+            resources.ApplyResources(this.connectionsToolStripMenuItem, "connectionsToolStripMenuItem");
+            // 
+            // DisplayMenu_Meshes
+            // 
+            this.DisplayMenu_Meshes.Checked = true;
+            this.DisplayMenu_Meshes.CheckOnClick = true;
+            this.DisplayMenu_Meshes.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.DisplayMenu_Meshes.Name = "DisplayMenu_Meshes";
+            resources.ApplyResources(this.DisplayMenu_Meshes, "DisplayMenu_Meshes");
+            this.DisplayMenu_Meshes.CheckedChanged += new System.EventHandler(this.DisplayMenu_Meshes_CheckedChanged);
             // 
             // ViewportPanel
             // 
@@ -176,5 +212,9 @@
         private System.Windows.Forms.ToolStripMenuItem CameraMenu_Orthographic;
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
         private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
+        private System.Windows.Forms.ToolStripDropDownButton DisplayMenuDropDown;
+        private System.Windows.Forms.ToolStripMenuItem DisplayMenu_Collisions;
+        private System.Windows.Forms.ToolStripMenuItem connectionsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem DisplayMenu_Meshes;
     }
 }

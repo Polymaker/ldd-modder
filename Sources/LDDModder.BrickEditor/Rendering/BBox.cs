@@ -9,22 +9,117 @@ namespace LDDModder.BrickEditor.Rendering
 {
     public struct BBox
     {
-        public Vector3 Min;
+        public Vector3 Extents;
+        public Vector3 Center;
 
-        public Vector3 Max;
-
-        public Vector3 Center => ((Max - Min) / 2f) + Min;
+        //public Vector3 Center => ((Max - Min) / 2f) + Min;
 
         public float SizeX => Max.X - Min.X;
         public float SizeY => Max.Y - Min.Y;
         public float SizeZ => Max.Z - Min.Z;
 
-        public Vector3 Extent => Max - Min;
-
-        public BBox(Vector3 min, Vector3 max)
+        public Vector3 Size
         {
-            Min = min;
-            Max = max;
+            get => Extents * 2f;
+            set => Extents = value * 0.5f;
+        }
+
+        #region Calculated bounds
+
+        public Vector3 Min
+        {
+            get { return Center - Extents; }
+            set
+            {
+                SetMinMax(value, Max);
+            }
+        }
+
+        public Vector3 Max
+        {
+            get { return Center + Extents; }
+            set
+            {
+                SetMinMax(Min, value);
+            }
+        }
+
+        public float Left
+        {
+            get { return Min.X; }
+            set
+            {
+                SetMinMax(new Vector3(value, Bottom, Back), Max);
+            }
+        }
+
+        public float Right
+        {
+            get { return Max.X; }
+            set
+            {
+                SetMinMax(Min, new Vector3(value, Top, Front));
+            }
+        }
+
+        public float Top
+        {
+            get { return Max.Y; }
+            set
+            {
+                SetMinMax(Min, new Vector3(Right, value, Front));
+            }
+        }
+
+        public float Bottom
+        {
+            get { return Min.Y; }
+            set
+            {
+                SetMinMax(new Vector3(Left, value, Back), Max);
+            }
+        }
+
+        public float Front
+        {
+            get { return Max.Z; }
+            set
+            {
+                SetMinMax(Min, new Vector3(Right, Top, value));
+            }
+        }
+
+        public float Back
+        {
+            get { return Min.Z; }
+            set
+            {
+                SetMinMax(new Vector3(Left, Bottom, value), Max);
+            }
+        }
+
+        #endregion
+
+        public static BBox FromMinMax(Vector3 min, Vector3 max)
+        {
+            var box = new BBox();
+            box.SetMinMax(min, max);
+            return box;
+        }
+
+        public static BBox FromCenterSize(Vector3 center, Vector3 size)
+        {
+            return new BBox
+            {
+                Center = center,
+                Extents = size / 2f
+            };
+        }
+
+        public void SetMinMax(Vector3 min, Vector3 max)
+        {
+            Extents = (max - min) * 0.5f;
+            Center = min + Extents;
         }
 
         public static BBox Calculate(IEnumerable<Vector3> vertices)
@@ -38,7 +133,7 @@ namespace LDDModder.BrickEditor.Rendering
                 maxPos = Vector3.ComponentMax(maxPos, v);
             }
 
-            return new BBox(minPos, maxPos);
+            return BBox.FromMinMax(minPos, maxPos);
         }
     }
 }

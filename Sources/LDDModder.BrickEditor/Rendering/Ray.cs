@@ -55,6 +55,28 @@ namespace LDDModder.BrickEditor.Rendering
             return !float.IsNaN(distance);
         }
 
+        public static bool IntersectsSphere(Ray ray, BSphere sphere, out float distance)
+        {
+            distance = float.NaN;
+
+            var a = Vector3.Dot(ray.Direction, ray.Origin - sphere.Center);
+            var b = (ray.Origin - sphere.Center).Length;
+            var c = (a * a) - (b * b) + (sphere.Radius * sphere.Radius);
+
+            if (c < 0f)
+                return false;
+
+            if (Math.Abs(c) < float.Epsilon)
+            {
+                distance = -a;
+                return true;
+            }
+
+            var d = (float)Math.Sqrt(c);
+            distance = Math.Min(-a + d, -a - d);//+|-
+            return true;
+        }
+
         public static bool IntersectsTriangle(Ray ray, Vector3 v1, Vector3 v2, Vector3 v3, out float distance)
         {
             distance = float.NaN;

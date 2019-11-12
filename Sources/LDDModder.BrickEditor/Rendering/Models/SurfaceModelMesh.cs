@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace LDDModder.BrickEditor.Rendering
 {
-    public class SurfaceModelMesh
+    public class SurfaceModelMesh : PartElementModel
     {
         public int StartIndex { get; set; }
         public int StartVertex { get; set; }
         public int IndexCount { get; set; }
-        public bool Visible { get; set; }
-        public Matrix4 Transform { get; set; }
+        //public bool Visible { get; set; }
+        //public Matrix4 Transform { get; set; }
 
         public SurfaceComponent Component { get; set; }
 
@@ -22,28 +22,24 @@ namespace LDDModder.BrickEditor.Rendering
 
         public ModelMeshReference Mesh { get; set; }
 
-        public bool IsSelected { get; set; }
+        
 
-        public BBox BoundingBox { get; set; }
+        //public BBox BoundingBox { get; set; }
 
         public GLSurfaceModel SurfaceModel { get; set; }
 
-        public SurfaceModelMesh(ModelMeshReference mesh, int startIndex, int indexCount)
-        {
-            Mesh = mesh;
-            StartIndex = startIndex;
-            IndexCount = indexCount;
-            Transform = Matrix4.Identity;
-        }
-
-        public SurfaceModelMesh(ModelMeshReference mesh, int startIndex, int indexCount, int startVertex)
+        public SurfaceModelMesh(ModelMeshReference mesh, int startIndex, int indexCount, int startVertex) : base(mesh)
         {
             Mesh = mesh;
             StartIndex = startIndex;
             IndexCount = indexCount;
             StartVertex = startVertex;
-            Transform = Matrix4.Identity;
+            //Transform = Matrix4.Identity;
         }
 
+        public override bool RayIntersects(Ray ray, out float distance)
+        {
+            return SurfaceModel.RayIntersects(ray, this, out distance);
+        }
     }
 }

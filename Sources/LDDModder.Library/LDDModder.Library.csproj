@@ -157,6 +157,8 @@
     <Compile Include="Maths\Line.cs" />
     <Compile Include="Modding\Editing\ChangeTracking\CollectionChangedEventArgs.cs" />
     <Compile Include="Modding\Editing\ChangeTracking\ElementCollection.cs" />
+    <Compile Include="Modding\Editing\Generation\CircularPattern.cs" />
+    <Compile Include="Modding\Editing\Generation\LinearPattern.cs" />
     <Compile Include="Modding\Editing\ModelComponents\PartCullingModel.cs" />
     <Compile Include="Modding\Editing\ItemTransform.cs" />
     <Compile Include="Modding\Editing\ModelComponents\ModelComponentType.cs" />

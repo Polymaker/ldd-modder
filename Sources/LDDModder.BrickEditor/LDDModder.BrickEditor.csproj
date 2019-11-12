@@ -130,11 +130,15 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rendering\BBox.cs" />
+    <Compile Include="Rendering\BSphere.cs" />
     <Compile Include="Rendering\Camera.cs" />
     <Compile Include="Rendering\CameraManipulator.cs" />
     <Compile Include="Rendering\CameraMovement.cs" />
     <Compile Include="Rendering\ModelDisplayMode.cs" />
     <Compile Include="Rendering\Models\CollisionModel.cs" />
+    <Compile Include="Rendering\Models\ModelBase.cs" />
+    <Compile Include="Rendering\Models\PartElementModel.cs" />
+    <Compile Include="Rendering\Models\PartModel.cs" />
     <Compile Include="Rendering\Models\SurfaceModelMesh.cs" />
     <Compile Include="Rendering\Models\GLSurfaceModel.cs" />
     <Compile Include="Rendering\Models\IndexedVertexBuffer.cs" />

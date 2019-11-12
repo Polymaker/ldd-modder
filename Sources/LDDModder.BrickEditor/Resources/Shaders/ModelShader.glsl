@@ -111,6 +111,7 @@ void main()
 	{
 		vec4 texColor = texture2D(Texture, vTexCoord);
 		baseColor = blendColors(texColor, baseColor);
+		baseColor.a = Material.Diffuse.a;
 	}
 	
 	vec3 finalColor = baseColor.rgb * 0.1;
