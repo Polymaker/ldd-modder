@@ -66,7 +66,7 @@ namespace LDDModder.BrickEditor.Rendering
             if (c < 0f)
                 return false;
 
-            if (Math.Abs(c) < float.Epsilon)
+            if (NearZero(c))
             {
                 distance = -a;
                 return true;
@@ -87,7 +87,7 @@ namespace LDDModder.BrickEditor.Rendering
             //if determinant is near zero, ray lies in plane of triangle or ray is parallel to plane of triangle
             var determinant = Vector3.Dot(edge1, vP);
 
-            if (determinant > -float.Epsilon && determinant < float.Epsilon)
+            if (NearZero(determinant))
                 return false;
 
             var inverseDet = 1f / determinant;
@@ -112,6 +112,27 @@ namespace LDDModder.BrickEditor.Rendering
                 distance = t;
 
             return !float.IsNaN(distance);
+        }
+
+        public static bool IntersectsPlane(Ray ray, Plane plane, out float distance)
+        {
+            distance = float.NaN;
+
+            var denom = Vector3.Dot(plane.Normal, ray.Direction);
+
+            if (!NearZero(denom))
+            {
+                var center = plane.Origin + (plane.Normal * plane.Distance);
+                distance = Vector3.Dot(center - ray.Origin, plane.Normal) / denom;
+                return distance >= 0;
+            }
+
+            return false;
+        }
+
+        private static bool NearZero(float value)
+        {
+            return Math.Abs(value) <= float.Epsilon;
         }
     }
 }

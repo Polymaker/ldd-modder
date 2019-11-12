@@ -76,10 +76,6 @@ namespace LDDModder.LDD.Primitives
 
         public Matrix4 ToMatrix4()
         {
-            if (Angle == 120)
-            {
-
-            }
             var rot = Matrix4.FromAngleAxis(Angle * ((float)Math.PI / 180f), Axis.Normalized());
             var trans = Matrix4.FromTranslation(Translation);
             return Matrix4.Identity * rot * trans;

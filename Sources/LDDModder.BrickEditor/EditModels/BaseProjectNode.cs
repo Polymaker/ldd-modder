@@ -51,6 +51,21 @@ namespace LDDModder.BrickEditor.EditModels
 
         }
 
+        public IEnumerable<BaseProjectNode> GetChildHierarchy(bool includeSelf = false)
+        {
+            if (includeSelf)
+                yield return this;
+
+            if (HasChildrens())
+            {
+                foreach(var directChild in Childrens)
+                {
+                    foreach(var subChild in directChild.GetChildHierarchy(true))
+                        yield return subChild;
+                }
+            }
+        }
+
         protected void AddGrouppedChildrens(IEnumerable<PartElement> elements, string groupKey, int groupWhen, int maxGroupSize)
         {
             int totalElements = elements.Count();

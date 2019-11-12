@@ -61,7 +61,7 @@ namespace LDDModder.BrickEditor.Rendering
                 CreateBuffers();
             VertexBuffer.Clear(BufferTarget.ArrayBuffer);
             VertexBuffer.Init(BufferTarget.ArrayBuffer, vertices.ToArray());
-            BoundingBox = BBox.Calculate(vertices.Select(x => x.Position));
+            BoundingBox = BBox.FromVertices(vertices.Select(x => x.Position));
         }
 
         public void SetVertices(IEnumerable<VertVN> vertices)
@@ -75,27 +75,27 @@ namespace LDDModder.BrickEditor.Rendering
                 Normal = x.Normal,
                 TexCoord = Vector2.Zero
             }).ToArray());
-            BoundingBox = BBox.Calculate(vertices.Select(x => x.Position));
+            BoundingBox = BBox.FromVertices(vertices.Select(x => x.Position));
         }
 
-        public void LoadFromLDD(LDD.Meshes.MeshGeometry geometry)
-        {
-            var verts = new List<VertVNT>();
-            foreach (var v in geometry.Vertices)
-            {
-                verts.Add(new VertVNT()
-                {
-                    Position = v.Position.ToGL(),
-                    Normal = v.Normal.ToGL(),
-                    TexCoord = geometry.IsTextured ? v.TexCoord.ToGL() : Vector2.Zero
-                });
-            }
-            SetVertices(verts);
-            int[] triIndices = geometry.GetTriangleIndices();
-            SetIndices(triIndices);
-        }
+        //public void LoadFromLDD(LDD.Meshes.MeshGeometry geometry)
+        //{
+        //    var verts = new List<VertVNT>();
+        //    foreach (var v in geometry.Vertices)
+        //    {
+        //        verts.Add(new VertVNT()
+        //        {
+        //            Position = v.Position.ToGL(),
+        //            Normal = v.Normal.ToGL(),
+        //            TexCoord = geometry.IsTextured ? v.TexCoord.ToGL() : Vector2.Zero
+        //        });
+        //    }
+        //    SetVertices(verts);
+        //    int[] triIndices = geometry.GetTriangleIndices();
+        //    SetIndices(triIndices);
+        //}
 
-        public static GLModel CreatFromAssimp(Assimp.Mesh mesh)
+        public static GLModel CreateFromAssimp(Assimp.Mesh mesh)
         {
             var model = new GLModel();
             model.LoadFromAssimp(mesh);
@@ -162,7 +162,6 @@ namespace LDDModder.BrickEditor.Rendering
             Vao.Bind();
             Vao.UnbindAttribute(wireframeShader.Position);
         }
-
 
         public void Draw(PrimitiveType drawMode = PrimitiveType.Triangles)
         {

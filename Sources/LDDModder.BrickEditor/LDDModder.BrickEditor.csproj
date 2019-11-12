@@ -129,8 +129,8 @@
     <Compile Include="Native\Shell32.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Rendering\BBox.cs" />
-    <Compile Include="Rendering\BSphere.cs" />
+    <Compile Include="Rendering\Maths\BBox.cs" />
+    <Compile Include="Rendering\Maths\BSphere.cs" />
     <Compile Include="Rendering\Camera.cs" />
     <Compile Include="Rendering\CameraManipulator.cs" />
     <Compile Include="Rendering\CameraMovement.cs" />
@@ -138,13 +138,14 @@
     <Compile Include="Rendering\Models\CollisionModel.cs" />
     <Compile Include="Rendering\Models\ModelBase.cs" />
     <Compile Include="Rendering\Models\PartElementModel.cs" />
-    <Compile Include="Rendering\Models\PartModel.cs" />
     <Compile Include="Rendering\Models\SurfaceModelMesh.cs" />
     <Compile Include="Rendering\Models\GLSurfaceModel.cs" />
     <Compile Include="Rendering\Models\IndexedVertexBuffer.cs" />
     <Compile Include="Rendering\Models\GLModel.cs" />
     <Compile Include="Rendering\InputManager.cs" />
-    <Compile Include="Rendering\Ray.cs" />
+    <Compile Include="Rendering\Maths\Plane.cs" />
+    <Compile Include="Rendering\Maths\Ray.cs" />
+    <Compile Include="Rendering\Shaders\GizmoShaderProgram.cs" />
     <Compile Include="Rendering\Shaders\ModelShaderProgram.cs" />
     <Compile Include="Rendering\Shaders\GridShaderProgram.cs" />
     <Compile Include="Rendering\Shaders\LightInfo.cs" />
@@ -152,6 +153,7 @@
     <Compile Include="Rendering\Shaders\WireframeShaderProgram.cs" />
     <Compile Include="Rendering\TextRenderingExtensions.cs" />
     <Compile Include="Rendering\Models\Vertices.cs" />
+    <Compile Include="Rendering\TransformGizmo.cs" />
     <Compile Include="Resources\ModelLocalizations.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -164,6 +166,7 @@
     </Compile>
     <Compile Include="Resources\ResourceHelper.cs" />
     <Compile Include="Settings\AppSettings.cs" />
+    <Compile Include="Settings\DisplaySettings.cs" />
     <Compile Include="Settings\RecentFileInfo.cs" />
     <Compile Include="Settings\SettingsManager.cs" />
     <Compile Include="UI\Controls\ListViewDB.cs">
@@ -297,14 +300,12 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <EmbeddedResource Include="Resources\Shaders\BasicShader.glsl" />
-    <EmbeddedResource Include="Resources\Shaders\TexturedShader.glsl" />
-    <EmbeddedResource Include="Resources\Shaders\BrickOutlineShader.glsl" />
     <EmbeddedResource Include="Resources\Shaders\GridShader.glsl" />
     <EmbeddedResource Include="Resources\Shaders\ModelShader.glsl" />
     <EmbeddedResource Include="Resources\Shaders\WireframeShader.glsl" />
     <EmbeddedResource Include="Resources\Models\Cube.obj" />
     <EmbeddedResource Include="Resources\Models\Sphere.obj" />
+    <EmbeddedResource Include="Resources\Shaders\GizmoShader.glsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

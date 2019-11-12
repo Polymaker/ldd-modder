@@ -126,8 +126,10 @@ namespace LDDModder.Modding.Editing
             return OwnedElements.Concat(Collections.SelectMany(x => x.GetElements()));
         }
 
-        public virtual IEnumerable<PartElement> GetChildsHierarchy()
+        public virtual IEnumerable<PartElement> GetChildsHierarchy(bool includeSelf = false)
         {
+            if (includeSelf)
+                yield return this;
             foreach(var child in GetAllChilds())
             {
                 yield return child;

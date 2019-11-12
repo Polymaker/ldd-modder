@@ -19,5 +19,18 @@ namespace LDDModder.BrickEditor.Settings
         public RecentFileInfo LastOpenProject { get; set; }
         [JsonProperty]
         public List<RecentFileInfo> RecentProjectFiles { get; set; } = new List<RecentFileInfo>();
+
+        //[JsonProperty("Display")]
+        //public DisplaySettings DisplaySettings { get; set; }
+
+        public static AppSettings CreateDefault()
+        {
+            var currEnv = LDD.LDDEnvironment.Current;
+            return new AppSettings()
+            {
+                LddApplicationDataPath = currEnv.ApplicationDataPath,
+                LddProgramFilesPath = currEnv.ProgramFilesPath
+            };
+        }
     }
 }

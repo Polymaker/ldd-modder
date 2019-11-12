@@ -35,18 +35,14 @@ namespace LDDModder.BrickEditor.Settings
         public static void LoadSettings()
         {
             string settingsPath = Path.Combine(AppDataFolder, AppSettingsFileName);
+
             if (File.Exists(settingsPath))
             {
                 Current = JsonConvert.DeserializeObject<AppSettings>(File.ReadAllText(settingsPath));
             }
             else
             {
-                var currEnv = LDD.LDDEnvironment.Current;
-                Current = new AppSettings()
-                {
-                    LddApplicationDataPath = currEnv.ApplicationDataPath,
-                    LddProgramFilesPath = currEnv.ProgramFilesPath
-                };
+                Current = AppSettings.CreateDefault();
                 SaveSettings();
             }
         }
@@ -76,8 +72,6 @@ namespace LDDModder.BrickEditor.Settings
                 SaveSettings();
             }
         }
-
-
 
         public static bool IsWorkspaceDefined => !string.IsNullOrEmpty(Current.ProjectWorkspace);
     }

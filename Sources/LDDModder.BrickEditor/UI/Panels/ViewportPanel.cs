@@ -38,7 +38,8 @@ namespace LDDModder.BrickEditor.UI.Panels
         private GridShaderProgram GridShader;
         private ModelShaderProgram ModelShader;
         private WireframeShaderProgram WireframeShader;
-        
+        private GizmoShaderProgram GizmoShader;
+
         private List<GLSurfaceModel> SurfaceModels;
         private List<CollisionModel> CollisionModels;
 
@@ -51,6 +52,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private GLModel BoxCollisionModel;
         private GLModel SphereCollisionModel;
+        private TransformGizmo TransformGizmo;
 
         public bool ShowCollisions { get; set; }
         public bool ShowMeshes { get; set; }
@@ -113,6 +115,9 @@ namespace LDDModder.BrickEditor.UI.Panels
             CameraManipulator.Initialize(new Vector3(5), Vector3.Zero);
             //CameraManipulator.RotationButton = MouseButton.Right;
 
+            TransformGizmo = new TransformGizmo();
+            //TransformGizmo.Visible = true;
+
             ShowMeshes = true;  
 
             InitializeTextures();
@@ -137,7 +142,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         private void InitializeModels()
         {
             var modelScene = ResourceHelper.GetResourceModel("Models.Cube.obj", "obj");
-            BoxCollisionModel = GLModel.CreatFromAssimp(modelScene.Meshes[0]);
+            BoxCollisionModel = GLModel.CreateFromAssimp(modelScene.Meshes[0]);
             BoxCollisionModel.Material = new MaterialInfo
             {
                 Diffuse = new Vector4(1f, 0.05f, 0.05f, 1f),
@@ -146,7 +151,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             };
 
             modelScene = ResourceHelper.GetResourceModel("Models.Sphere.obj", "obj");
-            SphereCollisionModel = GLModel.CreatFromAssimp(modelScene.Meshes[0]);
+            SphereCollisionModel = GLModel.CreateFromAssimp(modelScene.Meshes[0]);
             SphereCollisionModel.Material = new MaterialInfo
             {
                 Diffuse = new Vector4(1f, 0.05f, 0.05f, 1f),
@@ -228,6 +233,8 @@ namespace LDDModder.BrickEditor.UI.Panels
             WireframeShader.Use();
             WireframeShader.Color.Set(new Vector4(0, 0, 0, 1));
             WireframeShader.Thickness.Set(1f);
+
+            GizmoShader = ProgramFactory.Create<GizmoShaderProgram>();
         }
 
 
@@ -293,7 +300,6 @@ namespace LDDModder.BrickEditor.UI.Panels
         private void RenderWorld()
         {
             GL.UseProgram(0);
-            GL.Enable(EnableCap.Texture2D);
             GL.Enable(EnableCap.LineSmooth);
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.AlphaTest);
@@ -324,10 +330,15 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             GL.UseProgram(0);
 
+            if (TransformGizmo.Visible)
+                DrawGizmos();
+
             //GL.MatrixMode(MatrixMode.Projection);
             //GL.LoadMatrix(ref projection);
             //GL.MatrixMode(MatrixMode.Modelview);
             //GL.LoadMatrix(ref viewMatrix);
+
+            GL.UseProgram(0);
         }
 
         private void DrawConnections()
@@ -356,6 +367,8 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void DrawPartModels()
         {
+            GL.Enable(EnableCap.Texture2D);
+
             CheckboardTexture.Bind(TextureUnit.Texture4);
             ModelShader.Texture.BindTexture(TextureUnit.Texture4, CheckboardTexture);
 
@@ -388,7 +401,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             
 
             CheckboardTexture.Bind(TextureUnit.Texture0);
-            
+            GL.Disable(EnableCap.Texture2D);
         }
 
         private void DrawGrid()
@@ -396,6 +409,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             GridShader.Use();
             GridShader.MVMatrix.Set(Camera.GetViewMatrix());
             GridShader.PMatrix.Set(Camera.GetProjectionMatrix());
+            GridShader.FadeDistance.Set(Camera.IsPerspective ? 20f : 0f);
 
             GL.Begin(PrimitiveType.Quads);
             GL.Vertex3(-40, 0, -40);
@@ -403,6 +417,55 @@ namespace LDDModder.BrickEditor.UI.Panels
             GL.Vertex3(40, 0, 40);
             GL.Vertex3(40, 0, -40);
             GL.End();
+        }
+
+        private void DrawGizmos()
+        {
+            GL.Clear(ClearBufferMask.DepthBufferBit);
+
+            var viewMatrix = Camera.GetViewMatrix();
+            var projection = Camera.GetProjectionMatrix();
+
+            GizmoShader.Use();
+            GizmoShader.ViewMatrix.Set(viewMatrix);
+            GizmoShader.Projection.Set(projection);
+            GizmoShader.ModelMatrix.Set(TransformGizmo.Transform);
+
+            GL.PushAttrib(AttribMask.LineBit);
+            GL.LineWidth(2f);
+            GL.Begin(PrimitiveType.Points);
+            GL.Vertex3(Vector3.Zero);
+            GL.End();
+            GL.PopAttrib();
+            //GL.MatrixMode(MatrixMode.Projection);
+            //GL.LoadMatrix(ref projection);
+            //GL.MatrixMode(MatrixMode.Modelview);
+            //GL.LoadMatrix(ref viewMatrix);
+            //var trans = TransformGizmo.Transform;
+            //GL.MultMatrix(ref trans);
+
+            //GL.PushAttrib(AttribMask.LineBit);
+            //GL.LineWidth(2f);
+
+            //GL.Color4(new Vector4(1f, 0, 0, 1f));
+            //GL.Begin(PrimitiveType.Lines);
+            //GL.Vertex3(Vector3.Zero);
+            //GL.Vertex3(Vector3.UnitZ);
+            //GL.End();
+
+            //GL.Color4(new Vector4(0, 1f, 0, 1f));
+            //GL.Begin(PrimitiveType.Lines);
+            //GL.Vertex3(Vector3.Zero);
+            //GL.Vertex3(Vector3.UnitY);
+            //GL.End();
+
+            //GL.Color4(new Vector4(0, 0, 1f, 1f));
+            //GL.Begin(PrimitiveType.Lines);
+            //GL.Vertex3(Vector3.Zero);
+            //GL.Vertex3(Vector3.UnitX);
+            //GL.End();
+
+            //GL.PopAttrib();
         }
 
         private void RenderUI()
@@ -570,9 +633,11 @@ namespace LDDModder.BrickEditor.UI.Panels
                 BoxCollisionModel.Dispose();
             if (SphereCollisionModel != null)
                 SphereCollisionModel.Dispose();
+
             GridShader.Dispose();
             ModelShader.Dispose();
             WireframeShader.Dispose();
+            GizmoShader.Dispose();
             CheckboardTexture.Dispose();
         }
 
@@ -593,7 +658,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             var surfModel = new GLSurfaceModel(surface);
             surfModel.Material = new MaterialInfo
             {
-                Diffuse = new Vector4(0.6f, 0.6f, 0.6f, 0.7f),
+                Diffuse = new Vector4(0.6f, 0.6f, 0.6f, 1f),
                 Specular = new Vector3(1f),
                 Shininess = 6f
             };
@@ -608,14 +673,6 @@ namespace LDDModder.BrickEditor.UI.Panels
                     Shininess = 6f
                 };
             }
-
-
-            surfModel.SelectedMaterial = new MaterialInfo
-            {
-                Diffuse = new Vector4(surfModel.Material.Diffuse.Xyz * 1.2f, surfModel.Material.Diffuse.W),
-                Specular = surfModel.Material.Specular,
-                Shininess = surfModel.Material.Shininess
-            };
 
             surfModel.RebuildPartModels();
             SurfaceModels.Add(surfModel);
@@ -723,22 +780,14 @@ namespace LDDModder.BrickEditor.UI.Panels
             }
         }
 
-        protected override void OnSelectedElementChanged(PartElement selectedElement)
+        public IEnumerable<PartElementModel> GetAllElementModels()
         {
-            base.OnSelectedElementChanged(selectedElement);
-
-            CollisionModels.ForEach(x => x.IsSelected = (x.Element == selectedElement));
-
             foreach (var model in SurfaceModels.SelectMany(x => x.MeshModels))
-            {
-                model.IsSelected = model.Element == selectedElement ||
-                    model.Component == selectedElement ||
-                    model.Surface == selectedElement ||
-                    model.Mesh == selectedElement;
-            }
+                yield return model;
+
+            foreach (var model in CollisionModels)
+                yield return model;
         }
-
-
 
         public IEnumerable<PartElementModel> GetVisibleModels()
         {
@@ -752,6 +801,81 @@ namespace LDDModder.BrickEditor.UI.Panels
             {
                 foreach (var model in CollisionModels.Where(x => x.Visible))
                     yield return model;
+            }
+        }
+
+        #endregion
+
+        #region Selection Handling
+
+        protected override void OnElementSelectionChanged()
+        {
+            base.OnElementSelectionChanged();
+
+            CollisionModels.ForEach(x => x.IsSelected = ProjectManager.IsContainedInSelection(x.Element));
+
+            foreach (var model in SurfaceModels.SelectMany(x => x.MeshModels))
+            {
+                model.IsSelected = ProjectManager.IsContainedInSelection(model.Element);
+            }
+
+            var selectedModels = GetVisibleModels().Where(x => x.IsSelected);
+
+            if (selectedModels.Any())
+            {
+                TransformGizmo.Visible = true;
+                var avgBounding = CalculateBoundingBox(selectedModels);
+                TransformGizmo.Transform = Matrix4.CreateTranslation(avgBounding.Center);
+            }
+            else
+            {
+                TransformGizmo.Visible = false;
+            }
+        }
+
+        private void PerformRaySelection(Ray ray)
+        {
+            if (TransformGizmo.Visible)
+            {
+                if (TransformGizmo.RayIntersectsAxis(ray, Camera))
+                {
+
+                }
+            }
+
+            var visibleModels = GetVisibleModels();
+
+            if (ray != null && visibleModels.Any())
+            {
+
+                var intersectingModels = new List<Tuple<PartElementModel, float>>();
+
+                foreach (var model in visibleModels)
+                {
+                    if (model.RayIntersectsBoundingBox(ray, out float boxDist))
+                    {
+                        if (model.RayIntersects(ray, out float triangleDist))
+                            intersectingModels.Add(new Tuple<PartElementModel, float>(model, triangleDist));
+                    }
+                }
+
+                var closestHit = intersectingModels.OrderBy(x => x.Item2).FirstOrDefault();
+                var closestElement = closestHit?.Item1.Element;
+
+                if (InputManager.IsControlDown())
+                {
+                    if (closestElement != null)
+                        ProjectManager.SetSelected(closestElement, !ProjectManager.IsSelected(closestElement));
+                }
+                else if (InputManager.IsShiftDown())
+                {
+                    if (closestElement != null)
+                        ProjectManager.SetSelected(closestElement, true);
+                }
+                else
+                {
+                    ProjectManager.SelectElement(closestElement);
+                }
             }
         }
 
@@ -775,8 +899,9 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             foreach (var model in modelMeshes)
             {
-                minPos = Vector3.ComponentMin(minPos, model.BoundingBox.Min);
-                maxPos = Vector3.ComponentMax(maxPos, model.BoundingBox.Max);
+                var worldBounding = model.GetWorldBoundingBox();
+                minPos = Vector3.ComponentMin(minPos, worldBounding.Min);
+                maxPos = Vector3.ComponentMax(maxPos, worldBounding.Max);
             }
 
             return BBox.FromMinMax(minPos, maxPos);
@@ -859,37 +984,22 @@ namespace LDDModder.BrickEditor.UI.Panels
             CameraManipulator.Initialize(cameraPos, bounding.Center, upVector);
         }
 
+        #endregion
+
+        #region Control Events
+
         private void GlControl1_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
             {
                 var ray = Camera.RaycastFromScreen(new Vector2(e.X, e.Y));
-                var visibleModels = GetVisibleModels();
-
-                if (ray != null && visibleModels.Any())
-                {
-
-                    var intersectingModels = new List<Tuple<PartElementModel, float>>();
-
-                    foreach (var model in visibleModels)
-                    {
-                        if (model.RayIntersectsBoundingBox(ray, out float boxDist))
-                        {
-                            if (model.RayIntersects(ray, out float triangleDist))
-                                intersectingModels.Add(new Tuple<PartElementModel, float>(model, triangleDist));
-                            //if (model.SurfaceModel.RayIntersects(ray, model, out float triangleDist))
-                            //    intersectingModels.Add(new Tuple<SurfaceModelMesh, float>(model, triangleDist));
-                        }
-                    }
-
-                    var closest = intersectingModels.OrderBy(x => x.Item2).FirstOrDefault();
-                    ProjectManager.SelectedElement = closest?.Item1.Element;
-                }
+                PerformRaySelection(ray);
             }
         }
 
         #endregion
 
+        #region Toolbar Menu
 
         private void Camera_ResetCameraMenu_Click(object sender, EventArgs e)
         {
@@ -927,5 +1037,10 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             ShowMeshes = DisplayMenu_Meshes.Checked;
         }
+
+        #endregion
+
+
+
     }
 }

@@ -52,6 +52,16 @@ namespace LDDModder.BrickEditor.Rendering
             return KeyboardState.IsKeyDown(key);
         }
 
+        public bool IsControlDown()
+        {
+            return IsKeyDown(Key.ControlLeft) || IsKeyDown(Key.ControlRight);
+        }
+
+        public bool IsShiftDown()
+        {
+            return IsKeyDown(Key.ShiftLeft) || IsKeyDown(Key.ShiftRight);
+        }
+
         public bool IsKeyUp(Key key)
         {
             return KeyboardState.IsKeyUp(key);

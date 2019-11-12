@@ -31,6 +31,7 @@ out vec4 FragColor;
 
 uniform GridLineInfo MajorGridLine;
 uniform GridLineInfo MinorGridLine;
+uniform float FadeDistance;
 
 const float minCameraDistance = 15.0;
 const float mxCameraDistance = 200.0;
@@ -56,8 +57,12 @@ void main()
 	if (MinorGridLine.Spacing > 0.0)
 		minorDistInv = gridDistInverted(coord, MinorGridLine.Spacing, MinorGridLine.Thickness, MinorGridLine.OffCenter);
 
-	float cameraDist = clamp((vertex.w / 20.0) - 0.5, 0.0, 1.0);
-	cameraDist = mix(1.0, 0.1, cameraDist);
+	float cameraDist = 1f;
+	if (FadeDistance > 0)
+	{
+		cameraDist = clamp((vertex.w / FadeDistance) - 0.5, 0.0, 1.0);
+		cameraDist = mix(1.0, 0.1, cameraDist);
+	}
 	
 	if (majorDistInv > 0)
 		FragColor = vec4(MajorGridLine.Color.xyz, majorDistInv * MajorGridLine.Color.w * cameraDist);

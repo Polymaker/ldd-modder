@@ -28,6 +28,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         }
 
         private bool InternalSelection;
+        private bool UpdatingNavigation;
 
         //private class ViewModeModel
         //{
@@ -49,14 +50,14 @@ namespace LDDModder.BrickEditor.UI.Panels
             CloseButton = false;
             DockAreas = DockAreas.DockLeft | DockAreas.DockRight | DockAreas.Float;
             
-            treeListView1.CanExpandGetter += (model) =>
+            ProjectTreeView.CanExpandGetter += (model) =>
             {
                 if (model is BaseProjectNode node)
                     return node.HasChildrens();
                 return false;
             };
 
-            treeListView1.ChildrenGetter += (model) =>
+            ProjectTreeView.ChildrenGetter += (model) =>
             {
                 if (model is BaseProjectNode node)
                     return node.Childrens;
@@ -68,6 +69,8 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             base.OnLoad(e);
             InitializeViewComboBox();
+
+            label1.Text = "<No active project>";
         }
 
         private void InitializeViewComboBox()
@@ -84,6 +87,9 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             base.OnProjectChanged();
             RebuildNavigation(true);
+
+            label1.Text = ProjectManager.IsProjectOpen ? 
+                ProjectManager.GetProjectDisplayName() : "<No active project>";
         }
 
         private void ViewModeComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -96,40 +102,42 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void RebuildNavigation(bool recreate)
         {
+            UpdatingNavigation = true;
+
             if (recreate)
-                treeListView1.ClearObjects();
+                ProjectTreeView.ClearObjects();
 
             if (ProjectManager.IsProjectOpen)
             {
                 if (recreate)
                 {
-                    treeListView1.AddObject(new ProjectGroupNode(
+                    ProjectTreeView.AddObject(new ProjectGroupNode(
                         CurrentProject.Surfaces,
                         ModelLocalizations.Label_Surfaces));
 
-                    treeListView1.AddObject(new ProjectGroupNode(
+                    ProjectTreeView.AddObject(new ProjectGroupNode(
                         CurrentProject.Collisions,
                         ModelLocalizations.Label_Collisions));
 
-                    treeListView1.AddObject(new ProjectGroupNode(
+                    ProjectTreeView.AddObject(new ProjectGroupNode(
                         CurrentProject.Connections,
                         ModelLocalizations.Label_Connections));
 
-                    foreach (ProjectGroupNode node in treeListView1.Roots)
-                        treeListView1.Expand(node);
+                    foreach (ProjectGroupNode node in ProjectTreeView.Roots)
+                        ProjectTreeView.Expand(node);
                 }
                 else
                 {
-                    var expandedNodes = treeListView1.ExpandedObjects
+                    var expandedNodes = ProjectTreeView.ExpandedObjects
                         .OfType<BaseProjectNode>().Select(x => x.NodeID).ToList();
 
-                    foreach (BaseProjectNode node in treeListView1.Roots)
+                    foreach (BaseProjectNode node in ProjectTreeView.Roots)
                     {
                         node.IsDirty = true;
-                        treeListView1.UpdateObject(node);
+                        ProjectTreeView.UpdateObject(node);
                     }
 
-                    ExpandNodes(treeListView1.Roots, expandedNodes);
+                    ExpandNodes(ProjectTreeView.Roots, expandedNodes);
                 }
 
                 //treeListView1.AddObject(new ProjectGroupNode(
@@ -138,6 +146,8 @@ namespace LDDModder.BrickEditor.UI.Panels
             }
 
             FilterNavigation();
+
+            UpdatingNavigation = false;
         }
 
         private void ExpandNodes(IEnumerable nodes, List<string> nodeIDs)
@@ -146,7 +156,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             {
                 if(nodeIDs.Contains(node.NodeID))
                 {
-                    treeListView1.Expand(node);
+                    ProjectTreeView.Expand(node);
                     ExpandNodes(node.Childrens, nodeIDs);
                 }
             }
@@ -167,21 +177,28 @@ namespace LDDModder.BrickEditor.UI.Panels
             RebuildNavigation(false);
         }
 
-        private void treeListView1_SelectedIndexChanged(object sender, EventArgs e)
+        private void ProjectTreeView_SelectionChanged(object sender, EventArgs e)
         {
-            if (!InternalSelection && treeListView1.SelectedObject is ProjectElementNode elementNode)
-            {
-                ProjectManager.SelectedElement = elementNode.Element;
-            }
+            if (!(InternalSelection || UpdatingNavigation))
+                ProjectManager.SelectElements(GetSelectedElements());
         }
 
-        protected override void OnSelectedElementChanged(PartElement selectedElement)
+        public IEnumerable<PartElement> GetSelectedElements()
         {
-            base.OnSelectedElementChanged(selectedElement);
+            var selectedNodes = ProjectTreeView.SelectedObjects.OfType<BaseProjectNode>();
+            var elementNodes = selectedNodes.SelectMany(x => x.GetChildHierarchy(true)).OfType<ProjectElementNode>();
+            return elementNodes.Select(x => x.Element);
+        }
+
+        protected override void OnElementSelectionChanged()
+        {
+            base.OnElementSelectionChanged();
             InternalSelection = true;
 
-            
+
             InternalSelection = false;
         }
+
+        
     }
 }

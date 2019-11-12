@@ -29,6 +29,12 @@ namespace LDDModder.BrickEditor.Rendering
 
         public abstract bool RayIntersects(Ray ray, out float distance);
 
-
+        public virtual BBox GetWorldBoundingBox()
+        {
+            var corners = BoundingBox.GetCorners();
+            for (int i = 0; i < 8; i++)
+                corners[i] = Vector3.TransformPosition(corners[i], Transform);
+            return BBox.FromVertices(corners);
+        }
     }
 }

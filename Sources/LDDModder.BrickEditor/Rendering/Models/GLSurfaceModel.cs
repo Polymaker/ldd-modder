@@ -14,7 +14,7 @@ namespace LDDModder.BrickEditor.Rendering
     {
         public PartSurface Surface { get; set; }
 
-        public IndexedVertexBuffer VertexBuffer { get; private set; }
+        public IndexedVertexBuffer<VertVNT> VertexBuffer { get; private set; }
 
         public List<SurfaceModelMesh> MeshModels { get; private set; }
 
@@ -22,18 +22,16 @@ namespace LDDModder.BrickEditor.Rendering
 
         public MaterialInfo Material { get; set; }
 
-        public MaterialInfo SelectedMaterial { get; set; }
-
         public GLSurfaceModel()
         {
-            VertexBuffer = new IndexedVertexBuffer();
+            VertexBuffer = new IndexedVertexBuffer<VertVNT>();
             MeshModels = new List<SurfaceModelMesh>();
         }
 
         public GLSurfaceModel(PartSurface surface)
         {
             Surface = surface;
-            VertexBuffer = new IndexedVertexBuffer();
+            VertexBuffer = new IndexedVertexBuffer<VertVNT>();
             MeshModels = new List<SurfaceModelMesh>();
         }
 
@@ -120,9 +118,8 @@ namespace LDDModder.BrickEditor.Rendering
             VertexBuffer.BindAttribute(modelShader.Position, 0);
             VertexBuffer.BindAttribute(modelShader.Normal, 12);
             VertexBuffer.BindAttribute(modelShader.TexCoord, 24);
-            //modelShader.ModelMatrix.Set(Matrix4.Identity);
-            //modelShader.ModelMatrix.Set(Transform);
-            //modelShader.Material.Set(Material);
+
+            modelShader.Material.Set(Material);
         }
 
         public void UnbindShader(ModelShaderProgram modelShader)
@@ -173,7 +170,8 @@ namespace LDDModder.BrickEditor.Rendering
 
         public void DrawModelMesh(SurfaceModelMesh model, ModelShaderProgram modelShader)
         {
-            modelShader.Material.Set(model.IsSelected ? SelectedMaterial : Material);
+            modelShader.IsSelected.Set(model.IsSelected);
+            //modelShader.Material.Set(model.IsSelected ? SelectedMaterial : Material);
             modelShader.ModelMatrix.Set(model.Transform);
             //modelShader.Color.Set(model.IsSelected ? new Vector4(1f) : new Vector4(0f, 0f, 0f, 1f));
             DrawMesh(model);
@@ -181,12 +179,12 @@ namespace LDDModder.BrickEditor.Rendering
 
         public void Draw(WireframeShaderProgram wireframeShader, ModelShaderProgram modelShader)
         {
-            var visibleMeshes = MeshModels.Where(x => x.Visible).ToList();
-            BindToShader(wireframeShader);
+            var visibleMeshes = MeshModels.Where(x => x.Visible)
+                .OrderByDescending(x=>x.IsSelected).ToList();
 
+            BindToShader(wireframeShader);
             foreach (var mesh in visibleMeshes)
                 DrawModelMesh(mesh, wireframeShader);
-
             UnbindShader(wireframeShader);
 
             BindToShader(modelShader);
@@ -198,7 +196,8 @@ namespace LDDModder.BrickEditor.Rendering
 
         public void Draw(ModelShaderProgram modelShader)
         {
-            var visibleMeshes = MeshModels.Where(x => x.Visible).ToList();
+            var visibleMeshes = MeshModels.Where(x => x.Visible)
+                .OrderByDescending(x => x.IsSelected).ToList();
 
             BindToShader(modelShader);
             modelShader.UseTexture.Set(Surface.SurfaceID > 0);
@@ -221,7 +220,7 @@ namespace LDDModder.BrickEditor.Rendering
                 var idx3 = indices[i + 2 + model.StartIndex];
 
                 var v1 = vertices[idx1 + model.StartVertex];
-                var v2= vertices[idx2 + model.StartVertex];
+                var v2 = vertices[idx2 + model.StartVertex];
                 var v3 = vertices[idx3 + model.StartVertex];
 
                 if (Ray.IntersectsTriangle(ray, v1.Position, v2.Position, v3.Position, out float hitDist))

@@ -28,6 +28,8 @@ namespace LDDModder.BrickEditor.Rendering.Shaders
 
         public Uniform<bool> UseTexture { get; protected set; }
 
+        public Uniform<bool> IsSelected { get; protected set; }
+
         public TextureUniform<Texture2D> Texture { get; protected set; }
 
         public Uniform<Matrix4> ModelMatrix { get; protected set; }

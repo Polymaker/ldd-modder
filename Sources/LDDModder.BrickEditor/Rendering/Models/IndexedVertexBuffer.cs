@@ -11,13 +11,13 @@ using System.Threading.Tasks;
 
 namespace LDDModder.BrickEditor.Rendering
 {
-    public class IndexedVertexBuffer : IDisposable
+    public class IndexedVertexBuffer<T> : IDisposable where T : struct
     {
         public VertexArray Vao { get; protected set; }
 
         public Buffer<int> IndexBuffer { get; protected set; }
 
-        public Buffer<VertVNT> VertexBuffer { get; protected set; }
+        public Buffer<T> VertexBuffer { get; protected set; }
 
         public bool BufferInitialized { get; protected set; }
 
@@ -47,7 +47,7 @@ namespace LDDModder.BrickEditor.Rendering
             {
                 Vao = new VertexArray();
                 IndexBuffer = new Buffer<int>();
-                VertexBuffer = new Buffer<VertVNT>();
+                VertexBuffer = new Buffer<T>();
                 BufferInitialized = true;
 
                 Vao.Bind();
@@ -72,25 +72,12 @@ namespace LDDModder.BrickEditor.Rendering
             IndexBuffer.Init(BufferTarget.ElementArrayBuffer, indices.ToArray());
         }
 
-        public void SetVertices(IEnumerable<VertVNT> vertices)
+        public void SetVertices(IEnumerable<T> vertices)
         {
             if (!BufferInitialized)
                 CreateBuffers();
             VertexBuffer.Clear(BufferTarget.ArrayBuffer);
             VertexBuffer.Init(BufferTarget.ArrayBuffer, vertices.ToArray());
-        }
-
-        public void SetVertices(IEnumerable<VertVN> vertices)
-        {
-            if (!BufferInitialized)
-                CreateBuffers();
-            VertexBuffer.Clear(BufferTarget.ArrayBuffer);
-            VertexBuffer.Init(BufferTarget.ArrayBuffer, vertices.Select(x => new VertVNT
-            {
-                Position = x.Position,
-                Normal = x.Normal,
-                TexCoord = Vector2.Zero
-            }).ToArray());
         }
 
         ~IndexedVertexBuffer()

@@ -398,10 +398,5 @@ namespace LDDModder.Simple3D
         {
             return $"[{X}; {Y}; {Z}]";
         }
-
-        public static explicit operator Vector3(Assimp.Vector3D vector)
-        {
-            return new Vector3(vector.X, vector.Y, vector.Z);
-        }
     }
 }

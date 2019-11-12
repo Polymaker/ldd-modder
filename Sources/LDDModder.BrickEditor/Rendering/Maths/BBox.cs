@@ -116,13 +116,7 @@ namespace LDDModder.BrickEditor.Rendering
             };
         }
 
-        public void SetMinMax(Vector3 min, Vector3 max)
-        {
-            Extents = (max - min) * 0.5f;
-            Center = min + Extents;
-        }
-
-        public static BBox Calculate(IEnumerable<Vector3> vertices)
+        public static BBox FromVertices(IEnumerable<Vector3> vertices)
         {
             Vector3 minPos = new Vector3(99999f);
             Vector3 maxPos = new Vector3(-99999f);
@@ -133,7 +127,34 @@ namespace LDDModder.BrickEditor.Rendering
                 maxPos = Vector3.ComponentMax(maxPos, v);
             }
 
-            return BBox.FromMinMax(minPos, maxPos);
+            return FromMinMax(minPos, maxPos);
+        }
+
+        public void SetMinMax(Vector3 min, Vector3 max)
+        {
+            Extents = (max - min) * 0.5f;
+            Center = min + Extents;
+        }
+
+        public Vector3[] GetCorners()
+        {
+            var corners = new Vector3[8];
+            var axes = new Vector3[]
+            {
+                new Vector3(1,0,1),
+                new Vector3(-1,0,1),
+                new Vector3(-1,0,-1),
+                new Vector3(1,0,-1),
+            };
+
+            for (int i = 0; i < 4; i++)
+            {
+                var offset = Extents * axes[i];
+                corners[(i * 2)] = Center + offset + (Vector3.UnitY * Extents.Y);
+                corners[(i * 2) + 1] = Center + offset + (Vector3.UnitY * -Extents.Y);
+            }
+
+            return corners;
         }
     }
 }

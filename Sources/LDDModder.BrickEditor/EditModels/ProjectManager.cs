@@ -1,4 +1,5 @@
-﻿using LDDModder.Modding.Editing;
+﻿using LDDModder.BrickEditor.Resources;
+using LDDModder.Modding.Editing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,22 +14,17 @@ namespace LDDModder.BrickEditor.EditModels
 
         public bool IsProjectOpen => CurrentProject != null;
 
-        private PartElement _SelectedElement;
+        private List<PartElement> _SelectedElements;
 
         public PartElement SelectedElement
         {
-            get => _SelectedElement;
-            set
-            {
-                if (value != _SelectedElement)
-                {
-                    _SelectedElement = value;
-                    SelectedElementChanged?.Invoke(this, EventArgs.Empty);
-                }
-            }
+            get => _SelectedElements.FirstOrDefault();
+            set => SelectElement(value);
         }
 
-        public event EventHandler SelectedElementChanged;
+        public IList<PartElement> SelectedElements => _SelectedElements.AsReadOnly();
+
+        public event EventHandler SelectionChanged;
 
         public event EventHandler ProjectClosed;
 
@@ -40,7 +36,7 @@ namespace LDDModder.BrickEditor.EditModels
 
         public ProjectManager()
         {
-            
+            _SelectedElements = new List<PartElement>();
         }
 
         public void SetCurrentProject(PartProject project)
@@ -84,8 +80,83 @@ namespace LDDModder.BrickEditor.EditModels
         }
                 private void Project_ElementCollectionChanged(object sender, CollectionChangedEventArgs e)
         {
-            _SelectedElement = null;
+            _SelectedElements.Clear();
             ProjectElementsChanged?.Invoke(this, e);
         }
+
+        public string GetProjectDisplayName()
+        {
+            if (CurrentProject != null)
+            {
+                if (CurrentProject.PartID > 0 && !string.IsNullOrEmpty(CurrentProject.PartDescription))
+                    return $"{CurrentProject.PartID} - {CurrentProject.PartDescription}";
+                else if (CurrentProject.PartID > 0)
+                    return $"{ModelLocalizations.Label_Part} {CurrentProject.PartID}";
+                else if (!string.IsNullOrEmpty(CurrentProject.PartDescription))
+                    return $"{CurrentProject.PartDescription}";
+                else
+                    return ModelLocalizations.Label_NewPartProject;
+            }
+
+            return string.Empty;
+        }
+
+        #region Selection Management
+
+        public void ClearSelection()
+        {
+            if (_SelectedElements.Any())
+            {
+                _SelectedElements.Clear();
+                SelectionChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public void SelectElement(PartElement element)
+        {
+            if (element == null)
+            {
+                ClearSelection();
+            }
+            else if (!(SelectedElement == element && _SelectedElements.Count == 1))
+            {
+                _SelectedElements.Clear();
+                _SelectedElements.Add(element);
+                SelectionChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public void SetSelected(PartElement element, bool selected)
+        {
+            bool isSelected = SelectedElements.Contains(element);
+            if (selected != isSelected)
+            {
+                if (selected)
+                    _SelectedElements.Add(element);
+                else
+                    _SelectedElements.Remove(element);
+                SelectionChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public void SelectElements(IEnumerable<PartElement> elements)
+        {
+            _SelectedElements.Clear();
+            _SelectedElements.AddRange(elements);
+            SelectionChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        public bool IsSelected(PartElement element)
+        {
+            return SelectedElements.Contains(element);
+        }
+
+        public bool IsContainedInSelection(PartElement element)
+        {
+            var allChilds = SelectedElements.SelectMany(x => x.GetChildsHierarchy(true));
+            return allChilds.Contains(element);
+        }
+
+        #endregion
     }
 }

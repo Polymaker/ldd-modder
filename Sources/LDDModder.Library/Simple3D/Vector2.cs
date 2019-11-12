@@ -34,11 +34,6 @@ namespace LDDModder.Simple3D
             Y = values[1];
         }
 
-        public static explicit operator Vector2(Assimp.Vector2D vector)
-        {
-            return new Vector2(vector.X, vector.Y);
-        }
-
         #region Equality operators
 
         public override bool Equals(object obj)

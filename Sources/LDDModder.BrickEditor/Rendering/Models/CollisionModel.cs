@@ -43,6 +43,7 @@ namespace LDDModder.BrickEditor.Rendering
             BaseModel.Draw(CollisionType == CollisionType.Box ? 
                 OpenTK.Graphics.OpenGL.PrimitiveType.Quads : 
                 OpenTK.Graphics.OpenGL.PrimitiveType.Triangles);
+
         }
 
         public override bool RayIntersects(Ray ray, out float distance)
@@ -55,7 +56,5 @@ namespace LDDModder.BrickEditor.Rendering
 
             return Ray.IntersectsSphere(ray, sphere, out distance);
         }
-    
-    
     }
 }

@@ -53,6 +53,7 @@ smooth in vec2 vTexCoord;
 uniform LightInfo Lights[MAX_NUM_TOTAL_LIGHTS];
 uniform int LightCount;
 uniform bool UseTexture;
+uniform bool IsSelected;
 uniform sampler2D Texture;
 uniform MaterialInfo Material;
 uniform vec3 ViewPosition;
@@ -112,6 +113,11 @@ void main()
 		vec4 texColor = texture2D(Texture, vTexCoord);
 		baseColor = blendColors(texColor, baseColor);
 		baseColor.a = Material.Diffuse.a;
+	}
+	
+	if (IsSelected)
+	{
+		baseColor.rgb = clamp(baseColor.rgb * 1.2, vec3(0), vec3(1));
 	}
 	
 	vec3 finalColor = baseColor.rgb * 0.1;

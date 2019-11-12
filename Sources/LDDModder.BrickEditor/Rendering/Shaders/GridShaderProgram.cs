@@ -1,10 +1,5 @@
 ﻿using ObjectTK.Shaders.Variables;
 using OpenTK;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Graphics;
 using ObjectTK.Shaders.Sources;
@@ -22,6 +17,8 @@ namespace LDDModder.BrickEditor.Rendering.Shaders
         public StructUniform<GridLineInfo> MajorGridLine { get; protected set; }
 
         public StructUniform<GridLineInfo> MinorGridLine { get; protected set; }
+
+        public Uniform<float> FadeDistance { get; protected set; }
 
         public Uniform<Matrix4> MVMatrix { get; protected set; }
 

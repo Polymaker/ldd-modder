@@ -22,10 +22,6 @@ namespace LDDModder.BrickEditor.Rendering
 
         public ModelMeshReference Mesh { get; set; }
 
-        
-
-        //public BBox BoundingBox { get; set; }
-
         public GLSurfaceModel SurfaceModel { get; set; }
 
         public SurfaceModelMesh(ModelMeshReference mesh, int startIndex, int indexCount, int startVertex) : base(mesh)

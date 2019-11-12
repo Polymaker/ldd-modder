@@ -59,15 +59,6 @@ namespace LDDModder.BrickEditor.Rendering
             }
         }
 
-        //public Quaternion Rotation
-        //{
-        //    get => _Transform.ExtractRotation();
-        //    set
-        //    {
-
-        //    }
-        //}
-
         public RectangleF Viewport
         {
             get => _Viewport;
@@ -104,6 +95,7 @@ namespace LDDModder.BrickEditor.Rendering
                 if (value != _IsPerspective)
                 {
                     _IsPerspective = value;
+                    isViewMatrixDirty = true;
                     isProjectionMatrixDirty = true;
                 }
             }
@@ -175,6 +167,8 @@ namespace LDDModder.BrickEditor.Rendering
             if (isViewMatrixDirty)
             {
                 var pos = Position;
+                if (!IsPerspective)
+                    pos -= Forward * 20;
                 _ViewMatrix = Matrix4.LookAt(pos, pos + Forward * 4, Up);
                 isViewMatrixDirty = false;
             }
@@ -271,6 +265,19 @@ namespace LDDModder.BrickEditor.Rendering
             float value1 = (size.Y / 2f) / (float)Math.Tan(FieldOfView / 2f);
             float value2 = (size.X / AspectRatio / 2f) / (float)Math.Tan(FieldOfView / 2f);
             return Math.Max(value1, value2);
+        }
+
+        public float GetDistanceFromCamera(Vector3 worldPos)
+        {
+            var posOffset = worldPos - Position;
+
+            var angleFromFwrd = Vector3.CalculateAngle(posOffset.Normalized(), Forward);
+
+            if (float.IsNaN(angleFromFwrd))
+                return posOffset.Length;
+
+            //distance from camera is equal to adjacent side on the triangle formed by camera, specified pos and a point along camera foward axis
+            return (float)Math.Cos(angleFromFwrd) * posOffset.Length;
         }
 
         public void FitOrtographicSize(Vector2 size)
