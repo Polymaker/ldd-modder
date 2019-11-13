@@ -36,5 +36,10 @@ namespace LDDModder.BrickEditor.Rendering
                 corners[i] = Vector3.TransformPosition(corners[i], Transform);
             return BBox.FromVertices(corners);
         }
+
+        public virtual void RenderModel(Camera camera)
+        {
+
+        }
     }
 }

@@ -119,11 +119,11 @@ namespace LDDModder.BrickEditor.Rendering
             distance = float.NaN;
 
             var denom = Vector3.Dot(plane.Normal, ray.Direction);
+            var p0 = plane.Origin + (plane.Normal * plane.Distance);
 
             if (!NearZero(denom))
             {
-                var center = plane.Origin + (plane.Normal * plane.Distance);
-                distance = Vector3.Dot(center - ray.Origin, plane.Normal) / denom;
+                distance = Vector3.Dot(p0 - ray.Origin, plane.Normal) / denom;
                 return distance >= 0;
             }
 

@@ -11,13 +11,17 @@ using System.Threading.Tasks;
 
 namespace LDDModder.BrickEditor.Rendering
 {
-    public class IndexedVertexBuffer<T> : IDisposable where T : struct
+    public class IndexedVertexBuffer<T> : IDisposable, IVertexBuffer where T : struct
     {
         public VertexArray Vao { get; protected set; }
 
         public Buffer<int> IndexBuffer { get; protected set; }
 
+        public int IndexCount => (IndexBuffer != null && IndexBuffer.Initialized) ? IndexBuffer.ElementCount : 0;
+
         public Buffer<T> VertexBuffer { get; protected set; }
+
+        public int VertexCount => (VertexBuffer != null && VertexBuffer.Initialized) ? VertexBuffer.ElementCount : 0;
 
         public bool BufferInitialized { get; protected set; }
 
@@ -33,7 +37,6 @@ namespace LDDModder.BrickEditor.Rendering
         {
             if (BufferInitialized)
                 Vao.BindAttribute(attribute, VertexBuffer, offset);
-            
         }
 
         public void BindVertexBuffer()
@@ -41,10 +44,18 @@ namespace LDDModder.BrickEditor.Rendering
             GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBuffer.Handle);
         }
 
+        public void BindVertexPointer()
+        {
+            Bind();
+            GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBuffer.Handle);
+            GL.VertexPointer(3, VertexPointerType.Float, VertexBuffer.ElementSize, 0);
+        }
+
         public void UnbindAttribute(VertexAttrib attribute)
         {
             if (BufferInitialized)
                 Vao.UnbindAttribute(attribute);
+            
         }
 
         public void CreateBuffers()
@@ -58,6 +69,7 @@ namespace LDDModder.BrickEditor.Rendering
 
                 Vao.Bind();
                 Vao.BindElementBuffer(IndexBuffer);
+
             }
         }
 
@@ -86,6 +98,14 @@ namespace LDDModder.BrickEditor.Rendering
             VertexBuffer.Init(BufferTarget.ArrayBuffer, vertices.ToArray());
         }
 
+        #region Draw Methods
+
+        public void DrawElementsBaseVertex(PrimitiveType mode, int baseVertex, int count, int offset = 0)
+        {
+            Vao.Bind();
+            Vao.DrawElementsBaseVertex(mode, baseVertex, count, DrawElementsType.UnsignedInt, offset);
+        }
+
         public void DrawElements(PrimitiveType drawMode = PrimitiveType.Triangles)
         {
             Vao.Bind();
@@ -103,6 +123,10 @@ namespace LDDModder.BrickEditor.Rendering
             Vao.Bind();
             Vao.DrawArrays(drawMode, first, count);
         }
+
+        #endregion
+
+
 
         ~IndexedVertexBuffer()
         {

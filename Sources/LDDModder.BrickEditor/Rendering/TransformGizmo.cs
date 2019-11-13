@@ -13,30 +13,51 @@ namespace LDDModder.BrickEditor.Rendering
     public class TransformGizmo : IDisposable
     {
         public Matrix4 Transform { get; set; }
+
         public bool Visible { get; set; }
+
+        public GizmoStyle DisplayStyle { get; set; }
 
         public IndexedVertexBuffer<Vector3> VertexBuffer { get; private set; }
 
-        private TranslationGizmoAxis[] Axes;
+        private TranslationManipulator[] TranslationAxes;
+
+        private RotationManipulator[] RotationAxes;
+        
+        public float GizmoSize { get; set; }
 
         private Vector2 DisplayScale;
 
         public BSphere BoundingSphere { get; private set; }
 
+        public bool IsMouseOver { get; private set; }
+
         public TransformGizmo()
         {
             Transform = Matrix4.Identity;
             DisplayScale = Vector2.One;
-            Axes = new TranslationGizmoAxis[]
+            GizmoSize = 95f;
+            DisplayStyle = GizmoStyle.Translation;
+            InitializeManipulators();
+        }
+
+        public void InitializeManipulators()
+        {
+            TranslationAxes = new TranslationManipulator[]
             {
-                new TranslationGizmoAxis(GizmoAxis.X, Vector3.UnitX, new Color4(1f,0.3f,0.3f,1f)),
-                new TranslationGizmoAxis(GizmoAxis.Y, Vector3.UnitY, new Color4(0.6f, 0.9f, 0, 1f)),
-                new TranslationGizmoAxis(GizmoAxis.Z, Vector3.UnitZ, new Color4(0.18f,0.55f,1f,1f))
+                new TranslationManipulator(GizmoAxis.X, new Color4(1f,0.09f,0.26f,1f)),
+                new TranslationManipulator(GizmoAxis.Y, new Color4(0.576f, 0.898f, 0.156f, 1f)),
+                new TranslationManipulator(GizmoAxis.Z, new Color4(0.156f,0.564f,1f,1f))
             };
 
-            Axes[0].RotationMatrix = Matrix4.CreateRotationZ((float)Math.PI * -0.5f);
-            Axes[2].RotationMatrix = Matrix4.CreateRotationX((float)Math.PI * 0.5f);
+            RotationAxes = new RotationManipulator[]
+            {
+                new RotationManipulator(GizmoAxis.X, new Color4(1f,0.09f,0.26f,1f)),
+                new RotationManipulator(GizmoAxis.Y, new Color4(0.576f, 0.898f, 0.156f, 1f)),
+                new RotationManipulator(GizmoAxis.Z, new Color4(0.156f,0.564f,1f,1f))
+            };
         }
+
 
         public enum GizmoAxis
         {
@@ -46,29 +67,98 @@ namespace LDDModder.BrickEditor.Rendering
             Z
         }
 
-        class TranslationGizmoAxis
+        public enum GizmoStyle
+        {
+            Translation,
+            Rotation
+        }
+
+        abstract class GizmoAxisManipulator
         {
             public Vector3 Direction { get; set; }
-
-            public BBox BoundingBox { get; set; }
 
             public Color4 Color { get; set; }
 
             public Color4 InnactiveColor { get; set; }
 
+            public GizmoAxis Axis { get; protected set; }
+
+            public Matrix4 AxisRotation { get; set; }
+
             public bool IsOver { get; set; }
 
-            public Matrix4 RotationMatrix { get; set; }
+            public bool IsSelected { get; set; }
 
-            public GizmoAxis Axis { get; }
-
-            public TranslationGizmoAxis(GizmoAxis axis, Vector3 direction, Color4 color)
+            protected GizmoAxisManipulator(GizmoAxis axis, Color4 color)
             {
                 Axis = axis;
-                Direction = direction;
                 Color = color;
-                RotationMatrix = Matrix4.Identity;
                 InnactiveColor = new Color4(color.R * 0.9f, color.G * 0.9f, color.B * 0.9f, 0.75f);
+
+                switch (axis)
+                {
+                    case GizmoAxis.X:
+                        AxisRotation = Matrix4.CreateRotationZ((float)Math.PI * -0.5f);
+                        Direction = Vector3.UnitX;
+                        break;
+                    case GizmoAxis.Y:
+                        AxisRotation = Matrix4.Identity;
+                        Direction = Vector3.UnitY;
+                        break;
+                    case GizmoAxis.Z:
+                        AxisRotation = Matrix4.CreateRotationX((float)Math.PI * 0.5f);
+                        Direction = Vector3.UnitZ;
+                        break;
+                }
+            }
+
+            public abstract bool Hittest(Ray ray, out float distance);
+        }
+
+        class TranslationManipulator : GizmoAxisManipulator
+        {
+            public BBox BoundingBox { get; set; }
+
+            public TranslationManipulator(GizmoAxis axis, Color4 color) : base(axis, color)
+            {
+                
+            }
+
+            public override bool Hittest(Ray ray, out float distance)
+            {
+                return Ray.IntersectsBox(ray, BoundingBox, out distance);
+            }
+        }
+
+        class RotationManipulator : GizmoAxisManipulator
+        {
+            public Plane Plane { get; set; }
+
+            public float GizmoRadius { get; set; }
+
+            public float Tolerence { get; set; }
+
+            public RotationManipulator(GizmoAxis axis, Color4 color) : base(axis, color)
+            {
+                Plane = new Plane()
+                {
+                    Normal = Direction
+                };
+            }
+
+            public override bool Hittest(Ray ray, out float distance)
+            {
+                if (Ray.IntersectsPlane(ray, Plane, out distance))
+                {
+                    var hitPos = ray.Origin + ray.Direction * distance;
+                    var v = Vector3.Dot(hitPos, hitPos);
+                    distance = (float)Math.Sqrt(v);
+                    distance = Math.Abs(GizmoRadius - distance);
+
+                    if (distance <= Tolerence)
+                        return true;
+                }
+                return false;
             }
         }
 
@@ -85,9 +175,9 @@ namespace LDDModder.BrickEditor.Rendering
             {
                 var pt = new Vector3((float)Math.Cos(stepAngle * i), 0f, (float)Math.Sin(stepAngle * i)) * 0.5f;
                 vertices.Add(pt);
-                indices.Add(i);
-                indices.Add((i + 1) % 32);
                 
+                indices.Add((i + 1) % 32);
+                indices.Add(i);
                 indices.Add(32);
             }
             vertices.Add(Vector3.UnitY);
@@ -95,61 +185,12 @@ namespace LDDModder.BrickEditor.Rendering
             VertexBuffer.SetVertices(vertices);
         }
 
-        public void Render(Camera camera)
-        {
-            var viewMatrix = camera.GetViewMatrix();
-            var projection = camera.GetProjectionMatrix();
-
-            GL.MatrixMode(MatrixMode.Projection);
-            GL.LoadMatrix(ref projection);
-            GL.MatrixMode(MatrixMode.Modelview);
-            GL.LoadMatrix(ref viewMatrix);
-
-            var gizmoTrans = Transform;
-            GL.MultMatrix(ref gizmoTrans);
-
-            GL.PushAttrib(AttribMask.LineBit);
-            GL.LineWidth(2f);
-
-            var arrowScale = Matrix4.CreateScale(10 * DisplayScale.X, 20 * DisplayScale.Y, 10 * DisplayScale.X);
-            var arrowTrans = Matrix4.CreateTranslation(Vector3.UnitY * DisplayScale.Y * 75);
-
-
-            VertexBuffer.Bind();
-            VertexBuffer.BindVertexBuffer();
-            GL.VertexPointer(3, VertexPointerType.Float, 12, 0);
-
-            for (int i = 0; i < 3; i++)
-            {
-                var axis = Axes[i];
-
-                GL.Color4(axis.IsOver ? axis.Color : axis.InnactiveColor);
-
-                GL.Begin(PrimitiveType.Lines);
-                GL.Vertex3(Vector3.Zero);
-                GL.Vertex3(axis.Direction * DisplayScale.Y * 75);
-                GL.End();
-
-                GL.Enable(EnableCap.VertexArray);
-
-                GL.PushMatrix();
-
-
-                var arrowMatrix = arrowScale * arrowTrans * axis.RotationMatrix;// axis.RotationMatrix * arrowTrans * arrowScale;
-                GL.MultMatrix(ref arrowMatrix);
-                VertexBuffer.DrawElements();
-                GL.PopMatrix();
-                GL.Disable(EnableCap.VertexArray);
-            }
-
-            GL.PopAttrib();
-        }
 
         public bool RayIntersectsAxis(Ray ray, out GizmoAxis axis)
         {
             axis = GizmoAxis.None;
 
-            if (RayIntersectsAxis(ray, out TranslationGizmoAxis gizmoAxis))
+            if (RayIntersectsAxis(ray, out GizmoAxisManipulator gizmoAxis))
             {
                 axis = gizmoAxis.Axis;
                 return true;
@@ -157,7 +198,7 @@ namespace LDDModder.BrickEditor.Rendering
             return false;
         }
 
-        private bool RayIntersectsAxis(Ray ray, out TranslationGizmoAxis hitAxis)
+        private bool RayIntersectsAxis(Ray ray, out GizmoAxisManipulator hitAxis)
         {
             hitAxis = null;
             var localRay = Ray.Transform(ray, Transform.Inverted());
@@ -165,11 +206,14 @@ namespace LDDModder.BrickEditor.Rendering
 
             for (int i = 0; i < 3; i++)
             {
-                if (Ray.IntersectsBox(localRay, Axes[i].BoundingBox, out float hitDist))
+                var axis = (DisplayStyle == GizmoStyle.Translation) ? 
+                    (GizmoAxisManipulator)TranslationAxes[i] : RotationAxes[i];
+
+                if (axis.Hittest(localRay, out float hitDist))
                 {
                     if (hitDist < minDist)
                     {
-                        hitAxis = Axes[i];
+                        hitAxis = axis;
                         minDist = hitDist;
                     }
                 }
@@ -186,23 +230,147 @@ namespace LDDModder.BrickEditor.Rendering
 
             for (int i = 0; i < 3; i++)
             {
-                var axis = Axes[i];
+                var transAxis = TranslationAxes[i];
                 var boxSize = new Vector3(DisplayScale.X * 10);
-                boxSize = Vector3.ComponentMax(boxSize, axis.Direction * DisplayScale.Y * 95);
-                axis.BoundingBox = BBox.FromCenterSize(axis.Direction * DisplayScale.Y * 95 * 0.5f, boxSize);
+                boxSize = Vector3.ComponentMax(boxSize, transAxis.Direction * DisplayScale.Y * GizmoSize);
+                transAxis.BoundingBox = BBox.FromCenterSize(transAxis.Direction * DisplayScale.Y * GizmoSize * 0.5f, boxSize);
+
+                RotationAxes[i].GizmoRadius = GizmoSize * DisplayScale.Y;
+                RotationAxes[i].Tolerence = 10 * DisplayScale.Y;
             }
 
-            BoundingSphere = new BSphere(gizmoPos, DisplayScale.Y * 95);
+            BoundingSphere = new BSphere(gizmoPos, DisplayScale.Y * GizmoSize);
         }
 
         public void PerformMouseOver(Ray mouseRay)
         {
             for (int i = 0; i < 3; i++)
-                Axes[i].IsOver = false;
+            {
+                TranslationAxes[i].IsOver = false;
+                RotationAxes[i].IsOver = false;
+            }
+            IsMouseOver = false;
 
-            if (RayIntersectsAxis(mouseRay, out TranslationGizmoAxis gizmoAxis))
+            if (RayIntersectsAxis(mouseRay, out GizmoAxisManipulator gizmoAxis))
+            {
                 gizmoAxis.IsOver = true;
+                IsMouseOver = true;
+            }
         }
+
+        #region Rendering
+
+        public void Render()
+        {
+            GL.PushMatrix();
+            var gizmoTrans = Transform;
+            GL.MultMatrix(ref gizmoTrans);
+
+
+            var gizmoScale = Matrix4.CreateScale(GizmoSize * DisplayScale.X * 2);
+
+            var arrowScale = Matrix4.CreateScale(10 * DisplayScale.X, 20 * DisplayScale.Y, 10 * DisplayScale.X);
+            var arrowTrans = Matrix4.CreateTranslation(Vector3.UnitY * DisplayScale.Y * 75);
+            var arrowTransform = arrowScale * arrowTrans;
+
+            RenderHelper.EnableStencilTest();
+
+            VertexBuffer.BindVertexPointer();
+            GL.VertexPointer(3, VertexPointerType.Float, 12, 0);
+
+            for (int i = 0; i < 3; i++)
+            {
+                var currentAxis = DisplayStyle == GizmoStyle.Translation ? 
+                    (GizmoAxisManipulator)TranslationAxes[i] : RotationAxes[i];
+
+                if (currentAxis.IsOver)
+                    RenderHelper.EnableStencilMask();
+
+                if (DisplayStyle == GizmoStyle.Translation)
+                    RenderGizmoAxis(TranslationAxes[i], arrowTransform);
+                else
+                    RenderGizmoAxis(RotationAxes[i], gizmoScale);
+
+                if (currentAxis.IsOver)
+                {
+                    RenderHelper.ApplyStencilMask();
+                    if (DisplayStyle == GizmoStyle.Translation)
+                        RenderGizmoAxis(TranslationAxes[i], arrowTransform, true);
+                    else
+                        RenderGizmoAxis(RotationAxes[i], gizmoScale, true);
+                    RenderHelper.RemoveStencilMask();
+                }
+            }
+
+            GL.PopMatrix();
+            RenderHelper.DisableStencilTest();
+        }
+
+        private void RenderGizmoAxis(TranslationManipulator gizmoAxis, Matrix4 transform, bool outlined = false)
+        {
+            var arrowMatrix = transform * gizmoAxis.AxisRotation;
+            var axisColor = gizmoAxis.IsOver ? gizmoAxis.Color : gizmoAxis.InnactiveColor;
+
+            if (outlined)
+                axisColor = new Color4(1f, 1f, 1f, 1f);
+
+            GL.Color4(axisColor);
+
+            GL.PushAttrib(AttribMask.LineBit);
+            GL.LineWidth(outlined ? 3.5f : 2f);
+
+            GL.Begin(PrimitiveType.Lines);
+            GL.Vertex3(Vector3.Zero);
+            GL.Vertex3(gizmoAxis.Direction * DisplayScale.Y * 75);
+            GL.End();
+
+            GL.PopAttrib();
+
+            if (outlined)
+            {
+                GL.PushAttrib(AttribMask.LineBit);
+                GL.LineWidth(1.5f);
+            }
+
+            GL.PushMatrix();
+            GL.MultMatrix(ref arrowMatrix);
+
+            GL.Enable(EnableCap.VertexArray);
+            VertexBuffer.DrawElements(outlined ? PrimitiveType.LineLoop : PrimitiveType.Triangles);
+            GL.Disable(EnableCap.VertexArray);
+
+            GL.PopMatrix();
+            if (outlined)
+                GL.PopAttrib();
+        }
+
+        private void RenderGizmoAxis(RotationManipulator gizmoAxis, Matrix4 transform, bool outlined = false)
+        {
+            var axisColor = gizmoAxis.IsOver ? gizmoAxis.Color : gizmoAxis.InnactiveColor;
+
+            if (outlined)
+                axisColor = new Color4(1f, 1f, 1f, 1f);
+
+            GL.Color4(axisColor);
+
+            GL.PushAttrib(AttribMask.LineBit);
+            GL.LineWidth(outlined ? 4f : 2.5f);
+
+            var finalMatrix = transform * gizmoAxis.AxisRotation;
+
+            GL.PushMatrix();
+            GL.MultMatrix(ref finalMatrix);
+
+            GL.Enable(EnableCap.VertexArray);
+            VertexBuffer.DrawArrays(PrimitiveType.LineLoop, 0, 32);
+            GL.Disable(EnableCap.VertexArray);
+
+            GL.PopMatrix();
+
+            GL.PopAttrib();
+        }
+
+        #endregion
 
         public void Dispose()
         {

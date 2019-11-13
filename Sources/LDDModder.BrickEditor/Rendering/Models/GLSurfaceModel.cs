@@ -24,10 +24,17 @@ namespace LDDModder.BrickEditor.Rendering
 
         public MaterialInfo Material { get; set; }
 
+        public Vector4 WireframeColor { get; set; }
+
+        public Vector4 WireframeColorAlt { get; set; }
+
+        public Vector4 OutlineColor { get; set; }
+
         public GLSurfaceModel()
         {
             VertexBuffer = new IndexedVertexBuffer<VertVNT>();
             MeshModels = new List<SurfaceModelMesh>();
+            WireframeColor = new Vector4(0, 0, 0, 1f);
         }
 
         public GLSurfaceModel(PartSurface surface)
@@ -35,6 +42,10 @@ namespace LDDModder.BrickEditor.Rendering
             Surface = surface;
             VertexBuffer = new IndexedVertexBuffer<VertVNT>();
             MeshModels = new List<SurfaceModelMesh>();
+            WireframeColor = new Vector4(0, 0, 0, 1f);
+            WireframeColorAlt = new Vector4(1f);// new Vector4(0.956f, 0.6f, 0.168f, 1f);
+            OutlineColor = new Vector4(1f);
+
         }
 
         public void RebuildPartModels()
@@ -109,106 +120,83 @@ namespace LDDModder.BrickEditor.Rendering
         }
 
 
-        #region Shader Binding
-
-        public void BindToShader(ModelShaderProgram modelShader)
-        {
-            modelShader.Use();
-            VertexBuffer.Bind();
-            VertexBuffer.BindAttribute(modelShader.Position, 0);
-            VertexBuffer.BindAttribute(modelShader.Normal, 12);
-            VertexBuffer.BindAttribute(modelShader.TexCoord, 24);
-
-            modelShader.Material.Set(Material);
-        }
-
-        public void UnbindShader(ModelShaderProgram modelShader)
-        {
-            VertexBuffer.Bind();
-            VertexBuffer.UnbindAttribute(modelShader.Position);
-            VertexBuffer.UnbindAttribute(modelShader.Normal);
-            VertexBuffer.UnbindAttribute(modelShader.TexCoord);
-        }
-
-        public void BindToShader(WireframeShaderProgram wireframeShader)
-        {
-            wireframeShader.Use();
-
-            VertexBuffer.Bind();
-            VertexBuffer.BindAttribute(wireframeShader.Position, 0);
-            VertexBuffer.BindAttribute(wireframeShader.Normal, 12);
-            wireframeShader.ModelMatrix.Set(Matrix4.Identity);
-            //wireframeShader.ModelMatrix.Set(Transform);
-        }
-
-        public void UnbindShader(WireframeShaderProgram wireframeShader)
-        {
-            VertexBuffer.Bind();
-            VertexBuffer.UnbindAttribute(wireframeShader.Position);
-            VertexBuffer.UnbindAttribute(wireframeShader.Normal);
-        }
-
-        #endregion
-
-        public void Draw()
-        {
-            VertexBuffer.Vao.DrawElements(OpenTK.Graphics.OpenGL.PrimitiveType.Triangles, VertexBuffer.IndexBuffer.ElementCount);
-        }
-
-        public void DrawMesh(SurfaceModelMesh model)
-        {
-            VertexBuffer.Vao.DrawElementsBaseVertex(OpenTK.Graphics.OpenGL.PrimitiveType.Triangles,
-                model.StartVertex, model.IndexCount,
-                OpenTK.Graphics.OpenGL.DrawElementsType.UnsignedInt, 
-                model.StartIndex * 4);
-        }
-
-        public void DrawModelMesh(SurfaceModelMesh model, WireframeShaderProgram wireframeShader)
-        {
-            wireframeShader.Color.Set(model.IsSelected ? new Vector4(1f, 1f, 1f, 1f) : new Vector4(0f, 0f, 0f, 1f));
-            wireframeShader.ModelMatrix.Set(model.Transform);
-            DrawMesh(model);
-        }
-
-        public void DrawModelMesh(SurfaceModelMesh model, ModelShaderProgram modelShader)
-        {
-            modelShader.IsSelected.Set(model.IsSelected);
-            //modelShader.Material.Set(model.IsSelected ? SelectedMaterial : Material);
-            modelShader.ModelMatrix.Set(model.Transform);
-            //modelShader.Color.Set(model.IsSelected ? new Vector4(1f) : new Vector4(0f, 0f, 0f, 1f));
-            DrawMesh(model);
-        }
-
-        public void Draw(WireframeShaderProgram wireframeShader, ModelShaderProgram modelShader)
+        public void Render(RenderOptions renderOptions, bool alphaPass = false)
         {
             var visibleMeshes = MeshModels.Where(x => x.Visible)
                 .OrderByDescending(x=>x.IsSelected).ToList();
 
-            BindToShader(modelShader);
-            modelShader.UseTexture.Set(Surface.SurfaceID > 0);
+            if (!visibleMeshes.Any())
+                return;
 
-            //if (visibleMeshes.Any(x => x.IsSelected))
-            //{
-            //    GL.Enable(EnableCap.StencilTest);
-            //    GL.StencilFunc(StencilFunction.Always, 1, 0xFFFF);
-            //    GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Replace);
-            //}
-
-            foreach (var mesh in visibleMeshes)
+            var currentMaterial = Material;
+            if (renderOptions.DrawTransparent)
             {
-                //if (mesh.IsSelected)
-                //{
-                //    GL.ClearStencil(0);
-                //    GL.Clear(ClearBufferMask.StencilBufferBit);
-                //}
-                DrawModelMesh(mesh, modelShader);
+                var diffColor = currentMaterial.Diffuse;
+                diffColor.W = 0.8f;
+                currentMaterial.Diffuse = diffColor;
             }
-            //UnbindShader(modelShader);
 
-            BindToShader(wireframeShader);
-            foreach (var mesh in visibleMeshes)
-                DrawModelMesh(mesh, wireframeShader);
-            //UnbindShader(wireframeShader);
+            RenderHelper.ModelShader.Use();
+            RenderHelper.ModelShader.UseTexture.Set(renderOptions.DrawTextured && Surface.SurfaceID > 0);
+
+            bool useOutlineStencil = !alphaPass && visibleMeshes.Any(x => x.IsSelected);
+            if (useOutlineStencil)
+                RenderHelper.EnableStencilTest();
+
+
+            foreach (var model in visibleMeshes)
+            {
+                RenderPartialMesh(renderOptions, model, currentMaterial, useOutlineStencil);
+
+                if (useOutlineStencil && model.IsSelected)
+                    DrawModelOutline(model);
+            }
+
+
+            if (useOutlineStencil)
+                RenderHelper.DisableStencilTest();
+        }
+
+        private void RenderPartialMesh(RenderOptions renderOptions, SurfaceModelMesh model, MaterialInfo material, bool useStencil)
+        {
+            if (renderOptions.DrawShaded || renderOptions.DrawTextured)
+            {
+                RenderHelper.BeginDrawModel(VertexBuffer, model.Transform, material);
+                RenderHelper.ModelShader.IsSelected.Set(model.IsSelected);
+
+                if (model.IsSelected && useStencil)
+                    RenderHelper.EnableStencilMask();
+
+                DrawPartialMesh(model);
+
+                RenderHelper.EndDrawModel(VertexBuffer);
+
+                if (model.IsSelected && useStencil)
+                    RenderHelper.RemoveStencilMask();
+            }
+
+            if (renderOptions.DrawWireframe)
+            {
+                RenderHelper.BeginDrawWireframe(VertexBuffer, model.Transform, 1f, model.IsSelected ? WireframeColorAlt : WireframeColor);
+                DrawPartialMesh(model);
+                RenderHelper.EndDrawWireframe();
+            }
+        }
+
+        private void DrawModelOutline(SurfaceModelMesh model)
+        {
+            RenderHelper.BeginDrawWireframe(VertexBuffer, model.Transform, 4f, OutlineColor);
+            RenderHelper.ApplyStencilMask();
+
+            DrawPartialMesh(model);
+
+            RenderHelper.EndDrawWireframe();
+            RenderHelper.RemoveStencilMask();
+        }
+
+        private void DrawPartialMesh(SurfaceModelMesh mesh)
+        {
+            VertexBuffer.DrawElementsBaseVertex(PrimitiveType.Triangles, mesh.StartVertex, mesh.IndexCount, mesh.StartIndex * 4);
         }
 
         public bool RayIntersects(Ray ray, SurfaceModelMesh model, out float distance)

@@ -36,9 +36,6 @@ namespace LDDModder.BrickEditor.UI.Panels
         private Texture2D CheckboardTexture;
 
         private GridShaderProgram GridShader;
-        private ModelShaderProgram ModelShader;
-        private WireframeShaderProgram WireframeShader;
-        private GizmoShaderProgram GizmoShader;
 
         private List<GLSurfaceModel> SurfaceModels;
         private List<CollisionModel> CollisionModels;
@@ -56,6 +53,8 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         public bool ShowCollisions { get; set; }
         public bool ShowMeshes { get; set; }
+
+        public RenderOptions ModelRenderingOptions { get; private set; }
 
         public ViewportPanel()
         {
@@ -79,7 +78,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void CreateGLControl()
         {
-            glControl1 = new GLControl(new GraphicsMode(32, 24, 0, 8));
+            glControl1 = new GLControl(new GraphicsMode(32, 24, 2, 8));
             glControl1.BackColor = Color.FromArgb(204, 204, 204);
             Controls.Add(glControl1);
             glControl1.Dock = DockStyle.Fill;
@@ -116,10 +115,17 @@ namespace LDDModder.BrickEditor.UI.Panels
             CameraManipulator.Initialize(new Vector3(5), Vector3.Zero);
             //CameraManipulator.RotationButton = MouseButton.Right;
 
-            ShowMeshes = true;  
+            ShowMeshes = true;
+            ModelRenderingOptions = new RenderOptions()
+            {
+                DrawShaded = true,
+                DrawTextured = true,
+                DrawTransparent = false,
+                DrawWireframe = true
+            };
 
             InitializeTextures();
-
+            
             InitializeShaders();
 
             InitializeModels();
@@ -189,8 +195,8 @@ namespace LDDModder.BrickEditor.UI.Panels
                 OffCenter = false
             });
 
-            ModelShader = ProgramFactory.Create<ModelShaderProgram>();
-            ModelShader.Use();
+            RenderHelper.InitializeShaders();
+            RenderHelper.ModelShader.Use();
 
             var lights = new LightInfo[]
             {
@@ -226,18 +232,10 @@ namespace LDDModder.BrickEditor.UI.Panels
                 },
             };
 
-            ModelShader.Lights.Set(lights);
-            ModelShader.LightCount.Set(lights.Length);
-            ModelShader.UseTexture.Set(false);
-
-            WireframeShader = ProgramFactory.Create<WireframeShaderProgram>();
-            WireframeShader.Use();
-            WireframeShader.Color.Set(new Vector4(0, 0, 0, 1));
-            WireframeShader.Thickness.Set(1f);
-
-            GizmoShader = ProgramFactory.Create<GizmoShaderProgram>();
+            RenderHelper.ModelShader.Lights.Set(lights);
+            RenderHelper.ModelShader.LightCount.Set(lights.Length);
+            RenderHelper.ModelShader.UseTexture.Set(false);
         }
-
 
         #endregion
 
@@ -313,21 +311,19 @@ namespace LDDModder.BrickEditor.UI.Panels
             var viewMatrix = Camera.GetViewMatrix();
             var projection = Camera.GetProjectionMatrix();
 
-            WireframeShader.Use();
-            WireframeShader.ViewMatrix.Set(viewMatrix);
-            WireframeShader.Projection.Set(projection);
-            
-            ModelShader.Use();
-            ModelShader.ViewMatrix.Set(viewMatrix);
-            ModelShader.Projection.Set(projection);
-            ModelShader.ViewPosition.Set(Camera.Position);
+            GL.MatrixMode(MatrixMode.Projection);
+            GL.LoadMatrix(ref projection);
+            GL.MatrixMode(MatrixMode.Modelview);
+            GL.LoadMatrix(ref viewMatrix);
+
+            RenderHelper.InitializeMatrices(Camera);
 
             if (ShowCollisions)
                 DrawCollisions();
 
             DrawConnections();
 
-            if (ShowMeshes)
+            if (!ModelRenderingOptions.Hidden)
                 DrawPartModels();
 
             DrawGrid();
@@ -337,13 +333,8 @@ namespace LDDModder.BrickEditor.UI.Panels
             if (TransformGizmo.Visible)
             {
                 GL.Clear(ClearBufferMask.DepthBufferBit);
-                TransformGizmo.Render(Camera);
+                TransformGizmo.Render();
             }
-
-            //GL.MatrixMode(MatrixMode.Projection);
-            //GL.LoadMatrix(ref projection);
-            //GL.MatrixMode(MatrixMode.Modelview);
-            //GL.LoadMatrix(ref viewMatrix);
 
             GL.UseProgram(0);
         }
@@ -355,20 +346,12 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void DrawCollisions()
         {
+            GL.Disable(EnableCap.Texture2D);
             if (CollisionModels.Any())
             {
-                ModelShader.Texture.Set(TextureUnit.Texture0);
-                ModelShader.UseTexture.Set(false);
-                var selectedMat = BoxCollisionModel.Material;
-                selectedMat.Diffuse = new Vector4(1f, 0.4f, 0.4f, 1f);
-                foreach (var colModel in CollisionModels.Where(x=>x.Visible))
-                {
-                    colModel.BaseModel.BindToShader(ModelShader);
-                    ModelShader.Material.Set(colModel.IsSelected ? selectedMat : BoxCollisionModel.Material);
-                    ModelShader.ModelMatrix.Set(colModel.MeshTransform);
-                    colModel.Draw();
-                    colModel.BaseModel.UnbindShader(ModelShader);
-                }
+                RenderHelper.UnbindModelTexture();
+                foreach (var colModel in CollisionModels.Where(x => x.Visible))
+                    colModel.RenderModel(Camera);
             }
         }
 
@@ -376,39 +359,42 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             GL.Enable(EnableCap.Texture2D);
 
-            CheckboardTexture.Bind(TextureUnit.Texture4);
-            ModelShader.Texture.BindTexture(TextureUnit.Texture4, CheckboardTexture);
+            RenderHelper.BindModelTexture(CheckboardTexture, TextureUnit.Texture4);
 
-            var visiblePartMeshes = SurfaceModels.SelectMany(x => x.MeshModels).Where(x => x.Visible);
-
-            var transparentSurfaces = SurfaceModels.Where(x => x.IsTransparent);
-
-            if (transparentSurfaces.Any())
+            if (ModelRenderingOptions.DrawTransparent)
             {
+                GL.Disable(EnableCap.DepthTest);
                 GL.Enable(EnableCap.CullFace);
+                GL.CullFace(CullFaceMode.Front);
+                foreach (var surfaceModel in SurfaceModels)
+                    surfaceModel.Render(ModelRenderingOptions, true);
 
-                foreach (var surfaceModel in transparentSurfaces)
-                {
-                    GL.CullFace(CullFaceMode.Front);
-                    surfaceModel.Draw(WireframeShader, ModelShader);
-                }
-                foreach (var surfaceModel in transparentSurfaces)
-                {
-                    GL.CullFace(CullFaceMode.Back);
-                    surfaceModel.Draw(WireframeShader, ModelShader);
-                }
+                bool wireframeEnabled = ModelRenderingOptions.DrawWireframe;
+                ModelRenderingOptions.DrawWireframe = false;
+
+                GL.CullFace(CullFaceMode.Back);
+                foreach (var surfaceModel in SurfaceModels)
+                    surfaceModel.Render(ModelRenderingOptions);
                 GL.Disable(EnableCap.CullFace);
 
-                foreach (var surfaceModel in SurfaceModels.Where(x => !x.IsTransparent))
-                    surfaceModel.Draw(WireframeShader, ModelShader);
+                GL.Enable(EnableCap.DepthTest);
+                ModelRenderingOptions.DrawWireframe = wireframeEnabled;
+                
+                //var wireframeOptions = new RenderOptions
+                //{
+                //    DrawWireframe = true
+                //};
+
+                //foreach (var surfaceModel in SurfaceModels)
+                //    surfaceModel.Render(wireframeOptions, true);
             }
             else
             {
                 foreach (var surfaceModel in SurfaceModels)
-                    surfaceModel.Draw(WireframeShader, ModelShader);
+                    surfaceModel.Render(ModelRenderingOptions);
             }
-            
 
+            RenderHelper.UnbindModelTexture();
             CheckboardTexture.Bind(TextureUnit.Texture0);
             GL.Disable(EnableCap.Texture2D);
         }
@@ -545,6 +531,12 @@ namespace LDDModder.BrickEditor.UI.Panels
         private void OnUpdateFrame(double deltaTime)
         {
             InputManager.UpdateInputStates();
+
+            if (InputManager.IsKeyDown(Key.R) && InputManager.HasKeyChanged(Key.R))
+                TransformGizmo.DisplayStyle = TransformGizmo.GizmoStyle.Rotation;
+            else if (InputManager.IsKeyDown(Key.T) && InputManager.HasKeyChanged(Key.T))
+                TransformGizmo.DisplayStyle = TransformGizmo.GizmoStyle.Translation;
+
             CameraManipulator.HandleCamera(InputManager);
             if (Camera.IsDirty && TransformGizmo.Visible)
                 TransformGizmo.UpdateBoundingBoxes(Camera);
@@ -593,15 +585,13 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             UnloadModels();
 
+            RenderHelper.DisposeShaders();
             BoxCollisionModel.Dispose();
             SphereCollisionModel.Dispose();
 
             TransformGizmo.Dispose();
 
             GridShader.Dispose();
-            ModelShader.Dispose();
-            WireframeShader.Dispose();
-            GizmoShader.Dispose();
             CheckboardTexture.Dispose();
         }
 
@@ -756,7 +746,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         public IEnumerable<PartElementModel> GetVisibleModels()
         {
-            if (ShowMeshes)
+            if (!ModelRenderingOptions.Hidden)
             {
                 foreach (var model in SurfaceModels.SelectMany(x => x.MeshModels).Where(x=>x.Visible))
                     yield return model;
@@ -968,7 +958,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             if (TransformGizmo.Visible)
             {
                 var ray = Camera.RaycastFromScreen(new Vector2(e.X, e.Y));
-                if (Ray.IntersectsSphere(ray, TransformGizmo.BoundingSphere, out _))
+                if (Ray.IntersectsSphere(ray, TransformGizmo.BoundingSphere, out _) || TransformGizmo.IsMouseOver)
                     TransformGizmo.PerformMouseOver(ray);
             }
         }
@@ -1012,12 +1002,14 @@ namespace LDDModder.BrickEditor.UI.Panels
         private void DisplayMenu_Meshes_CheckedChanged(object sender, EventArgs e)
         {
             ShowMeshes = DisplayMenu_Meshes.Checked;
+            ModelRenderingOptions.Hidden = !DisplayMenu_Meshes.Checked;
         }
-
-
 
         #endregion
 
-        
+        private void xRayToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
+        {
+            ModelRenderingOptions.DrawTransparent = xRayToolStripMenuItem.Checked;
+        }
     }
 }

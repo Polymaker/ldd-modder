@@ -48,6 +48,7 @@
             this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.visualStudioToolStripExtender1 = new WeifenLuo.WinFormsUI.Docking.VisualStudioToolStripExtender(this.components);
+            this.xRayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -139,7 +140,8 @@
             this.DisplayMenuDropDown.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.DisplayMenu_Collisions,
             this.connectionsToolStripMenuItem,
-            this.DisplayMenu_Meshes});
+            this.DisplayMenu_Meshes,
+            this.xRayToolStripMenuItem});
             resources.ApplyResources(this.DisplayMenuDropDown, "DisplayMenuDropDown");
             this.DisplayMenuDropDown.Name = "DisplayMenuDropDown";
             // 
@@ -182,6 +184,13 @@
             // 
             this.visualStudioToolStripExtender1.DefaultRenderer = null;
             // 
+            // xRayToolStripMenuItem
+            // 
+            this.xRayToolStripMenuItem.CheckOnClick = true;
+            this.xRayToolStripMenuItem.Name = "xRayToolStripMenuItem";
+            resources.ApplyResources(this.xRayToolStripMenuItem, "xRayToolStripMenuItem");
+            this.xRayToolStripMenuItem.CheckedChanged += new System.EventHandler(this.xRayToolStripMenuItem_CheckedChanged);
+            // 
             // ViewportPanel
             // 
             resources.ApplyResources(this, "$this");
@@ -216,5 +225,6 @@
         private System.Windows.Forms.ToolStripMenuItem DisplayMenu_Collisions;
         private System.Windows.Forms.ToolStripMenuItem connectionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem DisplayMenu_Meshes;
+        private System.Windows.Forms.ToolStripMenuItem xRayToolStripMenuItem;
     }
 }

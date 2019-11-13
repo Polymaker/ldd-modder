@@ -100,6 +100,13 @@ vec3 CalcPointLight(LightInfo light, vec3 diffuseColor, vec3 normal, vec3 fragPo
     return (ambient + diffuse + specular);
 } 
 
+float getBrightness(vec3 color)
+{
+	float fmin = min(min(color.r, color.g), color.b); //Min. value of RGB
+ 	float fmax = max(max(color.r, color.g), color.b); //Max. value of RGB
+	return (fmax + fmin) / 2.0;
+}
+
 void main()
 {
 	
@@ -117,7 +124,9 @@ void main()
 	
 	if (IsSelected)
 	{
-		baseColor.rgb = clamp(baseColor.rgb * 1.15, vec3(0), vec3(1));
+		float baseBrightness = getBrightness(baseColor.rgb);
+		
+		baseColor.rgb = clamp(max(baseColor.rgb,baseBrightness * 0.5) * 1.15, vec3(0), vec3(1));
 	}
 	
 	vec3 finalColor = baseColor.rgb * 0.1;

@@ -33,7 +33,7 @@ namespace LDDModder.BrickEditor.Rendering
             else if (collision is PartSphereCollision sphereCollision)
                 scale = new Vector3(sphereCollision.Radius * 2f);
 
-            BoundingBox = BBox.FromCenterSize(Vector3.Zero/*collision.Transform.Position.ToGL()*/, scale);
+            BoundingBox = BBox.FromCenterSize(Vector3.Zero, scale);
             MeshTransform = Matrix4.CreateScale(scale) * Transform; 
             Scale = scale;
         }
@@ -44,6 +44,20 @@ namespace LDDModder.BrickEditor.Rendering
                 OpenTK.Graphics.OpenGL.PrimitiveType.Quads : 
                 OpenTK.Graphics.OpenGL.PrimitiveType.Triangles);
 
+        }
+
+        public override void RenderModel(Camera camera)
+        {
+            base.RenderModel(camera);
+
+            RenderHelper.BeginDrawModel(BaseModel.VertexBuffer, MeshTransform, BaseModel.Material);
+            RenderHelper.ModelShader.IsSelected.Set(IsSelected);
+
+            BaseModel.Draw(CollisionType == CollisionType.Box ?
+                OpenTK.Graphics.OpenGL.PrimitiveType.Quads :
+                OpenTK.Graphics.OpenGL.PrimitiveType.Triangles);
+
+            RenderHelper.EndDrawModel(BaseModel.VertexBuffer);
         }
 
         public override bool RayIntersects(Ray ray, out float distance)

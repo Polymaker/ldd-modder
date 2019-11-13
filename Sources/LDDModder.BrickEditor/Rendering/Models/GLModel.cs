@@ -10,66 +10,33 @@ using System.Threading.Tasks;
 
 namespace LDDModder.BrickEditor.Rendering
 {
-    public class GLModel : IDisposable
+    public class GLModel : ModelBase, IDisposable
     {
-        public bool Visible { get; set; }
 
         public MaterialInfo Material { get; set; }
 
-        public Matrix4 Transform { get; set; }
-
-        public VertexArray Vao { get; protected set; }
-
-        public Buffer<int> IndexBuffer { get; protected set; }
-
-        public Buffer<VertVNT> VertexBuffer { get; protected set; }
-
-        public bool BufferInitialized { get; protected set; }
-
-        public BBox BoundingBox { get; set; }
+        public IndexedVertexBuffer<VertVNT> VertexBuffer { get; private set; }
 
         public GLModel()
         {
             Transform = Matrix4.Identity;
-        }
-
-        public void CreateBuffers()
-        {
-            if (!BufferInitialized)
-            {
-                Vao = new VertexArray();
-                IndexBuffer = new Buffer<int>();
-                VertexBuffer = new Buffer<VertVNT>();
-                BufferInitialized = true;
-
-                Vao.Bind();
-                Vao.BindElementBuffer(IndexBuffer);
-            }
+            VertexBuffer = new IndexedVertexBuffer<VertVNT>();
         }
 
         public void SetIndices(IEnumerable<int> indices)
         {
-            if (!BufferInitialized)
-                CreateBuffers();
-            IndexBuffer.Clear(BufferTarget.ElementArrayBuffer);
-            IndexBuffer.Init(BufferTarget.ElementArrayBuffer, indices.ToArray());
+            VertexBuffer.SetIndices(indices);
         }
 
         public void SetVertices(IEnumerable<VertVNT> vertices)
         {
-            if (!BufferInitialized)
-                CreateBuffers();
-            VertexBuffer.Clear(BufferTarget.ArrayBuffer);
-            VertexBuffer.Init(BufferTarget.ArrayBuffer, vertices.ToArray());
+            VertexBuffer.SetVertices(vertices);
             BoundingBox = BBox.FromVertices(vertices.Select(x => x.Position));
         }
 
         public void SetVertices(IEnumerable<VertVN> vertices)
         {
-            if (!BufferInitialized)
-                CreateBuffers();
-            VertexBuffer.Clear(BufferTarget.ArrayBuffer);
-            VertexBuffer.Init(BufferTarget.ArrayBuffer, vertices.Select(x => new VertVNT
+            VertexBuffer.SetVertices(vertices.Select(x => new VertVNT
             {
                 Position = x.Position,
                 Normal = x.Normal,
@@ -127,67 +94,38 @@ namespace LDDModder.BrickEditor.Rendering
             SetIndices(indices);
         }
 
-        public void BindToShader(ModelShaderProgram modelShader)
-        {
-            modelShader.Use();
-            Vao.Bind();
-            Vao.BindAttribute(modelShader.Position, VertexBuffer, 0);
-            Vao.BindAttribute(modelShader.Normal, VertexBuffer, 12);
-            Vao.BindAttribute(modelShader.TexCoord, VertexBuffer, 24);
-
-            modelShader.ModelMatrix.Set(Transform);
-            modelShader.Material.Set(Material);
-        }
-
-        public void UnbindShader(ModelShaderProgram modelShader)
-        {
-            Vao.Bind();
-            Vao.UnbindAttribute(modelShader.Position);
-            Vao.UnbindAttribute(modelShader.Normal);
-            Vao.UnbindAttribute(modelShader.TexCoord);
-        }
-
-        public void BindToShader(WireframeShaderProgram wireframeShader)
-        {
-            wireframeShader.Use();
-
-            Vao.Bind();
-            Vao.BindAttribute(wireframeShader.Position, VertexBuffer, 0);
-
-            wireframeShader.ModelMatrix.Set(Transform);
-        }
-
-        public void UnbindShader(WireframeShaderProgram wireframeShader)
-        {
-            Vao.Bind();
-            Vao.UnbindAttribute(wireframeShader.Position);
-        }
-
         public void Draw(PrimitiveType drawMode = PrimitiveType.Triangles)
         {
-            Vao.Bind();
-            Vao.DrawElements(drawMode, IndexBuffer.ElementCount);
+            VertexBuffer.DrawElements(drawMode);
         }
 
         public void Dispose()
         {
-            if (IndexBuffer != null)
-            {
-                IndexBuffer.Dispose();
-                IndexBuffer = null;
-            }
-
             if (VertexBuffer != null)
-            {
                 VertexBuffer.Dispose();
-                VertexBuffer = null;
+        }
+
+        public override bool RayIntersects(Ray ray, out float distance)
+        {
+            distance = float.NaN;
+            var vertices = VertexBuffer.VertexBuffer.Content;
+            var indices = VertexBuffer.IndexBuffer.Content;
+
+            for (int i = 0; i < VertexBuffer.IndexCount; i += 3)
+            {
+                var idx1 = indices[i];
+                var idx2 = indices[i + 1];
+                var idx3 = indices[i + 2];
+
+                var v1 = vertices[idx1];
+                var v2 = vertices[idx2];
+                var v3 = vertices[idx3];
+
+                if (Ray.IntersectsTriangle(ray, v1.Position, v2.Position, v3.Position, out float hitDist))
+                    distance = float.IsNaN(distance) ? hitDist : Math.Min(hitDist, distance);
             }
 
-            if (Vao != null)
-            {
-                Vao.Dispose();
-                Vao = null;
-            }
+            return !float.IsNaN(distance);
         }
     }
 }
