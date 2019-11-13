@@ -11,7 +11,7 @@ namespace LDDModder.BrickEditor.Rendering
 {
     public class CollisionModel : PartElementModel
     {
-        public GLModel BaseModel { get; set; }
+        public GLModel BaseModel { get; private set; }
 
         public Vector3 Scale { get; set; }
         

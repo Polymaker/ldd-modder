@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OpenTK.Graphics;
+using OpenTK.Graphics.OpenGL;
 
 namespace LDDModder.BrickEditor.Rendering
 {
@@ -50,7 +52,6 @@ namespace LDDModder.BrickEditor.Rendering
                 {
                     var addedModel = AddMeshGeometry(meshRef, indexList, vertexList);
                     addedModel.Visible = true;
-                    addedModel.Component = surfComp;
 
                     if (!distinctMeshes.Contains(meshRef.ModelMesh))
                         distinctMeshes.Add(meshRef.ModelMesh);
@@ -61,7 +62,6 @@ namespace LDDModder.BrickEditor.Rendering
                     foreach (var meshRef in femaleStud.ReplacementMeshes)
                     {
                         var addedModel = AddMeshGeometry(meshRef, indexList, vertexList);
-                        addedModel.Component = surfComp;
                         addedModel.Visible = false;
 
                         if (!distinctMeshes.Contains(meshRef.ModelMesh))
@@ -101,9 +101,9 @@ namespace LDDModder.BrickEditor.Rendering
                 vertexList.Add(glVertex);
             }
 
-            var model = new SurfaceModelMesh(modelMesh, indexOffset, geometry.IndexCount, vertexOffset);
-            model.BoundingBox = BBox.FromMinMax(minPos, maxPos); //new BBox { Extents = (maxPos - minPos) * 0.5f };
-            model.SurfaceModel = this;
+            var model = new SurfaceModelMesh(this, modelMesh, indexOffset, geometry.IndexCount, vertexOffset);
+            model.BoundingBox = BBox.FromMinMax(minPos, maxPos);
+
             MeshModels.Add(model);
             return model;
         }
@@ -136,6 +136,7 @@ namespace LDDModder.BrickEditor.Rendering
 
             VertexBuffer.Bind();
             VertexBuffer.BindAttribute(wireframeShader.Position, 0);
+            VertexBuffer.BindAttribute(wireframeShader.Normal, 12);
             wireframeShader.ModelMatrix.Set(Matrix4.Identity);
             //wireframeShader.ModelMatrix.Set(Transform);
         }
@@ -144,6 +145,7 @@ namespace LDDModder.BrickEditor.Rendering
         {
             VertexBuffer.Bind();
             VertexBuffer.UnbindAttribute(wireframeShader.Position);
+            VertexBuffer.UnbindAttribute(wireframeShader.Normal);
         }
 
         #endregion
@@ -182,30 +184,32 @@ namespace LDDModder.BrickEditor.Rendering
             var visibleMeshes = MeshModels.Where(x => x.Visible)
                 .OrderByDescending(x=>x.IsSelected).ToList();
 
+            BindToShader(modelShader);
+            modelShader.UseTexture.Set(Surface.SurfaceID > 0);
+
+            //if (visibleMeshes.Any(x => x.IsSelected))
+            //{
+            //    GL.Enable(EnableCap.StencilTest);
+            //    GL.StencilFunc(StencilFunction.Always, 1, 0xFFFF);
+            //    GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Replace);
+            //}
+
+            foreach (var mesh in visibleMeshes)
+            {
+                //if (mesh.IsSelected)
+                //{
+                //    GL.ClearStencil(0);
+                //    GL.Clear(ClearBufferMask.StencilBufferBit);
+                //}
+                DrawModelMesh(mesh, modelShader);
+            }
+            //UnbindShader(modelShader);
+
             BindToShader(wireframeShader);
             foreach (var mesh in visibleMeshes)
                 DrawModelMesh(mesh, wireframeShader);
-            UnbindShader(wireframeShader);
-
-            BindToShader(modelShader);
-            modelShader.UseTexture.Set(Surface.SurfaceID > 0);
-            foreach (var mesh in visibleMeshes)
-                DrawModelMesh(mesh, modelShader);
-            UnbindShader(modelShader);
+            //UnbindShader(wireframeShader);
         }
-
-        public void Draw(ModelShaderProgram modelShader)
-        {
-            var visibleMeshes = MeshModels.Where(x => x.Visible)
-                .OrderByDescending(x => x.IsSelected).ToList();
-
-            BindToShader(modelShader);
-            modelShader.UseTexture.Set(Surface.SurfaceID > 0);
-            foreach (var mesh in visibleMeshes)
-                DrawModelMesh(mesh, modelShader);
-            UnbindShader(modelShader);
-        }
-
 
         public bool RayIntersects(Ray ray, SurfaceModelMesh model, out float distance)
         {

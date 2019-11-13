@@ -13,20 +13,18 @@ namespace LDDModder.BrickEditor.Rendering
         public int StartIndex { get; set; }
         public int StartVertex { get; set; }
         public int IndexCount { get; set; }
-        //public bool Visible { get; set; }
-        //public Matrix4 Transform { get; set; }
 
-        public SurfaceComponent Component { get; set; }
+        public SurfaceComponent Component => MeshReference.Parent as SurfaceComponent;
 
         public PartSurface Surface => Component?.Surface;
 
-        public ModelMeshReference Mesh { get; set; }
+        public ModelMeshReference MeshReference { get; private set; }
 
-        public GLSurfaceModel SurfaceModel { get; set; }
-
-        public SurfaceModelMesh(ModelMeshReference mesh, int startIndex, int indexCount, int startVertex) : base(mesh)
+        public GLSurfaceModel SurfaceModel { get; private set; }
+        public SurfaceModelMesh(GLSurfaceModel baseModel, ModelMeshReference meshRef, int startIndex, int indexCount, int startVertex) : base(meshRef)
         {
-            Mesh = mesh;
+            MeshReference = meshRef;
+            SurfaceModel = baseModel;
             StartIndex = startIndex;
             IndexCount = indexCount;
             StartVertex = startVertex;

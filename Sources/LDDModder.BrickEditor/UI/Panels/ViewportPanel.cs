@@ -87,6 +87,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             glControl1.MouseEnter += GlControl1_MouseEnter;
             glControl1.MouseLeave += GlControl1_MouseLeave;
             glControl1.MouseClick += GlControl1_MouseClick;
+            glControl1.MouseMove += GlControl_MouseMove;
         }
 
         protected override void OnLoad(EventArgs e)
@@ -114,9 +115,6 @@ namespace LDDModder.BrickEditor.UI.Panels
             CameraManipulator = new CameraManipulator(new Camera());
             CameraManipulator.Initialize(new Vector3(5), Vector3.Zero);
             //CameraManipulator.RotationButton = MouseButton.Right;
-
-            TransformGizmo = new TransformGizmo();
-            //TransformGizmo.Visible = true;
 
             ShowMeshes = true;  
 
@@ -158,6 +156,9 @@ namespace LDDModder.BrickEditor.UI.Panels
                 Specular = new Vector3(1f),
                 Shininess = 2f
             };
+
+            TransformGizmo = new TransformGizmo();
+            TransformGizmo.InitializeVertexBuffer();
         }
 
         private void InitializeFonts()
@@ -256,6 +257,9 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             if (!ViewInitialized)
                 ViewInitialized = true;
+
+            if (TransformGizmo.Visible)
+                TransformGizmo.UpdateBoundingBoxes(Camera);
         }
 
 
@@ -331,7 +335,10 @@ namespace LDDModder.BrickEditor.UI.Panels
             GL.UseProgram(0);
 
             if (TransformGizmo.Visible)
-                DrawGizmos();
+            {
+                GL.Clear(ClearBufferMask.DepthBufferBit);
+                TransformGizmo.Render(Camera);
+            }
 
             //GL.MatrixMode(MatrixMode.Projection);
             //GL.LoadMatrix(ref projection);
@@ -371,6 +378,8 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             CheckboardTexture.Bind(TextureUnit.Texture4);
             ModelShader.Texture.BindTexture(TextureUnit.Texture4, CheckboardTexture);
+
+            var visiblePartMeshes = SurfaceModels.SelectMany(x => x.MeshModels).Where(x => x.Visible);
 
             var transparentSurfaces = SurfaceModels.Where(x => x.IsTransparent);
 
@@ -417,55 +426,6 @@ namespace LDDModder.BrickEditor.UI.Panels
             GL.Vertex3(40, 0, 40);
             GL.Vertex3(40, 0, -40);
             GL.End();
-        }
-
-        private void DrawGizmos()
-        {
-            GL.Clear(ClearBufferMask.DepthBufferBit);
-
-            var viewMatrix = Camera.GetViewMatrix();
-            var projection = Camera.GetProjectionMatrix();
-
-            GizmoShader.Use();
-            GizmoShader.ViewMatrix.Set(viewMatrix);
-            GizmoShader.Projection.Set(projection);
-            GizmoShader.ModelMatrix.Set(TransformGizmo.Transform);
-
-            GL.PushAttrib(AttribMask.LineBit);
-            GL.LineWidth(2f);
-            GL.Begin(PrimitiveType.Points);
-            GL.Vertex3(Vector3.Zero);
-            GL.End();
-            GL.PopAttrib();
-            //GL.MatrixMode(MatrixMode.Projection);
-            //GL.LoadMatrix(ref projection);
-            //GL.MatrixMode(MatrixMode.Modelview);
-            //GL.LoadMatrix(ref viewMatrix);
-            //var trans = TransformGizmo.Transform;
-            //GL.MultMatrix(ref trans);
-
-            //GL.PushAttrib(AttribMask.LineBit);
-            //GL.LineWidth(2f);
-
-            //GL.Color4(new Vector4(1f, 0, 0, 1f));
-            //GL.Begin(PrimitiveType.Lines);
-            //GL.Vertex3(Vector3.Zero);
-            //GL.Vertex3(Vector3.UnitZ);
-            //GL.End();
-
-            //GL.Color4(new Vector4(0, 1f, 0, 1f));
-            //GL.Begin(PrimitiveType.Lines);
-            //GL.Vertex3(Vector3.Zero);
-            //GL.Vertex3(Vector3.UnitY);
-            //GL.End();
-
-            //GL.Color4(new Vector4(0, 0, 1f, 1f));
-            //GL.Begin(PrimitiveType.Lines);
-            //GL.Vertex3(Vector3.Zero);
-            //GL.Vertex3(Vector3.UnitX);
-            //GL.End();
-
-            //GL.PopAttrib();
         }
 
         private void RenderUI()
@@ -586,6 +546,10 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             InputManager.UpdateInputStates();
             CameraManipulator.HandleCamera(InputManager);
+            if (Camera.IsDirty && TransformGizmo.Visible)
+                TransformGizmo.UpdateBoundingBoxes(Camera);
+
+            
         }
 
         private void GlControl1_MouseEnter(object sender, EventArgs e)
@@ -629,10 +593,10 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             UnloadModels();
 
-            if (BoxCollisionModel != null)
-                BoxCollisionModel.Dispose();
-            if (SphereCollisionModel != null)
-                SphereCollisionModel.Dispose();
+            BoxCollisionModel.Dispose();
+            SphereCollisionModel.Dispose();
+
+            TransformGizmo.Dispose();
 
             GridShader.Dispose();
             ModelShader.Dispose();
@@ -681,6 +645,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         protected override void OnProjectClosed()
         {
             base.OnProjectClosed();
+            TransformGizmo.Visible = false;
             UnloadModels();
         }
 
@@ -826,6 +791,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                 TransformGizmo.Visible = true;
                 var avgBounding = CalculateBoundingBox(selectedModels);
                 TransformGizmo.Transform = Matrix4.CreateTranslation(avgBounding.Center);
+                TransformGizmo.UpdateBoundingBoxes(Camera);
             }
             else
             {
@@ -835,11 +801,11 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void PerformRaySelection(Ray ray)
         {
-            if (TransformGizmo.Visible)
+            if (TransformGizmo.Visible && !(InputManager.IsControlDown() || InputManager.IsShiftDown()))
             {
-                if (TransformGizmo.RayIntersectsAxis(ray, Camera))
+                if (TransformGizmo.RayIntersectsAxis(ray, out _))
                 {
-
+                    return;
                 }
             }
 
@@ -997,6 +963,16 @@ namespace LDDModder.BrickEditor.UI.Panels
             }
         }
 
+        private void GlControl_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            if (TransformGizmo.Visible)
+            {
+                var ray = Camera.RaycastFromScreen(new Vector2(e.X, e.Y));
+                if (Ray.IntersectsSphere(ray, TransformGizmo.BoundingSphere, out _))
+                    TransformGizmo.PerformMouseOver(ray);
+            }
+        }
+
         #endregion
 
         #region Toolbar Menu
@@ -1038,9 +1014,10 @@ namespace LDDModder.BrickEditor.UI.Panels
             ShowMeshes = DisplayMenu_Meshes.Checked;
         }
 
+
+
         #endregion
 
-
-
+        
     }
 }

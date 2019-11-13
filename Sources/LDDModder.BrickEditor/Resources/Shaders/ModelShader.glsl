@@ -117,7 +117,7 @@ void main()
 	
 	if (IsSelected)
 	{
-		baseColor.rgb = clamp(baseColor.rgb * 1.2, vec3(0), vec3(1));
+		baseColor.rgb = clamp(baseColor.rgb * 1.15, vec3(0), vec3(1));
 	}
 	
 	vec3 finalColor = baseColor.rgb * 0.1;

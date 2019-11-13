@@ -63,8 +63,6 @@ namespace LDDModder.BrickEditor.Rendering
             //var viewSize = new Vector2(Camera.Viewport.Width, Camera.Viewport.Height);
             var mouseDelta = input.MousePos - input.LastMousePos;
 
-            
-
             if (mouseDelta.LengthFast > 1)
             {
                 if (input.IsButtonDown(RotationButton))

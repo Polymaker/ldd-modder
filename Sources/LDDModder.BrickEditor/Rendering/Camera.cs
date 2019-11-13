@@ -140,6 +140,8 @@ namespace LDDModder.BrickEditor.Rendering
             }
         }
 
+        public bool IsDirty => isViewMatrixDirty || isProjectionMatrixDirty;
+
         public Camera()
         {
             _Transform = Matrix4.Identity;

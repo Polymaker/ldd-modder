@@ -14,6 +14,8 @@ namespace LDDModder.BrickEditor.Rendering.Shaders
     {
         [VertexAttrib(3, VertexAttribPointerType.Float)]
         public VertexAttrib Position { get; protected set; }
+        [VertexAttrib(3, VertexAttribPointerType.Float)]
+        public VertexAttrib Normal { get; protected set; }
 
         public Uniform<float> Thickness { get; protected set; }
 

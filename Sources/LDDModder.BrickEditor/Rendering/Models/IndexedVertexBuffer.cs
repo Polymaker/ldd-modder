@@ -33,6 +33,12 @@ namespace LDDModder.BrickEditor.Rendering
         {
             if (BufferInitialized)
                 Vao.BindAttribute(attribute, VertexBuffer, offset);
+            
+        }
+
+        public void BindVertexBuffer()
+        {
+            GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBuffer.Handle);
         }
 
         public void UnbindAttribute(VertexAttrib attribute)
@@ -78,6 +84,24 @@ namespace LDDModder.BrickEditor.Rendering
                 CreateBuffers();
             VertexBuffer.Clear(BufferTarget.ArrayBuffer);
             VertexBuffer.Init(BufferTarget.ArrayBuffer, vertices.ToArray());
+        }
+
+        public void DrawElements(PrimitiveType drawMode = PrimitiveType.Triangles)
+        {
+            Vao.Bind();
+            Vao.DrawElements(drawMode, IndexBuffer.ElementCount);
+        }
+
+        public void DrawElements(PrimitiveType drawMode, int count)
+        {
+            Vao.Bind();
+            Vao.DrawElements(drawMode, count);
+        }
+
+        public void DrawArrays(PrimitiveType drawMode, int first, int count)
+        {
+            Vao.Bind();
+            Vao.DrawArrays(drawMode, first, count);
         }
 
         ~IndexedVertexBuffer()
