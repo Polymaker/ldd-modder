@@ -134,5 +134,10 @@ namespace LDDModder.BrickEditor.Rendering
         {
             return Math.Abs(value) <= float.Epsilon;
         }
+
+        public override string ToString()
+        {
+            return $"{Origin} {Direction}";
+        }
     }
 }

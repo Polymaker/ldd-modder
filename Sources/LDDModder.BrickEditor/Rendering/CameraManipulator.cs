@@ -53,7 +53,7 @@ namespace LDDModder.BrickEditor.Rendering
             _Gimbal = gimbalPosition;
         }
 
-        public void HandleCamera(InputManager input)
+        public void ProcessInput(InputManager input)
         {
             if (!input.ContainsMouse)
                 return;

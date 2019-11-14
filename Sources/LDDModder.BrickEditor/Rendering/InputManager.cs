@@ -10,6 +10,7 @@ namespace LDDModder.BrickEditor.Rendering
 {
     public class InputManager
     {
+        public Vector2 RelativeScreenOffset { get; set; }
 
         public Vector2 LastMousePos { get; set; }
         public MouseState LastMouseState { get; set; }
@@ -19,15 +20,27 @@ namespace LDDModder.BrickEditor.Rendering
         public MouseState MouseState { get; set; }
         public KeyboardState KeyboardState { get; set; }
 
+        public Vector2 LocalMousePos { get; private set; }
+
         public bool HasInitialized { get; private set; }
 
         public bool ContainsMouse { get; set; }
 
-        public void HandleInputs()
+        public Vector2[] MouseDownPositions { get; set; }
+
+        public Vector2[] MouseUpPositions { get; set; }
+
+        public float ClickTolerence { get; set; }
+
+        public InputManager()
         {
-            LastMouseState = MouseState;
-            LastKeyboardState = KeyboardState;
+            MouseDownPositions = new Vector2[13];
+            MouseUpPositions = new Vector2[13];
+            ClickedButtons = new bool[13];
+            ClickTolerence = 2f;
         }
+
+        private bool[] ClickedButtons;
 
         public void UpdateInputStates()
         {
@@ -45,7 +58,44 @@ namespace LDDModder.BrickEditor.Rendering
                 LastMousePos = MousePos;
                 HasInitialized = true;
             }
+
+            for (int i = 0; i < (int)MouseButton.LastButton; i++)
+            {
+                ClickedButtons[i] = false;
+                if (IsButtonPressed((MouseButton)i))
+                    MouseDownPositions[i] = MousePos;
+
+                if (IsButtonReleased((MouseButton)i))
+                {
+                    MouseUpPositions[i] = MousePos;
+                    var dist = (MouseUpPositions[i] - MouseDownPositions[i]).Length;
+                    if (dist <= ClickTolerence && ContainsMouse)
+                        ClickedButtons[i] = true;
+                }
+            }
         }
+
+        public void ProcessMouseDown(System.Windows.Forms.MouseEventArgs mouseEvent)
+        {
+
+        }
+
+        public void ProcessMouseUp(System.Windows.Forms.MouseEventArgs mouseEvent)
+        {
+
+        }
+
+        public void ProcessMouseMove(System.Windows.Forms.MouseEventArgs mouseEvent)
+        {
+            LocalMousePos = new Vector2(mouseEvent.X, mouseEvent.Y);
+
+  
+            //var displayPos = new Vector2(mouseEvent.X, mouseEvent.Y);
+            //RelativeScreenOffset = displayPos - MousePos;
+        }
+
+
+        #region State functions
 
         public bool IsKeyDown(Key key)
         {
@@ -72,6 +122,16 @@ namespace LDDModder.BrickEditor.Rendering
             return LastKeyboardState.IsKeyDown(key) != KeyboardState.IsKeyDown(key);
         }
 
+        public bool IsKeyPressed(Key key)
+        {
+            return KeyboardState.IsKeyDown(key) && !LastKeyboardState.IsKeyDown(key);
+        }
+
+        public bool IsKeyReleased(Key key)
+        {
+            return KeyboardState.IsKeyUp(key) && !LastKeyboardState.IsKeyUp(key);
+        }
+
         public bool IsButtonDown(MouseButton button)
         {
             return MouseState.IsButtonDown(button);
@@ -86,6 +146,23 @@ namespace LDDModder.BrickEditor.Rendering
         {
             return LastMouseState.IsButtonDown(button) != MouseState.IsButtonDown(button);
         }
+
+        public bool IsButtonPressed(MouseButton button)
+        {
+            return MouseState.IsButtonDown(button) && !LastMouseState.IsButtonDown(button);
+        }
+
+        public bool IsButtonReleased(MouseButton button)
+        {
+            return !MouseState.IsButtonDown(button) && LastMouseState.IsButtonDown(button);
+        }
+
+        public bool IsButtonClicked(MouseButton button)
+        {
+            return ClickedButtons[(int)button];
+        }
+
+        #endregion
 
     }
 }

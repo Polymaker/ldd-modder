@@ -127,11 +127,15 @@
     </Compile>
     <Compile Include="Meshes\MeshConverter.cs" />
     <Compile Include="Native\Shell32.cs" />
+    <Compile Include="Native\User32.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rendering\Gizmos\GizmoHandle.cs" />
+    <Compile Include="Rendering\Gizmos\GizmoStyle.cs" />
     <Compile Include="Rendering\Gizmos\RotationHandle.cs" />
+    <Compile Include="Rendering\Gizmos\TransformGizmo.cs" />
     <Compile Include="Rendering\Gizmos\TranslationHandle.cs" />
+    <Compile Include="Rendering\LoopController.cs" />
     <Compile Include="Rendering\Maths\BBox.cs" />
     <Compile Include="Rendering\Maths\BSphere.cs" />
     <Compile Include="Rendering\Camera.cs" />
@@ -160,7 +164,6 @@
     <Compile Include="Rendering\Shaders\WireframeShaderProgram.cs" />
     <Compile Include="Rendering\TextRenderingExtensions.cs" />
     <Compile Include="Rendering\Models\Vertices.cs" />
-    <Compile Include="Rendering\TransformGizmo.cs" />
     <Compile Include="Resources\ModelLocalizations.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

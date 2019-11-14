@@ -325,11 +325,13 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         private void BrickEditorWindow_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (!CloseCurrentProject())
+            if (CurrentProject != null)
             {
                 e.Cancel = true;
+                BeginInvoke(new MethodInvoker(TryCloseProjectAndExit));
                 return;
             }
+            
 
             foreach (var form in DockPanelControl.Documents.OfType<DockContent>().ToList())
             {
@@ -342,6 +344,13 @@ namespace LDDModder.BrickEditor.UI.Windows
             }
         }
 
-        
+        private void TryCloseProjectAndExit()
+        {
+            if (CloseCurrentProject())
+            {
+                Application.DoEvents();
+                Close();
+            }
+        }
     }
 }

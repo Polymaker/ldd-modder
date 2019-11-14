@@ -54,23 +54,6 @@ namespace LDDModder.BrickEditor.Rendering
 
         #endregion
 
-        public static void InitializeViewProjection(Matrix4 view, Matrix4 projection)
-        {
-            WireframeShader.Use();
-            WireframeShader.ViewMatrix.Set(view);
-            WireframeShader.Projection.Set(projection);
-
-            ColorShader.Use();
-            ColorShader.ViewMatrix.Set(view);
-            ColorShader.Projection.Set(projection);
-
-            ModelShader.Use();
-            ModelShader.ViewMatrix.Set(view);
-            ModelShader.Projection.Set(projection);
-
-            GL.UseProgram(0);
-        }
-
         public static void InitializeMatrices(Camera camera)
         {
             var viewMatrix = camera.GetViewMatrix();
@@ -127,10 +110,10 @@ namespace LDDModder.BrickEditor.Rendering
 
         public static void BeginDrawColorModel(IVertexBuffer vertexBuffer, Matrix4 transform, MaterialInfo material)
         {
-            BeginDrawColorModel(vertexBuffer, transform, material.Diffuse);
+            BeginDrawColor(vertexBuffer, transform, material.Diffuse);
         }
 
-        public static void BeginDrawColorModel(IVertexBuffer vertexBuffer, Matrix4 transform, Vector4 color)
+        public static void BeginDrawColor(IVertexBuffer vertexBuffer, Matrix4 transform, Vector4 color)
         {
             ColorShader.Use();
             ColorShader.ModelMatrix.Set(transform);
@@ -153,13 +136,15 @@ namespace LDDModder.BrickEditor.Rendering
             vertexBuffer.BindAttribute(WireframeShader.Position, 0);
             vertexBuffer.BindAttribute(WireframeShader.Normal, 12);
 
-            //GL.PopAttrib();
         }
 
-        public static void EndDrawWireframe()
+        public static void EndDrawWireframe(IVertexBuffer vertexBuffer)
         {
             GL.PopAttrib();
+            vertexBuffer.UnbindAttribute(WireframeShader.Position);
+            vertexBuffer.UnbindAttribute(WireframeShader.Normal);
         }
+
 
         #region Stencil Buffer
 

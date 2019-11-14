@@ -185,7 +185,12 @@ namespace LDDModder.BrickEditor.Rendering
                 indices.Add(i);
                 indices.Add(32);
             }
-            vertices.Add(Vector3.UnitY);
+            vertices.Add(Vector3.UnitY);//cone top
+
+            //for drawing a line
+            vertices.Add(Vector3.Zero);
+            indices.Add(33); indices.Add(32);
+
             VertexBuffer.SetIndices(indices);
             VertexBuffer.SetVertices(vertices);
         }
@@ -384,6 +389,8 @@ namespace LDDModder.BrickEditor.Rendering
         }
 
         #endregion
+
+
 
         public void Dispose()
         {

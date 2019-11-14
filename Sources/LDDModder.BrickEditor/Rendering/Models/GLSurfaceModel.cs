@@ -30,6 +30,9 @@ namespace LDDModder.BrickEditor.Rendering
 
         public Vector4 OutlineColor { get; set; }
 
+        private VertVNT[] Vertices;
+        private int[] Indices;
+
         public GLSurfaceModel()
         {
             VertexBuffer = new IndexedVertexBuffer<VertVNT>();
@@ -53,15 +56,15 @@ namespace LDDModder.BrickEditor.Rendering
             MeshModels.Clear();
             VertexBuffer.ClearBuffers();
 
-            var indexList = new List<int>();
-            var vertexList = new List<VertVNT>();
+            var indices = new List<int>();
+            var vertices = new List<VertVNT>();
 
             var distinctMeshes = new List<ModelMesh>();
             foreach (var surfComp in Surface.Components)
             {
                 foreach (var meshRef in surfComp.Meshes)
                 {
-                    var addedModel = AddMeshGeometry(meshRef, indexList, vertexList);
+                    var addedModel = AddMeshGeometry(meshRef, indices, vertices);
                     addedModel.Visible = true;
 
                     if (!distinctMeshes.Contains(meshRef.ModelMesh))
@@ -72,7 +75,7 @@ namespace LDDModder.BrickEditor.Rendering
                 {
                     foreach (var meshRef in femaleStud.ReplacementMeshes)
                     {
-                        var addedModel = AddMeshGeometry(meshRef, indexList, vertexList);
+                        var addedModel = AddMeshGeometry(meshRef, indices, vertices);
                         addedModel.Visible = false;
 
                         if (!distinctMeshes.Contains(meshRef.ModelMesh))
@@ -82,9 +85,10 @@ namespace LDDModder.BrickEditor.Rendering
             }
 
             distinctMeshes.ForEach(x => x.UnloadModel());
-
-            VertexBuffer.SetIndices(indexList);
-            VertexBuffer.SetVertices(vertexList);
+            Indices = indices.ToArray();
+            Vertices = vertices.ToArray();
+            VertexBuffer.SetIndices(indices);
+            VertexBuffer.SetVertices(vertices);
         }
 
         private SurfaceModelMesh AddMeshGeometry(ModelMeshReference modelMesh, List<int> indexList, List<VertVNT> vertexList)
@@ -157,6 +161,22 @@ namespace LDDModder.BrickEditor.Rendering
                 RenderHelper.DisableStencilTest();
         }
 
+        public void RenderWireframe()
+        {
+            var visibleMeshes = MeshModels.Where(x => x.Visible)
+                .OrderByDescending(x => x.IsSelected).ToList();
+
+            if (!visibleMeshes.Any())
+                return;
+
+            foreach (var model in visibleMeshes)
+            {
+                RenderHelper.BeginDrawWireframe(VertexBuffer, model.Transform, 1f, model.IsSelected ? WireframeColorAlt : WireframeColor);
+                DrawPartialMesh(model);
+                RenderHelper.EndDrawWireframe(VertexBuffer);
+            }
+        }
+
         private void RenderPartialMesh(RenderOptions renderOptions, SurfaceModelMesh model, MaterialInfo material, bool useStencil)
         {
             if (renderOptions.DrawShaded || renderOptions.DrawTextured)
@@ -179,7 +199,7 @@ namespace LDDModder.BrickEditor.Rendering
             {
                 RenderHelper.BeginDrawWireframe(VertexBuffer, model.Transform, 1f, model.IsSelected ? WireframeColorAlt : WireframeColor);
                 DrawPartialMesh(model);
-                RenderHelper.EndDrawWireframe();
+                RenderHelper.EndDrawWireframe(VertexBuffer);
             }
         }
 
@@ -190,7 +210,7 @@ namespace LDDModder.BrickEditor.Rendering
 
             DrawPartialMesh(model);
 
-            RenderHelper.EndDrawWireframe();
+            RenderHelper.EndDrawWireframe(VertexBuffer);
             RenderHelper.RemoveStencilMask();
         }
 
@@ -202,8 +222,9 @@ namespace LDDModder.BrickEditor.Rendering
         public bool RayIntersects(Ray ray, SurfaceModelMesh model, out float distance)
         {
             distance = float.NaN;
-            var vertices = VertexBuffer.VertexBuffer.Content;
-            var indices = VertexBuffer.IndexBuffer.Content;
+            var vertices = Vertices;
+            var indices = Indices;
+            var localRay = Ray.Transform(ray, model.Transform.Inverted());
 
             for (int i = 0; i < model.IndexCount; i += 3)
             {
@@ -215,7 +236,7 @@ namespace LDDModder.BrickEditor.Rendering
                 var v2 = vertices[idx2 + model.StartVertex];
                 var v3 = vertices[idx3 + model.StartVertex];
 
-                if (Ray.IntersectsTriangle(ray, v1.Position, v2.Position, v3.Position, out float hitDist))
+                if (Ray.IntersectsTriangle(localRay, v1.Position, v2.Position, v3.Position, out float hitDist))
                     distance = float.IsNaN(distance) ? hitDist : Math.Min(hitDist, distance);
             }
 

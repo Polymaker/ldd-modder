@@ -20,6 +20,7 @@ using OpenTK.Input;
 using ObjectTK.Textures;
 using LDDModder.BrickEditor.EditModels;
 using LDDModder.BrickEditor.Resources;
+using LDDModder.BrickEditor.Rendering.Gizmos;
 
 namespace LDDModder.BrickEditor.UI.Panels
 {
@@ -54,6 +55,10 @@ namespace LDDModder.BrickEditor.UI.Panels
         public bool ShowCollisions { get; set; }
         public bool ShowMeshes { get; set; }
 
+        private double UpdateFPS { get; set; }
+
+        private double RenderFPS { get; set; }
+
         public RenderOptions ModelRenderingOptions { get; private set; }
 
         public ViewportPanel()
@@ -85,7 +90,6 @@ namespace LDDModder.BrickEditor.UI.Panels
             glControl1.BringToFront();
             glControl1.MouseEnter += GlControl1_MouseEnter;
             glControl1.MouseLeave += GlControl1_MouseLeave;
-            glControl1.MouseClick += GlControl_MouseClick;
             glControl1.MouseMove += GlControl_MouseMove;
             glControl1.MouseDown += GlControl_MouseDown;
             glControl1.MouseUp += GlControl_MouseUp;
@@ -132,7 +136,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             InitializeModels();
 
-            //InitializeFonts();
+            InitializeFonts();
         }
 
         private void InitializeTextures()
@@ -166,7 +170,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             };
 
             TransformGizmo = new TransformGizmo();
-            TransformGizmo.InitializeVertexBuffer();
+            TransformGizmo.InitializeVBO();
         }
 
         private void InitializeFonts()
@@ -259,7 +263,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                 ViewInitialized = true;
 
             if (TransformGizmo.Visible)
-                TransformGizmo.UpdateBoundingBoxes(Camera);
+                TransformGizmo.UpdateBounds(Camera);
         }
 
 
@@ -278,10 +282,16 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         #region Render Loop
 
+        private Stopwatch RenderTimer;
+        private double LastRenderTime = 0;
+
         private void StartRenderLoop()
         {
             if (!RenderLoopEnabled)
             {
+                RenderTimer = new Stopwatch();
+                RenderTimer.Start();
+                LastRenderTime = 0;
                 Application.Idle += Application_Idle;
                 RenderLoopEnabled = true;
             }
@@ -293,11 +303,25 @@ namespace LDDModder.BrickEditor.UI.Panels
             {
                 Application.Idle -= Application_Idle;
                 RenderLoopEnabled = false;
+                RenderTimer.Stop();
             }
         }
 
         private void Application_Idle(object sender, EventArgs e)
         {
+            double curTime = RenderTimer.Elapsed.TotalMilliseconds;
+            const double MaxTimer = 1000000;
+            if (curTime > MaxTimer)
+            {
+                LastRenderTime -= curTime;
+                RenderTimer.Restart();
+                curTime = 0;
+            }
+
+            double delta = curTime - LastRenderTime;
+            RenderFPS = 1000d / delta;
+            LastRenderTime = curTime;
+
             OnRenderFrame();
         }
 
@@ -365,21 +389,30 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             if (ModelRenderingOptions.DrawTransparent)
             {
-                GL.Disable(EnableCap.DepthTest);
+                
                 GL.Enable(EnableCap.CullFace);
                 GL.CullFace(CullFaceMode.Front);
                 foreach (var surfaceModel in SurfaceModels)
-                    surfaceModel.Render(ModelRenderingOptions, true);
+                    surfaceModel.RenderWireframe();
 
                 bool wireframeEnabled = ModelRenderingOptions.DrawWireframe;
                 ModelRenderingOptions.DrawWireframe = false;
 
-                GL.CullFace(CullFaceMode.Back);
-                foreach (var surfaceModel in SurfaceModels)
-                    surfaceModel.Render(ModelRenderingOptions);
+                GL.Disable(EnableCap.DepthTest);
                 GL.Disable(EnableCap.CullFace);
 
+                foreach (var surfaceModel in SurfaceModels)
+                    surfaceModel.Render(ModelRenderingOptions, true);
+                
+
+                GL.Enable(EnableCap.CullFace);
+                GL.CullFace(CullFaceMode.Back);
+                foreach (var surfaceModel in SurfaceModels)
+                    surfaceModel.RenderWireframe();
+
+                GL.Disable(EnableCap.CullFace);
                 GL.Enable(EnableCap.DepthTest);
+
                 ModelRenderingOptions.DrawWireframe = wireframeEnabled;
                 
                 //var wireframeOptions = new RenderOptions
@@ -428,13 +461,13 @@ namespace LDDModder.BrickEditor.UI.Panels
             GL.LoadIdentity();
 
             //GL.Disable(EnableCap.Texture2D);
-            GL.Enable(EnableCap.Blend);
-            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+            //GL.Enable(EnableCap.Blend);
+            //GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
 
-            var winSize = new Vector2(250, 150);
-            var winPos = new Vector2(
-                (viewSize.X - winSize.X) / 2f,
-                viewSize.Y - ((viewSize.Y - winSize.Y) / 2f));
+            //var winSize = new Vector2(250, 150);
+            //var winPos = new Vector2(
+            //    (viewSize.X - winSize.X) / 2f,
+            //    viewSize.Y - ((viewSize.Y - winSize.Y) / 2f));
             //GL.Begin(PrimitiveType.Quads);
             //GL.Color4(Color.FromArgb(120, 80, 80, 80));
 
@@ -448,10 +481,13 @@ namespace LDDModder.BrickEditor.UI.Panels
             GL.UseProgram(0);
             TextRenderer.ProjectionMatrix = UIProjectionMatrix;
             TextRenderer.DrawingPrimitives.Clear();
-            //var textHeight = RenderFont.Measure("Wasd").Height;
-            TextRenderer.AddText("Hello", RenderFont, Color.White, new Vector2(0.5f, 20f), QFontAlignment.Left);
-            TextRenderer.AddText("Hello World!", RenderFont, Color.White,
-                winPos, QFontAlignment.Left);
+
+            var textHeight = RenderFont.Measure("Wasd").Height;
+
+            TextRenderer.AddText($"Render FPS: {RenderFPS:0.00}", RenderFont, 
+                Color.LimeGreen, new Vector2(2f, viewSize.Y - textHeight - 3), QFontAlignment.Left);
+            TextRenderer.AddText($"Update FPS {UpdateFPS:0.00}", RenderFont,
+                Color.LimeGreen, new Vector2(2f, viewSize.Y - (textHeight * 2) - 6), QFontAlignment.Left);
             //TextRenderer.AddText("LDD Modder Splash Screen", RenderFont, Color.White,
             //    new Vector4(winPos.X, winPos.Y, winSize.X, winSize.Y), StringAlignment.Center, StringAlignment.Center);
             TextRenderer.RefreshBuffers();
@@ -469,8 +505,8 @@ namespace LDDModder.BrickEditor.UI.Panels
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             RenderWorld();
 
-            //GL.Clear(ClearBufferMask.DepthBufferBit);
-            //RenderUI();
+            GL.Clear(ClearBufferMask.DepthBufferBit);
+            RenderUI();
 
             glControl1.SwapBuffers();
         }
@@ -532,18 +568,23 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void OnUpdateFrame(double deltaTime)
         {
+            UpdateFPS = 1000.0 / deltaTime;
+
             InputManager.UpdateInputStates();
+            CameraManipulator.ProcessInput(InputManager);
 
-            if (InputManager.IsKeyDown(Key.R) && InputManager.HasKeyChanged(Key.R))
-                TransformGizmo.DisplayStyle = TransformGizmo.GizmoStyle.Rotation;
-            else if (InputManager.IsKeyDown(Key.T) && InputManager.HasKeyChanged(Key.T))
-                TransformGizmo.DisplayStyle = TransformGizmo.GizmoStyle.Translation;
+            if (TransformGizmo.Visible)
+            {
+                if (Camera.IsDirty)
+                    TransformGizmo.UpdateBounds(Camera);
+                TransformGizmo.ProcessInput(Camera, InputManager);
+            }
 
-            CameraManipulator.HandleCamera(InputManager);
-            if (Camera.IsDirty && TransformGizmo.Visible)
-                TransformGizmo.UpdateBoundingBoxes(Camera);
-
-            
+            if (!TransformGizmo.Selected && InputManager.IsButtonClicked(MouseButton.Left))
+            {
+                var ray = Camera.RaycastFromScreen(InputManager.LocalMousePos);
+                PerformRaySelection(ray);
+            }
         }
 
         #endregion
@@ -635,6 +676,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             base.OnProjectElementsChanged(e);
 
+            
             if (e.ElementType == typeof(PartSurface))
             {
                 if (e.Action == CollectionChangeAction.Add)
@@ -758,6 +800,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         protected override void OnElementSelectionChanged()
         {
             base.OnElementSelectionChanged();
+            Debug.WriteLine($"Selection changed {DateTime.Now:mm:ss.ffff}");
 
             CollisionModels.ForEach(x => x.IsSelected = ProjectManager.IsContainedInSelection(x.Element));
 
@@ -778,7 +821,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                 TransformGizmo.Visible = true;
                 var avgBounding = CalculateBoundingBox(selectedModels);
                 TransformGizmo.Transform = Matrix4.CreateTranslation(avgBounding.Center);
-                TransformGizmo.UpdateBoundingBoxes(Camera);
+                TransformGizmo.UpdateBounds(Camera);
             }
             else
             {
@@ -788,28 +831,23 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void PerformRaySelection(Ray ray)
         {
-            if (TransformGizmo.Visible && !(InputManager.IsControlDown() || InputManager.IsShiftDown()))
-            {
-                if (TransformGizmo.RayIntersectsAxis(ray, out _))
-                {
-                    return;
-                }
-            }
-
             var visibleModels = GetVisibleModels();
 
             if (ray != null && visibleModels.Any())
             {
 
                 var intersectingModels = new List<Tuple<PartElementModel, float>>();
-
+                int ctr = 0;
                 foreach (var model in visibleModels)
                 {
                     if (model.RayIntersectsBoundingBox(ray, out float boxDist))
                     {
                         if (model.RayIntersects(ray, out float triangleDist))
+                        {
                             intersectingModels.Add(new Tuple<PartElementModel, float>(model, triangleDist));
+                        }
                     }
+                    ctr++;
                 }
 
                 var closestHit = intersectingModels.OrderBy(x => x.Item2).FirstOrDefault();
@@ -941,8 +979,6 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         #region Control Events
 
-        private Vector2 MousePos { get; set; }
-        private Vector2 MouseDownPos { get; set; }
 
         private void GlControl1_MouseEnter(object sender, EventArgs e)
         {
@@ -954,66 +990,19 @@ namespace LDDModder.BrickEditor.UI.Panels
             InputManager.ContainsMouse = false;
         }
 
-        private void GlControl_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left)
-            {
-                if ((MousePos - MouseDownPos).Length < 2)
-                {
-                    var ray = Camera.RaycastFromScreen(new Vector2(e.X, e.Y));
-                    PerformRaySelection(ray);
-                }
-            }
-        }
-
         private void GlControl_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Left)
-            {
-                var pos = glControl1.PointToClient(MousePosition);
-                MouseDownPos = new Vector2(pos.X, pos.Y);
-
-                if (TransformGizmo.Visible)
-                {
-                    if (TransformGizmo.IsMouseOver)
-                        TransformGizmo.IsSelected = true;
-                }
-            }
+            InputManager.ProcessMouseDown(e);
         }
 
         private void GlControl_MouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Left)
-            {
-                TransformGizmo.IsDragging = false;
-                TransformGizmo.IsSelected = false;
-            }
+            InputManager.ProcessMouseUp(e);
         }
 
         private void GlControl_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
         {
-            MousePos = new Vector2(e.X, e.Y);
-
-            if (TransformGizmo.Visible)
-            {
-                if (!TransformGizmo.IsDragging)
-                {
-                    if (TransformGizmo.IsSelected)
-                    {
-                        TransformGizmo.IsDragging = true;
-                    }
-                    else
-                    {
-                        var ray = Camera.RaycastFromScreen(MousePos);
-                        if (Ray.IntersectsSphere(ray, TransformGizmo.BoundingSphere, out _) || TransformGizmo.IsMouseOver)
-                            TransformGizmo.PerformMouseOver(ray);
-                    }
-                }
-                else
-                {
-
-                }
-            }
+            InputManager.ProcessMouseMove(e);
         }
 
         #endregion
