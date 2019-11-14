@@ -26,17 +26,22 @@ namespace LDDModder.BrickEditor.Rendering
         
         public float GizmoSize { get; set; }
 
-        private Vector2 DisplayScale;
+        private float DisplayScale { get; set; }
+
 
         public BSphere BoundingSphere { get; private set; }
 
         public bool IsMouseOver { get; private set; }
 
+        public bool IsSelected { get; set; }
+
+        public bool IsDragging { get; set; }
+
         public TransformGizmo()
         {
             Transform = Matrix4.Identity;
-            DisplayScale = Vector2.One;
-            GizmoSize = 95f;
+            DisplayScale = 1f;
+            GizmoSize = 75f;
             DisplayStyle = GizmoStyle.Translation;
             InitializeManipulators();
         }
@@ -46,14 +51,14 @@ namespace LDDModder.BrickEditor.Rendering
             TranslationAxes = new TranslationManipulator[]
             {
                 new TranslationManipulator(GizmoAxis.X, new Color4(1f,0.09f,0.26f,1f)),
-                new TranslationManipulator(GizmoAxis.Y, new Color4(0.576f, 0.898f, 0.156f, 1f)),
+                new TranslationManipulator(GizmoAxis.Y, new Color4(0.58f, 0.898f, 0.156f, 1f)),
                 new TranslationManipulator(GizmoAxis.Z, new Color4(0.156f,0.564f,1f,1f))
             };
 
             RotationAxes = new RotationManipulator[]
             {
                 new RotationManipulator(GizmoAxis.X, new Color4(1f,0.09f,0.26f,1f)),
-                new RotationManipulator(GizmoAxis.Y, new Color4(0.576f, 0.898f, 0.156f, 1f)),
+                new RotationManipulator(GizmoAxis.Y, new Color4(0.58f, 0.898f, 0.156f, 1f)),
                 new RotationManipulator(GizmoAxis.Z, new Color4(0.156f,0.564f,1f,1f))
             };
         }
@@ -93,7 +98,7 @@ namespace LDDModder.BrickEditor.Rendering
             {
                 Axis = axis;
                 Color = color;
-                InnactiveColor = new Color4(color.R * 0.9f, color.G * 0.9f, color.B * 0.9f, 0.75f);
+                InnactiveColor = new Color4(color.R * 0.95f, color.G * 0.95f, color.B * 0.95f, 0.8f);
 
                 switch (axis)
                 {
@@ -226,20 +231,26 @@ namespace LDDModder.BrickEditor.Rendering
             var gizmoPos = Vector3.TransformPosition(Vector3.Zero, Transform);
             var distFromCamera = camera.GetDistanceFromCamera(gizmoPos);
             var viewSize = camera.GetViewSize(distFromCamera);
-            DisplayScale = new Vector2(viewSize.Y / camera.Viewport.Height, viewSize.X / camera.Viewport.Width);
+            DisplayScale = viewSize.Y / camera.Viewport.Height;
+
+            float scaledGizmoSize = DisplayScale * GizmoSize;
+            float arrowSize = scaledGizmoSize * 0.2666666666666667f;
+            float handleLength = scaledGizmoSize + arrowSize;
 
             for (int i = 0; i < 3; i++)
             {
                 var transAxis = TranslationAxes[i];
-                var boxSize = new Vector3(DisplayScale.X * 10);
-                boxSize = Vector3.ComponentMax(boxSize, transAxis.Direction * DisplayScale.Y * GizmoSize);
-                transAxis.BoundingBox = BBox.FromCenterSize(transAxis.Direction * DisplayScale.Y * GizmoSize * 0.5f, boxSize);
+                var boxSize = new Vector3(DisplayScale * 10);
 
-                RotationAxes[i].GizmoRadius = GizmoSize * DisplayScale.Y;
-                RotationAxes[i].Tolerence = 10 * DisplayScale.Y;
+                boxSize = Vector3.ComponentMax(boxSize, transAxis.Direction * handleLength);
+
+                transAxis.BoundingBox = BBox.FromCenterSize(transAxis.Direction * handleLength * 0.5f, boxSize);
+
+                RotationAxes[i].GizmoRadius = scaledGizmoSize;
+                RotationAxes[i].Tolerence = 10 * DisplayScale;
             }
 
-            BoundingSphere = new BSphere(gizmoPos, DisplayScale.Y * GizmoSize);
+            BoundingSphere = new BSphere(gizmoPos, handleLength);
         }
 
         public void PerformMouseOver(Ray mouseRay)
@@ -266,11 +277,13 @@ namespace LDDModder.BrickEditor.Rendering
             var gizmoTrans = Transform;
             GL.MultMatrix(ref gizmoTrans);
 
+            float scaledGizmoSize = DisplayScale * GizmoSize;
+            float arrowSize = scaledGizmoSize * 0.2666666666666667f;
 
-            var gizmoScale = Matrix4.CreateScale(GizmoSize * DisplayScale.X * 2);
+            var gizmoScale = Matrix4.CreateScale(scaledGizmoSize * 2);
 
-            var arrowScale = Matrix4.CreateScale(10 * DisplayScale.X, 20 * DisplayScale.Y, 10 * DisplayScale.X);
-            var arrowTrans = Matrix4.CreateTranslation(Vector3.UnitY * DisplayScale.Y * 75);
+            var arrowScale = Matrix4.CreateScale(arrowSize /2f, arrowSize, arrowSize / 2f);
+            var arrowTrans = Matrix4.CreateTranslation(Vector3.UnitY * scaledGizmoSize);
             var arrowTransform = arrowScale * arrowTrans;
 
             RenderHelper.EnableStencilTest();
@@ -321,7 +334,7 @@ namespace LDDModder.BrickEditor.Rendering
 
             GL.Begin(PrimitiveType.Lines);
             GL.Vertex3(Vector3.Zero);
-            GL.Vertex3(gizmoAxis.Direction * DisplayScale.Y * 75);
+            GL.Vertex3(gizmoAxis.Direction * DisplayScale * 75);
             GL.End();
 
             GL.PopAttrib();

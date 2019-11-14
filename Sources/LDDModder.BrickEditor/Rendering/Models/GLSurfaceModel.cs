@@ -43,7 +43,7 @@ namespace LDDModder.BrickEditor.Rendering
             VertexBuffer = new IndexedVertexBuffer<VertVNT>();
             MeshModels = new List<SurfaceModelMesh>();
             WireframeColor = new Vector4(0, 0, 0, 1f);
-            WireframeColorAlt = new Vector4(1f);// new Vector4(0.956f, 0.6f, 0.168f, 1f);
+            WireframeColorAlt = new Vector4(0.85f, 0.85f, 0.85f, 1f);// new Vector4(0.956f, 0.6f, 0.168f, 1f);
             OutlineColor = new Vector4(1f);
 
         }

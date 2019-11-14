@@ -38,17 +38,17 @@
             this.AlignToMenu_Bottom = new System.Windows.Forms.ToolStripMenuItem();
             this.AlignToMenu_Front = new System.Windows.Forms.ToolStripMenuItem();
             this.AlignToMenu_Back = new System.Windows.Forms.ToolStripMenuItem();
-            this.AlignToMenu_Left = new System.Windows.Forms.ToolStripMenuItem();
             this.AlignToMenu_Right = new System.Windows.Forms.ToolStripMenuItem();
+            this.AlignToMenu_Left = new System.Windows.Forms.ToolStripMenuItem();
             this.CameraMenu_Orthographic = new System.Windows.Forms.ToolStripMenuItem();
             this.DisplayMenuDropDown = new System.Windows.Forms.ToolStripDropDownButton();
             this.DisplayMenu_Collisions = new System.Windows.Forms.ToolStripMenuItem();
             this.connectionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.DisplayMenu_Meshes = new System.Windows.Forms.ToolStripMenuItem();
+            this.xRayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.visualStudioToolStripExtender1 = new WeifenLuo.WinFormsUI.Docking.VisualStudioToolStripExtender(this.components);
-            this.xRayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -70,12 +70,14 @@
             this.CameraMenu_AlignTo,
             this.CameraMenu_Orthographic});
             resources.ApplyResources(this.CameraMenuDropDown, "CameraMenuDropDown");
+            this.CameraMenuDropDown.Margin = new System.Windows.Forms.Padding(1, 1, 0, 2);
             this.CameraMenuDropDown.Name = "CameraMenuDropDown";
             // 
             // Camera_ResetCameraMenu
             // 
             this.Camera_ResetCameraMenu.Name = "Camera_ResetCameraMenu";
             resources.ApplyResources(this.Camera_ResetCameraMenu, "Camera_ResetCameraMenu");
+            this.Camera_ResetCameraMenu.Tag = "";
             this.Camera_ResetCameraMenu.Click += new System.EventHandler(this.Camera_ResetCameraMenu_Click);
             // 
             // CameraMenu_AlignTo
@@ -85,8 +87,8 @@
             this.AlignToMenu_Bottom,
             this.AlignToMenu_Front,
             this.AlignToMenu_Back,
-            this.AlignToMenu_Left,
-            this.AlignToMenu_Right});
+            this.AlignToMenu_Right,
+            this.AlignToMenu_Left});
             this.CameraMenu_AlignTo.Name = "CameraMenu_AlignTo";
             resources.ApplyResources(this.CameraMenu_AlignTo, "CameraMenu_AlignTo");
             this.CameraMenu_AlignTo.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.CameraMenu_AlignTo_DropDownItemClicked);
@@ -115,17 +117,17 @@
             resources.ApplyResources(this.AlignToMenu_Back, "AlignToMenu_Back");
             this.AlignToMenu_Back.Tag = "Back";
             // 
-            // AlignToMenu_Left
-            // 
-            this.AlignToMenu_Left.Name = "AlignToMenu_Left";
-            resources.ApplyResources(this.AlignToMenu_Left, "AlignToMenu_Left");
-            this.AlignToMenu_Left.Tag = "Left";
-            // 
             // AlignToMenu_Right
             // 
             this.AlignToMenu_Right.Name = "AlignToMenu_Right";
             resources.ApplyResources(this.AlignToMenu_Right, "AlignToMenu_Right");
             this.AlignToMenu_Right.Tag = "Right";
+            // 
+            // AlignToMenu_Left
+            // 
+            this.AlignToMenu_Left.Name = "AlignToMenu_Left";
+            resources.ApplyResources(this.AlignToMenu_Left, "AlignToMenu_Left");
+            this.AlignToMenu_Left.Tag = "Left";
             // 
             // CameraMenu_Orthographic
             // 
@@ -166,6 +168,13 @@
             resources.ApplyResources(this.DisplayMenu_Meshes, "DisplayMenu_Meshes");
             this.DisplayMenu_Meshes.CheckedChanged += new System.EventHandler(this.DisplayMenu_Meshes_CheckedChanged);
             // 
+            // xRayToolStripMenuItem
+            // 
+            this.xRayToolStripMenuItem.CheckOnClick = true;
+            this.xRayToolStripMenuItem.Name = "xRayToolStripMenuItem";
+            resources.ApplyResources(this.xRayToolStripMenuItem, "xRayToolStripMenuItem");
+            this.xRayToolStripMenuItem.CheckedChanged += new System.EventHandler(this.xRayToolStripMenuItem_CheckedChanged);
+            // 
             // toolStripDropDownButton1
             // 
             this.toolStripDropDownButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
@@ -183,13 +192,6 @@
             // visualStudioToolStripExtender1
             // 
             this.visualStudioToolStripExtender1.DefaultRenderer = null;
-            // 
-            // xRayToolStripMenuItem
-            // 
-            this.xRayToolStripMenuItem.CheckOnClick = true;
-            this.xRayToolStripMenuItem.Name = "xRayToolStripMenuItem";
-            resources.ApplyResources(this.xRayToolStripMenuItem, "xRayToolStripMenuItem");
-            this.xRayToolStripMenuItem.CheckedChanged += new System.EventHandler(this.xRayToolStripMenuItem_CheckedChanged);
             // 
             // ViewportPanel
             // 

@@ -61,12 +61,12 @@ namespace LDDModder.BrickEditor.UI.Panels
             InitializeComponent();
             SurfaceModels = new List<GLSurfaceModel>();
             CollisionModels = new List<CollisionModel>();
+            
         }
 
         public ViewportPanel(ProjectManager projectManager) : base(projectManager)
         {
             InitializeComponent();
-            
             //CloseButtonVisible = false;
             //CloseButton = false;
             DockAreas = DockAreas.Document;
@@ -85,8 +85,10 @@ namespace LDDModder.BrickEditor.UI.Panels
             glControl1.BringToFront();
             glControl1.MouseEnter += GlControl1_MouseEnter;
             glControl1.MouseLeave += GlControl1_MouseLeave;
-            glControl1.MouseClick += GlControl1_MouseClick;
+            glControl1.MouseClick += GlControl_MouseClick;
             glControl1.MouseMove += GlControl_MouseMove;
+            glControl1.MouseDown += GlControl_MouseDown;
+            glControl1.MouseUp += GlControl_MouseUp;
         }
 
         protected override void OnLoad(EventArgs e)
@@ -544,16 +546,6 @@ namespace LDDModder.BrickEditor.UI.Panels
             
         }
 
-        private void GlControl1_MouseEnter(object sender, EventArgs e)
-        {
-            InputManager.ContainsMouse = true;
-        }
-
-        private void GlControl1_MouseLeave(object sender, EventArgs e)
-        {
-            InputManager.ContainsMouse = false;
-        }
-
         #endregion
 
         private void ViewportPanel_SizeChanged(object sender, EventArgs e)
@@ -774,6 +766,11 @@ namespace LDDModder.BrickEditor.UI.Panels
                 model.IsSelected = ProjectManager.IsContainedInSelection(model.Element);
             }
 
+            UpdateSelection();
+        }
+
+        private void UpdateSelection()
+        {
             var selectedModels = GetVisibleModels().Where(x => x.IsSelected);
 
             if (selectedModels.Any())
@@ -944,22 +941,78 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         #region Control Events
 
-        private void GlControl1_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
+        private Vector2 MousePos { get; set; }
+        private Vector2 MouseDownPos { get; set; }
+
+        private void GlControl1_MouseEnter(object sender, EventArgs e)
+        {
+            InputManager.ContainsMouse = true;
+        }
+
+        private void GlControl1_MouseLeave(object sender, EventArgs e)
+        {
+            InputManager.ContainsMouse = false;
+        }
+
+        private void GlControl_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
             {
-                var ray = Camera.RaycastFromScreen(new Vector2(e.X, e.Y));
-                PerformRaySelection(ray);
+                if ((MousePos - MouseDownPos).Length < 2)
+                {
+                    var ray = Camera.RaycastFromScreen(new Vector2(e.X, e.Y));
+                    PerformRaySelection(ray);
+                }
+            }
+        }
+
+        private void GlControl_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                var pos = glControl1.PointToClient(MousePosition);
+                MouseDownPos = new Vector2(pos.X, pos.Y);
+
+                if (TransformGizmo.Visible)
+                {
+                    if (TransformGizmo.IsMouseOver)
+                        TransformGizmo.IsSelected = true;
+                }
+            }
+        }
+
+        private void GlControl_MouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                TransformGizmo.IsDragging = false;
+                TransformGizmo.IsSelected = false;
             }
         }
 
         private void GlControl_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
         {
+            MousePos = new Vector2(e.X, e.Y);
+
             if (TransformGizmo.Visible)
             {
-                var ray = Camera.RaycastFromScreen(new Vector2(e.X, e.Y));
-                if (Ray.IntersectsSphere(ray, TransformGizmo.BoundingSphere, out _) || TransformGizmo.IsMouseOver)
-                    TransformGizmo.PerformMouseOver(ray);
+                if (!TransformGizmo.IsDragging)
+                {
+                    if (TransformGizmo.IsSelected)
+                    {
+                        TransformGizmo.IsDragging = true;
+                    }
+                    else
+                    {
+                        var ray = Camera.RaycastFromScreen(MousePos);
+                        if (Ray.IntersectsSphere(ray, TransformGizmo.BoundingSphere, out _) || TransformGizmo.IsMouseOver)
+                            TransformGizmo.PerformMouseOver(ray);
+                    }
+                }
+                else
+                {
+
+                }
             }
         }
 
@@ -997,12 +1050,14 @@ namespace LDDModder.BrickEditor.UI.Panels
         private void DisplayMenu_Collisions_CheckedChanged(object sender, EventArgs e)
         {
             ShowCollisions = DisplayMenu_Collisions.Checked;
+            UpdateSelection();
         }
 
         private void DisplayMenu_Meshes_CheckedChanged(object sender, EventArgs e)
         {
             ShowMeshes = DisplayMenu_Meshes.Checked;
             ModelRenderingOptions.Hidden = !DisplayMenu_Meshes.Checked;
+            UpdateSelection();
         }
 
         #endregion
@@ -1010,6 +1065,31 @@ namespace LDDModder.BrickEditor.UI.Panels
         private void xRayToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
         {
             ModelRenderingOptions.DrawTransparent = xRayToolStripMenuItem.Checked;
+        }
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (keyData == Keys.NumPad0)
+            {
+                Camera_ResetCameraMenu.PerformClick();
+                return true;
+            }
+            else if (keyData == Keys.NumPad7)
+            {
+                AlignToMenu_Top.PerformClick();
+                return true;
+            }
+            else if (keyData == Keys.NumPad1)
+            {
+                AlignToMenu_Front.PerformClick();
+                return true;
+            }
+            else if (keyData == Keys.NumPad3)
+            {
+                AlignToMenu_Right.PerformClick();
+                return true;
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
         }
     }
 }
