@@ -2,8 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using OpenTK.Graphics.OpenGL;
 
 namespace LDDModder.BrickEditor.Rendering.Gizmos
 {
@@ -14,7 +13,11 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
 
         private float _GizmoSize;
         private Matrix4 _Transform;
-        private bool isDirty;
+        private bool recalculateBounds;
+        private Matrix4 _Position;
+        private Matrix4 _Orientation;
+
+        public float UIScale { get; private set; }
 
         /// <summary>
         /// Gizmo size in pixels.
@@ -27,7 +30,35 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
                 if (_GizmoSize != value)
                 {
                     _GizmoSize = value;
-                    isDirty = true;
+                    recalculateBounds = true;
+                }
+            }
+        }
+
+        public Vector3 Position
+        {
+            get => _Position.Row3.Xyz;
+            set
+            {
+                if (_Position.Row3.Xyz != value)
+                {
+                    _Position = Matrix4.CreateTranslation(value);
+                    _Transform = _Orientation * _Position;
+                    recalculateBounds = true;
+                }
+            }
+        }
+
+        public Matrix4 Orientation
+        {
+            get => _Orientation;
+            set
+            {
+                if (_Orientation != value)
+                {
+                    _Orientation = value;
+                    _Transform = _Orientation * _Position;
+                    recalculateBounds = true;
                 }
             }
         }
@@ -40,18 +71,16 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
                 if (_Transform != value)
                 {
                     _Transform = value;
-                    isDirty = true;
+                    _Position = Matrix4.CreateTranslation(_Transform.ExtractTranslation());
+                    _Orientation = Matrix4.CreateFromQuaternion(_Transform.ExtractRotation());
+                    recalculateBounds = true;
                 }
             }
         }
 
-        public Matrix4 EditTransform { get; private set; }
-
-        public float UIScale { get; private set; }
-
         public bool Visible { get; set; }
 
-        public bool IsOver { get; private set; }
+        public bool IsHovering { get; private set; }
 
         public GizmoHandle SelectedHandle { get; private set; }
 
@@ -59,7 +88,11 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
 
         public bool IsEditing { get; private set; }
 
-        public GizmoStyle CurrentMode { get; set; }
+        public GizmoStyle TransformMode { get; set; }
+
+        public OrientationMode OrientationMode { get; set; }
+
+        public PivotPointMode PivotPointMode { get; set; }
 
         public BSphere BoundingSphere { get; private set; }
 
@@ -71,9 +104,12 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
         {
             _GizmoSize = 75f;
             _Transform = Matrix4.Identity;
+            _Position = Matrix4.Identity;
+            _Orientation = Matrix4.Identity;
+
             EditTransform = Matrix4.Identity;
 
-            CurrentMode = GizmoStyle.Translation;
+            TransformMode = GizmoStyle.Translation;
             
             HandleColors = new Vector4[]
             {
@@ -82,6 +118,7 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
                 new Vector4(0.156f,0.564f,1f,1f)
             };
 
+            EditedElements = new List<ModelEditInfo>();
             InitializeHandles();
         }
 
@@ -123,15 +160,9 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
             VertexBuffer.SetVertices(vertices);
         }
 
-        public Vector3 GetPosition()
-        {
-            return Vector3.TransformPosition(Vector3.Zero, Transform);
-        }
-
         public void UpdateBounds(Camera camera)
         {
-            var position = GetPosition();
-            var distFromCamera = camera.GetDistanceFromCamera(position);
+            var distFromCamera = camera.GetDistanceFromCamera(Position);
             var viewSize = camera.GetViewSize(distFromCamera);
 
             UIScale = viewSize.Y / camera.Viewport.Height;
@@ -151,15 +182,15 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
                 rotAxis.Tolerence = UIScale * 10f; //10 pixel
             }
 
-            BoundingSphere = new BSphere(position, scaledGizmoSize + padding);
-            isDirty = false;
+            BoundingSphere = new BSphere(Position, scaledGizmoSize + padding);
+            recalculateBounds = false;
         }
 
         private GizmoHandle GetHandle(int index)
         {
-            if (CurrentMode == GizmoStyle.Translation)
+            if (TransformMode == GizmoStyle.Translation)
                 return TranslationHandles[index];
-            else if (CurrentMode == GizmoStyle.Rotation)
+            else if (TransformMode == GizmoStyle.Rotation)
                 return RotationHandles[index];
             return null;
         }
@@ -175,6 +206,8 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
             return null;
         }
 
+        #region HitTesting
+
         public bool IsOverGizmo(Ray ray)
         {
             return Ray.IntersectsSphere(ray, BoundingSphere, out _);
@@ -183,7 +216,7 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
         public bool IsOverHandle(Ray ray, out GizmoHandle handle)
         {
             handle = null;
-            if (isDirty)
+            if (recalculateBounds)
                 return false;
 
             var localRay = Ray.Transform(ray, Transform.Inverted());
@@ -205,7 +238,7 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
             return handle != null;
         }
 
-        private void ClearSelection()
+        private void ClearOver()
         {
             for (int i = 0; i < 3; i++)
             {
@@ -215,37 +248,44 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
                 var rotAxis = RotationHandles[i];
                 rotAxis.IsOver = false;
             }
-            IsOver = false;
+            IsHovering = false;
         }
 
         public void PerformMouseOver(Ray ray)
         {
-            ClearSelection();
+            ClearOver();
             if (IsOverHandle(ray, out GizmoHandle handle))
             {
                 handle.IsOver = true;
-                IsOver = true;
+                IsHovering = true;
             }
         }
+
+        #endregion
 
         public void ProcessInput(Camera camera, InputManager input)
         {
             if (!Visible)
                 return;
 
+            if (recalculateBounds)
+                UpdateBounds(camera);
+
+            bool updateMouseOver = false;
+
             if (!(IsEditing || Selected))
             {
-                if (input.IsKeyPressed(OpenTK.Input.Key.R)
-                    && CurrentMode != GizmoStyle.Rotation)
+                if (input.IsKeyPressed(OpenTK.Input.Key.R) && TransformMode != GizmoStyle.Rotation)
                 {
-                    CurrentMode = GizmoStyle.Rotation;
-                    ClearSelection();
+                    TransformMode = GizmoStyle.Rotation;
+                    ClearOver();
+                    updateMouseOver = true;
                 }
-                else if (input.IsKeyPressed(OpenTK.Input.Key.T)
-                    && CurrentMode != GizmoStyle.Translation)
+                else if (input.IsKeyPressed(OpenTK.Input.Key.T) && TransformMode != GizmoStyle.Translation)
                 {
-                    CurrentMode = GizmoStyle.Translation;
-                    ClearSelection();
+                    TransformMode = GizmoStyle.Translation;
+                    ClearOver();
+                    updateMouseOver = true;
                 }
             }
 
@@ -253,12 +293,12 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
             {
                 CancelEdit();
                 SelectedHandle = null;
-                ClearSelection();
+                ClearOver();
             }
 
             var mouseDelta = input.MousePos - input.LastMousePos;
 
-            if (mouseDelta.LengthFast > 1)
+            if (updateMouseOver || mouseDelta.LengthFast > 1)
             {
                 var mouseRay = camera.RaycastFromScreen(input.LocalMousePos);
 
@@ -273,24 +313,34 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
                 else if (IsEditing)
                 {
                     var localRay = Ray.Transform(mouseRay, Transform.Inverted());
-                    var curEditPos = SelectedHandle.ProjectToPlane(localRay);
+                    EditCurrentPos = SelectedHandle.ProjectToPlane(localRay);
 
-                    if (CurrentMode == GizmoStyle.Translation)
+                    if (TransformMode == GizmoStyle.Translation)
                     {
-                        var delta = curEditPos - EditStartPos;
-                        EditTransform = Matrix4.CreateTranslation(SelectedHandle.Axis * delta.Y);
+                        EditAmount = GetComponent(EditCurrentPos - EditStartPos, SelectedHandle.Axis);
+                        EditTransform = Matrix4.CreateTranslation(SelectedHandle.Axis * EditAmount);
+
                     }
-                    else if (CurrentMode == GizmoStyle.Rotation)
+                    else if (TransformMode == GizmoStyle.Rotation)
                     {
-                        var v1 = new Vector3(EditStartPos).Normalized();
-                        var v2 = new Vector3(curEditPos).Normalized();
+                        var v1 = EditStartPos.Normalized();
+                        var v2 = EditCurrentPos.Normalized();
                         var angle = Vector3.CalculateAngle(v1, v2);
-                        EditTransform = Matrix4.CreateFromAxisAngle(SelectedHandle.Axis, angle);
+
+                        if (angle >= 0.001)
+                        {
+                            var v3 = Vector3.Cross(EditStartPos, EditCurrentPos).Normalized();
+                            var counterClockwise = Vector3.Distance(v3, SelectedHandle.Axis) <= 0.1;
+                            EditAmount = angle * (counterClockwise ? 1 : -1);
+                            EditTransform = Matrix4.CreateFromAxisAngle(SelectedHandle.Axis, EditAmount);
+                        }
                     }
+
+                    ApplyTransformToElements();
                 }
             }
 
-            if (IsOver && input.IsButtonPressed(OpenTK.Input.MouseButton.Left))
+            if (IsHovering && input.IsButtonPressed(OpenTK.Input.MouseButton.Left))
             {
                 SelectedHandle = GetHoveredHandle();
             }
@@ -300,46 +350,43 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
                 if (IsEditing)
                     EndEditGizmo();
                 SelectedHandle = null;
+                UpdateBounds(camera);
             }
         }
 
-        private Vector2 EditStartPos;
-
-        private void BeginEditGizmo(Ray ray)
+        public static float GetComponent(Vector3 value, Vector3 axis)
         {
-            IsEditing = true;
-            EditTransform = Matrix4.Identity;
-            var localRay = Ray.Transform(ray, Transform.Inverted());
-            EditStartPos = SelectedHandle.ProjectToPlane(localRay);
-
-        }
-
-        public void CancelEdit()
-        {
-            if (IsEditing)
-            {
-                IsEditing = false;
-                EditTransform = Matrix4.Identity;
-                SelectedHandle = null;
-            }
-        }
-
-        private void EndEditGizmo()
-        {
-            IsEditing = false;
-            EditTransform = Matrix4.Identity;
-            SelectedHandle = null;
-        }
-
-        public Matrix4 GetActiveTransform()
-        {
-            return EditTransform * Transform;
+            for (int i = 0; i < 3; i++)
+                if (axis[i] == 1)
+                    return value[i];
+            return 0;
         }
 
         #region Rendering
 
         public void Render()
         {
+            if (IsEditing && TransformMode == GizmoStyle.Translation)
+            {
+                var color = HandleColors[SelectedHandle.Index];
+                RenderHelper.BeginDrawColor(VertexBuffer, Transform, color);
+                GL.Begin(PrimitiveType.Lines);
+                GL.Vertex3(SelectedHandle.Axis * -100f);
+                GL.Vertex3(SelectedHandle.Axis * 100f);
+                GL.End();
+            }
+
+            if (IsEditing && TransformMode == GizmoStyle.Rotation)
+            {
+
+                var color = HandleColors[SelectedHandle.Index];
+                RenderHelper.BeginDrawColor(VertexBuffer, Transform, color);
+                GL.Begin(PrimitiveType.Lines);
+                GL.Vertex3(Vector3.Zero);
+                GL.Vertex3(EditCurrentPos.Normalized() * UIScale * GizmoSize);
+                GL.End();
+            }
+
             for (int i = 0; i < 3; i++)
             {
                 var gizmoHandle = GetHandle(i);
@@ -353,6 +400,169 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
                     }
                     gizmoHandle.RenderHandle(this, color);
                 }
+            }
+        }
+
+        #endregion
+
+        #region Transform Editing
+
+        public Matrix4 EditTransform { get; private set; }
+
+        private Vector3 EditStartPos;
+
+        private Vector3 EditCurrentPos;
+
+        private List<ModelEditInfo> EditedElements { get; }
+
+        public float EditAmount { get; private set; }
+
+        private void BeginEditGizmo(Ray ray)
+        {
+            EditAmount = 0;
+            IsEditing = true;
+            EditTransform = Matrix4.Identity;
+            var localRay = Ray.Transform(ray, Transform.Inverted());
+            EditStartPos = SelectedHandle.ProjectToPlane(localRay);
+        }
+
+        public void CancelEdit()
+        {
+            if (IsEditing)
+            {
+                IsEditing = false;
+                EditTransform = Matrix4.Identity;
+                SelectedHandle = null;
+
+                if (EditedElements.Any())
+                {
+                    EditedElements.ForEach(x => x.Model.Transform = x.OriginalTrans);
+                    EditedElements.Clear();
+                }
+            }
+        }
+
+        private void EndEditGizmo()
+        {
+            ApplyTransformToElements();
+            Transform = EditTransform * Transform;
+            InitEditedElements();
+
+            IsEditing = false;
+            EditTransform = Matrix4.Identity;
+            SelectedHandle = null;
+        }
+
+        public Matrix4 GetActiveTransform()
+        {
+            if (!IsEditing)
+                return Transform;
+            return EditTransform * Transform;
+        }
+
+
+        public void ActivateForModels(IEnumerable<ModelBase> models, OrientationMode orientation, PivotPointMode pivotPoint)
+        {
+            Vector3 transformPosition = Vector3.Zero;
+
+            EditedElements.Clear();
+            EditedElements.AddRange(models.Select(x => new ModelEditInfo(x)));
+            
+
+            switch (pivotPoint)
+            {
+                case PivotPointMode.BoundingBox:
+                    var allboxes = models.Select(x => x.GetWorldBoundingBox());
+                    transformPosition = BBox.Combine(allboxes).Center;
+                    break;
+                case PivotPointMode.MedianCenter:
+                    var allCenters = models.Select(x => x.GetWorldBoundingBox().Center).ToList();
+                    foreach (var center in allCenters)
+                        transformPosition += center;
+                    transformPosition /= allCenters.Count;
+                    break;
+                case PivotPointMode.MedianOrigin:
+                    var allOrigins = models.Select(x => x.Origin).ToList();
+                    foreach (var origin in allOrigins)
+                        transformPosition += origin;
+                    transformPosition /= allOrigins.Count;
+                    break;
+                case PivotPointMode.ActiveElement:
+                    transformPosition = models.Last().Origin;
+                    break;
+
+                case PivotPointMode.Cursor:
+                    //TODO
+                    break;
+            }
+
+            _Position = Matrix4.CreateTranslation(transformPosition);
+            _Orientation = Matrix4.Identity;
+
+            if (orientation == OrientationMode.Local)
+            {
+                var allRot = models.Select(x => x.Transform.ExtractRotation());
+                var avgRot = OpenTKHelper.AverageQuaternion(allRot);
+                _Orientation = Matrix4.CreateFromQuaternion(avgRot);
+            }
+
+            _Transform = _Orientation * _Position;
+
+            InitEditedElements();
+
+            recalculateBounds = true;
+            Visible = true;
+        }
+
+
+        private void InitEditedElements()
+        {
+            var invTrans = Transform.Inverted();
+            foreach (var model in EditedElements)
+            {
+                model.OriginalTrans = model.Model.Transform;
+                //TODO: improve this logic!!
+                var localPos = Vector3.TransformPosition(model.OriginalTrans.ExtractTranslation(), invTrans);
+                var localRot = Quaternion.Multiply(Orientation.ExtractRotation().Inverted(), 
+                    model.OriginalTrans.ExtractRotation());
+
+                model.LocalMatrix = Matrix4.Mult(Matrix4.CreateFromQuaternion(localRot), 
+                    Matrix4.CreateTranslation(localPos));
+            }
+        }
+
+        public void Deactivate()
+        {
+            Visible = false;
+            EditedElements.Clear();
+        }
+
+        private void ApplyTransformToElements()
+        {
+            //var localTrans = EditTransform * Orientation;
+            var localTrans = GetActiveTransform();
+            foreach (var modelTrans in EditedElements)
+            {
+                var baseTrans = modelTrans.LocalMatrix * localTrans;
+                
+                
+                modelTrans.Model.Transform = baseTrans;
+            }
+        }
+
+        private class ModelEditInfo
+        {
+            public ModelBase Model { get; set; }
+            public Matrix4 OriginalTrans { get; set; }
+
+            public Matrix4 LocalMatrix { get; set; }
+
+            public Matrix4 InvertMat2 { get; set; }
+
+            public ModelEditInfo(ModelBase model)
+            {
+                Model = model;
+                OriginalTrans = model.Transform;
             }
         }
 

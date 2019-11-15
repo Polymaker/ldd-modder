@@ -49,6 +49,15 @@
             this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.visualStudioToolStripExtender1 = new WeifenLuo.WinFormsUI.Docking.VisualStudioToolStripExtender(this.components);
+            this.GizmoOrientationMenu = new System.Windows.Forms.ToolStripDropDownButton();
+            this.globalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.localToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.GizmoPivotModeMenu = new System.Windows.Forms.ToolStripDropDownButton();
+            this.boundingBoxCenterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.medianOriginsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.medianBoundingBoxToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.activeElementToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cursorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -58,7 +67,9 @@
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.CameraMenuDropDown,
             this.DisplayMenuDropDown,
-            this.toolStripDropDownButton1});
+            this.toolStripDropDownButton1,
+            this.GizmoOrientationMenu,
+            this.GizmoPivotModeMenu});
             resources.ApplyResources(this.toolStrip1, "toolStrip1");
             this.toolStrip1.Name = "toolStrip1";
             // 
@@ -193,6 +204,68 @@
             // 
             this.visualStudioToolStripExtender1.DefaultRenderer = null;
             // 
+            // GizmoOrientationMenu
+            // 
+            this.GizmoOrientationMenu.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.GizmoOrientationMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.globalToolStripMenuItem,
+            this.localToolStripMenuItem});
+            resources.ApplyResources(this.GizmoOrientationMenu, "GizmoOrientationMenu");
+            this.GizmoOrientationMenu.Name = "GizmoOrientationMenu";
+            this.GizmoOrientationMenu.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.GizmoOrientationMenu_DropDownItemClicked);
+            // 
+            // globalToolStripMenuItem
+            // 
+            this.globalToolStripMenuItem.Checked = true;
+            this.globalToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.globalToolStripMenuItem.Name = "globalToolStripMenuItem";
+            resources.ApplyResources(this.globalToolStripMenuItem, "globalToolStripMenuItem");
+            // 
+            // localToolStripMenuItem
+            // 
+            this.localToolStripMenuItem.Name = "localToolStripMenuItem";
+            resources.ApplyResources(this.localToolStripMenuItem, "localToolStripMenuItem");
+            // 
+            // GizmoPivotModeMenu
+            // 
+            this.GizmoPivotModeMenu.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.GizmoPivotModeMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.boundingBoxCenterToolStripMenuItem,
+            this.medianOriginsToolStripMenuItem,
+            this.medianBoundingBoxToolStripMenuItem,
+            this.activeElementToolStripMenuItem,
+            this.cursorToolStripMenuItem});
+            resources.ApplyResources(this.GizmoPivotModeMenu, "GizmoPivotModeMenu");
+            this.GizmoPivotModeMenu.Name = "GizmoPivotModeMenu";
+            this.GizmoPivotModeMenu.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.GizmoPivotModeMenu_DropDownItemClicked);
+            // 
+            // boundingBoxCenterToolStripMenuItem
+            // 
+            this.boundingBoxCenterToolStripMenuItem.Name = "boundingBoxCenterToolStripMenuItem";
+            resources.ApplyResources(this.boundingBoxCenterToolStripMenuItem, "boundingBoxCenterToolStripMenuItem");
+            // 
+            // medianOriginsToolStripMenuItem
+            // 
+            this.medianOriginsToolStripMenuItem.Name = "medianOriginsToolStripMenuItem";
+            resources.ApplyResources(this.medianOriginsToolStripMenuItem, "medianOriginsToolStripMenuItem");
+            // 
+            // medianBoundingBoxToolStripMenuItem
+            // 
+            this.medianBoundingBoxToolStripMenuItem.Checked = true;
+            this.medianBoundingBoxToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.medianBoundingBoxToolStripMenuItem.Name = "medianBoundingBoxToolStripMenuItem";
+            resources.ApplyResources(this.medianBoundingBoxToolStripMenuItem, "medianBoundingBoxToolStripMenuItem");
+            // 
+            // activeElementToolStripMenuItem
+            // 
+            this.activeElementToolStripMenuItem.Name = "activeElementToolStripMenuItem";
+            resources.ApplyResources(this.activeElementToolStripMenuItem, "activeElementToolStripMenuItem");
+            // 
+            // cursorToolStripMenuItem
+            // 
+            this.cursorToolStripMenuItem.Name = "cursorToolStripMenuItem";
+            resources.ApplyResources(this.cursorToolStripMenuItem, "cursorToolStripMenuItem");
+            // 
             // ViewportPanel
             // 
             resources.ApplyResources(this, "$this");
@@ -228,5 +301,14 @@
         private System.Windows.Forms.ToolStripMenuItem connectionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem DisplayMenu_Meshes;
         private System.Windows.Forms.ToolStripMenuItem xRayToolStripMenuItem;
+        private System.Windows.Forms.ToolStripDropDownButton GizmoOrientationMenu;
+        private System.Windows.Forms.ToolStripMenuItem globalToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem localToolStripMenuItem;
+        private System.Windows.Forms.ToolStripDropDownButton GizmoPivotModeMenu;
+        private System.Windows.Forms.ToolStripMenuItem boundingBoxCenterToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem medianOriginsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem medianBoundingBoxToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem activeElementToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem cursorToolStripMenuItem;
     }
 }

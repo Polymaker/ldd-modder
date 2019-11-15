@@ -1,4 +1,5 @@
 ﻿using LDDModder.LDD.Primitives.Collisions;
+using LDDModder.Simple3D;
 using System.Xml.Linq;
 
 namespace LDDModder.Modding.Editing
@@ -14,6 +15,13 @@ namespace LDDModder.Modding.Editing
         }
 
         public override CollisionType CollisionType => CollisionType.Sphere;
+
+
+        public override void SetSize(Vector3 size)
+        {
+            Radius = size.X;
+        }
+
 
         public override Collision GenerateLDD()
         {

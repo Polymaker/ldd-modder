@@ -24,7 +24,6 @@ namespace LDDModder.BrickEditor.Native
                         Shell32.FileOperationFlags.FOF_SILENT |
                         Shell32.FileOperationFlags.FOF_NOERRORUI;
                 }
-
                 if (sendToRecycleBin)
                     fs.fFlags |= Shell32.FileOperationFlags.FOF_ALLOWUNDO;
 

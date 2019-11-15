@@ -157,6 +157,17 @@ namespace LDDModder.BrickEditor.EditModels
             return allChilds.Contains(element);
         }
 
+        public int GetSelectionIndex(PartElement element)
+        {
+            for (int i = 0; i < _SelectedElements.Count; i++)
+            {
+                var allChilds = _SelectedElements[i].GetChildsHierarchy(true);
+                if (allChilds.Contains(element))
+                    return i;
+            }
+            return -1;
+        }
+
         #endregion
     }
 }

@@ -60,6 +60,7 @@ namespace LDDModder.BrickEditor.Rendering
             var vertices = new List<VertVNT>();
 
             var distinctMeshes = new List<ModelMesh>();
+
             foreach (var surfComp in Surface.Components)
             {
                 foreach (var meshRef in surfComp.Meshes)
@@ -77,6 +78,7 @@ namespace LDDModder.BrickEditor.Rendering
                     {
                         var addedModel = AddMeshGeometry(meshRef, indices, vertices);
                         addedModel.Visible = false;
+                        addedModel.IsReplacementModel = true;
 
                         if (!distinctMeshes.Contains(meshRef.ModelMesh))
                             distinctMeshes.Add(meshRef.ModelMesh);

@@ -348,8 +348,13 @@ namespace LDDModder.BrickEditor.UI.Windows
         {
             if (CloseCurrentProject())
             {
-                Application.DoEvents();
-                Close();
+                //Application.DoEvents();
+                Task.Factory.StartNew(() =>
+                {
+                    Thread.Sleep(100);
+                    BeginInvoke(new MethodInvoker(Close));
+                });
+                //Close();
             }
         }
     }

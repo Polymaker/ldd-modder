@@ -156,5 +156,19 @@ namespace LDDModder.BrickEditor.Rendering
 
             return corners;
         }
+    
+        public static BBox Combine(IEnumerable<BBox> boundingBoxes)
+        {
+            Vector3 minPos = new Vector3(99999f);
+            Vector3 maxPos = new Vector3(-99999f);
+
+            foreach (var bbox in boundingBoxes)
+            {
+                minPos = Vector3.ComponentMin(minPos, bbox.Min);
+                maxPos = Vector3.ComponentMax(maxPos, bbox.Max);
+            }
+
+            return FromMinMax(minPos, maxPos);
+        }
     }
 }

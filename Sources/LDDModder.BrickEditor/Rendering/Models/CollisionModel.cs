@@ -25,17 +25,31 @@ namespace LDDModder.BrickEditor.Rendering
         {
             PartCollision = collision;
             BaseModel = baseModel;
-            Transform = collision.Transform.ToMatrix().ToGL();
-            
+            //Transform = collision.Transform.ToMatrix().ToGL();
+            //SetTransform()
             Vector3 scale = Vector3.One;
             if (collision is PartBoxCollision boxCollision)
                 scale = boxCollision.Size.ToGL() * 2f;
             else if (collision is PartSphereCollision sphereCollision)
                 scale = new Vector3(sphereCollision.Radius * 2f);
 
+            var baseTransform = collision.Transform.ToMatrix().ToGL();
+            //var finalTransform = Matrix4.CreateScale(scale) * baseTransform;
+            SetTransform(baseTransform);
+
             BoundingBox = BBox.FromCenterSize(Vector3.Zero, scale);
-            MeshTransform = Matrix4.CreateScale(scale) * Transform; 
+            MeshTransform = Matrix4.CreateScale(scale) /** Transform*/; 
             Scale = scale;
+        }
+
+        
+        protected override void OnTransformChanged()
+        {
+            base.OnTransformChanged();
+            Matrix4 transCopy = Transform;
+            transCopy.ClearScale();
+            PartCollision.Transform.SetFromMatrix(transCopy.ToLDD());
+            PartCollision.SetSize(Transform.ExtractScale().ToLDD());
         }
 
         public void Draw()
@@ -49,8 +63,8 @@ namespace LDDModder.BrickEditor.Rendering
         public override void RenderModel(Camera camera)
         {
             base.RenderModel(camera);
-
-            RenderHelper.BeginDrawModel(BaseModel.VertexBuffer, MeshTransform, BaseModel.Material);
+            //MeshTransform
+            RenderHelper.BeginDrawModel(BaseModel.VertexBuffer, MeshTransform * Transform, BaseModel.Material);
             RenderHelper.ModelShader.IsSelected.Set(IsSelected);
 
             BaseModel.Draw(CollisionType == CollisionType.Box ?

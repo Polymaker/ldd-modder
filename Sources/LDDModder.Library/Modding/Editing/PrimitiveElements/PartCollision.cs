@@ -1,4 +1,5 @@
 ﻿using LDDModder.LDD.Primitives.Collisions;
+using LDDModder.Simple3D;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +25,9 @@ namespace LDDModder.Modding.Editing
         {
             Transform = new ItemTransform();
         }
+
+        public abstract void SetSize(Vector3 size);
+
 
         public abstract Collision GenerateLDD();
 

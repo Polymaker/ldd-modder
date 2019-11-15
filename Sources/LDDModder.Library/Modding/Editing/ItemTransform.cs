@@ -32,6 +32,13 @@ namespace LDDModder.Modding.Editing
             Rotation = rotation;
         }
 
+        public void SetFromMatrix(Matrix4 matrix)
+        {
+            Position = matrix.ExtractTranslation();
+            var rot = matrix.ExtractRotation();
+            Rotation = Quaternion.ToEuler(rot) * (180f / (float)Math.PI);
+        }
+
         public static ItemTransform FromMatrix(Matrix4 matrix)
         {
             var rot = matrix.ExtractRotation();

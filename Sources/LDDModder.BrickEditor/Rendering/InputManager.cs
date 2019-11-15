@@ -10,8 +10,6 @@ namespace LDDModder.BrickEditor.Rendering
 {
     public class InputManager
     {
-        public Vector2 RelativeScreenOffset { get; set; }
-
         public Vector2 LastMousePos { get; set; }
         public MouseState LastMouseState { get; set; }
         public KeyboardState LastKeyboardState { get; set; }
@@ -40,7 +38,7 @@ namespace LDDModder.BrickEditor.Rendering
             ClickTolerence = 2f;
         }
 
-        private bool[] ClickedButtons;
+        private readonly bool[] ClickedButtons;
 
         public void UpdateInputStates()
         {
@@ -75,25 +73,10 @@ namespace LDDModder.BrickEditor.Rendering
             }
         }
 
-        public void ProcessMouseDown(System.Windows.Forms.MouseEventArgs mouseEvent)
-        {
-
-        }
-
-        public void ProcessMouseUp(System.Windows.Forms.MouseEventArgs mouseEvent)
-        {
-
-        }
-
         public void ProcessMouseMove(System.Windows.Forms.MouseEventArgs mouseEvent)
         {
             LocalMousePos = new Vector2(mouseEvent.X, mouseEvent.Y);
-
-  
-            //var displayPos = new Vector2(mouseEvent.X, mouseEvent.Y);
-            //RelativeScreenOffset = displayPos - MousePos;
         }
-
 
         #region State functions
 

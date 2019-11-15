@@ -28,7 +28,7 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
             return false;
         }
 
-        public override Vector2 ProjectToPlane(Ray ray)
+        public override Vector2 ProjectToPlane2D(Ray ray)
         {
             if (Ray.IntersectsPlane(ray, Plane, out float dist))
             {
@@ -36,7 +36,7 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
                 var planeAxis = Axis == Vector3.UnitY ? Vector3.UnitX : Vector3.UnitY;
                 return Plane.ProjectPoint2D(planeAxis, hitPos).Yx;
             }
-            return base.ProjectToPlane(ray);
+            return base.ProjectToPlane2D(ray);
         }
 
         public override void RenderHandle(TransformGizmo gizmo, Vector4 color)

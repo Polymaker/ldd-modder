@@ -20,6 +20,14 @@ namespace LDDModder.BrickEditor.Rendering
             Distance = distance;
         }
 
+        public Vector3 ProjectPoint(Vector3 point)
+        {
+            var d = Vector3.Dot(Normal, Normal);
+            var dist = Vector3.Dot(Origin - point, Normal);
+            dist /= d;
+            return point + (Normal * dist);
+        }
+
         public Vector2 ProjectPoint2D(Vector3 axis, Vector3 point)
         {
             var perpAxis = Vector3.Cross(Normal, axis);

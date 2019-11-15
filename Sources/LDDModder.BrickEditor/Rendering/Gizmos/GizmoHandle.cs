@@ -13,6 +13,8 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
 
         public Vector3 Axis { get; private set; }
 
+        public int Index { get; private set; }
+
         public Plane Plane { get; set; }
 
         /// <summary>
@@ -34,14 +36,17 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
             
             if (axis.X == 1)
             {
+                Index = 0;
                 Orientation = Matrix4.CreateRotationZ((float)Math.PI * -0.5f);
             }
             else if (axis.Y == 1)
             {
+                Index = 1;
                 Orientation = Matrix4.Identity;
             }
             else if (axis.Z == 1)
             {
+                Index = 2;
                 Orientation = Matrix4.CreateRotationX((float)Math.PI * 0.5f);
             }
         }
@@ -53,7 +58,7 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
 
         }
 
-        public virtual Vector2 ProjectToPlane(Ray ray)
+        public virtual Vector2 ProjectToPlane2D(Ray ray)
         {
             if (Ray.IntersectsPlane(ray, Plane, out float dist))
             {
@@ -62,6 +67,16 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
             }
 
             return Vector2.Zero;
+        }
+
+        public virtual Vector3 ProjectToPlane(Ray ray)
+        {
+            if (Ray.IntersectsPlane(ray, Plane, out float dist))
+            {
+                var hitPos = ray.Origin + ray.Direction * dist;
+                return hitPos;
+            }
+            return Vector3.Zero;
         }
     }
 }

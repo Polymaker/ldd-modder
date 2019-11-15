@@ -7,7 +7,6 @@ namespace LDDModder.Modding.Editing
 {
     public class PartBoxCollision : PartCollision
     {
-        //private PartProperty<Vector3> SizeProperty;
         private Vector3 _Size;
 
         public Vector3 Size
@@ -15,12 +14,6 @@ namespace LDDModder.Modding.Editing
             get => _Size;
             set => SetPropertyValue(ref _Size, value);
         }
-
-        //public Vector3 Size
-        //{
-        //    get => SizeProperty.Value;
-        //    set => SizeProperty.SetValue(value);
-        //}
 
         public override CollisionType CollisionType => CollisionType.Box;
 
@@ -30,14 +23,13 @@ namespace LDDModder.Modding.Editing
 
         public PartBoxCollision(Vector3 size)
         {
-            //_Size = size;
-            Size = size;
+            _Size = size;
         }
 
-        //protected override void DefineProperties()
-        //{
-        //    SizeProperty = Properties.DefineProperty<Vector3>("Size");
-        //}
+        public override void SetSize(Vector3 size)
+        {
+            Size = size;
+        }
 
         public override Collision GenerateLDD()
         {
@@ -56,7 +48,7 @@ namespace LDDModder.Modding.Editing
             base.LoadFromXml(element);
             if (element.HasElement("Size", out XElement sizeElem))
             {
-                Size = new Vector3(
+                _Size = new Vector3(
                     sizeElem.ReadAttribute("X", 0f),
                     sizeElem.ReadAttribute("Y", 0f),
                     sizeElem.ReadAttribute("Z", 0f)
