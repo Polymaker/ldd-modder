@@ -90,7 +90,7 @@ namespace LDDModder.Simple3D
 
         public float Determinant => A1 * B2 * C3 - A1 * B3 * C2 + A2 * B3 * C1 - A2 * B1 * C3 + A3 * B1 * C2 - A3 * B2 * C1;
 
-        public float this[int row, int col]
+        public float this[int col, int row]
         {
             get
             {

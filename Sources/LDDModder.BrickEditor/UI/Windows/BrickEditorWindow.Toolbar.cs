@@ -143,6 +143,7 @@ namespace LDDModder.BrickEditor.UI.Windows
                     var lddPart = CurrentProject.GenerateLddPart();
                     lddPart.ComputeEdgeOutlines();
                     lddPart.Primitive.Save($"{lddPart.PartID}.xml");
+                    //var meshPath = LDD.LDDEnvironment.Current.GetAppDataSubDir("db\\Primitives\\LOD0");
                     foreach (var surface in lddPart.Surfaces)
                         surface.Mesh.Save(surface.GetFileName());
                 }

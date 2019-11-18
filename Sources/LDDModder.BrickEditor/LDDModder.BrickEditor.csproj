@@ -163,6 +163,7 @@
     <Compile Include="Rendering\Shaders\GridShaderProgram.cs" />
     <Compile Include="Rendering\Shaders\LightInfo.cs" />
     <Compile Include="Rendering\Shaders\MaterialInfo.cs" />
+    <Compile Include="Rendering\Shaders\WireframeShader2Program.cs" />
     <Compile Include="Rendering\Shaders\WireframeShaderProgram.cs" />
     <Compile Include="Rendering\TextRenderingExtensions.cs" />
     <Compile Include="Rendering\Models\Vertices.cs" />
@@ -320,6 +321,7 @@
     <EmbeddedResource Include="Resources\Models\Sphere.obj" />
     <EmbeddedResource Include="Resources\Shaders\GizmoShader.glsl" />
     <EmbeddedResource Include="Resources\Shaders\ColorShader.glsl" />
+    <EmbeddedResource Include="Resources\Shaders\WireframeShader2.glsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

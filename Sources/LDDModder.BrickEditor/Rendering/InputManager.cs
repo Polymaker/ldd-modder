@@ -61,7 +61,7 @@ namespace LDDModder.BrickEditor.Rendering
             {
                 ClickedButtons[i] = false;
                 if (IsButtonPressed((MouseButton)i))
-                    MouseDownPositions[i] = MousePos;
+                    MouseDownPositions[i] = ContainsMouse ? MousePos : new Vector2(99999,99999);
 
                 if (IsButtonReleased((MouseButton)i))
                 {

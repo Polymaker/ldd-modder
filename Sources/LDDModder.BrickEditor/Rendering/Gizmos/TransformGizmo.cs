@@ -16,6 +16,7 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
         private bool recalculateBounds;
         private Matrix4 _Position;
         private Matrix4 _Orientation;
+        private Matrix4 _SelectionOrientation;
 
         public float UIScale { get; private set; }
 
@@ -59,6 +60,7 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
                     _Orientation = value;
                     _Transform = _Orientation * _Position;
                     recalculateBounds = true;
+                    InitEditedElements();
                 }
             }
         }
@@ -94,6 +96,10 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
 
         public PivotPointMode PivotPointMode { get; set; }
 
+        public float TranslationSnap { get; set; }
+
+        public float RotationSnap { get; set; }
+
         public BSphere BoundingSphere { get; private set; }
 
         public Vector4[] HandleColors { get; set; }
@@ -106,6 +112,10 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
             _Transform = Matrix4.Identity;
             _Position = Matrix4.Identity;
             _Orientation = Matrix4.Identity;
+            _SelectionOrientation = Matrix4.Identity;
+
+            RotationSnap = 10f * (float)Math.PI / 180f;
+            TranslationSnap = 0.4f;
 
             EditTransform = Matrix4.Identity;
 
@@ -278,12 +288,15 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
                 if (input.IsKeyPressed(OpenTK.Input.Key.R) && TransformMode != GizmoStyle.Rotation)
                 {
                     TransformMode = GizmoStyle.Rotation;
+                    Orientation = _SelectionOrientation;
                     ClearOver();
                     updateMouseOver = true;
                 }
                 else if (input.IsKeyPressed(OpenTK.Input.Key.T) && TransformMode != GizmoStyle.Translation)
                 {
                     TransformMode = GizmoStyle.Translation;
+                    Orientation = _SelectionOrientation;
+
                     ClearOver();
                     updateMouseOver = true;
                 }
@@ -318,6 +331,9 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
                     if (TransformMode == GizmoStyle.Translation)
                     {
                         EditAmount = GetComponent(EditCurrentPos - EditStartPos, SelectedHandle.Axis);
+                        if (input.IsControlDown())
+                            EditAmount = SnapValue(EditAmount, TranslationSnap);
+
                         EditTransform = Matrix4.CreateTranslation(SelectedHandle.Axis * EditAmount);
 
                     }
@@ -332,6 +348,8 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
                             var v3 = Vector3.Cross(EditStartPos, EditCurrentPos).Normalized();
                             var counterClockwise = Vector3.Distance(v3, SelectedHandle.Axis) <= 0.1;
                             EditAmount = angle * (counterClockwise ? 1 : -1);
+                            if (input.IsControlDown())
+                                EditAmount = SnapValue(EditAmount, RotationSnap);
                             EditTransform = Matrix4.CreateFromAxisAngle(SelectedHandle.Axis, EditAmount);
                         }
                     }
@@ -352,6 +370,11 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
                 SelectedHandle = null;
                 UpdateBounds(camera);
             }
+        }
+
+        private static float SnapValue(float value, float snapIncrement)
+        {
+            return (float)Math.Round(Math.Abs(value) / snapIncrement) * snapIncrement * Math.Sign(value);
         }
 
         public static float GetComponent(Vector3 value, Vector3 axis)
@@ -505,7 +528,7 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
                 var avgRot = OpenTKHelper.AverageQuaternion(allRot);
                 _Orientation = Matrix4.CreateFromQuaternion(avgRot);
             }
-
+            _SelectionOrientation = _Orientation;
             _Transform = _Orientation * _Position;
 
             InitEditedElements();
@@ -513,7 +536,6 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
             recalculateBounds = true;
             Visible = true;
         }
-
 
         private void InitEditedElements()
         {

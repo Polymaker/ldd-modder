@@ -138,7 +138,7 @@ namespace LDDModder.BrickEditor.Rendering
             if (renderOptions.DrawTransparent)
             {
                 var diffColor = currentMaterial.Diffuse;
-                diffColor.W = 0.8f;
+                diffColor.W = 0.5f;
                 currentMaterial.Diffuse = diffColor;
             }
 
@@ -163,7 +163,7 @@ namespace LDDModder.BrickEditor.Rendering
                 RenderHelper.DisableStencilTest();
         }
 
-        public void RenderWireframe()
+        public void RenderWireframe(Vector4 color, float size = 1f)
         {
             var visibleMeshes = MeshModels.Where(x => x.Visible)
                 .OrderByDescending(x => x.IsSelected).ToList();
@@ -173,9 +173,9 @@ namespace LDDModder.BrickEditor.Rendering
 
             foreach (var model in visibleMeshes)
             {
-                RenderHelper.BeginDrawWireframe(VertexBuffer, model.Transform, 1f, model.IsSelected ? WireframeColorAlt : WireframeColor);
+                RenderHelper.BeginDrawWireframe2(VertexBuffer, model.Transform, size, color);
                 DrawPartialMesh(model);
-                RenderHelper.EndDrawWireframe(VertexBuffer);
+                //RenderHelper.EndDrawWireframe(VertexBuffer);
             }
         }
 
@@ -199,7 +199,7 @@ namespace LDDModder.BrickEditor.Rendering
 
             if (renderOptions.DrawWireframe)
             {
-                RenderHelper.BeginDrawWireframe(VertexBuffer, model.Transform, 1f, model.IsSelected ? WireframeColorAlt : WireframeColor);
+                RenderHelper.BeginDrawWireframe(VertexBuffer, model.Transform, 1f, model.IsSelected ? renderOptions.WireframeColorAlt : renderOptions.WireframeColor);
                 DrawPartialMesh(model);
                 RenderHelper.EndDrawWireframe(VertexBuffer);
             }

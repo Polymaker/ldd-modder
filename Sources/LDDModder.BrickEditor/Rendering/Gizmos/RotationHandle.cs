@@ -45,7 +45,7 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
             var baseTransform = Orientation * gizmo.GetActiveTransform();
 
             GL.PushAttrib(AttribMask.LineBit);
-            GL.LineWidth(3.5f);
+            GL.LineWidth(gizmo.IsEditing && !IsOver ? 1f : 3.5f);
 
             RenderHelper.BeginDrawColor(gizmo.VertexBuffer, scale * baseTransform, color);
             gizmo.VertexBuffer.DrawArrays(PrimitiveType.LineLoop, 0, 32);

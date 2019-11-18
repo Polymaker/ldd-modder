@@ -20,6 +20,8 @@ namespace LDDModder.BrickEditor.Rendering
 
         public static WireframeShaderProgram WireframeShader { get; private set; }
 
+        public static WireframeShader2Program WireframeShader2 { get; private set; }
+
         public static ModelShaderProgram ModelShader { get; private set; }
 
 
@@ -29,6 +31,7 @@ namespace LDDModder.BrickEditor.Rendering
             ColorShader = ProgramFactory.Create<ColorShaderProgram>();
             WireframeShader = ProgramFactory.Create<WireframeShaderProgram>();
             ModelShader = ProgramFactory.Create<ModelShaderProgram>();
+            WireframeShader2 = ProgramFactory.Create<WireframeShader2Program>();
         }
 
         public static void DisposeShaders()
@@ -43,6 +46,12 @@ namespace LDDModder.BrickEditor.Rendering
             {
                 WireframeShader.Dispose();
                 WireframeShader = null;
+            }
+
+            if (WireframeShader2 != null)
+            {
+                WireframeShader2.Dispose();
+                WireframeShader2 = null;
             }
 
             if (ModelShader != null)
@@ -62,6 +71,10 @@ namespace LDDModder.BrickEditor.Rendering
             WireframeShader.Use();
             WireframeShader.ViewMatrix.Set(viewMatrix);
             WireframeShader.Projection.Set(projection);
+
+            WireframeShader2.Use();
+            WireframeShader2.ViewMatrix.Set(viewMatrix);
+            WireframeShader2.Projection.Set(projection);
 
             ColorShader.Use();
             ColorShader.ViewMatrix.Set(viewMatrix);
@@ -136,6 +149,17 @@ namespace LDDModder.BrickEditor.Rendering
             vertexBuffer.BindAttribute(WireframeShader.Position, 0);
             vertexBuffer.BindAttribute(WireframeShader.Normal, 12);
 
+        }
+
+        public static void BeginDrawWireframe2(IVertexBuffer vertexBuffer, Matrix4 transform, float thickness, Vector4 color)
+        {
+            WireframeShader2.Use();
+            WireframeShader2.Color.Set(color);
+            WireframeShader2.ModelMatrix.Set(transform);
+            WireframeShader2.Size.Set(thickness);
+
+            vertexBuffer.Bind();
+            vertexBuffer.BindAttribute(WireframeShader2.Position, 0);
         }
 
         public static void EndDrawWireframe(IVertexBuffer vertexBuffer)

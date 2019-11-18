@@ -406,26 +406,28 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             if (ModelRenderingOptions.DrawTransparent)
             {
-                
                 GL.Enable(EnableCap.CullFace);
                 GL.CullFace(CullFaceMode.Front);
+                GL.Disable(EnableCap.DepthTest);
+                var wireColor = new Vector4(0f, 0f, 0f, 1f);
                 foreach (var surfaceModel in SurfaceModels)
-                    surfaceModel.RenderWireframe();
+                    surfaceModel.RenderWireframe(wireColor, 0.5f);
 
                 bool wireframeEnabled = ModelRenderingOptions.DrawWireframe;
                 ModelRenderingOptions.DrawWireframe = false;
 
-                GL.Disable(EnableCap.DepthTest);
+                
                 GL.Disable(EnableCap.CullFace);
 
                 foreach (var surfaceModel in SurfaceModels)
                     surfaceModel.Render(ModelRenderingOptions, true);
-                
+
 
                 GL.Enable(EnableCap.CullFace);
                 GL.CullFace(CullFaceMode.Back);
+
                 foreach (var surfaceModel in SurfaceModels)
-                    surfaceModel.RenderWireframe();
+                    surfaceModel.RenderWireframe(wireColor, 0.5f);
 
                 GL.Disable(EnableCap.CullFace);
                 GL.Enable(EnableCap.DepthTest);
@@ -604,7 +606,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                 TransformGizmo.ProcessInput(Camera, InputManager);
             }
 
-            if (!TransformGizmo.Selected && InputManager.IsButtonClicked(MouseButton.Left))
+            if (!TransformGizmo.Selected && InputManager.ContainsMouse && InputManager.IsButtonClicked(MouseButton.Left))
             {
                 var ray = Camera.RaycastFromScreen(InputManager.LocalMousePos);
                 PerformRaySelection(ray);
