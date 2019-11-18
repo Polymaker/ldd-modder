@@ -1,8 +1,10 @@
 ﻿using LDDModder.BrickEditor.EditModels;
 using LDDModder.BrickEditor.Native;
+using LDDModder.BrickEditor.Resources;
 using LDDModder.BrickEditor.Settings;
 using LDDModder.BrickEditor.UI.Panels;
 using LDDModder.Modding.Editing;
+using LDDModder.Utilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -33,7 +35,7 @@ namespace LDDModder.BrickEditor.UI.Windows
         {
             InitializeComponent();
             visualStudioToolStripExtender1.SetStyle(menuStrip1, 
-                VisualStudioToolStripExtender.VsVersion.Vs2015, 
+                VisualStudioToolStripExtender.VsVersion.Vs2015,
                 DockPanelControl.Theme);
 
             ProjectManager = new ProjectManager();
@@ -44,6 +46,7 @@ namespace LDDModder.BrickEditor.UI.Windows
         {
             base.OnLoad(e);
             SettingsManager.Initialize();
+            ResourceHelper.LoadPlatformsAndCategories();
             InitializePanels();
             RebuildRecentFilesMenu();
             UpdateMenuItemStates();
@@ -66,16 +69,28 @@ namespace LDDModder.BrickEditor.UI.Windows
         private NavigationPanel NavigationPanel;
         private ViewportPanel ViewportPanel;
         private ValidationPanel ValidationPanel;
+        private ProjectPropertiesPanel PropertiesPanel;
 
         private void InitializePanels()
         {
             NavigationPanel = new NavigationPanel(ProjectManager);
             ViewportPanel = new ViewportPanel(ProjectManager);
             ValidationPanel = new ValidationPanel(ProjectManager);
+            PropertiesPanel = new ProjectPropertiesPanel(ProjectManager);
+
 
             ViewportPanel.Show(DockPanelControl, DockState.Document);
+
             DockPanelControl.DockLeftPortion = 250;
             NavigationPanel.Show(DockPanelControl, DockState.DockLeft);
+
+            DockPanelControl.DockWindows[DockState.DockBottom].BringToFront();
+            DockPanelControl.DockBottomPortion = 200;
+
+            PropertiesPanel.Show(DockPanelControl, DockState.DockBottom);
+            ValidationPanel.Show(PropertiesPanel.Pane, null);
+
+            PropertiesPanel.Activate();
 
         }
 
@@ -90,7 +105,7 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         public string GetTemporaryWorkingDir()
         {
-            return Path.Combine(Path.GetTempPath(), Utilities.StringUtils.GenerateUID(16)); ;
+            return Path.Combine(Path.GetTempPath(), StringUtils.GenerateUID(16));
         }
 
         private void OpenPartProjectFile(string projectFilePath)

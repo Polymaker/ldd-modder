@@ -101,11 +101,11 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="WeifenLuo.WinFormsUI.Docking, Version=3.0.6.0, Culture=neutral, PublicKeyToken=5cded1a1a0a7b481, processorArchitecture=MSIL">
-      <HintPath>..\packages\DockPanelSuite.3.0.6\lib\net40\WeifenLuo.WinFormsUI.Docking.dll</HintPath>
+    <Reference Include="WeifenLuo.WinFormsUI.Docking, Version=3.0.4.0, Culture=neutral, PublicKeyToken=5cded1a1a0a7b481, processorArchitecture=MSIL">
+      <HintPath>..\packages\DockPanelSuite.3.0.4\lib\net40\WeifenLuo.WinFormsUI.Docking.dll</HintPath>
     </Reference>
-    <Reference Include="WeifenLuo.WinFormsUI.Docking.ThemeVS2015, Version=3.0.6.0, Culture=neutral, PublicKeyToken=5cded1a1a0a7b481, processorArchitecture=MSIL">
-      <HintPath>..\packages\DockPanelSuite.ThemeVS2015.3.0.6\lib\net40\WeifenLuo.WinFormsUI.Docking.ThemeVS2015.dll</HintPath>
+    <Reference Include="WeifenLuo.WinFormsUI.Docking.ThemeVS2015, Version=3.0.4.0, Culture=neutral, PublicKeyToken=5cded1a1a0a7b481, processorArchitecture=MSIL">
+      <HintPath>..\packages\DockPanelSuite.ThemeVS2015.3.0.4\lib\net40\WeifenLuo.WinFormsUI.Docking.ThemeVS2015.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -182,11 +182,23 @@
     <Compile Include="Settings\DisplaySettings.cs" />
     <Compile Include="Settings\RecentFileInfo.cs" />
     <Compile Include="Settings\SettingsManager.cs" />
+    <Compile Include="UI\Controls\BoundingBoxEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Controls\BoundingBoxEditor.Designer.cs">
+      <DependentUpon>BoundingBoxEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\Controls\ListViewDB.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="UI\Controls\ListViewDB.Designer.cs">
       <DependentUpon>ListViewDB.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Controls\NumberTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\Controls\NumberTextBox.Designer.cs">
+      <DependentUpon>NumberTextBox.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\ModelImportExportWindow.cs">
       <SubType>Form</SubType>
@@ -208,6 +220,12 @@
     </Compile>
     <Compile Include="UI\Panels\ProjectDocumentPanel.cs">
       <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Panels\ProjectPropertiesPanel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Panels\ProjectPropertiesPanel.Designer.cs">
+      <DependentUpon>ProjectPropertiesPanel.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\Panels\ValidationPanel.cs">
       <SubType>Form</SubType>
@@ -252,6 +270,7 @@
     <Compile Include="Utilities\AssimpHelper.cs" />
     <Compile Include="Utilities\Converter.cs" />
     <Compile Include="Native\NativeMethods.cs" />
+    <Compile Include="Utilities\NumberHelper.cs" />
     <Compile Include="Utilities\OpenTKHelper.cs" />
     <Compile Include="Utilities\SortableBindingList.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -273,6 +292,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>PartResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\Controls\BoundingBoxEditor.resx">
+      <DependentUpon>BoundingBoxEditor.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\ModelImportExportWindow.resx">
       <DependentUpon>ModelImportExportWindow.cs</DependentUpon>
     </EmbeddedResource>
@@ -281,6 +303,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Panels\NavigationPanel.resx">
       <DependentUpon>NavigationPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Panels\ProjectPropertiesPanel.resx">
+      <DependentUpon>ProjectPropertiesPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Panels\ValidationPanel.resx">
       <DependentUpon>ValidationPanel.cs</DependentUpon>
@@ -322,6 +347,8 @@
     <EmbeddedResource Include="Resources\Shaders\GizmoShader.glsl" />
     <EmbeddedResource Include="Resources\Shaders\ColorShader.glsl" />
     <EmbeddedResource Include="Resources\Shaders\WireframeShader2.glsl" />
+    <EmbeddedResource Include="Resources\Data\Categories.json" />
+    <EmbeddedResource Include="Resources\Data\Platforms.json" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -338,7 +365,9 @@
     </Content>
     <EmbeddedResource Include="Resources\Textures\DefaultTexture.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Rendering\UI\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\AssimpNet.4.1.0\build\AssimpNet.targets" Condition="Exists('..\packages\AssimpNet.4.1.0\build\AssimpNet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

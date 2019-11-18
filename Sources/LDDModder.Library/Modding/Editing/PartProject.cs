@@ -23,7 +23,7 @@ namespace LDDModder.Modding.Editing
 
         #region Part Info
 
-        public int PartID { get; private set; }
+        public int PartID { get; /*private*/ set; }
 
         public string PartDescription { get; set; }
 
@@ -99,6 +99,8 @@ namespace LDDModder.Modding.Editing
             Bones = new ElementCollection<PartBone>(this);
             Meshes = new ElementCollection<ModelMesh>(this);
 
+            Platform = new Platform(0, "None");
+            MainGroup = new MainGroup(0, "None");
             PrimitiveFileVersion = new VersionInfo(1, 0);
             Aliases = new List<int>();
             PartVersion = 1;

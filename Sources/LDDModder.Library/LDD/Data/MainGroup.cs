@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,8 +9,13 @@ namespace LDDModder.LDD.Data
 {
     public class MainGroup
     {
+        [JsonProperty]
         public int ID { get; set; }
+        [JsonProperty]
         public string Name { get; set; }
+
+        [JsonIgnore]
+        public string Display => $"{ID} - {Name}";
 
         public MainGroup()
         {
@@ -35,8 +41,6 @@ namespace LDDModder.LDD.Data
             hashCode = hashCode * -1521134295 + Name.GetHashCode();
             return hashCode;
         }
-
-        public static readonly MainGroup Bricks = new MainGroup(201, "BRICKS");
 
         public override string ToString()
         {

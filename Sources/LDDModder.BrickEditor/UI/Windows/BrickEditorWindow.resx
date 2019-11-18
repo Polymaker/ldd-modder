@@ -129,7 +129,7 @@
     <value>6, 6, 6, 6</value>
   </data>
   <data name="DockPanelControl.Size" type="System.Drawing.Size, System.Drawing">
-    <value>731, 471</value>
+    <value>784, 537</value>
   </data>
   <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="DockPanelControl.TabIndex" type="System.Int32, mscorlib">
@@ -142,7 +142,7 @@
     <value>DockPanelControl</value>
   </data>
   <data name="&gt;&gt;DockPanelControl.Type" xml:space="preserve">
-    <value>WeifenLuo.WinFormsUI.Docking.DockPanel, WeifenLuo.WinFormsUI.Docking, Version=3.0.6.0, Culture=neutral, PublicKeyToken=5cded1a1a0a7b481</value>
+    <value>WeifenLuo.WinFormsUI.Docking.DockPanel, WeifenLuo.WinFormsUI.Docking, Version=3.0.4.0, Culture=neutral, PublicKeyToken=5cded1a1a0a7b481</value>
   </data>
   <data name="&gt;&gt;DockPanelControl.Parent" xml:space="preserve">
     <value>$this</value>
@@ -307,7 +307,7 @@
     <value>0, 0</value>
   </data>
   <data name="menuStrip1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>731, 24</value>
+    <value>784, 24</value>
   </data>
   <data name="menuStrip1.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -334,7 +334,7 @@
     <value>6, 13</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>731, 495</value>
+    <value>784, 561</value>
   </data>
   <data name="$this.Font" type="System.Drawing.Font, System.Drawing">
     <value>Segoe UI, 8.25pt</value>
@@ -346,19 +346,19 @@
     <value>vS2015LightTheme1</value>
   </data>
   <data name="&gt;&gt;vS2015LightTheme1.Type" xml:space="preserve">
-    <value>WeifenLuo.WinFormsUI.Docking.VS2015LightTheme, WeifenLuo.WinFormsUI.Docking.ThemeVS2015, Version=3.0.6.0, Culture=neutral, PublicKeyToken=5cded1a1a0a7b481</value>
+    <value>WeifenLuo.WinFormsUI.Docking.VS2015LightTheme, WeifenLuo.WinFormsUI.Docking.ThemeVS2015, Version=3.0.4.0, Culture=neutral, PublicKeyToken=5cded1a1a0a7b481</value>
   </data>
   <data name="&gt;&gt;vS2015DarkTheme1.Name" xml:space="preserve">
     <value>vS2015DarkTheme1</value>
   </data>
   <data name="&gt;&gt;vS2015DarkTheme1.Type" xml:space="preserve">
-    <value>WeifenLuo.WinFormsUI.Docking.VS2015DarkTheme, WeifenLuo.WinFormsUI.Docking.ThemeVS2015, Version=3.0.6.0, Culture=neutral, PublicKeyToken=5cded1a1a0a7b481</value>
+    <value>WeifenLuo.WinFormsUI.Docking.VS2015DarkTheme, WeifenLuo.WinFormsUI.Docking.ThemeVS2015, Version=3.0.4.0, Culture=neutral, PublicKeyToken=5cded1a1a0a7b481</value>
   </data>
   <data name="&gt;&gt;visualStudioToolStripExtender1.Name" xml:space="preserve">
     <value>visualStudioToolStripExtender1</value>
   </data>
   <data name="&gt;&gt;visualStudioToolStripExtender1.Type" xml:space="preserve">
-    <value>WeifenLuo.WinFormsUI.Docking.VisualStudioToolStripExtender, WeifenLuo.WinFormsUI.Docking, Version=3.0.6.0, Culture=neutral, PublicKeyToken=5cded1a1a0a7b481</value>
+    <value>WeifenLuo.WinFormsUI.Docking.VisualStudioToolStripExtender, WeifenLuo.WinFormsUI.Docking, Version=3.0.4.0, Culture=neutral, PublicKeyToken=5cded1a1a0a7b481</value>
   </data>
   <data name="&gt;&gt;fileToolStripMenuItem.Name" xml:space="preserve">
     <value>fileToolStripMenuItem</value>
@@ -412,6 +412,18 @@
     <value>File_SaveAsMenu</value>
   </data>
   <data name="&gt;&gt;File_SaveAsMenu.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparator5.Name" xml:space="preserve">
+    <value>toolStripSeparator5</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparator5.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;File_CloseProjectMenu.Name" xml:space="preserve">
+    <value>File_CloseProjectMenu</value>
+  </data>
+  <data name="&gt;&gt;File_CloseProjectMenu.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;editToolStripMenuItem.Name" xml:space="preserve">
@@ -479,18 +491,6 @@
   </data>
   <data name="&gt;&gt;StartLddMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;File_CloseProjectMenu.Name" xml:space="preserve">
-    <value>File_CloseProjectMenu</value>
-  </data>
-  <data name="&gt;&gt;File_CloseProjectMenu.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;toolStripSeparator5.Name" xml:space="preserve">
-    <value>toolStripSeparator5</value>
-  </data>
-  <data name="&gt;&gt;toolStripSeparator5.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>BrickEditorWindow</value>

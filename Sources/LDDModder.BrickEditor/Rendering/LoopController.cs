@@ -7,10 +7,11 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace LDDModder.BrickEditor.Rendering
 {
-    public delegate void UpdateFrameDelegate(float deltaMs);
+    public delegate void UpdateFrameDelegate(double deltaMs);
 
     public delegate void RenderFrameDelegate();
 
@@ -28,10 +29,20 @@ namespace LDDModder.BrickEditor.Rendering
 
         public double TargetUpdatePeriod => 1f / TargetUpdateFrequency;
 
+        public bool IsRunning { get; private set; }
+
+        public double RenderFrequency { get; private set; }
+
+        public double UpdateFrequency { get; private set; }
+
         private Thread UpdateThread;
+        private double LastRender;
+        private double LastUpdate;
 
         private Stopwatch RenderWatch;
         private Stopwatch UpdateWatch;
+
+        private System.Windows.Forms.Timer RenderTimer;
 
         public event UpdateFrameDelegate UpdateFrame;
 
@@ -44,7 +55,13 @@ namespace LDDModder.BrickEditor.Rendering
             TargetUpdateFrequency = 60;
             RenderWatch = new Stopwatch();
             UpdateWatch = new Stopwatch();
+            WindowHandle = control.FindForm().Handle;
+
+            RenderTimer = new System.Windows.Forms.Timer();
+            RenderTimer.Tick += RenderTimer_Tick;
         }
+
+        
 
         public void ProcessEvent()
         {
@@ -60,23 +77,83 @@ namespace LDDModder.BrickEditor.Rendering
 
         public void Start()
         {
-            UpdateThread = new Thread(RenderLoop);
-            UpdateThread.Start();
+            if (!IsRunning)
+            {
+                IsRunning = true;
+                RenderWatch.Restart();
+                UpdateWatch.Restart();
+                LastRender = 0;
+                LastUpdate = 0;
+                RenderTimer.Interval = (int)(TargetRenderPeriod * 1000.0);
+                RenderTimer.Start();
+                //Application.Idle += Application_Idle;
+                UpdateThread = new Thread(UpdateLoop);
+                UpdateThread.Start();
+            }
+            
         }
 
         public void Stop()
         {
+            if (IsRunning)
+            {
+                IsRunning = false;
+                RenderTimer.Stop();
+                //Application.Idle -= Application_Idle;
+                if (UpdateThread != null)
+                {
+                    UpdateThread.Join();
+                    UpdateThread = null;
+                }
+                RenderWatch.Stop();
+                UpdateWatch.Stop();
+            }
+        }
 
+        private void Application_Idle(object sender, EventArgs e)
+        {
+            while (Control.IsIdle)
+            {
+                ProcessEvent();
+                DispatchRenderFrame();
+            }
+        }
+
+        private void RenderTimer_Tick(object sender, EventArgs e)
+        {
+            double timestamp = RenderWatch.Elapsed.TotalSeconds;
+            double elapsed = ClampElapsed(timestamp - LastRender);
+            if (elapsed > 0.0/* && elapsed >= TargetRenderPeriod*/)
+            {
+                RenderFrequency = 1d / elapsed;
+                LastRender = timestamp;
+                RenderFrame?.Invoke();
+            }
         }
 
         private void DispatchRenderFrame()
         {
             double timestamp = RenderWatch.Elapsed.TotalSeconds;
-            //double elapsed = ClampElapsed(timestamp - render_timestamp);
-            //if (elapsed > 0.0 && elapsed >= TargetRenderPeriod)
-            //{
-            //    //RaiseRenderFrame(elapsed, ref timestamp);
-            //}
+            double elapsed = ClampElapsed(timestamp - LastRender);
+            if (elapsed > 0.0 && elapsed >= TargetRenderPeriod)
+            {
+                RenderFrequency = 1d / elapsed;
+                LastRender = timestamp;
+                RenderFrame?.Invoke();
+            }
+        }
+
+        private void DispatchUpdateFrame()
+        {
+            double timestamp = UpdateWatch.Elapsed.TotalSeconds;
+            double elapsed = ClampElapsed(timestamp - LastUpdate);
+
+            if (elapsed > 0.0/* && elapsed >= TargetUpdatePeriod*/)
+            {
+                UpdateFrequency = 1d / elapsed;
+                LastUpdate = timestamp;
+                UpdateFrame?.Invoke(elapsed / 1000.0);
+            }
         }
 
         static double ClampElapsed(double elapsed) 
@@ -84,9 +161,13 @@ namespace LDDModder.BrickEditor.Rendering
             return elapsed < 0 ? 0 : (elapsed > 1 ? 1 : elapsed);
         }
 
-        private void RenderLoop()
+        private void UpdateLoop()
         {
-
+            while (IsRunning)
+            {
+                DispatchUpdateFrame();
+                Thread.Sleep((int)(TargetUpdatePeriod * 1000));
+            }
         }
     }
 }

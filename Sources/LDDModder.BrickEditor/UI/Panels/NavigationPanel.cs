@@ -48,8 +48,8 @@ namespace LDDModder.BrickEditor.UI.Panels
             InitializeComponent();
             CloseButtonVisible = false;
             CloseButton = false;
-            DockAreas = DockAreas.DockLeft | DockAreas.DockRight | DockAreas.Float;
-            
+            DockAreas = DockAreas.DockLeft | DockAreas.DockRight | DockAreas.Float | DockAreas.Document;
+
             ProjectTreeView.CanExpandGetter += (model) =>
             {
                 if (model is BaseProjectNode node)

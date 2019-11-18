@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,8 +9,13 @@ namespace LDDModder.LDD.Data
 {
     public class Platform
     {
+        [JsonProperty]
         public int ID { get; set; }
+        [JsonProperty]
         public string Name { get; set; }
+
+        [JsonIgnore]
+        public string Display => $"{ID} - {Name}";
 
         public Platform()
         {
@@ -41,9 +47,9 @@ namespace LDDModder.LDD.Data
             return $"{ID} - {Name}";
         }
 
-        public static readonly Platform None = new Platform(0, "None");
-        public static readonly Platform System = new Platform(200, "SYSTEM");
-        public static readonly Platform Technic = new Platform(300, "TECHNIC");
-        public static readonly Platform ActionFigures = new Platform(500, "ACTION FIGURES");
+        //public static readonly Platform None = new Platform(0, "None");
+        //public static readonly Platform System = new Platform(200, "SYSTEM");
+        //public static readonly Platform Technic = new Platform(300, "TECHNIC");
+        //public static readonly Platform ActionFigures = new Platform(500, "ACTION FIGURES");
     }
 }

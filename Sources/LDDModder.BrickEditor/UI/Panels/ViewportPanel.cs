@@ -52,6 +52,8 @@ namespace LDDModder.BrickEditor.UI.Panels
         private GLModel SphereCollisionModel;
         private TransformGizmo TransformGizmo;
 
+        private LoopController LoopController;
+
         public bool ShowCollisions { get; set; }
         public bool ShowMeshes { get; set; }
 
@@ -75,7 +77,9 @@ namespace LDDModder.BrickEditor.UI.Panels
             //CloseButtonVisible = false;
             //CloseButton = false;
             DockAreas = DockAreas.Document;
-
+            AllowEndUserDocking = false;
+            CloseButton = false;
+            CloseButtonVisible = false;
             SurfaceModels = new List<GLSurfaceModel>();
             CollisionModels = new List<CollisionModel>();
             CreateGLControl();
@@ -91,6 +95,11 @@ namespace LDDModder.BrickEditor.UI.Panels
             glControl1.MouseEnter += GlControl_MouseEnter;
             glControl1.MouseLeave += GlControl_MouseLeave;
             glControl1.MouseMove += GlControl_MouseMove;
+
+            LoopController = new LoopController(glControl1);
+            LoopController.TargetRenderFrequency = 40;
+            LoopController.RenderFrame += LoopController_RenderFrame;
+            LoopController.UpdateFrame += LoopController_UpdateFrame;
         }
 
         protected override void OnLoad(EventArgs e)
@@ -104,11 +113,12 @@ namespace LDDModder.BrickEditor.UI.Panels
             InitializeBase();
             UpdateViewport();
 
-            StartRenderLoop();
-            StartUpdateLoop();
+            //StartRenderLoop();
+            //StartUpdateLoop();
 
             InitializeMenus();
-            
+
+            LoopController.Start();
         }
 
         #region Initialization
@@ -287,60 +297,18 @@ namespace LDDModder.BrickEditor.UI.Panels
         protected override void OnActivated(EventArgs e)
         {
             base.OnActivated(e);
-            StartRenderLoop();
+            LoopController.Start();
         }
 
         protected override void OnDeactivate(EventArgs e)
         {
             base.OnDeactivate(e);
-            StopRenderLoop();
+            LoopController.Stop();
         }
 
+        
 
         #region Render Loop
-
-        private Stopwatch RenderTimer;
-        private double LastRenderTime = 0;
-
-        private void StartRenderLoop()
-        {
-            if (!RenderLoopEnabled)
-            {
-                RenderTimer = new Stopwatch();
-                RenderTimer.Start();
-                LastRenderTime = 0;
-                Application.Idle += Application_Idle;
-                RenderLoopEnabled = true;
-            }
-        }
-
-        private void StopRenderLoop()
-        {
-            if (RenderLoopEnabled)
-            {
-                Application.Idle -= Application_Idle;
-                RenderLoopEnabled = false;
-                RenderTimer.Stop();
-            }
-        }
-
-        private void Application_Idle(object sender, EventArgs e)
-        {
-            double curTime = RenderTimer.Elapsed.TotalMilliseconds;
-            const double MaxTimer = 1000000;
-            if (curTime > MaxTimer)
-            {
-                LastRenderTime -= curTime;
-                RenderTimer.Restart();
-                curTime = 0;
-            }
-
-            double delta = curTime - LastRenderTime;
-            RenderFPS = 1000d / delta;
-            LastRenderTime = curTime;
-
-            OnRenderFrame();
-        }
 
         private void RenderWorld()
         {
@@ -499,13 +467,14 @@ namespace LDDModder.BrickEditor.UI.Panels
             GL.Enable(EnableCap.Texture2D);
             GL.UseProgram(0);
             TextRenderer.ProjectionMatrix = UIProjectionMatrix;
+
             TextRenderer.DrawingPrimitives.Clear();
 
             var textHeight = RenderFont.Measure("Wasd").Height;
 
-            TextRenderer.AddText($"Render FPS: {RenderFPS:0.00}", RenderFont, 
+            TextRenderer.AddText($"Render FPS: {LoopController.RenderFrequency:0.00}", RenderFont, 
                 Color.White, new Vector2(2f, viewSize.Y - 3), QFontAlignment.Left);
-            TextRenderer.AddText($"Update FPS {UpdateFPS:0.00}", RenderFont,
+            TextRenderer.AddText($"Update FPS {LoopController.UpdateFrequency:0.00}", RenderFont,
                 Color.White, new Vector2(2f, viewSize.Y - textHeight - 9), QFontAlignment.Left);
 
             if (TransformGizmo.IsEditing)
@@ -514,14 +483,12 @@ namespace LDDModder.BrickEditor.UI.Panels
                     Color.White, new Vector2(2f, viewSize.Y - ((textHeight + 6) * 2) - 3), QFontAlignment.Left);
             }
 
-            //TextRenderer.AddText("LDD Modder Splash Screen", RenderFont, Color.White,
-            //    new Vector4(winPos.X, winPos.Y, winSize.X, winSize.Y), StringAlignment.Center, StringAlignment.Center);
             TextRenderer.RefreshBuffers();
             TextRenderer.Draw();
             TextRenderer.DisableShader();
         }
 
-        private void OnRenderFrame()
+        private void LoopController_RenderFrame()
         {
             if (IsDisposed || IsClosing)
                 return;
@@ -541,61 +508,8 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         #region Update Loop
 
-        private void StartUpdateLoop()
+        private void LoopController_UpdateFrame(double deltaMs)
         {
-            if (UpdateThread == null || !UpdateThread.IsAlive)
-            {
-                UpdateThread = new Thread(UpdateLoop);
-                UpdateThread.Start();
-            }
-        }
-
-        private void StopUpdateLoop()
-        {
-            if (UpdateThread != null)
-            {
-                if (UpdateThread.IsAlive)
-                {
-                    ExitUpdateLoop = true;
-                    UpdateThread.Join();
-                }
-                UpdateThread = null;
-                ExitUpdateLoop = false;
-            }
-        }
-
-        private void UpdateLoop()
-        {
-            var sw = Stopwatch.StartNew();
-            double lastTime = 0;
-            const double MaxTimer = 1000000;
-
-            while (!IsClosing)
-            {
-                if (ExitUpdateLoop)
-                    break;
-
-                double curTime = sw.Elapsed.TotalMilliseconds;
-                if (curTime > MaxTimer)
-                {
-                    lastTime -= curTime;
-                    sw.Restart();
-                    curTime = 0;
-                }
-
-                double delta = curTime - lastTime;
-                lastTime = curTime;
-
-                OnUpdateFrame(delta);
-                Thread.Sleep(15);
-            }
-            sw.Stop();
-        }
-
-        private void OnUpdateFrame(double deltaTime)
-        {
-            UpdateFPS = 1000.0 / deltaTime;
-
             InputManager.UpdateInputStates();
             CameraManipulator.ProcessInput(InputManager);
 
@@ -620,15 +534,15 @@ namespace LDDModder.BrickEditor.UI.Panels
             if (ViewInitialized && !Disposing)
             {
                 UpdateViewport();
-                OnRenderFrame();
+                //OnRenderFrame();
             }
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
+            LoopController.Stop();
+
             IsClosing = true;
-            StopUpdateLoop();
-            StopRenderLoop();
             DisposeGLResources();
         }
 

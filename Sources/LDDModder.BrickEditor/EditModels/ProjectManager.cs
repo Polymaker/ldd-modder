@@ -22,6 +22,8 @@ namespace LDDModder.BrickEditor.EditModels
             set => SelectElement(value);
         }
 
+        public bool IsNewProject => IsProjectOpen && string.IsNullOrEmpty(CurrentProject.ProjectPath);
+
         public IList<PartElement> SelectedElements => _SelectedElements.AsReadOnly();
 
         public event EventHandler SelectionChanged;

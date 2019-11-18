@@ -44,6 +44,8 @@
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.File_SaveMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.File_SaveAsMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.File_CloseProjectMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.Edit_ImportMeshMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
@@ -55,8 +57,6 @@
             this.ExportBrickMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.StartLddMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.File_CloseProjectMenu = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -144,6 +144,17 @@
             this.File_SaveAsMenu.Name = "File_SaveAsMenu";
             this.File_SaveAsMenu.Click += new System.EventHandler(this.File_SaveAsMenu_Click);
             // 
+            // toolStripSeparator5
+            // 
+            this.toolStripSeparator5.Name = "toolStripSeparator5";
+            resources.ApplyResources(this.toolStripSeparator5, "toolStripSeparator5");
+            // 
+            // File_CloseProjectMenu
+            // 
+            this.File_CloseProjectMenu.Name = "File_CloseProjectMenu";
+            resources.ApplyResources(this.File_CloseProjectMenu, "File_CloseProjectMenu");
+            this.File_CloseProjectMenu.Click += new System.EventHandler(this.File_CloseProjectMenu_Click);
+            // 
             // editToolStripMenuItem
             // 
             this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -213,17 +224,6 @@
             // 
             this.StartLddMenuItem.Name = "StartLddMenuItem";
             resources.ApplyResources(this.StartLddMenuItem, "StartLddMenuItem");
-            // 
-            // File_CloseProjectMenu
-            // 
-            this.File_CloseProjectMenu.Name = "File_CloseProjectMenu";
-            resources.ApplyResources(this.File_CloseProjectMenu, "File_CloseProjectMenu");
-            this.File_CloseProjectMenu.Click += new System.EventHandler(this.File_CloseProjectMenu_Click);
-            // 
-            // toolStripSeparator5
-            // 
-            this.toolStripSeparator5.Name = "toolStripSeparator5";
-            resources.ApplyResources(this.toolStripSeparator5, "toolStripSeparator5");
             // 
             // BrickEditorWindow
             // 

@@ -389,41 +389,57 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
 
         public void Render()
         {
-            if (IsEditing && TransformMode == GizmoStyle.Translation)
+            if (TransformMode == GizmoStyle.Plain)
             {
-                var color = HandleColors[SelectedHandle.Index];
-                RenderHelper.BeginDrawColor(VertexBuffer, Transform, color);
-                GL.Begin(PrimitiveType.Lines);
-                GL.Vertex3(SelectedHandle.Axis * -100f);
-                GL.Vertex3(SelectedHandle.Axis * 100f);
-                GL.End();
-            }
-
-            if (IsEditing && TransformMode == GizmoStyle.Rotation)
-            {
-
-                var color = HandleColors[SelectedHandle.Index];
-                RenderHelper.BeginDrawColor(VertexBuffer, Transform, color);
-                GL.Begin(PrimitiveType.Lines);
-                GL.Vertex3(Vector3.Zero);
-                GL.Vertex3(EditCurrentPos.Normalized() * UIScale * GizmoSize);
-                GL.End();
-            }
-
-            for (int i = 0; i < 3; i++)
-            {
-                var gizmoHandle = GetHandle(i);
-                if (gizmoHandle != null)
+                for (int i = 0; i < 3; i++)
                 {
                     var color = HandleColors[i];
-                    if (!gizmoHandle.IsOver)
-                    {
-                        color.Xyz *= 0.95f;
-                        color.W = 0.8f;
-                    }
-                    gizmoHandle.RenderHandle(this, color);
+                    RenderHelper.BeginDrawColor(VertexBuffer, Transform, color);
+                    GL.Begin(PrimitiveType.Lines);
+                    GL.Vertex3(Vector3.Zero);
+                    GL.Vertex3(SelectedHandle.Axis * UIScale * GizmoSize);
+                    GL.End();
                 }
             }
+            else
+            {
+                if (IsEditing && TransformMode == GizmoStyle.Translation)
+                {
+                    var color = HandleColors[SelectedHandle.Index];
+                    RenderHelper.BeginDrawColor(VertexBuffer, Transform, color);
+                    GL.Begin(PrimitiveType.Lines);
+                    GL.Vertex3(SelectedHandle.Axis * -100f);
+                    GL.Vertex3(SelectedHandle.Axis * 100f);
+                    GL.End();
+                }
+
+                if (IsEditing && TransformMode == GizmoStyle.Rotation)
+                {
+
+                    var color = HandleColors[SelectedHandle.Index];
+                    RenderHelper.BeginDrawColor(VertexBuffer, Transform, color);
+                    GL.Begin(PrimitiveType.Lines);
+                    GL.Vertex3(Vector3.Zero);
+                    GL.Vertex3(EditCurrentPos.Normalized() * UIScale * GizmoSize);
+                    GL.End();
+                }
+
+                for (int i = 0; i < 3; i++)
+                {
+                    var gizmoHandle = GetHandle(i);
+                    if (gizmoHandle != null)
+                    {
+                        var color = HandleColors[i];
+                        if (!gizmoHandle.IsOver)
+                        {
+                            color.Xyz *= 0.95f;
+                            color.W = 0.8f;
+                        }
+                        gizmoHandle.RenderHandle(this, color);
+                    }
+                }
+            }
+            
         }
 
         #endregion
@@ -459,7 +475,7 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
 
                 if (EditedElements.Any())
                 {
-                    EditedElements.ForEach(x => x.Model.Transform = x.OriginalTrans);
+                    EditedElements.ForEach(x => x.Model.Transform = x.OriginalMatrix);
                     EditedElements.Clear();
                 }
             }
@@ -542,14 +558,17 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
             var invTrans = Transform.Inverted();
             foreach (var model in EditedElements)
             {
-                model.OriginalTrans = model.Model.Transform;
-                //TODO: improve this logic!!
-                var localPos = Vector3.TransformPosition(model.OriginalTrans.ExtractTranslation(), invTrans);
-                var localRot = Quaternion.Multiply(Orientation.ExtractRotation().Inverted(), 
-                    model.OriginalTrans.ExtractRotation());
+                model.OriginalMatrix = model.Model.Transform;
 
-                model.LocalMatrix = Matrix4.Mult(Matrix4.CreateFromQuaternion(localRot), 
-                    Matrix4.CreateTranslation(localPos));
+                //var localPos = Vector3.TransformPosition(model.OriginalMatrix.ExtractTranslation(), invTrans);
+                //var localRot = Quaternion.Multiply(Orientation.ExtractRotation().Inverted(), 
+                //    model.OriginalMatrix.ExtractRotation());
+
+                //var localMatrix = Matrix4.Mult(Matrix4.CreateFromQuaternion(localRot),
+                //    Matrix4.CreateTranslation(localPos));
+
+                var localMatrix = Matrix4.Mult(invTrans, model.OriginalMatrix);
+                model.LocalMatrix = localMatrix;
             }
         }
 
@@ -561,30 +580,26 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
 
         private void ApplyTransformToElements()
         {
-            //var localTrans = EditTransform * Orientation;
             var localTrans = GetActiveTransform();
             foreach (var modelTrans in EditedElements)
             {
-                var baseTrans = modelTrans.LocalMatrix * localTrans;
-                
-                
-                modelTrans.Model.Transform = baseTrans;
+                modelTrans.Model.Transform = modelTrans.LocalMatrix * localTrans;
             }
         }
 
         private class ModelEditInfo
         {
             public ModelBase Model { get; set; }
-            public Matrix4 OriginalTrans { get; set; }
+
+            public Matrix4 OriginalMatrix { get; set; }
 
             public Matrix4 LocalMatrix { get; set; }
 
-            public Matrix4 InvertMat2 { get; set; }
 
             public ModelEditInfo(ModelBase model)
             {
                 Model = model;
-                OriginalTrans = model.Transform;
+                OriginalMatrix = model.Transform;
             }
         }
 
