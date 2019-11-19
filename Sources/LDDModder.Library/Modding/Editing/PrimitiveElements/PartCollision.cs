@@ -15,8 +15,14 @@ namespace LDDModder.Modding.Editing
     {
         public const string NODE_NAME = "Collision";
 
+        private ItemTransform _Transform;
+
         [XmlElement]
-        public ItemTransform Transform { get; set; }
+        public ItemTransform Transform
+        {
+            get => _Transform;
+            set => SetPropertyValue(ref _Transform, value);
+        }
 
         [XmlAttribute]
         public abstract CollisionType CollisionType { get; }
@@ -28,6 +34,7 @@ namespace LDDModder.Modding.Editing
 
         public abstract void SetSize(Vector3 size);
 
+        public abstract Vector3 GetSize();
 
         public abstract Collision GenerateLDD();
 

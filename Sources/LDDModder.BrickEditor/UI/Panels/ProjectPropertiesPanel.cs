@@ -9,12 +9,15 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using LDDModder.BrickEditor.EditModels;
 using LDDModder.BrickEditor.Resources;
+using LDDModder.LDD.Data;
 using LDDModder.Modding.Editing;
 
 namespace LDDModder.BrickEditor.UI.Panels
 {
     public partial class ProjectPropertiesPanel : ProjectDocumentPanel
     {
+        private bool InternalSet;
+
         public ProjectPropertiesPanel()
         {
             InitializeComponent();
@@ -68,6 +71,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             CategoryComboBox.Enabled = CurrentProject != null;
             boundingBoxEditor1.Enabled = CurrentProject != null;
             CalculateBoundingButton.Enabled = CurrentProject != null;
+            InternalSet = true;
 
             if (CurrentProject != null)
             {
@@ -85,11 +89,15 @@ namespace LDDModder.BrickEditor.UI.Panels
                 PlatformComboBox.SelectedIndex = 0;
                 CategoryComboBox.SelectedIndex = 0;
             }
+
+            InternalSet = false;
         }
+
+
 
         private void CalculateBoundingButton_Click(object sender, EventArgs e)
         {
-            if (CurrentProject != null)
+            if (CurrentProject != null && !InternalSet)
             {
                 var bounding = CurrentProject.CalculateBoundingBox();
                 boundingBoxEditor1.Value = bounding;
@@ -98,20 +106,42 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void boundingBoxEditor1_ValueChanged(object sender, EventArgs e)
         {
-            if (CurrentProject != null)
+            if (CurrentProject != null && !InternalSet)
                 CurrentProject.Bounding = boundingBoxEditor1.Value;
         }
 
-        private void DescriptionTextBox_TextChanged(object sender, EventArgs e)
+        private void DescriptionTextBox_Validated(object sender, EventArgs e)
         {
-            if (CurrentProject != null)
+            if (CurrentProject != null && !InternalSet)
                 CurrentProject.PartDescription = DescriptionTextBox.Text;
         }
 
         private void PartIDTextBox_ValueChanged(object sender, EventArgs e)
         {
-            if (CurrentProject != null)
+            if (CurrentProject != null && !InternalSet)
                 CurrentProject.PartID = (int)PartIDTextBox.Value;
+        }
+
+        private void PlatformComboBox_SelectedValueChanged(object sender, EventArgs e)
+        {
+            if (CurrentProject != null && !InternalSet)
+                CurrentProject.Platform = PlatformComboBox.SelectedItem as Platform;
+        }
+
+        private void CategoryComboBox_SelectedValueChanged(object sender, EventArgs e)
+        {
+            if (CurrentProject != null && !InternalSet)
+                CurrentProject.MainGroup = CategoryComboBox.SelectedItem as MainGroup;
+        }
+
+        protected override void OnElementPropertyChanged(Modding.Editing.PropertyChangedEventArgs e)
+        {
+            base.OnElementPropertyChanged(e);
+
+            if (e.Element == CurrentProject?.Properties)
+            {
+                UpdateControlBindings();
+            }
         }
     }
 }

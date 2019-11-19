@@ -16,6 +16,17 @@ namespace LDDModder.BrickEditor.Rendering
         protected PartElementModel(PartElement element)
         {
             Element = element;
+            Element.PropertyChanged += Element_PropertyChanged;
+        }
+
+        private void Element_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            OnElementPropertyChanged(e);
+        }
+
+        protected virtual void OnElementPropertyChanged(PropertyChangedEventArgs e)
+        {
+
         }
     }
 }

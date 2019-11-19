@@ -153,5 +153,20 @@ namespace LDDModder.BrickEditor.UI.Windows
                 }
             }
         }
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (keyData.HasFlag(Keys.Z) && keyData.HasFlag(Keys.Control))
+            {
+                ProjectManager.Undo();
+                return true;
+            }
+            else if (keyData.HasFlag(Keys.Y) && keyData.HasFlag(Keys.Control))
+            {
+                ProjectManager.Redo();
+                return true;
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
     }
 }

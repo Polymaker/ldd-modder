@@ -8,7 +8,7 @@ namespace LDDModder.Modding.Editing
 {
     public class PropertyChangedEventArgs : EventArgs
     {
-        public PartElement Component { get; }
+        public PartElement Element { get; }
 
         public string PropertyName { get; }
 
@@ -18,10 +18,18 @@ namespace LDDModder.Modding.Editing
 
         public PropertyChangedEventArgs(PartElement component, string propertyName, object oldValue, object newValue)
         {
-            Component = component;
+            Element = component;
             PropertyName = propertyName;
+
+            //if (oldValue is ItemTransform t1)
+            //    oldValue = t1.Clone();
+            //if (newValue is ItemTransform t2)
+            //    newValue = t2.Clone();
+
             OldValue = oldValue;
             NewValue = newValue;
+
+            
         }
     }
 }

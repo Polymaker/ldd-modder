@@ -32,6 +32,11 @@ namespace LDDModder.Modding.Editing
             Rotation = rotation;
         }
 
+        public ItemTransform Clone()
+        {
+            return new ItemTransform(Position, Rotation);
+        }
+
         public void SetFromMatrix(Matrix4 matrix)
         {
             Position = matrix.ExtractTranslation();

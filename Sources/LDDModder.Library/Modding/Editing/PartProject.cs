@@ -23,35 +23,93 @@ namespace LDDModder.Modding.Editing
 
         #region Part Info
 
-        public int PartID { get; /*private*/ set; }
+        public PartProperties Properties { get; }
 
-        public string PartDescription { get; set; }
+        public int PartID
+        {
+            get => Properties.PartID;
+            set => Properties.PartID = value;
+        }
 
-        public string Comments { get; set; }
+        public string PartDescription
+        {
+            get => Properties.PartDescription;
+            set => Properties.PartDescription = value;
+        }
 
-        public List<int> Aliases { get; set; }
+        public string Comments
+        {
+            get => Properties.Comments;
+            set => Properties.Comments = value;
+        }
 
-        public Platform Platform { get; set; }
+        public List<int> Aliases => Properties.Aliases;
 
-        public MainGroup MainGroup { get; set; }
+        public Platform Platform
+        {
+            get => Properties.Platform;
+            set => Properties.Platform = value;
+        }
 
-        public PhysicsAttributes PhysicsAttributes { get; set; }
+        public MainGroup MainGroup
+        {
+            get => Properties.MainGroup;
+            set => Properties.MainGroup = value;
+        }
 
-        public BoundingBox Bounding { get; set; }
+        public PhysicsAttributes PhysicsAttributes
+        {
+            get => Properties.PhysicsAttributes;
+            set => Properties.PhysicsAttributes = value;
+        }
 
-        public BoundingBox GeometryBounding { get; set; }
+        public BoundingBox Bounding
+        {
+            get => Properties.Bounding;
+            set => Properties.Bounding = value;
+        }
 
-        public ItemTransform DefaultOrientation { get; set; }
+        public BoundingBox GeometryBounding
+        {
+            get => Properties.GeometryBounding;
+            set => Properties.GeometryBounding = value;
+        }
 
-        public Camera DefaultCamera { get; set; }
+        public ItemTransform DefaultOrientation
+        {
+            get => Properties.DefaultOrientation;
+            set => Properties.DefaultOrientation = value;
+        }
 
-        public VersionInfo PrimitiveFileVersion { get; set; }
+        public Camera DefaultCamera
+        {
+            get => Properties.DefaultCamera;
+            set => Properties.DefaultCamera = value;
+        }
 
-        public int PartVersion { get; set; }
- 
-        public bool Decorated { get; set; }
+        public VersionInfo PrimitiveFileVersion
+        {
+            get => Properties.PrimitiveFileVersion;
+            set => Properties.PrimitiveFileVersion = value;
+        }
 
-        public bool Flexible { get; set; }
+        public int PartVersion
+        {
+            get => Properties.PartVersion;
+            set => Properties.PartVersion = value;
+        }
+
+        public bool Decorated
+        {
+            get => Properties.Decorated;
+            set => Properties.Decorated = value;
+        }
+
+        public bool Flexible
+        {
+            get => Properties.Flexible;
+            set => Properties.Flexible = value;
+        }
 
         #endregion
 
@@ -99,11 +157,7 @@ namespace LDDModder.Modding.Editing
             Bones = new ElementCollection<PartBone>(this);
             Meshes = new ElementCollection<ModelMesh>(this);
 
-            Platform = new Platform(0, "None");
-            MainGroup = new MainGroup(0, "None");
-            PrimitiveFileVersion = new VersionInfo(1, 0);
-            Aliases = new List<int>();
-            PartVersion = 1;
+            Properties = new PartProperties(this);
         }
 
         #region Creation From LDD
@@ -238,6 +292,8 @@ namespace LDDModder.Modding.Editing
         {
             var doc = new XDocument(new XElement("LDDPART"));
 
+            doc.Root.Add(Properties.SerializeToXml());
+            /*
             //Part Info
             {
                 var propsElem = doc.Root.AddElement("Properties");
@@ -284,7 +340,7 @@ namespace LDDModder.Modding.Editing
                 if (!string.IsNullOrEmpty(Comments))
                     propsElem.Add(new XElement("Comments", Comments));
             }
-
+            */
             var surfacesElem = doc.Root.AddElement("ModelSurfaces");
             foreach (var surf in Surfaces)
                 surfacesElem.Add(surf.SerializeToXml());
@@ -329,6 +385,8 @@ namespace LDDModder.Modding.Editing
             //Part info
             if (rootElem.HasElement("Properties", out XElement propsElem))
             {
+                Properties.LoadFromXml(propsElem);
+                /*
                 PartID = int.Parse(propsElem.Element("PartID")?.Value);
 
                 if (propsElem.HasElement("Aliases", out XElement aliasElem))
@@ -375,7 +433,7 @@ namespace LDDModder.Modding.Editing
                         groupElem.ReadAttribute("ID", 0),
                         groupElem.ReadAttribute("Name", string.Empty)
                     );
-                }
+                }*/
             }
 
             var surfacesElem = doc.Root.Element("ModelSurfaces");

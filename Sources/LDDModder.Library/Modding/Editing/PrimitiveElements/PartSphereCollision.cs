@@ -22,6 +22,10 @@ namespace LDDModder.Modding.Editing
             Radius = size.X;
         }
 
+        public override Vector3 GetSize()
+        {
+            return new Vector3(Radius);
+        }
 
         public override Collision GenerateLDD()
         {

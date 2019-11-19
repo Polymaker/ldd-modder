@@ -10,11 +10,17 @@ namespace LDDModder.BrickEditor.EditModels
 {
     public class ProjectManager
     {
+        private List<PartElement> _SelectedElements;
+
         public PartProject CurrentProject { get; private set; }
+
+        public UndoRedoManager UndoRedoManager { get; }
 
         public bool IsProjectOpen => CurrentProject != null;
 
-        private List<PartElement> _SelectedElements;
+        public bool IsNewProject => IsProjectOpen && string.IsNullOrEmpty(CurrentProject.ProjectPath);
+
+        public bool IsExecutingUndoRedo => UndoRedoManager.ExecutingUndoRedo;
 
         public PartElement SelectedElement
         {
@@ -22,9 +28,9 @@ namespace LDDModder.BrickEditor.EditModels
             set => SelectElement(value);
         }
 
-        public bool IsNewProject => IsProjectOpen && string.IsNullOrEmpty(CurrentProject.ProjectPath);
-
         public IList<PartElement> SelectedElements => _SelectedElements.AsReadOnly();
+
+        #region Events
 
         public event EventHandler SelectionChanged;
 
@@ -34,11 +40,17 @@ namespace LDDModder.BrickEditor.EditModels
 
         public event EventHandler<CollectionChangedEventArgs> ProjectElementsChanged;
 
+        public event EventHandler<PropertyChangedEventArgs> ElementPropertyChanged;
+
+        #endregion
+
+
         private bool PreventProjectChange;
 
         public ProjectManager()
         {
             _SelectedElements = new List<PartElement>();
+            UndoRedoManager = new UndoRedoManager(this);
         }
 
         public void SetCurrentProject(PartProject project)
@@ -74,16 +86,29 @@ namespace LDDModder.BrickEditor.EditModels
         private void AttachPartProject(PartProject project)
         {
             project.ElementCollectionChanged += Project_ElementCollectionChanged;
+            project.ElementPropertyChanged += Project_ElementPropertyChanged;
         }
 
         private void DettachPartProject(PartProject project)
         {
             project.ElementCollectionChanged -= Project_ElementCollectionChanged;
+            project.ElementPropertyChanged -= Project_ElementPropertyChanged;
         }
-                private void Project_ElementCollectionChanged(object sender, CollectionChangedEventArgs e)
+        
+        private void Project_ElementCollectionChanged(object sender, CollectionChangedEventArgs e)
         {
-            _SelectedElements.Clear();
+            if (e.Action == System.ComponentModel.CollectionChangeAction.Remove)
+            {
+                int count = _SelectedElements.RemoveAll(x => e.RemovedElements.Contains(x));
+                if (count > 0)
+                    SelectionChanged?.Invoke(this, EventArgs.Empty);
+            }
             ProjectElementsChanged?.Invoke(this, e);
+        }
+
+        private void Project_ElementPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            ElementPropertyChanged?.Invoke(this, e);
         }
 
         public string GetProjectDisplayName()
@@ -171,5 +196,25 @@ namespace LDDModder.BrickEditor.EditModels
         }
 
         #endregion
+    
+        public void Undo()
+        {
+            UndoRedoManager.Undo();
+        }
+
+        public void Redo()
+        {
+            UndoRedoManager.Redo();
+        }
+
+        public void StartBatchChanges()
+        {
+            UndoRedoManager.StartBatchChanges();
+        }
+
+        public void EndBatchChanges()
+        {
+            UndoRedoManager.EndBatchChanges();
+        }
     }
 }

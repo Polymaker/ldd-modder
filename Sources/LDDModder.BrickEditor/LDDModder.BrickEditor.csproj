@@ -110,9 +110,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EditModels\BaseProjectNode.cs" />
+    <Compile Include="EditModels\ChangeAction.cs" />
     <Compile Include="EditModels\ProjectElementNode.cs" />
     <Compile Include="EditModels\ProjectGroupNode.cs" />
     <Compile Include="EditModels\ProjectManager.cs" />
+    <Compile Include="EditModels\UndoRedoManager.cs" />
     <Compile Include="Localization\LocalizableString.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -144,6 +146,7 @@
     <Compile Include="Rendering\CameraManipulator.cs" />
     <Compile Include="Rendering\CameraMovement.cs" />
     <Compile Include="Rendering\Models\CollisionModel.cs" />
+    <Compile Include="Rendering\Models\ITransformableElement.cs" />
     <Compile Include="Rendering\Models\IVertexBuffer.cs" />
     <Compile Include="Rendering\Models\ModelBase.cs" />
     <Compile Include="Rendering\Models\PartElementModel.cs" />

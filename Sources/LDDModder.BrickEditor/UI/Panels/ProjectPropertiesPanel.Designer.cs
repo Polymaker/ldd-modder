@@ -111,7 +111,7 @@
             this.DescriptionTextBox.Name = "DescriptionTextBox";
             this.DescriptionTextBox.Size = new System.Drawing.Size(350, 20);
             this.DescriptionTextBox.TabIndex = 1;
-            this.DescriptionTextBox.TextChanged += new System.EventHandler(this.DescriptionTextBox_TextChanged);
+            this.DescriptionTextBox.Validated += new System.EventHandler(this.DescriptionTextBox_Validated);
             // 
             // label1
             // 
@@ -141,6 +141,7 @@
             this.PlatformComboBox.Name = "PlatformComboBox";
             this.PlatformComboBox.Size = new System.Drawing.Size(150, 21);
             this.PlatformComboBox.TabIndex = 4;
+            this.PlatformComboBox.SelectedValueChanged += new System.EventHandler(this.PlatformComboBox_SelectedValueChanged);
             // 
             // CategoryComboBox
             // 
@@ -151,6 +152,7 @@
             this.CategoryComboBox.Name = "CategoryComboBox";
             this.CategoryComboBox.Size = new System.Drawing.Size(350, 21);
             this.CategoryComboBox.TabIndex = 5;
+            this.CategoryComboBox.SelectedValueChanged += new System.EventHandler(this.CategoryComboBox_SelectedValueChanged);
             // 
             // PartIDTextBox
             // 

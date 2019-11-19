@@ -452,6 +452,8 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
 
         private Vector3 EditCurrentPos;
 
+        public event EventHandler TransformFinished;
+
         private List<ModelEditInfo> EditedElements { get; }
 
         public float EditAmount { get; private set; }
@@ -463,6 +465,12 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
             EditTransform = Matrix4.Identity;
             var localRay = Ray.Transform(ray, Transform.Inverted());
             EditStartPos = SelectedHandle.ProjectToPlane(localRay);
+
+            foreach (var item in EditedElements)
+            {
+                if (item.Model is ITransformableElement element)
+                    element.BeginEditTransform();
+            }
         }
 
         public void CancelEdit()
@@ -475,7 +483,12 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
 
                 if (EditedElements.Any())
                 {
-                    EditedElements.ForEach(x => x.Model.Transform = x.OriginalMatrix);
+                    foreach (var modelTrans in EditedElements)
+                    {
+                        modelTrans.Model.Transform = modelTrans.OriginalMatrix;
+                        if (modelTrans.Model is ITransformableElement transformableElement)
+                            transformableElement.EndEditTransform(true);
+                    }
                     EditedElements.Clear();
                 }
             }
@@ -484,6 +497,14 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
         private void EndEditGizmo()
         {
             ApplyTransformToElements();
+
+            foreach (var item in EditedElements)
+            {
+                if (item.Model is ITransformableElement element)
+                    element.EndEditTransform(false);
+            }
+
+            TransformFinished?.Invoke(this, EventArgs.Empty);
             Transform = EditTransform * Transform;
             InitEditedElements();
 
@@ -498,7 +519,6 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
                 return Transform;
             return EditTransform * Transform;
         }
-
 
         public void ActivateForModels(IEnumerable<ModelBase> models, OrientationMode orientation, PivotPointMode pivotPoint)
         {
@@ -560,14 +580,14 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
             {
                 model.OriginalMatrix = model.Model.Transform;
 
-                //var localPos = Vector3.TransformPosition(model.OriginalMatrix.ExtractTranslation(), invTrans);
-                //var localRot = Quaternion.Multiply(Orientation.ExtractRotation().Inverted(), 
-                //    model.OriginalMatrix.ExtractRotation());
+                var localPos = Vector3.TransformPosition(model.OriginalMatrix.ExtractTranslation(), invTrans);
+                var localRot = Quaternion.Multiply(Orientation.ExtractRotation().Inverted(),
+                    model.OriginalMatrix.ExtractRotation());
 
-                //var localMatrix = Matrix4.Mult(Matrix4.CreateFromQuaternion(localRot),
-                //    Matrix4.CreateTranslation(localPos));
+                var localMatrix = Matrix4.Mult(Matrix4.CreateFromQuaternion(localRot),
+                    Matrix4.CreateTranslation(localPos));
 
-                var localMatrix = Matrix4.Mult(invTrans, model.OriginalMatrix);
+                //var localMatrix = Matrix4.Mult(invTrans, model.OriginalMatrix);
                 model.LocalMatrix = localMatrix;
             }
         }
@@ -582,9 +602,7 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
         {
             var localTrans = GetActiveTransform();
             foreach (var modelTrans in EditedElements)
-            {
                 modelTrans.Model.Transform = modelTrans.LocalMatrix * localTrans;
-            }
         }
 
         private class ModelEditInfo

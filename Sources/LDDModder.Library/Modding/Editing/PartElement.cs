@@ -49,6 +49,8 @@ namespace LDDModder.Modding.Editing
         [XmlIgnore]
         public PartElement Parent { get; internal set; }
 
+        public event EventHandler<PropertyChangedEventArgs> PropertyChanged;
+
         public PartElement()
         {
             Collections = new List<IElementCollection>();
@@ -108,12 +110,16 @@ namespace LDDModder.Modding.Editing
                     OwnedElements.Add(newElem);
                 }
 
+                object oldValue = property;
+                property = value;
+
                 if (Project != null && !IsLoading)
                 {
-                    Project.OnElementPropertyChanged(
-                        new PropertyChangedEventArgs(this, propertyName, property, value));
+                    var args = new PropertyChangedEventArgs(this, propertyName, oldValue, value);
+                    PropertyChanged?.Invoke(this, args);
+                    Project.OnElementPropertyChanged(args);
                 }
-                property = value;
+                
                 return true;
             }
             return false;

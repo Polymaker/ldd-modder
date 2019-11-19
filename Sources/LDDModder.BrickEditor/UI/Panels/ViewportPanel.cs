@@ -619,7 +619,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             
             if (e.ElementType == typeof(PartSurface))
             {
-                if (e.Action == CollectionChangeAction.Add)
+                if (e.Action == System.ComponentModel.CollectionChangeAction.Add)
                 {
                     foreach (PartSurface surface in e.AddedElements)
                         AddPartSurfaceModel(surface);
@@ -959,13 +959,17 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            ProjectManager.StartBatchChanges();
             var components = CurrentProject.Surfaces[0].Components.ToList();
-            var meshes = components.SelectMany(x => x.GetAllModelMeshes()).Distinct().ToList();
-            meshes.ForEach(x => CurrentProject.Meshes.Remove(x));
+            //var meshes = components.SelectMany(x => x.GetAllModelMeshes()).Distinct().ToList();
+
             CurrentProject.Surfaces[0].Components.Clear();
+            //meshes.ForEach(x => CurrentProject.Meshes.Remove(x));
+            
 
             var noRefMeshes = CurrentProject.Meshes.Where(x => !x.GetReferences().Any()).ToList();
             noRefMeshes.ForEach(x => CurrentProject.Meshes.Remove(x));
+            ProjectManager.EndBatchChanges();
         }
 
         private void DisplayMenu_Collisions_CheckedChanged(object sender, EventArgs e)

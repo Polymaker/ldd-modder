@@ -118,6 +118,13 @@ namespace LDDModder.Simple3D
             Z = z;
         }
 
+        public Vector3(float value)
+        {
+            X = value;
+            Y = value;
+            Z = value;
+        }
+
         public Vector3(float[] values)
         {
             if (values.Length != 3)

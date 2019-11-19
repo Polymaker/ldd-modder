@@ -1,0 +1,220 @@
+﻿using LDDModder.LDD.Data;
+using LDDModder.LDD.Primitives;
+using LDDModder.Serialization;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Xml.Linq;
+
+namespace LDDModder.Modding.Editing
+{
+    public class PartProperties : PartElement
+    {
+        private int _PartID;
+        private string _PartDescription;
+        private List<int> _Aliases;
+        private Platform _Platform;
+        private MainGroup _MainGroup;
+        private PhysicsAttributes _PhysicsAttributes;
+        private BoundingBox _Bounding;
+        private BoundingBox _GeometryBounding;
+        private ItemTransform _DefaultOrientation;
+        private Camera _DefaultCamera;
+        private VersionInfo _PrimitiveFileVersion;
+        private int _PartVersion;
+        private bool _Decorated;
+        private bool _Flexible;
+
+        public int PartID
+        {
+            get => _PartID;
+            set => SetPropertyValue(ref _PartID, value);
+        }
+
+        public string PartDescription
+        {
+            get => _PartDescription;
+            set => SetPropertyValue(ref _PartDescription, value);
+        }
+
+        public List<int> Aliases
+        {
+            get => _Aliases;
+            set => SetPropertyValue(ref _Aliases, value);
+        }
+
+        public Platform Platform
+        {
+            get => _Platform;
+            set => SetPropertyValue(ref _Platform, value);
+        }
+
+        public MainGroup MainGroup
+        {
+            get => _MainGroup;
+            set => SetPropertyValue(ref _MainGroup, value);
+        }
+
+        public PhysicsAttributes PhysicsAttributes
+        {
+            get => _PhysicsAttributes;
+            set => SetPropertyValue(ref _PhysicsAttributes, value);
+        }
+
+        public BoundingBox Bounding
+        {
+            get => _Bounding;
+            set => SetPropertyValue(ref _Bounding, value);
+        }
+
+        public BoundingBox GeometryBounding
+        {
+            get => _GeometryBounding;
+            set => SetPropertyValue(ref _GeometryBounding, value);
+        }
+
+        public ItemTransform DefaultOrientation
+        {
+            get => _DefaultOrientation;
+            set => SetPropertyValue(ref _DefaultOrientation, value);
+        }
+
+        public Camera DefaultCamera
+        {
+            get => _DefaultCamera;
+            set => SetPropertyValue(ref _DefaultCamera, value);
+        }
+
+        public VersionInfo PrimitiveFileVersion
+        {
+            get => _PrimitiveFileVersion;
+            set => SetPropertyValue(ref _PrimitiveFileVersion, value);
+        }
+
+        public int PartVersion
+        {
+            get => _PartVersion;
+            set => SetPropertyValue(ref _PartVersion, value);
+        }
+
+        public bool Decorated
+        {
+            get => _Decorated;
+            set => SetPropertyValue(ref _Decorated, value);
+        }
+
+        public bool Flexible
+        {
+            get => _Flexible;
+            set => SetPropertyValue(ref _Flexible, value);
+        }
+
+        public PartProperties(PartProject project)
+        {
+            _Project = project;
+            Platform = new Platform(0, "None");
+            MainGroup = new MainGroup(0, "None");
+            PrimitiveFileVersion = new VersionInfo(1, 0);
+            Aliases = new List<int>();
+            PartVersion = 1;
+        }
+
+        public override XElement SerializeToXml()
+        {
+            var propsElem = SerializeToXmlBase("Properties");
+            propsElem.RemoveAttributes();
+            propsElem.Add(new XElement("PartID", PartID));
+
+            if (Aliases.Any())
+                propsElem.Add(new XElement("Aliases", string.Join(";", Aliases)));
+
+            propsElem.Add(new XElement("Description", PartDescription));
+
+            propsElem.Add(new XElement("PartVersion", PartVersion));
+
+            if (PrimitiveFileVersion != null)
+                propsElem.Add(PrimitiveFileVersion.ToXmlElement("PrimitiveVersion"));
+
+            propsElem.Add(new XElement("Flexible", Flexible));
+
+            propsElem.Add(new XElement("Decorated", Decorated));
+
+            if (Platform != null)
+                propsElem.AddElement("Platform", new XAttribute("ID", Platform.ID), new XAttribute("Name", Platform.Name));
+
+            if (MainGroup != null)
+                propsElem.AddElement("MainGroup", new XAttribute("ID", MainGroup.ID), new XAttribute("Name", MainGroup.Name));
+
+            if (PhysicsAttributes != null)
+                propsElem.Add(PhysicsAttributes.SerializeToXml());
+
+            if (Bounding != null)
+                propsElem.Add(XmlHelper.DefaultSerialize(Bounding, "Bounding"));
+
+            if (GeometryBounding != null)
+                propsElem.Add(XmlHelper.DefaultSerialize(GeometryBounding, "GeometryBounding"));
+
+            if (DefaultOrientation != null)
+                propsElem.Add(DefaultOrientation.SerializeToXml("DefaultOrientation"));
+
+            if (DefaultCamera != null)
+                propsElem.Add(XmlHelper.DefaultSerialize(DefaultCamera, "DefaultCamera"));
+
+            return propsElem;
+        }
+
+        protected internal override void LoadFromXml(XElement element)
+        {
+            base.LoadFromXml(element);
+            PartID = int.Parse(element.Element("PartID")?.Value);
+
+            if (element.HasElement("Aliases", out XElement aliasElem))
+            {
+                foreach (string partAlias in aliasElem.Value.Split(';'))
+                {
+                    if (int.TryParse(partAlias, out int aliasID))
+                        Aliases.Add(aliasID);
+                }
+            }
+
+            PartDescription = element.ReadElement("Description", string.Empty);
+            PartVersion = element.ReadElement("PartVersion", 1);
+
+            if (element.HasElement("PhysicsAttributes", out XElement pA))
+            {
+                PhysicsAttributes = new PhysicsAttributes();
+                PhysicsAttributes.LoadFromXml(pA);
+            }
+
+            if (element.HasElement("GeometryBounding", out XElement gb))
+                GeometryBounding = XmlHelper.DefaultDeserialize<BoundingBox>(gb);
+
+            if (element.HasElement("Bounding", out XElement bb))
+                Bounding = XmlHelper.DefaultDeserialize<BoundingBox>(bb);
+
+            if (element.HasElement("DefaultOrientation", out XElement defori))
+                DefaultOrientation = ItemTransform.FromXml(defori);
+
+            if (element.HasElement("DefaultCamera", out XElement camElem))
+                DefaultCamera = XmlHelper.DefaultDeserialize<Camera>(camElem);
+
+            if (element.HasElement("Platform", out XElement platformElem))
+            {
+                Platform = new Platform(
+                    platformElem.ReadAttribute("ID", 0),
+                    platformElem.ReadAttribute("Name", string.Empty)
+                );
+            }
+
+            if (element.HasElement("MainGroup", out XElement groupElem))
+            {
+                MainGroup = new MainGroup(
+                    groupElem.ReadAttribute("ID", 0),
+                    groupElem.ReadAttribute("Name", string.Empty)
+                );
+            }
+        }
+    }
+}

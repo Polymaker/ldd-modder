@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace LDDModder.BrickEditor.Rendering
 {
-    public abstract class ModelBase
+    public abstract class ModelBase : ITransformableElement
     {
         private bool _Visible;
 
@@ -37,10 +37,13 @@ namespace LDDModder.BrickEditor.Rendering
                 if (value != _Transform)
                 {
                     _Transform = value;
-                    OnTransformChanged();
+                    if (!IsEditingTransform)
+                        OnTransformChanged();
                 }
             }
         }
+
+        public bool IsEditingTransform { get; private set; }
 
         public Vector3 Origin => Vector3.TransformPosition(Vector3.Zero, Transform);
 
@@ -68,11 +71,6 @@ namespace LDDModder.BrickEditor.Rendering
             return BBox.FromVertices(corners);
         }
 
-        protected virtual void OnTransformChanged()
-        {
-            
-        }
-
         protected void OnVisibilityChanged()
         {
             VisibilityChanged?.Invoke(this, EventArgs.Empty);
@@ -84,6 +82,23 @@ namespace LDDModder.BrickEditor.Rendering
         }
 
         public virtual void RenderModel(Camera camera)
+        {
+
+        }
+
+        public void BeginEditTransform()
+        {
+            IsEditingTransform = true;
+        }
+
+        public void EndEditTransform(bool canceled)
+        {
+            IsEditingTransform = false;
+            if (!canceled)
+                OnTransformChanged();
+        }
+
+        protected virtual void OnTransformChanged()
         {
 
         }

@@ -31,6 +31,11 @@ namespace LDDModder.Modding.Editing
             Size = size;
         }
 
+        public override Vector3 GetSize()
+        {
+            return Size;
+        }
+
         public override Collision GenerateLDD()
         {
             return new CollisionBox(Size, Transform.ToLDD());

@@ -27,8 +27,11 @@ namespace LDDModder.BrickEditor.UI.Panels
             ProjectManager.ProjectClosed += ProjectManager_ProjectClosed;
             ProjectManager.ProjectChanged += ProjectManager_ProjectChanged;
             ProjectManager.ProjectElementsChanged += ProjectManager_ProjectElementsChanged;
+            ProjectManager.ElementPropertyChanged += ProjectManager_ElementPropertyChanged;
             ProjectManager.SelectionChanged += ProjectManager_SelectionChanged;
         }
+
+        
 
         private void ProjectManager_ProjectClosed(object sender, EventArgs e)
         {
@@ -57,6 +60,16 @@ namespace LDDModder.BrickEditor.UI.Panels
         }
 
         protected virtual void OnProjectElementsChanged(CollectionChangedEventArgs e)
+        {
+
+        }
+
+        private void ProjectManager_ElementPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            OnElementPropertyChanged(e);
+        }
+
+        protected virtual void OnElementPropertyChanged(PropertyChangedEventArgs e)
         {
 
         }

@@ -17,6 +17,10 @@ namespace LDDModder.Modding.Editing
 
         int Count { get; }
         IEnumerable<PartElement> GetElements();
+
+        void Add(PartElement element);
+
+        void Remove(PartElement element);
     }
 
     [Serializable]
@@ -196,6 +200,18 @@ namespace LDDModder.Modding.Editing
         public IEnumerable<PartElement> GetElements()
         {
             return InnerList;
+        }
+
+        public void Add(PartElement element)
+        {
+            if (element is T typedElem)
+                Add(typedElem);
+        }
+
+        public void Remove(PartElement element)
+        {
+            if (element is T typedElem)
+                Remove(typedElem);
         }
 
         //protected override IEnumerator<PartElement> GetEnumeratorBase()
