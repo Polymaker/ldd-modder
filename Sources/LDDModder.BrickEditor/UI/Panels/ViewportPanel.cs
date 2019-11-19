@@ -31,7 +31,6 @@ namespace LDDModder.BrickEditor.UI.Panels
         private QFont RenderFont;
         private Matrix4 UIProjectionMatrix;
         private bool IsClosing;
-        private bool RenderLoopEnabled;
         private GLControl glControl1;
 
         private Texture2D CheckboardTexture;
@@ -40,9 +39,6 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private List<GLSurfaceModel> SurfaceModels;
         private List<CollisionModel> CollisionModels;
-
-        private Thread UpdateThread;
-        private bool ExitUpdateLoop;
 
         private InputManager InputManager;
         private CameraManipulator CameraManipulator;
@@ -56,10 +52,6 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         public bool ShowCollisions { get; set; }
         public bool ShowMeshes { get; set; }
-
-        private double UpdateFPS { get; set; }
-
-        private double RenderFPS { get; set; }
 
         public RenderOptions ModelRenderingOptions { get; private set; }
 
@@ -198,6 +190,8 @@ namespace LDDModder.BrickEditor.UI.Panels
             TransformGizmo.InitializeVBO();
             TransformGizmo.PivotPointMode = PivotPointMode.MedianCenter;
             TransformGizmo.OrientationMode = OrientationMode.Global;
+            TransformGizmo.TransformFinishing += TransformGizmo_TransformFinishing;
+            TransformGizmo.TransformFinished += TransformGizmo_TransformFinished;
         }
 
         private void InitializeFonts()
@@ -479,7 +473,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             if (TransformGizmo.IsEditing)
             {
-                TextRenderer.AddText($"Tranform: {TransformGizmo.EditAmount:0.##}", RenderFont,
+                TextRenderer.AddText($"Tranform: {TransformGizmo.TransformedAmount:0.##}", RenderFont,
                     Color.White, new Vector2(2f, viewSize.Y - ((textHeight + 6) * 2) - 3), QFontAlignment.Left);
             }
 
@@ -525,6 +519,21 @@ namespace LDDModder.BrickEditor.UI.Panels
                 var ray = Camera.RaycastFromScreen(InputManager.LocalMousePos);
                 PerformRaySelection(ray);
             }
+        }
+
+        #endregion
+
+        #region Editing
+
+        private void TransformGizmo_TransformFinished(object sender, EventArgs e)
+        {
+            ProjectManager.EndBatchChanges();
+        }
+
+        private void TransformGizmo_TransformFinishing(object sender, EventArgs e)
+        {
+
+            ProjectManager.StartBatchChanges();
         }
 
         #endregion
@@ -735,7 +744,13 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         public IEnumerable<PartElementModel> GetSelectedModels(bool onlyVisible = false)
         {
-            var selectedModels = GetAllElementModels().Where(x => x.IsSelected);
+            IEnumerable<PartElementModel> selectedModels = Enumerable.Empty<PartElementModel>();
+
+            if (onlyVisible)
+                selectedModels = GetVisibleModels().Where(x => x.IsSelected);
+            else
+                selectedModels = GetAllElementModels().Where(x => x.IsSelected);
+
             return selectedModels
                 .Where(x => !onlyVisible || (onlyVisible && x.Visible))
                 .OrderBy(x => ProjectManager.GetSelectionIndex(x.Element));
@@ -761,9 +776,8 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             if (selectedModels.Any())
             {
-                TransformGizmo.ActivateForModels(selectedModels, 
-                    TransformGizmo.OrientationMode, 
-                    TransformGizmo.PivotPointMode);
+                TransformGizmo.SetActiveElements(selectedModels);
+
                 TransformGizmo.UpdateBounds(Camera);
             }
             else

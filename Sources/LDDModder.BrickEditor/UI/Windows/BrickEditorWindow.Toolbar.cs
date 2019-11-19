@@ -17,7 +17,7 @@ namespace LDDModder.BrickEditor.UI.Windows
             Edit_ImportMeshMenu.Enabled = ProjectManager.IsProjectOpen;
             Edit_ValidatePartMenu.Enabled = ProjectManager.IsProjectOpen;
             Edit_GenerateFilesMenu.Enabled = ProjectManager.IsProjectOpen;
-
+            UpdateUndoRedoMenus();
         }
 
         #region Main menu
@@ -125,6 +125,26 @@ namespace LDDModder.BrickEditor.UI.Windows
         private void File_CloseProjectMenu_Click(object sender, EventArgs e)
         {
             CloseCurrentProject();
+        }
+
+        #endregion
+
+        #region Edit Menu
+
+        private void EditMenu_Undo_Click(object sender, EventArgs e)
+        {
+            ProjectManager.Undo();
+        }
+
+        private void EditMenu_Redo_Click(object sender, EventArgs e)
+        {
+            ProjectManager.Redo();
+        }
+
+        private void UpdateUndoRedoMenus()
+        {
+            EditMenu_Undo.Enabled = ProjectManager.CanUndo;
+            EditMenu_Redo.Enabled = ProjectManager.CanRedo;
         }
 
         #endregion

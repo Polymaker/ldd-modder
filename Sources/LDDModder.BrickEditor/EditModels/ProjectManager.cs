@@ -22,6 +22,16 @@ namespace LDDModder.BrickEditor.EditModels
 
         public bool IsExecutingUndoRedo => UndoRedoManager.ExecutingUndoRedo;
 
+        public bool CanUndo => UndoRedoManager.CanUndo;
+
+        public bool CanRedo => UndoRedoManager.CanRedo;
+
+        public event EventHandler UndoHistoryChanged
+        {
+            add => UndoRedoManager.UndoHistoryChanged += value;
+            remove => UndoRedoManager.UndoHistoryChanged -= value;
+        }
+
         public PartElement SelectedElement
         {
             get => _SelectedElements.FirstOrDefault();

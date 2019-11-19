@@ -40,6 +40,15 @@ namespace LDDModder.BrickEditor.UI.Windows
 
             ProjectManager = new ProjectManager();
             ProjectManager.ProjectChanged += ProjectManager_ProjectChanged;
+            ProjectManager.UndoHistoryChanged += ProjectManager_UndoHistoryChanged;
+        }
+
+        private void ProjectManager_UndoHistoryChanged(object sender, EventArgs e)
+        {
+            if (InvokeRequired)
+                BeginInvoke(new MethodInvoker(UpdateUndoRedoMenus));
+            else
+                UpdateUndoRedoMenus();
         }
 
         protected override void OnLoad(EventArgs e)
@@ -372,5 +381,7 @@ namespace LDDModder.BrickEditor.UI.Windows
                 //Close();
             }
         }
+
+        
     }
 }

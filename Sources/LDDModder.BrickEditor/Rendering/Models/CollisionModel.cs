@@ -29,7 +29,7 @@ namespace LDDModder.BrickEditor.Rendering
             BaseModel = baseModel;
 
             var baseTransform = collision.Transform.ToMatrix().ToGL();
-            SetTransform(baseTransform);
+            SetTransform(baseTransform, false);
 
             UpdateScaleTransform();
         }
@@ -60,7 +60,7 @@ namespace LDDModder.BrickEditor.Rendering
             if (e.PropertyName == "Transform" && !ChangingTransform)
             {
                 var baseTransform = PartCollision.Transform.ToMatrix().ToGL();
-                SetTransform(baseTransform);
+                SetTransform(baseTransform, true);
             }
             else if (e.PropertyName == "Size" || e.PropertyName == "Radius")
             {

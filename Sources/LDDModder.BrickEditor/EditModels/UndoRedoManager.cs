@@ -18,9 +18,15 @@ namespace LDDModder.BrickEditor.EditModels
 
         private List<ChangeAction> RedoHistory { get; }
 
+        public bool CanUndo => UndoHistory.Any();
+
+        public bool CanRedo => RedoHistory.Any();
+
         private List<ChangeAction> BatchChanges;
 
         private bool IsInBatch;
+
+        public event EventHandler UndoHistoryChanged;
 
         public UndoRedoManager(ProjectManager projectManager)
         {
@@ -85,6 +91,8 @@ namespace LDDModder.BrickEditor.EditModels
             UndoHistory.Add(action);
             if (UndoHistory.Count > MaxHistory)
                 UndoHistory.RemoveAt(0);
+
+            UndoHistoryChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public void Undo()
@@ -97,6 +105,7 @@ namespace LDDModder.BrickEditor.EditModels
                 ExecutingUndoRedo = true;
                 lastAction.Undo();
                 ExecutingUndoRedo = false;
+                UndoHistoryChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -110,6 +119,7 @@ namespace LDDModder.BrickEditor.EditModels
                 ExecutingUndoRedo = true;
                 lastAction.Redo();
                 ExecutingUndoRedo = false;
+                UndoHistoryChanged?.Invoke(this, EventArgs.Empty);
             }
         }
     }

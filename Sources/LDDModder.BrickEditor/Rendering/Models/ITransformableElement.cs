@@ -13,8 +13,18 @@ namespace LDDModder.BrickEditor.Rendering
 
         Matrix4 Transform { get; set; }
 
+        BBox BoundingBox { get; }
+
+        Vector3 Origin { get; }
+
+        event EventHandler TransformChanged;
+
         void BeginEditTransform();
 
+        void ApplyTransform(Matrix4 transform);
+
         void EndEditTransform(bool canceled);
+
+        BBox GetWorldBoundingBox();
     }
 }

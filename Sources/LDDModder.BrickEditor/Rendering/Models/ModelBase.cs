@@ -49,11 +49,15 @@ namespace LDDModder.BrickEditor.Rendering
 
         public event EventHandler VisibilityChanged;
 
+        public event EventHandler TransformChanged;
+
         public ModelBase()
         {
             Visible = true;
             _Transform = Matrix4.Identity;
         }
+
+        #region HitTest
 
         public virtual bool RayIntersectsBoundingBox(Ray ray, out float distance)
         {
@@ -71,36 +75,74 @@ namespace LDDModder.BrickEditor.Rendering
             return BBox.FromVertices(corners);
         }
 
+
+        #endregion
+
+
         protected void OnVisibilityChanged()
         {
             VisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        protected void SetTransform(Matrix4 transform)
-        {
-            _Transform = transform;
-        }
+        
 
         public virtual void RenderModel(Camera camera)
         {
 
         }
 
+        #region Transform Handling
+
+        private Matrix4 OriginalTrans;
+
+        protected void SetTransform(Matrix4 transform, bool fireChange)
+        {
+            if (_Transform != transform)
+            {
+                _Transform = transform;
+                if (fireChange)
+                {
+                    TransformChanged?.Invoke(this, EventArgs.Empty);
+                    OnTransformChanged();
+                }
+                
+            }
+        }
+
+
         public void BeginEditTransform()
         {
+            OriginalTrans = Transform;
             IsEditingTransform = true;
         }
 
         public void EndEditTransform(bool canceled)
         {
             IsEditingTransform = false;
-            if (!canceled)
-                OnTransformChanged();
+
+            if (OriginalTrans != Transform)
+            {
+                if (canceled)
+                    _Transform = OriginalTrans;
+                else
+                {
+                    TransformChanged?.Invoke(this, EventArgs.Empty);
+                    OnTransformChanged();
+                }
+            }
+        }
+
+        public virtual void ApplyTransform(Matrix4 transform)
+        {
+            _Transform = transform;
         }
 
         protected virtual void OnTransformChanged()
         {
 
         }
+        #endregion
+
+
     }
 }
