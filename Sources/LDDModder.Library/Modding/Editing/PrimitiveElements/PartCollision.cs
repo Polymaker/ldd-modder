@@ -75,8 +75,8 @@ namespace LDDModder.Modding.Editing
         protected internal override void LoadFromXml(XElement element)
         {
             base.LoadFromXml(element);
-            if (element.Element("Transform") != null)
-                Transform = ItemTransform.FromXml(element.Element("Transform"));
+            if (element.HasElement(nameof(Transform), out XElement transElem))
+                Transform = ItemTransform.FromXml(transElem);
         }
 
         public override XElement SerializeToXml()
@@ -84,7 +84,7 @@ namespace LDDModder.Modding.Editing
             var elem = SerializeToXmlBase(NODE_NAME);
             elem.Add(new XAttribute("Type", CollisionType));
             elem.Add(new XComment(Transform.GetLddXml().ToString()));
-            elem.Add(Transform.SerializeToXml());
+            elem.Add(Transform.SerializeToXml(nameof(Transform)));
             return elem;
         }
     }

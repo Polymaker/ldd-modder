@@ -39,13 +39,19 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
             return base.ProjectToPlane2D(ray);
         }
 
-        public override void RenderHandle(TransformGizmo gizmo, Vector4 color)
+        public override void RenderHandle(TransformGizmo gizmo, Vector4 color, bool outlined = false)
         {
+            if (gizmo.IsEditing && outlined && !IsSelected)
+                return;
+
             var scale = Matrix4.CreateScale(GizmoSize * 2f);
             var baseTransform = Orientation * gizmo.GetActiveTransform();
 
             GL.PushAttrib(AttribMask.LineBit);
-            GL.LineWidth(gizmo.IsEditing && !IsOver ? 1f : 3.5f);
+            float lineSize = gizmo.IsEditing && !IsSelected ? 1f : 3.5f;
+            if (outlined)
+                lineSize += 2f;
+            GL.LineWidth(lineSize);
 
             RenderHelper.BeginDrawColor(gizmo.VertexBuffer, scale * baseTransform, color);
             gizmo.VertexBuffer.DrawArrays(PrimitiveType.LineLoop, 0, 32);

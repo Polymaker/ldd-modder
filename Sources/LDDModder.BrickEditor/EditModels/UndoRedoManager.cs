@@ -14,6 +14,8 @@ namespace LDDModder.BrickEditor.EditModels
 
         public bool ExecutingUndoRedo { get; private set; }
 
+        public bool HistoryLimitExceeded { get; private set; }
+
         private List<ChangeAction> UndoHistory { get; }
 
         private List<ChangeAction> RedoHistory { get; }
@@ -45,6 +47,7 @@ namespace LDDModder.BrickEditor.EditModels
         {
             UndoHistory.Clear();
             RedoHistory.Clear();
+            HistoryLimitExceeded = false;
         }
 
         private void ProjectManager_ProjectElementsChanged(object sender, Modding.Editing.CollectionChangedEventArgs e)
@@ -89,8 +92,12 @@ namespace LDDModder.BrickEditor.EditModels
         {
             RedoHistory.Clear();
             UndoHistory.Add(action);
+
             if (UndoHistory.Count > MaxHistory)
+            {
+                HistoryLimitExceeded = true;
                 UndoHistory.RemoveAt(0);
+            }
 
             UndoHistoryChanged?.Invoke(this, EventArgs.Empty);
         }

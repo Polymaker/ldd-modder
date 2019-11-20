@@ -20,6 +20,8 @@ namespace LDDModder.Modding.Editing
 
         public Vector3 Rotation { get; set; }
 
+        public bool IsEmpty => Position == Vector3.Zero && Rotation == Vector3.Zero;
+
         public ItemTransform()
         {
             Position = Vector3.Zero;

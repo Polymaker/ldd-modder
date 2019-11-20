@@ -57,7 +57,7 @@ namespace LDDModder.BrickEditor.Rendering
         {
             base.OnElementPropertyChanged(e);
 
-            if (e.PropertyName == "Transform" && !ChangingTransform)
+            if (e.PropertyName == nameof(PartCollision.Transform) && !ChangingTransform)
             {
                 var baseTransform = PartCollision.Transform.ToMatrix().ToGL();
                 SetTransform(baseTransform, true);

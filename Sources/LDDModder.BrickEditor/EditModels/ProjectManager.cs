@@ -26,6 +26,8 @@ namespace LDDModder.BrickEditor.EditModels
 
         public bool CanRedo => UndoRedoManager.CanRedo;
 
+        public bool IsModified => UndoRedoManager.CanUndo || UndoRedoManager.HistoryLimitExceeded;
+
         public event EventHandler UndoHistoryChanged
         {
             add => UndoRedoManager.UndoHistoryChanged += value;

@@ -26,6 +26,8 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
 
         public bool IsOver { get; set; }
 
+        public bool IsSelected { get; set; }
+
         public abstract GizmoStyle HandleType { get; }
 
         public abstract bool HitTest(Ray ray, out float distance);
@@ -53,7 +55,7 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
 
         public virtual void UpdateBounds() { }
 
-        public virtual void RenderHandle(TransformGizmo gizmo, Vector4 color)
+        public virtual void RenderHandle(TransformGizmo gizmo, Vector4 color, bool outlined = false)
         {
 
         }

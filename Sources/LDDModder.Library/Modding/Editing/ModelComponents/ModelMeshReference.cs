@@ -13,6 +13,7 @@ namespace LDDModder.Modding.Editing
         public const string NODE_NAME = "MeshRef";
 
         private ModelMesh _ModelMesh;
+        private ItemTransform _Transform;
 
         public string MeshID { get; set; }
 
@@ -23,6 +24,12 @@ namespace LDDModder.Modding.Editing
         public int StartVertex { get; set; }
         public int VertexCount { get; set; }
 
+        public ItemTransform Transform
+        {
+            get => _Transform;
+            set => SetPropertyValue(ref _Transform, value);
+        }
+
         public ModelMesh ModelMesh => GetModelMesh();
 
         public bool IsTextured => GetModelMesh()?.IsTextured ?? false;
@@ -31,12 +38,13 @@ namespace LDDModder.Modding.Editing
 
         public ModelMeshReference()
         {
-
+            _Transform = new ItemTransform();
         }
 
         public ModelMeshReference(string meshID)
         {
             MeshID = meshID;
+            _Transform = new ItemTransform();
         }
 
         public ModelMeshReference(string meshID, int startIndex, int indexCount, int startVertex, int vertexCount)
@@ -46,6 +54,7 @@ namespace LDDModder.Modding.Editing
             IndexCount = indexCount;
             StartVertex = startVertex;
             VertexCount = vertexCount;
+            _Transform = new ItemTransform();
         }
 
         public ModelMeshReference(ModelMesh model, int startIndex, int indexCount, int startVertex, int vertexCount)
@@ -55,6 +64,7 @@ namespace LDDModder.Modding.Editing
             IndexCount = indexCount;
             StartVertex = startVertex;
             VertexCount = vertexCount;
+            _Transform = new ItemTransform();
         }
 
         public ModelMeshReference(ModelMesh model, MeshCulling culling)
@@ -65,12 +75,14 @@ namespace LDDModder.Modding.Editing
             IndexCount = culling.IndexCount;
             StartVertex = culling.FromVertex;
             VertexCount = culling.VertexCount;
+            _Transform = new ItemTransform();
         }
 
         public ModelMeshReference(ModelMesh model)
         {
             MeshID = model.ID;
             _ModelMesh = model;
+            _Transform = new ItemTransform();
         }
 
         public ModelMesh GetModelMesh()
@@ -109,6 +121,9 @@ namespace LDDModder.Modding.Editing
             var elem = SerializeToXmlBase(NODE_NAME);
             elem.Add(new XAttribute(nameof(MeshID), MeshID));
 
+            if (!Transform.IsEmpty)
+                elem.Add(Transform.SerializeToXml(nameof(Transform)));
+
             if (IsPartialMesh)
             {
                 elem.AddNumberAttribute(nameof(StartIndex ), StartIndex );
@@ -128,6 +143,11 @@ namespace LDDModder.Modding.Editing
             IndexCount  = element.ReadAttribute(nameof(IndexCount ), 0);
             StartVertex = element.ReadAttribute(nameof(StartVertex), 0);
             VertexCount = element.ReadAttribute(nameof(VertexCount), 0);
+
+            if (element.HasElement(nameof(Transform), out XElement transElem))
+                Transform = ItemTransform.FromXml(transElem);
+            else
+                Transform = new ItemTransform();
         }
     }
 }

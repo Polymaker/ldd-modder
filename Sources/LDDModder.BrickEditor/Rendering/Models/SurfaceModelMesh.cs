@@ -31,12 +31,38 @@ namespace LDDModder.BrickEditor.Rendering
             StartIndex = startIndex;
             IndexCount = indexCount;
             StartVertex = startVertex;
-            //Transform = Matrix4.Identity;
+
+            var baseTransform = meshRef.Transform.ToMatrix().ToGL();
+            SetTransform(baseTransform, false);
         }
 
         public override bool RayIntersects(Ray ray, out float distance)
         {
             return SurfaceModel.RayIntersects(ray, this, out distance);
+        }
+
+        private bool ChangingTransform;
+
+        protected override void OnTransformChanged()
+        {
+            base.OnTransformChanged();
+            Matrix4 transCopy = Transform;
+            transCopy.ClearScale();
+
+            ChangingTransform = true;
+            MeshReference.Transform = ItemTransform.FromMatrix(transCopy.ToLDD());
+            ChangingTransform = false;
+        }
+
+        protected override void OnElementPropertyChanged(PropertyChangedEventArgs e)
+        {
+            base.OnElementPropertyChanged(e);
+
+            if (e.PropertyName == nameof(MeshReference.Transform) && !ChangingTransform)
+            {
+                var baseTransform = MeshReference.Transform.ToMatrix().ToGL();
+                SetTransform(baseTransform, true);
+            }
         }
     }
 }

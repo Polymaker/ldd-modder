@@ -21,24 +21,25 @@ using ObjectTK.Textures;
 using LDDModder.BrickEditor.EditModels;
 using LDDModder.BrickEditor.Resources;
 using LDDModder.BrickEditor.Rendering.Gizmos;
+using LDDModder.BrickEditor.Rendering.UI;
 
 namespace LDDModder.BrickEditor.UI.Panels
 {
     public partial class ViewportPanel : ProjectDocumentPanel
     {
         private bool ViewInitialized;
-        private QFontDrawing TextRenderer;
-        private QFont RenderFont;
-        private Matrix4 UIProjectionMatrix;
+
         private bool IsClosing;
         private GLControl glControl1;
 
         private Texture2D CheckboardTexture;
+        private Texture2D SelectionIcons;
 
         private GridShaderProgram GridShader;
 
         private List<GLSurfaceModel> SurfaceModels;
         private List<CollisionModel> CollisionModels;
+        private List<UIElement> UIElements;
 
         private InputManager InputManager;
         private CameraManipulator CameraManipulator;
@@ -74,6 +75,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             CloseButtonVisible = false;
             SurfaceModels = new List<GLSurfaceModel>();
             CollisionModels = new List<CollisionModel>();
+            UIElements = new List<UIElement>();
             CreateGLControl();
         }
 
@@ -103,10 +105,8 @@ namespace LDDModder.BrickEditor.UI.Panels
                 DockPanel.Theme);
 
             InitializeBase();
-            UpdateViewport();
 
-            //StartRenderLoop();
-            //StartUpdateLoop();
+            UpdateViewport();
 
             InitializeMenus();
 
@@ -134,12 +134,11 @@ namespace LDDModder.BrickEditor.UI.Panels
             };
 
             InitializeTextures();
-            
+            InitializeUI();
+
             InitializeShaders();
 
             InitializeModels();
-
-            InitializeFonts();
         }
 
         private void InitializeMenus()
@@ -160,10 +159,72 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             var checkboardImage = (Bitmap)Bitmap.FromStream(System.Reflection.Assembly.GetExecutingAssembly()
                 .GetManifestResourceStream("LDDModder.BrickEditor.Resources.Textures.DefaultTexture.png"));
+
+
             BitmapTexture.CreateCompatible(checkboardImage, out CheckboardTexture, 1);
             CheckboardTexture.LoadBitmap(checkboardImage, 0);
             CheckboardTexture.SetFilter(TextureMinFilter.Linear, TextureMagFilter.Linear);
             CheckboardTexture.SetWrapMode(TextureWrapMode.Repeat);
+
+            var selectionIconsImage = (Bitmap)Bitmap.FromStream(System.Reflection.Assembly.GetExecutingAssembly()
+                .GetManifestResourceStream("LDDModder.BrickEditor.Resources.Textures.SelectionIcons.png"));
+
+            BitmapTexture.CreateCompatible(selectionIconsImage, out SelectionIcons, 1);
+            SelectionIcons.LoadBitmap(selectionIconsImage, 0);
+            SelectionIcons.SetFilter(TextureMinFilter.Linear, TextureMagFilter.Linear);
+            SelectionIcons.SetWrapMode(TextureWrapMode.Clamp);
+        }
+
+        private UIButton SelectGizmoButton;
+        private UIButton MoveGizmoButton;
+        private UIButton RotateGizmoButton;
+
+        private void InitializeUI()
+        {
+            SelectGizmoButton = new UIButton()
+            {
+                Bounds = new Vector4(8, 64, 32, 32),
+                Texture= SelectionIcons,
+                NormalSprite = new SpriteBounds(0,0,0.25f,0.25f),
+                OverSprite = new SpriteBounds(0, 0.25f, 0.25f, 0.25f),
+                SelectedSprite = new SpriteBounds(0, 0.5f, 0.25f, 0.25f),
+                Selected = true
+            };
+            SelectGizmoButton.Clicked += SelectGizmoButton_Clicked;
+
+            UIElements.Add(SelectGizmoButton);
+            MoveGizmoButton = new UIButton()
+            {
+                Bounds = new Vector4(8, 96, 32, 32),
+                Texture = SelectionIcons,
+                NormalSprite =      new SpriteBounds(0.25f, 0, 0.25f, 0.25f),
+                OverSprite =        new SpriteBounds(0.25f, 0.25f, 0.25f, 0.25f),
+                SelectedSprite =    new SpriteBounds(0.25f, 0.5f, 0.25f, 0.25f),
+            };
+            MoveGizmoButton.Clicked += MoveGizmoButton_Clicked;
+            UIElements.Add(MoveGizmoButton);
+            RotateGizmoButton = new UIButton()
+            {
+                Bounds = new Vector4(8, 128, 32, 32),
+                Texture = SelectionIcons,
+                NormalSprite =      new SpriteBounds(0.5f, 0, 0.25f, 0.25f),
+                OverSprite =        new SpriteBounds(0.5f, 0.25f, 0.25f, 0.25f),
+                SelectedSprite =    new SpriteBounds(0.5f, 0.5f, 0.25f, 0.25f),
+            };
+            UIElements.Add(RotateGizmoButton);
+            RotateGizmoButton.Clicked += RotateGizmoButton_Clicked;
+
+            //var testButton = new UIButton()
+            //{
+            //    Bounds = new Vector4(8, 160, 32, 32),
+            //    Texture = SelectionIcons,
+            //    NormalSprite = new SpriteBounds(0.75f, 0, 0.25f, 0.25f),
+            //    OverSprite = new SpriteBounds(0.75f, 0.25f, 0.25f, 0.25f),
+            //    SelectedSprite = new SpriteBounds(0.75f, 0.5f, 0.25f, 0.25f),
+            //    Text = "Test",
+            //    TextColor = new Vector4(1f)
+            //};
+            //UIElements.Add(testButton);
         }
 
         private void InitializeModels()
@@ -188,17 +249,12 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             TransformGizmo = new TransformGizmo();
             TransformGizmo.InitializeVBO();
+            TransformGizmo.DisplayStyle = GizmoStyle.Plain;
             TransformGizmo.PivotPointMode = PivotPointMode.MedianCenter;
             TransformGizmo.OrientationMode = OrientationMode.Global;
             TransformGizmo.TransformFinishing += TransformGizmo_TransformFinishing;
             TransformGizmo.TransformFinished += TransformGizmo_TransformFinished;
-        }
-
-        private void InitializeFonts()
-        {
-            RenderFont = new QFont("C:\\Windows\\Fonts\\segoeui.ttf", 10,
-                new QFontBuilderConfiguration(true));
-            TextRenderer = new QFontDrawing();
+            TransformGizmo.DisplayStyleChanged += TransformGizmo_DisplayStyleChanged;
         }
 
         private void InitializeShaders()
@@ -222,7 +278,8 @@ namespace LDDModder.BrickEditor.UI.Panels
                 OffCenter = false
             });
 
-            RenderHelper.InitializeShaders();
+            UIRenderHelper.InitializeResources();
+            RenderHelper.InitializeResources();
             RenderHelper.ModelShader.Use();
 
             var lights = new LightInfo[]
@@ -271,17 +328,17 @@ namespace LDDModder.BrickEditor.UI.Panels
             if (IsDisposed || IsClosing)
                 return;
 
-            glControl1.MakeCurrent();
+            //glControl1.MakeCurrent();
             if (!ViewInitialized)
+            {
                 GL.ClearColor(glControl1.BackColor);
+                ViewInitialized = true;
+            }
 
             GL.Viewport(0, 0, glControl1.Width, glControl1.Height);
             Camera.Viewport = new RectangleF(0, 0, glControl1.Width, glControl1.Height);
 
-            UIProjectionMatrix = Matrix4.CreateOrthographicOffCenter(0, glControl1.Width, 0, glControl1.Height, -1.0f, 1.0f);
-
-            if (!ViewInitialized)
-                ViewInitialized = true;
+            UIRenderHelper.InitializeMatrices(Camera);
 
             if (TransformGizmo.Visible)
                 TransformGizmo.UpdateBounds(Camera);
@@ -436,50 +493,36 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             GL.Disable(EnableCap.DepthTest);
 
-            GL.MatrixMode(MatrixMode.Projection);
-            GL.LoadMatrix(ref UIProjectionMatrix);
-            GL.MatrixMode(MatrixMode.Modelview);
-            GL.LoadIdentity();
-
-            //GL.Disable(EnableCap.Texture2D);
-            //GL.Enable(EnableCap.Blend);
-            //GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
-
-            //var winSize = new Vector2(250, 150);
-            //var winPos = new Vector2(
-            //    (viewSize.X - winSize.X) / 2f,
-            //    viewSize.Y - ((viewSize.Y - winSize.Y) / 2f));
-            //GL.Begin(PrimitiveType.Quads);
-            //GL.Color4(Color.FromArgb(120, 80, 80, 80));
-
-            //GL.Vertex2(winPos.X, winPos.Y);
-            //GL.Vertex2(winPos.X, winPos.Y - winSize.Y);
-            //GL.Vertex2(winPos.X + winSize.X, winPos.Y - winSize.Y);
-            //GL.Vertex2(winPos.X + winSize.X, winPos.Y);
-            //GL.End();
+            //GL.MatrixMode(MatrixMode.Projection);
+            //GL.LoadMatrix(ref UIProjectionMatrix);
+            //GL.MatrixMode(MatrixMode.Modelview);
+            //GL.LoadIdentity();
 
             GL.Enable(EnableCap.Texture2D);
-            GL.UseProgram(0);
-            TextRenderer.ProjectionMatrix = UIProjectionMatrix;
+            UIRenderHelper.IntializeBeforeRender();
 
-            TextRenderer.DrawingPrimitives.Clear();
+            foreach (var elem in UIElements)
+                elem.Draw();
 
-            var textHeight = RenderFont.Measure("Wasd").Height;
-
-            TextRenderer.AddText($"Render FPS: {LoopController.RenderFrequency:0.00}", RenderFont, 
-                Color.White, new Vector2(2f, viewSize.Y - 3), QFontAlignment.Left);
-            TextRenderer.AddText($"Update FPS {LoopController.UpdateFrequency:0.00}", RenderFont,
-                Color.White, new Vector2(2f, viewSize.Y - textHeight - 9), QFontAlignment.Left);
+            //UIRenderHelper.DrawText($"Render FPS: {LoopController.RenderFrequency:0.00}", Color.White, new Vector2(10, 10));
 
             if (TransformGizmo.IsEditing)
             {
-                TextRenderer.AddText($"Tranform: {TransformGizmo.TransformedAmount:0.##}", RenderFont,
-                    Color.White, new Vector2(2f, viewSize.Y - ((textHeight + 6) * 2) - 3), QFontAlignment.Left);
+                //UIRenderHelper.DrawText("Hold Ctrl to snap", Color.Black, new Vector2(10, UIRenderHelper.ViewSize.Y - 20));
+
+                string amountStr = "";
+                if (TransformGizmo.DisplayStyle == GizmoStyle.Rotation)
+                {
+                    float degrees = (TransformGizmo.TransformedAmount / (float)Math.PI) * 180f;
+                    amountStr = $"Rotation: {degrees:0.##}°";
+                }
+                else
+                    amountStr = $"Translation: {TransformGizmo.TransformedAmount:0.##}";
+
+                UIRenderHelper.DrawText(amountStr, Color.Black, new Vector2(10, UIRenderHelper.ViewSize.Y - 20));
             }
 
-            TextRenderer.RefreshBuffers();
-            TextRenderer.Draw();
-            TextRenderer.DisableShader();
+            UIRenderHelper.RenderElements();
         }
 
         private void LoopController_RenderFrame()
@@ -513,12 +556,42 @@ namespace LDDModder.BrickEditor.UI.Panels
                     TransformGizmo.UpdateBounds(Camera);
                 TransformGizmo.ProcessInput(Camera, InputManager);
             }
+            
+            bool mouseClickHandled = TransformGizmo.Selected || TransformGizmo.IsEditing;
 
-            if (!TransformGizmo.Selected && InputManager.ContainsMouse && InputManager.IsButtonClicked(MouseButton.Left))
+            if (InputManager.ContainsMouse)
             {
-                var ray = Camera.RaycastFromScreen(InputManager.LocalMousePos);
-                PerformRaySelection(ray);
+                UIElement overElement = null;
+
+                foreach (var elem in UIElements.OrderByDescending(x => x.ZOrder))
+                {
+                    if (overElement == null && elem.Contains(InputManager.LocalMousePos))
+                    {
+                        overElement = elem;
+                        elem.SetIsOver(true);
+                    }
+                    else
+                        elem.SetIsOver(false);
+                }
+                if (!mouseClickHandled)
+                {
+                    if (overElement != null)
+                    {
+                        if (InputManager.IsButtonClicked(MouseButton.Left))
+                            overElement.PerformClick(InputManager.LocalMousePos, MouseButton.Left);
+                        else if (InputManager.IsButtonClicked(MouseButton.Right))
+                            overElement.PerformClick(InputManager.LocalMousePos, MouseButton.Right);
+                        mouseClickHandled = true;
+                    }
+                }
+
+                if (!mouseClickHandled && InputManager.IsButtonClicked(MouseButton.Left))
+                {
+                    var ray = Camera.RaycastFromScreen(InputManager.LocalMousePos);
+                    PerformRaySelection(ray);
+                }
             }
+
         }
 
         #endregion
@@ -536,14 +609,53 @@ namespace LDDModder.BrickEditor.UI.Panels
             ProjectManager.StartBatchChanges();
         }
 
+        private void TransformGizmo_DisplayStyleChanged(object sender, EventArgs e)
+        {
+            UpdateGizmoButtonStates();
+        }
+
+        private void MoveGizmoButton_Clicked(object sender, EventArgs e)
+        {
+            if (!MoveGizmoButton.Selected && !TransformGizmo.IsEditing)
+                TransformGizmo.DisplayStyle = GizmoStyle.Translation;
+        }
+
+        private void SelectGizmoButton_Clicked(object sender, EventArgs e)
+        {
+            if (!SelectGizmoButton.Selected && !TransformGizmo.IsEditing)
+            {
+                TransformGizmo.DisplayStyle = GizmoStyle.Plain;
+            }
+        }
+
+        private void RotateGizmoButton_Clicked(object sender, EventArgs e)
+        {
+            if (!RotateGizmoButton.Selected && !TransformGizmo.IsEditing)
+            {
+                TransformGizmo.DisplayStyle = GizmoStyle.Rotation;
+            }
+        }
+
+
+        private void UpdateGizmoButtonStates()
+        {
+            MoveGizmoButton.Selected = TransformGizmo.DisplayStyle == GizmoStyle.Translation;
+            SelectGizmoButton.Selected = TransformGizmo.DisplayStyle == GizmoStyle.Plain;
+            RotateGizmoButton.Selected = TransformGizmo.DisplayStyle == GizmoStyle.Rotation;
+        }
+
         #endregion
 
-        private void ViewportPanel_SizeChanged(object sender, EventArgs e)
+        protected override void WndProc(ref Message m)
         {
-            if (ViewInitialized && !Disposing)
+            base.WndProc(ref m);
+            if (m.Msg == 0x0005 || m.Msg == 0x0214 || m.Msg == 0x0046 || m.Msg == 0x0047)
             {
-                UpdateViewport();
-                //OnRenderFrame();
+                if (ViewInitialized && !Disposing && !IsClosing)
+                {
+                    UpdateViewport();
+                    LoopController.ForceRender();
+                }
             }
         }
 
@@ -567,7 +679,8 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             UnloadModels();
 
-            RenderHelper.DisposeShaders();
+            UIRenderHelper.ReleaseResources();
+            RenderHelper.ReleaseResources();
             BoxCollisionModel.Dispose();
             SphereCollisionModel.Dispose();
 

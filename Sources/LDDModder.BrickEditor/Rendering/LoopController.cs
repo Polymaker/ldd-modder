@@ -1,5 +1,6 @@
 ﻿using LDDModder.BrickEditor.Native;
 using OpenTK;
+using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -61,7 +62,10 @@ namespace LDDModder.BrickEditor.Rendering
             RenderTimer.Tick += RenderTimer_Tick;
         }
 
-        
+        public void ForceRender()
+        {
+            DispatchRenderFrame(true);
+        }
 
         public void ProcessEvent()
         {
@@ -110,14 +114,14 @@ namespace LDDModder.BrickEditor.Rendering
             }
         }
 
-        private void Application_Idle(object sender, EventArgs e)
-        {
-            while (Control.IsIdle)
-            {
-                ProcessEvent();
-                DispatchRenderFrame();
-            }
-        }
+        //private void Application_Idle(object sender, EventArgs e)
+        //{
+        //    while (Control.IsIdle)
+        //    {
+        //        ProcessEvent();
+        //        DispatchRenderFrame();
+        //    }
+        //}
 
         private void RenderTimer_Tick(object sender, EventArgs e)
         {
@@ -131,11 +135,11 @@ namespace LDDModder.BrickEditor.Rendering
             }
         }
 
-        private void DispatchRenderFrame()
+        private void DispatchRenderFrame(bool force = false)
         {
             double timestamp = RenderWatch.Elapsed.TotalSeconds;
             double elapsed = ClampElapsed(timestamp - LastRender);
-            if (elapsed > 0.0 && elapsed >= TargetRenderPeriod)
+            if (elapsed > 0.0 && (force || elapsed >= TargetRenderPeriod))
             {
                 RenderFrequency = 1d / elapsed;
                 LastRender = timestamp;

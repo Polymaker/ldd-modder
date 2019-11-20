@@ -192,10 +192,13 @@ namespace LDDModder.BrickEditor.UI.Windows
         {
             if (ProjectManager.IsProjectOpen)
             {
-                if (string.IsNullOrEmpty(CurrentProject.ProjectPath))
+                if (ProjectManager.IsModified || ProjectManager.IsNewProject)
                 {
-                    //project not saved
-
+                    var result = MessageBox.Show("Do you want to save?", "", MessageBoxButtons.YesNoCancel);
+                    if (result == DialogResult.Yes)
+                        SaveProject(CurrentProject);
+                    else if (result == DialogResult.Cancel)
+                        return false;
                 }
 
                 if (!string.IsNullOrEmpty(CurrentProject.ProjectWorkingDir))

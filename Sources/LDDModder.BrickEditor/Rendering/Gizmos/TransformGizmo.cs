@@ -115,6 +115,7 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
                 {
                     _DisplayStyle = value;
                     recalculateBounds = true;
+                    DisplayStyleChanged?.Invoke(this, EventArgs.Empty);
                 }
             }
         }
@@ -147,9 +148,9 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
             }
         }
 
+        public event EventHandler DisplayStyleChanged;
+
         #endregion
-
-
 
         public float TranslationSnap { get; set; }
 
@@ -422,12 +423,16 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
             if (IsHovering && input.IsButtonPressed(OpenTK.Input.MouseButton.Left))
             {
                 SelectedHandle = GetHoveredHandle();
+                if (SelectedHandle != null)
+                    SelectedHandle.IsSelected = true;
             }
 
             if (Selected && !input.IsButtonDown(OpenTK.Input.MouseButton.Left))
             {
                 if (IsEditing)
                     EndEditGizmo();
+                if (SelectedHandle != null)
+                    SelectedHandle.IsSelected = false;
                 SelectedHandle = null;
                 UpdateBounds(camera);
             }
@@ -503,9 +508,14 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
             {
                 var color = HandleColors[SelectedHandle.Index];
                 RenderHelper.BeginDrawColor(VertexBuffer, Transform, color);
+
+                var p1 = EditStartPos.Normalized();
+                var rot = Matrix4.CreateFromAxisAngle(SelectedHandle.Axis, TransformedAmount);
+                var p2 = Vector3.TransformPosition(p1, rot);
+
                 GL.Begin(PrimitiveType.Lines);
                 GL.Vertex3(Vector3.Zero);
-                GL.Vertex3(EditCurrentPos.Normalized() * UIScale * GizmoSize);
+                GL.Vertex3(p2.Normalized() * UIScale * GizmoSize);
                 GL.End();
             }
             
@@ -515,6 +525,9 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
 
         private void RenderHandles()
         {
+            //if (IsHovering || Selected)
+                RenderHelper.EnableStencilTest();
+
             for (int i = 0; i < 3; i++)
             {
                 var gizmoHandle = GetHandle(i);
@@ -526,9 +539,25 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
                         color.Xyz *= 0.95f;
                         color.W = 0.8f;
                     }
+
+                    //if (gizmoHandle.IsOver || gizmoHandle.IsSelected)
+                        RenderHelper.EnableStencilMask();
+
                     gizmoHandle.RenderHandle(this, color);
+
+                    //if (gizmoHandle.IsOver || gizmoHandle.IsSelected)
+                    {
+                        var outlineColor = (gizmoHandle.IsOver || gizmoHandle.IsSelected) ? new Vector4(1f) : new Vector4(0, 0, 0, 1f);
+                        RenderHelper.ApplyStencilMask();
+                        gizmoHandle.RenderHandle(this, outlineColor, true);
+                        RenderHelper.RemoveStencilMask();
+                        RenderHelper.ClearStencil();
+                    }
                 }
             }
+
+            //if (IsHovering || Selected)
+                RenderHelper.DisableStencilTest();
         }
 
         #endregion
@@ -571,6 +600,8 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
             {
                 IsEditing = false;
                 EditTransform = Matrix4.Identity;
+                if (SelectedHandle != null)
+                    SelectedHandle.IsSelected = false;
                 SelectedHandle = null;
 
                 foreach (var element in ActiveElements)
@@ -599,6 +630,8 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
            
             IsEditing = false;
             EditTransform = Matrix4.Identity;
+            if (SelectedHandle != null)
+                SelectedHandle.IsSelected = false;
             SelectedHandle = null;
         }
 

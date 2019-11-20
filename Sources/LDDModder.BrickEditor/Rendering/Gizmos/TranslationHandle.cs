@@ -90,7 +90,7 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
             return base.ProjectToPlane(ray);
         }
 
-        public override void RenderHandle(TransformGizmo gizmo, Vector4 color)
+        public override void RenderHandle(TransformGizmo gizmo, Vector4 color, bool outlined = false)
         {
             base.RenderHandle(gizmo, color);
 
@@ -102,15 +102,26 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
             var baseTransform = Orientation * gizmo.GetActiveTransform();
 
             GL.PushAttrib(AttribMask.LineBit);
-            GL.LineWidth(2.5f);
+            GL.LineWidth(outlined ? 4.5f : 2.5f);
 
             RenderHelper.BeginDrawColor(gizmo.VertexBuffer, scale * baseTransform, color);
             gizmo.VertexBuffer.DrawArrays(PrimitiveType.Lines, 32, 2);
 
             GL.PopAttrib();
 
-            RenderHelper.BeginDrawColor(gizmo.VertexBuffer, arrowTrans * baseTransform, color);
-            gizmo.VertexBuffer.DrawElements(PrimitiveType.Triangles);
+            
+            if (outlined)
+            {
+                RenderHelper.BeginDrawWireframe(gizmo.VertexBuffer, arrowTrans * baseTransform, 2f, color);
+                gizmo.VertexBuffer.DrawElements(PrimitiveType.Triangles);
+                RenderHelper.EndDrawWireframe(gizmo.VertexBuffer);
+            }
+            else
+            {
+                RenderHelper.BeginDrawColor(gizmo.VertexBuffer, arrowTrans * baseTransform, color);
+                gizmo.VertexBuffer.DrawElements(PrimitiveType.Triangles);
+            }
+            
 
         }
     }

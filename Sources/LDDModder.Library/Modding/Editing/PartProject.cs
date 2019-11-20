@@ -33,8 +33,8 @@ namespace LDDModder.Modding.Editing
 
         public string PartDescription
         {
-            get => Properties.PartDescription;
-            set => Properties.PartDescription = value;
+            get => Properties.Description;
+            set => Properties.Description = value;
         }
 
         public string Comments
@@ -293,54 +293,7 @@ namespace LDDModder.Modding.Editing
             var doc = new XDocument(new XElement("LDDPART"));
 
             doc.Root.Add(Properties.SerializeToXml());
-            /*
-            //Part Info
-            {
-                var propsElem = doc.Root.AddElement("Properties");
-                propsElem.Add(new XElement("PartID", PartID));
-
-                if (Aliases.Any())
-                    propsElem.Add(new XElement("Aliases", string.Join(";", Aliases)));
-
-                propsElem.Add(new XElement("Description", PartDescription));
-
-                propsElem.Add(new XElement("PartVersion", PartVersion));
-
-                if (PrimitiveFileVersion != null)
-                    propsElem.Add(PrimitiveFileVersion.ToXmlElement("PrimitiveVersion"));
-
-                propsElem.Add(new XElement("Flexible", Flexible));
-
-                propsElem.Add(new XElement("Decorated", Decorated));
-
-                if (Platform != null)
-                    propsElem.AddElement("Platform", new XAttribute("ID", Platform.ID), new XAttribute("Name", Platform.Name));
-
-                if (MainGroup != null)
-                    propsElem.AddElement("MainGroup", new XAttribute("ID", MainGroup.ID), new XAttribute("Name", MainGroup.Name));
-
-                if (PhysicsAttributes != null)
-                    propsElem.Add(PhysicsAttributes.SerializeToXml());
-
-                if (Bounding != null)
-                    propsElem.Add(XmlHelper.DefaultSerialize(Bounding, "Bounding"));
-
-                if (GeometryBounding != null)
-                    propsElem.Add(XmlHelper.DefaultSerialize(GeometryBounding, "GeometryBounding"));
-
-                if (DefaultOrientation != null)
-                {
-                    //propsElem.Add(new XComment(DefaultOrientation.GetLddXml().ToString()));
-                    propsElem.Add(DefaultOrientation.SerializeToXml("DefaultOrientation"));
-                }
-
-                if (DefaultCamera != null)
-                    propsElem.Add(XmlHelper.DefaultSerialize(DefaultCamera, "DefaultCamera"));
-
-                if (!string.IsNullOrEmpty(Comments))
-                    propsElem.Add(new XElement("Comments", Comments));
-            }
-            */
+            
             var surfacesElem = doc.Root.AddElement("ModelSurfaces");
             foreach (var surf in Surfaces)
                 surfacesElem.Add(surf.SerializeToXml());
@@ -382,59 +335,8 @@ namespace LDDModder.Modding.Editing
 
             var rootElem = doc.Root;
 
-            //Part info
             if (rootElem.HasElement("Properties", out XElement propsElem))
-            {
                 Properties.LoadFromXml(propsElem);
-                /*
-                PartID = int.Parse(propsElem.Element("PartID")?.Value);
-
-                if (propsElem.HasElement("Aliases", out XElement aliasElem))
-                {
-                    foreach(string partAlias in aliasElem.Value.Split(';'))
-                    {
-                        if (int.TryParse(partAlias, out int aliasID))
-                            Aliases.Add(aliasID);
-                    }
-                }
-
-                PartDescription = propsElem.ReadElement("Description", string.Empty);
-                PartVersion = propsElem.ReadElement("PartVersion", 1);
-                
-                if (propsElem.HasElement("PhysicsAttributes", out XElement pA))
-                {
-                    PhysicsAttributes = new PhysicsAttributes();
-                    PhysicsAttributes.LoadFromXml(pA);
-                }
-                
-                if (propsElem.HasElement("GeometryBounding", out XElement gb))
-                    GeometryBounding = XmlHelper.DefaultDeserialize<BoundingBox>(gb);
-
-                if (propsElem.HasElement("Bounding", out XElement bb))
-                    Bounding = XmlHelper.DefaultDeserialize<BoundingBox>(bb);
-
-                if (propsElem.HasElement("DefaultOrientation", out XElement defori))
-                    DefaultOrientation = ItemTransform.FromXml(defori);
-
-                if (propsElem.HasElement("DefaultCamera", out XElement camElem))
-                    DefaultCamera = XmlHelper.DefaultDeserialize<Camera>(camElem);
-
-                if (propsElem.HasElement("Platform", out XElement platformElem))
-                {
-                    Platform = new Platform(
-                        platformElem.ReadAttribute("ID", 0),
-                        platformElem.ReadAttribute("Name", string.Empty)
-                    );
-                }
-
-                if (propsElem.HasElement("MainGroup", out XElement groupElem))
-                {
-                    MainGroup = new MainGroup(
-                        groupElem.ReadAttribute("ID", 0),
-                        groupElem.ReadAttribute("Name", string.Empty)
-                    );
-                }*/
-            }
 
             var surfacesElem = doc.Root.Element("ModelSurfaces");
             if (surfacesElem != null)

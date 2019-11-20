@@ -142,9 +142,9 @@
     <Compile Include="Rendering\LoopController.cs" />
     <Compile Include="Rendering\Maths\BBox.cs" />
     <Compile Include="Rendering\Maths\BSphere.cs" />
-    <Compile Include="Rendering\Camera.cs" />
-    <Compile Include="Rendering\CameraManipulator.cs" />
-    <Compile Include="Rendering\CameraMovement.cs" />
+    <Compile Include="Rendering\Cameras\Camera.cs" />
+    <Compile Include="Rendering\Cameras\CameraManipulator.cs" />
+    <Compile Include="Rendering\Cameras\CameraMovement.cs" />
     <Compile Include="Rendering\Models\CollisionModel.cs" />
     <Compile Include="Rendering\Models\ITransformableElement.cs" />
     <Compile Include="Rendering\Models\IVertexBuffer.cs" />
@@ -160,16 +160,20 @@
     <Compile Include="Rendering\RenderHelper.cs" />
     <Compile Include="Rendering\RenderOptions.cs" />
     <Compile Include="Rendering\Shaders\ColorShaderProgram.cs" />
-    <Compile Include="Rendering\Shaders\GizmoShaderProgram.cs" />
     <Compile Include="Rendering\Shaders\IShaderMVP.cs" />
     <Compile Include="Rendering\Shaders\ModelShaderProgram.cs" />
     <Compile Include="Rendering\Shaders\GridShaderProgram.cs" />
     <Compile Include="Rendering\Shaders\LightInfo.cs" />
     <Compile Include="Rendering\Shaders\MaterialInfo.cs" />
+    <Compile Include="Rendering\Shaders\UIShaderProgram.cs" />
     <Compile Include="Rendering\Shaders\WireframeShader2Program.cs" />
     <Compile Include="Rendering\Shaders\WireframeShaderProgram.cs" />
     <Compile Include="Rendering\TextRenderingExtensions.cs" />
     <Compile Include="Rendering\Models\Vertices.cs" />
+    <Compile Include="Rendering\UI\SpriteBounds.cs" />
+    <Compile Include="Rendering\UI\UIButton.cs" />
+    <Compile Include="Rendering\UI\UIElement.cs" />
+    <Compile Include="Rendering\UIRenderHelper.cs" />
     <Compile Include="Resources\ModelLocalizations.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -236,7 +240,7 @@
     <Compile Include="UI\Panels\ValidationPanel.Designer.cs">
       <DependentUpon>ValidationPanel.cs</DependentUpon>
     </Compile>
-    <Compile Include="Rendering\CameraAlignment.cs" />
+    <Compile Include="Rendering\Cameras\CameraAlignment.cs" />
     <Compile Include="UI\Panels\ViewportPanel.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -347,11 +351,11 @@
     <EmbeddedResource Include="Resources\Shaders\WireframeShader.glsl" />
     <EmbeddedResource Include="Resources\Models\Cube.obj" />
     <EmbeddedResource Include="Resources\Models\Sphere.obj" />
-    <EmbeddedResource Include="Resources\Shaders\GizmoShader.glsl" />
     <EmbeddedResource Include="Resources\Shaders\ColorShader.glsl" />
     <EmbeddedResource Include="Resources\Shaders\WireframeShader2.glsl" />
     <EmbeddedResource Include="Resources\Data\Categories.json" />
     <EmbeddedResource Include="Resources\Data\Platforms.json" />
+    <EmbeddedResource Include="Resources\Shaders\UIShader.glsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -363,13 +367,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Data\LddData.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <EmbeddedResource Include="Resources\Textures\DefaultTexture.png" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Rendering\UI\" />
+    <EmbeddedResource Include="Resources\Textures\SelectionIcons.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\AssimpNet.4.1.0\build\AssimpNet.targets" Condition="Exists('..\packages\AssimpNet.4.1.0\build\AssimpNet.targets')" />

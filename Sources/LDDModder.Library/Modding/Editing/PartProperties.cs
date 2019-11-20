@@ -33,7 +33,7 @@ namespace LDDModder.Modding.Editing
             set => SetPropertyValue(ref _PartID, value);
         }
 
-        public string PartDescription
+        public string Description
         {
             get => _PartDescription;
             set => SetPropertyValue(ref _PartDescription, value);
@@ -130,7 +130,7 @@ namespace LDDModder.Modding.Editing
             if (Aliases.Any())
                 propsElem.Add(new XElement("Aliases", string.Join(";", Aliases)));
 
-            propsElem.Add(new XElement("Description", PartDescription));
+            propsElem.Add(new XElement("Description", Description));
 
             propsElem.Add(new XElement("PartVersion", PartVersion));
 
@@ -179,7 +179,7 @@ namespace LDDModder.Modding.Editing
                 }
             }
 
-            PartDescription = element.ReadElement("Description", string.Empty);
+            Description = element.ReadElement("Description", string.Empty);
             PartVersion = element.ReadElement("PartVersion", 1);
 
             if (element.HasElement("PhysicsAttributes", out XElement pA))

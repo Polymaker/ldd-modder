@@ -23,5 +23,17 @@ namespace LDDModder.BrickEditor.Rendering
         public Vector3 Normal;
         public Vector2 TexCoord;
     }
+    public struct VertVT : IVertexData
+    {
+        public Vector3 Position;
+        public Vector2 TexCoord;
 
+        public VertVT(Vector3 position, Vector2 texCoord)
+        {
+            Position = position;
+            TexCoord = texCoord;
+        }
+
+
+    }
 }
