@@ -91,9 +91,7 @@ namespace LDDModder.Modding.Editing
 
         public void UpdateMeshProperties()
         {
-            bool wasLoaded = IsModelLoaded;
-
-            if (LoadModel())
+            if (Geometry != null)
             {
                 VertexCount = Geometry.VertexCount;
                 IndexCount = Geometry.IndexCount;
@@ -101,18 +99,12 @@ namespace LDDModder.Modding.Editing
                 IsTextured = Geometry.IsTextured;
                 BoneCount = IsFlexible ? Geometry.Vertices.Max(x => x.BoneWeights.Max(y => y.BoneID)) : 0;
             }
-
-            if (!wasLoaded)
-                UnloadModel();
         }
 
         public bool LoadModel()
         {
             if (Geometry == null && Project != null)
-            {
                 Project.LoadModelMesh(this);
-                UpdateMeshProperties();
-            }
             return Geometry != null;
         }
 

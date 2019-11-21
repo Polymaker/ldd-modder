@@ -37,5 +37,11 @@ namespace LDDModder.Modding.Editing
                 AddedElements = new PartElement[0];
             }
         }
+
+        public IEnumerable<PartElement> GetElementHierarchy()
+        {
+            var elems = AddedElements.Concat(RemovedElements);
+            return elems.SelectMany(x => x.GetChildsHierarchy(true));
+        }
     }
 }

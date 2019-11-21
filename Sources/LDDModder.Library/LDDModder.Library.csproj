@@ -171,10 +171,8 @@
     <Compile Include="Modding\Editing\ModelComponents\ModelMesh.cs" />
     <Compile Include="Modding\Editing\PartProject.cs" />
     <Compile Include="Modding\Editing\PrimitiveElements\PartSphereCollision.cs" />
-    <Compile Include="Modding\Editing\ChangeTracking\PartProperty.cs" />
     <Compile Include="Modding\Editing\PartSurface.cs" />
     <Compile Include="Modding\Editing\ChangeTracking\PropertyChangedEventArgs.cs" />
-    <Compile Include="Modding\Editing\ChangeTracking\PropertyCollection.cs" />
     <Compile Include="Modding\Editing\PrimitiveElements\StudReference.cs" />
     <Compile Include="Modding\Editing\ModelComponents\SurfaceComponent.cs" />
     <Compile Include="Modding\Editing\ModelComponents\FemaleStudModel.cs" />

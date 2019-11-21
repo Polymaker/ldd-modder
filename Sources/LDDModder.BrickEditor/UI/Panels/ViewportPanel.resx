@@ -120,14 +120,14 @@
   <metadata name="toolStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <data name="Camera_ResetCameraMenu.ShortcutKeyDisplayString" xml:space="preserve">
+  <data name="CameraMenu_ResetCamera.ShortcutKeyDisplayString" xml:space="preserve">
     <value>Numpad 0</value>
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="Camera_ResetCameraMenu.Size" type="System.Drawing.Size, System.Drawing">
-    <value>165, 22</value>
+  <data name="CameraMenu_ResetCamera.Size" type="System.Drawing.Size, System.Drawing">
+    <value>180, 22</value>
   </data>
-  <data name="Camera_ResetCameraMenu.Text" xml:space="preserve">
+  <data name="CameraMenu_ResetCamera.Text" xml:space="preserve">
     <value>Reset</value>
   </data>
   <data name="AlignToMenu_Top.ShortcutKeyDisplayString" xml:space="preserve">
@@ -195,13 +195,19 @@
     <value>Left</value>
   </data>
   <data name="CameraMenu_AlignTo.Size" type="System.Drawing.Size, System.Drawing">
-    <value>165, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="CameraMenu_AlignTo.Text" xml:space="preserve">
     <value>Align to</value>
   </data>
+  <data name="CameraMenu_LookAt.Size" type="System.Drawing.Size, System.Drawing">
+    <value>180, 22</value>
+  </data>
+  <data name="CameraMenu_LookAt.Text" xml:space="preserve">
+    <value>Look at selection</value>
+  </data>
   <data name="CameraMenu_Orthographic.Size" type="System.Drawing.Size, System.Drawing">
-    <value>165, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="CameraMenu_Orthographic.Text" xml:space="preserve">
     <value>Orthographic</value>
@@ -444,10 +450,10 @@
   <data name="&gt;&gt;CameraMenuDropDown.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripDropDownButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;Camera_ResetCameraMenu.Name" xml:space="preserve">
-    <value>Camera_ResetCameraMenu</value>
+  <data name="&gt;&gt;CameraMenu_ResetCamera.Name" xml:space="preserve">
+    <value>CameraMenu_ResetCamera</value>
   </data>
-  <data name="&gt;&gt;Camera_ResetCameraMenu.Type" xml:space="preserve">
+  <data name="&gt;&gt;CameraMenu_ResetCamera.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;CameraMenu_AlignTo.Name" xml:space="preserve">
@@ -599,6 +605,12 @@
   </data>
   <data name="&gt;&gt;visualStudioToolStripExtender1.Type" xml:space="preserve">
     <value>WeifenLuo.WinFormsUI.Docking.VisualStudioToolStripExtender, WeifenLuo.WinFormsUI.Docking, Version=3.0.4.0, Culture=neutral, PublicKeyToken=5cded1a1a0a7b481</value>
+  </data>
+  <data name="&gt;&gt;CameraMenu_LookAt.Name" xml:space="preserve">
+    <value>CameraMenu_LookAt</value>
+  </data>
+  <data name="&gt;&gt;CameraMenu_LookAt.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>ViewportPanel</value>

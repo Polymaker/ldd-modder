@@ -99,6 +99,7 @@ namespace LDDModder.BrickEditor.EditModels
         {
             project.ElementCollectionChanged += Project_ElementCollectionChanged;
             project.ElementPropertyChanged += Project_ElementPropertyChanged;
+            project.UpdateModelStatistics();
         }
 
         private void DettachPartProject(PartProject project)

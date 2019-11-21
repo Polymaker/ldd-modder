@@ -32,7 +32,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ViewportPanel));
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.CameraMenuDropDown = new System.Windows.Forms.ToolStripDropDownButton();
-            this.Camera_ResetCameraMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.CameraMenu_ResetCamera = new System.Windows.Forms.ToolStripMenuItem();
             this.CameraMenu_AlignTo = new System.Windows.Forms.ToolStripMenuItem();
             this.AlignToMenu_Top = new System.Windows.Forms.ToolStripMenuItem();
             this.AlignToMenu_Bottom = new System.Windows.Forms.ToolStripMenuItem();
@@ -58,6 +58,7 @@
             this.activeElementToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cursorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.visualStudioToolStripExtender1 = new WeifenLuo.WinFormsUI.Docking.VisualStudioToolStripExtender(this.components);
+            this.CameraMenu_LookAt = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -77,19 +78,20 @@
             // 
             this.CameraMenuDropDown.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.CameraMenuDropDown.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.Camera_ResetCameraMenu,
+            this.CameraMenu_ResetCamera,
             this.CameraMenu_AlignTo,
+            this.CameraMenu_LookAt,
             this.CameraMenu_Orthographic});
             resources.ApplyResources(this.CameraMenuDropDown, "CameraMenuDropDown");
             this.CameraMenuDropDown.Margin = new System.Windows.Forms.Padding(1, 1, 0, 2);
             this.CameraMenuDropDown.Name = "CameraMenuDropDown";
             // 
-            // Camera_ResetCameraMenu
+            // CameraMenu_ResetCamera
             // 
-            this.Camera_ResetCameraMenu.Name = "Camera_ResetCameraMenu";
-            resources.ApplyResources(this.Camera_ResetCameraMenu, "Camera_ResetCameraMenu");
-            this.Camera_ResetCameraMenu.Tag = "";
-            this.Camera_ResetCameraMenu.Click += new System.EventHandler(this.Camera_ResetCameraMenu_Click);
+            this.CameraMenu_ResetCamera.Name = "CameraMenu_ResetCamera";
+            resources.ApplyResources(this.CameraMenu_ResetCamera, "CameraMenu_ResetCamera");
+            this.CameraMenu_ResetCamera.Tag = "";
+            this.CameraMenu_ResetCamera.Click += new System.EventHandler(this.CameraMenu_ResetCamera_Click);
             // 
             // CameraMenu_AlignTo
             // 
@@ -266,6 +268,12 @@
             // 
             this.visualStudioToolStripExtender1.DefaultRenderer = null;
             // 
+            // CameraMenu_LookAt
+            // 
+            this.CameraMenu_LookAt.Name = "CameraMenu_LookAt";
+            resources.ApplyResources(this.CameraMenu_LookAt, "CameraMenu_LookAt");
+            this.CameraMenu_LookAt.Click += new System.EventHandler(this.CameraMenu_LookAt_Click);
+            // 
             // ViewportPanel
             // 
             resources.ApplyResources(this, "$this");
@@ -283,7 +291,7 @@
 
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripDropDownButton CameraMenuDropDown;
-        private System.Windows.Forms.ToolStripMenuItem Camera_ResetCameraMenu;
+        private System.Windows.Forms.ToolStripMenuItem CameraMenu_ResetCamera;
         private WeifenLuo.WinFormsUI.Docking.VisualStudioToolStripExtender visualStudioToolStripExtender1;
         private System.Windows.Forms.ToolStripMenuItem CameraMenu_AlignTo;
         private System.Windows.Forms.ToolStripMenuItem AlignToMenu_Front;
@@ -309,5 +317,6 @@
         private System.Windows.Forms.ToolStripMenuItem medianBoundingBoxToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem activeElementToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem cursorToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem CameraMenu_LookAt;
     }
 }

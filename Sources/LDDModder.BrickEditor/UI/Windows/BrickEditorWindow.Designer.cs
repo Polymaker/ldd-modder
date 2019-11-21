@@ -47,6 +47,9 @@
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.File_CloseProjectMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.EditMenu_Undo = new System.Windows.Forms.ToolStripMenuItem();
+            this.EditMenu_Redo = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.Edit_ImportMeshMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.Edit_ValidatePartMenu = new System.Windows.Forms.ToolStripMenuItem();
@@ -59,9 +62,6 @@
             this.StartLddMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
-            this.EditMenu_Undo = new System.Windows.Forms.ToolStripMenuItem();
-            this.EditMenu_Redo = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -174,6 +174,23 @@
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
             resources.ApplyResources(this.editToolStripMenuItem, "editToolStripMenuItem");
             // 
+            // EditMenu_Undo
+            // 
+            this.EditMenu_Undo.Name = "EditMenu_Undo";
+            resources.ApplyResources(this.EditMenu_Undo, "EditMenu_Undo");
+            this.EditMenu_Undo.Click += new System.EventHandler(this.EditMenu_Undo_Click);
+            // 
+            // EditMenu_Redo
+            // 
+            this.EditMenu_Redo.Name = "EditMenu_Redo";
+            resources.ApplyResources(this.EditMenu_Redo, "EditMenu_Redo");
+            this.EditMenu_Redo.Click += new System.EventHandler(this.EditMenu_Redo_Click);
+            // 
+            // toolStripSeparator6
+            // 
+            this.toolStripSeparator6.Name = "toolStripSeparator6";
+            resources.ApplyResources(this.toolStripSeparator6, "toolStripSeparator6");
+            // 
             // Edit_ImportMeshMenu
             // 
             this.Edit_ImportMeshMenu.Name = "Edit_ImportMeshMenu";
@@ -246,23 +263,6 @@
             // 
             this.toolStripLabel1.Name = "toolStripLabel1";
             resources.ApplyResources(this.toolStripLabel1, "toolStripLabel1");
-            // 
-            // EditMenu_Undo
-            // 
-            this.EditMenu_Undo.Name = "EditMenu_Undo";
-            resources.ApplyResources(this.EditMenu_Undo, "EditMenu_Undo");
-            this.EditMenu_Undo.Click += new System.EventHandler(this.EditMenu_Undo_Click);
-            // 
-            // EditMenu_Redo
-            // 
-            this.EditMenu_Redo.Name = "EditMenu_Redo";
-            resources.ApplyResources(this.EditMenu_Redo, "EditMenu_Redo");
-            this.EditMenu_Redo.Click += new System.EventHandler(this.EditMenu_Redo_Click);
-            // 
-            // toolStripSeparator6
-            // 
-            this.toolStripSeparator6.Name = "toolStripSeparator6";
-            resources.ApplyResources(this.toolStripSeparator6, "toolStripSeparator6");
             // 
             // BrickEditorWindow
             // 

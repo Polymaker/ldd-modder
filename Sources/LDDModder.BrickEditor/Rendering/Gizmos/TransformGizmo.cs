@@ -377,7 +377,7 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
             {
                 var mouseRay = camera.RaycastFromScreen(input.LocalMousePos);
 
-                if (!Selected && IsOverGizmo(mouseRay))
+                if (!Selected && (IsOverGizmo(mouseRay) || IsHovering))
                 {
                     PerformMouseOver(mouseRay);
                 }
@@ -429,8 +429,15 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
 
             if (Selected && !input.IsButtonDown(OpenTK.Input.MouseButton.Left))
             {
+                input.MouseClickHandled = true;
+
                 if (IsEditing)
-                    EndEditGizmo();
+                {
+                    if (TransformedAmount == 0)
+                        CancelEdit();
+                    else
+                        EndEditGizmo();
+                }
                 if (SelectedHandle != null)
                     SelectedHandle.IsSelected = false;
                 SelectedHandle = null;

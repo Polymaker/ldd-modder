@@ -111,6 +111,10 @@ namespace LDDModder.BrickEditor.UI.Panels
             InitializeMenus();
 
             LoopController.Start();
+
+            var mainForm = DockPanel.FindForm();
+            mainForm.Activated += MainForm_Activated;
+            mainForm.Deactivate += MainForm_Deactivate;
         }
 
         #region Initialization
@@ -181,9 +185,12 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void InitializeUI()
         {
+            int buttonSpacing = 2;
+
+            int buttonSize = 40;
+
             SelectGizmoButton = new UIButton()
             {
-                Bounds = new Vector4(8, 64, 32, 32),
                 Texture= SelectionIcons,
                 NormalSprite = new SpriteBounds(0,0,0.25f,0.25f),
                 OverSprite = new SpriteBounds(0, 0.25f, 0.25f, 0.25f),
@@ -191,11 +198,10 @@ namespace LDDModder.BrickEditor.UI.Panels
                 Selected = true
             };
             SelectGizmoButton.Clicked += SelectGizmoButton_Clicked;
-
             UIElements.Add(SelectGizmoButton);
+
             MoveGizmoButton = new UIButton()
             {
-                Bounds = new Vector4(8, 96, 32, 32),
                 Texture = SelectionIcons,
                 NormalSprite =      new SpriteBounds(0.25f, 0, 0.25f, 0.25f),
                 OverSprite =        new SpriteBounds(0.25f, 0.25f, 0.25f, 0.25f),
@@ -203,9 +209,9 @@ namespace LDDModder.BrickEditor.UI.Panels
             };
             MoveGizmoButton.Clicked += MoveGizmoButton_Clicked;
             UIElements.Add(MoveGizmoButton);
+
             RotateGizmoButton = new UIButton()
             {
-                Bounds = new Vector4(8, 128, 32, 32),
                 Texture = SelectionIcons,
                 NormalSprite =      new SpriteBounds(0.5f, 0, 0.25f, 0.25f),
                 OverSprite =        new SpriteBounds(0.5f, 0.25f, 0.25f, 0.25f),
@@ -213,6 +219,12 @@ namespace LDDModder.BrickEditor.UI.Panels
             };
             UIElements.Add(RotateGizmoButton);
             RotateGizmoButton.Clicked += RotateGizmoButton_Clicked;
+
+            var gizmoButtons = new UIButton[] { SelectGizmoButton, MoveGizmoButton, RotateGizmoButton };
+            for (int i = 0; i < gizmoButtons.Length; i++)
+            {
+                gizmoButtons[i].Bounds = new Vector4(buttonSpacing, 64 + (buttonSize + buttonSpacing) * i, buttonSize, buttonSize);
+            }
 
             //var testButton = new UIButton()
             //{
@@ -343,21 +355,6 @@ namespace LDDModder.BrickEditor.UI.Panels
             if (TransformGizmo.Visible)
                 TransformGizmo.UpdateBounds(Camera);
         }
-
-
-        protected override void OnActivated(EventArgs e)
-        {
-            base.OnActivated(e);
-            LoopController.Start();
-        }
-
-        protected override void OnDeactivate(EventArgs e)
-        {
-            base.OnDeactivate(e);
-            LoopController.Stop();
-        }
-
-        
 
         #region Render Loop
 
@@ -519,9 +516,15 @@ namespace LDDModder.BrickEditor.UI.Panels
                 else
                     amountStr = $"Translation: {TransformGizmo.TransformedAmount:0.##}";
 
-                UIRenderHelper.DrawText(amountStr, Color.Black, new Vector2(10, UIRenderHelper.ViewSize.Y - 20));
+                UIRenderHelper.DrawText(amountStr, UIRenderHelper.NormalFont, Color.Black, new Vector2(10, UIRenderHelper.ViewSize.Y - 20));
             }
 
+            if (CurrentProject != null)
+            {
+                UIRenderHelper.DrawText($"{CurrentProject.TotalTriangles} triangles", UIRenderHelper.SmallFont, Color.Black, 
+                    new Vector2(UIRenderHelper.ViewSize.X - 100, UIRenderHelper.ViewSize.Y - 16));
+            }
+            
             UIRenderHelper.RenderElements();
         }
 
@@ -573,7 +576,8 @@ namespace LDDModder.BrickEditor.UI.Panels
                     else
                         elem.SetIsOver(false);
                 }
-                if (!mouseClickHandled)
+
+                if (!InputManager.MouseClickHandled)
                 {
                     if (overElement != null)
                     {
@@ -581,17 +585,16 @@ namespace LDDModder.BrickEditor.UI.Panels
                             overElement.PerformClick(InputManager.LocalMousePos, MouseButton.Left);
                         else if (InputManager.IsButtonClicked(MouseButton.Right))
                             overElement.PerformClick(InputManager.LocalMousePos, MouseButton.Right);
-                        mouseClickHandled = true;
+                        InputManager.MouseClickHandled = true;
                     }
                 }
 
-                if (!mouseClickHandled && InputManager.IsButtonClicked(MouseButton.Left))
+                if (!InputManager.MouseClickHandled && InputManager.IsButtonClicked(MouseButton.Left))
                 {
                     var ray = Camera.RaycastFromScreen(InputManager.LocalMousePos);
                     PerformRaySelection(ray);
                 }
             }
-
         }
 
         #endregion
@@ -1057,7 +1060,23 @@ namespace LDDModder.BrickEditor.UI.Panels
         private void GlControl_MouseLeave(object sender, EventArgs e)
         {
             InputManager.ContainsMouse = false;
+            foreach (var elem in UIElements)
+                elem.SetIsOver(false);
         }
+
+        private void MainForm_Activated(object sender, EventArgs e)
+        {
+            if (ViewInitialized)
+                LoopController.Start();
+        }
+
+        private void MainForm_Deactivate(object sender, EventArgs e)
+        {
+            if (ViewInitialized)
+                LoopController.Stop();
+        }
+
+        
 
         private void GlControl_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
         {
@@ -1068,9 +1087,17 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         #region Toolbar Menu
 
-        private void Camera_ResetCameraMenu_Click(object sender, EventArgs e)
+        private void CameraMenu_ResetCamera_Click(object sender, EventArgs e)
         {
             SetupDefaultCamera();
+        }
+
+        private void CameraMenu_LookAt_Click(object sender, EventArgs e)
+        {
+            if (TransformGizmo.Visible)
+            {
+                CameraManipulator.Gimbal = TransformGizmo.Position;
+            }
         }
 
         private void CameraMenu_AlignTo_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -1162,7 +1189,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             if (keyData == Keys.NumPad0)
             {
-                Camera_ResetCameraMenu.PerformClick();
+                CameraMenu_ResetCamera.PerformClick();
                 return true;
             }
             else if (keyData == Keys.NumPad7)

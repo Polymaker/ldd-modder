@@ -142,6 +142,14 @@ namespace LDDModder.Modding.Editing
 
         #endregion
 
+        #region Statistics properties
+
+        public int TotalVertices { get; private set; }
+
+        public int TotalTriangles { get; private set; }
+
+        #endregion
+
         [XmlIgnore]
         public bool IsLoading { get; internal set; }
 
@@ -556,7 +564,6 @@ namespace LDDModder.Modding.Editing
             if (string.IsNullOrEmpty(name))
                 GenerateElementName(modelMesh);
 
-            modelMesh.UpdateMeshProperties();
             modelMesh.FileName = $"Meshes\\{modelMesh.Name}.geom";
             
 
@@ -768,45 +775,11 @@ namespace LDDModder.Modding.Editing
                     comp.ConnectionID = linkedConnection?.ID;
                     comp.ConnectionIndex = linkedConnection != null ? Connections.IndexOf(linkedConnection) : -1;
 
-                    //foreach (var stud in comp.GetStudReferences())
-                    //{
-                        
-                    //    if (stud.Connection == null)
-                    //    {
-                    //        if (stud.ConnectorIndex != -1)
-                    //        {
-                    //            if (stud.ConnectorIndex < Connections.Count &&
-                    //                Connections[stud.ConnectorIndex].ConnectorType == ConnectorType.Custom2DField)
-                    //            {
-                    //                stud.Connection = (PartConnection/*<Custom2DFieldConnector>*/)Connections[stud.ConnectorIndex];
-                    //            }
-                    //            else
-                    //            {
-                    //                string refID = Utilities.StringUtils.GenerateUUID($"{PartID}_{stud.ConnectorIndex}", 8);
-                    //                stud.Connection = Connections.OfType<PartConnection/*<Custom2DFieldConnector>*/>()
-                    //                    .FirstOrDefault(x => x.RefID == refID);
-                    //            }
-                    //        }
-                    //        else if (!string.IsNullOrEmpty(stud.ConnectionID))
-                    //        {
-                    //            stud.Connection = Connections.OfType<PartConnection/*<Custom2DFieldConnector>*/>()
-                    //                .FirstOrDefault(x => x.RefID == stud.ConnectionID);
-                    //        }
-                    //    }
-
-                    //    if (stud.Connection != null)
-                    //    {
-                            
-                    //        stud.ConnectionID = stud.Connection.RefID;
-                    //        stud.ConnectorIndex = Connections.IndexOf(stud.Connection);
-                    //    }
-                    //}
-                
-                
                 }
             }
         }
 
+        /// TODO: remove this clutter
         private void GenerateMeshesNames()
         {
             foreach (var mesh in Meshes)
@@ -837,6 +810,8 @@ namespace LDDModder.Modding.Editing
                     if (File.Exists(meshPath))
                     {
                         modelMesh.Geometry = MeshGeometry.FromFile(meshPath);
+                        modelMesh.UpdateMeshProperties();
+                        UpdateModelStatistics();
                         modelMesh.WorkingFilePath = meshPath;
                     }
                     else
@@ -871,6 +846,13 @@ namespace LDDModder.Modding.Editing
             }
         }
 
+        public void UpdateModelStatistics()
+        {
+            var allMeshes = Surfaces.SelectMany(x => x.Components.SelectMany(c => c.Meshes));
+            TotalTriangles = allMeshes.Sum(x => x.TriangleCount);
+            TotalVertices = allMeshes.Sum(x => x.VertexCount == 0 ? x.ModelMesh?.VertexCount ?? 0 : x.VertexCount);
+        }
+
         #endregion
 
         #region Change tracking 
@@ -889,6 +871,9 @@ namespace LDDModder.Modding.Editing
                 }
             }
 
+            if (ccea.GetElementHierarchy().OfType<ModelMeshReference>().Any())
+                UpdateModelStatistics();
+
             if (!IsLoading)
                 ElementCollectionChanged?.Invoke(this, ccea);
         }
@@ -900,7 +885,6 @@ namespace LDDModder.Modding.Editing
         }
 
         #endregion
-
 
         #region LDD File Generation
 

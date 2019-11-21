@@ -23,8 +23,8 @@ namespace LDDModder.BrickEditor.Rendering
 
         public static Vector2 ViewSize { get; set; }
 
-        private static QFontDrawing TextRenderer;
-        private static QFont RenderFont;
+        
+        
 
         public static UIShaderProgram UIShader { get; private set; }
 
@@ -34,6 +34,10 @@ namespace LDDModder.BrickEditor.Rendering
         private static List<SpriteElement> SpritesToRender;
         private static List<VertVT> VertexList;
 
+        private static QFontDrawing TextRenderer;
+        public static QFont NormalFont { get; private set; }
+        public static QFont SmallFont { get; private set; }
+
         static UIRenderHelper()
         {
             SpritesToRender = new List<SpriteElement>();
@@ -42,8 +46,12 @@ namespace LDDModder.BrickEditor.Rendering
 
         public static void InitializeResources()
         {
-            RenderFont = new QFont("C:\\Windows\\Fonts\\segoeui.ttf", 10,
+            NormalFont = new QFont("C:\\Windows\\Fonts\\segoeui.ttf", 10,
                 new QFontBuilderConfiguration(true));
+
+            SmallFont = new QFont("C:\\Windows\\Fonts\\segoeui.ttf", 8,
+                new QFontBuilderConfiguration(true));
+
             TextRenderer = new QFontDrawing();
             UIShader = ProgramFactory.Create<UIShaderProgram>();
 
@@ -60,7 +68,8 @@ namespace LDDModder.BrickEditor.Rendering
             VBO.Dispose();
             VAO.Dispose();
 
-            RenderFont.Dispose();
+            NormalFont.Dispose();
+            SmallFont.Dispose();
             TextRenderer.Dispose();
             UIShader.Dispose();
         }
@@ -101,40 +110,40 @@ namespace LDDModder.BrickEditor.Rendering
             VertexList.AddRange(verts);
         }
 
-        public static void DrawText(string text, Vector4 color, Vector2 position)
+        public static void DrawText(string text, QFont font, Vector4 color, Vector2 position)
         {
             var col = Color.FromArgb((byte)(color.W * 255),
                 (byte)(color.X * 255), (byte)(color.Y * 255), (byte)(color.Z * 255));
-            DrawText(text, col, new RectangleF(position.X, position.Y, 9999, 9999));
+            DrawText(text, font, col, new RectangleF(position.X, position.Y, 9999, 9999));
         }
 
-        public static void DrawText(string text, Color color, Vector2 position)
+        public static void DrawText(string text, QFont font, Color color, Vector2 position)
         {
-            DrawText(text, color, new RectangleF(position.X, position.Y, 9999, 9999));
+            DrawText(text, font, color, new RectangleF(position.X, position.Y, 9999, 9999));
         }
 
-        public static void DrawText(string text, Vector4 color, Vector4 bounds,
+        public static void DrawText(string text, QFont font, Vector4 color, Vector4 bounds,
             StringAlignment vAlign = StringAlignment.Near,
             StringAlignment hAlign = StringAlignment.Near)
         {
             var col = Color.FromArgb((byte)(color.W * 255), 
                 (byte)(color.X * 255), (byte)(color.Y * 255), (byte)(color.Z * 255));
-            DrawText(text, col, new RectangleF(bounds.X, bounds.Y, bounds.Z, bounds.W), vAlign, hAlign);
+            DrawText(text, font, col, new RectangleF(bounds.X, bounds.Y, bounds.Z, bounds.W), vAlign, hAlign);
         }
 
-        public static void DrawText(string text, Color color, Vector4 bounds,
+        public static void DrawText(string text, QFont font, Color color, Vector4 bounds,
             StringAlignment vAlign = StringAlignment.Near,
             StringAlignment hAlign = StringAlignment.Near)
         {
-            DrawText(text, color, new RectangleF(bounds.X, bounds.Y, bounds.Z, bounds.W), vAlign, hAlign);
+            DrawText(text, font, color, new RectangleF(bounds.X, bounds.Y, bounds.Z, bounds.W), vAlign, hAlign);
         }
 
-        public static void DrawText(string text, Color color, RectangleF bounds,
+        public static void DrawText(string text, QFont font, Color color, RectangleF bounds,
             StringAlignment vAlign = StringAlignment.Near,
             StringAlignment hAlign = StringAlignment.Near)
         {
 
-            var textSize = RenderFont.Measure(text, bounds.Size, QFontAlignment.Left);
+            var textSize = font.Measure(text, bounds.Size, QFontAlignment.Left);
             var textPos = Vector2.Zero;
 
             switch (hAlign)
@@ -164,7 +173,7 @@ namespace LDDModder.BrickEditor.Rendering
 
             textPos.Y = ViewSize.Y - textPos.Y;
 
-            var dp = new QFontDrawingPrimitive(RenderFont, new QFontRenderOptions() { Colour = color, LockToPixel = true });
+            var dp = new QFontDrawingPrimitive(font, new QFontRenderOptions() { Colour = color, LockToPixel = true });
             dp.Print(text, new Vector3(textPos.X, textPos.Y, 0f), bounds.Size, QFontAlignment.Left);
             TextRenderer.DrawingPrimitives.Add(dp);
         }

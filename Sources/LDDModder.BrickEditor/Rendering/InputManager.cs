@@ -30,6 +30,8 @@ namespace LDDModder.BrickEditor.Rendering
 
         public float ClickTolerence { get; set; }
 
+        public bool MouseClickHandled { get; set; }
+
         public InputManager()
         {
             MouseDownPositions = new Vector2[13];
@@ -56,6 +58,8 @@ namespace LDDModder.BrickEditor.Rendering
                 LastMousePos = MousePos;
                 HasInitialized = true;
             }
+
+            MouseClickHandled = false;
 
             for (int i = 0; i < (int)MouseButton.LastButton; i++)
             {

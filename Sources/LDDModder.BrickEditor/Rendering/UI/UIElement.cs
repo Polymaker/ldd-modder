@@ -24,7 +24,7 @@ namespace LDDModder.BrickEditor.Rendering.UI
         public virtual void OnPaint()
         {
             if (!string.IsNullOrEmpty(Text))
-                UIRenderHelper.DrawText(Text, TextColor, Bounds, 
+                UIRenderHelper.DrawText(Text, UIRenderHelper.NormalFont, TextColor, Bounds, 
                     System.Drawing.StringAlignment.Center, 
                     System.Drawing.StringAlignment.Center);
         }

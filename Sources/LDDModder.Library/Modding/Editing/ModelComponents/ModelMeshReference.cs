@@ -36,6 +36,8 @@ namespace LDDModder.Modding.Editing
 
         public bool IsFlexible => GetModelMesh()?.IsFlexible ?? false;
 
+        public int TriangleCount => (IndexCount > 0) ? IndexCount / 3 : (ModelMesh?.IndexCount ?? 0) / 3;
+
         public ModelMeshReference()
         {
             _Transform = new ItemTransform();
