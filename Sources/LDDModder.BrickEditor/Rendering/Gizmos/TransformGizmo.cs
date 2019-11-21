@@ -16,7 +16,6 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
         private bool recalculateBounds;
         private Matrix4 _Position;
         private Matrix4 _Orientation;
-        private Matrix4 _SelectionOrientation;
 
         public float UIScale { get; private set; }
 
@@ -111,11 +110,15 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
             get => _DisplayStyle;
             set
             {
-                if (value != _DisplayStyle)
+                if (!IsEditing && value != _DisplayStyle)
                 {
                     _DisplayStyle = value;
                     recalculateBounds = true;
+
                     DisplayStyleChanged?.Invoke(this, EventArgs.Empty);
+
+                    if (Visible && ActiveElements.Any())
+                        RepositionGizmo();
                 }
             }
         }
@@ -125,7 +128,7 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
             get => _OrientationMode;
             set
             {
-                if (value != _OrientationMode)
+                if (!IsEditing && value != _OrientationMode)
                 {
                     _OrientationMode = value;
                     if (Visible && ActiveElements.Any())
@@ -139,7 +142,7 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
             get => _PivotPointMode;
             set
             {
-                if (value != _PivotPointMode)
+                if (!IsEditing && value != _PivotPointMode)
                 {
                     _PivotPointMode = value;
                     if (Visible && ActiveElements.Any())
@@ -168,7 +171,6 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
             _Transform = Matrix4.Identity;
             _Position = Matrix4.Identity;
             _Orientation = Matrix4.Identity;
-            _SelectionOrientation = Matrix4.Identity;
 
             RotationSnap = 10f * (float)Math.PI / 180f;
             TranslationSnap = 0.4f;
@@ -317,6 +319,15 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
             IsHovering = false;
         }
 
+        private void ClearSelection()
+        {
+            if (SelectedHandle != null)
+            {
+                SelectedHandle.IsSelected = false;
+                SelectedHandle = null;
+            }
+        }
+
         public void PerformMouseOver(Ray ray)
         {
             ClearOver();
@@ -367,7 +378,7 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
             if (IsEditing && input.IsKeyPressed(OpenTK.Input.Key.Escape))
             {
                 CancelEdit();
-                SelectedHandle = null;
+                ClearSelection();
                 ClearOver();
             }
 
@@ -438,9 +449,7 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
                     else
                         EndEditGizmo();
                 }
-                if (SelectedHandle != null)
-                    SelectedHandle.IsSelected = false;
-                SelectedHandle = null;
+                ClearSelection();
                 UpdateBounds(camera);
             }
         }
@@ -607,9 +616,7 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
             {
                 IsEditing = false;
                 EditTransform = Matrix4.Identity;
-                if (SelectedHandle != null)
-                    SelectedHandle.IsSelected = false;
-                SelectedHandle = null;
+                ClearSelection();
 
                 foreach (var element in ActiveElements)
                     element.EndEditTransform(true);
@@ -637,9 +644,7 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
            
             IsEditing = false;
             EditTransform = Matrix4.Identity;
-            if (SelectedHandle != null)
-                SelectedHandle.IsSelected = false;
-            SelectedHandle = null;
+            ClearSelection();
         }
 
         public Matrix4 GetActiveTransform()

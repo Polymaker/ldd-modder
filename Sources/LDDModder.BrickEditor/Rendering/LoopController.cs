@@ -3,6 +3,7 @@ using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -44,6 +45,7 @@ namespace LDDModder.BrickEditor.Rendering
         private Stopwatch UpdateWatch;
 
         private System.Windows.Forms.Timer RenderTimer;
+        private System.Threading.Timer RenderTimer2;
 
         public event UpdateFrameDelegate UpdateFrame;
 
@@ -57,6 +59,9 @@ namespace LDDModder.BrickEditor.Rendering
             RenderWatch = new Stopwatch();
             UpdateWatch = new Stopwatch();
             WindowHandle = control.FindForm().Handle;
+
+            RenderTimer2 = new System.Threading.Timer(OnRenderTick, null, 
+                System.Threading.Timeout.Infinite, System.Threading.Timeout.Infinite);
 
             RenderTimer = new System.Windows.Forms.Timer();
             RenderTimer.Tick += RenderTimer_Tick;
@@ -90,6 +95,7 @@ namespace LDDModder.BrickEditor.Rendering
                 LastUpdate = 0;
                 RenderTimer.Interval = (int)(TargetRenderPeriod * 1000.0);
                 RenderTimer.Start();
+                //RenderTimer2.Change(0, (int)(TargetRenderPeriod * 1000.0));
                 //Application.Idle += Application_Idle;
                 UpdateThread = new Thread(UpdateLoop);
                 UpdateThread.Start();
@@ -103,6 +109,7 @@ namespace LDDModder.BrickEditor.Rendering
             {
                 IsRunning = false;
                 RenderTimer.Stop();
+                //RenderTimer2.Change(System.Threading.Timeout.Infinite, System.Threading.Timeout.Infinite);
                 //Application.Idle -= Application_Idle;
                 if (UpdateThread != null)
                 {
@@ -123,16 +130,14 @@ namespace LDDModder.BrickEditor.Rendering
         //    }
         //}
 
+        private void OnRenderTick(object state)
+        {
+            DispatchRenderFrame(true);
+        }
+
         private void RenderTimer_Tick(object sender, EventArgs e)
         {
-            double timestamp = RenderWatch.Elapsed.TotalSeconds;
-            double elapsed = ClampElapsed(timestamp - LastRender);
-            if (elapsed > 0.0/* && elapsed >= TargetRenderPeriod*/)
-            {
-                RenderFrequency = 1d / elapsed;
-                LastRender = timestamp;
-                RenderFrame?.Invoke();
-            }
+            DispatchRenderFrame(true);
         }
 
         private void DispatchRenderFrame(bool force = false)
@@ -143,8 +148,18 @@ namespace LDDModder.BrickEditor.Rendering
             {
                 RenderFrequency = 1d / elapsed;
                 LastRender = timestamp;
-                RenderFrame?.Invoke();
+                RaiseRenderFrame();
             }
+        }
+
+        private void RaiseRenderFrame()
+        {
+            foreach (Delegate del in RenderFrame.GetInvocationList())
+            {
+                if (del.Target is ISynchronizeInvoke sync)
+                    sync.BeginInvoke(del, null);
+            }
+            //RenderFrame?.Invoke();
         }
 
         private void DispatchUpdateFrame()

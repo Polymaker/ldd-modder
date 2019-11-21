@@ -22,6 +22,8 @@ namespace LDDModder.BrickEditor.EditModels
 
         public bool IsExecutingUndoRedo => UndoRedoManager.ExecutingUndoRedo;
 
+        public bool IsExecutingBatchChanges => UndoRedoManager.IsInBatch;
+
         public bool CanUndo => UndoRedoManager.CanUndo;
 
         public bool CanRedo => UndoRedoManager.CanRedo;
@@ -50,19 +52,24 @@ namespace LDDModder.BrickEditor.EditModels
 
         public event EventHandler ProjectChanged;
 
-        public event EventHandler<CollectionChangedEventArgs> ProjectElementsChanged;
+        public event EventHandler<CollectionChangedEventArgs> ElementCollectionChanged;
+
+        public event EventHandler ProjectElementsChanged; 
 
         public event EventHandler<PropertyChangedEventArgs> ElementPropertyChanged;
 
         #endregion
 
 
+        private bool ElementsChanged;
         private bool PreventProjectChange;
 
         public ProjectManager()
         {
             _SelectedElements = new List<PartElement>();
             UndoRedoManager = new UndoRedoManager(this);
+            UndoRedoManager.BeginUndoRedo += UndoRedoManager_BeginUndoRedo;
+            UndoRedoManager.EndUndoRedo += UndoRedoManager_EndUndoRedo;
         }
 
         public void SetCurrentProject(PartProject project)
@@ -116,7 +123,13 @@ namespace LDDModder.BrickEditor.EditModels
                 if (count > 0)
                     SelectionChanged?.Invoke(this, EventArgs.Empty);
             }
-            ProjectElementsChanged?.Invoke(this, e);
+
+            ElementCollectionChanged?.Invoke(this, e);
+
+            if (IsExecutingUndoRedo || IsExecutingBatchChanges)
+                ElementsChanged = true;
+            else
+                ProjectElementsChanged?.Invoke(this, EventArgs.Empty);
         }
 
         private void Project_ElementPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -228,6 +241,25 @@ namespace LDDModder.BrickEditor.EditModels
         public void EndBatchChanges()
         {
             UndoRedoManager.EndBatchChanges();
+            if (ElementsChanged)
+            {
+                ElementsChanged = false;
+                ProjectElementsChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        private void UndoRedoManager_BeginUndoRedo(object sender, EventArgs e)
+        {
+
+        }
+
+        private void UndoRedoManager_EndUndoRedo(object sender, EventArgs e)
+        {
+            if (ElementsChanged)
+            {
+                ElementsChanged = false;
+                ProjectElementsChanged?.Invoke(this, EventArgs.Empty);
+            }
         }
     }
 }

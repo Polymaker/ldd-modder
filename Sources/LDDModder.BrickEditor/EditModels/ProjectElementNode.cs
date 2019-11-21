@@ -44,7 +44,7 @@ namespace LDDModder.BrickEditor.EditModels
                 {
                     if (elemCollection.Count > 4)
                     {
-                        Childrens.Add(new ProjectGroupNode(elemCollection, "Items"));
+                        Childrens.Add(new ProjectCollectionNode(elemCollection, "Items"));
                     }
                     else
                     {

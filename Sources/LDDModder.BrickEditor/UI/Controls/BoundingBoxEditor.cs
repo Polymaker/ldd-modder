@@ -37,15 +37,101 @@ namespace LDDModder.BrickEditor.UI.Controls
         {
             InitializeComponent();
             Height = tableLayoutPanel1.Height;
+            AdjustTableLayoutPositions();
         }
 
         protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified)
         {
-            if ((specified & BoundsSpecified.Height) == BoundsSpecified.Height && tableLayoutPanel1.IsHandleCreated)
-                height = tableLayoutPanel1.Height;
-            if ((specified & BoundsSpecified.Width) == BoundsSpecified.Width)
-                width = Math.Max(width, 300);
+            bool adjustLayout = false;
+            if (specified.HasFlag(BoundsSpecified.Width) || specified.HasFlag(BoundsSpecified.Height))
+            {
+                var prefSize = GetPreferredSize(new Size(width, height));
+                width = prefSize.Width;
+                height = prefSize.Height;
+                adjustLayout = true;
+                specified |= BoundsSpecified.Width;
+                specified |= BoundsSpecified.Height;
+            }
+
             base.SetBoundsCore(x, y, width, height, specified);
+
+            if (adjustLayout)
+                AdjustTableLayoutPositions();
+        }
+
+        protected override void OnLayout(LayoutEventArgs e)
+        {
+            base.OnLayout(e);
+            AdjustTableLayoutPositions();
+            if (tableLayoutPanel2.Bottom > Height)
+            {
+                Height = tableLayoutPanel2.Bottom;
+            }
+            else if(tableLayoutPanel2.Bottom < Height)
+            {
+                Height = tableLayoutPanel2.Bottom;
+            }
+        }
+
+        const int BOX_MARGIN = 3;
+
+        public override Size GetPreferredSize(Size proposedSize)
+        {
+            var minHeight = tableLayoutPanel1.GetPreferredSize(new Size(999, 999)).Height;
+
+            if (proposedSize.Width >= 180 * 2)
+            {
+                int boxWidth = proposedSize.Width - (BOX_MARGIN * 5);
+                boxWidth = (int)Math.Floor(boxWidth / 6f);
+                return new Size((boxWidth * 6) + (BOX_MARGIN * 5), minHeight);
+            }
+            else
+            {
+                int boxWidth = proposedSize.Width - (BOX_MARGIN * 2);
+                boxWidth = (int)Math.Floor(boxWidth / 3f);
+                boxWidth = Math.Max(boxWidth, 60);
+                return new Size((boxWidth * 3) + (BOX_MARGIN * 2), minHeight * 2);
+            }
+        }
+
+        private void AdjustTableLayoutPositions()
+        {
+            var minHeight = tableLayoutPanel1.GetPreferredSize(new Size(999, 999)).Height;
+            tableLayoutPanel1.Height = minHeight;
+            tableLayoutPanel2.Height = minHeight;
+
+
+            if (Width >= 180 * 2)
+            {
+                int boxWidth = Width - (3 * 5);
+                boxWidth = (int)Math.Floor(boxWidth / 6f);
+                tableLayoutPanel1.Width = boxWidth * 3 + (3 * 3);
+                
+                tableLayoutPanel2.Left = tableLayoutPanel1.Width;
+                tableLayoutPanel2.Top = 0;
+                tableLayoutPanel2.Width = boxWidth * 3 + (3 * 2);
+
+                MinX_Box.Margin = new Padding(0, 3, 3, 3);
+                MinY_Box.Margin = new Padding(0, 3, 3, 3);
+                MinZ_Box.Margin = new Padding(0, 3, 3, 3);
+                MaxX_Box.Margin = new Padding(0, 3, 2, 3);
+                MaxY_Box.Margin = new Padding(1, 3, 1, 3);
+                MaxZ_Box.Margin = new Padding(2, 3, 0, 3);
+            }
+            else
+            {
+                tableLayoutPanel1.Width = Width;
+                tableLayoutPanel2.Left = 0;
+                tableLayoutPanel2.Top = minHeight;
+                tableLayoutPanel2.Width = Width;
+
+                MinX_Box.Margin = new Padding(0, 3, 2, 3);
+                MinY_Box.Margin = new Padding(1, 3, 1, 3);
+                MinZ_Box.Margin = new Padding(2, 3, 0, 3);
+                MaxX_Box.Margin = new Padding(0, 3, 2, 3);
+                MaxY_Box.Margin = new Padding(1, 3, 1, 3);
+                MaxZ_Box.Margin = new Padding(2, 3, 0, 3);
+            }
         }
 
         private void OnValueChanged()

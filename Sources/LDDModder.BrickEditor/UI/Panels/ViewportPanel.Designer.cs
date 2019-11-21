@@ -40,14 +40,13 @@
             this.AlignToMenu_Back = new System.Windows.Forms.ToolStripMenuItem();
             this.AlignToMenu_Right = new System.Windows.Forms.ToolStripMenuItem();
             this.AlignToMenu_Left = new System.Windows.Forms.ToolStripMenuItem();
+            this.CameraMenu_LookAt = new System.Windows.Forms.ToolStripMenuItem();
             this.CameraMenu_Orthographic = new System.Windows.Forms.ToolStripMenuItem();
             this.DisplayMenuDropDown = new System.Windows.Forms.ToolStripDropDownButton();
             this.DisplayMenu_Collisions = new System.Windows.Forms.ToolStripMenuItem();
             this.connectionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.DisplayMenu_Meshes = new System.Windows.Forms.ToolStripMenuItem();
             this.xRayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
-            this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.GizmoOrientationMenu = new System.Windows.Forms.ToolStripDropDownButton();
             this.globalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.localToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -58,7 +57,6 @@
             this.activeElementToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cursorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.visualStudioToolStripExtender1 = new WeifenLuo.WinFormsUI.Docking.VisualStudioToolStripExtender(this.components);
-            this.CameraMenu_LookAt = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -68,7 +66,6 @@
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.CameraMenuDropDown,
             this.DisplayMenuDropDown,
-            this.toolStripDropDownButton1,
             this.GizmoOrientationMenu,
             this.GizmoPivotModeMenu});
             resources.ApplyResources(this.toolStrip1, "toolStrip1");
@@ -142,6 +139,12 @@
             resources.ApplyResources(this.AlignToMenu_Left, "AlignToMenu_Left");
             this.AlignToMenu_Left.Tag = "Left";
             // 
+            // CameraMenu_LookAt
+            // 
+            this.CameraMenu_LookAt.Name = "CameraMenu_LookAt";
+            resources.ApplyResources(this.CameraMenu_LookAt, "CameraMenu_LookAt");
+            this.CameraMenu_LookAt.Click += new System.EventHandler(this.CameraMenu_LookAt_Click);
+            // 
             // CameraMenu_Orthographic
             // 
             this.CameraMenu_Orthographic.CheckOnClick = true;
@@ -188,20 +191,6 @@
             resources.ApplyResources(this.xRayToolStripMenuItem, "xRayToolStripMenuItem");
             this.xRayToolStripMenuItem.CheckedChanged += new System.EventHandler(this.xRayToolStripMenuItem_CheckedChanged);
             // 
-            // toolStripDropDownButton1
-            // 
-            this.toolStripDropDownButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.deleteToolStripMenuItem});
-            resources.ApplyResources(this.toolStripDropDownButton1, "toolStripDropDownButton1");
-            this.toolStripDropDownButton1.Name = "toolStripDropDownButton1";
-            // 
-            // deleteToolStripMenuItem
-            // 
-            this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
-            resources.ApplyResources(this.deleteToolStripMenuItem, "deleteToolStripMenuItem");
-            this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
-            // 
             // GizmoOrientationMenu
             // 
             this.GizmoOrientationMenu.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -209,6 +198,7 @@
             this.globalToolStripMenuItem,
             this.localToolStripMenuItem});
             resources.ApplyResources(this.GizmoOrientationMenu, "GizmoOrientationMenu");
+            this.GizmoOrientationMenu.Margin = new System.Windows.Forms.Padding(50, 1, 0, 2);
             this.GizmoOrientationMenu.Name = "GizmoOrientationMenu";
             this.GizmoOrientationMenu.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.GizmoOrientationMenu_DropDownItemClicked);
             // 
@@ -268,12 +258,6 @@
             // 
             this.visualStudioToolStripExtender1.DefaultRenderer = null;
             // 
-            // CameraMenu_LookAt
-            // 
-            this.CameraMenu_LookAt.Name = "CameraMenu_LookAt";
-            resources.ApplyResources(this.CameraMenu_LookAt, "CameraMenu_LookAt");
-            this.CameraMenu_LookAt.Click += new System.EventHandler(this.CameraMenu_LookAt_Click);
-            // 
             // ViewportPanel
             // 
             resources.ApplyResources(this, "$this");
@@ -301,8 +285,6 @@
         private System.Windows.Forms.ToolStripMenuItem AlignToMenu_Left;
         private System.Windows.Forms.ToolStripMenuItem AlignToMenu_Right;
         private System.Windows.Forms.ToolStripMenuItem CameraMenu_Orthographic;
-        private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
-        private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
         private System.Windows.Forms.ToolStripDropDownButton DisplayMenuDropDown;
         private System.Windows.Forms.ToolStripMenuItem DisplayMenu_Collisions;
         private System.Windows.Forms.ToolStripMenuItem connectionsToolStripMenuItem;

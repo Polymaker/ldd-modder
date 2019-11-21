@@ -32,10 +32,11 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(NavigationPanel));
             this.ProjectTreeView = new BrightIdeasSoftware.TreeListView();
             this.olvColumn1 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.ElementsContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.addElementToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.surfaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.studToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ElementsMenu_Delete = new System.Windows.Forms.ToolStripMenuItem();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.label1 = new System.Windows.Forms.Label();
             this.ViewModeComboBox = new System.Windows.Forms.ComboBox();
@@ -46,7 +47,7 @@
             this.ViewModeBones = new LDDModder.BrickEditor.Localization.LocalizableString(this.components);
             this.ViewModeAll = new LDDModder.BrickEditor.Localization.LocalizableString(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.ProjectTreeView)).BeginInit();
-            this.contextMenuStrip1.SuspendLayout();
+            this.ElementsContextMenu.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -56,6 +57,7 @@
             this.ProjectTreeView.CellEditUseWholeCell = false;
             this.ProjectTreeView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.olvColumn1});
+            this.ProjectTreeView.ContextMenuStrip = this.ElementsContextMenu;
             this.ProjectTreeView.Cursor = System.Windows.Forms.Cursors.Default;
             resources.ApplyResources(this.ProjectTreeView, "ProjectTreeView");
             this.ProjectTreeView.HideSelection = false;
@@ -74,12 +76,14 @@
             this.olvColumn1.Sortable = false;
             resources.ApplyResources(this.olvColumn1, "olvColumn1");
             // 
-            // contextMenuStrip1
+            // ElementsContextMenu
             // 
-            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.addElementToolStripMenuItem});
-            this.contextMenuStrip1.Name = "contextMenuStrip1";
-            resources.ApplyResources(this.contextMenuStrip1, "contextMenuStrip1");
+            this.ElementsContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.addElementToolStripMenuItem,
+            this.ElementsMenu_Delete});
+            this.ElementsContextMenu.Name = "contextMenuStrip1";
+            resources.ApplyResources(this.ElementsContextMenu, "ElementsContextMenu");
+            this.ElementsContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.ElementsContextMenu_Opening);
             // 
             // addElementToolStripMenuItem
             // 
@@ -98,6 +102,12 @@
             // 
             this.studToolStripMenuItem.Name = "studToolStripMenuItem";
             resources.ApplyResources(this.studToolStripMenuItem, "studToolStripMenuItem");
+            // 
+            // ElementsMenu_Delete
+            // 
+            this.ElementsMenu_Delete.Name = "ElementsMenu_Delete";
+            resources.ApplyResources(this.ElementsMenu_Delete, "ElementsMenu_Delete");
+            this.ElementsMenu_Delete.Click += new System.EventHandler(this.ElementsMenu_Delete_Click);
             // 
             // tableLayoutPanel1
             // 
@@ -155,7 +165,7 @@
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "NavigationPanel";
             ((System.ComponentModel.ISupportInitialize)(this.ProjectTreeView)).EndInit();
-            this.contextMenuStrip1.ResumeLayout(false);
+            this.ElementsContextMenu.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);
@@ -166,7 +176,7 @@
 
         private BrightIdeasSoftware.TreeListView ProjectTreeView;
         private BrightIdeasSoftware.OLVColumn olvColumn1;
-        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ContextMenuStrip ElementsContextMenu;
         private System.Windows.Forms.ToolStripMenuItem addElementToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem surfaceToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem studToolStripMenuItem;
@@ -179,5 +189,6 @@
         private Localization.LocalizableString ViewModeConnections;
         private Localization.LocalizableString ViewModeBones;
         private Localization.LocalizableString ViewModeAll;
+        private System.Windows.Forms.ToolStripMenuItem ElementsMenu_Delete;
     }
 }

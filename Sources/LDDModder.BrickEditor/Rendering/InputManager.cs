@@ -24,6 +24,8 @@ namespace LDDModder.BrickEditor.Rendering
 
         public bool ContainsMouse { get; set; }
 
+        public bool ContainsFocus { get; set; }
+
         public Vector2[] MouseDownPositions { get; set; }
 
         public Vector2[] MouseUpPositions { get; set; }

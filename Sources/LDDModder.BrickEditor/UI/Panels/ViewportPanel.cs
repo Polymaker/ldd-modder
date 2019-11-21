@@ -483,6 +483,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             GL.Vertex3(40, 0, -40);
             GL.End();
         }
+        private double AvgRenderFPS = 0;
 
         private void RenderUI()
         {
@@ -501,7 +502,13 @@ namespace LDDModder.BrickEditor.UI.Panels
             foreach (var elem in UIElements)
                 elem.Draw();
 
-            //UIRenderHelper.DrawText($"Render FPS: {LoopController.RenderFrequency:0.00}", Color.White, new Vector2(10, 10));
+
+            if (AvgRenderFPS == 0)
+                AvgRenderFPS = LoopController.RenderFrequency;
+            else
+                AvgRenderFPS = (AvgRenderFPS + LoopController.RenderFrequency) / 2d;
+
+            UIRenderHelper.DrawText($"Render FPS: {AvgRenderFPS:0}", UIRenderHelper.NormalFont, Color.White, new Vector2(10, 10));
 
             if (TransformGizmo.IsEditing)
             {
@@ -522,7 +529,8 @@ namespace LDDModder.BrickEditor.UI.Panels
             if (CurrentProject != null)
             {
                 UIRenderHelper.DrawText($"{CurrentProject.TotalTriangles} triangles", UIRenderHelper.SmallFont, Color.Black, 
-                    new Vector2(UIRenderHelper.ViewSize.X - 100, UIRenderHelper.ViewSize.Y - 16));
+                    new Vector4(UIRenderHelper.ViewSize.X - 104, UIRenderHelper.ViewSize.Y - 20, 100, 16), 
+                    StringAlignment.Far, StringAlignment.Far);
             }
             
             UIRenderHelper.RenderElements();
@@ -550,7 +558,10 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void LoopController_UpdateFrame(double deltaMs)
         {
+
+            InputManager.ContainsFocus = ContainsFocus;
             InputManager.UpdateInputStates();
+
             CameraManipulator.ProcessInput(InputManager);
 
             if (TransformGizmo.Visible)
@@ -608,7 +619,6 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void TransformGizmo_TransformFinishing(object sender, EventArgs e)
         {
-
             ProjectManager.StartBatchChanges();
         }
 
@@ -664,9 +674,8 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
-            LoopController.Stop();
-
             IsClosing = true;
+            LoopController.Stop();
             DisposeGLResources();
         }
 
@@ -737,9 +746,9 @@ namespace LDDModder.BrickEditor.UI.Panels
             UnloadModels();
         }
 
-        protected override void OnProjectElementsChanged(CollectionChangedEventArgs e)
+        protected override void OnElementCollectionChanged(CollectionChangedEventArgs e)
         {
-            base.OnProjectElementsChanged(e);
+            base.OnElementCollectionChanged(e);
 
             
             if (e.ElementType == typeof(PartSurface))
@@ -1066,7 +1075,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void MainForm_Activated(object sender, EventArgs e)
         {
-            if (ViewInitialized)
+            if (ViewInitialized && !IsClosing)
                 LoopController.Start();
         }
 
@@ -1109,21 +1118,6 @@ namespace LDDModder.BrickEditor.UI.Panels
         private void CameraMenu_Orthographic_CheckedChanged(object sender, EventArgs e)
         {
             Camera.IsPerspective = !CameraMenu_Orthographic.Checked;
-        }
-
-        private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ProjectManager.StartBatchChanges();
-            var components = CurrentProject.Surfaces[0].Components.ToList();
-            //var meshes = components.SelectMany(x => x.GetAllModelMeshes()).Distinct().ToList();
-
-            CurrentProject.Surfaces[0].Components.Clear();
-            //meshes.ForEach(x => CurrentProject.Meshes.Remove(x));
-            
-
-            var noRefMeshes = CurrentProject.Meshes.Where(x => !x.GetReferences().Any()).ToList();
-            noRefMeshes.ForEach(x => CurrentProject.Meshes.Remove(x));
-            ProjectManager.EndBatchChanges();
         }
 
         private void DisplayMenu_Collisions_CheckedChanged(object sender, EventArgs e)

@@ -47,8 +47,8 @@
             // 
             this.tableLayoutPanel1.ColumnCount = 3;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 74F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 80F));
             this.tableLayoutPanel1.Controls.Add(this.label5, 0, 4);
             this.tableLayoutPanel1.Controls.Add(this.label4, 0, 3);
             this.tableLayoutPanel1.Controls.Add(this.label3, 0, 2);
@@ -71,7 +71,7 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(547, 198);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(619, 198);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // label5
@@ -109,7 +109,7 @@
             this.DescriptionTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.DescriptionTextBox.Location = new System.Drawing.Point(77, 29);
             this.DescriptionTextBox.Name = "DescriptionTextBox";
-            this.DescriptionTextBox.Size = new System.Drawing.Size(350, 20);
+            this.DescriptionTextBox.Size = new System.Drawing.Size(459, 20);
             this.DescriptionTextBox.TabIndex = 1;
             this.DescriptionTextBox.Validated += new System.EventHandler(this.DescriptionTextBox_Validated);
             // 
@@ -150,7 +150,7 @@
             this.CategoryComboBox.FormattingEnabled = true;
             this.CategoryComboBox.Location = new System.Drawing.Point(77, 82);
             this.CategoryComboBox.Name = "CategoryComboBox";
-            this.CategoryComboBox.Size = new System.Drawing.Size(350, 21);
+            this.CategoryComboBox.Size = new System.Drawing.Size(459, 21);
             this.CategoryComboBox.TabIndex = 5;
             this.CategoryComboBox.SelectedValueChanged += new System.EventHandler(this.CategoryComboBox_SelectedValueChanged);
             // 
@@ -166,10 +166,11 @@
             // 
             // boundingBoxEditor1
             // 
+            this.boundingBoxEditor1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.boundingBoxEditor1.Location = new System.Drawing.Point(77, 109);
-            this.boundingBoxEditor1.MinimumSize = new System.Drawing.Size(300, 0);
             this.boundingBoxEditor1.Name = "boundingBoxEditor1";
-            this.boundingBoxEditor1.Size = new System.Drawing.Size(350, 42);
+            this.boundingBoxEditor1.Size = new System.Drawing.Size(459, 42);
             this.boundingBoxEditor1.TabIndex = 9;
             this.boundingBoxEditor1.Value = null;
             this.boundingBoxEditor1.ValueChanged += new System.EventHandler(this.boundingBoxEditor1_ValueChanged);
@@ -177,9 +178,9 @@
             // CalculateBoundingButton
             // 
             this.CalculateBoundingButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.CalculateBoundingButton.Location = new System.Drawing.Point(433, 128);
+            this.CalculateBoundingButton.Location = new System.Drawing.Point(542, 128);
             this.CalculateBoundingButton.Name = "CalculateBoundingButton";
-            this.CalculateBoundingButton.Size = new System.Drawing.Size(75, 23);
+            this.CalculateBoundingButton.Size = new System.Drawing.Size(74, 23);
             this.CalculateBoundingButton.TabIndex = 11;
             this.CalculateBoundingButton.Text = "Calculate";
             this.CalculateBoundingButton.UseVisualStyleBackColor = true;
@@ -190,7 +191,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
-            this.ClientSize = new System.Drawing.Size(547, 336);
+            this.ClientSize = new System.Drawing.Size(619, 336);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "ProjectPropertiesPanel";
             this.Text = "Part Properties";

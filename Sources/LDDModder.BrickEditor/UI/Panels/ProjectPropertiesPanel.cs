@@ -94,7 +94,6 @@ namespace LDDModder.BrickEditor.UI.Panels
         }
 
 
-
         private void CalculateBoundingButton_Click(object sender, EventArgs e)
         {
             if (CurrentProject != null && !InternalSet)

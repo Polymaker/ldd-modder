@@ -17,6 +17,8 @@ namespace LDDModder.BrickEditor.Rendering.Shaders
         [VertexAttrib(2, VertexAttribPointerType.Float)]
         public VertexAttrib TexCoord { get; protected set; }
 
+        public Uniform<float> Opacity { get; protected set; }
+
         public TextureUniform<Texture2D> Texture { get; protected set; }
 
         public Uniform<Matrix4> Projection { get; protected set; }

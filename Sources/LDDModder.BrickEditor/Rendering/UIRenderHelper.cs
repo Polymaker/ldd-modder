@@ -56,6 +56,8 @@ namespace LDDModder.BrickEditor.Rendering
             UIShader = ProgramFactory.Create<UIShaderProgram>();
 
             UIShader.Use();
+            UIShader.Opacity.Set(1f);
+
             VAO = new VertexArray();
             VBO = new Buffer<VertVT>();
             VAO.Bind();
@@ -72,13 +74,6 @@ namespace LDDModder.BrickEditor.Rendering
             SmallFont.Dispose();
             TextRenderer.Dispose();
             UIShader.Dispose();
-        }
-
-        public static void SetupShaders()
-        {
-            RenderHelper.UIShader.Use();
-            RenderHelper.UIShader.Projection.Set(ProjectionMatrix);
-
         }
 
         public static void InitializeMatrices(Camera camera)
@@ -108,6 +103,65 @@ namespace LDDModder.BrickEditor.Rendering
                 ElemCount = verts.Length
             });
             VertexList.AddRange(verts);
+        }
+        public static SpriteElement DrawSpriteBox(Texture2D texture, Vector4 destination, BoxSpriteBounds spriteBounds)
+        {
+            float scale = Math.Min(destination.Z, destination.W);
+            return DrawSpriteBox(texture, destination, spriteBounds, scale);
+        }
+
+        public static SpriteElement DrawSpriteBox(Texture2D texture, Vector4 destination, BoxSpriteBounds spriteBounds, float edgeScale)
+        {
+            var allVerts = new List<VertVT>();
+
+            float[] BoxSizeX = new float[]
+            {
+                (spriteBounds.GetColumnSize(0) / spriteBounds.Width) * edgeScale,
+                0,
+                (spriteBounds.GetColumnSize(2) / spriteBounds.Width) * edgeScale
+            };
+            BoxSizeX[1] = destination.Z - BoxSizeX[0] - BoxSizeX[2];
+
+            float[] BoxSizeY = new float[]
+            {
+                (spriteBounds.GetRowSize(0) / spriteBounds.Height) * edgeScale,
+                0,
+                (spriteBounds.GetRowSize(2) / spriteBounds.Height) * edgeScale
+            };
+            BoxSizeY[1] = destination.W - BoxSizeY[0] - BoxSizeY[2];
+
+            float[] BoxPosX = new float[] { 
+                destination.X, 
+                destination.X + BoxSizeX[0], 
+                destination.X + BoxSizeX[0] + BoxSizeX[1] };
+            float[] BoxPosY = new float[] {
+                destination.Y,
+                destination.Y + BoxSizeY[0],
+                destination.Y + BoxSizeY[0] + BoxSizeY[1] };
+
+            for (int y = 0; y < 3; y++)
+            {
+                for (int x = 0; x < 3; x++)
+                {
+                    var boxSpriteBounds = spriteBounds.GetRegionBounds(x, y);
+                    if (boxSpriteBounds.Width > 0 && boxSpriteBounds.Height > 0)
+                    {
+                        var boxVerts = GetElementVertices(
+                            new Vector4(BoxPosX[x], BoxPosY[y], BoxSizeX[x], BoxSizeY[y]), boxSpriteBounds);
+                        allVerts.AddRange(boxVerts);
+                    }
+                }
+            }
+            var sprite = new SpriteElement()
+            {
+                Texture = texture,
+                Offset = VertexList.Count,
+                ElemCount = allVerts.Count
+            };
+            SpritesToRender.Add(sprite);
+            VertexList.AddRange(allVerts);
+
+            return sprite;
         }
 
         public static void DrawText(string text, QFont font, Vector4 color, Vector2 position)
@@ -144,6 +198,7 @@ namespace LDDModder.BrickEditor.Rendering
         {
 
             var textSize = font.Measure(text, bounds.Size, QFontAlignment.Left);
+            textSize.Height += 2;
             var textPos = Vector2.Zero;
 
             switch (hAlign)
@@ -167,7 +222,7 @@ namespace LDDModder.BrickEditor.Rendering
                     textPos.Y = bounds.Y + bounds.Height - textSize.Height;
                     break;
                 case StringAlignment.Center:
-                    textPos.Y = bounds.Y + ((bounds.Height - (textSize.Height + 2)) / 2f);
+                    textPos.Y = bounds.Y + ((bounds.Height - textSize.Height) / 2f);
                     break;
             }
 
@@ -198,8 +253,10 @@ namespace LDDModder.BrickEditor.Rendering
             {
                 spriteGroup.Key.Bind(OpenTK.Graphics.OpenGL.TextureUnit.Texture1);
                 UIShader.Texture.BindTexture(OpenTK.Graphics.OpenGL.TextureUnit.Texture1, spriteGroup.Key);
-                foreach(var sprite in spriteGroup)
+                
+                foreach (var sprite in spriteGroup)
                 {
+                    UIShader.Opacity.Set(sprite.Opacity);
                     VAO.DrawArrays(OpenTK.Graphics.OpenGL.PrimitiveType.Quads, sprite.Offset, sprite.ElemCount);
                 }
             }
@@ -209,11 +266,13 @@ namespace LDDModder.BrickEditor.Rendering
             TextRenderer.DisableShader();
         }
 
-        private class SpriteElement
+        public class SpriteElement
         {
             public Texture2D Texture { get; set; }
             public int Offset { get; set; }
             public int ElemCount { get; set; }
+            public float Opacity { get; set; } = 1f;
+            public OpenTK.Graphics.OpenGL.PrimitiveType PrimitiveType { get; set; } = OpenTK.Graphics.OpenGL.PrimitiveType.Quads;
         }
 
         public static VertVT[] GetElementVertices(Vector4 elementBounds, SpriteBounds texCoordBounds)

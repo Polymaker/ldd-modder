@@ -26,16 +26,20 @@ namespace LDDModder.BrickEditor.EditModels
 
         private List<ChangeAction> BatchChanges;
 
-        private bool IsInBatch;
+        public bool IsInBatch { get; private set; }
 
         public event EventHandler UndoHistoryChanged;
+
+        public event EventHandler BeginUndoRedo;
+
+        public event EventHandler EndUndoRedo;
 
         public UndoRedoManager(ProjectManager projectManager)
         {
             ProjectManager = projectManager;
             ProjectManager.ProjectChanged += ProjectManager_ProjectChanged;
             ProjectManager.ElementPropertyChanged += ProjectManager_ElementPropertyChanged;
-            ProjectManager.ProjectElementsChanged += ProjectManager_ProjectElementsChanged;
+            ProjectManager.ElementCollectionChanged += ProjectManager_ProjectElementsChanged;
             MaxHistory = 15;
 
             UndoHistory = new List<ChangeAction>();
@@ -106,12 +110,17 @@ namespace LDDModder.BrickEditor.EditModels
         {
             if (UndoHistory.Any())
             {
+                BeginUndoRedo?.Invoke(this, EventArgs.Empty);
+
                 var lastAction = UndoHistory.Last();
                 UndoHistory.Remove(lastAction);
                 RedoHistory.Add(lastAction);
+
                 ExecutingUndoRedo = true;
                 lastAction.Undo();
                 ExecutingUndoRedo = false;
+
+                EndUndoRedo?.Invoke(this, EventArgs.Empty);
                 UndoHistoryChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -120,12 +129,17 @@ namespace LDDModder.BrickEditor.EditModels
         {
             if (RedoHistory.Any())
             {
+                BeginUndoRedo?.Invoke(this, EventArgs.Empty);
+
                 var lastAction = RedoHistory.Last();
                 RedoHistory.Remove(lastAction);
                 UndoHistory.Add(lastAction);
+
                 ExecutingUndoRedo = true;
                 lastAction.Redo();
                 ExecutingUndoRedo = false;
+
+                EndUndoRedo?.Invoke(this, EventArgs.Empty);
                 UndoHistoryChanged?.Invoke(this, EventArgs.Empty);
             }
         }

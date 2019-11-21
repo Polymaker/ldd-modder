@@ -126,7 +126,6 @@ namespace LDDModder.Modding.Editing
         }
 
 
-
         public virtual IEnumerable<PartElement> GetAllChilds()
         {
             return OwnedElements.Concat(Collections.SelectMany(x => x.GetElements()));
@@ -145,6 +144,44 @@ namespace LDDModder.Modding.Editing
         }
 
         
+        public bool TryRemove()
+        {
+            if (Parent != null)
+            {
+                foreach(var col in Parent.Collections)
+                {
+                    if (col.Contains(this))
+                    {
+                        col.Remove(this);
+                        return true;
+                    }
+                }
+            }
+            else if (Project != null)
+            {
+                if (Project.Collisions.Contains(this))
+                {
+                    Project.Collisions.Remove(this);
+                    return true;
+                }
+                else if (Project.Connections.Contains(this))
+                {
+                    Project.Connections.Remove(this);
+                    return true;
+                }
+                else if (Project.Surfaces.Contains(this))
+                {
+                    Project.Surfaces.Remove(this);
+                    return true;
+                }
+                else if (Project.Bones.Contains(this))
+                {
+                    Project.Bones.Remove(this);
+                    return true;
+                }
+            }
+            return false;
+        }
 
         public Type GetElementType()
         {

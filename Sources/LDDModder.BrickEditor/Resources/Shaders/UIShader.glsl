@@ -29,10 +29,12 @@ out vec4 FragColor;
 
 // Uniforms
 uniform sampler2D Texture;
+uniform float Opacity;
 
 void main()
 {
 	FragColor = texture2D(Texture, vTexCoord);
+	FragColor.a = FragColor.a * Opacity;
 	/*if (FragColor.a == 0)
 		FragColor = vec4(1);*/
 }

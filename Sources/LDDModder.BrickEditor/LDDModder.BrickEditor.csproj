@@ -111,8 +111,9 @@
   <ItemGroup>
     <Compile Include="EditModels\BaseProjectNode.cs" />
     <Compile Include="EditModels\ChangeAction.cs" />
+    <Compile Include="EditModels\ElementGroupNode.cs" />
     <Compile Include="EditModels\ProjectElementNode.cs" />
-    <Compile Include="EditModels\ProjectGroupNode.cs" />
+    <Compile Include="EditModels\ProjectCollectionNode.cs" />
     <Compile Include="EditModels\ProjectManager.cs" />
     <Compile Include="EditModels\UndoRedoManager.cs" />
     <Compile Include="Localization\LocalizableString.cs">
@@ -170,6 +171,7 @@
     <Compile Include="Rendering\Shaders\WireframeShaderProgram.cs" />
     <Compile Include="Rendering\TextRenderingExtensions.cs" />
     <Compile Include="Rendering\Models\Vertices.cs" />
+    <Compile Include="Rendering\UI\BoxSpriteBounds.cs" />
     <Compile Include="Rendering\UI\SpriteBounds.cs" />
     <Compile Include="Rendering\UI\UIButton.cs" />
     <Compile Include="Rendering\UI\UIElement.cs" />

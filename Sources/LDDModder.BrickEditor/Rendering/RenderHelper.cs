@@ -24,15 +24,12 @@ namespace LDDModder.BrickEditor.Rendering
 
         public static ModelShaderProgram ModelShader { get; private set; }
 
-        public static UIShaderProgram UIShader { get; private set; }
-
         public static void InitializeResources()
         {
             ColorShader = ProgramFactory.Create<ColorShaderProgram>();
             WireframeShader = ProgramFactory.Create<WireframeShaderProgram>();
             ModelShader = ProgramFactory.Create<ModelShaderProgram>();
             WireframeShader2 = ProgramFactory.Create<WireframeShader2Program>();
-            UIShader = ProgramFactory.Create<UIShaderProgram>();
         }
 
         public static void ReleaseResources()
@@ -59,12 +56,6 @@ namespace LDDModder.BrickEditor.Rendering
             {
                 ModelShader.Dispose();
                 ModelShader = null;
-            }
-
-            if (UIShader != null)
-            {
-                UIShader.Dispose();
-                UIShader = null;
             }
         }
 

@@ -846,6 +846,18 @@ namespace LDDModder.Modding.Editing
             }
         }
 
+        public void RemoveUnreferencedMeshes()
+        {
+            var allMeshes = GetAllElements<ModelMesh>().ToList();
+            var allRefs = GetAllElements<ModelMeshReference>().ToList();
+
+            foreach(var mesh in allMeshes)
+            {
+                if (!allRefs.Any(x => x.MeshID == mesh.ID || x.ModelMesh == mesh))
+                    Meshes.Remove(mesh);
+            }
+        }
+
         public void UpdateModelStatistics()
         {
             var allMeshes = Surfaces.SelectMany(x => x.Components.SelectMany(c => c.Meshes));

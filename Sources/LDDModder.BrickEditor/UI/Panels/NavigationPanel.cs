@@ -111,19 +111,19 @@ namespace LDDModder.BrickEditor.UI.Panels
             {
                 if (recreate)
                 {
-                    ProjectTreeView.AddObject(new ProjectGroupNode(
+                    ProjectTreeView.AddObject(new ProjectCollectionNode(
                         CurrentProject.Surfaces,
                         ModelLocalizations.Label_Surfaces));
 
-                    ProjectTreeView.AddObject(new ProjectGroupNode(
+                    ProjectTreeView.AddObject(new ProjectCollectionNode(
                         CurrentProject.Collisions,
                         ModelLocalizations.Label_Collisions));
 
-                    ProjectTreeView.AddObject(new ProjectGroupNode(
+                    ProjectTreeView.AddObject(new ProjectCollectionNode(
                         CurrentProject.Connections,
                         ModelLocalizations.Label_Connections));
 
-                    foreach (ProjectGroupNode node in ProjectTreeView.Roots)
+                    foreach (ProjectCollectionNode node in ProjectTreeView.Roots)
                         ProjectTreeView.Expand(node);
                 }
                 else
@@ -171,9 +171,9 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         #endregion
 
-        protected override void OnProjectElementsChanged(CollectionChangedEventArgs e)
+        protected override void OnProjectElementsChanged()
         {
-            base.OnProjectElementsChanged(e);
+            base.OnProjectElementsChanged();
             RebuildNavigation(false);
         }
 
@@ -199,6 +199,38 @@ namespace LDDModder.BrickEditor.UI.Panels
             InternalSelection = false;
         }
 
-        
+        private void ElementsContextMenu_Opening(object sender, CancelEventArgs e)
+        {
+            if (!ProjectManager.IsProjectOpen)
+            {
+                e.Cancel = true;
+                return;
+            }
+
+            var selectedNodes = ProjectTreeView.SelectedObjects.OfType<BaseProjectNode>();
+            if (selectedNodes.Any())
+            {
+                ElementsMenu_Delete.Visible = selectedNodes.All(x => x is ProjectElementNode);
+            }
+        }
+
+        private void ElementsMenu_Delete_Click(object sender, EventArgs e)
+        {
+            var elements = GetSelectedElements().ToList();
+            if (elements.Count > 1)
+            {
+                //TODO: show confirmation message whene deleting more than one
+            }
+            ProjectManager.ClearSelection();
+
+            ProjectManager.StartBatchChanges();
+
+            var removedElements = elements.Where(x => x.TryRemove()).ToList();
+
+            if (removedElements.OfType<ModelMeshReference>().Any())
+                CurrentProject.RemoveUnreferencedMeshes();
+            ProjectManager.EndBatchChanges();
+
+        }
     }
 }

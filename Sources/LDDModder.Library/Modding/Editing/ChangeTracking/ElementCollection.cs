@@ -21,6 +21,8 @@ namespace LDDModder.Modding.Editing
         void Add(PartElement element);
 
         void Remove(PartElement element);
+
+        bool Contains(PartElement element);
     }
 
     [Serializable]
@@ -178,6 +180,11 @@ namespace LDDModder.Modding.Editing
         }
 
         public bool Contains(T item)
+        {
+            return InnerList.Contains(item);
+        }
+
+        public bool Contains(PartElement item)
         {
             return InnerList.Contains(item);
         }

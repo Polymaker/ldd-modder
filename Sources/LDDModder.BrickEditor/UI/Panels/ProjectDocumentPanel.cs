@@ -26,12 +26,11 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             ProjectManager.ProjectClosed += ProjectManager_ProjectClosed;
             ProjectManager.ProjectChanged += ProjectManager_ProjectChanged;
+            ProjectManager.ElementCollectionChanged += ProjectManager_ElementCollectionChanged;
             ProjectManager.ProjectElementsChanged += ProjectManager_ProjectElementsChanged;
             ProjectManager.ElementPropertyChanged += ProjectManager_ElementPropertyChanged;
             ProjectManager.SelectionChanged += ProjectManager_SelectionChanged;
         }
-
-        
 
         private void ProjectManager_ProjectClosed(object sender, EventArgs e)
         {
@@ -54,12 +53,23 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         }
 
-        private void ProjectManager_ProjectElementsChanged(object sender, CollectionChangedEventArgs e)
+        private void ProjectManager_ElementCollectionChanged(object sender, CollectionChangedEventArgs e)
         {
-            OnProjectElementsChanged(e);
+            //if (!(ProjectManager.IsExecutingBatchChanges || ProjectManager.IsExecutingUndoRedo))
+                OnElementCollectionChanged(e);
         }
 
-        protected virtual void OnProjectElementsChanged(CollectionChangedEventArgs e)
+        protected virtual void OnElementCollectionChanged(CollectionChangedEventArgs e)
+        {
+
+        }
+
+        private void ProjectManager_ProjectElementsChanged(object sender, EventArgs e)
+        {
+            OnProjectElementsChanged();
+        }
+
+        protected virtual void OnProjectElementsChanged()
         {
 
         }
