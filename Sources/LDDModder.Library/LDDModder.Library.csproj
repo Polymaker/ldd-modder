@@ -202,9 +202,7 @@
     <Compile Include="Utilities\MathHelper.cs" />
     <Compile Include="Utilities\StringUtils.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Rebrickable\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>

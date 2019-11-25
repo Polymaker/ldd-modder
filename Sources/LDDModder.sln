@@ -15,6 +15,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LDDModder.LifExtractor", "LDDModder.LifExtractor\LDDModder.LifExtractor.csproj", "{FE3028F1-F15F-4263-A169-77F00333D795}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LDDModder.PaletteMaker", "LDDModder.PaletteMaker\LDDModder.PaletteMaker.csproj", "{5492B62D-8941-4F76-AA02-2DB5C787AC57}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,14 @@ Global
 		{FE3028F1-F15F-4263-A169-77F00333D795}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FE3028F1-F15F-4263-A169-77F00333D795}.Release|x64.ActiveCfg = Release|x64
 		{FE3028F1-F15F-4263-A169-77F00333D795}.Release|x64.Build.0 = Release|x64
+		{5492B62D-8941-4F76-AA02-2DB5C787AC57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5492B62D-8941-4F76-AA02-2DB5C787AC57}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5492B62D-8941-4F76-AA02-2DB5C787AC57}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{5492B62D-8941-4F76-AA02-2DB5C787AC57}.Debug|x64.Build.0 = Debug|Any CPU
+		{5492B62D-8941-4F76-AA02-2DB5C787AC57}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5492B62D-8941-4F76-AA02-2DB5C787AC57}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5492B62D-8941-4F76-AA02-2DB5C787AC57}.Release|x64.ActiveCfg = Release|Any CPU
+		{5492B62D-8941-4F76-AA02-2DB5C787AC57}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -63,9 +73,10 @@ Global
 		{9C186783-9516-4837-8BC6-A5EC1158E17F} = {B52B75BF-8B19-49FF-9479-6B3EDFEBCB87}
 		{5379F456-A474-4108-ACD8-3B179CF4D041} = {406BD71D-724C-4575-A7DD-982B1EC329AB}
 		{FE3028F1-F15F-4263-A169-77F00333D795} = {406BD71D-724C-4575-A7DD-982B1EC329AB}
+		{5492B62D-8941-4F76-AA02-2DB5C787AC57} = {406BD71D-724C-4575-A7DD-982B1EC329AB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		RESX_SaveFilesImmediatelyUponChange = False
 		SolutionGuid = {458206FC-7A4F-48CD-87ED-E84434A5C4CA}
+		RESX_SaveFilesImmediatelyUponChange = False
 	EndGlobalSection
 EndGlobal
