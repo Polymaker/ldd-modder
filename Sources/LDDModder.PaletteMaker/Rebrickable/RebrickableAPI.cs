@@ -10,51 +10,67 @@ using System.Threading.Tasks;
 
 namespace LDDModder.PaletteMaker.Rebrickable
 {
-    public class RebrickableAPI
+    public static class RebrickableAPI
     {
-        public string ApiKey { get; set; }
+        public static string ApiKey { get; set; }
 
-        public RebrickableAPI(string apiKey)
+        public static RestClient Client { get; private set; }
+
+        public static void InitializeClient()
         {
-            ApiKey = apiKey;
+            Client = new RestClient("https://rebrickable.com/api/v3");
+            Client.UseSerializer(() => new JsonNetSerializer());
+            Client.AddDefaultHeader("Authorization", $"key {ApiKey}");
         }
 
-        public RestClient GetClient()
+        public static IEnumerable<Color> GetAllColors()
         {
-            var client = new RestClient("https://rebrickable.com/api/v3");
-            client.UseSerializer(() => new JsonNetSerializer());
-            client.AddDefaultHeader("Authorization", ApiKey);
-            return client;
+            var request = new RestRequest("lego/colors/", Method.GET, DataFormat.Json);
+            return GetRequestAllPages<Color>(request);
         }
 
-        public void GetSetsRequest()
-        {
+        //public RestRequest GetPagedRequest(string url, int page, int pageSize = 100)
+        //{
+        //    var request = new RestRequest(url, Method.GET, DataFormat.Json);
+        //    request.AddParameter("page", page);
+        //    request.AddParameter("page_size", pageSize);
+        //    return request;
+        //}
 
-        }
-
-        public RestRequest GetPagedRequest(string url, int page, int pageSize = 100)
+        //public IEnumerable<T> ExecutePagedRequest<T>(RestRequest request)
+        //{
+        //    //IEnumerable<T> results = Enumerable.Empty<T>();
+        //    var requestResult = Client.Execute<PagedResult<T>>(request);
+        //    //if (requestResult.IsSuccessful)
+        //    //    results = requestResult.Data.Results;
+        //    //if (requestResult.IsSuccessful && !string.IsNullOrEmpty(requestResult.Data.Next))
+        //    //{
+        //    //    var newRequest = new RestRequest(requestResult.Data.Next, Method.GET, DataFormat.Json);
+        //    //    requestResult = client.Execute<PagedResult<T>>(newRequest);
+        //    //    if (requestResult.IsSuccessful)
+        //    //        results = results.Concat(requestResult.Data.Results);
+        //    //}
+        //    return requestResult.Data.Results;
+        //}
+        
+        public static IEnumerable<T> GetRequestAllPages<T>(RestRequest request)
         {
-            var request = new RestRequest(url, Method.GET, DataFormat.Json);
-            request.AddParameter("page", page);
-            request.AddParameter("page_size", pageSize);
-            return request;
-        }
+            IEnumerable<T> results = Enumerable.Empty<T>();
 
-        public IEnumerable<T> ExecutePagedRequest<T>(RestRequest request)
-        {
-            var client = GetClient();
-            //IEnumerable<T> results = Enumerable.Empty<T>();
-            var requestResult = client.Execute<PagedResult<T>>(request);
-            //if (requestResult.IsSuccessful)
-            //    results = requestResult.Data.Results;
-            //if (requestResult.IsSuccessful && !string.IsNullOrEmpty(requestResult.Data.Next))
-            //{
-            //    var newRequest = new RestRequest(requestResult.Data.Next, Method.GET, DataFormat.Json);
-            //    requestResult = client.Execute<PagedResult<T>>(newRequest);
-            //    if (requestResult.IsSuccessful)
-            //        results = results.Concat(requestResult.Data.Results);
-            //}
-            return requestResult.Data.Results;
+            var requestResult = Client.Execute<PagedResult<T>>(request);
+
+            while (requestResult.IsSuccessful)
+            {
+                results = results.Concat(requestResult.Data.Results);
+
+                if (string.IsNullOrEmpty(requestResult.Data.Next))
+                    break;
+
+                var newRequest = new RestRequest(requestResult.Data.Next, Method.GET, DataFormat.Json);
+                requestResult = Client.Execute<PagedResult<T>>(newRequest);
+            }
+
+            return results;
         }
 
         class JsonNetSerializer : IRestSerializer

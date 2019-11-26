@@ -19,6 +19,6 @@ namespace LDDModder.PaletteMaker.Rebrickable.Models
         public string Previous { get; set; }
 
         [JsonProperty("results")]
-        public IList<T> Results { get; set; }
+        public List<T> Results { get; set; }
     }
 }

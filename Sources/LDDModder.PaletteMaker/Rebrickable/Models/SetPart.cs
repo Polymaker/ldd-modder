@@ -16,7 +16,7 @@ namespace LDDModder.PaletteMaker.Rebrickable.Models
         public Part Part { get; set; }
 
         [JsonProperty("color")]
-        public PartColor Color { get; set; }
+        public Color Color { get; set; }
 
         [JsonProperty("set_num")]
         public string SetNum { get; set; }

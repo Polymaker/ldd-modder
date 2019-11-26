@@ -1,24 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace LDDModder.PaletteMaker.Rebrickable.Models
 {
     public class PartColor
     {
-        [JsonProperty("id")]
-        public int Id { get; set; }
+        [JsonProperty("color_id")]
+        public int ColorId { get; set; }
 
-        [JsonProperty("name")]
-        public string Name { get; set; }
+        [JsonProperty("color_name")]
+        public string ColorName { get; set; }
 
-        [JsonProperty("rgb")]
-        public string RgbHex { get; set; }
+        [JsonProperty("num_sets")]
+        public int NumSets { get; set; }
 
-        [JsonProperty("is_trans")]
-        public bool IsTransparent { get; set; }
+        [JsonProperty("num_set_parts")]
+        public int NumSetParts { get; set; }
 
-        [JsonProperty("external_ids")]
-        public ExternalColorIds ExternalColorIds { get; set; }
+        [JsonProperty("part_img_url")]
+        public string PartImgUrl { get; set; }
+
+        [JsonProperty("elements")]
+        public List<string> Elements { get; set; }
     }
 }

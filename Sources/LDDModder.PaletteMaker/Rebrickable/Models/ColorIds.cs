@@ -7,9 +7,9 @@ namespace LDDModder.PaletteMaker.Rebrickable.Models
     public class ColorIds
     {
         [JsonProperty("ext_ids")]
-        public IList<int> ExtIds { get; set; }
+        public List<int> ExtIds { get; set; }
 
         [JsonProperty("ext_descrs")]
-        public IList<IList<string>> ExtDescrs { get; set; }
+        public List<string[]> ExtDescrs { get; set; }
     }
 }

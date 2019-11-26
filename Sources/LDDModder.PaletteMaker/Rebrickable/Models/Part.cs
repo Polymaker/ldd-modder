@@ -28,13 +28,13 @@ namespace LDDModder.PaletteMaker.Rebrickable.Models
         public string PartImgUrl { get; set; }
 
         [JsonProperty("prints")]
-        public IList<string> Prints { get; set; }
+        public List<string> Prints { get; set; }
 
         [JsonProperty("molds")]
-        public IList<string> Molds { get; set; }
+        public List<string> Molds { get; set; }
 
         [JsonProperty("alternates")]
-        public IList<string> Alternates { get; set; }
+        public List<string> Alternates { get; set; }
 
         [JsonProperty("external_ids")]
         public ExternalPartIds ExternalIds { get; set; }
