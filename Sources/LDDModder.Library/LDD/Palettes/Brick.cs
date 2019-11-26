@@ -19,6 +19,19 @@ namespace LDDModder.LDD.Palettes
         [XmlElement("Decoration")]
         public List<Decoration> Decorations { get; set; }
 
+        [XmlIgnore]
         public override bool HasDecorations => Decorations.Any();
+
+        public Brick()
+        {
+        }
+
+        public Brick(int designID, string elementID) : base(designID, elementID)
+        {
+        }
+
+        public Brick(int designID, string elementID, int quantity) : base(designID, elementID, quantity)
+        {
+        }
     }
 }

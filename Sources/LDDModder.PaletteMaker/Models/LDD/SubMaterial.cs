@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace LDDModder.PaletteMaker.Models.Palettes
+namespace LDDModder.PaletteMaker.Models.LDD
 {
     [Table("SubMaterials")]
     public class SubMaterial
@@ -19,5 +19,14 @@ namespace LDDModder.PaletteMaker.Models.Palettes
 
         public int MaterialID { get; set; }
 
+        public SubMaterial()
+        {
+        }
+
+        public SubMaterial(int surfaceID, int materialID)
+        {
+            SurfaceID = surfaceID;
+            MaterialID = materialID;
+        }
     }
 }

@@ -29,30 +29,25 @@ namespace LDDModder.PaletteMaker.Rebrickable
             return GetRequestAllPages<Color>(request);
         }
 
-        //public RestRequest GetPagedRequest(string url, int page, int pageSize = 100)
-        //{
-        //    var request = new RestRequest(url, Method.GET, DataFormat.Json);
-        //    request.AddParameter("page", page);
-        //    request.AddParameter("page_size", pageSize);
-        //    return request;
-        //}
+        public static IEnumerable<Category> GetAllCategories()
+        {
+            var request = new RestRequest("lego/part_categories/", Method.GET, DataFormat.Json);
+            return GetRequestAllPages<Category>(request);
+        }
 
-        //public IEnumerable<T> ExecutePagedRequest<T>(RestRequest request)
-        //{
-        //    //IEnumerable<T> results = Enumerable.Empty<T>();
-        //    var requestResult = Client.Execute<PagedResult<T>>(request);
-        //    //if (requestResult.IsSuccessful)
-        //    //    results = requestResult.Data.Results;
-        //    //if (requestResult.IsSuccessful && !string.IsNullOrEmpty(requestResult.Data.Next))
-        //    //{
-        //    //    var newRequest = new RestRequest(requestResult.Data.Next, Method.GET, DataFormat.Json);
-        //    //    requestResult = client.Execute<PagedResult<T>>(newRequest);
-        //    //    if (requestResult.IsSuccessful)
-        //    //        results = results.Concat(requestResult.Data.Results);
-        //    //}
-        //    return requestResult.Data.Results;
-        //}
-        
+        public static IEnumerable<Theme> GetAllThemes()
+        {
+            var request = new RestRequest("lego/themes/", Method.GET, DataFormat.Json);
+            return GetRequestAllPages<Theme>(request);
+        }
+
+        public static IEnumerable<SetPart> GetSetParts(string setID)
+        {
+            var request = new RestRequest("lego/sets/{set_num}/parts/", Method.GET, DataFormat.Json);
+            request.AddUrlSegment("set_num", setID);
+            return GetRequestAllPages<SetPart>(request);
+        }
+
         public static IEnumerable<T> GetRequestAllPages<T>(RestRequest request)
         {
             IEnumerable<T> results = Enumerable.Empty<T>();
@@ -71,6 +66,14 @@ namespace LDDModder.PaletteMaker.Rebrickable
             }
 
             return results;
+        }
+
+        public static Set GetSet(string setID)
+        {
+            var request = new RestRequest("lego/sets/{set_num}/", Method.GET, DataFormat.Json);
+            request.AddUrlSegment("set_num", setID);
+            var requestResult = Client.Execute<Set>(request);
+            return requestResult.IsSuccessful ? requestResult.Data : null;
         }
 
         class JsonNetSerializer : IRestSerializer

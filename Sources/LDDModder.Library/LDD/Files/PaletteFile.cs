@@ -61,11 +61,16 @@ namespace LDDModder.LDD.Files
                 directory = Path.Combine(directory, FileHelper.GetSafeFileName(Info.Name));
 
             Directory.CreateDirectory(directory);
+
             GeneratePaletteNames();
 
             Info.Save(Path.Combine(directory, Bag.FileName));
+
             foreach (var palette in Palettes)
-                palette.Save(Path.Combine(directory, palette.Name + ".paxml"));
+            {
+                var paletteName = FileHelper.GetSafeFileName(palette.Name);
+                palette.Save(Path.Combine(directory, paletteName + ".paxml"));
+            }
         }
 
         #endregion
@@ -97,16 +102,22 @@ namespace LDDModder.LDD.Files
         {
             var lif = new LifFile();
             var ms = new MemoryStream();
+
+            GeneratePaletteNames();
+
             Info.Save(ms);
             ms.Position = 0;
 
             lif.AddFile(ms, Bag.FileName);
+
             foreach (var palette in Palettes)
             {
+                var paletteName = FileHelper.GetSafeFileName(palette.Name);
+
                 ms = new MemoryStream();
                 palette.Save(ms);
                 ms.Position = 0;
-                lif.AddFile(ms, palette.Name + ".paxml");
+                lif.AddFile(ms, paletteName + ".paxml");
             }
 
             return lif;

@@ -30,6 +30,12 @@ namespace LDDModder.LDD.Palettes
 
         public bool BrandFilter { get; set; }
 
+        public Bag()
+        {
+            FileVersion = new VersionInfo(1, 0);
+            PaletteVersion = 1;
+        }
+
         #region Save / Load
 
         public void Save(string filename)

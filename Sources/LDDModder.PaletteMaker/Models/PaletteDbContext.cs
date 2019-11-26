@@ -1,4 +1,6 @@
-﻿using LDDModder.PaletteMaker.Models.Palettes;
+﻿using LDDModder.PaletteMaker.Models.LDD;
+using LDDModder.PaletteMaker.Models.LDD;
+using LDDModder.PaletteMaker.Models.Rebrickable;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -13,11 +15,31 @@ namespace LDDModder.PaletteMaker.Models
         
         #region LDD Elements
 
-        public DbSet<LegoElement> LegoElements { get; set; }
+        public DbSet<LddPart> LddParts { get; set; }
+
+        public DbSet<LddAssemblyPart> AssemblyParts { get; set; }
+
+        public DbSet<LddElement> LddElements { get; set; }
 
         public DbSet<PartConfiguration> Configurations { get; set; }
 
         #endregion
+
+        #region Rebrickable Elements
+
+        public DbSet<RbTheme> Themes { get; set; }
+
+        public DbSet<RbCategory> Categories { get; set; }
+
+        public DbSet<RbColor> Colors { get; set; }
+
+        public DbSet<RbPart> RbParts { get; set; }
+
+        public DbSet<RbPartRelation> RbPartRelationships { get; set; }
+
+        #endregion
+
+        public DbSet<PartMapping> PartMappings { get; set; }
 
         public PaletteDbContext(System.Data.SQLite.SQLiteConnection conn) : base(conn, false)
         {
@@ -31,7 +53,11 @@ namespace LDDModder.PaletteMaker.Models
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-
+            modelBuilder.Entity<RbPartRelation>()
+                    .HasRequired(m => m.ParentPart)
+                    .WithMany(t => t.Relationships)
+                    .HasForeignKey(m => m.ParentPartID)
+                    .WillCascadeOnDelete(false);
         }
     }
 }

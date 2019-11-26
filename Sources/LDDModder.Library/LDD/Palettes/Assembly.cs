@@ -13,6 +13,7 @@ namespace LDDModder.LDD.Palettes
         [XmlElement("Part")]
         public List<Part> Parts { get; set; }
 
+        [XmlIgnore]
         public override bool HasDecorations => Parts.Any(p => p.HasDecorations);
 
         [XmlRoot("Part")]
@@ -32,6 +33,35 @@ namespace LDDModder.LDD.Palettes
 
             [XmlIgnore]
             public bool HasDecorations => Decorations.Any();
+
+            public Part()
+            {
+                SubMaterials = new List<SubMaterial>();
+                Decorations = new List<Decoration>();
+            }
+
+            public Part(int designID, int materialID)
+            {
+                DesignID = designID;
+                MaterialID = materialID;
+                SubMaterials = new List<SubMaterial>();
+                Decorations = new List<Decoration>();
+            }
+        }
+
+        public Assembly()
+        {
+            Parts = new List<Part>();
+        }
+
+        public Assembly(int designID, string elementID) : base(designID, elementID)
+        {
+            Parts = new List<Part>();
+        }
+
+        public Assembly(int designID, string elementID, int quantity) : base(designID, elementID, quantity)
+        {
+            Parts = new List<Part>();
         }
     }
 }

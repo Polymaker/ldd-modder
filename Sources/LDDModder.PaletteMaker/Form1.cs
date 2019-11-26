@@ -1,6 +1,7 @@
 ﻿using LDDModder.LDD.Files;
 using LDDModder.PaletteMaker.Models;
 using LDDModder.PaletteMaker.Rebrickable;
+using LDDModder.Utilities;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,8 @@ namespace LDDModder.PaletteMaker
 {
     public partial class Form1 : Form
     {
+        public string DatabaseFilePath;
+
         public Form1()
         {
             InitializeComponent();
@@ -27,156 +30,244 @@ namespace LDDModder.PaletteMaker
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            //SQLiteConnection.CreateFile("Bricks.db");
+            string curPath = System.Reflection.Assembly.GetExecutingAssembly().Location;
+            var curDir = new DirectoryInfo(curPath);
+            while (curDir.Name.ToLower() != "bin")
+                curDir = curDir.Parent;
+            DatabaseFilePath = Path.Combine(curDir.Parent.FullName, "Bricks.db");
+
             LDD.LDDEnvironment.Initialize();
             RebrickableAPI.ApiKey = "aU49o5xulf";
             RebrickableAPI.InitializeClient();
+
+            InitializeDB();
+        }
+
+        private void InitializeDB()
+        {
+            string curPath = System.Reflection.Assembly.GetExecutingAssembly().Location;
+            curPath = Path.GetDirectoryName(curPath);
+            DatabaseFilePath = Path.Combine(curPath, "Bricks.db");
+
+            if (!File.Exists(DatabaseFilePath))
+            {
+                File.Copy(Path.Combine(curPath, "Resources\\EmptyDatabase.db"), DatabaseFilePath);
+                DatabaseInitializer.InitDb(DatabaseFilePath);
+            }
+
+            //DatabaseInitializer.InitRebrickableParts(DatabaseFilePath,
+            //    @"C:\Users\JWTurner\Documents\Development\Test\ldd-modder\parts.csv");
+
+            //DatabaseInitializer.InitRebrickablePartRelationships(DatabaseFilePath,
+            //    @"C:\Users\JWTurner\Documents\Development\Test\ldd-modder\part_relationships.csv");
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             Task.Factory.StartNew(() =>
             {
-                ImportLddPalette();
+                CreatePaletteFromSet("75252-1");
             });
         }
 
-        private PaletteFile GetLddPalette()
+        class PartMatchResult
         {
-            var appDataPalettes = LDD.LDDEnvironment.Current.GetAppDataSubDir("Palettes");
-            if (File.Exists(Path.Combine(appDataPalettes, "LDD.lif")))
-                return PaletteFile.FromLif(Path.Combine(appDataPalettes, "LDD.lif"));
-            if (Directory.Exists(Path.Combine(appDataPalettes, "LDD")))
-                return PaletteFile.FromDirectory(Path.Combine(appDataPalettes, "LDD"));
-            string dbLifPath = Path.Combine(LDD.LDDEnvironment.Current.ApplicationDataPath, "db.lif");
-
-            if (File.Exists(dbLifPath))
-            {
-                using (var lif = LifFile.Open(dbLifPath))
-                {
-                    var paletteEntry = lif.GetAllFiles().FirstOrDefault(x => x.Name == "LDD.lif");
-                    if (paletteEntry != null)
-                    {
-                        using (var paletteLif = LifFile.Read(paletteEntry.GetStream()))
-                            return PaletteFile.FromLif(paletteLif);
-                    }
-                }
-            }
-
-            return null;
+            public Rebrickable.Models.Part RebrickablePart { get; set; }
+            public Models.LDD.LddPart LddPart { get; set; }
         }
 
-        private void ImportLddPalette()
+        private void CreatePaletteFromSet(string setNumber)
         {
-            var lddPalette = GetLddPalette();
-            if (lddPalette == null)
-                return;
-            int processedCount = 0;
+            var setInfo = RebrickableAPI.GetSet(setNumber);
 
-            var db = new PaletteDbContext("Data Source=Bricks.db");
-
-            foreach (var item in lddPalette.Palettes[0].Items)
+            var setParts = RebrickableAPI.GetSetParts(setNumber).ToList();
+            var palette = new LDD.Palettes.Palette()
             {
-                var legoElem = db.LegoElements.FirstOrDefault(x => x.DesignID == item.DesignID.ToString() && x.ElementID == item.ElementID);
-
-                if (legoElem == null)
-                {
-                    legoElem = new Models.Palettes.LegoElement()
-                    {
-                        DesignID = item.DesignID.ToString(),
-                        ElementID = item.ElementID,
-                        IsAssembly = (item is LDD.Palettes.Assembly)
-                    };
-                    db.LegoElements.Add(legoElem);
-
-                    if (item is LDD.Palettes.Assembly assy)
-                    {
-                        foreach (var part in assy.Parts)
-                            legoElem.Configurations.Add(AssemblyPartToConfig(part));
-                    }
-                    else if (item is LDD.Palettes.Brick brick)
-                    {
-                        legoElem.Configurations.Add(PaletteBrickToConfig(brick));
-                    }
-                }
-
-                processedCount++;
-                if (processedCount % 100 == 0)
-                {
-                    Debug.WriteLine($"Total processed: {processedCount} of {lddPalette.Palettes[0].Items.Count}");
-                    db.SaveChanges();
-                    db.Dispose();
-                    db = new PaletteDbContext("Data Source=Bricks.db");
-                }
-                
-            }
-
-            db.SaveChanges();
-            db.Dispose();
-        }
-
-        private static Models.Palettes.PartConfiguration AssemblyPartToConfig(LDD.Palettes.Assembly.Part part)
-        {
-            var partConfig = new Models.Palettes.PartConfiguration()
-            {
-                DesignID = part.DesignID.ToString(),
-                MaterialID = part.MaterialID,
+                Name = setInfo.SetNum
             };
-            if (part.Decorations?.Any() ?? false)
-            {
-                foreach (var deco in part.Decorations)
-                {
-                    partConfig.Decorations.Add(new Models.Palettes.Decoration()
-                    {
-                        SurfaceID = deco.SurfaceID,
-                        DecorationID = deco.DecorationID
-                    });
-                }
-            }
-            if (part.SubMaterials?.Any() ?? false)
-            {
-                foreach (var subMat in part.SubMaterials)
-                {
-                    partConfig.SubMaterials.Add(new Models.Palettes.SubMaterial()
-                    {
-                        SurfaceID = subMat.SurfaceID,
-                        MaterialID = subMat.MaterialID
-                    });
-                }
-            }
-            return partConfig;
-        }
+            int totalSetParts = setParts.Count;
+            int totalMatchedParts = 0;
+            var unmatchedParts = new List<Rebrickable.Models.SetPart>();
 
-        private static Models.Palettes.PartConfiguration PaletteBrickToConfig(LDD.Palettes.Brick part)
-        {
-            var partConfig = new Models.Palettes.PartConfiguration()
+            using (var db = new PaletteDbContext($"Data Source={DatabaseFilePath}"))
             {
-                DesignID = part.DesignID.ToString(),
-                MaterialID = part.MaterialID,
-            };
-            if (part.Decorations?.Any() ?? false)
-            {
-                foreach (var deco in part.Decorations)
+                foreach (var setPart in setParts)
                 {
-                    partConfig.Decorations.Add(new Models.Palettes.Decoration()
+                    if (setPart.Color == null || setPart.Color.Id == 9999)
+                        continue;
+
+                    if (!string.IsNullOrEmpty(setPart.ElementId))
                     {
-                        SurfaceID = deco.SurfaceID,
-                        DecorationID = deco.DecorationID
-                    });
+                        var exisintElem = db.LddElements.FirstOrDefault(x => x.ElementID == setPart.ElementId);
+
+                        if (exisintElem != null)
+                        {
+                            palette.Items.Add(exisintElem.ToPaletteItem(setPart.Quantity));
+                            totalMatchedParts++;
+                        }
+                        else
+                        {
+                            var rbPart = db.RbParts.FirstOrDefault(x => x.PartID == setPart.Part.PartNum);
+                            if (rbPart == null)
+                                continue;
+
+                            var rbColor = db.Colors.FirstOrDefault(x => x.ID == setPart.Color.Id);
+
+                            if (rbColor == null)
+                                continue;
+
+                            var lddColor = rbColor.ColorMatches.FirstOrDefault(x => x.Platform == "LEGO");
+
+                            if (lddColor == null)
+                            {
+                                unmatchedParts.Add(setPart);
+                                Debug.WriteLine($"Could not match Rb color {rbColor.ID}");
+                                continue;
+                            }
+
+                            var foundPartMatch = db.PartMappings.FirstOrDefault(x => x.RebrickableID == setPart.Part.PartNum && x.IsActive);
+                            
+                            if (foundPartMatch != null)
+                            {
+                                var lddPart = db.LddParts.FirstOrDefault(x => x.DesignID == foundPartMatch.LddID);
+
+                                var newLddElement = db.LddElements.FirstOrDefault(x => x.DesignID == foundPartMatch.LddID);
+                                
+                                if (newLddElement != null)
+                                {
+                                    newLddElement = newLddElement.Clone(setPart.ElementId);
+                                    newLddElement.Configurations.First().MaterialID = lddColor.ID;
+
+                                    db.LddElements.Add(newLddElement);
+                                    palette.Items.Add(newLddElement.ToPaletteItem(setPart.Quantity));
+                                    totalMatchedParts++;
+                                }
+                                else
+                                {
+                                    newLddElement = new Models.LDD.LddElement()
+                                    {
+                                        DesignID = foundPartMatch.LddID,
+                                        ElementID = setPart.ElementId,
+                                        IsAssembly = lddPart.IsAssembly 
+                                    };
+
+                                    if (!lddPart.IsAssembly)
+                                    {
+                                        newLddElement.Configurations.Add(new Models.LDD.PartConfiguration()
+                                        {
+                                            DesignID = foundPartMatch.LddID,
+                                            MaterialID = lddColor.ColorID
+                                        });
+
+                                        db.LddElements.Add(newLddElement);
+                                        palette.Items.Add(newLddElement.ToPaletteItem(setPart.Quantity));
+                                        totalMatchedParts++;
+                                    }
+                                    else
+                                    {
+                                        var assemParts = db.AssemblyParts.Where(x => x.AssemblyID == lddPart.DesignID).ToList();
+                                        
+                                        if (assemParts.Any())
+                                        {
+                                            foreach (var subPart in assemParts)
+                                            {
+                                                var materials = subPart.GetMaterials();
+                                                var partConfig = new Models.LDD.PartConfiguration()
+                                                {
+                                                    DesignID = subPart.PartID,
+                                                    MaterialID = materials.FirstOrDefault()
+                                                };
+
+                                                if (materials.Count > 1)
+                                                {
+                                                    for (int i = 1; i < materials.Count; i++)
+                                                        partConfig.SubMaterials.Add(new Models.LDD.SubMaterial(i, materials[i]));
+                                                }
+
+                                                newLddElement.Configurations.Add(partConfig);
+                                            }
+
+                                            db.LddElements.Add(newLddElement);
+                                            palette.Items.Add(newLddElement.ToPaletteItem(setPart.Quantity));
+                                            totalMatchedParts++;
+                                        }
+                                        else
+                                            unmatchedParts.Add(setPart);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                unmatchedParts.Add(setPart);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        var rbPart = db.RbParts.FirstOrDefault(x => x.PartID == setPart.Part.PartNum);
+                        if (rbPart == null)
+                            continue;
+
+                        var rbColor = db.Colors.FirstOrDefault(x => x.ID == setPart.Color.Id);
+
+                        if (rbColor == null)
+                            continue;
+
+                        var lddColor = rbColor.ColorMatches.FirstOrDefault(x => x.Platform == "LEGO");
+
+                        if (lddColor == null)
+                        {
+                            unmatchedParts.Add(setPart);
+                            Debug.WriteLine($"Could not match Rb color {rbColor.ID}");
+                            continue;
+                        }
+
+                        var foundPartMatch = db.PartMappings.FirstOrDefault(x => x.RebrickableID == setPart.Part.PartNum && x.IsActive);
+
+                        if (foundPartMatch != null)
+                        {
+                            var lddPart = db.LddParts.FirstOrDefault(x => x.DesignID == foundPartMatch.LddID);
+
+                            if (!lddPart.IsAssembly)
+                            {
+                                palette.Items.Add(new LDD.Palettes.Brick(
+                                    int.Parse(lddPart.DesignID), string.Empty, setPart.Quantity));
+                                totalMatchedParts++;
+                            }
+                            else
+                                unmatchedParts.Add(setPart);
+                        }
+                        else
+                        {
+                            unmatchedParts.Add(setPart);
+                        }
+                    }
+                        
                 }
+
+                db.SaveChanges();
+
+                Debug.WriteLine($"Matched {totalMatchedParts} of {totalSetParts} parts");
+                Debug.WriteLine("Unmatched parts:");
+                foreach (var part in unmatchedParts)
+                    Debug.WriteLine($"{part.Part.PartNum} {part.Part.Name} Color: {part.Color.Name} ({part.ElementId})");
             }
-            if (part.SubMaterials?.Any() ?? false)
+
+            var paletteFile = new PaletteFile(new LDD.Palettes.Bag()
             {
-                foreach (var subMat in part.SubMaterials)
-                {
-                    partConfig.SubMaterials.Add(new Models.Palettes.SubMaterial()
-                    {
-                        SurfaceID = subMat.SurfaceID,
-                        MaterialID = subMat.MaterialID
-                    });
-                }
-            }
-            return partConfig;
+                Name = $"{setInfo.SetNum} {setInfo.Name}",
+                Countable = true,
+                ParentBrand = LDD.Data.Brand.LDD
+            });
+
+            paletteFile.Palettes.Add(palette);
+
+            var userPaletteDir = LDD.LDDEnvironment.Current.GetAppDataSubDir("UserPalettes");
+            string paletteFileName = FileHelper.GetSafeFileName(setInfo.Name.Replace(" ", ""));
+
+            paletteFile.SaveToDirectory(Path.Combine(userPaletteDir, paletteFileName), false);
+
+            //paletteFile.SaveAsLif(Path.Combine(userPaletteDir, paletteFileName) + ".lif");
         }
     }
 }

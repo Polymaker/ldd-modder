@@ -198,7 +198,10 @@ namespace LDDModder.LDD.Primitives
                                 case "aliases":
                                     var aliases = value.Split(';');
                                     for (int i = 0; i < aliases.Length; i++)
-                                        Aliases.Add(int.Parse(aliases[i]));
+                                    {
+                                        if (int.TryParse(aliases[i], out int aliasID))
+                                            Aliases.Add(aliasID);
+                                    }
                                     break;
                                 case "designname":
                                     Name = value;

@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace LDDModder.PaletteMaker.Models.Palettes
+namespace LDDModder.PaletteMaker.Models.LDD
 {
     [Table("Decorations")]
     public class Decoration

@@ -1101,6 +1101,13 @@ namespace LDDModder.LDD.Files
                         File.GetLastWriteTime(fs.Name),
                         File.GetLastAccessTime(fs.Name));
                 }
+                else
+                {
+                    newFile.SetFileAttributes(
+                        DateTime.Now,
+                        DateTime.Now,
+                        DateTime.Now);
+                }
 
                 return newFile;
             }

@@ -30,6 +30,7 @@ namespace LDDModder.LDD.Palettes
         public Palette()
         {
             Items = new List<PaletteItem>();
+            FileVersion = new VersionInfo(1, 0);
         }
 
         public void Save(string filename)
@@ -51,7 +52,12 @@ namespace LDDModder.LDD.Palettes
             };
             var bagElem = doc.Root.AddElement("Bag");
             foreach (var item in Items)
-                bagElem.Add(XmlHelper.DefaultSerialize(item));
+            {
+                if (item is Brick brick)
+                    bagElem.Add(XmlHelper.DefaultSerialize(brick));
+                else if (item is Assembly assembly)
+                    bagElem.Add(XmlHelper.DefaultSerialize(assembly));
+            }
             doc.Save(stream);
         }
 

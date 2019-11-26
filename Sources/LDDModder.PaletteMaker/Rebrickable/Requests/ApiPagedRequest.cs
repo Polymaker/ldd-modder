@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LDDModder.PaletteMaker.Rebrickable.Requests
 {
-    class Colors
+    public class ApiPagedRequest : ApiRequest
     {
 
     }
