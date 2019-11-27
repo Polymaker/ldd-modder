@@ -13,6 +13,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -52,7 +53,7 @@ namespace LDDModder.PaletteMaker
             if (!File.Exists(DatabaseFilePath))
             {
                 File.Copy(Path.Combine(curPath, "Resources\\EmptyDatabase.db"), DatabaseFilePath);
-                DatabaseInitializer.InitDb(DatabaseFilePath);
+                
             }
 
             //DatabaseInitializer.InitRebrickableParts(DatabaseFilePath, "parts.csv");
@@ -60,12 +61,47 @@ namespace LDDModder.PaletteMaker
             //DatabaseInitializer.InitRebrickablePartRelationships(DatabaseFilePath, "part_relationships.csv");
         }
 
+        private CancellationTokenSource CTS;
+
         private void button1_Click(object sender, EventArgs e)
         {
-            Task.Factory.StartNew(() =>
+            if (CTS == null)
             {
-                CreatePaletteFromSet("75252-1");
-            });
+                CTS = new CancellationTokenSource();
+                timer1.Start();
+                Task.Factory.StartNew(() =>
+                {
+                    DatabaseInitializer.ImportBaseData(DatabaseFilePath, CTS.Token, 
+                        new Progress<DatabaseInitializer.StepProgressInfo>(OnDbStepProgress), 
+                        new Progress<DatabaseInitializer.ProgressInfo>(OnDbImportProgress));
+
+                    BeginInvoke((Action)(() => {
+                        timer1.Stop();
+                        DisplayImportProgres();
+                    } ));
+
+                    //CreatePaletteFromSet("75252-1");
+                });
+            }
+            else
+            {
+                CTS.Cancel();
+                CTS = null;
+            }
+        }
+
+        private DatabaseInitializer.StepProgressInfo CurrentProgressStep;
+        private DatabaseInitializer.ProgressInfo CurrentImportProgress;
+
+        private void OnDbStepProgress(DatabaseInitializer.StepProgressInfo progress)
+        {
+            CurrentProgressStep = progress;
+            CurrentImportProgress = new DatabaseInitializer.ProgressInfo();
+        }
+
+        private void OnDbImportProgress(DatabaseInitializer.ProgressInfo progress)
+        {
+            CurrentImportProgress = progress;
         }
 
         class PartMatchResult
@@ -132,7 +168,13 @@ namespace LDDModder.PaletteMaker
                                 if (newLddElement != null)
                                 {
                                     newLddElement = newLddElement.Clone(setPart.ElementId);
-                                    newLddElement.Configurations.First().MaterialID = lddColor.ColorID;
+                                    int mainColorID = newLddElement.Configurations.First().MaterialID;
+
+                                    foreach (var cfg in newLddElement.Configurations)
+                                    {
+                                        if (cfg.MaterialID == mainColorID)
+                                            cfg.MaterialID = lddColor.ColorID;
+                                    }
 
                                     db.LddElements.Add(newLddElement);
                                     palette.Items.Add(newLddElement.ToPaletteItem(setPart.Quantity));
@@ -171,13 +213,13 @@ namespace LDDModder.PaletteMaker
                                                 var partConfig = new Models.LDD.PartConfiguration()
                                                 {
                                                     DesignID = subPart.PartID,
-                                                    MaterialID = materials.FirstOrDefault()
+                                                    MaterialID = lddColor.ColorID //materials.FirstOrDefault()
                                                 };
 
                                                 if (materials.Count > 1)
                                                 {
                                                     for (int i = 1; i < materials.Count; i++)
-                                                        partConfig.SubMaterials.Add(new Models.LDD.SubMaterial(i, materials[i]));
+                                                        partConfig.SubMaterials.Add(new Models.LDD.SubMaterial(i, lddColor.ColorID/*materials[i]*/));
                                                 }
 
                                                 newLddElement.Configurations.Add(partConfig);
@@ -306,6 +348,38 @@ namespace LDDModder.PaletteMaker
             }
 
             return null;
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            DisplayImportProgres();
+        }
+
+        private void DisplayImportProgres()
+        {
+            if (CurrentProgressStep.Total != 0)
+            {
+                label1.Text = CurrentProgressStep.Name;
+                progressBar1.Value = Math.Min(progressBar1.Value, CurrentProgressStep.Total);
+                progressBar1.Maximum = CurrentProgressStep.Total;
+                progressBar1.Value = CurrentProgressStep.Current;
+            }
+
+            if (CurrentImportProgress.Total != 0)
+            {
+                progressBar2.Value = Math.Min(progressBar2.Value, CurrentImportProgress.Total);
+                progressBar2.Maximum = CurrentImportProgress.Total;
+                progressBar2.Value = CurrentImportProgress.Current;
+            }
+            else if (progressBar2.Value > 0)
+            {
+                progressBar2.Value = 0;
+            }
         }
     }
 }

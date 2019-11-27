@@ -83,5 +83,10 @@ namespace LDDModder.LDD
         {
             return new DirectoryInfo(GetAppDataSubDir(path));
         }
+
+        public string GetDatabaseLifPath()
+        {
+            return Path.Combine(ApplicationDataPath, "db.lif");
+        }
     }
 }

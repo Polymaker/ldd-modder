@@ -17,6 +17,8 @@ namespace LDDModder.PaletteMaker.Models.LDD
 
         public bool IsAssembly { get; set; }
 
+        public int Flag { get; set; }
+
         public virtual ICollection<PartConfiguration> Configurations { get; set; }
 
         public LddElement()

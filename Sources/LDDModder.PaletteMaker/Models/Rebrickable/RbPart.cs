@@ -19,6 +19,8 @@ namespace LDDModder.PaletteMaker.Models.Rebrickable
 
         public string ParentPartID { get; set; }
 
+        public bool IsPrintOrPattern { get; set; }
+
         public virtual ICollection<RbPartRelation> Relationships { get; set; }
 
         public RbPart()
