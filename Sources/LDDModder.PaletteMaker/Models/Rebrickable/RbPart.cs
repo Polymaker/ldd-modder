@@ -17,6 +17,8 @@ namespace LDDModder.PaletteMaker.Models.Rebrickable
         [ForeignKey("CategoryID")]
         public virtual RbCategory Category { get; set; }
 
+        public string ParentPartID { get; set; }
+
         public virtual ICollection<RbPartRelation> Relationships { get; set; }
 
         public RbPart()

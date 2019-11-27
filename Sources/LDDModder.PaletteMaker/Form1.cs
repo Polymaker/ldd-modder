@@ -55,11 +55,9 @@ namespace LDDModder.PaletteMaker
                 DatabaseInitializer.InitDb(DatabaseFilePath);
             }
 
-            //DatabaseInitializer.InitRebrickableParts(DatabaseFilePath,
-            //    @"C:\Users\JWTurner\Documents\Development\Test\ldd-modder\parts.csv");
+            //DatabaseInitializer.InitRebrickableParts(DatabaseFilePath, "parts.csv");
 
-            //DatabaseInitializer.InitRebrickablePartRelationships(DatabaseFilePath,
-            //    @"C:\Users\JWTurner\Documents\Development\Test\ldd-modder\part_relationships.csv");
+            //DatabaseInitializer.InitRebrickablePartRelationships(DatabaseFilePath, "part_relationships.csv");
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -98,11 +96,11 @@ namespace LDDModder.PaletteMaker
 
                     if (!string.IsNullOrEmpty(setPart.ElementId))
                     {
-                        var exisintElem = db.LddElements.FirstOrDefault(x => x.ElementID == setPart.ElementId);
+                        var existingElem = db.LddElements.FirstOrDefault(x => x.ElementID == setPart.ElementId);
 
-                        if (exisintElem != null)
+                        if (existingElem != null)
                         {
-                            palette.Items.Add(exisintElem.ToPaletteItem(setPart.Quantity));
+                            palette.Items.Add(existingElem.ToPaletteItem(setPart.Quantity));
                             totalMatchedParts++;
                         }
                         else
@@ -116,7 +114,7 @@ namespace LDDModder.PaletteMaker
                             if (rbColor == null)
                                 continue;
 
-                            var lddColor = rbColor.ColorMatches.FirstOrDefault(x => x.Platform == "LEGO");
+                            var lddColor = rbColor.ColorMatches.OrderBy(x => x.ColorID).FirstOrDefault(x => x.Platform == "LEGO");
 
                             if (lddColor == null)
                             {
@@ -125,18 +123,16 @@ namespace LDDModder.PaletteMaker
                                 continue;
                             }
 
-                            var foundPartMatch = db.PartMappings.FirstOrDefault(x => x.RebrickableID == setPart.Part.PartNum && x.IsActive);
-                            
-                            if (foundPartMatch != null)
-                            {
-                                var lddPart = db.LddParts.FirstOrDefault(x => x.DesignID == foundPartMatch.LddID);
+                            var lddPart = FindMatchingPart(db, rbPart, rbPart.PartID, setPart.Part.PartNum);
 
-                                var newLddElement = db.LddElements.FirstOrDefault(x => x.DesignID == foundPartMatch.LddID);
+                            if (lddPart != null)
+                            {
+                                var newLddElement = db.LddElements.FirstOrDefault(x => x.DesignID == lddPart.DesignID);
                                 
                                 if (newLddElement != null)
                                 {
                                     newLddElement = newLddElement.Clone(setPart.ElementId);
-                                    newLddElement.Configurations.First().MaterialID = lddColor.ID;
+                                    newLddElement.Configurations.First().MaterialID = lddColor.ColorID;
 
                                     db.LddElements.Add(newLddElement);
                                     palette.Items.Add(newLddElement.ToPaletteItem(setPart.Quantity));
@@ -146,7 +142,7 @@ namespace LDDModder.PaletteMaker
                                 {
                                     newLddElement = new Models.LDD.LddElement()
                                     {
-                                        DesignID = foundPartMatch.LddID,
+                                        DesignID = lddPart.DesignID,
                                         ElementID = setPart.ElementId,
                                         IsAssembly = lddPart.IsAssembly 
                                     };
@@ -155,7 +151,7 @@ namespace LDDModder.PaletteMaker
                                     {
                                         newLddElement.Configurations.Add(new Models.LDD.PartConfiguration()
                                         {
-                                            DesignID = foundPartMatch.LddID,
+                                            DesignID = lddPart.DesignID,
                                             MaterialID = lddColor.ColorID
                                         });
 
@@ -213,7 +209,7 @@ namespace LDDModder.PaletteMaker
                         if (rbColor == null)
                             continue;
 
-                        var lddColor = rbColor.ColorMatches.FirstOrDefault(x => x.Platform == "LEGO");
+                        var lddColor = rbColor.ColorMatches.OrderBy(x=>x.ColorID).FirstOrDefault(x => x.Platform == "LEGO");
 
                         if (lddColor == null)
                         {
@@ -222,16 +218,16 @@ namespace LDDModder.PaletteMaker
                             continue;
                         }
 
-                        var foundPartMatch = db.PartMappings.FirstOrDefault(x => x.RebrickableID == setPart.Part.PartNum && x.IsActive);
-
-                        if (foundPartMatch != null)
+                        var lddPart = FindMatchingPart(db, rbPart, rbPart.PartID, setPart.Part.PartNum);
+                        if (lddPart != null)
                         {
-                            var lddPart = db.LddParts.FirstOrDefault(x => x.DesignID == foundPartMatch.LddID);
 
                             if (!lddPart.IsAssembly)
                             {
-                                palette.Items.Add(new LDD.Palettes.Brick(
-                                    int.Parse(lddPart.DesignID), string.Empty, setPart.Quantity));
+                                var brick = new LDD.Palettes.Brick(
+                                    int.Parse(lddPart.DesignID), string.Empty, setPart.Quantity);
+                                brick.MaterialID = lddColor.ColorID;
+                                palette.Items.Add(brick);
                                 totalMatchedParts++;
                             }
                             else
@@ -268,6 +264,48 @@ namespace LDDModder.PaletteMaker
             paletteFile.SaveToDirectory(Path.Combine(userPaletteDir, paletteFileName), false);
 
             //paletteFile.SaveAsLif(Path.Combine(userPaletteDir, paletteFileName) + ".lif");
+        }
+
+        static Models.LDD.LddPart FindMatchingPart(PaletteDbContext db, Models.Rebrickable.RbPart part, string partID, string originalId, List<string> tentatives = null)
+        {
+            if (tentatives == null)
+                tentatives = new List<string>();
+            else
+            {
+                if (tentatives.Contains(partID))
+                    return null;
+                tentatives.Add(partID);
+            }
+
+            Debug.WriteLine($"Finding matching part for '{originalId}': {partID}");
+            var foundPartMatch = db.PartMappings.FirstOrDefault(x => x.RebrickableID == partID && x.IsActive);
+            if (foundPartMatch != null)
+            {
+                return db.LddParts.FirstOrDefault(x => x.DesignID == foundPartMatch.LddID);
+            }
+
+            if (!string.IsNullOrEmpty(part?.ParentPartID))
+            {
+                var parentPart = db.RbParts.FirstOrDefault(x => x.PartID == part.ParentPartID);
+
+                var found = FindMatchingPart(db, parentPart, part.ParentPartID, originalId, tentatives);
+                if (found != null)
+                    return found;
+            }
+
+            if (part != null && part.Relationships.Any())
+            {
+                foreach (var relatedPart in part.Relationships)
+                {
+                    if (relatedPart.RelationType == Models.Rebrickable.RbRelationType.Print)
+                        continue;
+                    var found = FindMatchingPart(db, relatedPart.ChildPart, relatedPart.ChildPartID, originalId, tentatives);
+                    if (found != null)
+                        return found;
+                }
+            }
+
+            return null;
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using LDDModder.PaletteMaker.Models.LDD;
-using LDDModder.PaletteMaker.Models.LDD;
 using LDDModder.PaletteMaker.Models.Rebrickable;
 using System;
 using System.Collections.Generic;
