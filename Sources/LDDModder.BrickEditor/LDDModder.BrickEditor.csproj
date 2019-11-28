@@ -129,7 +129,6 @@
       <DependentUpon>LocalizableStringList.cs</DependentUpon>
     </Compile>
     <Compile Include="Meshes\MeshConverter.cs" />
-    <Compile Include="Native\Shell32.cs" />
     <Compile Include="Native\User32.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -278,7 +277,6 @@
     </Compile>
     <Compile Include="Utilities\AssimpHelper.cs" />
     <Compile Include="Utilities\Converter.cs" />
-    <Compile Include="Native\NativeMethods.cs" />
     <Compile Include="Utilities\NumberHelper.cs" />
     <Compile Include="Utilities\OpenTKHelper.cs" />
     <Compile Include="Utilities\SortableBindingList.cs" />
@@ -312,6 +310,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Panels\NavigationPanel.resx">
       <DependentUpon>NavigationPanel.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Panels\ProjectPropertiesPanel.resx">
       <DependentUpon>ProjectPropertiesPanel.cs</DependentUpon>

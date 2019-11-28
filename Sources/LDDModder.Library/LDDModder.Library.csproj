@@ -183,6 +183,7 @@
     <Compile Include="Modding\Editing\ModelComponents\BrickTubeModel.cs" />
     <Compile Include="Modding\Installing\PartInstaller.cs" />
     <Compile Include="Modding\Installing\PartPackage.cs" />
+    <Compile Include="Native\Shell32.cs" />
     <Compile Include="Serialization\IXmlObject.cs" />
     <Compile Include="Serialization\LinqXmlExtensions.cs" />
     <Compile Include="Serialization\XmlHelper.cs" />
@@ -200,6 +201,7 @@
     <Compile Include="Utilities\ExtensionMethods\StreamExtensions.cs" />
     <Compile Include="Utilities\ExtensionMethods\StringExtensions.cs" />
     <Compile Include="Utilities\FileHelper.cs" />
+    <Compile Include="Utilities\FormattedMessage.cs" />
     <Compile Include="Utilities\ListIndexer.cs" />
     <Compile Include="Utilities\MathHelper.cs" />
     <Compile Include="Utilities\StringUtils.cs" />

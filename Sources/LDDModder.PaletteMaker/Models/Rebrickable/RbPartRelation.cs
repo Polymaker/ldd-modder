@@ -21,7 +21,7 @@ namespace LDDModder.PaletteMaker.Models.Rebrickable
         public virtual RbPart ChildPart { get; set; }
 
         [Column("RelationType")]
-        protected char RelationTypeChar { get; set; }
+        public char RelationTypeChar { get; set; }
 
         [NotMapped]
         public RbRelationType RelationType

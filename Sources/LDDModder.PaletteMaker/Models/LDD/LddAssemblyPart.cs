@@ -13,6 +13,9 @@ namespace LDDModder.PaletteMaker.Models.LDD
 
         public string AssemblyID { get;  set; }
 
+        [ForeignKey("AssemblyID")]
+        public virtual LddPart Assembly { get; set; }
+
         public string PartID { get; set; }
 
         public string DefaultMaterials { get; set; }

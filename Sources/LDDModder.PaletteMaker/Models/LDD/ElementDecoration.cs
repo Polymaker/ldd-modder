@@ -4,28 +4,28 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LDDModder.PaletteMaker.Models.LDD
 {
-    [Table("Decorations")]
-    public class Decoration
+    [Table("LddElementDecorations")]
+    public class ElementDecoration
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ID { get; set; }
 
-        public int ConfigurationID { get; set; }
+        public int ElementPartID { get; set; }
 
-        [ForeignKey("ConfigurationID")]
-        public virtual PartConfiguration Configuration { get; set; }
+        [ForeignKey("ElementPartID")]
+        public virtual ElementPart Part { get; set; }
 
         public int SurfaceID { get; set; }
 
         public string DecorationID { get; set; }
 
-        public Decoration()
+        public ElementDecoration()
         {
             SurfaceID = 0;
             DecorationID = string.Empty;
         }
 
-        public Decoration(int surfaceID, string decorationID)
+        public ElementDecoration(int surfaceID, string decorationID)
         {
             SurfaceID = surfaceID;
             DecorationID = decorationID;

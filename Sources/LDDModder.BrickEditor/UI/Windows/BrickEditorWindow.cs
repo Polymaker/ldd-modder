@@ -202,7 +202,9 @@ namespace LDDModder.BrickEditor.UI.Windows
                 }
 
                 if (!string.IsNullOrEmpty(CurrentProject.ProjectWorkingDir))
-                    NativeMethods.DeleteFileOrFolder(CurrentProject.ProjectWorkingDir, true, false);
+                {
+                    Task.Factory.StartNew(() => FileHelper.DeleteFileOrFolder(CurrentProject.ProjectWorkingDir, true, true));
+                }
 
                 SettingsManager.Current.LastOpenProject = null;
                 SettingsManager.SaveSettings();
@@ -270,7 +272,7 @@ namespace LDDModder.BrickEditor.UI.Windows
                     }
                     else
                     {
-                        NativeMethods.DeleteFileOrFolder(fileInfo.WorkingDirectory, true, false);
+                        Task.Factory.StartNew(() => FileHelper.DeleteFileOrFolder(fileInfo.WorkingDirectory, true, true));
                     }
                 }
             }

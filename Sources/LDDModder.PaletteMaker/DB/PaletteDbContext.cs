@@ -1,4 +1,5 @@
-﻿using LDDModder.PaletteMaker.Models.LDD;
+﻿using LDDModder.PaletteMaker.Models;
+using LDDModder.PaletteMaker.Models.LDD;
 using LDDModder.PaletteMaker.Models.Rebrickable;
 using System;
 using System.Collections.Generic;
@@ -7,11 +8,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LDDModder.PaletteMaker.Models
+namespace LDDModder.PaletteMaker.DB
 {
     public class PaletteDbContext : DbContext
     {
-        
+
         #region LDD Elements
 
         public DbSet<LddPart> LddParts { get; set; }
@@ -20,7 +21,7 @@ namespace LDDModder.PaletteMaker.Models
 
         public DbSet<LddElement> LddElements { get; set; }
 
-        public DbSet<PartConfiguration> Configurations { get; set; }
+        public DbSet<ElementPart> Configurations { get; set; }
 
         #endregion
 

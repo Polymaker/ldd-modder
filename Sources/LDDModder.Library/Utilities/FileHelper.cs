@@ -65,5 +65,39 @@ namespace LDDModder.Utilities
         {
             return FileNameCleaner.Replace(fileName, string.Empty);
         }
+
+        public static string GetTempDirectory()
+        {
+            return Path.Combine(Path.GetTempPath(), LDDModder.Utilities.StringUtils.GenerateUID(8));
+        }
+
+        public static bool DeleteFileOrFolder(string destination, bool permanent, bool silent)
+        {
+            try
+            {
+                var fs = new Native.Shell32.SHFILEOPSTRUCT
+                {
+                    wFunc = Native.Shell32.FileOperationType.FO_DELETE,
+                    pFrom = destination + '\0' + '\0',
+                };
+
+                if (!permanent)
+                    fs.fFlags |= Native.Shell32.FileOperationFlags.FOF_ALLOWUNDO;
+
+                if (silent)
+                {
+                    fs.fFlags |= Native.Shell32.FileOperationFlags.FOF_NOCONFIRMATION |
+                        Native.Shell32.FileOperationFlags.FOF_NOERRORUI |
+                        Native.Shell32.FileOperationFlags.FOF_SILENT;
+                }
+
+                Native.Shell32.SHFileOperation(ref fs);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
     }
 }

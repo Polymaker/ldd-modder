@@ -12,7 +12,7 @@ namespace LDDModder.PaletteMaker.Models
 
         public string RebrickableID { get; set; }
 
-        public string LddID { get; set; }
+        public string LegoID { get; set; }
 
         public bool IsActive { get; set; }
     }
