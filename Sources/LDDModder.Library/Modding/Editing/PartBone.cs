@@ -11,7 +11,7 @@ using System.Xml.Serialization;
 
 namespace LDDModder.Modding.Editing
 {
-    public class PartBone : PartElement
+    public class PartBone : PartElement, IPhysicalElement
     {
         public const string NODE_NAME = "Bone";
 

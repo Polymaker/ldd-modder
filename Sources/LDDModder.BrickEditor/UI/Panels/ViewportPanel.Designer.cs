@@ -44,7 +44,7 @@
             this.CameraMenu_Orthographic = new System.Windows.Forms.ToolStripMenuItem();
             this.DisplayMenuDropDown = new System.Windows.Forms.ToolStripDropDownButton();
             this.DisplayMenu_Collisions = new System.Windows.Forms.ToolStripMenuItem();
-            this.connectionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.DisplayMenu_Connections = new System.Windows.Forms.ToolStripMenuItem();
             this.DisplayMenu_Meshes = new System.Windows.Forms.ToolStripMenuItem();
             this.xRayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.GizmoOrientationMenu = new System.Windows.Forms.ToolStripDropDownButton();
@@ -157,7 +157,7 @@
             this.DisplayMenuDropDown.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.DisplayMenuDropDown.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.DisplayMenu_Collisions,
-            this.connectionsToolStripMenuItem,
+            this.DisplayMenu_Connections,
             this.DisplayMenu_Meshes,
             this.xRayToolStripMenuItem});
             resources.ApplyResources(this.DisplayMenuDropDown, "DisplayMenuDropDown");
@@ -170,10 +170,12 @@
             resources.ApplyResources(this.DisplayMenu_Collisions, "DisplayMenu_Collisions");
             this.DisplayMenu_Collisions.CheckedChanged += new System.EventHandler(this.DisplayMenu_Collisions_CheckedChanged);
             // 
-            // connectionsToolStripMenuItem
+            // DisplayMenu_Connections
             // 
-            this.connectionsToolStripMenuItem.Name = "connectionsToolStripMenuItem";
-            resources.ApplyResources(this.connectionsToolStripMenuItem, "connectionsToolStripMenuItem");
+            this.DisplayMenu_Connections.CheckOnClick = true;
+            this.DisplayMenu_Connections.Name = "DisplayMenu_Connections";
+            resources.ApplyResources(this.DisplayMenu_Connections, "DisplayMenu_Connections");
+            this.DisplayMenu_Connections.CheckedChanged += new System.EventHandler(this.DisplayMenu_Connections_CheckedChanged);
             // 
             // DisplayMenu_Meshes
             // 
@@ -287,7 +289,7 @@
         private System.Windows.Forms.ToolStripMenuItem CameraMenu_Orthographic;
         private System.Windows.Forms.ToolStripDropDownButton DisplayMenuDropDown;
         private System.Windows.Forms.ToolStripMenuItem DisplayMenu_Collisions;
-        private System.Windows.Forms.ToolStripMenuItem connectionsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem DisplayMenu_Connections;
         private System.Windows.Forms.ToolStripMenuItem DisplayMenu_Meshes;
         private System.Windows.Forms.ToolStripMenuItem xRayToolStripMenuItem;
         private System.Windows.Forms.ToolStripDropDownButton GizmoOrientationMenu;

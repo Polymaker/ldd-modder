@@ -1,7 +1,6 @@
 ﻿using LDDModder.LDD;
 using LDDModder.LDD.Files;
 using LDDModder.LDD.Primitives;
-using LDDModder.PaletteMaker.Models;
 using LDDModder.PaletteMaker.Models.LDD;
 using LDDModder.Utilities;
 using System.Collections.Generic;

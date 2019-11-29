@@ -16,6 +16,15 @@ namespace LDDModder.Modding.Editing
 
         public override CollisionType CollisionType => CollisionType.Sphere;
 
+        public PartSphereCollision()
+        {
+            _Radius = 1f;
+        }
+
+        public PartSphereCollision(float radius)
+        {
+            _Radius = radius;
+        }
 
         public override void SetSize(Vector3 size)
         {

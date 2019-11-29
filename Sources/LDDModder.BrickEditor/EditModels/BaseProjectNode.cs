@@ -17,23 +17,38 @@ namespace LDDModder.BrickEditor.EditModels
 
         public bool IsDirty { get; set; } = true;
 
-        public List<BaseProjectNode> Childrens { get; set; }
+        public BaseProjectNode Parent { get; set; }
+
+        public ProjectNodeCollection Childrens { get; private set; }
 
         protected BaseProjectNode()
         {
-            Childrens = new List<BaseProjectNode>();
+            Childrens = new ProjectNodeCollection(this);
         }
 
         public BaseProjectNode(PartProject project)
         {
             Project = project;
-            Childrens = new List<BaseProjectNode>();
+            Childrens = new ProjectNodeCollection(this);
         }
 
         public BaseProjectNode(PartProject project, string text) : this(project)
         {
             Text = text;
-            Childrens = new List<BaseProjectNode>();
+            Childrens = new ProjectNodeCollection(this);
+        }
+
+        public IEnumerable<BaseProjectNode> GetParents(bool includeSelf = false)
+        {
+            if (includeSelf)
+                yield return this;
+
+            if (Parent != null)
+            {
+                yield return Parent;
+                foreach (var other in Parent.GetParents())
+                    yield return other;
+            }
         }
 
         public virtual bool HasChildrens()

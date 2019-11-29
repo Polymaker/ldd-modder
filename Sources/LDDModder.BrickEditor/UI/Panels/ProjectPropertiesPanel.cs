@@ -17,6 +17,8 @@ namespace LDDModder.BrickEditor.UI.Panels
     public partial class ProjectPropertiesPanel : ProjectDocumentPanel
     {
         private bool InternalSet;
+        private List<MainGroup> Categories;
+        
 
         public ProjectPropertiesPanel()
         {
@@ -41,12 +43,22 @@ namespace LDDModder.BrickEditor.UI.Panels
             PlatformComboBox.DisplayMember = "Display";
             PlatformComboBox.MouseWheel += ComboBox_MouseWheel;
 
-            CategoryComboBox.DataSource = ResourceHelper.Categories.ToList();
-            CategoryComboBox.ValueMember = "ID";
-            CategoryComboBox.DisplayMember = "Display";
+            Categories = ResourceHelper.Categories.ToList();
             CategoryComboBox.MouseWheel += ComboBox_MouseWheel;
 
+            UpdateCategoriesCombobox();
+
             UpdateControlBindings();
+        }
+
+        private void UpdateCategoriesCombobox()
+        {
+            var selectedPlatform = PlatformComboBox.SelectedItem as Platform;
+            int platformID = selectedPlatform?.ID ?? 0;
+
+            CategoryComboBox.DataSource = Categories.Where(x => (x.ID - (x.ID % 100)) == platformID).ToList();
+            CategoryComboBox.ValueMember = "ID";
+            CategoryComboBox.DisplayMember = "Display";
         }
 
         private void ComboBox_MouseWheel(object sender, MouseEventArgs e)
@@ -71,15 +83,18 @@ namespace LDDModder.BrickEditor.UI.Panels
             CategoryComboBox.Enabled = CurrentProject != null;
             boundingBoxEditor1.Enabled = CurrentProject != null;
             CalculateBoundingButton.Enabled = CurrentProject != null;
+
             InternalSet = true;
 
             if (CurrentProject != null)
             {
                 PartIDTextBox.Value = CurrentProject.PartID;
-                PartIDTextBox.ReadOnly = !(CurrentProject.PartID == 0);
+                PartIDTextBox.ReadOnly = !(ProjectManager.IsNewProject);
                 DescriptionTextBox.Text = CurrentProject.PartDescription;
                 PlatformComboBox.SelectedValue = CurrentProject.Platform?.ID ?? 0;
+                UpdateCategoriesCombobox();
                 CategoryComboBox.SelectedValue = CurrentProject.MainGroup?.ID ?? 0;
+
                 boundingBoxEditor1.Value = CurrentProject.Bounding ?? new LDD.Primitives.BoundingBox();
             }
             else
@@ -124,7 +139,12 @@ namespace LDDModder.BrickEditor.UI.Panels
         private void PlatformComboBox_SelectedValueChanged(object sender, EventArgs e)
         {
             if (CurrentProject != null && !InternalSet)
+            {
+                ProjectManager.StartBatchChanges();
                 CurrentProject.Platform = PlatformComboBox.SelectedItem as Platform;
+                UpdateCategoriesCombobox();
+                ProjectManager.EndBatchChanges();
+            }
         }
 
         private void CategoryComboBox_SelectedValueChanged(object sender, EventArgs e)

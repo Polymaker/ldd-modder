@@ -21,13 +21,17 @@ namespace LDDModder.PaletteMaker.Models.Rebrickable
         public virtual RbPart ChildPart { get; set; }
 
         [Column("RelationType")]
-        public char RelationTypeChar { get; set; }
+        public string RelationType { get; set; }
 
         [NotMapped]
-        public RbRelationType RelationType
+        public RbRelationType RelationTypeFlag
         {
-            get => (RbRelationType)RelationTypeChar;
-            set => RelationTypeChar = (char)value;
+            get => (RbRelationType)RelationType[0];
+            set 
+            {
+                if ((char)value != '\0')
+                    RelationType = ((char)value).ToString();
+            }
         }
     }
 }

@@ -8,7 +8,7 @@ using System.Xml.Linq;
 
 namespace LDDModder.Modding.Editing
 {
-    public class ModelMeshReference : PartElement
+    public class ModelMeshReference : PartElement, IPhysicalElement
     {
         public const string NODE_NAME = "MeshRef";
 

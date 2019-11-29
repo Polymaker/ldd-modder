@@ -115,6 +115,7 @@
     <Compile Include="EditModels\ProjectElementNode.cs" />
     <Compile Include="EditModels\ProjectCollectionNode.cs" />
     <Compile Include="EditModels\ProjectManager.cs" />
+    <Compile Include="EditModels\ProjectNodeCollection.cs" />
     <Compile Include="EditModels\UndoRedoManager.cs" />
     <Compile Include="Localization\LocalizableString.cs">
       <SubType>Component</SubType>
@@ -146,6 +147,7 @@
     <Compile Include="Rendering\Cameras\CameraManipulator.cs" />
     <Compile Include="Rendering\Cameras\CameraMovement.cs" />
     <Compile Include="Rendering\Models\CollisionModel.cs" />
+    <Compile Include="Rendering\Models\ConnectionModel.cs" />
     <Compile Include="Rendering\Models\ITransformableElement.cs" />
     <Compile Include="Rendering\Models\IVertexBuffer.cs" />
     <Compile Include="Rendering\Models\ModelBase.cs" />

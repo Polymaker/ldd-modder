@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace LDDModder.PaletteMaker.Rebrickable
@@ -48,6 +49,14 @@ namespace LDDModder.PaletteMaker.Rebrickable
             return GetRequestAllPages<SetPart>(request);
         }
 
+        public static IEnumerable<Part> GetPartsDetails(IEnumerable<string> partIDs)
+        {
+            var request = new RestRequest("lego/parts/", Method.GET, DataFormat.Json);
+            request.AddParameter("inc_part_details", "1");
+            request.AddParameter("part_nums", string.Join(",", partIDs));
+            return GetRequestAllPages<Part>(request);
+        }
+
         public static IEnumerable<T> GetRequestAllPages<T>(RestRequest request)
         {
             IEnumerable<T> results = Enumerable.Empty<T>();
@@ -62,6 +71,7 @@ namespace LDDModder.PaletteMaker.Rebrickable
                     break;
 
                 var newRequest = new RestRequest(requestResult.Data.Next, Method.GET, DataFormat.Json);
+                Thread.Sleep(100);
                 requestResult = Client.Execute<PagedResult<T>>(newRequest);
             }
 

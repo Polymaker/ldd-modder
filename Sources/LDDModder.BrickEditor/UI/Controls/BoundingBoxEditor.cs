@@ -111,12 +111,12 @@ namespace LDDModder.BrickEditor.UI.Controls
                 tableLayoutPanel2.Top = 0;
                 tableLayoutPanel2.Width = boxWidth * 3 + (3 * 2);
 
-                MinX_Box.Margin = new Padding(0, 3, 3, 3);
-                MinY_Box.Margin = new Padding(0, 3, 3, 3);
-                MinZ_Box.Margin = new Padding(0, 3, 3, 3);
-                MaxX_Box.Margin = new Padding(0, 3, 2, 3);
-                MaxY_Box.Margin = new Padding(1, 3, 1, 3);
-                MaxZ_Box.Margin = new Padding(2, 3, 0, 3);
+                MinX_Box.Margin = new Padding(0, 3, 3, 0);
+                MinY_Box.Margin = new Padding(0, 3, 3, 0);
+                MinZ_Box.Margin = new Padding(0, 3, 3, 0);
+                MaxX_Box.Margin = new Padding(0, 3, 2, 0);
+                MaxY_Box.Margin = new Padding(1, 3, 1, 0);
+                MaxZ_Box.Margin = new Padding(2, 3, 0, 0);
             }
             else
             {
@@ -125,12 +125,12 @@ namespace LDDModder.BrickEditor.UI.Controls
                 tableLayoutPanel2.Top = minHeight;
                 tableLayoutPanel2.Width = Width;
 
-                MinX_Box.Margin = new Padding(0, 3, 2, 3);
-                MinY_Box.Margin = new Padding(1, 3, 1, 3);
-                MinZ_Box.Margin = new Padding(2, 3, 0, 3);
-                MaxX_Box.Margin = new Padding(0, 3, 2, 3);
-                MaxY_Box.Margin = new Padding(1, 3, 1, 3);
-                MaxZ_Box.Margin = new Padding(2, 3, 0, 3);
+                MinX_Box.Margin = new Padding(0, 3, 2, 0);
+                MinY_Box.Margin = new Padding(1, 3, 1, 0);
+                MinZ_Box.Margin = new Padding(2, 3, 0, 0);
+                MaxX_Box.Margin = new Padding(0, 3, 2, 0);
+                MaxY_Box.Margin = new Padding(1, 3, 1, 0);
+                MaxZ_Box.Margin = new Padding(2, 3, 0, 0);
             }
         }
 

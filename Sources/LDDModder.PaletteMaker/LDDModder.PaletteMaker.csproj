@@ -79,6 +79,8 @@
     <Compile Include="DB\DbInitializerModule.cs" />
     <Compile Include="DB\RebrickableDataImporter.cs" />
     <Compile Include="Generation\PalatteGenerator.cs" />
+    <Compile Include="Generation\PartMatchingFlags.cs" />
+    <Compile Include="Generation\SetPartWrapper.cs" />
     <Compile Include="Models\DataStateFlag.cs" />
     <Compile Include="Models\LDD\LddAssemblyPart.cs" />
     <Compile Include="DB\PaletteDbContext.cs" />
@@ -87,6 +89,7 @@
     <Compile Include="Models\LDD\LddElement.cs" />
     <Compile Include="Models\LDD\ElementPart.cs" />
     <Compile Include="Models\LDD\ElementMaterial.cs" />
+    <Compile Include="Models\MatchLevel.cs" />
     <Compile Include="Models\PartMapping.cs" />
     <Compile Include="Models\Rebrickable\RbCategory.cs" />
     <Compile Include="Models\Rebrickable\RbColor.cs" />
@@ -122,6 +125,12 @@
     <Compile Include="UI\MainWindow.Designer.cs">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\PartMatchDetail.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\PartMatchDetail.Designer.cs">
+      <DependentUpon>PartMatchDetail.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -134,6 +143,9 @@
     </Compile>
     <EmbeddedResource Include="UI\MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\PartMatchDetail.resx">
+      <DependentUpon>PartMatchDetail.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">

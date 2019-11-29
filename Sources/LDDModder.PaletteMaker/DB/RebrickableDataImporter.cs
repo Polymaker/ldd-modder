@@ -2,7 +2,6 @@
 using LDDModder.LDD;
 using LDDModder.LDD.Files;
 using LDDModder.LDD.Primitives;
-using LDDModder.PaletteMaker.Models;
 using LDDModder.PaletteMaker.Models.LDD;
 using LDDModder.PaletteMaker.Models.Rebrickable;
 using LDDModder.PaletteMaker.Rebrickable;
@@ -29,19 +28,28 @@ namespace LDDModder.PaletteMaker.DB
         {
 
         }
+        [Flags]
+        public enum RebrickableDataType
+        {   
+            Colors = 1,
+            Categories = 2,
+            Themes = 4,
+            PartsAndRelationships = 8,
+            All = Colors | Categories | Themes | PartsAndRelationships
+        }
 
-        public void ImportAllData()
+        public void ImportAllData(RebrickableDataType data = RebrickableDataType.All)
         {
-            if (!IsCancellationRequested)
+            if (!IsCancellationRequested && data.HasFlag(RebrickableDataType.Colors))
                 ImportColors();
 
-            if (!IsCancellationRequested)
+            if (!IsCancellationRequested && data.HasFlag(RebrickableDataType.Categories))
                 ImportCategories();
 
-            if (!IsCancellationRequested)
+            if (!IsCancellationRequested && data.HasFlag(RebrickableDataType.Themes))
                 ImportThemes();
 
-            if (!IsCancellationRequested)
+            if (!IsCancellationRequested && data.HasFlag(RebrickableDataType.PartsAndRelationships))
                 ImportPartsAndRelationships();
         }
 
@@ -206,7 +214,7 @@ namespace LDDModder.PaletteMaker.DB
             }
         }
 
-        public static Regex IsPrintOrPatternRegex = new Regex("((?<=\\d)p|pr|pb|px|pat)\\d", RegexOptions.Compiled);
+        public static Regex IsPrintOrPatternRegex = new Regex("(?<=\\d[a-d]?)(p|pb|pr|ps|px|pat)\\d", RegexOptions.Compiled);
         public static Regex IsAssemblyRegex = new Regex("c\\d\\d[a-c]?$", RegexOptions.Compiled);
 
         private void ImportRebrickableParts()
@@ -233,6 +241,7 @@ namespace LDDModder.PaletteMaker.DB
                     x.Name,
                     x.CategoryID,
                     x.IsPrintOrPattern,
+                    x.IsAssembly,
                     x.ParentPartID
                 });
 
@@ -244,15 +253,18 @@ namespace LDDModder.PaletteMaker.DB
                     if (row.IsHeader)
                         continue;
                     string partID = row[0];
-
+                    string partName = row[1];
                     int? category = string.IsNullOrEmpty(row[2]) ? default(int?) : int.Parse(row[2]);
+
                     string parentPartID = null;
                     bool isPrintOrPattern = false;
+                    bool isAssembly = IsAssemblyRegex.IsMatch(partID);
 
                     if (!(category == 17 || category == 58))//non-lego and stickers
                     {
                         var match = IsPrintOrPatternRegex.Match(partID);
                         isPrintOrPattern = match.Success;
+
                         if (isPrintOrPattern)
                         {
                             parentPartID = partID.Substring(0, match.Index);
@@ -260,11 +272,12 @@ namespace LDDModder.PaletteMaker.DB
                             if (IsAssemblyRegex.IsMatch(partID) && !IsAssemblyRegex.IsMatch(parentPartID))
                             {
                                 parentPartID += partID.Substring(IsAssemblyRegex.Match(partID).Index);
+                                isAssembly = true;
                             }
                         }
                     }
 
-                    DbHelper.InsertWithParameters(cmd, row[0], row[1], category, isPrintOrPattern, parentPartID);
+                    DbHelper.InsertWithParameters(cmd, partID, partName, category, isPrintOrPattern, isAssembly, parentPartID);
 
                 }
 
@@ -292,7 +305,7 @@ namespace LDDModder.PaletteMaker.DB
                 DbHelper.OrderCommandParameters(cmd,
                     nameof(RbPartRelation.ParentPartID),
                     nameof(RbPartRelation.ChildPartID),
-                    nameof(RbPartRelation.RelationTypeChar));
+                    nameof(RbPartRelation.RelationType));
 
                 foreach (var row in partCsv.Rows)
                 {
@@ -301,9 +314,13 @@ namespace LDDModder.PaletteMaker.DB
 
                     if (row.IsHeader)
                         continue;
+
                     DbHelper.InsertWithParameters(cmd, row[2], row[1], row[0]);
 
                 }
+
+                cmd.Parameters.Clear();
+                cmd.CommandText = "";
                 trans.Commit();
             }
         }

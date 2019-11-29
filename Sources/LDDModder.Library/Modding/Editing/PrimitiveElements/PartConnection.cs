@@ -14,7 +14,7 @@ using LDDModder.Utilities;
 namespace LDDModder.Modding.Editing
 {
     [XmlRoot("Connection")]
-    public /*abstract*/ class PartConnection : PartElement
+    public /*abstract*/ class PartConnection : PartElement, IPhysicalElement
     {
         public const string NODE_NAME = "Connection";
 
@@ -83,6 +83,7 @@ namespace LDDModder.Modding.Editing
                 connElem.Add(new XAttribute(attr.Name.LocalName, attr.Value));
             if (element.HasElement("StudsArray", out XElement studs))
                 connElem.Value = studs.Value;
+
             Connector = Connector.CreateFromType(ConnectorType);
             Connector.LoadFromXml(connElem);
 

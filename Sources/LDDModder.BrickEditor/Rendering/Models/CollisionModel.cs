@@ -80,6 +80,10 @@ namespace LDDModder.BrickEditor.Rendering
                 OpenTK.Graphics.OpenGL.PrimitiveType.Triangles);
 
             RenderHelper.EndDrawModel(BaseModel.VertexBuffer);
+            if (CollisionType == CollisionType.Box)
+            {
+                RenderHelper.DrawBoundingBox(Transform, BoundingBox, new Vector4(0, 0, 0, 1), 1.5f);
+            }
         }
 
         public override bool RayIntersects(Ray ray, out float distance)

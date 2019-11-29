@@ -14,6 +14,8 @@ namespace LDDModder.PaletteMaker.Models
 
         public string LegoID { get; set; }
 
+        public int MatchLevel { get; set; }
+
         public bool IsActive { get; set; }
     }
 }

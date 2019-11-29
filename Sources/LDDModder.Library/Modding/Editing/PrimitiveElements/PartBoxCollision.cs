@@ -19,6 +19,7 @@ namespace LDDModder.Modding.Editing
 
         public PartBoxCollision()
         {
+            _Size = new Vector3(1f);
         }
 
         public PartBoxCollision(Vector3 size)

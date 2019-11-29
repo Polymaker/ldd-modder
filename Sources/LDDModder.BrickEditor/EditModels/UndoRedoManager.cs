@@ -26,6 +26,8 @@ namespace LDDModder.BrickEditor.EditModels
 
         private List<ChangeAction> BatchChanges;
 
+        private int BatchNesting;
+
         public bool IsInBatch { get; private set; }
 
         public event EventHandler UndoHistoryChanged;
@@ -79,17 +81,24 @@ namespace LDDModder.BrickEditor.EditModels
                 AddAction(action);
         }
 
+
+
         public void StartBatchChanges()
         {
+            BatchNesting++;
             IsInBatch = true;
         }
 
         public void EndBatchChanges()
         {
-            IsInBatch = false;
-            if (BatchChanges.Any())
-                AddAction(new BatchChangeAction(BatchChanges));
-            BatchChanges.Clear();
+            BatchNesting--;
+            if (BatchNesting == 0)
+            {
+                IsInBatch = false;
+                if (BatchChanges.Any())
+                    AddAction(new BatchChangeAction(BatchChanges));
+                BatchChanges.Clear();
+            }
         }
         
         private void AddAction(ChangeAction action)

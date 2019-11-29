@@ -5,8 +5,6 @@ using ObjectTK.Shaders;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
-using QuickFont;
-using QuickFont.Configuration;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -39,6 +37,8 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private List<GLSurfaceModel> SurfaceModels;
         private List<CollisionModel> CollisionModels;
+        private List<ConnectionModel> ConnectionModels;
+
         private List<UIElement> UIElements;
 
         private InputManager InputManager;
@@ -52,6 +52,9 @@ namespace LDDModder.BrickEditor.UI.Panels
         private LoopController LoopController;
 
         public bool ShowCollisions { get; set; }
+
+        public bool ShowConnections { get; set; }
+
         public bool ShowMeshes { get; set; }
 
         public RenderOptions ModelRenderingOptions { get; private set; }
@@ -61,7 +64,8 @@ namespace LDDModder.BrickEditor.UI.Panels
             InitializeComponent();
             SurfaceModels = new List<GLSurfaceModel>();
             CollisionModels = new List<CollisionModel>();
-            
+            ConnectionModels = new List<ConnectionModel>();
+            UIElements = new List<UIElement>();
         }
 
         public ViewportPanel(ProjectManager projectManager) : base(projectManager)
@@ -75,6 +79,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             CloseButtonVisible = false;
             SurfaceModels = new List<GLSurfaceModel>();
             CollisionModels = new List<CollisionModel>();
+            ConnectionModels = new List<ConnectionModel>();
             UIElements = new List<UIElement>();
             CreateGLControl();
         }
@@ -380,7 +385,8 @@ namespace LDDModder.BrickEditor.UI.Panels
             if (ShowCollisions)
                 DrawCollisions();
 
-            DrawConnections();
+            if (ShowConnections)
+                DrawConnections();
 
             if (!ModelRenderingOptions.Hidden)
                 DrawPartModels();
@@ -400,7 +406,13 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void DrawConnections()
         {
-
+            GL.Disable(EnableCap.Texture2D);
+            if (ConnectionModels.Any())
+            {
+                RenderHelper.UnbindModelTexture();
+                foreach (var connModel in ConnectionModels.Where(x => x.Visible))
+                    connModel.RenderModel(Camera);
+            }
         }
 
         private void DrawCollisions()
@@ -684,6 +696,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             SurfaceModels.ForEach(x => x.Dispose());
             SurfaceModels.Clear();
             CollisionModels.Clear();
+            ConnectionModels.Clear();
             GC.Collect();
         }
 
@@ -710,7 +723,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             RebuildSurfaceModels();
             RebuildCollisionModels();
-
+            RebuildConnectionModels();
             SetupDefaultCamera();
         }
 
@@ -773,22 +786,34 @@ namespace LDDModder.BrickEditor.UI.Panels
             }
             else if (e.ElementType == typeof(ModelMeshReference))
             {
-                var addedMeshes = e.AddedElements.OfType<ModelMeshReference>();
-                var changedSurfaces = addedMeshes.Select(x => (x.Parent as SurfaceComponent)?.Surface).Distinct().ToList();
+                if (e.Collection.Owner is SurfaceComponent component)
+                {
+                    UpdateSurfacesModels(new PartSurface[] { component.Surface });
+                }
+                //var addedMeshes = e.AddedElements.OfType<ModelMeshReference>();
+                //var changedSurfaces = addedMeshes.Select(x => (x.Parent as SurfaceComponent)?.Surface).Distinct().ToList();
 
-                UpdateSurfacesModels(changedSurfaces);
+                //UpdateSurfacesModels(changedSurfaces);
 
             }
             else if (e.ElementType == typeof(SurfaceComponent))
             {
-                var changedSurfaces = e.AddedElements.OfType<SurfaceComponent>()
-                    .Concat(e.RemovedElements.OfType<SurfaceComponent>()).Select(x=>x.Surface).Distinct();
+                if (e.Collection.Owner is PartSurface surface)
+                {
+                    UpdateSurfacesModels(new PartSurface[] { surface });
+                }
+                //var changedSurfaces = e.AddedElements.OfType<SurfaceComponent>()
+                //    .Concat(e.RemovedElements.OfType<SurfaceComponent>()).Select(x=>x.Surface).Distinct();
 
-                UpdateSurfacesModels(changedSurfaces);
+                //UpdateSurfacesModels(changedSurfaces);
             }
             else if (e.ElementType == typeof(PartCollision))
             {
                 RebuildCollisionModels();
+            }
+            else if (e.ElementType == typeof(PartConnection))
+            {
+                RebuildConnectionModels();
             }
         }
 
@@ -831,6 +856,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         private void RebuildCollisionModels()
         {
             CollisionModels.Clear();
+
             if (CurrentProject != null)
             {
                 foreach (var col in CurrentProject.Collisions)
@@ -843,12 +869,27 @@ namespace LDDModder.BrickEditor.UI.Panels
             }
         }
 
+        private void RebuildConnectionModels()
+        {
+            ConnectionModels.Clear();
+
+            if (CurrentProject != null)
+            {
+                foreach (var conn in CurrentProject.Connections)
+                    ConnectionModels.Add(new ConnectionModel(conn));
+            }
+        }
+
+
         public IEnumerable<PartElementModel> GetAllElementModels()
         {
             foreach (var model in SurfaceModels.SelectMany(x => x.MeshModels))
                 yield return model;
 
             foreach (var model in CollisionModels)
+                yield return model;
+
+            foreach (var model in ConnectionModels)
                 yield return model;
         }
 
@@ -865,6 +906,13 @@ namespace LDDModder.BrickEditor.UI.Panels
                 foreach (var model in CollisionModels.Where(x => x.Visible))
                     yield return model;
             }
+
+            if (ShowConnections)
+            {
+                foreach (var model in ConnectionModels)
+                    yield return model;
+            }
+            
         }
 
         public IEnumerable<PartElementModel> GetSelectedModels(bool onlyVisible = false)
@@ -1123,6 +1171,12 @@ namespace LDDModder.BrickEditor.UI.Panels
         private void DisplayMenu_Collisions_CheckedChanged(object sender, EventArgs e)
         {
             ShowCollisions = DisplayMenu_Collisions.Checked;
+            UpdateGizmoFromSelection();
+        }
+
+        private void DisplayMenu_Connections_CheckedChanged(object sender, EventArgs e)
+        {
+            ShowConnections = DisplayMenu_Connections.Checked;
             UpdateGizmoFromSelection();
         }
 

@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Data.SQLite;
 using System.Linq.Expressions;
 
-namespace LDDModder.PaletteMaker.Models
+namespace LDDModder.PaletteMaker.DB
 {
     static class DbHelper
     {
@@ -67,7 +67,7 @@ namespace LDDModder.PaletteMaker.Models
             cmd.CommandText = $"INSERT INTO {GetTableName<T>()} ({string.Join(",", insertColumns)}) VALUES ({string.Join(",", insertParameters)})";
         }
 
-        public static void InitializeInsertCommand<T>(SQLiteCommand cmd, Expression<Func<T,object>> columnOrder)
+        public static void InitializeInsertCommand<T>(SQLiteCommand cmd, Expression<Func<T, object>> columnOrder)
         {
             var columnProperties = new List<PropertyInfo>();
 
@@ -108,8 +108,8 @@ namespace LDDModder.PaletteMaker.Models
                 {
                     var mappedProp = typeof(T)
                         .GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-                        .FirstOrDefault(x => x.GetCustomAttribute<System.ComponentModel.DataAnnotations.Schema.ColumnAttribute >()?.Name == prop.Name);
-                    
+                        .FirstOrDefault(x => x.GetCustomAttribute<System.ComponentModel.DataAnnotations.Schema.ColumnAttribute>()?.Name == prop.Name);
+
                     if (mappedProp == null)
                         continue;
                 }
@@ -139,7 +139,7 @@ namespace LDDModder.PaletteMaker.Models
 
             for (int i = 0; i < parameterNames.Length; i++)
             {
-                var cmdParam = tmpParams.FirstOrDefault(x => x.Item1 == parameterNames[i] || x.Item1 ==  "$" + parameterNames[i]);
+                var cmdParam = tmpParams.FirstOrDefault(x => x.Item1 == parameterNames[i] || x.Item1 == "$" + parameterNames[i]);
                 cmd.Parameters.Add(cmdParam.Item1, cmdParam.Item2);
             }
         }

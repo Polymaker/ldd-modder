@@ -489,18 +489,21 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
 
         private void RenderPlainGizmo()
         {
+            GL.PushAttrib(AttribMask.LineBit);
+            GL.LineWidth(2f);
+
             for (int i = 0; i < 3; i++)
             {
                 var color = HandleColors[i];
-                GL.PushAttrib(AttribMask.LineBit);
-                GL.LineWidth(2f);
+                
                 RenderHelper.BeginDrawColor(VertexBuffer, Transform, color);
                 GL.Begin(PrimitiveType.Lines);
                 GL.Vertex3(Vector3.Zero);
                 GL.Vertex3(TranslationHandles[i].Axis * UIScale * GizmoSize);
                 GL.End();
-                GL.PopAttrib();
             }
+            
+            GL.PopAttrib();
         }
 
         private void RenderTranslationGizmo()

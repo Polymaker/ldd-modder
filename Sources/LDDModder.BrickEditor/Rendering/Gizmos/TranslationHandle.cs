@@ -94,6 +94,9 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
         {
             base.RenderHandle(gizmo, color);
 
+            if (gizmo.IsEditing && !IsSelected)
+                return;
+
             var scale = Matrix4.CreateScale(GizmoSize);
             var arrowSize = GizmoSize * ArrowSize;
             var arrowScale = Matrix4.CreateScale(arrowSize / 2f, arrowSize, arrowSize / 2f);

@@ -40,6 +40,13 @@ namespace LDDModder.Modding.Editing
             Name = $"Surface{surfaceID}";
         }
 
+        public override bool TryRemove()
+        {
+            if (SurfaceID == 0)
+                return false;
+            return base.TryRemove();
+        }
+
         public IEnumerable<ModelMeshReference> GetAllMeshReferences()
         {
             return Components.SelectMany(c => c.GetAllMeshReferences());

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace LDDModder.BrickEditor.Rendering
 {
-    public abstract class ModelBase : ITransformableElement
+    public abstract class ModelBase : ITransformableElement, IDisposable
     {
         private bool _Visible;
 
@@ -75,16 +75,12 @@ namespace LDDModder.BrickEditor.Rendering
             return BBox.FromVertices(corners);
         }
 
-
         #endregion
-
 
         protected void OnVisibilityChanged()
         {
             VisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
-
-        
 
         public virtual void RenderModel(Camera camera)
         {
@@ -105,10 +101,8 @@ namespace LDDModder.BrickEditor.Rendering
                     TransformChanged?.Invoke(this, EventArgs.Empty);
                     OnTransformChanged();
                 }
-                
             }
         }
-
 
         public void BeginEditTransform()
         {
@@ -141,8 +135,12 @@ namespace LDDModder.BrickEditor.Rendering
         {
 
         }
+
         #endregion
 
-
+        public virtual void Dispose()
+        {
+            
+        }
     }
 }

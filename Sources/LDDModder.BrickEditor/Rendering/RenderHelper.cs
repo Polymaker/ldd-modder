@@ -24,12 +24,32 @@ namespace LDDModder.BrickEditor.Rendering
 
         public static ModelShaderProgram ModelShader { get; private set; }
 
+        public static IndexedVertexBuffer<Vector3> BoundingBoxBufffer;
+
         public static void InitializeResources()
         {
             ColorShader = ProgramFactory.Create<ColorShaderProgram>();
             WireframeShader = ProgramFactory.Create<WireframeShaderProgram>();
             ModelShader = ProgramFactory.Create<ModelShaderProgram>();
             WireframeShader2 = ProgramFactory.Create<WireframeShader2Program>();
+
+            BoundingBoxBufffer = new IndexedVertexBuffer<Vector3>();
+            var box = BBox.FromCenterSize(Vector3.Zero, Vector3.One);
+
+            BoundingBoxBufffer.SetVertices(box.GetCorners());
+            var bboxIndices = new List<int>();
+
+            for (int i = 0; i < 4; i++)
+            {
+                bboxIndices.Add((i * 2));
+                bboxIndices.Add((i * 2) + 1);
+                bboxIndices.Add((i * 2));
+                bboxIndices.Add(((i + 1) * 2) % 8);
+                bboxIndices.Add((i * 2) + 1);
+                bboxIndices.Add((((i + 1) * 2) + 1) % 8);
+            }
+
+            BoundingBoxBufffer.SetIndices(bboxIndices);
         }
 
         public static void ReleaseResources()
@@ -56,6 +76,12 @@ namespace LDDModder.BrickEditor.Rendering
             {
                 ModelShader.Dispose();
                 ModelShader = null;
+            }
+
+            if (BoundingBoxBufffer != null)
+            {
+                BoundingBoxBufffer.Dispose();
+                BoundingBoxBufffer = null;
             }
         }
 
@@ -165,6 +191,105 @@ namespace LDDModder.BrickEditor.Rendering
             GL.PopAttrib();
             vertexBuffer.UnbindAttribute(WireframeShader.Position);
             vertexBuffer.UnbindAttribute(WireframeShader.Normal);
+        }
+
+        public static Vector4[] DefaultAxisColors = new Vector4[]
+            {
+                new Vector4(1f,0.09f,0.26f,1f),
+                new Vector4(0.58f, 0.898f, 0.156f, 1f),
+                new Vector4(0.156f,0.564f,1f,1f)
+            };
+
+        public static void DrawLine(Vector4 color, Vector3 p1, Vector3 p2, float thickness = 1f)
+        {
+            ColorShader.Use();
+            ColorShader.ModelMatrix.Set(Matrix4.Identity);
+            ColorShader.Color.Set(color);
+
+            GL.PushAttrib(AttribMask.LineBit);
+            GL.LineWidth(thickness);
+            GL.Begin(PrimitiveType.Lines);
+            GL.Vertex3(p1);
+            GL.Vertex3(p2);
+            GL.End();
+            GL.PopAttrib();
+        }
+
+        public static void DrawRectangle(Matrix4 transform, Vector2 size, Vector4 color, float thickness = 1f)
+        {
+            ColorShader.Use();
+            ColorShader.ModelMatrix.Set(transform);
+            ColorShader.Color.Set(color);
+
+            GL.PushAttrib(AttribMask.LineBit);
+            GL.LineWidth(thickness);
+            GL.Begin(PrimitiveType.LineStrip);
+            GL.Vertex3(Vector3.Zero);
+            GL.Vertex3(Vector3.UnitZ * size.Y);
+            GL.Vertex3(Vector3.UnitX * size.X + Vector3.UnitZ * size.Y);
+            GL.Vertex3(Vector3.UnitX * size.X);
+            GL.Vertex3(Vector3.Zero);
+            GL.End();
+            GL.PopAttrib();
+        }
+
+        public static void DrawBoundingBox(Matrix4 transform, BBox box, Vector4 color, float thickness = 1f)
+        {
+            ColorShader.Use();
+            ColorShader.ModelMatrix.Set(Matrix4.CreateScale(box.Size) * transform);
+            ColorShader.Color.Set(color);
+
+            BoundingBoxBufffer.Bind();
+            BoundingBoxBufffer.BindAttribute(ColorShader.Position, 0);
+
+            GL.PushAttrib(AttribMask.LineBit);
+            GL.LineWidth(thickness);
+            BoundingBoxBufffer.DrawElements(PrimitiveType.Lines);
+            GL.PopAttrib();
+        }
+
+        public static void DrawGizmoAxes(Matrix4 transform, float size, Vector4 color, float lineThickness = 1f)
+        {
+            ColorShader.Use();
+            ColorShader.ModelMatrix.Set(transform);
+            ColorShader.Color.Set(color);
+
+            GL.PushAttrib(AttribMask.LineBit);
+            GL.LineWidth(lineThickness);
+
+            for (int i = 0; i < 3; i++)
+            {
+                GL.Begin(PrimitiveType.Lines);
+                GL.Vertex3(Vector3.Zero);
+                var axisVector = new Vector3();
+                axisVector[i] = 1f;
+                GL.Vertex3(axisVector * size);
+                GL.End();
+            }
+
+            GL.PopAttrib();
+        }
+
+        public static void DrawGizmoAxes(Matrix4 transform, float size, float lineThickness = 1f)
+        {
+            ColorShader.Use();
+            ColorShader.ModelMatrix.Set(transform);
+
+            GL.PushAttrib(AttribMask.LineBit);
+            GL.LineWidth(lineThickness);
+
+            for (int i = 0; i < 3; i++)
+            {
+                ColorShader.Color.Set(DefaultAxisColors[i]);
+                GL.Begin(PrimitiveType.Lines);
+                GL.Vertex3(Vector3.Zero);
+                var axisVector = new Vector3();
+                axisVector[i] = 1f;
+                GL.Vertex3(axisVector * size);
+                GL.End();
+            }
+
+            GL.PopAttrib();
         }
 
 

@@ -33,9 +33,25 @@
             this.ProjectTreeView = new BrightIdeasSoftware.TreeListView();
             this.olvColumn1 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.ElementsContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.addElementToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.surfaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.studToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ContextMenu_AddSurface = new System.Windows.Forms.ToolStripMenuItem();
+            this.ContextMenu_AddElement = new System.Windows.Forms.ToolStripMenuItem();
+            this.AddElementMenu_Part = new System.Windows.Forms.ToolStripMenuItem();
+            this.AddElementMenu_MaleStud = new System.Windows.Forms.ToolStripMenuItem();
+            this.AddElementMenu_FemaleStud = new System.Windows.Forms.ToolStripMenuItem();
+            this.AddElementMenu_BrickTube = new System.Windows.Forms.ToolStripMenuItem();
+            this.ContextMenu_AddCollision = new System.Windows.Forms.ToolStripMenuItem();
+            this.AddCollisionMenu_Box = new System.Windows.Forms.ToolStripMenuItem();
+            this.AddCollisionMenu_Sphere = new System.Windows.Forms.ToolStripMenuItem();
+            this.ContextMenu_AddConnection = new System.Windows.Forms.ToolStripMenuItem();
+            this.studsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.technicToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.hingeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ballToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.railToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.gearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.sliderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.fixedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.ElementsMenu_Delete = new System.Windows.Forms.ToolStripMenuItem();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.label1 = new System.Windows.Forms.Label();
@@ -79,29 +95,129 @@
             // ElementsContextMenu
             // 
             this.ElementsContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.addElementToolStripMenuItem,
+            this.ContextMenu_AddSurface,
+            this.ContextMenu_AddElement,
+            this.ContextMenu_AddCollision,
+            this.ContextMenu_AddConnection,
+            this.toolStripSeparator1,
             this.ElementsMenu_Delete});
             this.ElementsContextMenu.Name = "contextMenuStrip1";
             resources.ApplyResources(this.ElementsContextMenu, "ElementsContextMenu");
             this.ElementsContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.ElementsContextMenu_Opening);
             // 
-            // addElementToolStripMenuItem
+            // ContextMenu_AddSurface
             // 
-            this.addElementToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.surfaceToolStripMenuItem,
-            this.studToolStripMenuItem});
-            this.addElementToolStripMenuItem.Name = "addElementToolStripMenuItem";
-            resources.ApplyResources(this.addElementToolStripMenuItem, "addElementToolStripMenuItem");
+            this.ContextMenu_AddSurface.Name = "ContextMenu_AddSurface";
+            resources.ApplyResources(this.ContextMenu_AddSurface, "ContextMenu_AddSurface");
             // 
-            // surfaceToolStripMenuItem
+            // ContextMenu_AddElement
             // 
-            this.surfaceToolStripMenuItem.Name = "surfaceToolStripMenuItem";
-            resources.ApplyResources(this.surfaceToolStripMenuItem, "surfaceToolStripMenuItem");
+            this.ContextMenu_AddElement.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.AddElementMenu_Part,
+            this.AddElementMenu_MaleStud,
+            this.AddElementMenu_FemaleStud,
+            this.AddElementMenu_BrickTube});
+            this.ContextMenu_AddElement.Name = "ContextMenu_AddElement";
+            resources.ApplyResources(this.ContextMenu_AddElement, "ContextMenu_AddElement");
             // 
-            // studToolStripMenuItem
+            // AddElementMenu_Part
             // 
-            this.studToolStripMenuItem.Name = "studToolStripMenuItem";
-            resources.ApplyResources(this.studToolStripMenuItem, "studToolStripMenuItem");
+            this.AddElementMenu_Part.Name = "AddElementMenu_Part";
+            resources.ApplyResources(this.AddElementMenu_Part, "AddElementMenu_Part");
+            // 
+            // AddElementMenu_MaleStud
+            // 
+            this.AddElementMenu_MaleStud.Name = "AddElementMenu_MaleStud";
+            resources.ApplyResources(this.AddElementMenu_MaleStud, "AddElementMenu_MaleStud");
+            // 
+            // AddElementMenu_FemaleStud
+            // 
+            this.AddElementMenu_FemaleStud.Name = "AddElementMenu_FemaleStud";
+            resources.ApplyResources(this.AddElementMenu_FemaleStud, "AddElementMenu_FemaleStud");
+            // 
+            // AddElementMenu_BrickTube
+            // 
+            this.AddElementMenu_BrickTube.Name = "AddElementMenu_BrickTube";
+            resources.ApplyResources(this.AddElementMenu_BrickTube, "AddElementMenu_BrickTube");
+            // 
+            // ContextMenu_AddCollision
+            // 
+            this.ContextMenu_AddCollision.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.AddCollisionMenu_Box,
+            this.AddCollisionMenu_Sphere});
+            this.ContextMenu_AddCollision.Name = "ContextMenu_AddCollision";
+            resources.ApplyResources(this.ContextMenu_AddCollision, "ContextMenu_AddCollision");
+            // 
+            // AddCollisionMenu_Box
+            // 
+            this.AddCollisionMenu_Box.Name = "AddCollisionMenu_Box";
+            resources.ApplyResources(this.AddCollisionMenu_Box, "AddCollisionMenu_Box");
+            this.AddCollisionMenu_Box.Click += new System.EventHandler(this.AddCollisionMenu_Box_Click);
+            // 
+            // AddCollisionMenu_Sphere
+            // 
+            this.AddCollisionMenu_Sphere.Name = "AddCollisionMenu_Sphere";
+            resources.ApplyResources(this.AddCollisionMenu_Sphere, "AddCollisionMenu_Sphere");
+            this.AddCollisionMenu_Sphere.Click += new System.EventHandler(this.AddCollisionMenu_Sphere_Click);
+            // 
+            // ContextMenu_AddConnection
+            // 
+            this.ContextMenu_AddConnection.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.studsToolStripMenuItem,
+            this.technicToolStripMenuItem,
+            this.hingeToolStripMenuItem,
+            this.ballToolStripMenuItem,
+            this.railToolStripMenuItem,
+            this.gearToolStripMenuItem,
+            this.sliderToolStripMenuItem,
+            this.fixedToolStripMenuItem});
+            this.ContextMenu_AddConnection.Name = "ContextMenu_AddConnection";
+            resources.ApplyResources(this.ContextMenu_AddConnection, "ContextMenu_AddConnection");
+            // 
+            // studsToolStripMenuItem
+            // 
+            this.studsToolStripMenuItem.Name = "studsToolStripMenuItem";
+            resources.ApplyResources(this.studsToolStripMenuItem, "studsToolStripMenuItem");
+            // 
+            // technicToolStripMenuItem
+            // 
+            this.technicToolStripMenuItem.Name = "technicToolStripMenuItem";
+            resources.ApplyResources(this.technicToolStripMenuItem, "technicToolStripMenuItem");
+            // 
+            // hingeToolStripMenuItem
+            // 
+            this.hingeToolStripMenuItem.Name = "hingeToolStripMenuItem";
+            resources.ApplyResources(this.hingeToolStripMenuItem, "hingeToolStripMenuItem");
+            // 
+            // ballToolStripMenuItem
+            // 
+            this.ballToolStripMenuItem.Name = "ballToolStripMenuItem";
+            resources.ApplyResources(this.ballToolStripMenuItem, "ballToolStripMenuItem");
+            // 
+            // railToolStripMenuItem
+            // 
+            this.railToolStripMenuItem.Name = "railToolStripMenuItem";
+            resources.ApplyResources(this.railToolStripMenuItem, "railToolStripMenuItem");
+            // 
+            // gearToolStripMenuItem
+            // 
+            this.gearToolStripMenuItem.Name = "gearToolStripMenuItem";
+            resources.ApplyResources(this.gearToolStripMenuItem, "gearToolStripMenuItem");
+            // 
+            // sliderToolStripMenuItem
+            // 
+            this.sliderToolStripMenuItem.Name = "sliderToolStripMenuItem";
+            resources.ApplyResources(this.sliderToolStripMenuItem, "sliderToolStripMenuItem");
+            // 
+            // fixedToolStripMenuItem
+            // 
+            this.fixedToolStripMenuItem.Name = "fixedToolStripMenuItem";
+            resources.ApplyResources(this.fixedToolStripMenuItem, "fixedToolStripMenuItem");
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            resources.ApplyResources(this.toolStripSeparator1, "toolStripSeparator1");
             // 
             // ElementsMenu_Delete
             // 
@@ -177,9 +293,9 @@
         private BrightIdeasSoftware.TreeListView ProjectTreeView;
         private BrightIdeasSoftware.OLVColumn olvColumn1;
         private System.Windows.Forms.ContextMenuStrip ElementsContextMenu;
-        private System.Windows.Forms.ToolStripMenuItem addElementToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem surfaceToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem studToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ContextMenu_AddElement;
+        private System.Windows.Forms.ToolStripMenuItem AddElementMenu_Part;
+        private System.Windows.Forms.ToolStripMenuItem AddElementMenu_MaleStud;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ComboBox ViewModeComboBox;
@@ -190,5 +306,21 @@
         private Localization.LocalizableString ViewModeBones;
         private Localization.LocalizableString ViewModeAll;
         private System.Windows.Forms.ToolStripMenuItem ElementsMenu_Delete;
+        private System.Windows.Forms.ToolStripMenuItem ContextMenu_AddSurface;
+        private System.Windows.Forms.ToolStripMenuItem AddElementMenu_FemaleStud;
+        private System.Windows.Forms.ToolStripMenuItem AddElementMenu_BrickTube;
+        private System.Windows.Forms.ToolStripMenuItem ContextMenu_AddCollision;
+        private System.Windows.Forms.ToolStripMenuItem AddCollisionMenu_Box;
+        private System.Windows.Forms.ToolStripMenuItem AddCollisionMenu_Sphere;
+        private System.Windows.Forms.ToolStripMenuItem ContextMenu_AddConnection;
+        private System.Windows.Forms.ToolStripMenuItem studsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem technicToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem hingeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem gearToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripMenuItem ballToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem railToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem sliderToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem fixedToolStripMenuItem;
     }
 }

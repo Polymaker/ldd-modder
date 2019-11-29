@@ -201,9 +201,10 @@ namespace LDDModder.BrickEditor.UI.Windows
                         return false;
                 }
 
-                if (!string.IsNullOrEmpty(CurrentProject.ProjectWorkingDir))
+                string workingDirPath = CurrentProject?.ProjectWorkingDir;
+                if (!string.IsNullOrEmpty(workingDirPath) && Directory.Exists(workingDirPath))
                 {
-                    Task.Factory.StartNew(() => FileHelper.DeleteFileOrFolder(CurrentProject.ProjectWorkingDir, true, true));
+                    Task.Factory.StartNew(() => FileHelper.DeleteFileOrFolder(workingDirPath, true, true));
                 }
 
                 SettingsManager.Current.LastOpenProject = null;
@@ -252,6 +253,7 @@ namespace LDDModder.BrickEditor.UI.Windows
 
             string oldPath = project.ProjectPath;
             project.Save(targetPath);
+            
             project.ProjectPath = targetPath;
             SettingsManager.AddRecentProject(project, true);
             if (oldPath != targetPath)

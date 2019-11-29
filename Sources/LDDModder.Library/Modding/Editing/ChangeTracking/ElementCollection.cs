@@ -153,6 +153,24 @@ namespace LDDModder.Modding.Editing
             return false;
         }
 
+        public void Remove(IEnumerable<T> elements)
+        {
+            var removedElements = new List<T>();
+            PreventEvents = true;
+
+            foreach(var item in elements)
+            {
+                if (Remove(item))
+                    removedElements.Add(item);
+            }
+
+            PreventEvents = false;
+
+            OnCollectionChanged(new CollectionChangedEventArgs(this,
+                    System.ComponentModel.CollectionChangeAction.Remove,
+                    removedElements.ToArray()));
+        }
+
         public void Add(T item)
         {
             UpdateItemParent(item, true);

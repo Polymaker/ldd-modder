@@ -171,10 +171,81 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         #endregion
 
+        #region ContextMenu Handling
+
+        private void ElementsContextMenu_Opening(object sender, CancelEventArgs e)
+        {
+            if (!ProjectManager.IsProjectOpen)
+            {
+                e.Cancel = true;
+                return;
+            }
+
+            ContextMenu_AddElement.Enabled = false;
+            ContextMenu_AddCollision.Enabled = !CurrentProject.Flexible;
+            ContextMenu_AddConnection.Enabled = !CurrentProject.Flexible;
+
+            AddElementMenu_MaleStud.Enabled = !CurrentProject.Flexible;
+            AddElementMenu_FemaleStud.Enabled = !CurrentProject.Flexible;
+            AddElementMenu_BrickTube.Enabled = !CurrentProject.Flexible;
+            
+            if (ProjectTreeView.FocusedItem != null && ProjectTreeView.FocusedItem.Selected)
+            {
+                var focusedSurfaceNode = GetFocusedParentElement<PartSurface>();
+
+                ContextMenu_AddElement.Enabled = focusedSurfaceNode != null;
+
+                if (CurrentProject.Flexible)
+                {
+                    var focusedBoneNode = GetFocusedParentElement<PartBone>();
+                    ContextMenu_AddCollision.Enabled = focusedBoneNode != null;
+                    ContextMenu_AddConnection.Enabled = focusedBoneNode != null;
+                }
+            }
+
+            var selectedNodes = ProjectTreeView.SelectedObjects.OfType<BaseProjectNode>();
+            ElementsMenu_Delete.Enabled = selectedNodes.Any(x => x is ProjectElementNode);
+        }
+
+        private void AddCollisionMenu_Box_Click(object sender, EventArgs e)
+        {
+            var boxCollision = new PartBoxCollision(new Simple3D.Vector3(0.4f));
+
+            var focusedBoneNode = GetFocusedParentElement<PartBone>();
+
+            if (focusedBoneNode != null)
+                (focusedBoneNode.Element as PartBone).Collisions.Add(boxCollision);
+            else
+                CurrentProject.Collisions.Add(boxCollision);
+
+            ProjectManager.SelectElement(boxCollision);
+
+        }
+
+        private void AddCollisionMenu_Sphere_Click(object sender, EventArgs e)
+        {
+            var sphereCollision = new PartSphereCollision(0.4f);
+
+            var focusedBoneNode = GetFocusedParentElement<PartBone>();
+
+            if (focusedBoneNode != null)
+                (focusedBoneNode.Element as PartBone).Collisions.Add(sphereCollision);
+            else
+                CurrentProject.Collisions.Add(sphereCollision);
+
+            ProjectManager.SelectElement(sphereCollision);
+        }
+
+        #endregion
+
         protected override void OnProjectElementsChanged()
         {
             base.OnProjectElementsChanged();
-            RebuildNavigation(false);
+
+            if (InvokeRequired)
+                BeginInvoke((Action)(() => RebuildNavigation(false)));
+            else
+                RebuildNavigation(false);
         }
 
         private void ProjectTreeView_SelectionChanged(object sender, EventArgs e)
@@ -190,6 +261,14 @@ namespace LDDModder.BrickEditor.UI.Panels
             return elementNodes.Select(x => x.Element);
         }
 
+        private ProjectElementNode GetFocusedParentElement<T>() where T : PartElement
+        {
+            var focusedNode = ProjectTreeView.FocusedObject as BaseProjectNode;
+            return focusedNode.GetParents(true)
+                .OfType<ProjectElementNode>()
+                .FirstOrDefault(x => x.Element.GetType() == typeof(T));
+        }
+
         protected override void OnElementSelectionChanged()
         {
             base.OnElementSelectionChanged();
@@ -199,38 +278,30 @@ namespace LDDModder.BrickEditor.UI.Panels
             InternalSelection = false;
         }
 
-        private void ElementsContextMenu_Opening(object sender, CancelEventArgs e)
-        {
-            if (!ProjectManager.IsProjectOpen)
-            {
-                e.Cancel = true;
-                return;
-            }
-
-            var selectedNodes = ProjectTreeView.SelectedObjects.OfType<BaseProjectNode>();
-            if (selectedNodes.Any())
-            {
-                ElementsMenu_Delete.Visible = selectedNodes.All(x => x is ProjectElementNode);
-            }
-        }
+        
 
         private void ElementsMenu_Delete_Click(object sender, EventArgs e)
         {
             var elements = GetSelectedElements().ToList();
+
+
             if (elements.Count > 1)
             {
                 //TODO: show confirmation message whene deleting more than one
             }
-            ProjectManager.ClearSelection();
 
+            ProjectManager.ClearSelection();
             ProjectManager.StartBatchChanges();
 
             var removedElements = elements.Where(x => x.TryRemove()).ToList();
 
             if (removedElements.OfType<ModelMeshReference>().Any())
                 CurrentProject.RemoveUnreferencedMeshes();
+
             ProjectManager.EndBatchChanges();
 
         }
+
+        
     }
 }

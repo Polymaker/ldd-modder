@@ -144,8 +144,11 @@ namespace LDDModder.Modding.Editing
         }
 
         
-        public bool TryRemove()
+        public virtual bool TryRemove()
         {
+            if (Project == null && Parent != null)
+                return true;//parent was removed
+
             if (Parent != null)
             {
                 foreach(var col in Parent.Collections)

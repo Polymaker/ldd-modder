@@ -23,5 +23,8 @@ namespace LDDModder.PaletteMaker.Models.Rebrickable
         {
             ColorMatches = new List<RbColorMatch>();
         }
+
+        [NotMapped]
+        public string DisplayName => $"{Name} ({ID})";
     }
 }
