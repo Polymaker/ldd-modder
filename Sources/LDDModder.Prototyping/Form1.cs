@@ -28,8 +28,9 @@ namespace LDDModder.Prototyping
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+            
             //TestPrimitives();
-            TestGFiles();
+            //TestGFiles();
             //SolveShaderData();
             //TestCustomBrick();
             //TestLddFiles();

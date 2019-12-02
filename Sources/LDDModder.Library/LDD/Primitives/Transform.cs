@@ -78,7 +78,14 @@ namespace LDDModder.LDD.Primitives
         {
             var rot = Matrix4.FromAngleAxis(Angle * ((float)Math.PI / 180f), Axis.Normalized());
             var trans = Matrix4.FromTranslation(Translation);
-            return Matrix4.Identity * rot * trans;
+            return rot * trans;
+        }
+
+        public Matrix4d ToMatrix4d()
+        {
+            var rot = Matrix4d.FromAngleAxis(Angle * ((float)Math.PI / 180f), new Vector3d(Axis.X, Axis.Y, Axis.Z).Normalized());
+            var trans = Matrix4d.FromTranslation(new Vector3d(Translation.X, Translation.Y, Translation.Z));
+            return rot * trans;
         }
 
         public static Transform FromMatrix(Matrix4 matrix)
@@ -87,6 +94,14 @@ namespace LDDModder.LDD.Primitives
             rot.ToAxisAngle(out Vector3 axis, out float angle);
             angle *= 180f / (float)Math.PI;
             return new Transform((float)Math.Round(angle, 4), axis.Rounded(), matrix.ExtractTranslation().Rounded());
+        }
+
+        public static Transform FromMatrix(Matrix4d matrix)
+        {
+            var rot = matrix.ExtractRotation();
+            rot.ToAxisAngle(out Vector3d axis, out double angle);
+            angle *= 180f / (float)Math.PI;
+            return new Transform((float)Math.Round(angle, 4), (Vector3)axis.Rounded(), (Vector3)matrix.ExtractTranslation().Rounded());
         }
 
         public Vector3 GetPosition()

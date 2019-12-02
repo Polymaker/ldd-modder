@@ -8,6 +8,11 @@ namespace LDDModder
 {
     public static class MathHelper
     {
+        public static double Clamp(double n, double min, double max)
+        {
+            return Math.Max(Math.Min(n, max), min);
+        }
+
         public static float Clamp(float n, float min, float max)
         {
             return Math.Max(Math.Min(n, max), min);

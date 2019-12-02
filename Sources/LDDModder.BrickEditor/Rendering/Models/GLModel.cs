@@ -99,7 +99,7 @@ namespace LDDModder.BrickEditor.Rendering
             VertexBuffer.DrawElements(drawMode);
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             if (VertexBuffer != null)
                 VertexBuffer.Dispose();

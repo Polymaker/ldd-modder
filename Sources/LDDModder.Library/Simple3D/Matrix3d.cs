@@ -6,25 +6,25 @@ using System.Threading.Tasks;
 
 namespace LDDModder.Simple3D
 {
-    public struct Matrix3
+    public struct Matrix3d
     {
-        public static readonly Matrix3 Identity = new Matrix3(1f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 1f);
+        public static readonly Matrix3d Identity = new Matrix3d(1d, 0d, 0d, 0d, 1d, 0d, 0d, 0d, 1d);
 
-        public float A1;
-        public float A2;
-        public float A3;
+        public double A1;
+        public double A2;
+        public double A3;
 
-        public float B1;
-        public float B2;
-        public float B3;
+        public double B1;
+        public double B2;
+        public double B3;
 
-        public float C1;
-        public float C2;
-        public float C3;
+        public double C1;
+        public double C2;
+        public double C3;
 
-        public Vector3 RowA
+        public Vector3d RowA
         {
-            get => new Vector3(A1, A2, A3);
+            get => new Vector3d(A1, A2, A3);
             set
             {
                 A1 = value.X;
@@ -33,9 +33,9 @@ namespace LDDModder.Simple3D
             }
         }
 
-        public Vector3 RowB
+        public Vector3d RowB
         {
-            get => new Vector3(B1, B2, B3);
+            get => new Vector3d(B1, B2, B3);
             set
             {
                 B1 = value.X;
@@ -44,9 +44,9 @@ namespace LDDModder.Simple3D
             }
         }
 
-        public Vector3 RowC
+        public Vector3d RowC
         {
-            get => new Vector3(C1, C2, C3);
+            get => new Vector3d(C1, C2, C3);
             set
             {
                 C1 = value.X;
@@ -55,9 +55,9 @@ namespace LDDModder.Simple3D
             }
         }
 
-        public Vector3 Col1
+        public Vector3d Col1
         {
-            get => new Vector3(A1, B1, C1);
+            get => new Vector3d(A1, B1, C1);
             set
             {
                 A1 = value.X;
@@ -66,9 +66,9 @@ namespace LDDModder.Simple3D
             }
         }
 
-        public Vector3 Col2
+        public Vector3d Col2
         {
-            get => new Vector3(A2, B2, C2);
+            get => new Vector3d(A2, B2, C2);
             set
             {
                 A2 = value.X;
@@ -77,9 +77,9 @@ namespace LDDModder.Simple3D
             }
         }
 
-        public Vector3 Col3
+        public Vector3d Col3
         {
-            get => new Vector3(A3, B3, C3);
+            get => new Vector3d(A3, B3, C3);
             set
             {
                 A3 = value.X;
@@ -88,9 +88,9 @@ namespace LDDModder.Simple3D
             }
         }
 
-        public float Determinant => A1 * B2 * C3 - A1 * B3 * C2 + A2 * B3 * C1 - A2 * B1 * C3 + A3 * B1 * C2 - A3 * B2 * C1;
+        public double Determinant => A1 * B2 * C3 - A1 * B3 * C2 + A2 * B3 * C1 - A2 * B1 * C3 + A3 * B1 * C2 - A3 * B2 * C1;
 
-        public float this[int col, int row]
+        public double this[int col, int row]
         {
             get
             {
@@ -106,7 +106,7 @@ namespace LDDModder.Simple3D
                             case 3:
                                 return A3;
                             default:
-                                return 0f;
+                                return 0d;
                         }
                     case 2:
                         switch (col)
@@ -118,7 +118,7 @@ namespace LDDModder.Simple3D
                             case 3:
                                 return B3;
                             default:
-                                return 0f;
+                                return 0d;
                         }
                     case 3:
                         switch (col)
@@ -130,10 +130,10 @@ namespace LDDModder.Simple3D
                             case 3:
                                 return C3;
                             default:
-                                return 0f;
+                                return 0d;
                         }
                     default:
-                        return 0f;
+                        return 0d;
                 }
             }
             set
@@ -186,7 +186,7 @@ namespace LDDModder.Simple3D
             }
         }
 
-        public float this[int index]
+        public double this[int index]
         {
             get
             {
@@ -202,7 +202,7 @@ namespace LDDModder.Simple3D
             }
         }
 
-        public Matrix3(float a1, float a2, float a3, float b1, float b2, float b3, float c1, float c2, float c3)
+        public Matrix3d(double a1, double a2, double a3, double b1, double b2, double b3, double c1, double c2, double c3)
         {
             A1 = a1;
             A2 = a2;
@@ -215,7 +215,7 @@ namespace LDDModder.Simple3D
             C3 = c3;
         }
 
-        public Matrix3(Vector3 a, Vector3 b, Vector3 c)
+        public Matrix3d(Vector3d a, Vector3d b, Vector3d c)
         {
             A1 = a.X;
             A2 = a.Y;
@@ -228,38 +228,25 @@ namespace LDDModder.Simple3D
             C3 = c.Z;
         }
 
-        public Matrix3(Matrix4 matrix)
+        public static Matrix3d operator *(Matrix3d left, Matrix3d right)
         {
-            A1 = matrix.A1;
-            A2 = matrix.A2;
-            A3 = matrix.A3;
-            B1 = matrix.B1;
-            B2 = matrix.B2;
-            B3 = matrix.B3;
-            C1 = matrix.C1;
-            C2 = matrix.C2;
-            C3 = matrix.C3;
-        }
-
-        public static Matrix3 operator *(Matrix3 left, Matrix3 right)
-        {
-            Mult(ref left, ref right, out Matrix3 m);
+            Mult(ref left, ref right, out Matrix3d m);
             return m;
         }
 
-        public static bool operator ==(Matrix3 left, Matrix3 right)
+        public static bool operator ==(Matrix3d left, Matrix3d right)
         {
             return left.Equals(right);
         }
 
-        public static bool operator !=(Matrix3 left, Matrix3 right)
+        public static bool operator !=(Matrix3d left, Matrix3d right)
         {
             return !(left == right);
         }
 
         public override bool Equals(object obj)
         {
-            return obj is Matrix3 matrix &&
+            return obj is Matrix3d matrix &&
                    A1 == matrix.A1 &&
                    A2 == matrix.A2 &&
                    A3 == matrix.A3 &&
@@ -290,22 +277,22 @@ namespace LDDModder.Simple3D
 
         public void Normalize()
         {
-            float determinant = Determinant;
+            double determinant = Determinant;
             RowA /= determinant;
             RowB /= determinant;
             RowC /= determinant;
         }
 
-        public Matrix3 Normalized()
+        public Matrix3d Normalized()
         {
-            Matrix3 m = this;
+            Matrix3d m = this;
             m.Normalize();
             return m;
         }
 
-        public Matrix3 Inverted()
+        public Matrix3d Inverted()
         {
-            Matrix3 m = this;
+            Matrix3d m = this;
             if (m.Determinant != 0f)
                 m.Invert();
             return m;
@@ -316,18 +303,18 @@ namespace LDDModder.Simple3D
             int[] colIdx = new int[3];
             int[] rowIdx = new int[3];
             int[] pivotIdx = new int[3] { -1, -1, -1 };
-            float[,] obj = new float[3, 3];
+            double[,] obj = new double[3, 3];
             for (int i = 0; i < 3; i++)
             {
                 for (int j = 0; j < 3; j++)
                     obj[i, j] = this[i, j];
             }
-            float[,] inverse = obj;
+            double[,] inverse = obj;
             int icol = 0;
             int irow = 0;
             for (int i2 = 0; i2 < 3; i2++)
             {
-                float maxPivot = 0f;
+                double maxPivot = 0f;
                 for (int n = 0; n < 3; n++)
                 {
                     if (pivotIdx[n] != 0)
@@ -336,7 +323,7 @@ namespace LDDModder.Simple3D
                         {
                             if (pivotIdx[i] == -1)
                             {
-                                float absVal = Math.Abs(inverse[n, i]);
+                                double absVal = Math.Abs(inverse[n, i]);
                                 if (absVal > maxPivot)
                                 {
                                     maxPivot = absVal;
@@ -356,23 +343,23 @@ namespace LDDModder.Simple3D
                 {
                     for (int m = 0; m < 3; m++)
                     {
-                        float f2 = inverse[irow, m];
-                        float[,] array = inverse;
+                        double f2 = inverse[irow, m];
+                        double[,] array = inverse;
                         int num = irow;
                         int num2 = m;
-                        float num3 = inverse[icol, m];
+                        double num3 = inverse[icol, m];
                         array[num, num2] = num3;
                         inverse[icol, m] = f2;
                     }
                 }
                 rowIdx[i2] = irow;
                 colIdx[i2] = icol;
-                float pivot = inverse[icol, icol];
+                double pivot = inverse[icol, icol];
                 if (pivot == 0f)
                 {
                     throw new InvalidOperationException("Matrix is singular and cannot be inverted.");
                 }
-                float oneOverPivot = 1f / pivot;
+                double oneOverPivot = 1f / pivot;
                 inverse[icol, icol] = 1f;
                 for (int l = 0; l < 3; l++)
                 {
@@ -382,7 +369,7 @@ namespace LDDModder.Simple3D
                 {
                     if (icol != k)
                     {
-                        float f = inverse[k, icol];
+                        double f = inverse[k, icol];
                         inverse[k, icol] = 0f;
                         for (int j = 0; j < 3; j++)
                         {
@@ -397,11 +384,11 @@ namespace LDDModder.Simple3D
                 int ic = colIdx[j2];
                 for (int k2 = 0; k2 < 3; k2++)
                 {
-                    float f3 = inverse[k2, ir];
-                    float[,] array2 = inverse;
+                    double f3 = inverse[k2, ir];
+                    double[,] array2 = inverse;
                     int num4 = k2;
                     int num5 = ir;
-                    float num6 = inverse[k2, ic];
+                    double num6 = inverse[k2, ic];
                     array2[num4, num5] = num6;
                     inverse[k2, ic] = f3;
                 }
@@ -414,7 +401,7 @@ namespace LDDModder.Simple3D
             }
         }
 
-        public static void Mult(ref Matrix3 left, ref Matrix3 right, out Matrix3 result)
+        public static void Mult(ref Matrix3d left, ref Matrix3d right, out Matrix3d result)
         {
             result.A1 = left.A1 * right.A1 + left.A2 * right.B1 + left.A3 * right.C1;
             result.A2 = left.A1 * right.A2 + left.A2 * right.B2 + left.A3 * right.C2;
@@ -431,22 +418,22 @@ namespace LDDModder.Simple3D
 
         #region Functions
 
-        public static Matrix3 FromAngleAxis(float radians, Vector3 axis)
+        public static Matrix3d FromAngleAxis(double radians, Vector3d axis)
         {
             axis.Normalize();
-            float cos = (float)Math.Cos((0f - radians));
-            float sin = (float)Math.Sin((0f - radians));
-            float t = 1f - cos;
-            float tXX = t * axis.X * axis.X;
-            float tXY = t * axis.X * axis.Y;
-            float tXZ = t * axis.X * axis.Z;
-            float tYY = t * axis.Y * axis.Y;
-            float tYZ = t * axis.Y * axis.Z;
-            float tZZ = t * axis.Z * axis.Z;
-            float sinX = sin * axis.X;
-            float sinY = sin * axis.Y;
-            float sinZ = sin * axis.Z;
-            Matrix3 result = default(Matrix3);
+            double cos = Math.Cos((0d - radians));
+            double sin = Math.Sin((0d - radians));
+            double t = 1f - cos;
+            double tXX = t * axis.X * axis.X;
+            double tXY = t * axis.X * axis.Y;
+            double tXZ = t * axis.X * axis.Z;
+            double tYY = t * axis.Y * axis.Y;
+            double tYZ = t * axis.Y * axis.Z;
+            double tZZ = t * axis.Z * axis.Z;
+            double sinX = sin * axis.X;
+            double sinY = sin * axis.Y;
+            double sinZ = sin * axis.Z;
+            Matrix3d result = default(Matrix3d);
             result.A1 = tXX + cos;
             result.A2 = tXY - sinZ;
             result.A3 = tXZ + sinY;
@@ -459,22 +446,63 @@ namespace LDDModder.Simple3D
             return result;
         }
 
-        public static Matrix3 FromQuaternion(Quaternion q)
+        public Quaterniond ExtractRotation(bool row_normalise = true)
         {
-            q.ToAxisAngle(out Vector3 axis, out float angle);
-            return FromAngleAxis(angle, axis);
+            Vector3d vector3d = RowA;
+            Vector3d vector3d2 = RowB;
+            Vector3d vector3d3 = RowC;
+            if (row_normalise)
+            {
+                vector3d = vector3d.Normalized();
+                vector3d2 = vector3d2.Normalized();
+                vector3d3 = vector3d3.Normalized();
+            }
+            Quaterniond result = default(Quaterniond);
+            double num = 0.25 * (vector3d[0] + vector3d2[1] + vector3d3[2] + 1.0);
+            if (num > 0.0)
+            {
+                double num2 = 1.0 / (4.0 * (result.W = Math.Sqrt(num)));
+                result.X = (vector3d2[2] - vector3d3[1]) * num2;
+                result.Y = (vector3d3[0] - vector3d[2]) * num2;
+                result.Z = (vector3d[1] - vector3d2[0]) * num2;
+            }
+            else if (vector3d[0] > vector3d2[1] && vector3d[0] > vector3d3[2])
+            {
+                double num3 = 2.0 * Math.Sqrt(1.0 + vector3d[0] - vector3d2[1] - vector3d3[2]);
+                result.X = 0.25 * num3;
+                num3 = 1.0 / num3;
+                result.W = (vector3d3[1] - vector3d2[2]) * num3;
+                result.Y = (vector3d2[0] + vector3d[1]) * num3;
+                result.Z = (vector3d3[0] + vector3d[2]) * num3;
+            }
+            else if (vector3d2[1] > vector3d3[2])
+            {
+                double num4 = 2.0 * Math.Sqrt(1.0 + vector3d2[1] - vector3d[0] - vector3d3[2]);
+                result.Y = 0.25 * num4;
+                num4 = 1.0 / num4;
+                result.W = (vector3d3[0] - vector3d[2]) * num4;
+                result.X = (vector3d2[0] + vector3d[1]) * num4;
+                result.Z = (vector3d3[1] + vector3d2[2]) * num4;
+            }
+            else
+            {
+                double num5 = 2.0 * Math.Sqrt(1.0 + vector3d3[2] - vector3d[0] - vector3d2[1]);
+                result.Z = 0.25 * num5;
+                num5 = 1.0 / num5;
+                result.W = (vector3d2[0] - vector3d[1]) * num5;
+                result.X = (vector3d3[0] + vector3d[2]) * num5;
+                result.Y = (vector3d3[1] + vector3d2[2]) * num5;
+            }
+            result.Normalize();
+            return result;
         }
+
+        //public static Matrix3d FromQuaternion(Quaternion q)
+        //{
+        //    q.ToAxisAngle(out Vector3d axis, out double angle);
+        //    return FromAngleAxis(angle, axis);
+        //}
 
         #endregion
-
-        public float[] ToArray()
-        {
-            return new float[] { A1, A2, A3, B1, B2, B3, C1, C2, C3 };
-        }
-
-        public override string ToString()
-        {
-            return $"{RowA}\n{RowB}\n{RowC}";
-        }
     }
 }

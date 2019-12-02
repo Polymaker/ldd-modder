@@ -228,6 +228,11 @@ namespace LDDModder.Simple3D
             return result;
         }
 
+        public static explicit operator Vector3(Vector3d vector)
+        {
+            return new Vector3((float)vector.X, (float)vector.Y, (float)vector.Z);
+        }
+
         #endregion
 
         #region Functions

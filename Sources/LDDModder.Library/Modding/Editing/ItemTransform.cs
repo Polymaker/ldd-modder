@@ -54,9 +54,17 @@ namespace LDDModder.Modding.Editing
                 Quaternion.ToEuler(rot) * (180f / (float)Math.PI));
         }
 
+        public static ItemTransform FromMatrix(Matrix4d matrix)
+        {
+            var rot = matrix.ExtractRotation();
+
+            return new ItemTransform((Vector3)matrix.ExtractTranslation(),
+                (Vector3)(Quaterniond.ToEuler(rot) * (180f / (float)Math.PI)));
+        }
+
         public static ItemTransform FromLDD(LDD.Primitives.Transform transform)
         {
-            var trans = FromMatrix(transform.ToMatrix4());
+            var trans = FromMatrix(transform.ToMatrix4d());
             trans.Position = trans.Position.Rounded();
             trans.Rotation = trans.Rotation.Rounded();
             return trans;
