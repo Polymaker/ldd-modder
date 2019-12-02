@@ -1,4 +1,5 @@
-﻿using LDDModder.LDD.Meshes;
+﻿using Assimp;
+using LDDModder.LDD.Meshes;
 using LDDModder.LDD.Parts;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,9 @@ namespace LDDModder.BrickEditor.Meshes
 {
     public static class MeshConverter
     {
-        public static MeshGeometry AssimpToLdd(Assimp.Scene scene, Assimp.Mesh mesh)
+        
+
+        public static MeshGeometry AssimpToLdd(Scene scene, Mesh mesh)
         {
             bool hasUVs = mesh.HasTextureCoords(0);
 
@@ -41,29 +44,43 @@ namespace LDDModder.BrickEditor.Meshes
             return geometry;
         }
 
-        public static Assimp.Scene LddPartToAssimp(PartWrapper part)
-        {
-            var scene = new Assimp.Scene() { RootNode = new Assimp.Node("Root") };
-            scene.Materials.Add(new Assimp.Material() { Name = "BaseMaterial" });
+        #region LDD -> Assimp
 
-            var meshNodes = new List<Assimp.Node>();
+        public static Scene LddPartToAssimp(PartWrapper part, MeshExportOptions exportOptions = null)
+        {
+            if (exportOptions == null)
+                exportOptions = new MeshExportOptions();
+
+            var scene = new Scene() { RootNode = new Node("Root") };
+            scene.Materials.Add(new Material() { Name = "BaseMaterial" });
+
+            var meshNodes = new List<Node>();
 
 
             foreach (var surface in part.Surfaces)
             {
-                string nodeName = "BaseModel";
+                string nodeName = "MainSurface";
                 if (surface.SurfaceID > 0)
                     nodeName = $"Decoration{surface.SurfaceID}";
 
-                scene.Materials.Add(new Assimp.Material() { Name = $"{nodeName}_Material" });
-                var meshNode = CreateMeshNode(scene, part, surface.Mesh, nodeName);
-
-                meshNodes.Add(meshNode);
+                var createdNodes = CreateSurfaceMeshNodes(surface, scene, nodeName, exportOptions);
+                meshNodes.AddRange(createdNodes);
             }
 
-            if (meshNodes.Count > 1)
+            //meshNodes.AddRange(scene.GetNodeHierarchy().Where(x => x.MeshCount > 0));
+
+            if (exportOptions.IncludeBones && part.IsFlexible)
             {
-                var groupNode = new Assimp.Node() { Name = "Part" };
+                var armatureNode = CreateArmatureNodeHierarchy(part, scene);
+
+                foreach (var node in meshNodes)
+                    armatureNode.Children.Add(node);
+
+                scene.RootNode.Children.Add(armatureNode);
+            }
+            else if (meshNodes.Count > 1)
+            {
+                var groupNode = new Node() { Name = "Part" };
                 foreach (var node in meshNodes)
                     groupNode.Children.Add(node);
                 scene.RootNode.Children.Add(groupNode);
@@ -71,59 +88,226 @@ namespace LDDModder.BrickEditor.Meshes
             else
                 scene.RootNode.Children.Add(meshNodes[0]);
 
-            
-            foreach (var connGroup in part.Primitive.Connectors.GroupBy(x => x.Type))
+            if (exportOptions.IncludeConnections && part.Primitive.Connectors.Any())
             {
-                int connectionIdx = 0;
-                foreach (var conn in connGroup)
-                {
-                    var connNode = new Assimp.Node($"{connGroup.Key.ToString()}{connectionIdx++}_Type_{conn.SubType}");
+                var connectionsNode = new Node("Connections");
+                scene.RootNode.Children.Add(connectionsNode);
 
-                    //connNode.Metadata.Add("Type", new Assimp.Metadata.Entry(Assimp.MetaDataType.String, conn.Type.ToString()));
-                    connNode.Transform = conn.Transform.ToMatrix4().ToAssimp();
-                    scene.RootNode.Children.Add(connNode);
+                foreach (var connGroup in part.Primitive.Connectors.GroupBy(x => x.Type))
+                {
+                    int connectionIdx = 0;
+                    foreach (var conn in connGroup)
+                    {
+                        var connNode = new Node($"{connGroup.Key.ToString()}{connectionIdx++}_Type_{conn.SubType}");
+
+                        //connNode.Metadata.Add("Type", new Assimp.Metadata.Entry(Assimp.MetaDataType.String, conn.Type.ToString()));
+                        connNode.Transform = conn.Transform.ToMatrix4().ToAssimp();
+                        connectionsNode.Children.Add(connNode);
+                    }
                 }
             }
-            
+
+            if (exportOptions.IncludeCollisions && part.Primitive.Collisions.Any())
+            {
+                var collisionsNode = new Node("Collisions");
+                scene.RootNode.Children.Add(collisionsNode);
+
+                foreach (var collGroup in part.Primitive.Collisions.GroupBy(x => x.CollisionType))
+                {
+                    int collisionIdx = 0;
+                    foreach (var collision in collGroup)
+                    {
+                        var collNode = new Node($"{collGroup.Key.ToString()}{collisionIdx++}");
+
+                        if (collision is LDDModder.LDD.Primitives.Collisions.CollisionBox collisionBox)
+                        {
+                            var boxMesh = CreateBoxMesh(collisionBox.Size * 2f);
+                            collNode.MeshIndices.Add(scene.MeshCount);
+                            scene.Meshes.Add(boxMesh);
+                        }
+                        else
+                            continue;
+                        //connNode.Metadata.Add("Type", new Assimp.Metadata.Entry(Assimp.MetaDataType.String, conn.Type.ToString()));
+                        collNode.Transform = collision.Transform.ToMatrix4().ToAssimp();
+                        collisionsNode.Children.Add(collNode);
+                    }
+                }
+            }
 
             return scene;
         }
 
-        public static Assimp.Mesh LddMeshToAssimp(MeshGeometry mesh)
+        private static List<Node> CreateSurfaceMeshNodes(PartSurfaceMesh partSurface, Scene scene, string surfaceName, MeshExportOptions exportOptions)
         {
-            var oMesh = new Assimp.Mesh(Assimp.PrimitiveType.Triangle);
+            var meshNodes = new List<Node>();
 
-            foreach (var v in mesh.Vertices)
+            int materialIndex = scene.MaterialCount;
+            scene.Materials.Add(new Material() { Name = $"{surfaceName}_Material" });
+
+            if (exportOptions.IndividualComponents)
             {
-                oMesh.Vertices.Add(v.Position.ToAssimp());
-                oMesh.Normals.Add(v.Normal.ToAssimp());
-                if (mesh.IsTextured)
-                    oMesh.TextureCoordinateChannels[0].Add(new Assimp.Vector3D(v.TexCoord.X, v.TexCoord.Y, 0));
+                int meshIndex = 0;
+
+                foreach (var comp in partSurface.Mesh.Cullings)
+                {
+                    string nodeName = $"{surfaceName}_Mesh{meshIndex++}";
+
+                    var compModel = partSurface.Mesh.GetCullingGeometry(comp);
+                    var mNode = CreateMeshNode(scene, compModel, nodeName, materialIndex);
+                    meshNodes.Add(mNode);
+
+
+                    if (comp.ReplacementMesh != null && exportOptions.IncludeAltMeshes)
+                    {
+                        mNode = CreateMeshNode(scene, comp.ReplacementMesh, nodeName + "Alt", materialIndex);
+                        meshNodes.Add(mNode);
+                    }
+                }
+            }
+            else
+            {
+                var mNode = CreateMeshNode(scene, partSurface.Mesh.Geometry, surfaceName, materialIndex);
+                meshNodes.Add(mNode);
             }
 
-            int[] indices = mesh.GetTriangleIndices();
-
-            for (int i = 0; i < indices.Length; i += 3)
-                oMesh.Faces.Add(new Assimp.Face(new int[] { indices[i], indices[i + 1], indices[i + 2] }));
-
-            return oMesh;
+            return meshNodes;
         }
 
-        public static Assimp.Mesh LddMeshToAssimp(LDD.Files.MeshFile meshFile)
+        private static Node CreateArmatureNodeHierarchy(PartWrapper part, Scene scene)
+        {
+            var armatureNode = new Node() { Name = "Armature" };
+            armatureNode.Transform = Assimp.Matrix4x4.Identity;
+            var allBoneNodes = new List<Node>();
+            Matrix4x4 lastMatrix = Assimp.Matrix4x4.Identity;
+            Node lastBoneNode = null;
+            var boneMatrixes = new Dictionary<string, Matrix4x4>();
+            var primitive = part.Primitive;
+
+            for (int i = 0; i < primitive.FlexBones.Count; i++)
+            {
+                var flexBone = primitive.FlexBones[i];
+
+                var bonePosMat = flexBone.Transform.ToMatrix4().ToAssimp();
+                var localPosMat = bonePosMat;
+
+                if (!lastMatrix.IsIdentity)
+                {
+                    var inv = lastMatrix;
+                    inv.Inverse();
+                    localPosMat = bonePosMat * inv;
+                }
+
+                var boneNode = new Node()
+                {
+                    Name = GetBoneName(flexBone),
+                    Transform = localPosMat
+                };
+
+                var boneOrientation = bonePosMat;
+                boneOrientation.Inverse();
+
+                boneMatrixes.Add(boneNode.Name, boneOrientation);
+
+                allBoneNodes.Add(boneNode);
+                if (lastBoneNode == null)
+                    armatureNode.Children.Add(boneNode);
+                else
+                    lastBoneNode.Children.Add(boneNode);
+
+                lastBoneNode = boneNode;
+                lastMatrix = bonePosMat;
+            }
+
+            foreach (var mesh in scene.Meshes)
+            {
+                foreach (var b in mesh.Bones)
+                    b.OffsetMatrix = boneMatrixes[b.Name];
+            }
+
+            return armatureNode;
+        }
+
+        public static Mesh LddMeshToAssimp(MeshGeometry geometry)
+        {
+            var assimpMesh = new Mesh(Assimp.PrimitiveType.Triangle);
+
+            foreach (var v in geometry.Vertices)
+            {
+                assimpMesh.Vertices.Add(v.Position.ToAssimp());
+                assimpMesh.Normals.Add(v.Normal.ToAssimp());
+                if (geometry.IsTextured)
+                    assimpMesh.TextureCoordinateChannels[0].Add(new Vector3D(v.TexCoord.X, v.TexCoord.Y, 0));
+            }
+
+            if (geometry.IsFlexible)
+            {
+                var boneIDs = geometry.Vertices.SelectMany(x => x.BoneWeights).Select(y => y.BoneID).Distinct().ToList();
+                var boneDict = new Dictionary<int, Bone>();
+                boneIDs.ForEach(x => boneDict.Add(x, new Bone() { Name = GetBoneName(x) }));
+
+                for (int vIdx = 0; vIdx < geometry.VertexCount; vIdx++)
+                {
+                    foreach (var bw in geometry.Vertices[vIdx].BoneWeights)
+                    {
+                        boneDict[bw.BoneID].VertexWeights.Add(new VertexWeight(vIdx, bw.Weight));
+                    }
+                }
+
+                assimpMesh.Bones.AddRange(boneDict.Values);
+            }
+
+            int[] indices = geometry.GetTriangleIndices();
+
+            for (int i = 0; i < indices.Length; i += 3)
+                assimpMesh.Faces.Add(new Face(new int[] { indices[i], indices[i + 1], indices[i + 2] }));
+
+            return assimpMesh;
+        }
+
+        public static Mesh LddMeshToAssimp(LDD.Files.MeshFile meshFile)
         {
             return LddMeshToAssimp(meshFile.Geometry);
         }
 
-        private static Assimp.Node CreateMeshNode(Assimp.Scene scene, PartWrapper part, LDD.Files.MeshFile lddMesh, string name)
+        private static Node CreateMeshNode(Scene scene, MeshGeometry geometry, string name, int materialIndex)
         {
-            var meshNode = new Assimp.Node() { Name = name };
-            var aMesh = LddMeshToAssimp(lddMesh);
-            aMesh.MaterialIndex = scene.MeshCount;
+            var meshNode = new Node() { Name = name };
+            var aMesh = LddMeshToAssimp(geometry);
+            aMesh.MaterialIndex = materialIndex;
             meshNode.MeshIndices.Add(scene.MeshCount);
             scene.Meshes.Add(aMesh);
 
             return meshNode;
         }
 
+        private static Mesh CreateBoxMesh(LDDModder.Simple3D.Vector3 size)
+        {
+            var assimpMesh = new Mesh(Assimp.PrimitiveType.Polygon);
+            var bbox = Rendering.BBox.FromCenterSize(OpenTK.Vector3.Zero, size.ToGL());
+            var vertices = bbox.GetCorners();
+            var bboxIndices = new List<int>();
+            assimpMesh.Vertices.AddRange(vertices.Select(v => v.ToAssimp()));
+
+            assimpMesh.Faces.Add(new Face(new int[] { 0, 2, 3, 1 }));
+            assimpMesh.Faces.Add(new Face(new int[] { 0, 6, 4, 2 }));
+            assimpMesh.Faces.Add(new Face(new int[] { 0, 1, 7, 6 }));
+            assimpMesh.Faces.Add(new Face(new int[] { 1, 3, 5, 7 }));
+            assimpMesh.Faces.Add(new Face(new int[] { 2, 4, 5, 3 }));
+            assimpMesh.Faces.Add(new Face(new int[] { 4, 6, 7, 5 }));
+
+            return assimpMesh;
+        }
+
+        #endregion
+
+        private static string GetBoneName(LDD.Primitives.FlexBone flexBone)
+        {
+            return $"Bone_{flexBone.ID.ToString().PadLeft(4, '0')}";
+        }
+
+        private static string GetBoneName(int boneID)
+        {
+            return $"Bone_{boneID.ToString().PadLeft(4, '0')}";
+        }
     }
 }

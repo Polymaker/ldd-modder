@@ -30,8 +30,12 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         private void ExportBrickMenuItem_Click(object sender, EventArgs e)
         {
-            using (var frm = new ModelImportExportWindow())
+            using (var frm = new ExportPartModelWindow())
+            {
+                if (ProjectCreatedFromBrick && CurrentProject != null)
+                    frm.PartIDToExport = CurrentProject.PartID;
                 frm.ShowDialog();
+            }
         }
 
         #endregion
@@ -53,6 +57,8 @@ namespace LDDModder.BrickEditor.UI.Windows
                     var selectedBrick = dlg.SelectedBrick;
                     var project = PartProject.CreateFromLddPart(selectedBrick.PartId);
                     LoadNewPartProject(project);
+                    if (CurrentProject == project)
+                        ProjectCreatedFromBrick = true;
                 }
             }
         }
@@ -151,7 +157,7 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         private void Edit_ImportMeshMenu_Click(object sender, EventArgs e)
         {
-            ImportGeometry(null);
+            ImportMeshFile();
         }
 
         private void Edit_GenerateFilesMenu_Click(object sender, EventArgs e)

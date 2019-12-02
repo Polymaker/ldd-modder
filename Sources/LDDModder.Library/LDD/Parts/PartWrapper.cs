@@ -126,6 +126,34 @@ namespace LDDModder.LDD.Parts
             }
         }
 
+        public static Primitive GetPrimitiveInfo(LDDEnvironment environment, int partID)
+        {
+            if (environment.DatabaseExtracted)
+            {
+                var primitivesDir = Path.Combine(environment.ApplicationDataPath, "db\\Primitives");
+
+                var primitiveFile = Path.Combine(primitivesDir, $"{partID}.xml");
+                if (!File.Exists(primitiveFile))
+                    throw new FileNotFoundException($"Primitive file not found. ({partID}.xml)");
+
+                return Primitive.Load(primitiveFile);
+            }
+            else
+            {
+                using (var lif = LifFile.Open(Path.Combine(environment.ApplicationDataPath, "db.lif")))
+                {
+                    var primitiveFolder = lif.GetFolder("Primitives");
+                    var meshesFolder = primitiveFolder.GetFolder("LOD0");
+
+                    var primitiveEntry = primitiveFolder.GetFile($"{partID}.xml");
+                    if (primitiveEntry == null)
+                        throw new FileNotFoundException($"Primitive file not found. ({partID}.xml)");
+
+                    return Primitive.Load(primitiveEntry.GetStream());
+                }
+            }
+        }
+
         #endregion
 
 

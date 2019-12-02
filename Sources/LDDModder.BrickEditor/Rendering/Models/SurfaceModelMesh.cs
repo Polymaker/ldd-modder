@@ -64,5 +64,10 @@ namespace LDDModder.BrickEditor.Rendering
                 SetTransform(baseTransform, true);
             }
         }
+
+        public override void RenderModel(Camera camera)
+        {
+            SurfaceModel.RenderPartialModel(this);
+        }
     }
 }

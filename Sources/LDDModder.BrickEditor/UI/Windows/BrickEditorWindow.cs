@@ -29,6 +29,8 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         public PartProject CurrentProject => ProjectManager.CurrentProject;
 
+        private bool ProjectCreatedFromBrick;
+
         //private string TemporaryFolder;
 
         public BrickEditorWindow()
@@ -110,6 +112,7 @@ namespace LDDModder.BrickEditor.UI.Windows
         private void ProjectManager_ProjectChanged(object sender, EventArgs e)
         {
             UpdateMenuItemStates();
+            ProjectCreatedFromBrick = false;
         }
 
         public string GetTemporaryWorkingDir()
@@ -282,40 +285,19 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         #endregion
 
-        private void ImportGeometry(PartSurface preferredSurface)
+        private void ImportMeshFile()
         {
-            using (var ofd = new OpenFileDialog())
+            using (var imd = new ImportModelsDialog())
             {
-                ofd.Filter = "Mesh files (*.dae, *.obj, *.stl)|*.dae;*.obj;*.stl|Wavefront (*.obj)|*.obj|Collada (*.dae)|*.dae|STL (*.stl)|*.stl|All files (*.*)|*.*";
-                if (ofd.ShowDialog() == DialogResult.OK)
+                imd.Project = CurrentProject;
+                imd.SelectFileOnStart = true;
+                if (imd.ShowDialog() == DialogResult.OK)
                 {
-                    Assimp.Scene fileScene = null;
-                    try
-                    {
-                        fileScene = AssimpContext.ImportFile(ofd.FileName, 
-                            Assimp.PostProcessSteps.Triangulate | 
-                            Assimp.PostProcessSteps.GenerateNormals);
-                        
-                    }
-                    catch 
-                    {
-                        MessageBox.Show("Invalid file.");
-                    }
-                    if (fileScene != null)
-                    {
-                        try
-                        {
-                            ImportAssimpModel(fileScene, preferredSurface);
-                        }
-                        catch (Exception ex)
-                        {
 
-                        }
-                    }
                 }
             }
         }
-
+        /*
         private void ImportAssimpModel(Assimp.Scene scene, PartSurface preferredSurface)
         {
             using(var imd = new ImportModelsDialog())
@@ -323,6 +305,7 @@ namespace LDDModder.BrickEditor.UI.Windows
                 imd.Project = CurrentProject;
                 imd.SceneToImport = scene;
                 imd.PreferredSurfaceID = preferredSurface?.SurfaceID ?? -1;
+                imd.SelectFileOnStart = true;
 
                 if (imd.ShowDialog() == DialogResult.OK)
                 {
@@ -353,7 +336,7 @@ namespace LDDModder.BrickEditor.UI.Windows
                 }
             }
         }
-
+        */
         private void BrickEditorWindow_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (CurrentProject != null)

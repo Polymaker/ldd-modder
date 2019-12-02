@@ -236,7 +236,8 @@ namespace LDDModder.BrickEditor.Rendering
         public static void DrawBoundingBox(Matrix4 transform, BBox box, Vector4 color, float thickness = 1f)
         {
             ColorShader.Use();
-            ColorShader.ModelMatrix.Set(Matrix4.CreateScale(box.Size) * transform);
+            
+            ColorShader.ModelMatrix.Set(Matrix4.CreateScale(box.Size + new Vector3(0.1f)) * Matrix4.CreateTranslation(box.Center) * transform);
             ColorShader.Color.Set(color);
 
             BoundingBoxBufffer.Bind();

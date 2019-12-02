@@ -38,6 +38,29 @@ namespace Assimp
             return FindNode(scene.RootNode);
         }
 
+        public static IEnumerable<Node> GetNodeHierarchy(this Scene scene)
+        {
+            return GetNodeHierarchy(scene.RootNode, true);
+        }
+
+        public static IEnumerable<Node> GetNodeHierarchy(this Node node)
+        {
+            foreach (var child in node.Children)
+                yield return child;
+        }
+
+        public static IEnumerable<Node> GetNodeHierarchy(this Node node, bool includeSelf)
+        {
+            if (includeSelf)
+                yield return node;
+
+            foreach (var child in node.Children)
+            {
+                foreach (var subChild in GetNodeHierarchy(child, true))
+                    yield return subChild;
+            }
+        }
+
         public static Matrix4x4 GetFinalTransform(this Node node)
         {
             var parents = new List<Node>();

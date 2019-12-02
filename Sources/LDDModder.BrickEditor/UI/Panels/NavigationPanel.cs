@@ -48,6 +48,8 @@ namespace LDDModder.BrickEditor.UI.Panels
             InitializeComponent();
             CloseButtonVisible = false;
             CloseButton = false;
+            ElementsMenu_Delete.ShortcutKeys = Keys.Delete;
+
             DockAreas = DockAreas.DockLeft | DockAreas.DockRight | DockAreas.Float | DockAreas.Document;
 
             ProjectTreeView.CanExpandGetter += (model) =>

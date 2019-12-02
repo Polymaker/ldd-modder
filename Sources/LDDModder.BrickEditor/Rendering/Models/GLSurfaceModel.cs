@@ -161,6 +161,20 @@ namespace LDDModder.BrickEditor.Rendering
 
             if (useOutlineStencil)
                 RenderHelper.DisableStencilTest();
+
+            foreach (var model in visibleMeshes)
+            {
+                if (model.IsSelected)
+                {
+                    RenderHelper.DrawBoundingBox(model.Transform, model.BoundingBox, 
+                        new Vector4(0f, 1f, 1f, 1f), 1.5f);
+                }
+            }
+        }
+
+        public void RenderPartialModel(SurfaceModelMesh surfaceModel)
+        {
+
         }
 
         public void RenderWireframe(Vector4 color, float size = 1f)

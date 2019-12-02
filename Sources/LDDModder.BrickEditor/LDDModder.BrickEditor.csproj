@@ -130,6 +130,7 @@
       <DependentUpon>LocalizableStringList.cs</DependentUpon>
     </Compile>
     <Compile Include="Meshes\MeshConverter.cs" />
+    <Compile Include="Meshes\MeshExportOptions.cs" />
     <Compile Include="Native\User32.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -198,6 +199,12 @@
     <Compile Include="UI\Controls\BoundingBoxEditor.Designer.cs">
       <DependentUpon>BoundingBoxEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\Controls\BrowseTextBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Controls\BrowseTextBox.Designer.cs">
+      <DependentUpon>BrowseTextBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\Controls\ListViewDB.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -209,12 +216,6 @@
     </Compile>
     <Compile Include="UI\Controls\NumberTextBox.Designer.cs">
       <DependentUpon>NumberTextBox.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\ModelImportExportWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\ModelImportExportWindow.Designer.cs">
-      <DependentUpon>ModelImportExportWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\Panels\LocalisationEditorPanel.cs">
       <SubType>Form</SubType>
@@ -258,6 +259,12 @@
     </Compile>
     <Compile Include="UI\Windows\BrickEditorWindow.Toolbar.cs">
       <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Windows\ExportPartModelWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Windows\ExportPartModelWindow.Designer.cs">
+      <DependentUpon>ExportPartModelWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\Windows\ImportModelsDialog.cs">
       <SubType>Form</SubType>
@@ -304,8 +311,8 @@
     <EmbeddedResource Include="UI\Controls\BoundingBoxEditor.resx">
       <DependentUpon>BoundingBoxEditor.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\ModelImportExportWindow.resx">
-      <DependentUpon>ModelImportExportWindow.cs</DependentUpon>
+    <EmbeddedResource Include="UI\Controls\BrowseTextBox.resx">
+      <DependentUpon>BrowseTextBox.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Panels\LocalisationEditorPanel.resx">
       <DependentUpon>LocalisationEditorPanel.cs</DependentUpon>
@@ -328,6 +335,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Windows\BrickEditorWindow.resx">
       <DependentUpon>BrickEditorWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Windows\ExportPartModelWindow.resx">
+      <DependentUpon>ExportPartModelWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Windows\ImportModelsDialog.resx">
       <DependentUpon>ImportModelsDialog.cs</DependentUpon>

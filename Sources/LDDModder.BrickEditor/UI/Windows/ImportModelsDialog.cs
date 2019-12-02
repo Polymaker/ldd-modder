@@ -15,6 +15,8 @@ namespace LDDModder.BrickEditor.UI.Windows
     {
         public PartProject Project { get; set; }
 
+        private Assimp.AssimpContext AssimpContext;
+
         public Assimp.Scene SceneToImport { get; set; }
 
         public int PreferredSurfaceID { get; set; }
@@ -24,6 +26,8 @@ namespace LDDModder.BrickEditor.UI.Windows
         private List<SurfaceItem> SurfaceList;
 
         private bool HasInitialized { get; set; }
+
+        public bool SelectFileOnStart { get; set; }
 
         public ImportModelsDialog()
         {
@@ -45,13 +49,20 @@ namespace LDDModder.BrickEditor.UI.Windows
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+            AssimpContext = new Assimp.AssimpContext();
             RebuildSurfaceList();
             UpdateSurfaceComboBox();
-            FillModelsGridView();
+            //FillModelsGridView();
             HasInitialized = true;
         }
 
-        
+        protected override void OnShown(EventArgs e)
+        {
+            base.OnShown(e);
+            if (SelectFileOnStart)
+                ShowSelectFileDialog();
+        }
+
 
         private void FillModelsGridView()
         {
@@ -112,7 +123,6 @@ namespace LDDModder.BrickEditor.UI.Windows
                 Name = name;
             }
         }
-
 
         #endregion
 
@@ -188,5 +198,38 @@ namespace LDDModder.BrickEditor.UI.Windows
         }
 
         #endregion
+
+        private void browseTextBox1_BrowseButtonClicked(object sender, EventArgs e)
+        {
+            ShowSelectFileDialog();
+        }
+
+        public void ShowSelectFileDialog()
+        {
+            using (var ofd = new OpenFileDialog())
+            {
+                ofd.Filter = "Mesh files (*.dae, *.obj, *.stl)|*.dae;*.obj;*.stl|Wavefront (*.obj)|*.obj|Collada (*.dae)|*.dae|STL (*.stl)|*.stl|All files (*.*)|*.*";
+                if (!string.IsNullOrEmpty(browseTextBox1.Value))
+                    ofd.FileName = browseTextBox1.Value;
+
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        browseTextBox1.Value = ofd.FileName;
+                        SceneToImport = AssimpContext.ImportFile(ofd.FileName, 
+                            Assimp.PostProcessSteps.Triangulate | 
+                            Assimp.PostProcessSteps.GenerateNormals);
+
+                        FillModelsGridView();
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
+                    
+                }
+            }
+        }
     }
 }

@@ -26,6 +26,8 @@ namespace LDDModder.LDD
 
         public static LDDEnvironment Current { get; private set; }
 
+        public static bool HasInitialized { get; private set; }
+
         public static void Initialize()
         {
             var lddEnv = new LDDEnvironment()
@@ -35,6 +37,7 @@ namespace LDDModder.LDD
             };
             lddEnv.CheckLifStatus();
             Current = lddEnv;
+            HasInitialized = true;
         }
 
         public static string FindInstallFolder()

@@ -51,6 +51,7 @@ namespace LDDModder.BrickEditor.Rendering
             switch (Connection.ConnectorType)
             {
                 case LDD.Primitives.Connectors.ConnectorType.Axel:
+                    RenderTechnicAxle(Connection.GetConnector<AxelConnector>());
                     break;
                 case LDD.Primitives.Connectors.ConnectorType.Ball:
                     break;
@@ -90,6 +91,14 @@ namespace LDDModder.BrickEditor.Rendering
             RenderHelper.DrawRectangle(Transform, 
                 new Vector2(connector.StudWidth * 0.8f, connector.StudHeight * 0.8f), 
                 new Vector4(0, 0, 0, 1), 3f);
+        }
+
+        private void RenderTechnicAxle(AxelConnector axel)
+        {
+            if (axel.Length > 0)
+                RenderHelper.DrawLine(new Vector4(0, 0, 0, 1), 
+                    Vector3.Zero, Vector3.UnitY * axel.Length, 1.5f);
+
         }
 
         public override bool RayIntersects(Ray ray, out float distance)
