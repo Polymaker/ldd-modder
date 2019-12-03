@@ -57,7 +57,25 @@
             this.activeElementToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cursorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.visualStudioToolStripExtender1 = new WeifenLuo.WinFormsUI.Docking.VisualStudioToolStripExtender(this.components);
+            this.SelectionInfoPanel = new System.Windows.Forms.Panel();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.PosZNumBox = new LDDModder.BrickEditor.UI.Controls.NumberTextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.PosXNumBox = new LDDModder.BrickEditor.UI.Controls.NumberTextBox();
+            this.PosYNumBox = new LDDModder.BrickEditor.UI.Controls.NumberTextBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.RotXNumBox = new LDDModder.BrickEditor.UI.Controls.NumberTextBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.RotYNumBox = new LDDModder.BrickEditor.UI.Controls.NumberTextBox();
+            this.RotZNumBox = new LDDModder.BrickEditor.UI.Controls.NumberTextBox();
             this.toolStrip1.SuspendLayout();
+            this.SelectionInfoPanel.SuspendLayout();
+            this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // toolStrip1
@@ -260,14 +278,145 @@
             // 
             this.visualStudioToolStripExtender1.DefaultRenderer = null;
             // 
+            // SelectionInfoPanel
+            // 
+            resources.ApplyResources(this.SelectionInfoPanel, "SelectionInfoPanel");
+            this.SelectionInfoPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
+            this.SelectionInfoPanel.Controls.Add(this.tableLayoutPanel1);
+            this.SelectionInfoPanel.Name = "SelectionInfoPanel";
+            // 
+            // tableLayoutPanel1
+            // 
+            resources.ApplyResources(this.tableLayoutPanel1, "tableLayoutPanel1");
+            this.tableLayoutPanel1.Controls.Add(this.PosZNumBox, 1, 3);
+            this.tableLayoutPanel1.Controls.Add(this.label1, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.label2, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this.label3, 0, 3);
+            this.tableLayoutPanel1.Controls.Add(this.PosXNumBox, 1, 1);
+            this.tableLayoutPanel1.Controls.Add(this.PosYNumBox, 1, 2);
+            this.tableLayoutPanel1.Controls.Add(this.label4, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.label5, 0, 4);
+            this.tableLayoutPanel1.Controls.Add(this.label6, 0, 5);
+            this.tableLayoutPanel1.Controls.Add(this.RotXNumBox, 1, 5);
+            this.tableLayoutPanel1.Controls.Add(this.label7, 0, 6);
+            this.tableLayoutPanel1.Controls.Add(this.label8, 0, 7);
+            this.tableLayoutPanel1.Controls.Add(this.RotYNumBox, 1, 6);
+            this.tableLayoutPanel1.Controls.Add(this.RotZNumBox, 1, 7);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            // 
+            // PosZNumBox
+            // 
+            resources.ApplyResources(this.PosZNumBox, "PosZNumBox");
+            this.PosZNumBox.MaximumValue = 5000D;
+            this.PosZNumBox.MinDisplayedDecimalPlaces = 2;
+            this.PosZNumBox.MinimumValue = -5000D;
+            this.PosZNumBox.Name = "PosZNumBox";
+            this.PosZNumBox.ValueChanged += new System.EventHandler(this.PositionNumBoxes_ValueChanged);
+            // 
+            // label1
+            // 
+            resources.ApplyResources(this.label1, "label1");
+            this.label1.ForeColor = System.Drawing.Color.White;
+            this.label1.Name = "label1";
+            // 
+            // label2
+            // 
+            resources.ApplyResources(this.label2, "label2");
+            this.label2.ForeColor = System.Drawing.Color.White;
+            this.label2.Name = "label2";
+            // 
+            // label3
+            // 
+            resources.ApplyResources(this.label3, "label3");
+            this.label3.ForeColor = System.Drawing.Color.White;
+            this.label3.Name = "label3";
+            // 
+            // PosXNumBox
+            // 
+            resources.ApplyResources(this.PosXNumBox, "PosXNumBox");
+            this.PosXNumBox.MaximumValue = 5000D;
+            this.PosXNumBox.MinDisplayedDecimalPlaces = 2;
+            this.PosXNumBox.MinimumValue = -5000D;
+            this.PosXNumBox.Name = "PosXNumBox";
+            this.PosXNumBox.ValueChanged += new System.EventHandler(this.PositionNumBoxes_ValueChanged);
+            // 
+            // PosYNumBox
+            // 
+            resources.ApplyResources(this.PosYNumBox, "PosYNumBox");
+            this.PosYNumBox.MaximumValue = 5000D;
+            this.PosYNumBox.MinDisplayedDecimalPlaces = 2;
+            this.PosYNumBox.MinimumValue = -5000D;
+            this.PosYNumBox.Name = "PosYNumBox";
+            this.PosYNumBox.ValueChanged += new System.EventHandler(this.PositionNumBoxes_ValueChanged);
+            // 
+            // label4
+            // 
+            resources.ApplyResources(this.label4, "label4");
+            this.tableLayoutPanel1.SetColumnSpan(this.label4, 2);
+            this.label4.ForeColor = System.Drawing.Color.White;
+            this.label4.Name = "label4";
+            // 
+            // label5
+            // 
+            resources.ApplyResources(this.label5, "label5");
+            this.tableLayoutPanel1.SetColumnSpan(this.label5, 2);
+            this.label5.ForeColor = System.Drawing.Color.White;
+            this.label5.Name = "label5";
+            // 
+            // label6
+            // 
+            resources.ApplyResources(this.label6, "label6");
+            this.label6.ForeColor = System.Drawing.Color.White;
+            this.label6.Name = "label6";
+            // 
+            // RotXNumBox
+            // 
+            resources.ApplyResources(this.RotXNumBox, "RotXNumBox");
+            this.RotXNumBox.MaximumValue = 360D;
+            this.RotXNumBox.MinDisplayedDecimalPlaces = 2;
+            this.RotXNumBox.MinimumValue = -360D;
+            this.RotXNumBox.Name = "RotXNumBox";
+            // 
+            // label7
+            // 
+            resources.ApplyResources(this.label7, "label7");
+            this.label7.ForeColor = System.Drawing.Color.White;
+            this.label7.Name = "label7";
+            // 
+            // label8
+            // 
+            resources.ApplyResources(this.label8, "label8");
+            this.label8.ForeColor = System.Drawing.Color.White;
+            this.label8.Name = "label8";
+            // 
+            // RotYNumBox
+            // 
+            resources.ApplyResources(this.RotYNumBox, "RotYNumBox");
+            this.RotYNumBox.MaximumValue = 360D;
+            this.RotYNumBox.MinDisplayedDecimalPlaces = 2;
+            this.RotYNumBox.MinimumValue = -360D;
+            this.RotYNumBox.Name = "RotYNumBox";
+            // 
+            // RotZNumBox
+            // 
+            resources.ApplyResources(this.RotZNumBox, "RotZNumBox");
+            this.RotZNumBox.MaximumValue = 360D;
+            this.RotZNumBox.MinDisplayedDecimalPlaces = 2;
+            this.RotZNumBox.MinimumValue = -360D;
+            this.RotZNumBox.Name = "RotZNumBox";
+            // 
             // ViewportPanel
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.SelectionInfoPanel);
             this.Controls.Add(this.toolStrip1);
             this.Name = "ViewportPanel";
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
+            this.SelectionInfoPanel.ResumeLayout(false);
+            this.tableLayoutPanel1.ResumeLayout(false);
+            this.tableLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -302,5 +451,21 @@
         private System.Windows.Forms.ToolStripMenuItem activeElementToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem cursorToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem CameraMenu_LookAt;
+        private System.Windows.Forms.Panel SelectionInfoPanel;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label3;
+        private Controls.NumberTextBox PosXNumBox;
+        private Controls.NumberTextBox PosZNumBox;
+        private Controls.NumberTextBox PosYNumBox;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label6;
+        private Controls.NumberTextBox RotXNumBox;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label8;
+        private Controls.NumberTextBox RotYNumBox;
+        private Controls.NumberTextBox RotZNumBox;
     }
 }

@@ -90,12 +90,62 @@ namespace LDDModder.BrickEditor.Rendering
             IndexBuffer.Init(BufferTarget.ElementArrayBuffer, indices.ToArray());
         }
 
+        public void AppendIndices(IEnumerable<int> indices)
+        {
+            if (!BufferInitialized)
+                CreateBuffers();
+            var currentIndices = IndexBuffer.Content;
+            IndexBuffer.Clear(BufferTarget.ElementArrayBuffer);
+            IndexBuffer.Init(BufferTarget.ElementArrayBuffer, currentIndices.Concat(indices).ToArray());
+        }
+
         public void SetVertices(IEnumerable<T> vertices)
         {
             if (!BufferInitialized)
                 CreateBuffers();
             VertexBuffer.Clear(BufferTarget.ArrayBuffer);
             VertexBuffer.Init(BufferTarget.ArrayBuffer, vertices.ToArray());
+        }
+
+        public void AppendVertices(IEnumerable<T> vertices)
+        {
+            if (!BufferInitialized)
+                CreateBuffers();
+            var currentVerts = VertexBuffer.Content;
+            VertexBuffer.Clear(BufferTarget.ArrayBuffer);
+            VertexBuffer.Init(BufferTarget.ArrayBuffer, currentVerts.Concat(vertices).ToArray());
+        }
+
+        public void LoadModelVertices(Assimp.Mesh mesh, bool append = false)
+        {
+            var verts = new List<VertVNT>();
+            bool isTextured = mesh.HasTextureCoords(0);
+
+            for (int i = 0; i < mesh.VertexCount; i++)
+            {
+                verts.Add(new VertVNT()
+                {
+                    Position = mesh.Vertices[i].ToGL(),
+                    Normal = mesh.Normals[i].ToGL(),
+                    TexCoord = isTextured ? mesh.TextureCoordinateChannels[0][i].ToGL().Xy : Vector2.Zero
+                });
+            }
+
+            if (append)
+                AppendVertices(verts.Select(x => x.Cast<T>()));
+            else
+                SetVertices(verts.Select(x => x.Cast<T>()));
+
+            var indices = new List<int>();
+            int indexPerFace = mesh.Faces[0].IndexCount;
+            foreach (var face in mesh.Faces)
+                if (face.IndexCount == indexPerFace)
+                    indices.AddRange(face.Indices);
+
+            if (append)
+                AppendIndices(indices);
+            else
+                SetIndices(indices);
         }
 
         #region Draw Methods
@@ -125,8 +175,6 @@ namespace LDDModder.BrickEditor.Rendering
         }
 
         #endregion
-
-
 
         ~IndexedVertexBuffer()
         {

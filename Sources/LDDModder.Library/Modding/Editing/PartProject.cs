@@ -153,9 +153,9 @@ namespace LDDModder.Modding.Editing
         [XmlIgnore]
         public bool IsLoading { get; internal set; }
 
-        public event EventHandler<PropertyChangedEventArgs> ElementPropertyChanged;
+        public event EventHandler<ElementValueChangedEventArgs> ElementPropertyChanged;
 
-        public event EventHandler<CollectionChangedEventArgs> ElementCollectionChanged;
+        public event EventHandler<ElementCollectionChangedEventArgs> ElementCollectionChanged;
 
         public PartProject()
         {
@@ -869,7 +869,7 @@ namespace LDDModder.Modding.Editing
 
         #region Change tracking 
 
-        internal void OnElementCollectionChanged(CollectionChangedEventArgs ccea)
+        internal void OnElementCollectionChanged(ElementCollectionChangedEventArgs ccea)
         {
             if (ccea.Action == System.ComponentModel.CollectionChangeAction.Add)
             {
@@ -890,7 +890,7 @@ namespace LDDModder.Modding.Editing
                 ElementCollectionChanged?.Invoke(this, ccea);
         }
 
-        internal void OnElementPropertyChanged(PropertyChangedEventArgs pcea)
+        internal void OnElementPropertyChanged(ElementValueChangedEventArgs pcea)
         {
             if (!IsLoading)
                 ElementPropertyChanged?.Invoke(this, pcea);

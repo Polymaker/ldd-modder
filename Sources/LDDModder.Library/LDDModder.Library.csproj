@@ -156,7 +156,7 @@
     <Compile Include="LDD\Primitives\Primitive.cs" />
     <Compile Include="LDD\Primitives\Transform.cs" />
     <Compile Include="Maths\Line.cs" />
-    <Compile Include="Modding\Editing\ChangeTracking\CollectionChangedEventArgs.cs" />
+    <Compile Include="Modding\Editing\ChangeTracking\ElementCollectionChangedEventArgs.cs" />
     <Compile Include="Modding\Editing\ChangeTracking\ElementCollection.cs" />
     <Compile Include="Modding\Editing\Generation\CircularPattern.cs" />
     <Compile Include="Modding\Editing\Generation\LinearPattern.cs" />
@@ -175,7 +175,7 @@
     <Compile Include="Modding\Editing\PartProject.cs" />
     <Compile Include="Modding\Editing\PrimitiveElements\PartSphereCollision.cs" />
     <Compile Include="Modding\Editing\PartSurface.cs" />
-    <Compile Include="Modding\Editing\ChangeTracking\PropertyChangedEventArgs.cs" />
+    <Compile Include="Modding\Editing\ChangeTracking\ElementValueChangedEventArgs.cs" />
     <Compile Include="Modding\Editing\PrimitiveElements\StudReference.cs" />
     <Compile Include="Modding\Editing\ModelComponents\SurfaceComponent.cs" />
     <Compile Include="Modding\Editing\ModelComponents\FemaleStudModel.cs" />

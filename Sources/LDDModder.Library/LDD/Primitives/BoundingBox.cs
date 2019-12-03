@@ -75,6 +75,17 @@ namespace LDDModder.LDD.Primitives
             MaxZ = maxZ;
         }
 
+        public BoundingBox(Vector3 min, Vector3 max)
+        {
+            Min = min;
+            Max = max;
+        }
+
+        public BoundingBox Clone()
+        {
+            return new BoundingBox(Min, Max);
+        }
+
         public static BoundingBox FromVertices(IEnumerable<Vertex> vertices)
         {
             //var minX = vertices.Select(x => x.Position.X).Min();
@@ -131,6 +142,33 @@ namespace LDDModder.LDD.Primitives
             }
 
             return new BoundingBox(minX, minY, minZ, maxX, maxY, maxZ);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is BoundingBox box &&
+                   Min.Equals(box.Min) &&
+                   Max.Equals(box.Max);
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = 1537547080;
+            hashCode = hashCode * -1521134295 + Min.GetHashCode();
+            hashCode = hashCode * -1521134295 + Max.GetHashCode();
+            return hashCode;
+        }
+
+        public static bool operator ==(BoundingBox left, BoundingBox right)
+        {
+            if (!ReferenceEquals(left, null))
+                return left.Equals(right);
+            return ReferenceEquals(right, null);
+        }
+
+        public static bool operator !=(BoundingBox left, BoundingBox right)
+        {
+            return !(left == right);
         }
     }
 }

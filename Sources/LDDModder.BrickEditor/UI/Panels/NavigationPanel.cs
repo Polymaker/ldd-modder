@@ -1,4 +1,5 @@
-﻿using LDDModder.BrickEditor.EditModels;
+﻿using LDDModder.BrickEditor.Models.Navigation;
+using LDDModder.BrickEditor.ProjectHandling;
 using LDDModder.BrickEditor.Resources;
 using LDDModder.LDD.Meshes;
 using LDDModder.Modding.Editing;

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using LDDModder.Modding.Editing;
 
-namespace LDDModder.BrickEditor.EditModels
+namespace LDDModder.BrickEditor.Models.Navigation
 {
     public class ElementGroupNode : BaseProjectNode
     {

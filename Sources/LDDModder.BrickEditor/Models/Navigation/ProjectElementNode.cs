@@ -6,11 +6,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LDDModder.BrickEditor.EditModels
+namespace LDDModder.BrickEditor.Models.Navigation
 {
     public class ProjectElementNode : BaseProjectNode
     {
-        public override PartProject Project => Element.Project; 
+        public override PartProject Project => Element.Project;
 
         public PartElement Element { get; set; }
 
@@ -40,7 +40,7 @@ namespace LDDModder.BrickEditor.EditModels
             else
             {
 
-                foreach(var elemCollection in Element.ElementCollections)
+                foreach (var elemCollection in Element.ElementCollections)
                 {
                     if (elemCollection.Count > 4)
                     {
@@ -53,7 +53,7 @@ namespace LDDModder.BrickEditor.EditModels
                     }
                 }
 
-                foreach(var chilElem in Element.ChildElements)
+                foreach (var chilElem in Element.ChildElements)
                     Childrens.Add(CreateDefault(chilElem));
             }
         }

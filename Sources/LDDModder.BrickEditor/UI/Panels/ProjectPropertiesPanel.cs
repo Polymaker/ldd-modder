@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using LDDModder.BrickEditor.EditModels;
+using LDDModder.BrickEditor.ProjectHandling;
 using LDDModder.BrickEditor.Resources;
 using LDDModder.LDD.Data;
 using LDDModder.Modding.Editing;
@@ -69,8 +69,6 @@ namespace LDDModder.BrickEditor.UI.Panels
         protected override void OnProjectChanged()
         {
             base.OnProjectChanged();
-
-            
             UpdateControlBindings();
         }
 
@@ -79,9 +77,13 @@ namespace LDDModder.BrickEditor.UI.Panels
             PartIDTextBox.Enabled = CurrentProject != null;
             PartIDTextBox.Enabled = CurrentProject != null;
             DescriptionTextBox.Enabled = CurrentProject != null;
+            DescriptionTextBox.DataBindings.Clear();
+
             PlatformComboBox.Enabled = CurrentProject != null;
             CategoryComboBox.Enabled = CurrentProject != null;
             boundingBoxEditor1.Enabled = CurrentProject != null;
+            boundingBoxEditor1.DataBindings.Clear();
+
             CalculateBoundingButton.Enabled = CurrentProject != null;
 
             InternalSet = true;
@@ -90,12 +92,20 @@ namespace LDDModder.BrickEditor.UI.Panels
             {
                 PartIDTextBox.Value = CurrentProject.PartID;
                 PartIDTextBox.ReadOnly = !(ProjectManager.IsNewProject);
-                DescriptionTextBox.Text = CurrentProject.PartDescription;
+
+                DescriptionTextBox.DataBindings.Add(new Binding("Text", 
+                    CurrentProject.Properties, nameof(PartProperties.Description), 
+                    true, DataSourceUpdateMode.OnValidation));
+
+                //DescriptionTextBox.Text = CurrentProject.PartDescription;
                 PlatformComboBox.SelectedValue = CurrentProject.Platform?.ID ?? 0;
                 UpdateCategoriesCombobox();
                 CategoryComboBox.SelectedValue = CurrentProject.MainGroup?.ID ?? 0;
 
-                boundingBoxEditor1.Value = CurrentProject.Bounding ?? new LDD.Primitives.BoundingBox();
+                boundingBoxEditor1.DataBindings.Add(new Binding("Value",
+                    CurrentProject.Properties, nameof(CurrentProject.Properties.Bounding), 
+                    false, DataSourceUpdateMode.OnPropertyChanged));
+
             }
             else
             {
@@ -118,16 +128,9 @@ namespace LDDModder.BrickEditor.UI.Panels
             }
         }
 
-        private void boundingBoxEditor1_ValueChanged(object sender, EventArgs e)
-        {
-            if (CurrentProject != null && !InternalSet)
-                CurrentProject.Bounding = boundingBoxEditor1.Value;
-        }
-
         private void DescriptionTextBox_Validated(object sender, EventArgs e)
         {
-            if (CurrentProject != null && !InternalSet)
-                CurrentProject.PartDescription = DescriptionTextBox.Text;
+            DescriptionTextBox.ClearUndo();
         }
 
         private void PartIDTextBox_ValueChanged(object sender, EventArgs e)
@@ -153,7 +156,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                 CurrentProject.MainGroup = CategoryComboBox.SelectedItem as MainGroup;
         }
 
-        protected override void OnElementPropertyChanged(Modding.Editing.PropertyChangedEventArgs e)
+        protected override void OnElementPropertyChanged(Modding.Editing.ElementValueChangedEventArgs e)
         {
             base.OnElementPropertyChanged(e);
 
@@ -161,6 +164,19 @@ namespace LDDModder.BrickEditor.UI.Panels
             {
                 UpdateControlBindings();
             }
+        }
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (DescriptionTextBox.ContainsFocus)
+            {
+                if (keyData.HasFlag(Keys.Z) && keyData.HasFlag(Keys.Control) && DescriptionTextBox.CanUndo)
+                {
+                    DescriptionTextBox.Undo();
+                    return true;
+                }
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
         }
     }
 }

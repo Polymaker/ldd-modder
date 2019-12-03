@@ -13,7 +13,7 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
 
         private float _GizmoSize;
         private Matrix4 _Transform;
-        private bool recalculateBounds;
+        private bool RecalculateBounds;
         private Matrix4 _Position;
         private Matrix4 _Orientation;
 
@@ -30,7 +30,7 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
                 if (_GizmoSize != value)
                 {
                     _GizmoSize = value;
-                    recalculateBounds = true;
+                    RecalculateBounds = true;
                 }
             }
         }
@@ -47,7 +47,7 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
                 {
                     _Position = Matrix4.CreateTranslation(value);
                     _Transform = _Orientation * _Position;
-                    recalculateBounds = true;
+                    RecalculateBounds = true;
                 }
             }
         }
@@ -64,7 +64,7 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
                 {
                     _Orientation = value;
                     _Transform = _Orientation * _Position;
-                    recalculateBounds = true;
+                    RecalculateBounds = true;
                     SetupElementsMatrices();
                 }
             }
@@ -83,7 +83,7 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
                     _Transform = value;
                     _Position = Matrix4.CreateTranslation(_Transform.ExtractTranslation());
                     _Orientation = Matrix4.CreateFromQuaternion(_Transform.ExtractRotation());
-                    recalculateBounds = true;
+                    RecalculateBounds = true;
 
                 }
             }
@@ -110,15 +110,16 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
             get => _DisplayStyle;
             set
             {
-                if (!IsEditing && value != _DisplayStyle)
+                if (!(IsEditing || Selected) && value != _DisplayStyle)
                 {
                     _DisplayStyle = value;
-                    recalculateBounds = true;
-
-                    DisplayStyleChanged?.Invoke(this, EventArgs.Empty);
+                    RecalculateBounds = true;
+                    ClearOver();
 
                     if (Visible && ActiveElements.Any())
                         RepositionGizmo();
+
+                    DisplayStyleChanged?.Invoke(this, EventArgs.Empty);
                 }
             }
         }
@@ -128,9 +129,10 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
             get => _OrientationMode;
             set
             {
-                if (!IsEditing && value != _OrientationMode)
+                if (!(IsEditing || Selected) && value != _OrientationMode)
                 {
                     _OrientationMode = value;
+                    ClearOver();
                     if (Visible && ActiveElements.Any())
                         RepositionGizmo();
                 }
@@ -142,9 +144,10 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
             get => _PivotPointMode;
             set
             {
-                if (!IsEditing && value != _PivotPointMode)
+                if (!(IsEditing || Selected) && value != _PivotPointMode)
                 {
                     _PivotPointMode = value;
+                    ClearOver();
                     if (Visible && ActiveElements.Any())
                         RepositionGizmo();
                 }
@@ -177,7 +180,7 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
 
             EditTransform = Matrix4.Identity;
 
-            DisplayStyle = GizmoStyle.Translation;
+            _DisplayStyle = GizmoStyle.Translation;
             
             HandleColors = new Vector4[]
             {
@@ -251,7 +254,7 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
             }
 
             BoundingSphere = new BSphere(Position, scaledGizmoSize + padding);
-            recalculateBounds = false;
+            RecalculateBounds = false;
         }
 
         private GizmoHandle GetHandle(int index)
@@ -284,7 +287,7 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
         public bool IsOverHandle(Ray ray, out GizmoHandle handle)
         {
             handle = null;
-            if (recalculateBounds)
+            if (RecalculateBounds)
                 return false;
 
             var localRay = Ray.Transform(ray, Transform.Inverted());
@@ -345,35 +348,9 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
             if (!Visible)
                 return;
 
-            if (recalculateBounds)
+            bool recalculatedBounds = RecalculateBounds;
+            if (RecalculateBounds)
                 UpdateBounds(camera);
-
-            bool updateMouseOver = false;
-
-            if (!(IsEditing || Selected))
-            {
-                if (input.IsKeyPressed(OpenTK.Input.Key.R) && DisplayStyle != GizmoStyle.Rotation)
-                {
-                    DisplayStyle = GizmoStyle.Rotation;
-
-                    ClearOver();
-                    updateMouseOver = true;
-                }
-                else if (input.IsKeyPressed(OpenTK.Input.Key.T) && DisplayStyle != GizmoStyle.Translation)
-                {
-                    DisplayStyle = GizmoStyle.Translation;
-
-                    ClearOver();
-                    updateMouseOver = true;
-                }
-                else if (input.IsKeyPressed(OpenTK.Input.Key.S) && DisplayStyle != GizmoStyle.Plain)
-                {
-                    DisplayStyle = GizmoStyle.Plain;
-
-                    ClearOver();
-                    updateMouseOver = true;
-                }
-            }
 
             if (IsEditing && input.IsKeyPressed(OpenTK.Input.Key.Escape))
             {
@@ -384,7 +361,7 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
 
             var mouseDelta = input.MousePos - input.LastMousePos;
 
-            if (updateMouseOver || mouseDelta.LengthFast > 1)
+            if (recalculatedBounds || mouseDelta.LengthFast > 1)
             {
                 var mouseRay = camera.RaycastFromScreen(input.LocalMousePos);
 
@@ -537,15 +514,13 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
                 GL.Vertex3(p2.Normalized() * UIScale * GizmoSize);
                 GL.End();
             }
-            
 
             RenderHandles();
         }
 
         private void RenderHandles()
         {
-            //if (IsHovering || Selected)
-                RenderHelper.EnableStencilTest();
+            RenderHelper.EnableStencilTest();
 
             for (int i = 0; i < 3; i++)
             {
@@ -559,24 +534,21 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
                         color.W = 0.8f;
                     }
 
-                    //if (gizmoHandle.IsOver || gizmoHandle.IsSelected)
-                        RenderHelper.EnableStencilMask();
+                    RenderHelper.EnableStencilMask();
 
                     gizmoHandle.RenderHandle(this, color);
+                    
+                    var outlineColor = (gizmoHandle.IsOver || gizmoHandle.IsSelected) ? new Vector4(1f) : new Vector4(0, 0, 0, 1f);
+                    RenderHelper.ApplyStencilMask();
 
-                    //if (gizmoHandle.IsOver || gizmoHandle.IsSelected)
-                    {
-                        var outlineColor = (gizmoHandle.IsOver || gizmoHandle.IsSelected) ? new Vector4(1f) : new Vector4(0, 0, 0, 1f);
-                        RenderHelper.ApplyStencilMask();
-                        gizmoHandle.RenderHandle(this, outlineColor, true);
-                        RenderHelper.RemoveStencilMask();
-                        RenderHelper.ClearStencil();
-                    }
+                    gizmoHandle.RenderHandle(this, outlineColor, true);
+
+                    RenderHelper.RemoveStencilMask();
+                    RenderHelper.ClearStencil();
                 }
             }
 
-            //if (IsHovering || Selected)
-                RenderHelper.DisableStencilTest();
+            RenderHelper.DisableStencilTest();
         }
 
         #endregion
@@ -726,7 +698,7 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
 
             //_SelectionOrientation = _Orientation;
             _Transform = _Orientation * _Position;
-            recalculateBounds = true;
+            RecalculateBounds = true;
 
             if (ActiveElements.Any())
                 SetupElementsMatrices();

@@ -1,4 +1,5 @@
-﻿using LDDModder.BrickEditor.Resources;
+﻿using LDDModder.BrickEditor.Models.Project;
+using LDDModder.BrickEditor.Resources;
 using LDDModder.Modding.Editing;
 using System;
 using System.Collections.Generic;
@@ -6,11 +7,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LDDModder.BrickEditor.EditModels
+namespace LDDModder.BrickEditor.ProjectHandling
 {
     public class ProjectManager
     {
         private List<PartElement> _SelectedElements;
+        //private HashSet<ElementExtention> ElementExtentions;
+        //private Dictionary<Type, Type> ElementExtenders;
+
+        private long LastSavedChange;
 
         public PartProject CurrentProject { get; private set; }
 
@@ -20,15 +25,7 @@ namespace LDDModder.BrickEditor.EditModels
 
         public bool IsNewProject => IsProjectOpen && string.IsNullOrEmpty(CurrentProject.ProjectPath);
 
-        public bool IsExecutingUndoRedo => UndoRedoManager.ExecutingUndoRedo;
-
-        public bool IsExecutingBatchChanges => UndoRedoManager.IsInBatch;
-
-        public bool CanUndo => UndoRedoManager.CanUndo;
-
-        public bool CanRedo => UndoRedoManager.CanRedo;
-
-        public bool IsModified => UndoRedoManager.CanUndo || UndoRedoManager.HistoryLimitExceeded;
+        public bool IsModified => LastSavedChange != UndoRedoManager.CurrentChangeID;
 
         public event EventHandler UndoHistoryChanged
         {
@@ -52,14 +49,13 @@ namespace LDDModder.BrickEditor.EditModels
 
         public event EventHandler ProjectChanged;
 
-        public event EventHandler<CollectionChangedEventArgs> ElementCollectionChanged;
+        public event EventHandler<ElementCollectionChangedEventArgs> ElementCollectionChanged;
 
-        public event EventHandler ProjectElementsChanged; 
+        public event EventHandler ProjectElementsChanged;
 
-        public event EventHandler<PropertyChangedEventArgs> ElementPropertyChanged;
+        public event EventHandler<ElementValueChangedEventArgs> ElementPropertyChanged;
 
         #endregion
-
 
         private bool ElementsChanged;
         private bool PreventProjectChange;
@@ -70,6 +66,13 @@ namespace LDDModder.BrickEditor.EditModels
             UndoRedoManager = new UndoRedoManager(this);
             UndoRedoManager.BeginUndoRedo += UndoRedoManager_BeginUndoRedo;
             UndoRedoManager.EndUndoRedo += UndoRedoManager_EndUndoRedo;
+            //ElementExtentions = new HashSet<ElementExtention>();
+        }
+
+        private void InitializeExtenders()
+        {
+            //ElementExtenders = new Dictionary<Type, Type>();
+            //ElementExtenders.Add(typeof(part))
         }
 
         public void SetCurrentProject(PartProject project)
@@ -96,9 +99,19 @@ namespace LDDModder.BrickEditor.EditModels
                 DettachPartProject(CurrentProject);
                 ProjectClosed?.Invoke(this, EventArgs.Empty);
                 CurrentProject = null;
-
+                //ElementExtentions.Clear();
                 if (!PreventProjectChange)
                     ProjectChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public void SaveProject(string targetPath)
+        {
+            if (IsProjectOpen)
+            {
+                CurrentProject.Save(targetPath);
+                CurrentProject.ProjectPath = targetPath;
+                LastSavedChange = UndoRedoManager.CurrentChangeID;
             }
         }
 
@@ -114,8 +127,8 @@ namespace LDDModder.BrickEditor.EditModels
             project.ElementCollectionChanged -= Project_ElementCollectionChanged;
             project.ElementPropertyChanged -= Project_ElementPropertyChanged;
         }
-        
-        private void Project_ElementCollectionChanged(object sender, CollectionChangedEventArgs e)
+
+        private void Project_ElementCollectionChanged(object sender, ElementCollectionChangedEventArgs e)
         {
             if (e.Action == System.ComponentModel.CollectionChangeAction.Remove)
             {
@@ -132,7 +145,7 @@ namespace LDDModder.BrickEditor.EditModels
                 ProjectElementsChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        private void Project_ElementPropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void Project_ElementPropertyChanged(object sender, ElementValueChangedEventArgs e)
         {
             ElementPropertyChanged?.Invoke(this, e);
         }
@@ -222,7 +235,17 @@ namespace LDDModder.BrickEditor.EditModels
         }
 
         #endregion
-    
+
+        #region Undo/Redo
+
+        public bool IsExecutingUndoRedo => UndoRedoManager.ExecutingUndoRedo;
+
+        public bool IsExecutingBatchChanges => UndoRedoManager.IsInBatch;
+
+        public bool CanUndo => UndoRedoManager.CanUndo;
+
+        public bool CanRedo => UndoRedoManager.CanRedo;
+
         public void Undo()
         {
             UndoRedoManager.Undo();
@@ -261,5 +284,7 @@ namespace LDDModder.BrickEditor.EditModels
                 ProjectElementsChanged?.Invoke(this, EventArgs.Empty);
             }
         }
+        #endregion
+
     }
 }

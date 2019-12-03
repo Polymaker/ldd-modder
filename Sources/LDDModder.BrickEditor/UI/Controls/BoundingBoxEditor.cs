@@ -11,20 +11,22 @@ using LDDModder.LDD.Primitives;
 
 namespace LDDModder.BrickEditor.UI.Controls
 {
-    public partial class BoundingBoxEditor : UserControl
+    public partial class BoundingBoxEditor : UserControl, INotifyPropertyChanged
     {
         private BoundingBox _Value;
         private bool InternalAssign = false;
 
-        [Browsable(false)]
+        [Browsable(false), Bindable(true)]
         public BoundingBox Value
         {
             get => _Value;
             set
             {
-                if (_Value != value)
+                var notNullValue = value ?? new BoundingBox();
+                if (!notNullValue.Equals(Value))
                 {
-                    _Value = value;
+
+                    _Value = notNullValue.Clone();
                     LoadBoundingBox();
                     OnValueChanged();
                 }
@@ -32,11 +34,13 @@ namespace LDDModder.BrickEditor.UI.Controls
         }
 
         public event EventHandler ValueChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public BoundingBoxEditor()
         {
             InitializeComponent();
             Height = tableLayoutPanel1.Height;
+            _Value = new BoundingBox();
             AdjustTableLayoutPositions();
         }
 
@@ -137,6 +141,7 @@ namespace LDDModder.BrickEditor.UI.Controls
         private void OnValueChanged()
         {
             ValueChanged?.Invoke(this, EventArgs.Empty);
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Value"));
         }
 
         private void LoadBoundingBox()

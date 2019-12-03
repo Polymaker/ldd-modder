@@ -8,8 +8,8 @@
 		<Connector type="Axel" subtype="4" gender="female" description="Cross axle" connectswith="5,7" />
 		<Connector type="Axel" subtype="5" gender="male" description="Cross axle" connectswith="4" />
 		
-		<Connector type="Axel" subtype="6" gender="female" description="Bar" connectswith="7" />
-		<Connector type="Axel" subtype="7" gender="male" description="Bar" connectswith="4,6" />
+		<Connector type="Axel" subtype="6" gender="female" description="Bar Ø3.2mm" connectswith="7" />
+		<Connector type="Axel" subtype="7" gender="male" description="Bar Ø3.2mm" connectswith="4,6" />
 		
 		<!-- a technic hole that accepts cross axles and pins, generally used in plates -->
 		<Connector type="Axel" subtype="8" gender="female" description="Technic hole (plate/brick)" connectswith="3,5,13,19" /> 
@@ -70,8 +70,7 @@
 		<Connector type="Ball" subtype="18" gender="female" description="3M ball cup" connectswith="19" />
 		<Connector type="Ball" subtype="19" gender="male" description="3M ball" connectswith="18" />
 		
-		<!-- The following connectors seems to be only used on flex bones (flexible parts) -->
-		<!-- They do not seem to connect with anything -->
+		<!-- The following connectors are only used for flex bones (flexible parts) -->
 		<Connector type="Ball" subtype="999000" gender="" description="" />
 		<Connector type="Ball" subtype="999001" gender="" description="" />
 		<Connector type="Ball" subtype="999002" gender="" description="" />
@@ -236,6 +235,7 @@
 		<Connector type="Fixed" subtype="158" gender="" description="" />
 		<Connector type="Fixed" subtype="159" gender="" description="" />
 		
+		<!-- The following connectors are only used for flex bones (flexible parts) -->
 		<Connector type="Fixed" subtype="999000" gender="" description="" />
 		<Connector type="Fixed" subtype="999001" gender="" description="" />
 		<Connector type="Fixed" subtype="999002" gender="" description="" />

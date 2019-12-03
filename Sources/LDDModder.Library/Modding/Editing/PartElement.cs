@@ -49,7 +49,7 @@ namespace LDDModder.Modding.Editing
         [XmlIgnore]
         public PartElement Parent { get; internal set; }
 
-        public event EventHandler<PropertyChangedEventArgs> PropertyChanged;
+        public event EventHandler<ElementValueChangedEventArgs> PropertyChanged;
 
         public PartElement()
         {
@@ -115,7 +115,7 @@ namespace LDDModder.Modding.Editing
 
                 if (Project != null && !IsLoading)
                 {
-                    var args = new PropertyChangedEventArgs(this, propertyName, oldValue, value);
+                    var args = new ElementValueChangedEventArgs(this, propertyName, oldValue, value);
                     PropertyChanged?.Invoke(this, args);
                     Project.OnElementPropertyChanged(args);
                 }

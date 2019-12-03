@@ -24,12 +24,6 @@ namespace LDDModder.BrickEditor.Rendering
 
         public MaterialInfo Material { get; set; }
 
-        public Vector4 WireframeColor { get; set; }
-
-        public Vector4 WireframeColorAlt { get; set; }
-
-        public Vector4 OutlineColor { get; set; }
-
         private VertVNT[] Vertices;
         private int[] Indices;
 
@@ -37,7 +31,6 @@ namespace LDDModder.BrickEditor.Rendering
         {
             VertexBuffer = new IndexedVertexBuffer<VertVNT>();
             MeshModels = new List<SurfaceModelMesh>();
-            WireframeColor = new Vector4(0, 0, 0, 1f);
         }
 
         public GLSurfaceModel(PartSurface surface)
@@ -45,10 +38,6 @@ namespace LDDModder.BrickEditor.Rendering
             Surface = surface;
             VertexBuffer = new IndexedVertexBuffer<VertVNT>();
             MeshModels = new List<SurfaceModelMesh>();
-            WireframeColor = new Vector4(0, 0, 0, 1f);
-            WireframeColorAlt = new Vector4(0.85f, 0.85f, 0.85f, 1f);// new Vector4(0.956f, 0.6f, 0.168f, 1f);
-            OutlineColor = new Vector4(1f);
-
         }
 
         public void RebuildPartModels()
@@ -125,7 +114,6 @@ namespace LDDModder.BrickEditor.Rendering
             return model;
         }
 
-
         public void Render(RenderOptions renderOptions, bool alphaPass = false)
         {
             var visibleMeshes = MeshModels.Where(x => x.Visible)
@@ -166,7 +154,9 @@ namespace LDDModder.BrickEditor.Rendering
             {
                 if (model.IsSelected)
                 {
-                    RenderHelper.DrawBoundingBox(model.Transform, model.BoundingBox, 
+                    var selectionBox = model.BoundingBox;
+                    selectionBox.Size += new Vector3(0.1f);
+                    RenderHelper.DrawBoundingBox(model.Transform, selectionBox, 
                         new Vector4(0f, 1f, 1f, 1f), 1.5f);
                 }
             }
@@ -213,7 +203,8 @@ namespace LDDModder.BrickEditor.Rendering
 
             if (renderOptions.DrawWireframe)
             {
-                RenderHelper.BeginDrawWireframe(VertexBuffer, model.Transform, 1f, model.IsSelected ? renderOptions.WireframeColorAlt : renderOptions.WireframeColor);
+                RenderHelper.BeginDrawWireframe(VertexBuffer, model.Transform, 1f, 
+                    model.IsSelected ? RenderHelper.WireframeColorAlt : RenderHelper.WireframeColor);
                 DrawPartialMesh(model);
                 RenderHelper.EndDrawWireframe(VertexBuffer);
             }
@@ -221,7 +212,7 @@ namespace LDDModder.BrickEditor.Rendering
 
         private void DrawModelOutline(SurfaceModelMesh model)
         {
-            RenderHelper.BeginDrawWireframe(VertexBuffer, model.Transform, 4f, OutlineColor);
+            RenderHelper.BeginDrawWireframe(VertexBuffer, model.Transform, 4f, RenderHelper.SelectionOutlineColor);
             RenderHelper.ApplyStencilMask();
 
             DrawPartialMesh(model);

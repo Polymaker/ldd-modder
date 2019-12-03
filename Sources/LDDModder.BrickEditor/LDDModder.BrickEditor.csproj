@@ -109,24 +109,27 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EditModels\BaseProjectNode.cs" />
-    <Compile Include="EditModels\ChangeAction.cs" />
-    <Compile Include="EditModels\ElementGroupNode.cs" />
-    <Compile Include="EditModels\ProjectElementNode.cs" />
-    <Compile Include="EditModels\ProjectCollectionNode.cs" />
-    <Compile Include="EditModels\ProjectManager.cs" />
-    <Compile Include="EditModels\ProjectNodeCollection.cs" />
-    <Compile Include="EditModels\UndoRedoManager.cs" />
-    <Compile Include="Localization\LocalizableString.cs">
+    <Compile Include="Models\Navigation\BaseProjectNode.cs" />
+    <Compile Include="Models\Project\ElementExtention.cs" />
+    <Compile Include="Models\Project\FemaleStudElement.cs" />
+    <Compile Include="Models\Project\RenderableElement.cs" />
+    <Compile Include="ProjectHandling\ChangeAction.cs" />
+    <Compile Include="Models\Navigation\ElementGroupNode.cs" />
+    <Compile Include="Models\Navigation\ProjectElementNode.cs" />
+    <Compile Include="Models\Navigation\ProjectCollectionNode.cs" />
+    <Compile Include="ProjectHandling\ProjectManager.cs" />
+    <Compile Include="Models\Navigation\ProjectNodeCollection.cs" />
+    <Compile Include="ProjectHandling\UndoRedoManager.cs" />
+    <Compile Include="Utilities\LocalizableString.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Localization\LocalizableString.Designer.cs">
+    <Compile Include="Utilities\LocalizableString.Designer.cs">
       <DependentUpon>LocalizableString.cs</DependentUpon>
     </Compile>
-    <Compile Include="Localization\LocalizableStringList.cs">
+    <Compile Include="Utilities\LocalizableStringList.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Localization\LocalizableStringList.Designer.cs">
+    <Compile Include="Utilities\LocalizableStringList.Designer.cs">
       <DependentUpon>LocalizableStringList.cs</DependentUpon>
     </Compile>
     <Compile Include="Meshes\MeshConverter.cs" />
@@ -147,12 +150,14 @@
     <Compile Include="Rendering\Cameras\Camera.cs" />
     <Compile Include="Rendering\Cameras\CameraManipulator.cs" />
     <Compile Include="Rendering\Cameras\CameraMovement.cs" />
+    <Compile Include="Rendering\ModelManager.cs" />
     <Compile Include="Rendering\Models\CollisionModel.cs" />
     <Compile Include="Rendering\Models\ConnectionModel.cs" />
     <Compile Include="Rendering\Models\ITransformableElement.cs" />
     <Compile Include="Rendering\Models\IVertexBuffer.cs" />
     <Compile Include="Rendering\Models\ModelBase.cs" />
     <Compile Include="Rendering\Models\PartElementModel.cs" />
+    <Compile Include="Rendering\Models\PartialModel.cs" />
     <Compile Include="Rendering\Models\SurfaceModelMesh.cs" />
     <Compile Include="Rendering\Models\GLSurfaceModel.cs" />
     <Compile Include="Rendering\Models\IndexedVertexBuffer.cs" />
@@ -369,6 +374,9 @@
     <EmbeddedResource Include="Resources\Data\Categories.json" />
     <EmbeddedResource Include="Resources\Data\Platforms.json" />
     <EmbeddedResource Include="Resources\Shaders\UIShader.glsl" />
+    <EmbeddedResource Include="Resources\Models\CrossAxleMale.obj" />
+    <EmbeddedResource Include="Resources\Models\Cylinder.obj" />
+    <EmbeddedResource Include="Resources\Models\CrossAxleFemale.obj" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

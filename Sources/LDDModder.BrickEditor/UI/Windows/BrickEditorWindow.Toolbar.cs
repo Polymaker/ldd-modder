@@ -194,6 +194,7 @@ namespace LDDModder.BrickEditor.UI.Windows
                 ProjectManager.Redo();
                 return true;
             }
+
             return base.ProcessCmdKey(ref msg, keyData);
         }
     }

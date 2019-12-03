@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LDDModder.BrickEditor.EditModels
+namespace LDDModder.BrickEditor.Models.Navigation
 {
     public class BaseProjectNode
     {
@@ -73,9 +73,9 @@ namespace LDDModder.BrickEditor.EditModels
 
             if (HasChildrens())
             {
-                foreach(var directChild in Childrens)
+                foreach (var directChild in Childrens)
                 {
-                    foreach(var subChild in directChild.GetChildHierarchy(true))
+                    foreach (var subChild in directChild.GetChildHierarchy(true))
                         yield return subChild;
                 }
             }

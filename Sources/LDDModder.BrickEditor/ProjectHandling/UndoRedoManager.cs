@@ -4,11 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LDDModder.BrickEditor.EditModels
+namespace LDDModder.BrickEditor.ProjectHandling
 {
     public class UndoRedoManager
     {
         public ProjectManager ProjectManager { get; }
+
+        public long CurrentChangeID { get; private set; }
 
         public int MaxHistory { get; set; }
 
@@ -54,9 +56,10 @@ namespace LDDModder.BrickEditor.EditModels
             UndoHistory.Clear();
             RedoHistory.Clear();
             HistoryLimitExceeded = false;
+            CurrentChangeID = 0;
         }
 
-        private void ProjectManager_ProjectElementsChanged(object sender, Modding.Editing.CollectionChangedEventArgs e)
+        private void ProjectManager_ProjectElementsChanged(object sender, Modding.Editing.ElementCollectionChangedEventArgs e)
         {
             if (ExecutingUndoRedo)
                 return;
@@ -69,7 +72,7 @@ namespace LDDModder.BrickEditor.EditModels
                 AddAction(action);
         }
 
-        private void ProjectManager_ElementPropertyChanged(object sender, Modding.Editing.PropertyChangedEventArgs e)
+        private void ProjectManager_ElementPropertyChanged(object sender, Modding.Editing.ElementValueChangedEventArgs e)
         {
             if (ExecutingUndoRedo)
                 return;
@@ -80,7 +83,6 @@ namespace LDDModder.BrickEditor.EditModels
             else
                 AddAction(action);
         }
-
 
 
         public void StartBatchChanges()
@@ -100,11 +102,12 @@ namespace LDDModder.BrickEditor.EditModels
                 BatchChanges.Clear();
             }
         }
-        
+
         private void AddAction(ChangeAction action)
         {
             RedoHistory.Clear();
             UndoHistory.Add(action);
+            action.ChangeID = ++CurrentChangeID;
 
             if (UndoHistory.Count > MaxHistory)
             {
@@ -122,6 +125,8 @@ namespace LDDModder.BrickEditor.EditModels
                 BeginUndoRedo?.Invoke(this, EventArgs.Empty);
 
                 var lastAction = UndoHistory.Last();
+                CurrentChangeID = lastAction.ChangeID - 1;
+
                 UndoHistory.Remove(lastAction);
                 RedoHistory.Add(lastAction);
 
@@ -141,6 +146,8 @@ namespace LDDModder.BrickEditor.EditModels
                 BeginUndoRedo?.Invoke(this, EventArgs.Empty);
 
                 var lastAction = RedoHistory.Last();
+                CurrentChangeID = lastAction.ChangeID;
+
                 RedoHistory.Remove(lastAction);
                 UndoHistory.Add(lastAction);
 

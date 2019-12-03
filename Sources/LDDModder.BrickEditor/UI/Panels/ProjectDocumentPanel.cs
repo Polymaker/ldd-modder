@@ -1,4 +1,4 @@
-﻿using LDDModder.BrickEditor.EditModels;
+﻿using LDDModder.BrickEditor.ProjectHandling;
 using LDDModder.Modding.Editing;
 using System;
 using System.Collections.Generic;
@@ -53,13 +53,13 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         }
 
-        private void ProjectManager_ElementCollectionChanged(object sender, CollectionChangedEventArgs e)
+        private void ProjectManager_ElementCollectionChanged(object sender, ElementCollectionChangedEventArgs e)
         {
             //if (!(ProjectManager.IsExecutingBatchChanges || ProjectManager.IsExecutingUndoRedo))
                 OnElementCollectionChanged(e);
         }
 
-        protected virtual void OnElementCollectionChanged(CollectionChangedEventArgs e)
+        protected virtual void OnElementCollectionChanged(ElementCollectionChangedEventArgs e)
         {
 
         }
@@ -74,12 +74,12 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         }
 
-        private void ProjectManager_ElementPropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void ProjectManager_ElementPropertyChanged(object sender, ElementValueChangedEventArgs e)
         {
             OnElementPropertyChanged(e);
         }
 
-        protected virtual void OnElementPropertyChanged(PropertyChangedEventArgs e)
+        protected virtual void OnElementPropertyChanged(ElementValueChangedEventArgs e)
         {
 
         }

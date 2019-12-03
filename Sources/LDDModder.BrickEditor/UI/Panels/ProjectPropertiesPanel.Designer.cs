@@ -28,6 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
+            LDDModder.LDD.Primitives.BoundingBox boundingBox1 = new LDDModder.LDD.Primitives.BoundingBox();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ProjectPropertiesPanel));
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
@@ -174,8 +176,15 @@
             this.boundingBoxEditor1.Name = "boundingBoxEditor1";
             this.boundingBoxEditor1.Size = new System.Drawing.Size(459, 39);
             this.boundingBoxEditor1.TabIndex = 9;
-            this.boundingBoxEditor1.Value = null;
-            this.boundingBoxEditor1.ValueChanged += new System.EventHandler(this.boundingBoxEditor1_ValueChanged);
+            boundingBox1.Max = ((LDDModder.Simple3D.Vector3)(resources.GetObject("boundingBox1.Max")));
+            boundingBox1.MaxX = 0F;
+            boundingBox1.MaxY = 0F;
+            boundingBox1.MaxZ = 0F;
+            boundingBox1.Min = ((LDDModder.Simple3D.Vector3)(resources.GetObject("boundingBox1.Min")));
+            boundingBox1.MinX = 0F;
+            boundingBox1.MinY = 0F;
+            boundingBox1.MinZ = 0F;
+            this.boundingBoxEditor1.Value = boundingBox1;
             // 
             // CalculateBoundingButton
             // 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LDDModder.BrickEditor.Rendering.Models;
 using LDDModder.BrickEditor.Rendering.Shaders;
 using ObjectTK.Shaders;
 using ObjectTK.Textures;
@@ -25,6 +26,9 @@ namespace LDDModder.BrickEditor.Rendering
         public static ModelShaderProgram ModelShader { get; private set; }
 
         public static IndexedVertexBuffer<Vector3> BoundingBoxBufffer;
+
+        #endregion
+
 
         public static void InitializeResources()
         {
@@ -50,6 +54,24 @@ namespace LDDModder.BrickEditor.Rendering
             }
 
             BoundingBoxBufffer.SetIndices(bboxIndices);
+
+            CollisionMaterial = new MaterialInfo
+            {
+                Diffuse = new Vector4(1f, 0.05f, 0.05f, 1f),
+                Specular = new Vector3(1f),
+                Shininess = 2f
+            };
+
+            ConnectionMaterial = new MaterialInfo
+            {
+                Diffuse = new Vector4(0.05f, 0.05f, 1f, 1f),
+                Specular = new Vector3(1f),
+                Shininess = 2f
+            };
+
+            WireframeColor = new Vector4(0, 0, 0, 1f);
+            WireframeColorAlt = new Vector4(0.85f, 0.85f, 0.85f, 1f);
+            SelectionOutlineColor = new Vector4(1f);
         }
 
         public static void ReleaseResources()
@@ -84,8 +106,6 @@ namespace LDDModder.BrickEditor.Rendering
                 BoundingBoxBufffer = null;
             }
         }
-
-        #endregion
 
         public static void InitializeMatrices(Camera camera)
         {
@@ -126,6 +146,13 @@ namespace LDDModder.BrickEditor.Rendering
             ModelShader.UseTexture.Set(false);
         }
 
+        #region Draw Model
+
+        public static void BeginDrawModel(PartialModel model, Matrix4 transform, MaterialInfo material)
+        {
+            BeginDrawModel(model.VertexBuffer, transform, material);
+        }
+
         public static void BeginDrawModel(IVertexBuffer vertexBuffer, Matrix4 transform, MaterialInfo material)
         {
             ModelShader.Use();
@@ -144,6 +171,13 @@ namespace LDDModder.BrickEditor.Rendering
             vertexBuffer.UnbindAttribute(ModelShader.Normal);
             vertexBuffer.UnbindAttribute(ModelShader.TexCoord);
         }
+
+        public static void EndDrawModel(PartialModel model)
+        {
+            EndDrawModel(model.VertexBuffer);
+        }
+
+        #endregion
 
         public static void BeginDrawColorModel(IVertexBuffer vertexBuffer, Matrix4 transform, MaterialInfo material)
         {
@@ -193,17 +227,16 @@ namespace LDDModder.BrickEditor.Rendering
             vertexBuffer.UnbindAttribute(WireframeShader.Normal);
         }
 
-        public static Vector4[] DefaultAxisColors = new Vector4[]
-            {
-                new Vector4(1f,0.09f,0.26f,1f),
-                new Vector4(0.58f, 0.898f, 0.156f, 1f),
-                new Vector4(0.156f,0.564f,1f,1f)
-            };
 
         public static void DrawLine(Vector4 color, Vector3 p1, Vector3 p2, float thickness = 1f)
         {
+            DrawLine(Matrix4.Identity, color, p1, p2, thickness);
+        }
+
+        public static void DrawLine(Matrix4 transform, Vector4 color, Vector3 p1, Vector3 p2, float thickness = 1f)
+        {
             ColorShader.Use();
-            ColorShader.ModelMatrix.Set(Matrix4.Identity);
+            ColorShader.ModelMatrix.Set(transform);
             ColorShader.Color.Set(color);
 
             GL.PushAttrib(AttribMask.LineBit);
@@ -233,11 +266,27 @@ namespace LDDModder.BrickEditor.Rendering
             GL.PopAttrib();
         }
 
+        public static void DrawBoundingBox(Matrix4 transform, Vector3 pos, Vector3 size, Vector4 color, float thickness = 1f)
+        {
+            ColorShader.Use();
+
+            ColorShader.ModelMatrix.Set(Matrix4.CreateScale(size) * Matrix4.CreateTranslation(pos) * transform);
+            ColorShader.Color.Set(color);
+
+            BoundingBoxBufffer.Bind();
+            BoundingBoxBufffer.BindAttribute(ColorShader.Position, 0);
+
+            GL.PushAttrib(AttribMask.LineBit);
+            GL.LineWidth(thickness);
+            BoundingBoxBufffer.DrawElements(PrimitiveType.Lines);
+            GL.PopAttrib();
+        }
+
         public static void DrawBoundingBox(Matrix4 transform, BBox box, Vector4 color, float thickness = 1f)
         {
             ColorShader.Use();
             
-            ColorShader.ModelMatrix.Set(Matrix4.CreateScale(box.Size + new Vector3(0.1f)) * Matrix4.CreateTranslation(box.Center) * transform);
+            ColorShader.ModelMatrix.Set(Matrix4.CreateScale(box.Size) * Matrix4.CreateTranslation(box.Center) * transform);
             ColorShader.Color.Set(color);
 
             BoundingBoxBufffer.Bind();
@@ -292,6 +341,25 @@ namespace LDDModder.BrickEditor.Rendering
 
             GL.PopAttrib();
         }
+
+        #region Default Materials and Colors (TODO: maybe put this elsewhere)
+
+
+        public static MaterialInfo CollisionMaterial { get; set; }
+        public static MaterialInfo ConnectionMaterial { get; set; }
+
+        public static Vector4 WireframeColor { get; set; }
+        public static Vector4 WireframeColorAlt { get; set; }
+        public static Vector4 SelectionOutlineColor { get; set; }
+
+        public static Vector4[] DefaultAxisColors = new Vector4[]
+            {
+                new Vector4(1f,0.09f,0.26f,1f),
+                new Vector4(0.58f, 0.898f, 0.156f, 1f),
+                new Vector4(0.156f,0.564f,1f,1f)
+            };
+
+        #endregion
 
 
         #region Stencil Buffer

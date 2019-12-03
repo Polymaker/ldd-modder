@@ -1,5 +1,5 @@
-﻿using LDDModder.BrickEditor.EditModels;
-using LDDModder.BrickEditor.Native;
+﻿using LDDModder.BrickEditor.Native;
+using LDDModder.BrickEditor.ProjectHandling;
 using LDDModder.BrickEditor.Resources;
 using LDDModder.BrickEditor.Settings;
 using LDDModder.BrickEditor.UI.Panels;
@@ -255,9 +255,9 @@ namespace LDDModder.BrickEditor.UI.Windows
             }
 
             string oldPath = project.ProjectPath;
-            project.Save(targetPath);
-            
-            project.ProjectPath = targetPath;
+
+            ProjectManager.SaveProject(targetPath);
+
             SettingsManager.AddRecentProject(project, true);
             if (oldPath != targetPath)
                 RebuildRecentFilesMenu();

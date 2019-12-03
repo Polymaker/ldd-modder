@@ -19,12 +19,12 @@ namespace LDDModder.BrickEditor.Rendering
             Element.PropertyChanged += Element_PropertyChanged;
         }
 
-        private void Element_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void Element_PropertyChanged(object sender, ElementValueChangedEventArgs e)
         {
             OnElementPropertyChanged(e);
         }
 
-        protected virtual void OnElementPropertyChanged(PropertyChangedEventArgs e)
+        protected virtual void OnElementPropertyChanged(ElementValueChangedEventArgs e)
         {
 
         }

@@ -1,4 +1,5 @@
-﻿using LDDModder.LDD.Primitives.Connectors;
+﻿using LDDModder.BrickEditor.Rendering.Models;
+using LDDModder.LDD.Primitives.Connectors;
 using LDDModder.Modding.Editing;
 using OpenTK;
 using System;
@@ -13,6 +14,26 @@ namespace LDDModder.BrickEditor.Rendering
     {
         public PartConnection Connection { get; set; }
 
+        public PartialModel RenderingModel { get; set; }
+
+        public Matrix4 ModelTransform { get; set; }
+
+        private bool _DisplayInvertedGender;
+
+
+        public bool DisplayInvertedGender
+        {
+            get => _DisplayInvertedGender;
+            set
+            {
+                if (value != _DisplayInvertedGender)
+                {
+                    _DisplayInvertedGender = value;
+                    UpdateRenderingModel();
+                }
+            }
+        }
+
         private bool ChangingTransform;
 
         public ConnectionModel(PartConnection connection) : base (connection)
@@ -20,6 +41,9 @@ namespace LDDModder.BrickEditor.Rendering
             Connection = connection;
             var baseTransform = connection.Transform.ToMatrix().ToGL();
             SetTransform(baseTransform, false);
+            
+
+            UpdateRenderingModel();
         }
 
         protected override void OnTransformChanged()
@@ -33,7 +57,7 @@ namespace LDDModder.BrickEditor.Rendering
             ChangingTransform = false;
         }
 
-        protected override void OnElementPropertyChanged(PropertyChangedEventArgs e)
+        protected override void OnElementPropertyChanged(ElementValueChangedEventArgs e)
         {
             base.OnElementPropertyChanged(e);
 
@@ -41,6 +65,60 @@ namespace LDDModder.BrickEditor.Rendering
             {
                 var baseTransform = Connection.Transform.ToMatrix().ToGL();
                 SetTransform(baseTransform, true);
+            }
+            else
+            {
+                UpdateRenderingModel();
+            }
+        }
+
+        private void UpdateRenderingModel()
+        {
+            RenderingModel = null;
+            ModelTransform = Matrix4.Identity;
+            BoundingBox = new BBox();
+
+            if (Connection.Connector is AxelConnector axelConnector)
+            {
+                if (axelConnector.Length > 0)
+                {
+                    int renderType = axelConnector.SubType;
+                    if (DisplayInvertedGender)
+                        renderType += (renderType % 2 == 0) ? 1 : -1;
+
+                    if (renderType == 3)
+                    {
+                        RenderingModel = ModelManager.CylinderModel;
+                        ModelTransform = Matrix4.CreateScale(0.48f, axelConnector.Length, 0.48f);
+                    }
+                    else if (renderType == 4)
+                    {
+                        RenderingModel = ModelManager.CrossAxleFemaleModel;
+                        ModelTransform = Matrix4.CreateScale(1f, axelConnector.Length, 1f);
+                    }
+                    else if (renderType == 5)
+                    {
+                        RenderingModel = ModelManager.CrossAxleMaleModel;
+                        ModelTransform = Matrix4.CreateScale(1f, axelConnector.Length, 1f);
+                    }
+                    else if (renderType == 7)
+                    {
+                        RenderingModel = ModelManager.CylinderModel;
+                        ModelTransform = Matrix4.CreateScale(0.32f, axelConnector.Length, 0.32f);
+                    }
+                    else if (renderType == 15)
+                    {
+                        RenderingModel = ModelManager.CylinderModel;
+                        ModelTransform = Matrix4.CreateScale(0.15f, axelConnector.Length, 0.15f);
+                    }
+                }
+            }
+
+            if (RenderingModel != null)
+            {
+                var vertices = RenderingModel.BoundingBox.GetCorners();
+                vertices = vertices.Select(x => Vector3.TransformPosition(x, ModelTransform)).ToArray();
+                BoundingBox = BBox.FromVertices(vertices);
             }
         }
 
@@ -69,21 +147,19 @@ namespace LDDModder.BrickEditor.Rendering
                 case LDD.Primitives.Connectors.ConnectorType.Slider:
                     break;
             }
-            //if (IsSelected)
-            //{
-            //    RenderHelper.EnableStencilTest();
-            //    RenderHelper.EnableStencilMask();
-            //    RenderHelper.DrawGizmoAxes(Transform, 0.5f, 2f);
-            //    RenderHelper.ApplyStencilMask();
-            //    RenderHelper.DrawGizmoAxes(Transform, 0.5f, new Vector4(1f), 3.5f);
-            //    RenderHelper.RemoveStencilMask();
-            //    RenderHelper.DisableStencilTest();
-            //}
-            //else
-            //{
-            //    RenderHelper.DrawGizmoAxes(Transform, 0.5f, 2f);
-            //}
-            RenderHelper.DrawGizmoAxes(Transform, 0.5f, 2f);
+
+            if (RenderingModel != null)
+            {
+                RenderHelper.BeginDrawModel(RenderingModel, 
+                    ModelTransform * Transform, RenderHelper.ConnectionMaterial);
+                RenderHelper.ModelShader.IsSelected.Set(IsSelected);
+                RenderingModel.DrawElements();
+                RenderHelper.EndDrawModel(RenderingModel);
+            }
+            else
+            {
+                RenderHelper.DrawGizmoAxes(Transform, 0.5f, 2f);
+            }
         }
 
         private void RenderCustom2DField(Custom2DFieldConnector connector)
@@ -95,14 +171,18 @@ namespace LDDModder.BrickEditor.Rendering
 
         private void RenderTechnicAxle(AxelConnector axel)
         {
-            if (axel.Length > 0)
-                RenderHelper.DrawLine(new Vector4(0, 0, 0, 1), 
-                    Vector3.Zero, Vector3.UnitY * axel.Length, 1.5f);
-
+            if (RenderingModel == null && axel.Length > 0)
+            {
+                RenderHelper.DrawLine(Transform, RenderHelper.DefaultAxisColors[1],
+                    Vector3.Zero, Vector3.UnitY * axel.Length, 2f);
+            }
         }
 
         public override bool RayIntersects(Ray ray, out float distance)
         {
+            if (BoundingBox.SizeX > 0)
+                return RayIntersectsBoundingBox(ray, out distance);
+
             distance = float.NaN;
             return false;
         }

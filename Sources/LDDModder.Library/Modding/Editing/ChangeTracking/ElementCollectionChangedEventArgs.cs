@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LDDModder.Modding.Editing
 {
-    public class CollectionChangedEventArgs : EventArgs
+    public class ElementCollectionChangedEventArgs : EventArgs
     {
         public IElementCollection Collection { get; }
         public Type ElementType { get; }
@@ -14,7 +14,7 @@ namespace LDDModder.Modding.Editing
         public PartElement[] AddedElements { get; }
         public PartElement[] RemovedElements { get; }
 
-        public CollectionChangedEventArgs(
+        public ElementCollectionChangedEventArgs(
             IElementCollection collection, 
             System.ComponentModel.CollectionChangeAction action, 
             IEnumerable<PartElement> elements)

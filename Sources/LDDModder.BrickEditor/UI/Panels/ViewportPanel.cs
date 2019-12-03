@@ -16,10 +16,10 @@ using System.Threading;
 using System.Diagnostics;
 using OpenTK.Input;
 using ObjectTK.Textures;
-using LDDModder.BrickEditor.EditModels;
 using LDDModder.BrickEditor.Resources;
 using LDDModder.BrickEditor.Rendering.Gizmos;
 using LDDModder.BrickEditor.Rendering.UI;
+using LDDModder.BrickEditor.ProjectHandling;
 
 namespace LDDModder.BrickEditor.UI.Panels
 {
@@ -45,9 +45,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         private CameraManipulator CameraManipulator;
         private Camera Camera => CameraManipulator.Camera;
 
-        private GLModel BoxCollisionModel;
-        private GLModel SphereCollisionModel;
-        private TransformGizmo TransformGizmo;
+        private TransformGizmo SelectionGizmo;
 
         private LoopController LoopController;
 
@@ -81,7 +79,10 @@ namespace LDDModder.BrickEditor.UI.Panels
             CollisionModels = new List<CollisionModel>();
             ConnectionModels = new List<ConnectionModel>();
             UIElements = new List<UIElement>();
+
             CreateGLControl();
+            SelectionInfoPanel.BringToFront();
+            SelectionInfoPanel.Visible = false;
         }
 
         private void CreateGLControl()
@@ -94,6 +95,10 @@ namespace LDDModder.BrickEditor.UI.Panels
             glControl1.MouseEnter += GlControl_MouseEnter;
             glControl1.MouseLeave += GlControl_MouseLeave;
             glControl1.MouseMove += GlControl_MouseMove;
+            glControl1.GotFocus += GlControl1_GotFocus;
+            glControl1.LostFocus += GlControl1_LostFocus;
+
+            
 
             LoopController = new LoopController(glControl1);
             LoopController.TargetRenderFrequency = 40;
@@ -120,6 +125,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             var mainForm = DockPanel.FindForm();
             mainForm.Activated += MainForm_Activated;
             mainForm.Deactivate += MainForm_Deactivate;
+
         }
 
         #region Initialization
@@ -147,7 +153,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             InitializeShaders();
 
-            InitializeModels();
+            InitializeSelectionGizmo();
         }
 
         private void InitializeMenus()
@@ -244,34 +250,17 @@ namespace LDDModder.BrickEditor.UI.Panels
             //UIElements.Add(testButton);
         }
 
-        private void InitializeModels()
+        private void InitializeSelectionGizmo()
         {
-            var modelScene = ResourceHelper.GetResourceModel("Models.Cube.obj", "obj");
-            BoxCollisionModel = GLModel.CreateFromAssimp(modelScene.Meshes[0]);
-            BoxCollisionModel.Material = new MaterialInfo
-            {
-                Diffuse = new Vector4(1f, 0.05f, 0.05f, 1f),
-                Specular = new Vector3(1f),
-                Shininess = 2f
-            };
+            SelectionGizmo = new TransformGizmo();
+            SelectionGizmo.InitializeVBO();
+            SelectionGizmo.DisplayStyle = GizmoStyle.Plain;
+            SelectionGizmo.PivotPointMode = PivotPointMode.MedianCenter;
+            SelectionGizmo.OrientationMode = OrientationMode.Global;
 
-            modelScene = ResourceHelper.GetResourceModel("Models.Sphere.obj", "obj");
-            SphereCollisionModel = GLModel.CreateFromAssimp(modelScene.Meshes[0]);
-            SphereCollisionModel.Material = new MaterialInfo
-            {
-                Diffuse = new Vector4(1f, 0.05f, 0.05f, 1f),
-                Specular = new Vector3(1f),
-                Shininess = 2f
-            };
-
-            TransformGizmo = new TransformGizmo();
-            TransformGizmo.InitializeVBO();
-            TransformGizmo.DisplayStyle = GizmoStyle.Plain;
-            TransformGizmo.PivotPointMode = PivotPointMode.MedianCenter;
-            TransformGizmo.OrientationMode = OrientationMode.Global;
-            TransformGizmo.TransformFinishing += TransformGizmo_TransformFinishing;
-            TransformGizmo.TransformFinished += TransformGizmo_TransformFinished;
-            TransformGizmo.DisplayStyleChanged += TransformGizmo_DisplayStyleChanged;
+            SelectionGizmo.TransformFinishing += SelectionGizmo_TransformFinishing;
+            SelectionGizmo.TransformFinished += SelectionGizmo_TransformFinished;
+            SelectionGizmo.DisplayStyleChanged += SelectionGizmo_DisplayStyleChanged;
         }
 
         private void InitializeShaders()
@@ -297,6 +286,8 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             UIRenderHelper.InitializeResources();
             RenderHelper.InitializeResources();
+            ModelManager.InitializeResources();
+
             RenderHelper.ModelShader.Use();
 
             var lights = new LightInfo[]
@@ -357,8 +348,8 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             UIRenderHelper.InitializeMatrices(Camera);
 
-            if (TransformGizmo.Visible)
-                TransformGizmo.UpdateBounds(Camera);
+            if (SelectionGizmo.Visible)
+                SelectionGizmo.UpdateBounds(Camera);
         }
 
         #region Render Loop
@@ -395,10 +386,10 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             GL.UseProgram(0);
 
-            if (TransformGizmo.Visible)
+            if (SelectionGizmo.Visible)
             {
                 GL.Clear(ClearBufferMask.DepthBufferBit);
-                TransformGizmo.Render();
+                SelectionGizmo.Render();
             }
 
             GL.UseProgram(0);
@@ -522,18 +513,18 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             UIRenderHelper.DrawText($"Render FPS: {AvgRenderFPS:0}", UIRenderHelper.NormalFont, Color.White, new Vector2(10, 10));
 
-            if (TransformGizmo.IsEditing)
+            if (SelectionGizmo.IsEditing)
             {
                 //UIRenderHelper.DrawText("Hold Ctrl to snap", Color.Black, new Vector2(10, UIRenderHelper.ViewSize.Y - 20));
 
                 string amountStr = "";
-                if (TransformGizmo.DisplayStyle == GizmoStyle.Rotation)
+                if (SelectionGizmo.DisplayStyle == GizmoStyle.Rotation)
                 {
-                    float degrees = (TransformGizmo.TransformedAmount / (float)Math.PI) * 180f;
+                    float degrees = (SelectionGizmo.TransformedAmount / (float)Math.PI) * 180f;
                     amountStr = $"Rotation: {degrees:0.##}°";
                 }
                 else
-                    amountStr = $"Translation: {TransformGizmo.TransformedAmount:0.##}";
+                    amountStr = $"Translation: {SelectionGizmo.TransformedAmount:0.##}";
 
                 UIRenderHelper.DrawText(amountStr, UIRenderHelper.NormalFont, Color.Black, new Vector2(10, UIRenderHelper.ViewSize.Y - 20));
             }
@@ -570,20 +561,28 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void LoopController_UpdateFrame(double deltaMs)
         {
-
-            InputManager.ContainsFocus = ContainsFocus;
             InputManager.UpdateInputStates();
 
             CameraManipulator.ProcessInput(InputManager);
 
-            if (TransformGizmo.Visible)
+            if (InputManager.ContainsFocus)
+            {
+                if (InputManager.IsKeyPressed(Key.S))
+                    SelectionGizmo.DisplayStyle = GizmoStyle.Plain;
+                else if (InputManager.IsKeyPressed(Key.R))
+                    SelectionGizmo.DisplayStyle = GizmoStyle.Rotation;
+                else if (InputManager.IsKeyPressed(Key.T))
+                    SelectionGizmo.DisplayStyle = GizmoStyle.Translation;
+            }
+
+            if (SelectionGizmo.Visible)
             {
                 if (Camera.IsDirty)
-                    TransformGizmo.UpdateBounds(Camera);
-                TransformGizmo.ProcessInput(Camera, InputManager);
+                    SelectionGizmo.UpdateBounds(Camera);
+                SelectionGizmo.ProcessInput(Camera, InputManager);
             }
             
-            bool mouseClickHandled = TransformGizmo.Selected || TransformGizmo.IsEditing;
+            bool mouseClickHandled = SelectionGizmo.Selected || SelectionGizmo.IsEditing;
 
             if (InputManager.ContainsMouse)
             {
@@ -624,49 +623,49 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         #region Editing
 
-        private void TransformGizmo_TransformFinished(object sender, EventArgs e)
-        {
-            ProjectManager.EndBatchChanges();
-        }
-
-        private void TransformGizmo_TransformFinishing(object sender, EventArgs e)
+        private void SelectionGizmo_TransformFinishing(object sender, EventArgs e)
         {
             ProjectManager.StartBatchChanges();
         }
 
-        private void TransformGizmo_DisplayStyleChanged(object sender, EventArgs e)
+        private void SelectionGizmo_TransformFinished(object sender, EventArgs e)
+        {
+            ProjectManager.EndBatchChanges();
+            UpdateSelectionInfoPanel();
+        }
+
+        private void SelectionGizmo_DisplayStyleChanged(object sender, EventArgs e)
         {
             UpdateGizmoButtonStates();
         }
 
         private void MoveGizmoButton_Clicked(object sender, EventArgs e)
         {
-            if (!MoveGizmoButton.Selected && !TransformGizmo.IsEditing)
-                TransformGizmo.DisplayStyle = GizmoStyle.Translation;
+            if (!MoveGizmoButton.Selected && !SelectionGizmo.IsEditing)
+                SelectionGizmo.DisplayStyle = GizmoStyle.Translation;
         }
 
         private void SelectGizmoButton_Clicked(object sender, EventArgs e)
         {
-            if (!SelectGizmoButton.Selected && !TransformGizmo.IsEditing)
+            if (!SelectGizmoButton.Selected && !SelectionGizmo.IsEditing)
             {
-                TransformGizmo.DisplayStyle = GizmoStyle.Plain;
+                SelectionGizmo.DisplayStyle = GizmoStyle.Plain;
             }
         }
 
         private void RotateGizmoButton_Clicked(object sender, EventArgs e)
         {
-            if (!RotateGizmoButton.Selected && !TransformGizmo.IsEditing)
+            if (!RotateGizmoButton.Selected && !SelectionGizmo.IsEditing)
             {
-                TransformGizmo.DisplayStyle = GizmoStyle.Rotation;
+                SelectionGizmo.DisplayStyle = GizmoStyle.Rotation;
             }
         }
 
-
         private void UpdateGizmoButtonStates()
         {
-            MoveGizmoButton.Selected = TransformGizmo.DisplayStyle == GizmoStyle.Translation;
-            SelectGizmoButton.Selected = TransformGizmo.DisplayStyle == GizmoStyle.Plain;
-            RotateGizmoButton.Selected = TransformGizmo.DisplayStyle == GizmoStyle.Rotation;
+            MoveGizmoButton.Selected = SelectionGizmo.DisplayStyle == GizmoStyle.Translation;
+            SelectGizmoButton.Selected = SelectionGizmo.DisplayStyle == GizmoStyle.Plain;
+            RotateGizmoButton.Selected = SelectionGizmo.DisplayStyle == GizmoStyle.Rotation;
         }
 
         #endregion
@@ -706,10 +705,9 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             UIRenderHelper.ReleaseResources();
             RenderHelper.ReleaseResources();
-            BoxCollisionModel.Dispose();
-            SphereCollisionModel.Dispose();
+            ModelManager.ReleaseResources();
 
-            TransformGizmo.Dispose();
+            SelectionGizmo.Dispose();
 
             GridShader.Dispose();
             CheckboardTexture.Dispose();
@@ -755,11 +753,11 @@ namespace LDDModder.BrickEditor.UI.Panels
         protected override void OnProjectClosed()
         {
             base.OnProjectClosed();
-            TransformGizmo.Deactivate();
+            SelectionGizmo.Deactivate();
             UnloadModels();
         }
 
-        protected override void OnElementCollectionChanged(CollectionChangedEventArgs e)
+        protected override void OnElementCollectionChanged(ElementCollectionChangedEventArgs e)
         {
             base.OnElementCollectionChanged(e);
 
@@ -860,12 +858,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             if (CurrentProject != null)
             {
                 foreach (var col in CurrentProject.Collisions)
-                {
-                    if (col is PartBoxCollision boxCollision)
-                        CollisionModels.Add(new CollisionModel(col, BoxCollisionModel));
-                    else if (col is PartSphereCollision sphereCollision)
-                        CollisionModels.Add(new CollisionModel(col, SphereCollisionModel));
-                }
+                    CollisionModels.Add(new CollisionModel(col));
             }
         }
 
@@ -949,13 +942,75 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             if (selectedModels.Any())
             {
-                TransformGizmo.SetActiveElements(selectedModels);
+                SelectionGizmo.SetActiveElements(selectedModels);
 
-                TransformGizmo.UpdateBounds(Camera);
+                SelectionGizmo.UpdateBounds(Camera);
             }
             else
             {
-                TransformGizmo.Deactivate();
+                SelectionGizmo.Deactivate();
+            }
+
+            UpdateSelectionInfoPanel();
+        }
+
+        private bool UpdatingInfo;
+
+        private void UpdateSelectionInfoPanel()
+        {
+            if (InvokeRequired)
+            {
+                BeginInvoke(new MethodInvoker(UpdateSelectionInfoPanel));
+                return;
+            }
+            
+            int activeObjectCount = SelectionGizmo.ActiveElements.Count();
+
+            if (activeObjectCount == 1)
+            {
+                var activeObject = SelectionGizmo.ActiveElements.FirstOrDefault();
+
+                UpdatingInfo = true;
+                if (activeObject is PartElementModel elementModel && 
+                    elementModel.Element is IPhysicalElement physicalElement)
+                {
+                    var transPos = physicalElement.Transform.Position.Rounded();
+                    var transRot = physicalElement.Transform.Rotation.Rounded();
+                    PosXNumBox.Value = transPos.X;
+                    PosYNumBox.Value = transPos.Y;
+                    PosZNumBox.Value = transPos.Z;
+                    RotXNumBox.Value = transRot.X;
+                    RotYNumBox.Value = transRot.Y;
+                    RotZNumBox.Value = transRot.Z;
+                }
+                else
+                {
+                    var translation = activeObject.Transform.ExtractTranslation();
+
+                    PosXNumBox.Value = translation.X;
+                    PosYNumBox.Value = translation.Y;
+                    PosZNumBox.Value = translation.Z;
+                }
+                UpdatingInfo = false;
+            }
+
+            SelectionInfoPanel.Visible = (activeObjectCount == 1);
+
+        }
+
+        private void PositionNumBoxes_ValueChanged(object sender, EventArgs e)
+        {
+            if (UpdatingInfo)
+                return;
+
+            var activeObject = SelectionGizmo.ActiveElements.FirstOrDefault();
+            if (activeObject != null)
+            {
+                activeObject.BeginEditTransform();
+                var trans = Matrix4.CreateTranslation((float)PosXNumBox.Value, (float)PosYNumBox.Value, (float)PosZNumBox.Value);
+                var rot = activeObject.Transform.ExtractRotation();
+                activeObject.Transform = Matrix4.CreateFromQuaternion(rot) * trans;
+                activeObject.EndEditTransform(false);
             }
         }
 
@@ -1121,6 +1176,16 @@ namespace LDDModder.BrickEditor.UI.Panels
                 elem.SetIsOver(false);
         }
 
+        private void GlControl1_GotFocus(object sender, EventArgs e)
+        {
+            InputManager.ContainsFocus = true;
+        }
+
+        private void GlControl1_LostFocus(object sender, EventArgs e)
+        {
+            InputManager.ContainsFocus = false;
+        }
+
         private void MainForm_Activated(object sender, EventArgs e)
         {
             if (ViewInitialized && !IsClosing)
@@ -1132,8 +1197,6 @@ namespace LDDModder.BrickEditor.UI.Panels
             if (ViewInitialized)
                 LoopController.Stop();
         }
-
-        
 
         private void GlControl_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
         {
@@ -1151,9 +1214,9 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void CameraMenu_LookAt_Click(object sender, EventArgs e)
         {
-            if (TransformGizmo.Visible)
+            if (SelectionGizmo.Visible)
             {
-                CameraManipulator.Gimbal = TransformGizmo.Position;
+                CameraManipulator.Gimbal = SelectionGizmo.Position;
             }
         }
 
@@ -1187,13 +1250,18 @@ namespace LDDModder.BrickEditor.UI.Panels
             UpdateGizmoFromSelection();
         }
 
+        private void xRayToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
+        {
+            ModelRenderingOptions.DrawTransparent = xRayToolStripMenuItem.Checked;
+        }
+
         #region Tranform Gizmo Settings
 
         private void GizmoOrientationMenu_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
             if (Enum.TryParse(e.ClickedItem.Tag as string, out OrientationMode mode))
             {
-                TransformGizmo.OrientationMode = mode;
+                SelectionGizmo.OrientationMode = mode;
                 SelectCurrentGizmoOptions();
                 UpdateGizmoFromSelection();
             }
@@ -1203,7 +1271,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             if (Enum.TryParse(e.ClickedItem.Tag as string, out PivotPointMode mode))
             {
-                TransformGizmo.PivotPointMode = mode;
+                SelectionGizmo.PivotPointMode = mode;
                 SelectCurrentGizmoOptions();
                 UpdateGizmoFromSelection();
             }
@@ -1214,47 +1282,46 @@ namespace LDDModder.BrickEditor.UI.Panels
             foreach (ToolStripMenuItem item in GizmoOrientationMenu.DropDownItems)
             {
                 if (Enum.TryParse(item.Tag as string, out OrientationMode mode))
-                    item.Checked = mode == TransformGizmo.OrientationMode;
+                    item.Checked = mode == SelectionGizmo.OrientationMode;
             }
 
             foreach (ToolStripMenuItem item in GizmoPivotModeMenu.DropDownItems)
             {
                 if (Enum.TryParse(item.Tag as string, out PivotPointMode mode))
-                    item.Checked = mode == TransformGizmo.PivotPointMode;
+                    item.Checked = mode == SelectionGizmo.PivotPointMode;
             }
         }
 
         #endregion
 
         #endregion
-
-        private void xRayToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
-        {
-            ModelRenderingOptions.DrawTransparent = xRayToolStripMenuItem.Checked;
-        }
-
+       
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
-            if (keyData == Keys.NumPad0)
+            if (!SelectionInfoPanel.ContainsFocus)
             {
-                CameraMenu_ResetCamera.PerformClick();
-                return true;
+                if (keyData == Keys.NumPad0)
+                {
+                    CameraMenu_ResetCamera.PerformClick();
+                    return true;
+                }
+                else if (keyData == Keys.NumPad7)
+                {
+                    AlignToMenu_Top.PerformClick();
+                    return true;
+                }
+                else if (keyData == Keys.NumPad1)
+                {
+                    AlignToMenu_Front.PerformClick();
+                    return true;
+                }
+                else if (keyData == Keys.NumPad3)
+                {
+                    AlignToMenu_Right.PerformClick();
+                    return true;
+                }
             }
-            else if (keyData == Keys.NumPad7)
-            {
-                AlignToMenu_Top.PerformClick();
-                return true;
-            }
-            else if (keyData == Keys.NumPad1)
-            {
-                AlignToMenu_Front.PerformClick();
-                return true;
-            }
-            else if (keyData == Keys.NumPad3)
-            {
-                AlignToMenu_Right.PerformClick();
-                return true;
-            }
+            
             return base.ProcessCmdKey(ref msg, keyData);
         }
 

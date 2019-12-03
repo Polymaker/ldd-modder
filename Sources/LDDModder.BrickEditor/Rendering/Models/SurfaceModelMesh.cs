@@ -54,7 +54,7 @@ namespace LDDModder.BrickEditor.Rendering
             ChangingTransform = false;
         }
 
-        protected override void OnElementPropertyChanged(PropertyChangedEventArgs e)
+        protected override void OnElementPropertyChanged(ElementValueChangedEventArgs e)
         {
             base.OnElementPropertyChanged(e);
 

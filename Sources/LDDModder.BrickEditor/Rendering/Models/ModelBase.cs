@@ -11,7 +11,6 @@ namespace LDDModder.BrickEditor.Rendering
     {
         private bool _Visible;
 
-
         public bool Visible
         {
             get => _Visible;

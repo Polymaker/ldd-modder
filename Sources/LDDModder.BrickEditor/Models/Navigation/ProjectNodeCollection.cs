@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LDDModder.BrickEditor.EditModels
+namespace LDDModder.BrickEditor.Models.Navigation
 {
     public class ProjectNodeCollection : IList<BaseProjectNode>
     {

@@ -22,6 +22,7 @@ namespace LDDModder.BrickEditor.UI.Controls
         private double _MinimumValue;
         private double _MaximumValue;
         private bool updatingText;
+        private int _MinDisplayedDecimalPlaces;
         private int _MaxDisplayedDecimalPlaces;
         private bool _AutoSize;
 
@@ -95,6 +96,20 @@ namespace LDDModder.BrickEditor.UI.Controls
             }
         }
 
+        [DefaultValue(0)]
+        public int MinDisplayedDecimalPlaces
+        {
+            get { return _MinDisplayedDecimalPlaces; }
+            set
+            {
+                if (value != _MinDisplayedDecimalPlaces)
+                {
+                    _MinDisplayedDecimalPlaces = Math.Max(0, Math.Min(value, MaxDisplayedDecimalPlaces));
+                    UpdateTextboxValue();
+                }
+            }
+        }
+
         [DefaultValue(5)]
         public int MaxDisplayedDecimalPlaces
         {
@@ -126,9 +141,10 @@ namespace LDDModder.BrickEditor.UI.Controls
 
         public NumberTextBox()
         {
+            Width = 100;
             InitializeComponent();
             _MaximumValue = 100;
-            Width = 100;
+            
             _AllowDecimals = true;
             _AutoSize = true;
             _MaxDisplayedDecimalPlaces = 5;
@@ -145,7 +161,11 @@ namespace LDDModder.BrickEditor.UI.Controls
             updatingText = true;
             string formatString = "0";
             if (MaxDisplayedDecimalPlaces > 0)
-                formatString += "." + string.Empty.PadRight(MaxDisplayedDecimalPlaces, '#');
+            {
+                string decimalsFormat = string.Empty.PadRight(MinDisplayedDecimalPlaces, '0');
+                decimalsFormat = decimalsFormat.PadRight(MaxDisplayedDecimalPlaces, '#');
+                formatString += "." + decimalsFormat;
+            }
             base.Text = Value.ToString(formatString);
             updatingText = false;
         }
@@ -253,6 +273,13 @@ namespace LDDModder.BrickEditor.UI.Controls
                 CancelEdit();
                 return true;
             }
+
+            if (ShortcutsEnabled && keyData.HasFlag(Keys.Y) && keyData.HasFlag(Keys.Control) && CanUndo)
+            {
+                Undo();
+                return true;
+            }
+
             return base.ProcessCmdKey(ref msg, keyData);
         }
 

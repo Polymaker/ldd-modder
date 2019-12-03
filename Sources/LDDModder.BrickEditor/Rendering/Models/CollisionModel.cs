@@ -11,8 +11,6 @@ namespace LDDModder.BrickEditor.Rendering
 {
     public class CollisionModel : PartElementModel
     {
-        public GLModel BaseModel { get; private set; }
-
         public Vector3 Scale { get; private set; }
         
         public Matrix4 ScaleTransform { get; private set; }
@@ -23,10 +21,9 @@ namespace LDDModder.BrickEditor.Rendering
 
         private bool ChangingTransform;
 
-        public CollisionModel(PartCollision collision, GLModel baseModel) : base(collision)
+        public CollisionModel(PartCollision collision) : base(collision)
         {
             PartCollision = collision;
-            BaseModel = baseModel;
 
             var baseTransform = collision.Transform.ToMatrix().ToGL();
             SetTransform(baseTransform, false);
@@ -53,7 +50,7 @@ namespace LDDModder.BrickEditor.Rendering
             ChangingTransform = false;
         }
 
-        protected override void OnElementPropertyChanged(PropertyChangedEventArgs e)
+        protected override void OnElementPropertyChanged(ElementValueChangedEventArgs e)
         {
             base.OnElementPropertyChanged(e);
 
@@ -72,17 +69,19 @@ namespace LDDModder.BrickEditor.Rendering
         {
             base.RenderModel(camera);
 
-            RenderHelper.BeginDrawModel(BaseModel.VertexBuffer, ScaleTransform * Transform, BaseModel.Material);
+            var model = CollisionType == CollisionType.Box ? ModelManager.CubeModel : ModelManager.SphereModel;
+
+            RenderHelper.BeginDrawModel(model.VertexBuffer, ScaleTransform * Transform, RenderHelper.CollisionMaterial);
             RenderHelper.ModelShader.IsSelected.Set(IsSelected);
 
-            BaseModel.Draw(CollisionType == CollisionType.Box ?
-                OpenTK.Graphics.OpenGL.PrimitiveType.Quads :
-                OpenTK.Graphics.OpenGL.PrimitiveType.Triangles);
+            model.DrawElements();
 
-            RenderHelper.EndDrawModel(BaseModel.VertexBuffer);
+            RenderHelper.EndDrawModel(model.VertexBuffer);
+
             if (CollisionType == CollisionType.Box)
             {
-                RenderHelper.DrawBoundingBox(Transform, BoundingBox, new Vector4(0, 0, 0, 1), 1.5f);
+                var wireColor = IsSelected ? RenderHelper.WireframeColorAlt : RenderHelper.WireframeColor;
+                RenderHelper.DrawBoundingBox(Transform, BoundingBox, wireColor, 1.5f);
             }
         }
 

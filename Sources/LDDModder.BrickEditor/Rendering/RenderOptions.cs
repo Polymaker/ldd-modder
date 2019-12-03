@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace LDDModder.BrickEditor.Rendering
 {
+    /// <summary>
+    /// TODO: re-implement this elsewhere
+    /// </summary>
     public class RenderOptions
     {
         public bool Hidden { get; set; }

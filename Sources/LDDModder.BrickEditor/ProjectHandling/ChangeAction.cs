@@ -5,10 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LDDModder.BrickEditor.EditModels
+namespace LDDModder.BrickEditor.ProjectHandling
 {
     public class ChangeAction
     {
+        internal long ChangeID;
+
         public virtual void Undo()
         {
 
@@ -22,9 +24,9 @@ namespace LDDModder.BrickEditor.EditModels
 
     public class CollectionChangeAction : ChangeAction
     {
-        public CollectionChangedEventArgs Data { get; }
+        public ElementCollectionChangedEventArgs Data { get; }
 
-        public CollectionChangeAction(CollectionChangedEventArgs data)
+        public CollectionChangeAction(ElementCollectionChangedEventArgs data)
         {
             Data = data;
         }
@@ -60,9 +62,9 @@ namespace LDDModder.BrickEditor.EditModels
 
     public class PropertyChangeAction : ChangeAction
     {
-        public PropertyChangedEventArgs Data { get; }
+        public ElementValueChangedEventArgs Data { get; }
 
-        public PropertyChangeAction(PropertyChangedEventArgs data)
+        public PropertyChangeAction(ElementValueChangedEventArgs data)
         {
             Data = data;
         }

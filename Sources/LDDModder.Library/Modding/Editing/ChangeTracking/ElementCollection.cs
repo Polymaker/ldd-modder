@@ -45,7 +45,7 @@ namespace LDDModder.Modding.Editing
 
         public T this[int index] { get => InnerList[index]; set => InnerList[index] = value; }
 
-        public event EventHandler<CollectionChangedEventArgs> CollectionChanged;
+        public event EventHandler<ElementCollectionChangedEventArgs> CollectionChanged;
 
         private bool PreventEvents;
 
@@ -86,12 +86,12 @@ namespace LDDModder.Modding.Editing
             finally
             {
                 PreventEvents = false;
-                OnCollectionChanged(new CollectionChangedEventArgs(this, 
+                OnCollectionChanged(new ElementCollectionChangedEventArgs(this, 
                     System.ComponentModel.CollectionChangeAction.Add, addedItems));
             }
         }
 
-        protected void OnCollectionChanged(CollectionChangedEventArgs e)
+        protected void OnCollectionChanged(ElementCollectionChangedEventArgs e)
         {
             if (!PreventEvents)
             {
@@ -120,7 +120,7 @@ namespace LDDModder.Modding.Editing
             UpdateItemParent(item, true);
             InnerList.Insert(index, item);
 
-            OnCollectionChanged(new CollectionChangedEventArgs(this,
+            OnCollectionChanged(new ElementCollectionChangedEventArgs(this,
                     System.ComponentModel.CollectionChangeAction.Add, 
                     new PartElement[] { item }));
         }
@@ -132,7 +132,7 @@ namespace LDDModder.Modding.Editing
 
             InnerList.RemoveAt(index);
 
-            OnCollectionChanged(new CollectionChangedEventArgs(this,
+            OnCollectionChanged(new ElementCollectionChangedEventArgs(this,
                     System.ComponentModel.CollectionChangeAction.Remove,
                     new PartElement[] { removedItem }));
         }
@@ -143,7 +143,7 @@ namespace LDDModder.Modding.Editing
             {
                 UpdateItemParent(item, false);
 
-                OnCollectionChanged(new CollectionChangedEventArgs(this,
+                OnCollectionChanged(new ElementCollectionChangedEventArgs(this,
                     System.ComponentModel.CollectionChangeAction.Remove,
                     new PartElement[] { item }));
 
@@ -166,7 +166,7 @@ namespace LDDModder.Modding.Editing
 
             PreventEvents = false;
 
-            OnCollectionChanged(new CollectionChangedEventArgs(this,
+            OnCollectionChanged(new ElementCollectionChangedEventArgs(this,
                     System.ComponentModel.CollectionChangeAction.Remove,
                     removedElements.ToArray()));
         }
@@ -176,7 +176,7 @@ namespace LDDModder.Modding.Editing
             UpdateItemParent(item, true);
             InnerList.Add(item);
 
-            OnCollectionChanged(new CollectionChangedEventArgs(this,
+            OnCollectionChanged(new ElementCollectionChangedEventArgs(this,
                     System.ComponentModel.CollectionChangeAction.Add,
                     new PartElement[] { item }));
         }
@@ -189,7 +189,7 @@ namespace LDDModder.Modding.Editing
 
             if (oldItems.Length > 0)
             {
-                OnCollectionChanged(new CollectionChangedEventArgs(this,
+                OnCollectionChanged(new ElementCollectionChangedEventArgs(this,
                     System.ComponentModel.CollectionChangeAction.Remove, oldItems));
 
                 foreach (var itm in oldItems)

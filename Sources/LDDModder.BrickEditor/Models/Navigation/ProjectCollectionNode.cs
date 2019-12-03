@@ -5,11 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LDDModder.BrickEditor.EditModels
+namespace LDDModder.BrickEditor.Models.Navigation
 {
     public class ProjectCollectionNode : BaseProjectNode
     {
-        public override PartProject Project => Collection.Project; 
+        public override PartProject Project => Collection.Project;
 
         public IElementCollection Collection { get; }
 
