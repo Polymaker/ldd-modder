@@ -125,6 +125,12 @@ namespace LDDModder.Modding.Editing
                 cullings.Add(cullingInfo);
             }
 
+            if (SurfaceID == 0)
+            {
+                foreach (var v in builder.Vertices)
+                    v.TexCoord = Simple3D.Vector2.Empty;
+            }
+
             notLoadedModels.ForEach(x => x.UnloadModel());
 
             var file = new MeshFile(builder.GetGeometry());

@@ -293,50 +293,38 @@ namespace LDDModder.BrickEditor.UI.Windows
                 imd.SelectFileOnStart = true;
                 if (imd.ShowDialog() == DialogResult.OK)
                 {
-
+                    ImportAssimpModel(imd);
                 }
             }
         }
-        /*
-        private void ImportAssimpModel(Assimp.Scene scene, PartSurface preferredSurface)
+        
+        private void ImportAssimpModel(ImportModelsDialog imd)
         {
-            using(var imd = new ImportModelsDialog())
+            foreach (var model in imd.ModelsToImport)
             {
-                imd.Project = CurrentProject;
-                imd.SceneToImport = scene;
-                imd.PreferredSurfaceID = preferredSurface?.SurfaceID ?? -1;
-                imd.SelectFileOnStart = true;
+                var geom = Meshes.MeshConverter.AssimpToLdd(imd.SceneToImport, model.Mesh);
+                var surface = CurrentProject.Surfaces.FirstOrDefault(x => x.SurfaceID == model.SurfaceID);
 
-                if (imd.ShowDialog() == DialogResult.OK)
+                if (surface == null)
                 {
-
-                    foreach (var model in imd.ModelsToImport)
-                    {
-                        var geom = Meshes.MeshConverter.AssimpToLdd(imd.SceneToImport, model.Mesh);
-                        var surface = CurrentProject.Surfaces.FirstOrDefault(x => x.SurfaceID == model.SurfaceID);
-
-                        if (surface == null)
-                        {
-                            surface = new PartSurface(model.SurfaceID, CurrentProject.Surfaces.Max(x=>x.SubMaterialIndex) + 1);
-                            CurrentProject.Surfaces.Add(surface);
-                        }
-
-                        var partModel = surface.Components.FirstOrDefault(x=>x.ComponentType == ModelComponentType.Part);
-
-                        if (partModel == null)
-                        {
-                            partModel = new PartModel();
-                            surface.Components.Add(partModel);
-                        }
-
-                        var modelMesh = CurrentProject.AddMeshGeometry(geom);
-                        partModel.Meshes.Add(new ModelMeshReference(modelMesh));
-
-                    }
+                    surface = new PartSurface(model.SurfaceID, CurrentProject.Surfaces.Max(x => x.SubMaterialIndex) + 1);
+                    CurrentProject.Surfaces.Add(surface);
                 }
+
+                var partModel = surface.Components.FirstOrDefault(x => x.ComponentType == ModelComponentType.Part);
+
+                if (partModel == null)
+                {
+                    partModel = new PartModel();
+                    surface.Components.Add(partModel);
+                }
+
+                var modelMesh = CurrentProject.AddMeshGeometry(geom);
+                partModel.Meshes.Add(new ModelMeshReference(modelMesh));
+
             }
         }
-        */
+        
         private void BrickEditorWindow_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (CurrentProject != null)

@@ -3,6 +3,7 @@ using LDDModder.Modding.Editing;
 using System;
 using System.IO;
 using System.Windows.Forms;
+using System.Linq;
 
 namespace LDDModder.BrickEditor.UI.Windows
 {

@@ -245,6 +245,11 @@ namespace LDDModder.LDD.Files
                 culling.ReplacementGeometry = geom;
             }
 
+            long readSize = br.BaseStream.Position - startPosition;
+            if (readSize != blockSize)
+            {
+
+            }
             return culling;
         }
 

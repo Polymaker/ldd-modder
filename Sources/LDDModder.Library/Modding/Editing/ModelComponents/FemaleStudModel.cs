@@ -34,6 +34,13 @@ namespace LDDModder.Modding.Editing
                 var builder = new GeometryBuilder();
                 foreach(var meshRef in ReplacementMeshes)
                     builder.CombineGeometry(meshRef.GetGeometry());
+
+                if (Surface.SurfaceID == 0)
+                {
+                    foreach (var v in builder.Vertices)
+                        v.TexCoord = Simple3D.Vector2.Empty;
+                }
+
                 culling.ReplacementMesh = builder.GetGeometry();
             }
         }
