@@ -39,19 +39,9 @@ namespace LDDModder.Modding.Editing
             return new ItemTransform(Position, Rotation);
         }
 
-        public void SetFromMatrix(Matrix4 matrix)
-        {
-            Position = matrix.ExtractTranslation();
-            var rot = matrix.ExtractRotation();
-            Rotation = Quaternion.ToEuler(rot) * (180f / (float)Math.PI);
-        }
-
         public static ItemTransform FromMatrix(Matrix4 matrix)
         {
-            var rot = matrix.ExtractRotation();
-
-            return new ItemTransform(matrix.ExtractTranslation(), 
-                Quaternion.ToEuler(rot) * (180f / (float)Math.PI));
+            return FromMatrix((Matrix4d)matrix);
         }
 
         public static ItemTransform FromMatrix(Matrix4d matrix)
@@ -59,7 +49,7 @@ namespace LDDModder.Modding.Editing
             var rot = matrix.ExtractRotation();
 
             return new ItemTransform((Vector3)matrix.ExtractTranslation(),
-                (Vector3)(Quaterniond.ToEuler(rot) * (180f / (float)Math.PI)));
+                (Vector3)(Quaterniond.ToEuler(rot) * (180d / Math.PI)));
         }
 
         public static ItemTransform FromLDD(LDD.Primitives.Transform transform)
@@ -72,16 +62,21 @@ namespace LDDModder.Modding.Editing
 
         public Matrix4 ToMatrix()
         {
-            var quat = Quaternion.FromEuler(Rotation * ((float)Math.PI / 180f));
-            quat.ToAxisAngle(out Vector3 axis, out float angle);
-            var rot = Matrix4.FromAngleAxis(angle, axis);
-            var trans = Matrix4.FromTranslation(Position);
+            return (Matrix4)ToMatrixD();
+        }
+
+        public Matrix4d ToMatrixD()
+        {
+            var quat = Quaterniond.FromEuler((Vector3d)Rotation * (Math.PI / 180d));
+            quat.ToAxisAngle(out Vector3d axis, out double angle);
+            var rot = Matrix4d.FromAngleAxis(angle, axis);
+            var trans = Matrix4d.FromTranslation((Vector3d)Position);
             return rot * trans;
         }
 
         public LDD.Primitives.Transform ToLDD()
         {
-            return LDD.Primitives.Transform.FromMatrix(ToMatrix());
+            return LDD.Primitives.Transform.FromMatrix(ToMatrixD());
         }
 
         public XElement GetLddXml()

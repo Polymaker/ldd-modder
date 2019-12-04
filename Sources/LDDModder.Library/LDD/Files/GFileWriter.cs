@@ -302,29 +302,31 @@ namespace LDDModder.LDD.Files
             file.AverageNormals = avgNormals.ToArray();
             file.RoundEdgeShaderData = outlines.Select(x => new ROUNDEDGE_SHADER_DATA(x.Coords)).ToArray();
 
-            file.Geometry = SerializeMeshGeometry(shaderData, mesh.Geometry);
+            file.Geometry = SerializeMeshGeometry(file, shaderData, mesh.Geometry);
             file.Culling = new MESH_CULLING[mesh.Cullings.Count];
 
             for (int i = 0; i < mesh.Cullings.Count; i++)
-                file.Culling[i] = SerializeMeshCulling(shaderData, mesh.Cullings[i]);
+                file.Culling[i] = SerializeMeshCulling(file, shaderData, mesh.Cullings[i]);
 
             return file;
         }
 
-        private static MESH_DATA SerializeMeshGeometry(ShaderDataHelper shaderData, MeshGeometry meshGeometry)
+        private static MESH_DATA SerializeMeshGeometry(MESH_FILE file, ShaderDataHelper shaderData, MeshGeometry meshGeometry)
         {
-            var meshData = MESH_DATA.Create(meshGeometry);
+            var meshData = MESH_DATA.Create(meshGeometry.VertexCount, meshGeometry.IndexCount, file.IsTextured, file.IsFlexible);
+
             var vertIndexer = new ListIndexer<Vertex>(meshGeometry.Vertices);
+
             for (int i = 0; i < meshGeometry.Vertices.Count; i++)
             {
                 var vert = meshGeometry.Vertices[i];
                 meshData.Positions[i] = vert.Position;
                 meshData.Normals[i] = vert.Normal;
+                
+                if (file.IsTextured)
+                    meshData.UVs[i] = meshGeometry.IsTextured ? vert.TexCoord : new Vector2(0f);
 
-                if (meshGeometry.IsTextured)
-                    meshData.UVs[i] = vert.TexCoord;
-
-                if (vert.BoneWeights.Any())
+                if (file.IsTextured && vert.BoneWeights.Any())
                 {
                     var boneWeights = vert.BoneWeights.Select(x => new MESH_BONE_WEIGHT { BoneID = x.BoneID, Weight = x.Weight });
                     meshData.Bones[i] = new MESH_BONE_MAPPING(boneWeights);
@@ -348,7 +350,7 @@ namespace LDDModder.LDD.Files
             return meshData;
         }
 
-        private static MESH_CULLING SerializeMeshCulling(ShaderDataHelper shaderData, MeshCulling meshCulling)
+        private static MESH_CULLING SerializeMeshCulling(MESH_FILE file, ShaderDataHelper shaderData, MeshCulling meshCulling)
         {
             var culling = new MESH_CULLING
             {
@@ -360,7 +362,7 @@ namespace LDDModder.LDD.Files
             };
 
             if (meshCulling.ReplacementMesh != null)
-                culling.ReplacementGeometry = SerializeMeshGeometry(shaderData, meshCulling.ReplacementMesh);
+                culling.ReplacementGeometry = SerializeMeshGeometry(file, shaderData, meshCulling.ReplacementMesh);
 
             if (meshCulling.Studs != null && meshCulling.Studs.Any())
                 culling.Studs = meshCulling.Studs.Select(x => x.Serialize()).ToArray();

@@ -376,7 +376,6 @@ namespace LDDModder.BrickEditor.Rendering
         {
             GL.Disable(EnableCap.StencilTest);
             GL.Clear(ClearBufferMask.StencilBufferBit);
-
         }
 
         public static void EnableStencilMask()

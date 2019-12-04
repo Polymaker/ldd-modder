@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -71,16 +72,34 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
         public override void Undo()
         {
-            var propInfo = Data.Element.GetType().GetProperty(Data.PropertyName);
-            if (propInfo != null)
-                propInfo.SetValue(Data.Element, Data.OldValue);
+            if (Data.ChildProperty != null)
+            {
+                var propInfo = Data.ChildProperty.GetType().GetProperty(Data.PropertyName);
+                if (propInfo != null)
+                    propInfo.SetValue(Data.ChildProperty, Data.OldValue);
+            }
+            else
+            {
+                var propInfo = Data.Element.GetType().GetProperty(Data.PropertyName);
+                if (propInfo != null)
+                    propInfo.SetValue(Data.Element, Data.OldValue);
+            }
         }
 
         public override void Redo()
         {
-            var propInfo = Data.Element.GetType().GetProperty(Data.PropertyName);
-            if (propInfo != null)
-                propInfo.SetValue(Data.Element, Data.NewValue);
+            if (Data.ChildProperty != null)
+            {
+                var propInfo = Data.ChildProperty.GetType().GetProperty(Data.PropertyName);
+                if (propInfo != null)
+                    propInfo.SetValue(Data.ChildProperty, Data.NewValue);
+            }
+            else
+            {
+                var propInfo = Data.Element.GetType().GetProperty(Data.PropertyName);
+                if (propInfo != null)
+                    propInfo.SetValue(Data.Element, Data.NewValue);
+            }
         }
     }
 

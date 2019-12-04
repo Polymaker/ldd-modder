@@ -1,4 +1,5 @@
 ﻿using LDDModder.BrickEditor.ProjectHandling;
+using LDDModder.Modding.Editing;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -24,6 +25,17 @@ namespace LDDModder.BrickEditor.UI.Panels
             InitializeComponent();
         }
 
-
+        private void button1_Click(object sender, EventArgs e)
+        {
+            var conn = ProjectManager.SelectedElements.OfType<PartConnection>().FirstOrDefault();
+            if (conn != null)
+            {
+                if (conn.ConnectorType == LDD.Primitives.Connectors.ConnectorType.Axel)
+                {
+                    var test = conn.ConnectorProxy;
+                    test.Length += 2;
+                }
+            }
+        }
     }
 }

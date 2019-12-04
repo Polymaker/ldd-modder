@@ -16,9 +16,20 @@ namespace LDDModder.Modding.Editing
 
         public object NewValue { get; }
 
+        public object ChildProperty { get; }
+
         public ElementValueChangedEventArgs(PartElement component, string propertyName, object oldValue, object newValue)
         {
             Element = component;
+            PropertyName = propertyName;
+            OldValue = oldValue;
+            NewValue = newValue;
+        }
+
+        public ElementValueChangedEventArgs(PartElement component, object childProperty, string propertyName, object oldValue, object newValue)
+        {
+            Element = component;
+            ChildProperty = childProperty;
             PropertyName = propertyName;
             OldValue = oldValue;
             NewValue = newValue;

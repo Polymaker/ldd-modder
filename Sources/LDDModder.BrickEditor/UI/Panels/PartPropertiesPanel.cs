@@ -14,18 +14,18 @@ using LDDModder.Modding.Editing;
 
 namespace LDDModder.BrickEditor.UI.Panels
 {
-    public partial class ProjectPropertiesPanel : ProjectDocumentPanel
+    public partial class PartPropertiesPanel : ProjectDocumentPanel
     {
         private bool InternalSet;
         private List<MainGroup> Categories;
         
 
-        public ProjectPropertiesPanel()
+        public PartPropertiesPanel()
         {
             InitializeComponent();
         }
 
-        internal ProjectPropertiesPanel(ProjectManager projectManager) : base(projectManager)
+        internal PartPropertiesPanel(ProjectManager projectManager) : base(projectManager)
         {
             InitializeComponent();
             CloseButtonVisible = false;

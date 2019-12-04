@@ -1,5 +1,4 @@
-﻿using LDDModder.BrickEditor.Native;
-using LDDModder.BrickEditor.ProjectHandling;
+﻿using LDDModder.BrickEditor.ProjectHandling;
 using LDDModder.BrickEditor.Resources;
 using LDDModder.BrickEditor.Settings;
 using LDDModder.BrickEditor.UI.Panels;
@@ -22,8 +21,6 @@ namespace LDDModder.BrickEditor.UI.Windows
 {
     public partial class BrickEditorWindow : Form
     {
-        
-        private Assimp.AssimpContext AssimpContext;
 
         public ProjectManager ProjectManager { get; private set; }
 
@@ -61,7 +58,6 @@ namespace LDDModder.BrickEditor.UI.Windows
             InitializePanels();
             RebuildRecentFilesMenu();
             UpdateMenuItemStates();
-            AssimpContext = new Assimp.AssimpContext();
         }
 
         protected override void OnShown(EventArgs e)
@@ -80,14 +76,14 @@ namespace LDDModder.BrickEditor.UI.Windows
         private NavigationPanel NavigationPanel;
         private ViewportPanel ViewportPanel;
         private ValidationPanel ValidationPanel;
-        private ProjectPropertiesPanel PropertiesPanel;
+        private PartPropertiesPanel PropertiesPanel;
 
         private void InitializePanels()
         {
             NavigationPanel = new NavigationPanel(ProjectManager);
             ViewportPanel = new ViewportPanel(ProjectManager);
             ValidationPanel = new ValidationPanel(ProjectManager);
-            PropertiesPanel = new ProjectPropertiesPanel(ProjectManager);
+            PropertiesPanel = new PartPropertiesPanel(ProjectManager);
 
 
             ViewportPanel.Show(DockPanelControl, DockState.Document);
@@ -318,8 +314,8 @@ namespace LDDModder.BrickEditor.UI.Windows
                     partModel = new PartModel();
                     surface.Components.Add(partModel);
                 }
-
-                var modelMesh = CurrentProject.AddMeshGeometry(geom);
+                
+                var modelMesh = CurrentProject.AddMeshGeometry(geom, model.Name);
                 partModel.Meshes.Add(new ModelMeshReference(modelMesh));
 
             }
@@ -333,7 +329,6 @@ namespace LDDModder.BrickEditor.UI.Windows
                 BeginInvoke(new MethodInvoker(TryCloseProjectAndExit));
                 return;
             }
-            
 
             foreach (var form in DockPanelControl.Documents.OfType<DockContent>().ToList())
             {

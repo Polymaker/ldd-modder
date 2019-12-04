@@ -113,18 +113,22 @@ namespace LDDModder.Modding.Editing
                 object oldValue = property;
                 property = value;
 
-                if (Project != null && !IsLoading)
-                {
-                    var args = new ElementValueChangedEventArgs(this, propertyName, oldValue, value);
-                    PropertyChanged?.Invoke(this, args);
-                    Project.OnElementPropertyChanged(args);
-                }
-                
+                var args = new ElementValueChangedEventArgs(this, propertyName, oldValue, value);
+                RaisePropertyValueChanged(args);
+
                 return true;
             }
             return false;
         }
 
+        protected void RaisePropertyValueChanged(ElementValueChangedEventArgs args)
+        {
+            if (Project != null && !IsLoading)
+            {
+                PropertyChanged?.Invoke(this, args);
+                Project.OnElementPropertyChanged(args);
+            }
+        }
 
         public virtual IEnumerable<PartElement> GetAllChilds()
         {

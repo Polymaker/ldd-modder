@@ -100,6 +100,7 @@ namespace LDDModder.Modding.Editing
         public MeshGeometry GetGeometry()
         {
             var modelMesh = GetModelMesh();
+            MeshGeometry modelGeometry = null;
 
             if (modelMesh != null)
             {
@@ -108,14 +109,21 @@ namespace LDDModder.Modding.Editing
 
                 if (modelMesh.Geometry != null)
                 {
-                    if (!IsPartialMesh)
-                        return modelMesh.Geometry;
+                    if (IsPartialMesh)
+                        modelGeometry = modelMesh.Geometry.GetPartialGeometry(StartIndex, IndexCount, StartVertex, VertexCount);
+                    else if (!Transform.IsEmpty)
+                        modelGeometry = modelMesh.Geometry.Clone();
+                    else
+                        modelGeometry = modelMesh.Geometry;
 
-                    return modelMesh.Geometry.GetPartialGeometry(StartIndex, IndexCount, StartVertex, VertexCount);
+                    if (!Transform.IsEmpty)
+                    {
+                        modelGeometry.TransformVertices(Transform.ToMatrix());
+                    }
                 }
             }
 
-            return null;
+            return modelGeometry;
         }
 
         public override XElement SerializeToXml()

@@ -169,4 +169,37 @@
   <data name="Label_DecorationSurfaceNumber" xml:space="preserve">
     <value>Decoration surface {0}</value>
   </data>
+  <data name="Label_NoActiveProject" xml:space="preserve">
+    <value>No active project</value>
+  </data>
+  <data name="ConnectorType_Axel" xml:space="preserve">
+    <value>Cylindrical (bars &amp; technic)</value>
+  </data>
+  <data name="ConnectorType_Ball" xml:space="preserve">
+    <value>Ball joint &amp; misc</value>
+  </data>
+  <data name="ConnectorType_Custom2DField" xml:space="preserve">
+    <value>Studs (bricks)</value>
+  </data>
+  <data name="ConnectorType_Fixed" xml:space="preserve">
+    <value>Fixed coupling (tires, doors &amp; etc)</value>
+  </data>
+  <data name="ConnectorType_Gear" xml:space="preserve">
+    <value>Gear</value>
+  </data>
+  <data name="ConnectorType_Hinge" xml:space="preserve">
+    <value>Hinge</value>
+  </data>
+  <data name="ConnectorType_Rail" xml:space="preserve">
+    <value>Train rails</value>
+  </data>
+  <data name="ConnectorType_Slider" xml:space="preserve">
+    <value>Slider</value>
+  </data>
+  <data name="CollisionType_Box" xml:space="preserve">
+    <value>Box</value>
+  </data>
+  <data name="CollisionType_Sphere" xml:space="preserve">
+    <value>Sphere</value>
+  </data>
 </root>

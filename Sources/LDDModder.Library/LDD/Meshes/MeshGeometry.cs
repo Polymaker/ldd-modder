@@ -131,37 +131,6 @@ namespace LDDModder.LDD.Meshes
                 Triangles[i].RebuildIndices();
         }
 
-        public void CalculateAverageNormals()
-        {
-            var vfD = new Dictionary<Vector3, List<Triangle>>();
-
-            foreach (var tri in Triangles)
-            {
-                for (int i = 0; i < 3; i++)
-                {
-                    if (!vfD.ContainsKey(tri.Vertices[i].Position))
-                        vfD.Add(tri.Vertices[i].Position, new List<Triangle>());
-                    if (!vfD[tri.Vertices[i].Position].Contains(tri))
-                        vfD[tri.Vertices[i].Position].Add(tri);
-                }
-            }
-
-            foreach (var idx in Indices)
-            {
-                var tangentFaces = vfD[idx.Vertex.Position];// GetVertexFaces(idx.Vertex).ToList();
-                var faceNormals = tangentFaces.Select(x => x.Normal).DistinctValues().ToList();
-
-                Vector3 avgNormal = Vector3.Zero;
-                foreach (var norm in faceNormals)
-                    avgNormal += norm;
-
-                avgNormal /= faceNormals.Count;
-                avgNormal.Normalize();
-
-                idx.AverageNormal = avgNormal;
-            }
-        }
-
         public void RebuildIndices()
         {
             var triIdx = GetTriangleIndices();
@@ -554,6 +523,15 @@ namespace LDDModder.LDD.Meshes
             }
 
             return geom;
+        }
+    
+        public void TransformVertices(Matrix4 matrix)
+        {
+            foreach(var vert in Vertices)
+            {
+                vert.Position = Matrix4.TransformPosition(matrix, vert.Position);
+                vert.Normal = Matrix4.TransformNormal(matrix, vert.Normal);
+            }
         }
     }
 }

@@ -164,7 +164,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
                     return ModelLocalizations.Label_NewPartProject;
             }
 
-            return string.Empty;
+            return ModelLocalizations.Label_NoActiveProject;
         }
 
         #region Selection Management

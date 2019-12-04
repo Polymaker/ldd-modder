@@ -66,6 +66,8 @@ namespace LDDModder.BrickEditor.UI.Panels
                     return node.Childrens;
                 return new ArrayList();
             };
+
+            InitializeContextMenus();
         }
 
         protected override void OnLoad(EventArgs e)
@@ -90,9 +92,9 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             base.OnProjectChanged();
             RebuildNavigation(true);
+            string projectTitle = ProjectManager.GetProjectDisplayName();
 
-            label1.Text = ProjectManager.IsProjectOpen ? 
-                ProjectManager.GetProjectDisplayName() : "<No active project>";
+            label1.Text = ProjectManager.IsProjectOpen ? projectTitle : $"<{projectTitle}> ";
         }
 
         private void ViewModeComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -176,6 +178,85 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         #region ContextMenu Handling
 
+        private void InitializeContextMenus()
+        {
+            InitializeCollisionContextMenu();
+            InitializeConnectionContextMenu();
+
+        }
+
+        private void InitializeCollisionContextMenu()
+        {
+            foreach (ToolStripMenuItem item in ContextMenu_AddCollision.DropDownItems)
+            {
+                string collisionTypeStr = item.Tag as string;
+                if (!string.IsNullOrEmpty(collisionTypeStr) &&
+                    Enum.TryParse(collisionTypeStr, out LDD.Primitives.Collisions.CollisionType collisionType))
+                {
+                    string menuText = ModelLocalizations.ResourceManager.GetString($"CollisionType_{collisionTypeStr}");
+                    menuText = menuText.Replace("&", "&&");
+                    item.Text = menuText;
+                    item.Click += AddCollisionMenuItem_Click;
+                }
+            }
+        }
+
+        private void InitializeConnectionContextMenu()
+        {
+            foreach (ToolStripMenuItem item in ContextMenu_AddConnection.DropDownItems)
+            {
+                string connectionTypeStr = item.Tag as string;
+                if (!string.IsNullOrEmpty(connectionTypeStr) && 
+                    Enum.TryParse(connectionTypeStr, out LDD.Primitives.Connectors.ConnectorType connectorType))
+                {
+                    string menuText = ModelLocalizations.ResourceManager.GetString($"ConnectorType_{connectionTypeStr}");
+                    menuText = menuText.Replace("&", "&&");
+                    item.Text = menuText;
+                    item.Click += AddConnectionMenuItem_Click;
+                }
+            }
+        }
+
+        private void AddConnectionMenuItem_Click(object sender, EventArgs e)
+        {
+            string connectionTypeStr = (sender as ToolStripMenuItem).Tag as string;
+
+            if (!string.IsNullOrEmpty(connectionTypeStr) &&
+                Enum.TryParse(connectionTypeStr, out LDD.Primitives.Connectors.ConnectorType connectorType))
+            {
+                var newConnection = PartConnection.Create(connectorType);
+
+                var focusedBoneNode = GetFocusedParentElement<PartBone>();
+
+                if (focusedBoneNode != null)
+                    (focusedBoneNode.Element as PartBone).Connections.Add(newConnection);
+                else
+                    CurrentProject.Connections.Add(newConnection);
+
+                ProjectManager.SelectElement(newConnection);
+            }
+        }
+
+        private void AddCollisionMenuItem_Click(object sender, EventArgs e)
+        {
+            string collisionTypeStr = (sender as ToolStripMenuItem).Tag as string;
+
+            if (!string.IsNullOrEmpty(collisionTypeStr) &&
+                Enum.TryParse(collisionTypeStr, out LDD.Primitives.Collisions.CollisionType collisionType))
+            {
+                var newCollision = PartCollision.Create(collisionType, 0.4f);
+
+                var focusedBoneNode = GetFocusedParentElement<PartBone>();
+
+                if (focusedBoneNode != null)
+                    (focusedBoneNode.Element as PartBone).Collisions.Add(newCollision);
+                else
+                    CurrentProject.Collisions.Add(newCollision);
+
+                ProjectManager.SelectElement(newCollision);
+            }
+        }
+
         private void ElementsContextMenu_Opening(object sender, CancelEventArgs e)
         {
             if (!ProjectManager.IsProjectOpen)
@@ -210,34 +291,6 @@ namespace LDDModder.BrickEditor.UI.Panels
             ElementsMenu_Delete.Enabled = selectedNodes.Any(x => x is ProjectElementNode);
         }
 
-        private void AddCollisionMenu_Box_Click(object sender, EventArgs e)
-        {
-            var boxCollision = new PartBoxCollision(new Simple3D.Vector3(0.4f));
-
-            var focusedBoneNode = GetFocusedParentElement<PartBone>();
-
-            if (focusedBoneNode != null)
-                (focusedBoneNode.Element as PartBone).Collisions.Add(boxCollision);
-            else
-                CurrentProject.Collisions.Add(boxCollision);
-
-            ProjectManager.SelectElement(boxCollision);
-
-        }
-
-        private void AddCollisionMenu_Sphere_Click(object sender, EventArgs e)
-        {
-            var sphereCollision = new PartSphereCollision(0.4f);
-
-            var focusedBoneNode = GetFocusedParentElement<PartBone>();
-
-            if (focusedBoneNode != null)
-                (focusedBoneNode.Element as PartBone).Collisions.Add(sphereCollision);
-            else
-                CurrentProject.Collisions.Add(sphereCollision);
-
-            ProjectManager.SelectElement(sphereCollision);
-        }
 
         #endregion
 

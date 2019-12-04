@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using System.Xml.Serialization;
@@ -536,9 +537,9 @@ namespace LDDModder.Modding.Editing
             }
         }
 
-        public ModelMesh AddMeshGeometry(MeshGeometry geometry)
+        public ModelMesh AddMeshGeometry(MeshGeometry geometry, string name = null)
         {
-            ModelMesh modelMesh = AddMeshGeometry(geometry, null, null);
+            ModelMesh modelMesh = AddMeshGeometry(geometry, null, name);
 
             if (IsLoadedFromDisk)
             {
@@ -557,12 +558,14 @@ namespace LDDModder.Modding.Editing
                 ID = id,
                 Name = name
             };
-            Meshes.Add(modelMesh);
             
             if (string.IsNullOrEmpty(id))
                 GenerateElementID(modelMesh);
-            if (string.IsNullOrEmpty(name))
+
+            //if (string.IsNullOrEmpty(name))
                 GenerateElementName(modelMesh);
+
+            Meshes.Add(modelMesh);
 
             modelMesh.FileName = $"Meshes\\{modelMesh.Name}.geom";
             
@@ -693,13 +696,29 @@ namespace LDDModder.Modding.Editing
 
             string elementName = element.Name;
 
-            while (string.IsNullOrEmpty(elementName) ||
-                        elemList.Any(x => x.Name == elementName && x != element))
+            if (element is ModelMesh && !string.IsNullOrEmpty(elementName)
+                && !Regex.IsMatch(elementName, "^Mesh\\d+$"))
             {
-                elementName = GenerateElementName(element, nameCount++);
-                if (elementName == null)
-                    break;
+                string meshName = elementName;
+                nameCount = 1;
+
+                while (string.IsNullOrEmpty(elementName) ||
+                        elemList.Any(x => x.Name == elementName && x != element))
+                {
+                    elementName = $"{meshName}_{nameCount++}";
+                }
             }
+            else
+            {
+                while (string.IsNullOrEmpty(elementName) ||
+                        elemList.Any(x => x.Name == elementName && x != element))
+                {
+                    elementName = GenerateElementName(element, nameCount++);
+                    if (elementName == null)
+                        break;
+                }
+            }
+            
 
             element.Name = elementName;
         }
@@ -712,6 +731,7 @@ namespace LDDModder.Modding.Editing
             }
             else if (element is ModelMesh)
             {
+                
                 return $"Mesh{number}";
             }
             else if (element is PartConnection connection)

@@ -30,6 +30,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             ProjectManager.ProjectElementsChanged += ProjectManager_ProjectElementsChanged;
             ProjectManager.ElementPropertyChanged += ProjectManager_ElementPropertyChanged;
             ProjectManager.SelectionChanged += ProjectManager_SelectionChanged;
+            ProjectManager.UndoHistoryChanged += ProjectManager_UndoHistoryChanged;
         }
 
         private void ProjectManager_ProjectClosed(object sender, EventArgs e)
@@ -90,6 +91,16 @@ namespace LDDModder.BrickEditor.UI.Panels
         }
 
         protected virtual void OnElementSelectionChanged()
+        {
+
+        }
+
+        private void ProjectManager_UndoHistoryChanged(object sender, EventArgs e)
+        {
+            OnProjectChangeApplied();
+        }
+
+        protected virtual void OnProjectChangeApplied()
         {
 
         }

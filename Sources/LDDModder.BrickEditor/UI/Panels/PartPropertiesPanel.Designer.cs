@@ -1,6 +1,6 @@
 ﻿namespace LDDModder.BrickEditor.UI.Panels
 {
-    partial class ProjectPropertiesPanel
+    partial class PartPropertiesPanel
     {
         /// <summary>
         /// Required designer variable.
@@ -29,7 +29,8 @@
         private void InitializeComponent()
         {
             LDDModder.LDD.Primitives.BoundingBox boundingBox1 = new LDDModder.LDD.Primitives.BoundingBox();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ProjectPropertiesPanel));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PartPropertiesPanel));
+            LDDModder.LDD.Primitives.BoundingBox boundingBox2 = new LDDModder.LDD.Primitives.BoundingBox();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
@@ -42,6 +43,8 @@
             this.PartIDTextBox = new LDDModder.BrickEditor.UI.Controls.NumberTextBox();
             this.boundingBoxEditor1 = new LDDModder.BrickEditor.UI.Controls.BoundingBoxEditor();
             this.CalculateBoundingButton = new System.Windows.Forms.Button();
+            this.label6 = new System.Windows.Forms.Label();
+            this.boundingBoxEditor2 = new LDDModder.BrickEditor.UI.Controls.BoundingBoxEditor();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -62,6 +65,8 @@
             this.tableLayoutPanel1.Controls.Add(this.PartIDTextBox, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.boundingBoxEditor1, 1, 4);
             this.tableLayoutPanel1.Controls.Add(this.CalculateBoundingButton, 2, 4);
+            this.tableLayoutPanel1.Controls.Add(this.label6, 0, 5);
+            this.tableLayoutPanel1.Controls.Add(this.boundingBoxEditor2, 1, 5);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -71,9 +76,9 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(619, 227);
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 8F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(534, 227);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // label5
@@ -112,7 +117,7 @@
             this.tableLayoutPanel1.SetColumnSpan(this.DescriptionTextBox, 2);
             this.DescriptionTextBox.Location = new System.Drawing.Point(77, 29);
             this.DescriptionTextBox.Name = "DescriptionTextBox";
-            this.DescriptionTextBox.Size = new System.Drawing.Size(539, 20);
+            this.DescriptionTextBox.Size = new System.Drawing.Size(454, 20);
             this.DescriptionTextBox.TabIndex = 1;
             this.DescriptionTextBox.Validated += new System.EventHandler(this.DescriptionTextBox_Validated);
             // 
@@ -154,7 +159,7 @@
             this.CategoryComboBox.FormattingEnabled = true;
             this.CategoryComboBox.Location = new System.Drawing.Point(77, 82);
             this.CategoryComboBox.Name = "CategoryComboBox";
-            this.CategoryComboBox.Size = new System.Drawing.Size(539, 21);
+            this.CategoryComboBox.Size = new System.Drawing.Size(454, 21);
             this.CategoryComboBox.TabIndex = 5;
             this.CategoryComboBox.SelectedValueChanged += new System.EventHandler(this.CategoryComboBox_SelectedValueChanged);
             // 
@@ -174,7 +179,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.boundingBoxEditor1.Location = new System.Drawing.Point(77, 109);
             this.boundingBoxEditor1.Name = "boundingBoxEditor1";
-            this.boundingBoxEditor1.Size = new System.Drawing.Size(459, 39);
+            this.boundingBoxEditor1.Size = new System.Drawing.Size(374, 39);
             this.boundingBoxEditor1.TabIndex = 9;
             boundingBox1.Max = ((LDDModder.Simple3D.Vector3)(resources.GetObject("boundingBox1.Max")));
             boundingBox1.MaxX = 0F;
@@ -189,7 +194,7 @@
             // CalculateBoundingButton
             // 
             this.CalculateBoundingButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.CalculateBoundingButton.Location = new System.Drawing.Point(542, 125);
+            this.CalculateBoundingButton.Location = new System.Drawing.Point(457, 125);
             this.CalculateBoundingButton.Name = "CalculateBoundingButton";
             this.CalculateBoundingButton.Size = new System.Drawing.Size(74, 23);
             this.CalculateBoundingButton.TabIndex = 11;
@@ -197,14 +202,42 @@
             this.CalculateBoundingButton.UseVisualStyleBackColor = true;
             this.CalculateBoundingButton.Click += new System.EventHandler(this.CalculateBoundingButton_Click);
             // 
-            // ProjectPropertiesPanel
+            // label6
+            // 
+            this.label6.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(3, 160);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(55, 26);
+            this.label6.TabIndex = 12;
+            this.label6.Text = "Geometry Bounding";
+            // 
+            // boundingBoxEditor2
+            // 
+            this.boundingBoxEditor2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.boundingBoxEditor2.Location = new System.Drawing.Point(77, 154);
+            this.boundingBoxEditor2.Name = "boundingBoxEditor2";
+            this.boundingBoxEditor2.Size = new System.Drawing.Size(374, 39);
+            this.boundingBoxEditor2.TabIndex = 13;
+            boundingBox2.Max = ((LDDModder.Simple3D.Vector3)(resources.GetObject("boundingBox2.Max")));
+            boundingBox2.MaxX = 0F;
+            boundingBox2.MaxY = 0F;
+            boundingBox2.MaxZ = 0F;
+            boundingBox2.Min = ((LDDModder.Simple3D.Vector3)(resources.GetObject("boundingBox2.Min")));
+            boundingBox2.MinX = 0F;
+            boundingBox2.MinY = 0F;
+            boundingBox2.MinZ = 0F;
+            this.boundingBoxEditor2.Value = boundingBox2;
+            // 
+            // PartPropertiesPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
-            this.ClientSize = new System.Drawing.Size(619, 336);
+            this.ClientSize = new System.Drawing.Size(534, 336);
             this.Controls.Add(this.tableLayoutPanel1);
-            this.Name = "ProjectPropertiesPanel";
+            this.Name = "PartPropertiesPanel";
             this.Text = "Part Properties";
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
@@ -226,5 +259,7 @@
         private System.Windows.Forms.Label label5;
         private Controls.BoundingBoxEditor boundingBoxEditor1;
         private System.Windows.Forms.Button CalculateBoundingButton;
+        private System.Windows.Forms.Label label6;
+        private Controls.BoundingBoxEditor boundingBoxEditor2;
     }
 }

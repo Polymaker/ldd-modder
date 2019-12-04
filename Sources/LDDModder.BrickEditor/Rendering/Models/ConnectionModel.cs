@@ -20,7 +20,6 @@ namespace LDDModder.BrickEditor.Rendering
 
         private bool _DisplayInvertedGender;
 
-
         public bool DisplayInvertedGender
         {
             get => _DisplayInvertedGender;
@@ -76,7 +75,7 @@ namespace LDDModder.BrickEditor.Rendering
         {
             RenderingModel = null;
             ModelTransform = Matrix4.Identity;
-            BoundingBox = new BBox();
+            BoundingBox = BBox.FromCenterSize(Vector3.Zero, new Vector3(0.5f));
 
             if (Connection.Connector is AxelConnector axelConnector)
             {
@@ -180,11 +179,12 @@ namespace LDDModder.BrickEditor.Rendering
 
         public override bool RayIntersects(Ray ray, out float distance)
         {
-            if (BoundingBox.SizeX > 0)
+            if (RenderingModel != null)
                 return RayIntersectsBoundingBox(ray, out distance);
 
-            distance = float.NaN;
-            return false;
+            var localRay = Ray.Transform(ray, Transform.Inverted());
+            var bsphere = new BSphere(Vector3.Zero, 0.5f);
+            return Ray.IntersectsSphere(localRay, bsphere, out distance);
         }
     }
 }

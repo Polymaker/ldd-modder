@@ -72,6 +72,13 @@ namespace LDDModder.Modding.Editing
             return collision;
         }
 
+        public static PartCollision Create(CollisionType collisionType, float size = 1f)
+        {
+            if (collisionType == CollisionType.Box)
+                return new PartBoxCollision(new Vector3(size));
+            return new PartSphereCollision(size);
+        }
+
         protected internal override void LoadFromXml(XElement element)
         {
             base.LoadFromXml(element);

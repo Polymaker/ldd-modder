@@ -43,25 +43,25 @@
             this.AddCollisionMenu_Box = new System.Windows.Forms.ToolStripMenuItem();
             this.AddCollisionMenu_Sphere = new System.Windows.Forms.ToolStripMenuItem();
             this.ContextMenu_AddConnection = new System.Windows.Forms.ToolStripMenuItem();
-            this.studsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.technicToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.hingeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.ballToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.railToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.gearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.sliderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.fixedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.AddConnectionMenu_Axel = new System.Windows.Forms.ToolStripMenuItem();
+            this.AddConnectionMenu_Ball = new System.Windows.Forms.ToolStripMenuItem();
+            this.AddConnectionMenu_Custom2DField = new System.Windows.Forms.ToolStripMenuItem();
+            this.AddConnectionMenu_Fixed = new System.Windows.Forms.ToolStripMenuItem();
+            this.AddConnectionMenu_Gear = new System.Windows.Forms.ToolStripMenuItem();
+            this.AddConnectionMenu_Hinge = new System.Windows.Forms.ToolStripMenuItem();
+            this.AddConnectionMenu_Rail = new System.Windows.Forms.ToolStripMenuItem();
+            this.AddConnectionMenu_Slider = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.ElementsMenu_Delete = new System.Windows.Forms.ToolStripMenuItem();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.label1 = new System.Windows.Forms.Label();
             this.ViewModeComboBox = new System.Windows.Forms.ComboBox();
             this.LocalizedStrings = new LDDModder.BrickEditor.Localization.LocalizableStringList(this.components);
-            this.ViewModeSurfaces = new LDDModder.BrickEditor.Localization.LocalizableString(this.components);
-            this.ViewModeCollisions = new LDDModder.BrickEditor.Localization.LocalizableString(this.components);
-            this.ViewModeConnections = new LDDModder.BrickEditor.Localization.LocalizableString(this.components);
-            this.ViewModeBones = new LDDModder.BrickEditor.Localization.LocalizableString(this.components);
-            this.ViewModeAll = new LDDModder.BrickEditor.Localization.LocalizableString(this.components);
+            this.ViewModeAll = new LDDModder.BrickEditor.Localization.LocalizableString();
+            this.ViewModeSurfaces = new LDDModder.BrickEditor.Localization.LocalizableString();
+            this.ViewModeCollisions = new LDDModder.BrickEditor.Localization.LocalizableString();
+            this.ViewModeConnections = new LDDModder.BrickEditor.Localization.LocalizableString();
+            this.ViewModeBones = new LDDModder.BrickEditor.Localization.LocalizableString();
             ((System.ComponentModel.ISupportInitialize)(this.ProjectTreeView)).BeginInit();
             this.ElementsContextMenu.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -152,67 +152,75 @@
             // 
             this.AddCollisionMenu_Box.Name = "AddCollisionMenu_Box";
             resources.ApplyResources(this.AddCollisionMenu_Box, "AddCollisionMenu_Box");
-            this.AddCollisionMenu_Box.Click += new System.EventHandler(this.AddCollisionMenu_Box_Click);
+            this.AddCollisionMenu_Box.Tag = "Box";
             // 
             // AddCollisionMenu_Sphere
             // 
             this.AddCollisionMenu_Sphere.Name = "AddCollisionMenu_Sphere";
             resources.ApplyResources(this.AddCollisionMenu_Sphere, "AddCollisionMenu_Sphere");
-            this.AddCollisionMenu_Sphere.Click += new System.EventHandler(this.AddCollisionMenu_Sphere_Click);
+            this.AddCollisionMenu_Sphere.Tag = "Sphere";
             // 
             // ContextMenu_AddConnection
             // 
             this.ContextMenu_AddConnection.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.studsToolStripMenuItem,
-            this.technicToolStripMenuItem,
-            this.hingeToolStripMenuItem,
-            this.ballToolStripMenuItem,
-            this.railToolStripMenuItem,
-            this.gearToolStripMenuItem,
-            this.sliderToolStripMenuItem,
-            this.fixedToolStripMenuItem});
+            this.AddConnectionMenu_Axel,
+            this.AddConnectionMenu_Ball,
+            this.AddConnectionMenu_Custom2DField,
+            this.AddConnectionMenu_Fixed,
+            this.AddConnectionMenu_Gear,
+            this.AddConnectionMenu_Hinge,
+            this.AddConnectionMenu_Rail,
+            this.AddConnectionMenu_Slider});
             this.ContextMenu_AddConnection.Name = "ContextMenu_AddConnection";
             resources.ApplyResources(this.ContextMenu_AddConnection, "ContextMenu_AddConnection");
             // 
-            // studsToolStripMenuItem
+            // AddConnectionMenu_Axel
             // 
-            this.studsToolStripMenuItem.Name = "studsToolStripMenuItem";
-            resources.ApplyResources(this.studsToolStripMenuItem, "studsToolStripMenuItem");
+            this.AddConnectionMenu_Axel.Name = "AddConnectionMenu_Axel";
+            resources.ApplyResources(this.AddConnectionMenu_Axel, "AddConnectionMenu_Axel");
+            this.AddConnectionMenu_Axel.Tag = "Axel";
             // 
-            // technicToolStripMenuItem
+            // AddConnectionMenu_Ball
             // 
-            this.technicToolStripMenuItem.Name = "technicToolStripMenuItem";
-            resources.ApplyResources(this.technicToolStripMenuItem, "technicToolStripMenuItem");
+            this.AddConnectionMenu_Ball.Name = "AddConnectionMenu_Ball";
+            resources.ApplyResources(this.AddConnectionMenu_Ball, "AddConnectionMenu_Ball");
+            this.AddConnectionMenu_Ball.Tag = "Ball";
             // 
-            // hingeToolStripMenuItem
+            // AddConnectionMenu_Custom2DField
             // 
-            this.hingeToolStripMenuItem.Name = "hingeToolStripMenuItem";
-            resources.ApplyResources(this.hingeToolStripMenuItem, "hingeToolStripMenuItem");
+            this.AddConnectionMenu_Custom2DField.Name = "AddConnectionMenu_Custom2DField";
+            resources.ApplyResources(this.AddConnectionMenu_Custom2DField, "AddConnectionMenu_Custom2DField");
+            this.AddConnectionMenu_Custom2DField.Tag = "Custom2DField";
             // 
-            // ballToolStripMenuItem
+            // AddConnectionMenu_Fixed
             // 
-            this.ballToolStripMenuItem.Name = "ballToolStripMenuItem";
-            resources.ApplyResources(this.ballToolStripMenuItem, "ballToolStripMenuItem");
+            this.AddConnectionMenu_Fixed.Name = "AddConnectionMenu_Fixed";
+            resources.ApplyResources(this.AddConnectionMenu_Fixed, "AddConnectionMenu_Fixed");
+            this.AddConnectionMenu_Fixed.Tag = "Fixed";
             // 
-            // railToolStripMenuItem
+            // AddConnectionMenu_Gear
             // 
-            this.railToolStripMenuItem.Name = "railToolStripMenuItem";
-            resources.ApplyResources(this.railToolStripMenuItem, "railToolStripMenuItem");
+            this.AddConnectionMenu_Gear.Name = "AddConnectionMenu_Gear";
+            resources.ApplyResources(this.AddConnectionMenu_Gear, "AddConnectionMenu_Gear");
+            this.AddConnectionMenu_Gear.Tag = "Gear";
             // 
-            // gearToolStripMenuItem
+            // AddConnectionMenu_Hinge
             // 
-            this.gearToolStripMenuItem.Name = "gearToolStripMenuItem";
-            resources.ApplyResources(this.gearToolStripMenuItem, "gearToolStripMenuItem");
+            this.AddConnectionMenu_Hinge.Name = "AddConnectionMenu_Hinge";
+            resources.ApplyResources(this.AddConnectionMenu_Hinge, "AddConnectionMenu_Hinge");
+            this.AddConnectionMenu_Hinge.Tag = "Hinge";
             // 
-            // sliderToolStripMenuItem
+            // AddConnectionMenu_Rail
             // 
-            this.sliderToolStripMenuItem.Name = "sliderToolStripMenuItem";
-            resources.ApplyResources(this.sliderToolStripMenuItem, "sliderToolStripMenuItem");
+            this.AddConnectionMenu_Rail.Name = "AddConnectionMenu_Rail";
+            resources.ApplyResources(this.AddConnectionMenu_Rail, "AddConnectionMenu_Rail");
+            this.AddConnectionMenu_Rail.Tag = "Rail";
             // 
-            // fixedToolStripMenuItem
+            // AddConnectionMenu_Slider
             // 
-            this.fixedToolStripMenuItem.Name = "fixedToolStripMenuItem";
-            resources.ApplyResources(this.fixedToolStripMenuItem, "fixedToolStripMenuItem");
+            this.AddConnectionMenu_Slider.Name = "AddConnectionMenu_Slider";
+            resources.ApplyResources(this.AddConnectionMenu_Slider, "AddConnectionMenu_Slider");
+            this.AddConnectionMenu_Slider.Tag = "Slider";
             // 
             // toolStripSeparator1
             // 
@@ -248,11 +256,15 @@
             // 
             // LocalizedStrings
             // 
-            this.LocalizedStrings.Items.Add(this.ViewModeSurfaces);
+            this.LocalizedStrings.Items.Add(this.ViewModeAll);
+            this.LocalizedStrings.Items.Add(this.ViewModeBones);
             this.LocalizedStrings.Items.Add(this.ViewModeCollisions);
             this.LocalizedStrings.Items.Add(this.ViewModeConnections);
-            this.LocalizedStrings.Items.Add(this.ViewModeBones);
-            this.LocalizedStrings.Items.Add(this.ViewModeAll);
+            this.LocalizedStrings.Items.Add(this.ViewModeSurfaces);
+            // 
+            // ViewModeAll
+            // 
+            resources.ApplyResources(this.ViewModeAll, "ViewModeAll");
             // 
             // ViewModeSurfaces
             // 
@@ -269,10 +281,6 @@
             // ViewModeBones
             // 
             resources.ApplyResources(this.ViewModeBones, "ViewModeBones");
-            // 
-            // ViewModeAll
-            // 
-            resources.ApplyResources(this.ViewModeAll, "ViewModeAll");
             // 
             // NavigationPanel
             // 
@@ -313,14 +321,14 @@
         private System.Windows.Forms.ToolStripMenuItem AddCollisionMenu_Box;
         private System.Windows.Forms.ToolStripMenuItem AddCollisionMenu_Sphere;
         private System.Windows.Forms.ToolStripMenuItem ContextMenu_AddConnection;
-        private System.Windows.Forms.ToolStripMenuItem studsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem technicToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem hingeToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem gearToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem AddConnectionMenu_Custom2DField;
+        private System.Windows.Forms.ToolStripMenuItem AddConnectionMenu_Axel;
+        private System.Windows.Forms.ToolStripMenuItem AddConnectionMenu_Hinge;
+        private System.Windows.Forms.ToolStripMenuItem AddConnectionMenu_Gear;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.ToolStripMenuItem ballToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem railToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem sliderToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem fixedToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem AddConnectionMenu_Ball;
+        private System.Windows.Forms.ToolStripMenuItem AddConnectionMenu_Rail;
+        private System.Windows.Forms.ToolStripMenuItem AddConnectionMenu_Slider;
+        private System.Windows.Forms.ToolStripMenuItem AddConnectionMenu_Fixed;
     }
 }

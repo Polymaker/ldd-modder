@@ -69,20 +69,46 @@ namespace LDDModder.BrickEditor.Rendering
         {
             base.RenderModel(camera);
 
-            var model = CollisionType == CollisionType.Box ? ModelManager.CubeModel : ModelManager.SphereModel;
+            if (CollisionType == CollisionType.Box)
+                DrawBoxCollision();
+            else
+                DrawSphereCollision();
+        }
 
-            RenderHelper.BeginDrawModel(model.VertexBuffer, ScaleTransform * Transform, RenderHelper.CollisionMaterial);
+        private void DrawBoxCollision()
+        {
+            RenderHelper.BeginDrawModel(ModelManager.CubeModel, ScaleTransform * Transform, RenderHelper.CollisionMaterial);
             RenderHelper.ModelShader.IsSelected.Set(IsSelected);
 
-            model.DrawElements();
+            ModelManager.CubeModel.DrawElements();
 
-            RenderHelper.EndDrawModel(model.VertexBuffer);
+            RenderHelper.EndDrawModel(ModelManager.CubeModel);
 
-            if (CollisionType == CollisionType.Box)
-            {
-                var wireColor = IsSelected ? RenderHelper.WireframeColorAlt : RenderHelper.WireframeColor;
-                RenderHelper.DrawBoundingBox(Transform, BoundingBox, wireColor, 1.5f);
-            }
+            var wireColor = IsSelected ? RenderHelper.WireframeColorAlt : RenderHelper.WireframeColor;
+            RenderHelper.DrawBoundingBox(Transform, BoundingBox, wireColor, 1.5f);
+        }
+
+        private void DrawSphereCollision()
+        {
+            RenderHelper.EnableStencilTest();
+            RenderHelper.EnableStencilMask();
+
+            RenderHelper.BeginDrawModel(ModelManager.SphereModel, ScaleTransform * Transform, RenderHelper.CollisionMaterial);
+            RenderHelper.ModelShader.IsSelected.Set(IsSelected);
+            ModelManager.SphereModel.DrawElements();
+            RenderHelper.EndDrawModel(ModelManager.SphereModel);
+
+            var wireColor = IsSelected ? RenderHelper.WireframeColorAlt : RenderHelper.WireframeColor;
+            
+            RenderHelper.ApplyStencilMask();
+
+            RenderHelper.BeginDrawWireframe(ModelManager.SphereModel.VertexBuffer, ScaleTransform * Transform, 2.5f, wireColor);
+            ModelManager.SphereModel.DrawElements();
+            RenderHelper.EndDrawWireframe(ModelManager.SphereModel.VertexBuffer);
+
+            RenderHelper.RemoveStencilMask();
+            RenderHelper.ClearStencil();
+            RenderHelper.DisableStencilTest();
         }
 
         public override bool RayIntersects(Ray ray, out float distance)

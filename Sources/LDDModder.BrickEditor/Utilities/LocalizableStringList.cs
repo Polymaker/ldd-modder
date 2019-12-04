@@ -9,6 +9,7 @@ namespace LDDModder.BrickEditor.Localization
     public partial class LocalizableStringList : Component
     {
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
+        [MergableProperty(false)]
         public List<LocalizableString> Items { get; private set; }
 
         public LocalizableStringList()

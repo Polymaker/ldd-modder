@@ -26,8 +26,8 @@ namespace LDDModder.BrickEditor.UI.Panels
     public partial class ViewportPanel : ProjectDocumentPanel
     {
         private bool ViewInitialized;
-
         private bool IsClosing;
+
         private GLControl glControl1;
 
         private Texture2D CheckboardTexture;
@@ -116,7 +116,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             InitializeBase();
 
-            UpdateViewport();
+            UpdateGLViewport();
 
             InitializeMenus();
 
@@ -126,6 +126,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             mainForm.Activated += MainForm_Activated;
             mainForm.Deactivate += MainForm_Deactivate;
 
+            UpdateTitle();
         }
 
         #region Initialization
@@ -331,26 +332,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         #endregion
 
-        private void UpdateViewport()
-        {
-            if (IsDisposed || IsClosing)
-                return;
-
-            //glControl1.MakeCurrent();
-            if (!ViewInitialized)
-            {
-                GL.ClearColor(glControl1.BackColor);
-                ViewInitialized = true;
-            }
-
-            GL.Viewport(0, 0, glControl1.Width, glControl1.Height);
-            Camera.Viewport = new RectangleF(0, 0, glControl1.Width, glControl1.Height);
-
-            UIRenderHelper.InitializeMatrices(Camera);
-
-            if (SelectionGizmo.Visible)
-                SelectionGizmo.UpdateBounds(Camera);
-        }
+        
 
         #region Render Loop
 
@@ -621,7 +603,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         #endregion
 
-        #region Editing
+        #region Selection Gizmo Handling
 
         private void SelectionGizmo_TransformFinishing(object sender, EventArgs e)
         {
@@ -670,6 +652,8 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         #endregion
 
+        #region Form handling
+
         protected override void WndProc(ref Message m)
         {
             base.WndProc(ref m);
@@ -677,7 +661,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             {
                 if (ViewInitialized && !Disposing && !IsClosing)
                 {
-                    UpdateViewport();
+                    UpdateGLViewport();
                     LoopController.ForceRender();
                 }
             }
@@ -690,14 +674,14 @@ namespace LDDModder.BrickEditor.UI.Panels
             DisposeGLResources();
         }
 
-        private void UnloadModels()
+        private void UpdateTitle()
         {
-            SurfaceModels.ForEach(x => x.Dispose());
-            SurfaceModels.Clear();
-            CollisionModels.Clear();
-            ConnectionModels.Clear();
-            GC.Collect();
+            Text = ProjectManager.GetProjectDisplayName();
+            if (ProjectManager.IsModified)
+                Text += "*";
         }
+
+        #endregion
 
         private void DisposeGLResources()
         {
@@ -723,6 +707,19 @@ namespace LDDModder.BrickEditor.UI.Panels
             RebuildCollisionModels();
             RebuildConnectionModels();
             SetupDefaultCamera();
+            UpdateTitle();
+        }
+
+        protected override void OnProjectChangeApplied()
+        {
+            BeginInvoke(new MethodInvoker(UpdateTitle));
+        }
+
+        protected override void OnElementPropertyChanged(ElementValueChangedEventArgs e)
+        {
+            base.OnElementPropertyChanged(e);
+            if (e.Element is PartProperties)
+                BeginInvoke(new MethodInvoker(UpdateTitle));
         }
 
         private void AddPartSurfaceModel(PartSurface surface)
@@ -815,6 +812,10 @@ namespace LDDModder.BrickEditor.UI.Panels
             }
         }
 
+        #endregion
+
+        #region Model/Mesh Handling
+
         private void UpdateSurfacesModels(IEnumerable<PartSurface> changedSurfaces)
         {
             foreach (var surface in changedSurfaces)
@@ -873,6 +874,15 @@ namespace LDDModder.BrickEditor.UI.Panels
             }
         }
 
+        private void UnloadModels()
+        {
+            SurfaceModels.ForEach(x => x.Dispose());
+            SurfaceModels.Clear();
+            CollisionModels.Clear();
+            ConnectionModels.Clear();
+            GC.Collect();
+        }
+
 
         public IEnumerable<PartElementModel> GetAllElementModels()
         {
@@ -890,7 +900,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             if (!ModelRenderingOptions.Hidden)
             {
-                foreach (var model in SurfaceModels.SelectMany(x => x.MeshModels).Where(x=>x.Visible))
+                foreach (var model in SurfaceModels.SelectMany(x => x.MeshModels).Where(x => x.Visible))
                     yield return model;
             }
 
@@ -905,7 +915,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                 foreach (var model in ConnectionModels)
                     yield return model;
             }
-            
+
         }
 
         public IEnumerable<PartElementModel> GetSelectedModels(bool onlyVisible = false)
@@ -1057,7 +1067,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         #endregion
 
-        #region Viewport Handling
+        #region Camera & Viewport Handling
 
         private void SetupDefaultCamera()
         {
@@ -1158,6 +1168,27 @@ namespace LDDModder.BrickEditor.UI.Panels
             distanceToTarget += Camera.GetDistanceForSize(targetSize);
             var cameraPos = bounding.Center + cameraDirection * distanceToTarget;
             CameraManipulator.Initialize(cameraPos, bounding.Center, upVector);
+        }
+
+        private void UpdateGLViewport()
+        {
+            if (IsDisposed || IsClosing)
+                return;
+
+            //glControl1.MakeCurrent();
+            if (!ViewInitialized)
+            {
+                GL.ClearColor(glControl1.BackColor);
+                ViewInitialized = true;
+            }
+
+            GL.Viewport(0, 0, glControl1.Width, glControl1.Height);
+            Camera.Viewport = new RectangleF(0, 0, glControl1.Width, glControl1.Height);
+
+            UIRenderHelper.InitializeMatrices(Camera);
+
+            if (SelectionGizmo.Visible)
+                SelectionGizmo.UpdateBounds(Camera);
         }
 
         #endregion
@@ -1325,6 +1356,5 @@ namespace LDDModder.BrickEditor.UI.Panels
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
-        
     }
 }

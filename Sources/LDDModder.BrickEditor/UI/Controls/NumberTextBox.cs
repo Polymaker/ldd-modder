@@ -25,6 +25,7 @@ namespace LDDModder.BrickEditor.UI.Controls
         private int _MinDisplayedDecimalPlaces;
         private int _MaxDisplayedDecimalPlaces;
         private bool _AutoSize;
+        private bool SizeInitialized;
 
         #endregion
 
@@ -141,19 +142,32 @@ namespace LDDModder.BrickEditor.UI.Controls
 
         public NumberTextBox()
         {
-            Width = 100;
+            //Width = 100;
             InitializeComponent();
             _MaximumValue = 100;
             
             _AllowDecimals = true;
-            _AutoSize = true;
+            _AutoSize = base.AutoSize;
             _MaxDisplayedDecimalPlaces = 5;
         }
 
         protected override void OnHandleCreated(EventArgs e)
         {
             base.OnHandleCreated(e);
+            
             UpdateTextboxValue();
+        }
+
+        protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified)
+        {
+            if (specified.HasFlag(BoundsSpecified.Width) && !SizeInitialized)
+            {
+                if (width < 6)
+                    width = DefaultSize.Width;
+
+                SizeInitialized = true;
+            }
+            base.SetBoundsCore(x, y, width, height, specified);
         }
 
         private void UpdateTextboxValue()

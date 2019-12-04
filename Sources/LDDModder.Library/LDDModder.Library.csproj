@@ -158,6 +158,8 @@
     <Compile Include="Maths\Line.cs" />
     <Compile Include="Modding\Editing\ChangeTracking\ElementCollectionChangedEventArgs.cs" />
     <Compile Include="Modding\Editing\ChangeTracking\ElementCollection.cs" />
+    <Compile Include="Utilities\Events\INotifyPropertyValueChanged.cs" />
+    <Compile Include="Utilities\Events\PropertyValueChangedEventArgs.cs" />
     <Compile Include="Modding\Editing\Generation\CircularPattern.cs" />
     <Compile Include="Modding\Editing\Generation\LinearPattern.cs" />
     <Compile Include="Modding\Editing\IPhysicalElement.cs" />
@@ -167,6 +169,7 @@
     <Compile Include="Modding\Editing\ModelComponents\ModelMeshReference.cs" />
     <Compile Include="Modding\Editing\PartBone.cs" />
     <Compile Include="Modding\Editing\PartProperties.cs" />
+    <Compile Include="Modding\Editing\PrimitiveElements\ConnectorProxy.cs" />
     <Compile Include="Modding\Editing\PrimitiveElements\PartBoxCollision.cs" />
     <Compile Include="Modding\Editing\PrimitiveElements\PartCollision.cs" />
     <Compile Include="Modding\Editing\PartElement.cs" />

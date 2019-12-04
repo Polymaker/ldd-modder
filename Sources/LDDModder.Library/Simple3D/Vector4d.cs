@@ -62,6 +62,11 @@ namespace LDDModder.Simple3D
             return new Vector4d(vec1.X - vec2.X, vec1.Y - vec2.Y, vec1.Z - vec2.Z, vec1.W - vec2.W);
         }
 
+        public static explicit operator Vector4d(Vector4 vector)
+        {
+            return new Vector4d(vector.X, vector.Y, vector.Z, vector.W);
+        }
+
         #endregion
 
         public override int GetHashCode()

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -117,109 +117,36 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Label_Decoration" xml:space="preserve">
-    <value>Décoration</value>
+  <data name="boundingBox1.Max" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>
+        AAEAAAD/////AQAAAAAAAAAMAgAAAEhMRERNb2RkZXIuTGlicmFyeSwgVmVyc2lvbj0xLjAuMC4wLCBD
+        dWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPW51bGwFAQAAABpMRERNb2RkZXIuU2ltcGxlM0Qu
+        VmVjdG9yMwMAAAASPFg+a19fQmFja2luZ0ZpZWxkEjxZPmtfX0JhY2tpbmdGaWVsZBI8Wj5rX19CYWNr
+        aW5nRmllbGQAAAALCwsCAAAAAAAAAAAAAAAAAAAACw==
+</value>
   </data>
-  <data name="Label_Part" xml:space="preserve">
-    <value>Pièce</value>
+  <data name="boundingBox1.Min" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>
+        AAEAAAD/////AQAAAAAAAAAMAgAAAEhMRERNb2RkZXIuTGlicmFyeSwgVmVyc2lvbj0xLjAuMC4wLCBD
+        dWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPW51bGwFAQAAABpMRERNb2RkZXIuU2ltcGxlM0Qu
+        VmVjdG9yMwMAAAASPFg+a19fQmFja2luZ0ZpZWxkEjxZPmtfX0JhY2tpbmdGaWVsZBI8Wj5rX19CYWNr
+        aW5nRmllbGQAAAALCwsCAAAAAAAAAAAAAAAAAAAACw==
+</value>
   </data>
-  <data name="Label_Brick" xml:space="preserve">
-    <value>Brique</value>
+  <data name="boundingBox2.Max" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>
+        AAEAAAD/////AQAAAAAAAAAMAgAAAEhMRERNb2RkZXIuTGlicmFyeSwgVmVyc2lvbj0xLjAuMC4wLCBD
+        dWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPW51bGwFAQAAABpMRERNb2RkZXIuU2ltcGxlM0Qu
+        VmVjdG9yMwMAAAASPFg+a19fQmFja2luZ0ZpZWxkEjxZPmtfX0JhY2tpbmdGaWVsZBI8Wj5rX19CYWNr
+        aW5nRmllbGQAAAALCwsCAAAAAAAAAAAAAAAAAAAACw==
+</value>
   </data>
-  <data name="Label_Surfaces" xml:space="preserve">
-    <value>Surfaces</value>
-  </data>
-  <data name="Label_Surface" xml:space="preserve">
-    <value>Surface</value>
-  </data>
-  <data name="Label_Collisions" xml:space="preserve">
-    <value>Collisions</value>
-  </data>
-  <data name="Label_Connections" xml:space="preserve">
-    <value>Connexions</value>
-  </data>
-  <data name="Label_MainSurface" xml:space="preserve">
-    <value>Surface principale</value>
-  </data>
-  <data name="Label_DecorationSurface" xml:space="preserve">
-    <value>Surface de décoration</value>
-  </data>
-  <data name="Label_Model" xml:space="preserve">
-    <value>Modèle</value>
-  </data>
-  <data name="Label_Stud" xml:space="preserve">
-    <value>Stud</value>
-  </data>
-  <data name="Label_Component" xml:space="preserve">
-    <value>Composant</value>
-  </data>
-  <data name="Label_NewPartProject" xml:space="preserve">
-    <value>Nouvelle pièce</value>
-  </data>
-  <data name="Label_PartProjectName" xml:space="preserve">
-    <value>Pièce %partid%</value>
-  </data>
-  <data name="Label_Models" xml:space="preserve">
-    <value>Modèles</value>
-  </data>
-  <data name="Label_MaleStuds" xml:space="preserve">
-    <value>Studs (male)</value>
-  </data>
-  <data name="Label_BrickTubes" xml:space="preserve">
-    <value>Tubes</value>
-  </data>
-  <data name="Label_FemaleStuds" xml:space="preserve">
-    <value>Studs (femelle)</value>
-  </data>
-  <data name="Label_Studs" xml:space="preserve">
-    <value>Studs</value>
-  </data>
-  <data name="Label_FemaleStud" xml:space="preserve">
-    <value>Stud femelle</value>
-  </data>
-  <data name="Label_Geometry" xml:space="preserve">
-    <value>Géometrie</value>
-  </data>
-  <data name="Label_Mesh" xml:space="preserve">
-    <value>Géometrie</value>
-  </data>
-  <data name="Label_ReplacementMesh" xml:space="preserve">
-    <value>Géometrie de remplacement</value>
-  </data>
-  <data name="Label_DecorationSurfaceNumber" xml:space="preserve">
-    <value>Surface de décoration {0}</value>
-  </data>
-  <data name="Label_NoActiveProject" xml:space="preserve">
-    <value>Aucun projet actif</value>
-  </data>
-  <data name="ConnectorType_Axel" xml:space="preserve">
-    <value>Cylindrique (barres &amp; technic)</value>
-  </data>
-  <data name="ConnectorType_Hinge" xml:space="preserve">
-    <value>Charnière</value>
-  </data>
-  <data name="ConnectorType_Rail" xml:space="preserve">
-    <value>Rails de train</value>
-  </data>
-  <data name="ConnectorType_Gear" xml:space="preserve">
-    <value>Engrenage</value>
-  </data>
-  <data name="ConnectorType_Fixed" xml:space="preserve">
-    <value>Couplage fixe (pneus, portes, etc.)</value>
-  </data>
-  <data name="ConnectorType_Custom2DField" xml:space="preserve">
-    <value>Studs (briques)</value>
-  </data>
-  <data name="ConnectorType_Slider" xml:space="preserve">
-    <value>Glisière</value>
-  </data>
-  <data name="ConnectorType_Ball" xml:space="preserve">
-    <value>Joint à rotule &amp; divers</value>
-  </data>
-  <data name="CollisionType_Sphere" xml:space="preserve">
-    <value>Sphère</value>
-  </data>
-  <data name="CollisionType_Box" xml:space="preserve">
-    <value>Boîte</value>
+  <data name="boundingBox2.Min" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>
+        AAEAAAD/////AQAAAAAAAAAMAgAAAEhMRERNb2RkZXIuTGlicmFyeSwgVmVyc2lvbj0xLjAuMC4wLCBD
+        dWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPW51bGwFAQAAABpMRERNb2RkZXIuU2ltcGxlM0Qu
+        VmVjdG9yMwMAAAASPFg+a19fQmFja2luZ0ZpZWxkEjxZPmtfX0JhY2tpbmdGaWVsZBI8Wj5rX19CYWNr
+        aW5nRmllbGQAAAALCwsCAAAAAAAAAAAAAAAAAAAACw==
+</value>
   </data>
 </root>

@@ -67,7 +67,7 @@
             // 
             resources.ApplyResources(this.DockPanelControl, "DockPanelControl");
             this.DockPanelControl.DockBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(238)))), ((int)(((byte)(238)))), ((int)(((byte)(242)))));
-            this.DockPanelControl.DocumentStyle = WeifenLuo.WinFormsUI.Docking.DocumentStyle.DockingSdi;
+            this.DockPanelControl.DocumentStyle = WeifenLuo.WinFormsUI.Docking.DocumentStyle.DockingWindow;
             this.DockPanelControl.Name = "DockPanelControl";
             this.DockPanelControl.ShowAutoHideContentOnHover = false;
             this.DockPanelControl.Theme = this.vS2015LightTheme1;

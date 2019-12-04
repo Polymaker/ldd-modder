@@ -61,6 +61,96 @@ namespace LDDModder.BrickEditor.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Box.
+        /// </summary>
+        internal static string CollisionType_Box {
+            get {
+                return ResourceManager.GetString("CollisionType_Box", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Sphere.
+        /// </summary>
+        internal static string CollisionType_Sphere {
+            get {
+                return ResourceManager.GetString("CollisionType_Sphere", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Cylindrical (bars &amp; technic).
+        /// </summary>
+        internal static string ConnectorType_Axel {
+            get {
+                return ResourceManager.GetString("ConnectorType_Axel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Ball joint &amp; misc.
+        /// </summary>
+        internal static string ConnectorType_Ball {
+            get {
+                return ResourceManager.GetString("ConnectorType_Ball", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Studs (bricks).
+        /// </summary>
+        internal static string ConnectorType_Custom2DField {
+            get {
+                return ResourceManager.GetString("ConnectorType_Custom2DField", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Fixed coupling (tires, doors &amp; etc).
+        /// </summary>
+        internal static string ConnectorType_Fixed {
+            get {
+                return ResourceManager.GetString("ConnectorType_Fixed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Gear.
+        /// </summary>
+        internal static string ConnectorType_Gear {
+            get {
+                return ResourceManager.GetString("ConnectorType_Gear", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Hinge.
+        /// </summary>
+        internal static string ConnectorType_Hinge {
+            get {
+                return ResourceManager.GetString("ConnectorType_Hinge", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Train rails.
+        /// </summary>
+        internal static string ConnectorType_Rail {
+            get {
+                return ResourceManager.GetString("ConnectorType_Rail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Slider.
+        /// </summary>
+        internal static string ConnectorType_Slider {
+            get {
+                return ResourceManager.GetString("ConnectorType_Slider", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Brick.
         /// </summary>
         internal static string Label_Brick {
@@ -210,6 +300,15 @@ namespace LDDModder.BrickEditor.Resources {
         internal static string Label_NewPartProject {
             get {
                 return ResourceManager.GetString("Label_NewPartProject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à No active project.
+        /// </summary>
+        internal static string Label_NoActiveProject {
+            get {
+                return ResourceManager.GetString("Label_NoActiveProject", resourceCulture);
             }
         }
         

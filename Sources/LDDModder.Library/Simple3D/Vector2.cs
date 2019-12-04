@@ -26,6 +26,12 @@ namespace LDDModder.Simple3D
             Y = y;
         }
 
+        public Vector2(float value)
+        {
+            X = value;
+            Y = value;
+        }
+
         public Vector2(float[] values)
         {
             if (values.Length != 2)

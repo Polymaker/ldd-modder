@@ -344,7 +344,14 @@ namespace LDDModder.Simple3D
             return m;
         }
 
-
+        public static explicit operator Matrix4(Matrix4d matrix)
+        {
+            return new Matrix4(
+                (Vector4)matrix.RowA,
+                (Vector4)matrix.RowB,
+                (Vector4)matrix.RowC,
+                (Vector4)matrix.RowD);
+        }
 
         #region Equality
 
