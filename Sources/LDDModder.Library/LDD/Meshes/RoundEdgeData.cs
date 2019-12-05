@@ -74,7 +74,6 @@ namespace LDDModder.LDD.Meshes
             }
         }
 
-
         public Vector2[] Coords { get; set; }
 
         public PairWrapper Pairs { get; private set; }
@@ -82,6 +81,8 @@ namespace LDDModder.LDD.Meshes
         public static readonly Vector2 EmptyCoord = new Vector2(1000, 1000);
 
         public static RoundEdgeData NoOutline => new RoundEdgeData(EmptyCoord, EmptyCoord, EmptyCoord, EmptyCoord, EmptyCoord, EmptyCoord);
+
+        public bool IsEmpty => Coords.All(x => x.Equals(EmptyCoord));
 
         public RoundEdgeData()
         {

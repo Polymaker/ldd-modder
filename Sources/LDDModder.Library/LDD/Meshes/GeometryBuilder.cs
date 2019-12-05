@@ -118,6 +118,12 @@ namespace LDDModder.LDD.Meshes
         //    _Vertices.AddRange(orderDict.OrderBy(kv => kv.Value).Select(kv => kv.Key));
         //}
 
+        public void RemoveTextureCoords()
+        {
+            foreach (var vert in Vertices)
+                vert.TexCoord = Simple3D.Vector2.Empty;
+        }
+
         public MeshGeometry GetGeometry()
         {
             var geom = new MeshGeometry();

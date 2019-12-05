@@ -167,6 +167,11 @@ namespace LDDModder.LDD.Meshes
             return Vertices.Select(v => v.Position).ToArray();
         }
 
+        public bool CheckIfRoundEdgaDataDefined()
+        {
+            return Indices.Any(x => !x.RoundEdgeData.IsEmpty);
+        }
+
         #region Convertion From/To Stream
 
         public void Save(string filename)

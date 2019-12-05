@@ -23,7 +23,17 @@ namespace LDDModder.Modding.Editing
         public string Name
         {
             get => _Name;
-            set => SetPropertyValue(ref _Name, value);
+            //set => SetPropertyValue(ref _Name, value);
+            set
+            {
+                if (_Name != value)
+                {
+                    if (Project != null)
+                        Project.RenameElement(this, value);
+                    else
+                        _Name = value;
+                }
+            }
         }
 
         [XmlElement]
@@ -62,6 +72,8 @@ namespace LDDModder.Modding.Editing
             Parent = parent;
         }
 
+        #region Xml
+
         public virtual XElement SerializeToXml()
         {
             return SerializeToXmlBase(GetType().Name);
@@ -89,11 +101,13 @@ namespace LDDModder.Modding.Editing
                 ID = idAttr.Value;
 
             if (element.HasAttribute("Name", out XAttribute nameAttr))
-                Name = nameAttr.Value;
+                InternalSetName(nameAttr.Value);
 
             if (element.HasElement("Comments", out XElement commentElem))
                 Comments = commentElem.Value;
         }
+
+        #endregion
 
         protected bool SetPropertyValue<T>(ref T property, T value, [CallerMemberName] string propertyName = null)
         {
@@ -116,9 +130,36 @@ namespace LDDModder.Modding.Editing
                 var args = new ElementValueChangedEventArgs(this, propertyName, oldValue, value);
                 RaisePropertyValueChanged(args);
 
+                if (propertyName == nameof(Name) && oldValue != null)
+                    OnAfterRename(oldValue as string, value as string);
+
                 return true;
             }
             return false;
+        }
+
+        protected virtual void OnAfterRename(string oldName, string newName)
+        {
+
+        }
+
+        internal void InternalSetName(string name, bool raiseValueChange = false)
+        {
+            if (raiseValueChange)
+                SetPropertyValue(ref _Name, name, nameof(Name));
+            else
+                _Name = name;
+        }
+
+        internal void InternalSetID(string id)
+        {
+            ID = id;
+        }
+
+        internal void InternalSetNameAndID(string id, string name)
+        {
+            ID = id;
+            _Name = name;
         }
 
         protected void RaisePropertyValueChanged(ElementValueChangedEventArgs args)
@@ -147,7 +188,6 @@ namespace LDDModder.Modding.Editing
             }
         }
 
-        
         public virtual bool TryRemove()
         {
             if (Project == null && Parent != null)

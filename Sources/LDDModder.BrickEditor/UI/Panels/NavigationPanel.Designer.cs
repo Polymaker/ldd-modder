@@ -53,15 +53,16 @@
             this.AddConnectionMenu_Slider = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.ElementsMenu_Delete = new System.Windows.Forms.ToolStripMenuItem();
+            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.label1 = new System.Windows.Forms.Label();
             this.ViewModeComboBox = new System.Windows.Forms.ComboBox();
             this.LocalizedStrings = new LDDModder.BrickEditor.Localization.LocalizableStringList(this.components);
             this.ViewModeAll = new LDDModder.BrickEditor.Localization.LocalizableString();
-            this.ViewModeSurfaces = new LDDModder.BrickEditor.Localization.LocalizableString();
+            this.ViewModeBones = new LDDModder.BrickEditor.Localization.LocalizableString();
             this.ViewModeCollisions = new LDDModder.BrickEditor.Localization.LocalizableString();
             this.ViewModeConnections = new LDDModder.BrickEditor.Localization.LocalizableString();
-            this.ViewModeBones = new LDDModder.BrickEditor.Localization.LocalizableString();
+            this.ViewModeSurfaces = new LDDModder.BrickEditor.Localization.LocalizableString();
             ((System.ComponentModel.ISupportInitialize)(this.ProjectTreeView)).BeginInit();
             this.ElementsContextMenu.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -70,16 +71,21 @@
             // ProjectTreeView
             // 
             this.ProjectTreeView.AllColumns.Add(this.olvColumn1);
+            this.ProjectTreeView.AlternateRowBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(250)))), ((int)(((byte)(250)))));
             this.ProjectTreeView.CellEditUseWholeCell = false;
             this.ProjectTreeView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.olvColumn1});
             this.ProjectTreeView.ContextMenuStrip = this.ElementsContextMenu;
             this.ProjectTreeView.Cursor = System.Windows.Forms.Cursors.Default;
             resources.ApplyResources(this.ProjectTreeView, "ProjectTreeView");
+            this.ProjectTreeView.FullRowSelect = true;
             this.ProjectTreeView.HideSelection = false;
             this.ProjectTreeView.Name = "ProjectTreeView";
             this.ProjectTreeView.ShowGroups = false;
+            this.ProjectTreeView.SmallImageList = this.imageList1;
+            this.ProjectTreeView.UseAlternatingBackColors = true;
             this.ProjectTreeView.UseCompatibleStateImageBehavior = false;
+            this.ProjectTreeView.UseHotItem = true;
             this.ProjectTreeView.View = System.Windows.Forms.View.Details;
             this.ProjectTreeView.VirtualMode = true;
             this.ProjectTreeView.SelectionChanged += new System.EventHandler(this.ProjectTreeView_SelectionChanged);
@@ -88,6 +94,7 @@
             // 
             this.olvColumn1.AspectName = "Text";
             this.olvColumn1.FillsFreeSpace = true;
+            this.olvColumn1.ImageAspectName = "ImageKey";
             this.olvColumn1.IsEditable = false;
             this.olvColumn1.Sortable = false;
             resources.ApplyResources(this.olvColumn1, "olvColumn1");
@@ -233,6 +240,15 @@
             resources.ApplyResources(this.ElementsMenu_Delete, "ElementsMenu_Delete");
             this.ElementsMenu_Delete.Click += new System.EventHandler(this.ElementsMenu_Delete_Click);
             // 
+            // imageList1
+            // 
+            this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageList1.Images.SetKeyName(0, "Surface_Main");
+            this.imageList1.Images.SetKeyName(1, "Surface_Decoration");
+            this.imageList1.Images.SetKeyName(2, "Model_MaleStud");
+            this.imageList1.Images.SetKeyName(3, "Mesh");
+            // 
             // tableLayoutPanel1
             // 
             resources.ApplyResources(this.tableLayoutPanel1, "tableLayoutPanel1");
@@ -266,9 +282,9 @@
             // 
             resources.ApplyResources(this.ViewModeAll, "ViewModeAll");
             // 
-            // ViewModeSurfaces
+            // ViewModeBones
             // 
-            resources.ApplyResources(this.ViewModeSurfaces, "ViewModeSurfaces");
+            resources.ApplyResources(this.ViewModeBones, "ViewModeBones");
             // 
             // ViewModeCollisions
             // 
@@ -278,9 +294,9 @@
             // 
             resources.ApplyResources(this.ViewModeConnections, "ViewModeConnections");
             // 
-            // ViewModeBones
+            // ViewModeSurfaces
             // 
-            resources.ApplyResources(this.ViewModeBones, "ViewModeBones");
+            resources.ApplyResources(this.ViewModeSurfaces, "ViewModeSurfaces");
             // 
             // NavigationPanel
             // 
@@ -330,5 +346,6 @@
         private System.Windows.Forms.ToolStripMenuItem AddConnectionMenu_Rail;
         private System.Windows.Forms.ToolStripMenuItem AddConnectionMenu_Slider;
         private System.Windows.Forms.ToolStripMenuItem AddConnectionMenu_Fixed;
+        private System.Windows.Forms.ImageList imageList1;
     }
 }

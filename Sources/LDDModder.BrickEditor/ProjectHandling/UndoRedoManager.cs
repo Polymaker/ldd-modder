@@ -98,9 +98,62 @@ namespace LDDModder.BrickEditor.ProjectHandling
             {
                 IsInBatch = false;
                 if (BatchChanges.Any())
-                    AddAction(new BatchChangeAction(BatchChanges));
+                    AddAction(CombineBatchChanges(BatchChanges));
+
                 BatchChanges.Clear();
             }
+        }
+
+        private BatchChangeAction CombineBatchChanges(IEnumerable<ChangeAction> actions)
+        {
+            var combinedChanges = new List<ChangeAction>();
+            CollectionChangeAction prevColChange = null;
+
+            foreach (var action in actions)
+            {
+                if (action is CollectionChangeAction colChange)
+                {
+                    if (prevColChange != null)
+                    {
+                        if (colChange.Data.Collection == prevColChange.Data.Collection &&
+                            colChange.Data.Action == prevColChange.Data.Action)
+                        {
+                            var prevElements = prevColChange.Data.AddedElements.Concat(prevColChange.Data.RemovedElements);
+                            var currElements = colChange.Data.AddedElements.Concat(colChange.Data.RemovedElements);
+                            
+                            prevColChange = new CollectionChangeAction(
+                                new Modding.Editing.ElementCollectionChangedEventArgs(
+                                    colChange.Data.Collection, colChange.Data.Action,
+                                    prevElements.Concat(currElements)
+                                    ));
+                        }
+                        else
+                        {
+                            combinedChanges.Add(prevColChange);
+                            prevColChange = colChange;
+                        }
+                    }
+                    else
+                    {
+                        prevColChange = colChange;
+                    }
+                }
+                else
+                {
+                    if (prevColChange != null)
+                    {
+                        combinedChanges.Add(prevColChange);
+                        prevColChange = null;
+                    }
+
+                    combinedChanges.Add(action);
+                }
+            }
+
+            if (prevColChange != null)
+                combinedChanges.Add(prevColChange);
+
+            return new BatchChangeAction(combinedChanges);
         }
 
         private void AddAction(ChangeAction action)

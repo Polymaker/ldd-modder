@@ -37,7 +37,7 @@ namespace LDDModder.Modding.Editing
             SurfaceID = surfaceID;
             SubMaterialIndex = subMaterialIndex;
             Components = new ElementCollection<SurfaceComponent>(this);
-            Name = $"Surface{surfaceID}";
+            InternalSetName($"Surface{surfaceID}");
         }
 
         public override bool TryRemove()
@@ -83,7 +83,7 @@ namespace LDDModder.Modding.Editing
             if (element.TryGetIntAttribute(nameof(SurfaceID), out int surfID))
                 SurfaceID = surfID;
 
-            Name = $"Surface{SurfaceID}";
+            InternalSetName($"Surface{SurfaceID}");
 
             if (element.TryGetIntAttribute(nameof(SubMaterialIndex), out int matIDX))
                 SubMaterialIndex = matIDX;
@@ -126,14 +126,12 @@ namespace LDDModder.Modding.Editing
             }
 
             if (SurfaceID == 0)
-            {
-                foreach (var v in builder.Vertices)
-                    v.TexCoord = Simple3D.Vector2.Empty;
-            }
+                builder.RemoveTextureCoords();
 
             notLoadedModels.ForEach(x => x.UnloadModel());
 
             var file = new MeshFile(builder.GetGeometry());
+            
             file.Cullings.AddRange(cullings);
             return file;
         }

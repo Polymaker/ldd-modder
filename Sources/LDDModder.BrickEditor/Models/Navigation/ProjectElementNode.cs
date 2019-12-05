@@ -35,26 +35,51 @@ namespace LDDModder.BrickEditor.Models.Navigation
             if (Element is PartSurface surface)
             {
                 foreach (var elemGroup in surface.Components.GroupBy(x => x.ComponentType))
-                    AddGrouppedChildrens(elemGroup, elemGroup.Key.ToString(), 5, 50);
+                {
+                    string groupTitle = ModelLocalizations.ResourceManager.GetString($"Label_{elemGroup.Key}Components");
+                    
+                    int itemCount = elemGroup.Count();
+                    int groupSize = 10;
+                    if (itemCount >= 50)
+                        groupSize = 20;
+                    else if (itemCount >= 100)
+                        groupSize = 50;
+                    AutoGroupElements(elemGroup, groupTitle, 5, groupSize);
+                }
+            }
+            else if (Element is SurfaceComponent surfaceComponent)
+            {
+                if (surfaceComponent is FemaleStudModel femaleStud && 
+                    femaleStud.ReplacementMeshes.Any())
+                {
+                    AutoGroupElements(femaleStud.Meshes,
+                        ModelLocalizations.Label_DefaultMeshes, 0, 10, false);
+                    AutoGroupElements(femaleStud.ReplacementMeshes,
+                        ModelLocalizations.Label_AlternateMeshes, 0, 10, false);
+                }
+                else
+                {
+                    AutoGroupElements(surfaceComponent.Meshes,
+                        ModelLocalizations.Label_Models, 10, 10, true);
+                }
             }
             else
             {
 
                 foreach (var elemCollection in Element.ElementCollections)
                 {
-                    if (elemCollection.Count > 4)
-                    {
-                        Childrens.Add(new ProjectCollectionNode(elemCollection, "Items"));
-                    }
-                    else
-                    {
-                        foreach (var elem in elemCollection.GetElements())
-                            Childrens.Add(CreateDefault(elem));
-                    }
+                    if (elemCollection.ElementType == typeof(StudReference))
+                        continue;
+
+                    AutoGroupElements(elemCollection.GetElements(), "Items", 5, 10);
                 }
 
-                foreach (var chilElem in Element.ChildElements)
-                    Childrens.Add(CreateDefault(chilElem));
+                foreach (var childElem in Element.ChildElements)
+                {
+                    if (childElem is StudReference)
+                        continue;
+                    Childrens.Add(CreateDefault(childElem));
+                }
             }
         }
 
@@ -65,12 +90,28 @@ namespace LDDModder.BrickEditor.Models.Navigation
             if (element is PartSurface surface)
             {
                 if (surface.SurfaceID == 0)
+                {
                     node.Text = ModelLocalizations.Label_MainSurface;
+                    node.ImageKey = "Surface_Main";
+                }
                 else
+                {
                     node.Text = string.Format(ModelLocalizations.Label_DecorationSurfaceNumber, surface.SurfaceID);
+                    node.ImageKey = "Surface_Decoration";
+                }
             }
             else
+            {
                 node.Text = element.Name;
+                if (element is SurfaceComponent component)
+                    node.ImageKey = $"Model_{component.ComponentType}";
+                else if (element is PartConnection connection)
+                    node.ImageKey = $"Connection_{connection.ConnectorType}";
+                else if (element is PartCollision collision)
+                    node.ImageKey = $"Collision_{collision.CollisionType}";
+                else if (element is ModelMeshReference || element is ModelMesh)
+                    node.ImageKey = "Mesh";
+            }
             return node;
         }
     }

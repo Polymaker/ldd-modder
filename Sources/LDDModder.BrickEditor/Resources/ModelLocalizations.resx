@@ -163,8 +163,8 @@
   <data name="Label_Mesh" xml:space="preserve">
     <value>Mesh</value>
   </data>
-  <data name="Label_ReplacementMesh" xml:space="preserve">
-    <value>Replacement mesh</value>
+  <data name="Label_AlternateMeshes" xml:space="preserve">
+    <value>Alternate model</value>
   </data>
   <data name="Label_DecorationSurfaceNumber" xml:space="preserve">
     <value>Decoration surface {0}</value>
@@ -182,7 +182,7 @@
     <value>Studs (bricks)</value>
   </data>
   <data name="ConnectorType_Fixed" xml:space="preserve">
-    <value>Fixed coupling (tires, doors &amp; etc)</value>
+    <value>Fixed coupling (tires, doors, etc.)</value>
   </data>
   <data name="ConnectorType_Gear" xml:space="preserve">
     <value>Gear</value>
@@ -201,5 +201,68 @@
   </data>
   <data name="CollisionType_Sphere" xml:space="preserve">
     <value>Sphere</value>
+  </data>
+  <data name="Label_CollisionBoxes" xml:space="preserve">
+    <value>Boxes</value>
+  </data>
+  <data name="Label_CollisionSpheres" xml:space="preserve">
+    <value>Spheres</value>
+  </data>
+  <data name="NodeRangeFormat1" xml:space="preserve">
+    <value>{0} to {1}</value>
+  </data>
+  <data name="NodeRangeFormat2" xml:space="preserve">
+    <value>{0}+</value>
+  </data>
+  <data name="ModelComponentType_Part" xml:space="preserve">
+    <value>Part model</value>
+  </data>
+  <data name="ModelComponentType_MaleStud" xml:space="preserve">
+    <value>Stud (male)</value>
+  </data>
+  <data name="ModelComponentType_FemaleStud" xml:space="preserve">
+    <value>Stud (female)</value>
+  </data>
+  <data name="ModelComponentType_BrickTube" xml:space="preserve">
+    <value>Brick tube</value>
+  </data>
+  <data name="Label_AxelConnectors" xml:space="preserve">
+    <value>Cylindrical conn.</value>
+  </data>
+  <data name="Label_BallConnectors" xml:space="preserve">
+    <value>Balls</value>
+  </data>
+  <data name="Label_Custom2DFieldConnectors" xml:space="preserve">
+    <value>Studs</value>
+  </data>
+  <data name="Label_FixedConnectors" xml:space="preserve">
+    <value>Fixed conn.</value>
+  </data>
+  <data name="Label_GearConnectors" xml:space="preserve">
+    <value>Gears</value>
+  </data>
+  <data name="Label_HingeConnectors" xml:space="preserve">
+    <value>Hinges</value>
+  </data>
+  <data name="Label_RailConnectors" xml:space="preserve">
+    <value>Rails</value>
+  </data>
+  <data name="Label_SliderConnectors" xml:space="preserve">
+    <value>Sliders</value>
+  </data>
+  <data name="Label_PartComponents" xml:space="preserve">
+    <value>Part models</value>
+  </data>
+  <data name="Label_MaleStudComponents" xml:space="preserve">
+    <value>Male studs</value>
+  </data>
+  <data name="Label_FemaleStudComponents" xml:space="preserve">
+    <value>Female studs</value>
+  </data>
+  <data name="Label_BrickTubeComponents" xml:space="preserve">
+    <value>Brick tubes</value>
+  </data>
+  <data name="Label_DefaultMeshes" xml:space="preserve">
+    <value>Normal model</value>
   </data>
 </root>

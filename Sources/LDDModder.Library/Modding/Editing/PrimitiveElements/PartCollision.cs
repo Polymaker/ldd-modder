@@ -17,14 +17,12 @@ namespace LDDModder.Modding.Editing
 
         private ItemTransform _Transform;
 
-        [XmlElement]
         public ItemTransform Transform
         {
             get => _Transform;
             set => SetPropertyValue(ref _Transform, value);
         }
 
-        [XmlAttribute]
         public abstract CollisionType CollisionType { get; }
 
         public PartCollision()

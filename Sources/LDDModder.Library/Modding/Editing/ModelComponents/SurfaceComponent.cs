@@ -37,9 +37,10 @@ namespace LDDModder.Modding.Editing
 
         }
 
-        public static SurfaceComponent CreateFromLDD(MeshCulling culling, ModelMesh mainModel, ModelMesh replacement)
+        public static SurfaceComponent CreateFromLDD(MeshCulling culling, ModelMesh mainModel)
         {
             SurfaceComponent modelComponent = null;
+
             switch (culling.Type)
             {
                 case MeshCullingType.MainModel:
@@ -60,8 +61,6 @@ namespace LDDModder.Modding.Editing
             {
                 modelComponent.LoadCullingInformation(culling);
                 modelComponent.Meshes.Add(new ModelMeshReference(mainModel, culling));
-                if (modelComponent is FemaleStudModel femaleStud && replacement != null)
-                    femaleStud.ReplacementMeshes.Add(new ModelMeshReference(replacement.ID));
             }
 
             return modelComponent;

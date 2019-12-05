@@ -124,11 +124,134 @@
     <value>17, 17</value>
   </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="ElementsContextMenu.Size" type="System.Drawing.Size, System.Drawing">
+    <value>180, 120</value>
+  </data>
+  <data name="&gt;&gt;ElementsContextMenu.Name" xml:space="preserve">
+    <value>ElementsContextMenu</value>
+  </data>
+  <data name="&gt;&gt;ElementsContextMenu.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="ProjectTreeView.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="ProjectTreeView.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 49</value>
+  </data>
+  <data name="ProjectTreeView.Size" type="System.Drawing.Size, System.Drawing">
+    <value>282, 331</value>
+  </data>
+  <metadata name="imageList1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>402, 22</value>
+  </metadata>
+  <data name="imageList1.ImageStream" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>
+        AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj00LjAuMC4w
+        LCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAACZTeXN0
+        ZW0uV2luZG93cy5Gb3Jtcy5JbWFnZUxpc3RTdHJlYW1lcgEAAAAERGF0YQcCAgAAAAkDAAAADwMAAADO
+        EAAAAk1TRnQBSQFMAgEBBAEAATgBAAE4AQABFAEAARQBAAT/ASEBAAj/AUIBTQE2BwABNgMAASgDAAFQ
+        AwABKAMAAQEBAAEgBgABMv8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A
+        /wD/AP8ASwADBAEGA0oBjANIAYQDBAEGQAADBAEGA0oBigNGAYEDBAEG3AADMQFOA1oB0wNhAeIDXgHI
+        A1kByQM4AVw4AAMwAUwDWgHNA1wB0QNSAakDWAHAAzcBW9AAAx0BKQNZAcQDXQHiA2IB3QNjAd0DWwG+
+        A1sBvgNdAcoDVgG+AyABLygAAx0BKgNXAb8DWwHWA1oBxwNaAccDTgGVA04BlQNWAbEDVQG3AyABL2wA
+        AywBQwNQAZ4DUAGeAzIBUCAAAzIEUAGeA1ABngMsAUMUAAMNAREDUQGgA10B4ANgAd8DYwHdA2MB3QNj
+        Ad0DWwG+A1sBvgNbAb4DWwHBA10BygNPAaUDEAEVGAADDQERA1UBsQNMAfMDXQHKA1oBxwNaAccDWgHH
+        A04BlQNOAZUDTgGVA1ABmgNWAewDVQG3AxABFWQAA04BmAO/AfsD0wH9A2IB6QNYAbsDWAG7A1gBuwNY
+        AbsDWAG7A1gBuwNYAbsDWAG7A2IB6QPTAf0DvwH7A04BmAwAAwMBBANEAXkDWgHbA2EB4QNjAd0DYwHd
+        A2MB3QNjAd0DYwHdA1sBvgNbAb4DWwG+A1sBvgNbAb4DXQHFA10BygNIAYQDBAEGCAADAwEEA0gBhQNM
+        Ae8DMAH/AzUB+wNaAccDWgHHA1oBxwNaAccDTgGVA04BlQNOAZUDTgGVA1EB9wM0Af8DVgHrA0wBkQME
+        AQYYAAMCAQMDMQFOA1EBoANVAbQDVgG5A1YBuQNVAbQDUQGgAzEBTgMCAQMcAANOAZgD0QH9A+MB/gNh
+        AewDWwHDA1sBwwNbAcMDWwHDA1sBwwNbAcMDWwHDA1sBxANYAfYD7QH/A9EB/QNOAZgMAANFAX8DXgHl
+        A2MB3QNjAd0DYwHdA2MB3QNjAd0DYwHdA2MB3QNbAb4DWwG+A1sBvgNbAb4DWwG+A1sBvgNbAb4DXgHO
+        A0MBeAgAA0oBiwM3Af4DMAH/AzAB/wM1AfsDWgHHA1oBxwNcAcgDWwHeA1gBwQNPAZcDTgGVA04BlQNR
+        AfcDNQH/AzUB/wM2AfwDSAGFFAADKgFBA1gBwANYAbsDUwGoA1MBpQNTAaUDUwGlA1MBpQNTAagDWAG7
+        A1gBwAMpAT8YAAM1AVYDYAHrA10B7QM4AVwYAAMEAQYDVAGmA0MB+ANSAfcDYAHrAzEBTwwAA0oBiwNh
+        AeIDYwHdA2MB3QNjAd0DYwHdA2MB3QNjAd0DYwHdA1sBvgNbAb4DWwG+A1sBvgNbAb4DWwG+A1sBvgNc
+        AccDRwGCCAADUAGaAy8B/wMwAf8DMAH/AzUB+wNaAccDXgHVA0IB9QMwAf8DNQH/A1QB7gNWAbMDTgGV
+        A1EB9wM1Af8DNQH/AzQB/wNMAZIQAAMoATwDWQHDA1QBpgNTAaUDUwGlA1MBpQNTAaUDUwGlA1MBpQNT
+        AaUDUwGlA1QBpgNZAcMDJwE6GAADWAG8A1oBxRgAAwQBBgNSAaQDTAHzA1MBqANbAccDWAG8EAADSgGL
+        A2EB4gNjAd0DYwHdA2MB3QNjAd0DYwHdA2MB3QNjAd0DWwG+A1sBvgNbAb4DWwG+A1sBvgNbAb4DWwG+
+        A1wBxwNHAYIIAANQAZoDLwH/AzAB/wMwAf8DTQH3A1QB7QMwAf8DMAH/AzAB/wM1Af8DNQH/AzUB/wNe
+        Ad0DVgHvAzUB/wM1Af8DNAH/A0wBkhAAA1QBrwNSAacDUwGlA1MBpQNTAaUDUgGpA1cBuANXAbcDUgGp
+        A1MBpQNTAaUDUwGlA1IBpwNUAa4YAANYAbwDWgHFFAADBAEFA1EBogNMAfMDUgGnAwQBBgNaAcUDWAG8
+        EAADSgGLA2EB4gNjAd0DYwHdA2MB3QNjAd0DYwHdA2MB3QNjAd0DWwG+A1sBvgNbAb4DWwG+A1sBvgNb
+        Ab4DWwG+A1wBxwNHAYIIAANQAZoDLwH/AzMB/ANYAeMDXAHNAzAB/wMwAf8DMAH/AzAB/wM1Af8DNQH/
+        AzUB/wM1Af8DUQGfA1sBwwNDAfkDNAH/A0wBkhAAA1UBtQNTAaUDWgG9A1gB5gNVAeoDXAHnA2AB3gNg
+        Ad4DXAHnA1gB6QNYAeYDWgG9A1MBpQNVAbUYAANYAbwDWgHFEAADBAEFA1EBogNMAfMDUgGnAwQBBgQA
+        A1oBxQNYAbwQAANKAYsDYQHiA2MB3QNjAd0DYwHdA2MB3QNjAd0DYwHdA2MB3QNbAb4DWwG+A1sBvgNb
+        Ab4DWwG+A1sBvgNbAb4DXAHHA0cBgggAA04BmQNPAe8DXAHNA1oBxwNbAcsDMAH/AzAB/wMwAf8DMAH/
+        AzUB/wM1Af8DNQH/AzUB/wNQAZ0DTgGVA1EBnwNfAdsDSwGQEAADVQG1A1cB3wNhAeEDUwGlA08BlwNP
+        AZcDTwGXA08BlwNPAZcDTwGXA1QBpgNhAeIDWgHeA1UBtRgAA1gBvANaAcUMAAMEAQUDUQGiA0wB8wNS
+        AacDBAEGCAADWgHFA1gBvBAAA0oBiwNhAeIDYwHdA2MB3QNjAd0DYwHdA2MB3QNjAdsDagHbA2kB1ANd
+        AcMDWwG+A1sBvgNbAb4DWwG+A1sBvgNcAccDRwGCCAADSAGIA1wBzwNaAccDWgHHA1sBywMwAf8DMAH/
+        AzkB/wNqAf8DdgH/A0MB/wM1Af8DNQH/A1ABnQNOAZUDTgGVA1IBpANGAX8QAANYAeYDXAHNA08BlwNP
+        AZcDTwGXA08BlwNPAZcDTwGXA08BlwNPAZcDTwGXA08BlwNeAc4DWAHmGAADWAG8A1oBxQgAAwQBBQNR
+        AaIDTAHzA1IBpwMEAQYMAANaAcUDWAG8EAADSgGLA2EB4gNjAd0DYwHdA2MB3QNhAdwDZQHZA3IB3ANx
+        Ad0DcQHdA3IB3ANlAdADWgHAA1sBvgNbAb4DWwG+A1wBxwNHAYIIAANIAYgDXAHPA1oBxwNaAccDWwHL
+        AzQB/wNZAf8DlAH/A5gB/wOYAf8DlgH/A2wB/wM8Af8DUAGdA04BlQNOAZUDUgGkA0YBfxAAA1gB4wNP
+        AZcDTwGXA08BlwNPAZcDTwGXA08BlwNPAZcDTwGXA08BlwNPAZcDTwGXA08BlwNYAeQYAANYAbwDWgHF
+        BAADBAEFA1EBogNMAfMDUgGnAwQBBhAAA1oBxQNYAbwQAANKAYsDYQHiA2MB3QNhAdwDZAHZA3EB3ANx
+        Ad0DcQHdA3EB3QNxAd0DcQHdA3EB3QNwAdsDYQHLA1sBvgNbAb4DXAHHA0cBgggAA0gBiANcAc8DWgHH
+        A1sBxgNbAcMDegHtA5gB/wOYAf8DmAH/A5gB/wOYAf8DmAH/A3wB7ANVAa0DTgGVA04BlQNSAaQDRgF/
+        EAADUwGwA04BmQNPAZcDTwGXA08BlwNPAZcDTwGXA08BlwNPAZcDTwGXA08BlwNPAZcDTgGZA1MBsBgA
+        A1gBvANaAcUDBAEFA1EBogNMAfMDUgGnAwQBBhQAA1oBxQNYAbwQAANKAYsDYQHiA2YB2gNwAdsDcQHd
+        A3EB3QNxAd0DcQHdA3EB3QNxAd0DcQHdA3EB3QNxAd0DcQHdA2wB2ANeAcYDXAHHA0cBgggAA0gBiANc
+        Ac8DWQHCA10BwwNeAccDXgHHA2kB1QOGAfUDmAH/A5gB/wOIAfYDaQHXA14BxwNeAccDWwG/A1IBowNS
+        AaQDRgF/EAADKAE9A1oBvQNOAZgDTwGXA08BlwNPAZcDTwGXA08BlwNPAZcDTwGXA08BlwNOAZgDWgG9
+        AygBPBgAA1gBvANbAccDUgGkA0wB8wNTAagDBAEGGAADWgHFA1gBvBAAA0UBfwNoAeIDcQHdA3EB3QNx
+        Ad0DcQHdA3EB3QNxAd0DcQHdA3EB3QNxAd0DcQHdA3EB3QNxAd0DcQHdA3EB3QNoAd0DRAF5CAADRAF8
+        A18B0gNeAccDXgHHA14BxwNeAccDXgHHA2AByANzAeIDcwHiA2AByANeAccDXgHHA14BxwNeAccDXgHH
+        A10BygNCAXYUAAMsAUQDVwG9A1YBsQNQAZsDTwGXA08BlwNPAZcDTwGXA1ABmwNWAbEDVgG+AysBQhgA
+        AzEBTwNgAesDUgH3A1EB9wNUAaYDBAEGGAADOAFcA10B7QNgAesDMQFPDAADAwEEA0QBegNfAdsDdgHh
+        A3EB3QNxAd0DcQHdA3EB3QNxAd0DcQHdA3EB3QNxAd0DcQHdA3EB3QN2AeEDYQHcA0oBjAMEAQYIAAMD
+        AQQDQwF3A2AB1ANiAc4DXgHHA14BxwNgAcgDbwHdA4wB+gOSAfsDcgHhA2AByANeAccDXgHHA2ABzQNd
+        AdMDSgGJAwQBBhgAAwMBBAMzAVIDUQGgA1MBsANWAbYDVgG2A1MBsANRAaADMgFRAwMBBBwAA04BmAPR
+        Af0D7QH/A1gB9gNbAcQDWwHDA1sBwwNbAcMDWwHDA1sBwwNbAcMDWwHDA2EB7APjAf4D0QH9A04BmBQA
+        Aw0BEQNRAaADZAHgA3MB3wNxAd0DcQHdA3EB3QNxAd0DcQHdA3EB3QNyAd4DYgHfA1QBrwMQARUYAAMN
+        AREDUQGcA18B1wNpAdcDhgH1A5gB/wOYAf8DmAH/A5gB/wOLAfcDaQHZA2AB1ANUAasDEAEVZAADTgGY
+        A78B+wPTAf0DYgHpA1gBuwNYAbsDWAG7A1gBuwNYAbsDWAG7A1gBuwNYAbsDYgHpA9MB/QO/AfsDTgGY
+        HAADHQEpA1kBxANpAeMDcQHdA3EB3QNxAd0DcQHdA20B4QNbAcsDIQEwKAADHQEqA1oB2ANfAfsDlwH/
+        A5gB/wOYAf8DlwH/A2MB+wNcAdwDIgExbAADMAFLA1ABngNQAZ4DMgFQIAADNQFXA1ABngNQAZ4DLAFD
+        JAADMQFOA1oB0wNwAeIDcwHiA10B1wM6AWE4AAM0AVQDWAHmA4AB/QN/Af4DWQHrAz0BaNwAAwQBBgNK
+        AYsDSgGLAwQBBkAAAwQBBgNOAZkDTgGZAwQBBsAAAUIBTQE+BwABPgMAASgDAAFQAwABKAMAAQEBAAEB
+        BQAB4AEBFgAD//EAAf8BDwH/AfAG/wIAAf4BBwH/AeABfwX/AgAB+AEBAf8BgAEfAv8B/AE/AcMCAAHg
+        AQABfgEAAQcC/wH8AQABAwIAAYABAAEYAQABAQH4AQEB/AEAAQMCAAGAAQABGAEAAQEB8AEAAfwBPwED
+        AgABgAEAARgBAAEBAeABAAJ+AQcCAAGAAQABGAEAAQEB4AEAAX4BfAEHAgABgAEAARgBAAEBAeABAAF+
+        AXgBJwIAAYABAAEYAQABAQHgAQABfgFwAWcCAAGAAQABGAEAAQEB4AEAAX4BYAHnAgABgAEAARgBAAEB
+        AeABAAF+AUEB5wIAAYABAAEYAQABAQHgAQABfgEDAecCAAGAAQABGAEAAQEB4AEAAX4BBwHnAgABgAEA
+        ARgBAAEBAfABAAH8AQ8BwwIAAYABAAEYAQABAQH4AQEB/AEAAQMCAAHgAQABfgEAAQcC/wH8AQABAwIA
+        AfgBAQH/AYABHwL/AfwBPwHDAgAB/gEHAf8B4AF/Bf8CAAH/AQ8B/wHwBv8CAAs=
+</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="ProjectTreeView.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;ProjectTreeView.Name" xml:space="preserve">
+    <value>ProjectTreeView</value>
+  </data>
+  <data name="&gt;&gt;ProjectTreeView.Type" xml:space="preserve">
+    <value>BrightIdeasSoftware.TreeListView, ObjectListView, Version=2.9.1.1072, Culture=neutral, PublicKeyToken=b1c5bf581481bcd4</value>
+  </data>
+  <data name="&gt;&gt;ProjectTreeView.Parent" xml:space="preserve">
+    <value>tableLayoutPanel1</value>
+  </data>
+  <data name="&gt;&gt;ProjectTreeView.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
   <data name="ContextMenu_AddSurface.Size" type="System.Drawing.Size, System.Drawing">
     <value>179, 22</value>
   </data>
   <data name="ContextMenu_AddSurface.Text" xml:space="preserve">
     <value>Add Surface</value>
+  </data>
+  <data name="ContextMenu_AddElement.Size" type="System.Drawing.Size, System.Drawing">
+    <value>179, 22</value>
+  </data>
+  <data name="ContextMenu_AddElement.Text" xml:space="preserve">
+    <value>Add Model Element</value>
   </data>
   <data name="AddElementMenu_Part.Size" type="System.Drawing.Size, System.Drawing">
     <value>139, 22</value>
@@ -154,11 +277,11 @@
   <data name="AddElementMenu_BrickTube.Text" xml:space="preserve">
     <value>Brick Tube</value>
   </data>
-  <data name="ContextMenu_AddElement.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="ContextMenu_AddCollision.Size" type="System.Drawing.Size, System.Drawing">
     <value>179, 22</value>
   </data>
-  <data name="ContextMenu_AddElement.Text" xml:space="preserve">
-    <value>Add Model Element</value>
+  <data name="ContextMenu_AddCollision.Text" xml:space="preserve">
+    <value>Add Collision</value>
   </data>
   <data name="AddCollisionMenu_Box.Size" type="System.Drawing.Size, System.Drawing">
     <value>110, 22</value>
@@ -172,11 +295,11 @@
   <data name="AddCollisionMenu_Sphere.Text" xml:space="preserve">
     <value>Sphere</value>
   </data>
-  <data name="ContextMenu_AddCollision.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="ContextMenu_AddConnection.Size" type="System.Drawing.Size, System.Drawing">
     <value>179, 22</value>
   </data>
-  <data name="ContextMenu_AddCollision.Text" xml:space="preserve">
-    <value>Add Collision</value>
+  <data name="ContextMenu_AddConnection.Text" xml:space="preserve">
+    <value>Add Connection</value>
   </data>
   <data name="AddConnectionMenu_Axel.Size" type="System.Drawing.Size, System.Drawing">
     <value>155, 22</value>
@@ -226,12 +349,6 @@
   <data name="AddConnectionMenu_Slider.Text" xml:space="preserve">
     <value>Slider</value>
   </data>
-  <data name="ContextMenu_AddConnection.Size" type="System.Drawing.Size, System.Drawing">
-    <value>179, 22</value>
-  </data>
-  <data name="ContextMenu_AddConnection.Text" xml:space="preserve">
-    <value>Add Connection</value>
-  </data>
   <data name="toolStripSeparator1.Size" type="System.Drawing.Size, System.Drawing">
     <value>176, 6</value>
   </data>
@@ -241,43 +358,62 @@
   <data name="ElementsMenu_Delete.Text" xml:space="preserve">
     <value>Delete</value>
   </data>
-  <data name="ElementsContextMenu.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 120</value>
-  </data>
-  <data name="&gt;&gt;ElementsContextMenu.Name" xml:space="preserve">
-    <value>ElementsContextMenu</value>
-  </data>
-  <data name="&gt;&gt;ElementsContextMenu.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="ProjectTreeView.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="ProjectTreeView.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 49</value>
-  </data>
-  <data name="ProjectTreeView.Size" type="System.Drawing.Size, System.Drawing">
-    <value>282, 331</value>
-  </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="ProjectTreeView.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;ProjectTreeView.Name" xml:space="preserve">
-    <value>ProjectTreeView</value>
-  </data>
-  <data name="&gt;&gt;ProjectTreeView.Type" xml:space="preserve">
-    <value>BrightIdeasSoftware.TreeListView, ObjectListView, Version=2.9.1.1072, Culture=neutral, PublicKeyToken=b1c5bf581481bcd4</value>
-  </data>
-  <data name="&gt;&gt;ProjectTreeView.Parent" xml:space="preserve">
-    <value>tableLayoutPanel1</value>
-  </data>
-  <data name="&gt;&gt;ProjectTreeView.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
   <data name="tableLayoutPanel1.ColumnCount" type="System.Int32, mscorlib">
     <value>1</value>
+  </data>
+  <data name="&gt;&gt;label1.Name" xml:space="preserve">
+    <value>label1</value>
+  </data>
+  <data name="&gt;&gt;label1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label1.Parent" xml:space="preserve">
+    <value>tableLayoutPanel1</value>
+  </data>
+  <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;ViewModeComboBox.Name" xml:space="preserve">
+    <value>ViewModeComboBox</value>
+  </data>
+  <data name="&gt;&gt;ViewModeComboBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ViewModeComboBox.Parent" xml:space="preserve">
+    <value>tableLayoutPanel1</value>
+  </data>
+  <data name="&gt;&gt;ViewModeComboBox.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="tableLayoutPanel1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="tableLayoutPanel1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="tableLayoutPanel1.RowCount" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="tableLayoutPanel1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>288, 383</value>
+  </data>
+  <data name="tableLayoutPanel1.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel1.Name" xml:space="preserve">
+    <value>tableLayoutPanel1</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel1.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel1.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="tableLayoutPanel1.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="label1" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="ProjectTreeView" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="ViewModeComboBox" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,50" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0,Percent,50" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <data name="label1.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -332,36 +468,6 @@
   </data>
   <data name="&gt;&gt;ViewModeComboBox.ZOrder" xml:space="preserve">
     <value>2</value>
-  </data>
-  <data name="tableLayoutPanel1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="tableLayoutPanel1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
-  </data>
-  <data name="tableLayoutPanel1.RowCount" type="System.Int32, mscorlib">
-    <value>3</value>
-  </data>
-  <data name="tableLayoutPanel1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>288, 383</value>
-  </data>
-  <data name="tableLayoutPanel1.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;tableLayoutPanel1.Name" xml:space="preserve">
-    <value>tableLayoutPanel1</value>
-  </data>
-  <data name="&gt;&gt;tableLayoutPanel1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;tableLayoutPanel1.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;tableLayoutPanel1.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="tableLayoutPanel1.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="label1" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="ProjectTreeView" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="ViewModeComboBox" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,50" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0,Percent,50" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <metadata name="LocalizedStrings.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>263, 22</value>
@@ -519,6 +625,12 @@
   <data name="&gt;&gt;ElementsMenu_Delete.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;imageList1.Name" xml:space="preserve">
+    <value>imageList1</value>
+  </data>
+  <data name="&gt;&gt;imageList1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ImageList, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;LocalizedStrings.Name" xml:space="preserve">
     <value>LocalizedStrings</value>
   </data>
@@ -531,10 +643,10 @@
   <data name="&gt;&gt;ViewModeAll.Type" xml:space="preserve">
     <value>LDDModder.BrickEditor.Localization.LocalizableString, LDDModder.BrickEditor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
-  <data name="&gt;&gt;ViewModeSurfaces.Name" xml:space="preserve">
-    <value>ViewModeSurfaces</value>
+  <data name="&gt;&gt;ViewModeBones.Name" xml:space="preserve">
+    <value>ViewModeBones</value>
   </data>
-  <data name="&gt;&gt;ViewModeSurfaces.Type" xml:space="preserve">
+  <data name="&gt;&gt;ViewModeBones.Type" xml:space="preserve">
     <value>LDDModder.BrickEditor.Localization.LocalizableString, LDDModder.BrickEditor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;ViewModeCollisions.Name" xml:space="preserve">
@@ -549,10 +661,10 @@
   <data name="&gt;&gt;ViewModeConnections.Type" xml:space="preserve">
     <value>LDDModder.BrickEditor.Localization.LocalizableString, LDDModder.BrickEditor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
-  <data name="&gt;&gt;ViewModeBones.Name" xml:space="preserve">
-    <value>ViewModeBones</value>
+  <data name="&gt;&gt;ViewModeSurfaces.Name" xml:space="preserve">
+    <value>ViewModeSurfaces</value>
   </data>
-  <data name="&gt;&gt;ViewModeBones.Type" xml:space="preserve">
+  <data name="&gt;&gt;ViewModeSurfaces.Type" xml:space="preserve">
     <value>LDDModder.BrickEditor.Localization.LocalizableString, LDDModder.BrickEditor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">

@@ -70,36 +70,22 @@ namespace LDDModder.BrickEditor.ProjectHandling
             Data = data;
         }
 
+        private void AssignPropertyValue(object value)
+        {
+            object objToAssign = Data.ChildProperty ?? Data.Element;
+            var propInfo = objToAssign.GetType().GetProperty(Data.PropertyName);
+            if (propInfo != null)
+                propInfo.SetValue(objToAssign, value);
+        }
+
         public override void Undo()
         {
-            if (Data.ChildProperty != null)
-            {
-                var propInfo = Data.ChildProperty.GetType().GetProperty(Data.PropertyName);
-                if (propInfo != null)
-                    propInfo.SetValue(Data.ChildProperty, Data.OldValue);
-            }
-            else
-            {
-                var propInfo = Data.Element.GetType().GetProperty(Data.PropertyName);
-                if (propInfo != null)
-                    propInfo.SetValue(Data.Element, Data.OldValue);
-            }
+            AssignPropertyValue(Data.OldValue);
         }
 
         public override void Redo()
         {
-            if (Data.ChildProperty != null)
-            {
-                var propInfo = Data.ChildProperty.GetType().GetProperty(Data.PropertyName);
-                if (propInfo != null)
-                    propInfo.SetValue(Data.ChildProperty, Data.NewValue);
-            }
-            else
-            {
-                var propInfo = Data.Element.GetType().GetProperty(Data.PropertyName);
-                if (propInfo != null)
-                    propInfo.SetValue(Data.Element, Data.NewValue);
-            }
+            AssignPropertyValue(Data.NewValue);
         }
     }
 

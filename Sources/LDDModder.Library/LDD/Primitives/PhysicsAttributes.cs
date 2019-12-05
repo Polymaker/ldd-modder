@@ -42,9 +42,9 @@ namespace LDDModder.LDD.Primitives
             FrictionType = element.ReadAttribute<int>("frictionType");
         }
 
-        public XElement SerializeToXml()
+        public XElement SerializeToXml(string elementName)
         {
-            var elem = new XElement("PhysicsAttributes");
+            var elem = new XElement(elementName);
 
             elem.Add(new XAttribute("inertiaTensor", 
                 string.Format(CultureInfo.InvariantCulture, "{0},{1},{2},{3},{4},{5},{6},{7},{8}", 
@@ -60,6 +60,11 @@ namespace LDDModder.LDD.Primitives
             elem.AddNumberAttribute("frictionType", FrictionType);
 
             return elem;
+        }
+
+        public XElement SerializeToXml()
+        {
+            return SerializeToXml("PhysicsAttributes");
         }
     }
 }

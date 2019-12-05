@@ -296,6 +296,8 @@ namespace LDDModder.BrickEditor.UI.Windows
         
         private void ImportAssimpModel(ImportModelsDialog imd)
         {
+            ProjectManager.StartBatchChanges();
+
             foreach (var model in imd.ModelsToImport)
             {
                 var geom = Meshes.MeshConverter.AssimpToLdd(imd.SceneToImport, model.Mesh);
@@ -319,6 +321,8 @@ namespace LDDModder.BrickEditor.UI.Windows
                 partModel.Meshes.Add(new ModelMeshReference(modelMesh));
 
             }
+
+            ProjectManager.EndBatchChanges();
         }
         
         private void BrickEditorWindow_FormClosing(object sender, FormClosingEventArgs e)

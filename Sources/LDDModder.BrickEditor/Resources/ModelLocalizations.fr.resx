@@ -183,8 +183,8 @@
   <data name="Label_Mesh" xml:space="preserve">
     <value>Géometrie</value>
   </data>
-  <data name="Label_ReplacementMesh" xml:space="preserve">
-    <value>Géometrie de remplacement</value>
+  <data name="Label_AlternateMeshes" xml:space="preserve">
+    <value>Modèle alternatif</value>
   </data>
   <data name="Label_DecorationSurfaceNumber" xml:space="preserve">
     <value>Surface de décoration {0}</value>
@@ -221,5 +221,68 @@
   </data>
   <data name="CollisionType_Box" xml:space="preserve">
     <value>Boîte</value>
+  </data>
+  <data name="Label_CollisionBoxes" xml:space="preserve">
+    <value>Boîtes</value>
+  </data>
+  <data name="Label_CollisionSpheres" xml:space="preserve">
+    <value>Sphères</value>
+  </data>
+  <data name="NodeRangeFormat1" xml:space="preserve">
+    <value>{0} à {1}</value>
+  </data>
+  <data name="NodeRangeFormat2" xml:space="preserve">
+    <value>{0}+</value>
+  </data>
+  <data name="ModelComponentType_Part" xml:space="preserve">
+    <value>Modèle</value>
+  </data>
+  <data name="ModelComponentType_MaleStud" xml:space="preserve">
+    <value>Stud (male)</value>
+  </data>
+  <data name="ModelComponentType_FemaleStud" xml:space="preserve">
+    <value>Stud (femelle)</value>
+  </data>
+  <data name="ModelComponentType_BrickTube" xml:space="preserve">
+    <value>Tube intérieur</value>
+  </data>
+  <data name="Label_FixedConnectors" xml:space="preserve">
+    <value>Conn. fixes</value>
+  </data>
+  <data name="Label_GearConnectors" xml:space="preserve">
+    <value>Engrenages</value>
+  </data>
+  <data name="Label_HingeConnectors" xml:space="preserve">
+    <value>Charnières</value>
+  </data>
+  <data name="Label_RailConnectors" xml:space="preserve">
+    <value>Rails</value>
+  </data>
+  <data name="Label_SliderConnectors" xml:space="preserve">
+    <value>Glisières</value>
+  </data>
+  <data name="Label_BallConnectors" xml:space="preserve">
+    <value>Joints</value>
+  </data>
+  <data name="Label_Custom2DFieldConnectors" xml:space="preserve">
+    <value>Studs</value>
+  </data>
+  <data name="Label_AxelConnectors" xml:space="preserve">
+    <value>Conn. cylindriques</value>
+  </data>
+  <data name="Label_BrickTubeComponents" xml:space="preserve">
+    <value>Tube intérieurs</value>
+  </data>
+  <data name="Label_MaleStudComponents" xml:space="preserve">
+    <value>Studs mâles</value>
+  </data>
+  <data name="Label_FemaleStudComponents" xml:space="preserve">
+    <value>Studs femelles</value>
+  </data>
+  <data name="Label_PartComponents" xml:space="preserve">
+    <value>Modèles de pièce</value>
+  </data>
+  <data name="Label_DefaultMeshes" xml:space="preserve">
+    <value>Modèle normal</value>
   </data>
 </root>

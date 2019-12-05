@@ -288,9 +288,13 @@ namespace LDDModder.BrickEditor.UI.Panels
             }
 
             var selectedNodes = ProjectTreeView.SelectedObjects.OfType<BaseProjectNode>();
+            if (selectedNodes.Any())
+            {
+
+            }
+            var anyPojectElem = GetSelectedElements().Any();
             ElementsMenu_Delete.Enabled = selectedNodes.Any(x => x is ProjectElementNode);
         }
-
 
         #endregion
 

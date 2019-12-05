@@ -29,6 +29,7 @@ namespace LDDModder.Modding.Editing
         internal override void FillCullingInformation(MeshCulling culling)
         {
             culling.Studs.AddRange(Studs.Select(x => GetFieldReference(x)));
+
             if (ReplacementMeshes.Any())
             {
                 var builder = new GeometryBuilder();
@@ -36,10 +37,7 @@ namespace LDDModder.Modding.Editing
                     builder.CombineGeometry(meshRef.GetGeometry());
 
                 if (Surface.SurfaceID == 0)
-                {
-                    foreach (var v in builder.Vertices)
-                        v.TexCoord = Simple3D.Vector2.Empty;
-                }
+                    builder.RemoveTextureCoords();
 
                 culling.ReplacementMesh = builder.GetGeometry();
             }

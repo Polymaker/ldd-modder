@@ -15,13 +15,34 @@ namespace LDDModder.Modding.Editing
     {
         public const string NODE_NAME = "Bone";
 
-        public int BoneID { get; set; }
+        private int _BoneID;
+        private ItemTransform _Transform;
+        private PhysicsAttributes _PhysicsAttributes;
+        private BoundingBox _Bounding;
 
-        public ItemTransform Transform { get; set; }
+        public int BoneID
+        {
+            get => _BoneID;
+            set => SetPropertyValue(ref _BoneID, value);
+        }
 
-        public PhysicsAttributes PhysicsAttributes { get; set; }
+        public ItemTransform Transform
+        {
+            get => _Transform;
+            set => SetPropertyValue(ref _Transform, value);
+        }
 
-        public BoundingBox Bounding { get; set; }
+        public PhysicsAttributes PhysicsAttributes
+        {
+            get => _PhysicsAttributes;
+            set => SetPropertyValue(ref _PhysicsAttributes, value);
+        }
+
+        public BoundingBox Bounding
+        {
+            get => _Bounding;
+            set => SetPropertyValue(ref _Bounding, value);
+        }
 
         public ElementCollection<PartConnection> Connections { get; }
 
@@ -34,10 +55,14 @@ namespace LDDModder.Modding.Editing
             Transform = new ItemTransform();
         }
 
-        //public override IEnumerable<PartElement> GetAllChilds()
-        //{
-        //    return Connections.AsEnumerable<PartElement>().Concat(Collisions);
-        //}
+        public PartBone(int boneID)
+        {
+            Connections = new ElementCollection<PartConnection>(this);
+            Collisions = new ElementCollection<PartCollision>(this);
+            Transform = new ItemTransform();
+            _BoneID = boneID;
+            InternalSetName($"Bone{boneID}");
+        }
 
         internal void LoadFromLDD(FlexBone flexBone)
         {
@@ -75,9 +100,9 @@ namespace LDDModder.Modding.Editing
             {
                 var propsElem = elem.AddElement("Properties");
                 if (PhysicsAttributes != null)
-                    propsElem.Add(PhysicsAttributes.SerializeToXml());
+                    propsElem.Add(PhysicsAttributes.SerializeToXml(nameof(PhysicsAttributes)));
                 if (Bounding != null)
-                    propsElem.Add(XmlHelper.DefaultSerialize(Bounding, "Bounding"));
+                    propsElem.Add(XmlHelper.DefaultSerialize(Bounding, nameof(Bounding)));
             }
 
             if (Connections.Any())
@@ -102,18 +127,18 @@ namespace LDDModder.Modding.Editing
             base.LoadFromXml(element);
             BoneID = element.ReadAttribute<int>(nameof(BoneID));
 
-            if (element.HasElement("Transform", out XElement transElem))
+            if (element.HasElement(nameof(Transform), out XElement transElem))
                 Transform = ItemTransform.FromXml(transElem);
 
             if (element.HasElement("Properties", out XElement propsElem))
             {
-                if (propsElem.HasElement("PhysicsAttributes", out XElement pA))
+                if (propsElem.HasElement(nameof(PhysicsAttributes), out XElement pA))
                 {
                     PhysicsAttributes = new PhysicsAttributes();
                     PhysicsAttributes.LoadFromXml(pA);
                 }
 
-                if (propsElem.HasElement("Bounding", out XElement gb))
+                if (propsElem.HasElement(nameof(Bounding), out XElement gb))
                     Bounding = XmlHelper.DefaultDeserialize<BoundingBox>(gb);
             }
 

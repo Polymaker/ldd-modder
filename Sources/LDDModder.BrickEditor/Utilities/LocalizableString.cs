@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.ComponentModel.Design.Serialization;
 using System.Globalization;
+using System.Linq;
 
 namespace LDDModder.BrickEditor.Localization
 {
@@ -60,15 +61,24 @@ namespace LDDModder.BrickEditor.Localization
 
         public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
         {
-            if (value is LocalizableString localizableString)
-            {
-                if (destinationType == typeof(InstanceDescriptor))
-                {
-                    var defaultCtor = typeof(LocalizableString).GetConstructor(new Type[0]);
+            //if (value is LocalizableString localizableString)
+            //{
+            //    if (destinationType == typeof(InstanceDescriptor))
+            //    {
+            //        var defaultCtor = typeof(LocalizableString).GetConstructor(new Type[] { typeof(string) });
+            //        return new InstanceDescriptor(defaultCtor, new object[] { localizableString.Text }, true);
+            //    }
+            //}
 
-                    return new InstanceDescriptor(defaultCtor, new object[0], false);
-                }
+            if (destinationType == typeof(InstanceDescriptor))
+            {
+                var defaultCtor = typeof(LocalizableString).GetConstructor(new Type[0]);
+                if (defaultCtor == null)
+                    defaultCtor = typeof(LocalizableString).GetConstructors()
+                        .OrderBy(x => x.GetParameters().Length).FirstOrDefault();
+                return new InstanceDescriptor(defaultCtor, new object[0], false);
             }
+
             return base.ConvertTo(context, culture, value, destinationType);
         }
     }

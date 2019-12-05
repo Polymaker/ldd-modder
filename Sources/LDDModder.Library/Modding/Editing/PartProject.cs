@@ -204,20 +204,21 @@ namespace LDDModder.Modding.Editing
             }
 
             elementIndex = 0;
+
             foreach (var flexBone in lddPart.Primitive.FlexBones)
             {
-                var boneElement = new PartBone
-                {
-                    ID = StringUtils.GenerateUUID($"Part{partID}_Bone{elementIndex++}", 8),
-                    Name = $"Bone{flexBone.ID}"
-                };
+                var boneElement = new PartBone(flexBone.ID);
+                boneElement.InternalSetID(
+                    StringUtils.GenerateUUID($"Part{partID}_Bone{elementIndex++}", 8));
+
                 project.Bones.Add(boneElement);
                 boneElement.LoadFromLDD(flexBone);
-                
             }
 
             foreach (var meshSurf in lddPart.Surfaces)
             {
+                int surfaceID = meshSurf.SurfaceID;
+
                 var surfaceElement = new PartSurface(
                     meshSurf.SurfaceID,
                     lddPart.Primitive.GetSurfaceMaterialIndex(meshSurf.SurfaceID)
@@ -227,24 +228,32 @@ namespace LDDModder.Modding.Editing
 
                 var surfaceMesh = project.AddMeshGeometry(
                     meshSurf.Mesh.Geometry,
-                    StringUtils.GenerateUUID($"Part{partID}_SurfaceMesh{surfaceElement.SurfaceID}", 8),
-                    $"Surface{surfaceElement.SurfaceID}_Mesh"
+                    StringUtils.GenerateUUID($"P{partID}_S{surfaceID}", 8),
+                    $"Surface{surfaceElement.SurfaceID}.Mesh"
                 );
 
                 elementIndex = 0;
+
                 foreach (var culling in meshSurf.Mesh.Cullings)
                 {
-                    ModelMesh replacementMesh = null;
+                    var cullingComp = SurfaceComponent.CreateFromLDD(culling, surfaceMesh);
+                    cullingComp.InternalSetID(
+                        StringUtils.GenerateUUID(
+                            $"P{partID}_S{surfaceID}_C{elementIndex}", 8));
+                    project.GenerateElementName(cullingComp);
+
                     if (culling.ReplacementMesh != null)
                     {
-                        replacementMesh = project.AddMeshGeometry(
+                        var replacementMesh = project.AddMeshGeometry(
                             culling.ReplacementMesh,
-                            StringUtils.GenerateUUID($"Part{partID}_SurfaceMesh{surfaceElement.SurfaceID}_Culling{elementIndex}", 8)
+                            StringUtils.GenerateUUID($"P{partID}_S{surfaceID}_C{elementIndex}_Alt", 8),
+                            cullingComp.Name + "_Alt"
                         );
+
+                        (cullingComp as FemaleStudModel).ReplacementMeshes
+                            .Add(new ModelMeshReference(replacementMesh));
                     }
 
-                    var cullingComp = SurfaceComponent.CreateFromLDD(culling, surfaceMesh, replacementMesh);
-                    cullingComp.ID = StringUtils.GenerateUUID($"Part{partID}_Surface{surfaceElement.SurfaceID}_Culling{elementIndex}", 8);
                     surfaceElement.Components.Add(cullingComp);
                     elementIndex++;
                 }
@@ -385,9 +394,6 @@ namespace LDDModder.Modding.Editing
             Directory.CreateDirectory(directory);
             if (setWorkingDir)
                 ProjectWorkingDir = directory;
-            //LinkStudReferences();
-            //GenerateMeshIDs(false);
-            GenerateMeshesNames();
 
             var projectXml = GenerateProjectXml();
             projectXml.Save(Path.Combine(directory, ProjectFileName));
@@ -427,7 +433,6 @@ namespace LDDModder.Modding.Editing
                 
                 zipStream.PutNextEntry(new ZipEntry(ProjectFileName));
 
-                GenerateMeshesNames();
                 var projectXml = GenerateProjectXml();
 
                 projectXml.Save(zipStream);
@@ -436,8 +441,7 @@ namespace LDDModder.Modding.Editing
 
                 foreach (var mesh in Meshes)
                 {
-                    if (!string.IsNullOrEmpty(mesh.WorkingFilePath) && 
-                        File.Exists(mesh.WorkingFilePath))
+                    if (mesh.MeshFileExists)
                     {
                         zipStream.PutNextEntry(new ZipEntry(mesh.FileName));
                         using (var meshFs = File.OpenRead(mesh.WorkingFilePath))
@@ -527,14 +531,7 @@ namespace LDDModder.Modding.Editing
         private void CheckFiles()
         {
             foreach (var mesh in Meshes)
-            {
-                if (IsLoadedFromDisk && !string.IsNullOrEmpty(mesh.FileName))
-                {
-                    var meshPath = Path.Combine(ProjectWorkingDir, mesh.FileName);
-                    if (File.Exists(meshPath))
-                        mesh.WorkingFilePath = meshPath;
-                }
-            }
+                mesh.CheckFileExist();
         }
 
         public ModelMesh AddMeshGeometry(MeshGeometry geometry, string name = null)
@@ -543,9 +540,9 @@ namespace LDDModder.Modding.Editing
 
             if (IsLoadedFromDisk)
             {
-                modelMesh.WorkingFilePath = Path.Combine(ProjectWorkingDir, modelMesh.FileName);
-                Directory.CreateDirectory(Path.GetDirectoryName(modelMesh.WorkingFilePath));
-                modelMesh.Geometry.Save(modelMesh.WorkingFilePath);
+                var targetFilePath = GetFileFullPath(modelMesh.FileName);
+                geometry.Save(targetFilePath);
+                modelMesh.CheckFileExist();
             }
 
             return modelMesh;
@@ -553,22 +550,18 @@ namespace LDDModder.Modding.Editing
 
         private ModelMesh AddMeshGeometry(MeshGeometry geometry, string id, string name = null)
         {
-            var modelMesh = new ModelMesh(geometry)
-            {
-                ID = id,
-                Name = name
-            };
-            
+            var modelMesh = new ModelMesh(geometry);
+            modelMesh.InternalSetNameAndID(id, name);
+
             if (string.IsNullOrEmpty(id))
                 GenerateElementID(modelMesh);
 
-            //if (string.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
                 GenerateElementName(modelMesh);
+            else
+                RenameElement(modelMesh, name);
 
             Meshes.Add(modelMesh);
-
-            modelMesh.FileName = $"Meshes\\{modelMesh.Name}.geom";
-            
 
             return modelMesh;
         }
@@ -657,7 +650,7 @@ namespace LDDModder.Modding.Editing
                             break;
                     }
 
-                    element.Name = elementName;
+                    element.InternalSetName(elementName, true);
                 }
             }
         }
@@ -684,7 +677,7 @@ namespace LDDModder.Modding.Editing
                             break;
                     }
 
-                    element.Name = elementName;
+                    element.InternalSetName(elementName, true);
                 }
             }
         }
@@ -718,9 +711,8 @@ namespace LDDModder.Modding.Editing
                         break;
                 }
             }
-            
 
-            element.Name = elementName;
+            element.InternalSetName(elementName, true);
         }
 
         private string GenerateElementName(PartElement element, int number)
@@ -767,6 +759,18 @@ namespace LDDModder.Modding.Editing
             return null;
         }
 
+        public string RenameElement(PartElement element, string suggestedName)
+        {
+            var elemList = GetAllElements().Where(x => x.GetFullElementType() == element.GetFullElementType()).ToList();
+            int nameCount = 1;
+            string elementName = suggestedName;
+            while (elemList.Any(x => x.Name == elementName && x != element))
+                elementName = $"{suggestedName}_{nameCount++}";
+
+            element.InternalSetName(elementName, true);
+            return elementName;
+        }
+
         #endregion
 
         #region Methods
@@ -799,43 +803,15 @@ namespace LDDModder.Modding.Editing
             }
         }
 
-        /// TODO: remove this clutter
-        private void GenerateMeshesNames()
-        {
-            foreach (var mesh in Meshes)
-            {
-                string meshName = string.IsNullOrEmpty(mesh.Name) ? mesh.ID : mesh.Name;
-
-                if (string.IsNullOrEmpty(mesh.FileName) || !mesh.FileName.Contains(meshName))
-                {
-                    mesh.FileName = $"Meshes\\{meshName}.geom";
-
-                    //if (mesh.Surface != null)
-                    //    mesh.FileName = $"Meshes\\Surface{mesh.Surface.SurfaceID}_{meshName}.geom";
-                }
-
-                if (IsLoadedFromDisk)
-                    mesh.WorkingFilePath = Path.Combine(ProjectWorkingDir, mesh.FileName);
-            }
-
-        }
-
         public MeshGeometry LoadModelMesh(ModelMesh modelMesh)
         {
-            if (modelMesh.Geometry == null && !string.IsNullOrEmpty(modelMesh.FileName) && IsLoadedFromDisk)
+            if (IsLoadedFromDisk && modelMesh.Geometry == null &&  modelMesh.MeshFileExists)
             {
-                string meshPath = Path.Combine(ProjectWorkingDir, modelMesh.FileName);
                 try
                 {
-                    if (File.Exists(meshPath))
-                    {
-                        modelMesh.Geometry = MeshGeometry.FromFile(meshPath);
-                        modelMesh.UpdateMeshProperties();
-                        UpdateModelStatistics();
-                        modelMesh.WorkingFilePath = meshPath;
-                    }
-                    else
-                        modelMesh.WorkingFilePath = null;
+                    modelMesh.Geometry = MeshGeometry.FromFile(modelMesh.WorkingFilePath);
+                    modelMesh.UpdateMeshProperties();
+                    UpdateModelStatistics();
                 }
                 catch { }
             }
@@ -918,8 +894,31 @@ namespace LDDModder.Modding.Editing
 
         #endregion
 
-        #region LDD File Generation
+        #region Project File/Directory Handling
 
+        public string GenerateMeshFileName(string meshName)
+        {
+            meshName = FileHelper.GetSafeFileName(meshName);
+            return $"Meshes\\{meshName}.geom";
+        }
+
+        public string GetFileFullPath(string filename)
+        {
+            if (IsLoadedFromDisk)
+                return Path.Combine(ProjectWorkingDir, filename);
+            return null;
+        }
+
+        public bool FileExist(string filename)
+        {
+            if (IsLoadedFromDisk)
+                return File.Exists(GetFileFullPath(filename));
+            return false;
+        }
+
+        #endregion
+
+        #region LDD File Generation
 
         public void ValidatePart()
         {

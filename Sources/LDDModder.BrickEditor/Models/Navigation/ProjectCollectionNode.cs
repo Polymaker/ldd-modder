@@ -1,4 +1,5 @@
-﻿using LDDModder.Modding.Editing;
+﻿using LDDModder.BrickEditor.Resources;
+using LDDModder.Modding.Editing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,12 +36,21 @@ namespace LDDModder.BrickEditor.Models.Navigation
             if (Collection.ElementType == typeof(PartConnection))
             {
                 foreach (var elemGroup in Collection.GetElements().OfType<PartConnection>().GroupBy(x => x.ConnectorType))
-                    AddGrouppedChildrens(elemGroup, elemGroup.Key.ToString(), 4, 10);
+                {
+                    string groupTitle = ModelLocalizations.ResourceManager.GetString($"Label_{elemGroup.Key}Connectors");
+                    
+                    AutoGroupElements(elemGroup, groupTitle, 4, 10);
+                }
             }
             else if (Collection.ElementType == typeof(PartCollision))
             {
                 foreach (var elemGroup in Collection.GetElements().OfType<PartCollision>().GroupBy(x => x.CollisionType))
-                    AddGrouppedChildrens(elemGroup, elemGroup.Key.ToString(), 10, 10);
+                {
+                    string groupTitle = elemGroup.Key == LDD.Primitives.Collisions.CollisionType.Box ?
+                        ModelLocalizations.Label_CollisionBoxes : ModelLocalizations.Label_CollisionSpheres;
+                    
+                    AutoGroupElements(elemGroup, groupTitle, 10, 10, true);
+                }
             }
             else
             {
