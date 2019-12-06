@@ -8,7 +8,14 @@ using System.Xml.Linq;
 
 namespace LDDModder.LDD.Primitives.Connectors
 {
-    public abstract class Connector : IXmlObject
+    public interface IConnector
+    {
+        ConnectorType Type { get; }
+        int SubType { get; set; }
+        Transform Transform { get; set; }
+    }
+
+    public abstract class Connector : IXmlObject, IConnector
     {
         public abstract ConnectorType Type { get; }
         public int SubType { get; set; }

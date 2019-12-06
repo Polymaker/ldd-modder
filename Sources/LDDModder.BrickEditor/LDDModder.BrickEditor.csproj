@@ -123,6 +123,12 @@
     <Compile Include="ProjectHandling\ProjectManager.cs" />
     <Compile Include="Models\Navigation\ProjectNodeCollection.cs" />
     <Compile Include="ProjectHandling\UndoRedoManager.cs" />
+    <Compile Include="UI\Controls\CollapsiblePanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\Controls\CollapsiblePanel.Designer.cs">
+      <DependentUpon>CollapsiblePanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\Controls\ConnectorEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>

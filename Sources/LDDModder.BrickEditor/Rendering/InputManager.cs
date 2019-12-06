@@ -34,6 +34,8 @@ namespace LDDModder.BrickEditor.Rendering
 
         public bool MouseClickHandled { get; set; }
 
+        private bool MouseEntered;
+
         public InputManager()
         {
             MouseDownPositions = new Vector2[13];
@@ -53,12 +55,13 @@ namespace LDDModder.BrickEditor.Rendering
             KeyboardState = Keyboard.GetState();
             MousePos = new Vector2(MouseState.X, MouseState.Y);
 
-            if (!HasInitialized)
+            if (!HasInitialized || MouseEntered)
             {
                 LastMouseState = MouseState;
                 LastKeyboardState = KeyboardState;
                 LastMousePos = MousePos;
                 HasInitialized = true;
+                MouseEntered = false;
             }
 
             MouseClickHandled = false;
@@ -82,6 +85,16 @@ namespace LDDModder.BrickEditor.Rendering
         public void ProcessMouseMove(System.Windows.Forms.MouseEventArgs mouseEvent)
         {
             LocalMousePos = new Vector2(mouseEvent.X, mouseEvent.Y);
+        }
+
+        public void SetContainsMouse(bool value)
+        {
+            if (ContainsMouse != value)
+            {
+                ContainsMouse = value;
+                if (value)
+                    MouseEntered = true;
+            }
         }
 
         #region State functions

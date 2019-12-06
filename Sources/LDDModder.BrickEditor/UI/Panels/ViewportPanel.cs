@@ -1197,12 +1197,12 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void GlControl_MouseEnter(object sender, EventArgs e)
         {
-            InputManager.ContainsMouse = true;
+            InputManager.SetContainsMouse(true);
         }
 
         private void GlControl_MouseLeave(object sender, EventArgs e)
         {
-            InputManager.ContainsMouse = false;
+            InputManager.SetContainsMouse(false);
             foreach (var elem in UIElements)
                 elem.SetIsOver(false);
         }

@@ -5,6 +5,8 @@ using System.ComponentModel;
 using System.Dynamic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Remoting.Messaging;
+using System.Runtime.Remoting.Proxies;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -88,6 +90,31 @@ namespace LDDModder.Modding.Editing
         {
             PropertyValueChanged?.Invoke(Connector, 
                 new PropertyValueChangedEventArgs(propertyName, oldValue, newValue));
+        }
+    }
+
+    class ConnectorProxy2 : RealProxy
+    {
+        public Connector Connector { get; }
+
+        public ConnectorProxy2(Connector connector) : base(connector.GetType())
+        {
+            Connector = connector;
+        }
+
+        public ConnectorProxy2(Connector connector, Type type) : base(type)
+        {
+            Connector = connector;
+        }
+
+        public override IMessage Invoke(IMessage msg)
+        {
+            if (msg is IMethodCallMessage methodCall)
+            {
+                var result = (methodCall.MethodBase as MethodInfo).Invoke(Connector, methodCall.InArgs);
+                return new ReturnMessage(result, null, 0, methodCall.LogicalCallContext, methodCall);
+            }
+            throw new NotImplementedException();
         }
     }
 }
