@@ -45,7 +45,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             Categories = ResourceHelper.Categories.ToList();
             CategoryComboBox.MouseWheel += ComboBox_MouseWheel;
-
+            int test = AliasesButtonBox.Height;
             UpdateCategoriesCombobox();
 
             UpdateControlBindings();
@@ -74,17 +74,23 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void UpdateControlBindings()
         {
-            PartIDTextBox.Enabled = CurrentProject != null;
-            PartIDTextBox.Enabled = CurrentProject != null;
-            DescriptionTextBox.Enabled = CurrentProject != null;
+            ToggleControlsEnabled(CurrentProject != null,
+                PartIDTextBox,
+                AliasesButtonBox,
+                DescriptionTextBox,
+                PlatformComboBox,
+                CategoryComboBox,
+                BoundingEditor,
+                GeomBoundingEditor,
+                CalcBoundingButton,
+                CalcGeomBoundingButton,
+                InertiaTensorTextBox,
+                MassNumberBox,
+                FrictionCheckBox);
+
             DescriptionTextBox.DataBindings.Clear();
-
-            PlatformComboBox.Enabled = CurrentProject != null;
-            CategoryComboBox.Enabled = CurrentProject != null;
-            boundingBoxEditor1.Enabled = CurrentProject != null;
-            boundingBoxEditor1.DataBindings.Clear();
-
-            CalculateBoundingButton.Enabled = CurrentProject != null;
+            BoundingEditor.DataBindings.Clear();
+            GeomBoundingEditor.DataBindings.Clear();
 
             InternalSet = true;
 
@@ -92,6 +98,8 @@ namespace LDDModder.BrickEditor.UI.Panels
             {
                 PartIDTextBox.Value = CurrentProject.PartID;
                 PartIDTextBox.ReadOnly = !(ProjectManager.IsNewProject);
+
+                AliasesButtonBox.Value = string.Join("; ", CurrentProject.Aliases);
 
                 DescriptionTextBox.DataBindings.Add(new Binding("Text", 
                     CurrentProject.Properties, nameof(PartProperties.Description), 
@@ -102,29 +110,43 @@ namespace LDDModder.BrickEditor.UI.Panels
                 UpdateCategoriesCombobox();
                 CategoryComboBox.SelectedValue = CurrentProject.MainGroup?.ID ?? 0;
 
-                boundingBoxEditor1.DataBindings.Add(new Binding("Value",
+                BoundingEditor.DataBindings.Add(new Binding("Value",
                     CurrentProject.Properties, nameof(CurrentProject.Properties.Bounding), 
                     false, DataSourceUpdateMode.OnPropertyChanged));
 
+                GeomBoundingEditor.DataBindings.Add(new Binding("Value",
+                    CurrentProject.Properties, nameof(CurrentProject.Properties.GeometryBounding),
+                    false, DataSourceUpdateMode.OnPropertyChanged));
             }
             else
             {
                 PartIDTextBox.Value = 0;
                 DescriptionTextBox.Text = string.Empty;
+                AliasesButtonBox.Value = string.Empty;
                 PlatformComboBox.SelectedIndex = 0;
                 CategoryComboBox.SelectedIndex = 0;
+                BoundingEditor.Value = new LDD.Primitives.BoundingBox();
+                GeomBoundingEditor.Value = new LDD.Primitives.BoundingBox();
             }
 
             InternalSet = false;
         }
 
-
-        private void CalculateBoundingButton_Click(object sender, EventArgs e)
+        private void CalcBoundingButton_Click(object sender, EventArgs e)
         {
             if (CurrentProject != null && !InternalSet)
             {
                 var bounding = CurrentProject.CalculateBoundingBox();
-                boundingBoxEditor1.Value = bounding;
+                BoundingEditor.Value = bounding;
+            }
+        }
+
+        private void CalcGeomBoundingButton_Click(object sender, EventArgs e)
+        {
+            if (CurrentProject != null && !InternalSet)
+            {
+                var bounding = CurrentProject.CalculateBoundingBox();
+                GeomBoundingEditor.Value = bounding;
             }
         }
 

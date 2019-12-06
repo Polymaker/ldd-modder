@@ -37,9 +37,11 @@
             this.ValueTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.ValueTextBox.Location = new System.Drawing.Point(0, 0);
+            this.ValueTextBox.Margin = new System.Windows.Forms.Padding(0);
             this.ValueTextBox.Name = "ValueTextBox";
             this.ValueTextBox.Size = new System.Drawing.Size(155, 20);
             this.ValueTextBox.TabIndex = 0;
+            this.ValueTextBox.FontChanged += new System.EventHandler(this.Controls_FontChanged);
             this.ValueTextBox.Validating += new System.ComponentModel.CancelEventHandler(this.ValueTextBox_Validating);
             this.ValueTextBox.Validated += new System.EventHandler(this.ValueTextBox_Validated);
             // 
@@ -47,11 +49,13 @@
             // 
             this.BrowseButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.BrowseButton.Location = new System.Drawing.Point(153, -1);
+            this.BrowseButton.Margin = new System.Windows.Forms.Padding(0);
             this.BrowseButton.Name = "BrowseButton";
             this.BrowseButton.Size = new System.Drawing.Size(75, 22);
             this.BrowseButton.TabIndex = 1;
             this.BrowseButton.Text = "Browse";
             this.BrowseButton.UseVisualStyleBackColor = true;
+            this.BrowseButton.FontChanged += new System.EventHandler(this.Controls_FontChanged);
             this.BrowseButton.Click += new System.EventHandler(this.BrowseButton_Click);
             // 
             // BrowseTextBox

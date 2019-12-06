@@ -186,7 +186,6 @@ namespace LDDModder.Modding.Editing
             };
             project.SetBaseInfo(lddPart);
 
-
             int elementIndex = 0;
             foreach (var collision in lddPart.Primitive.Collisions)
             {

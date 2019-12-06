@@ -50,6 +50,7 @@ namespace LDDModder.BrickEditor.UI.Controls
         protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified)
         {
             bool adjustLayout = false;
+
             if (specified.HasFlag(BoundsSpecified.Width) || specified.HasFlag(BoundsSpecified.Height))
             {
                 var prefSize = GetPreferredSize(new Size(width, height));
@@ -68,17 +69,17 @@ namespace LDDModder.BrickEditor.UI.Controls
 
         protected override void OnLayout(LayoutEventArgs e)
         {
-            base.OnLayout(e);
+            //if (e.AffectedControl == tableLayoutPanel1 || e.AffectedControl == tableLayoutPanel2)
+            //{
 
+            //}
+            base.OnLayout(e);
             AdjustTableLayoutPositions();
-            if (tableLayoutPanel2.Bottom > Height)
-            {
-                Height = tableLayoutPanel2.Bottom;
-            }
-            else if(tableLayoutPanel2.Bottom < Height)
-            {
-                Height = tableLayoutPanel2.Bottom;
-            }
+        }
+
+        private void TableLayouts_SizeChanged(object sender, EventArgs e)
+        {
+
         }
 
         public override Size GetPreferredSize(Size proposedSize)
@@ -106,16 +107,15 @@ namespace LDDModder.BrickEditor.UI.Controls
             tableLayoutPanel1.Height = minHeight;
             tableLayoutPanel2.Height = minHeight;
 
-
             if (Width >= (MinimumBoxWidth * 6) + (BOX_MARGIN * 5))
             {
-                int boxWidth = Width - (3 * 5);
+                int boxWidth = Width - (BOX_MARGIN * 5);
                 boxWidth = (int)Math.Floor(boxWidth / 6f);
-                tableLayoutPanel1.Width = boxWidth * 3 + (3 * 3);
+                tableLayoutPanel1.Width = boxWidth * 3 + (BOX_MARGIN * 3);
                 
                 tableLayoutPanel2.Left = tableLayoutPanel1.Width;
                 tableLayoutPanel2.Top = 0;
-                tableLayoutPanel2.Width = boxWidth * 3 + (3 * 2);
+                tableLayoutPanel2.Width = boxWidth * 3 + (BOX_MARGIN * 2);
 
                 MinX_Box.Margin = new Padding(0, 3, 3, 0);
                 MinY_Box.Margin = new Padding(0, 3, 3, 0);
@@ -138,6 +138,8 @@ namespace LDDModder.BrickEditor.UI.Controls
                 MaxY_Box.Margin = new Padding(1, 3, 1, 0);
                 MaxZ_Box.Margin = new Padding(2, 3, 0, 0);
             }
+
+            Height = tableLayoutPanel2.Bottom;
         }
 
         private void OnValueChanged()
@@ -180,5 +182,7 @@ namespace LDDModder.BrickEditor.UI.Controls
                 OnValueChanged();
             }
         }
+
+        
     }
 }

@@ -90,8 +90,8 @@ namespace LDDModder.BrickEditor.UI.Controls
             {
                 if (!AutoSizeButton && _ButtonWidth != value && value > 3)
                 {
-                    //_ButtonWidth = value;
-                    AdjustButtonWidth(value);
+                    _ButtonWidth = value;
+                    RepositionControls();
                 }
             }
         }
@@ -131,48 +131,69 @@ namespace LDDModder.BrickEditor.UI.Controls
             base.OnLoad(e);
             if (AutoSizeButton)
                 RecalculateButtonWidth();
-            else
-                AdjustButtonWidth(ButtonWidth);
-            
+
+            RepositionControls();
         }
 
         protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified)
         {
-            height = ValueTextBox.Height;
+            if (specified.HasFlag(BoundsSpecified.Height))
+            {
+                height = ValueTextBox.Height;
+            }
+            
             base.SetBoundsCore(x, y, width, height, specified);
 
+            if (specified.HasFlag(BoundsSpecified.Height) || specified.HasFlag(BoundsSpecified.Width))
+            {
+                RepositionControls();
+            }
         }
 
-        private void AdjustButtonWidth(int width)
+        protected override void OnLayout(LayoutEventArgs e)
         {
-            SuspendLayout();
-            int oldWidth = BrowseButton.Width;
-            int oldButtonPos = BrowseButton.Left;
-            int oldTextboxSize = ValueTextBox.Width;
-            BrowseButton.Width = width;
-            BrowseButton.Left = oldButtonPos + (oldWidth - width);
-            ValueTextBox.Width = oldTextboxSize + (oldWidth - width);
+            base.OnLayout(e);
 
-            _ButtonWidth = width;
-            ResumeLayout();
+            RepositionControls();
+        }
+
+        private void RepositionControls()
+        {
+            //var clientRect = ClientRectangle;
+            ValueTextBox.Width = (Width - ButtonWidth) + 3;
+            BrowseButton.Width = ButtonWidth;
+            BrowseButton.Height = ValueTextBox.Height + 2;
+            BrowseButton.Left = ValueTextBox.Right - 2;
+            Height = ValueTextBox.Height;
+        }
+
+        private int CalculateButtonWidth()
+        {
+            //using(var g = BrowseButton.CreateGraphics())
+            //{
+            //    var textSize = g.MeasureString(ButtonText, Font);
+            //    return (int)textSize.Width + 8;
+            //}
+            BrowseButton.SuspendLayout();
+            var currentBounds = BrowseButton.Bounds;
+            BrowseButton.AutoSize = true;
+            BrowseButton.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            var prefSize = BrowseButton.GetPreferredSize(new Size(1000, Height));
+            BrowseButton.AutoSize = false;
+            BrowseButton.AutoSizeMode = AutoSizeMode.GrowOnly;
+            BrowseButton.Bounds = currentBounds;
+            BrowseButton.ResumeLayout();
+            return prefSize.Width;
         }
 
         private void RecalculateButtonWidth()
         {
             if (AutoSizeButton)
             {
-                var oldSize = BrowseButton.Size;
-                var oldPosition = BrowseButton.Location;
-                BrowseButton.SuspendLayout();
-                BrowseButton.AutoSize = true;
-                BrowseButton.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-                var prefSize = BrowseButton.GetPreferredSize(new Size(1000, Height));
-                BrowseButton.AutoSize = false;
-                BrowseButton.AutoSizeMode = AutoSizeMode.GrowOnly;
-                BrowseButton.Size = oldSize;
-                BrowseButton.Location = oldPosition;
-                BrowseButton.ResumeLayout();
-                AdjustButtonWidth(prefSize.Width);
+                int oldWidth = _ButtonWidth;
+                _ButtonWidth = CalculateButtonWidth();
+                if (oldWidth != _ButtonWidth)
+                    RepositionControls();
             }
         }
 
@@ -195,6 +216,19 @@ namespace LDDModder.BrickEditor.UI.Controls
         protected bool ShouldSerializeButtonWidth()
         {
             return !AutoSizeButton;
+        }
+
+        private void Controls_FontChanged(object sender, EventArgs e)
+        {
+            if (AutoSizeButton)
+                RecalculateButtonWidth();
+            RepositionControls();
+        }
+
+        protected override void OnFontChanged(EventArgs e)
+        {
+            base.OnFontChanged(e);
+            RepositionControls();
         }
     }
 

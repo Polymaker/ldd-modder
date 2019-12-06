@@ -130,37 +130,37 @@ namespace LDDModder.Modding.Editing
             if (Aliases.Any())
                 propsElem.Add(new XElement("Aliases", string.Join(";", Aliases)));
 
-            propsElem.Add(new XElement("Description", Description));
+            propsElem.Add(new XElement(nameof(Description), Description));
 
-            propsElem.Add(new XElement("PartVersion", PartVersion));
+            propsElem.Add(new XElement(nameof(PartVersion), PartVersion));
 
             if (PrimitiveFileVersion != null)
                 propsElem.Add(PrimitiveFileVersion.ToXmlElement("PrimitiveVersion"));
 
-            propsElem.Add(new XElement("Flexible", Flexible));
+            propsElem.Add(new XElement(nameof(Flexible), Flexible));
 
-            propsElem.Add(new XElement("Decorated", Decorated));
+            propsElem.Add(new XElement(nameof(Decorated), Decorated));
 
             if (Platform != null)
-                propsElem.AddElement("Platform", new XAttribute("ID", Platform.ID), new XAttribute("Name", Platform.Name));
+                propsElem.AddElement(nameof(Platform), new XAttribute("ID", Platform.ID), new XAttribute("Name", Platform.Name));
 
             if (MainGroup != null)
-                propsElem.AddElement("MainGroup", new XAttribute("ID", MainGroup.ID), new XAttribute("Name", MainGroup.Name));
+                propsElem.AddElement(nameof(MainGroup), new XAttribute("ID", MainGroup.ID), new XAttribute("Name", MainGroup.Name));
 
             if (PhysicsAttributes != null)
                 propsElem.Add(PhysicsAttributes.SerializeToXml());
 
             if (Bounding != null)
-                propsElem.Add(XmlHelper.DefaultSerialize(Bounding, "Bounding"));
+                propsElem.Add(XmlHelper.DefaultSerialize(Bounding, nameof(Bounding)));
 
             if (GeometryBounding != null)
-                propsElem.Add(XmlHelper.DefaultSerialize(GeometryBounding, "GeometryBounding"));
+                propsElem.Add(XmlHelper.DefaultSerialize(GeometryBounding, nameof(GeometryBounding)));
 
             if (DefaultOrientation != null)
-                propsElem.Add(DefaultOrientation.SerializeToXml("DefaultOrientation"));
+                propsElem.Add(DefaultOrientation.SerializeToXml(nameof(DefaultOrientation)));
 
             if (DefaultCamera != null)
-                propsElem.Add(XmlHelper.DefaultSerialize(DefaultCamera, "DefaultCamera"));
+                propsElem.Add(XmlHelper.DefaultSerialize(DefaultCamera, nameof(DefaultCamera)));
 
             return propsElem;
         }
@@ -179,25 +179,25 @@ namespace LDDModder.Modding.Editing
                 }
             }
 
-            Description = element.ReadElement("Description", string.Empty);
-            PartVersion = element.ReadElement("PartVersion", 1);
+            Description = element.ReadElement(nameof(Description), string.Empty);
+            PartVersion = element.ReadElement(nameof(PartVersion), 1);
 
-            if (element.HasElement("PhysicsAttributes", out XElement pA))
+            if (element.HasElement(nameof(PhysicsAttributes), out XElement pA))
             {
                 PhysicsAttributes = new PhysicsAttributes();
                 PhysicsAttributes.LoadFromXml(pA);
             }
 
-            if (element.HasElement("GeometryBounding", out XElement gb))
+            if (element.HasElement(nameof(GeometryBounding), out XElement gb))
                 GeometryBounding = XmlHelper.DefaultDeserialize<BoundingBox>(gb);
 
-            if (element.HasElement("Bounding", out XElement bb))
+            if (element.HasElement(nameof(Bounding), out XElement bb))
                 Bounding = XmlHelper.DefaultDeserialize<BoundingBox>(bb);
 
-            if (element.HasElement("DefaultOrientation", out XElement defori))
+            if (element.HasElement(nameof(DefaultOrientation), out XElement defori))
                 DefaultOrientation = ItemTransform.FromXml(defori);
 
-            if (element.HasElement("DefaultCamera", out XElement camElem))
+            if (element.HasElement(nameof(DefaultCamera), out XElement camElem))
                 DefaultCamera = XmlHelper.DefaultDeserialize<Camera>(camElem);
 
             if (element.HasElement("Platform", out XElement platformElem))

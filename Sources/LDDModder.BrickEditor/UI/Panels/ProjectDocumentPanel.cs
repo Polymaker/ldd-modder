@@ -104,5 +104,11 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
 
         }
+
+        protected void ToggleControlsEnabled(bool enabled, params System.Windows.Forms.Control[] controls)
+        {
+            foreach (var ctrl in controls)
+                ctrl.Enabled = enabled;
+        }
     }
 }

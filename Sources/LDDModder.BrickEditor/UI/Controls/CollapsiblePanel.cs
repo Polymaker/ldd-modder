@@ -2,13 +2,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
+using System.Windows.Forms.VisualStyles;
 
 namespace LDDModder.BrickEditor.UI.Controls
 {
@@ -18,8 +21,14 @@ namespace LDDModder.BrickEditor.UI.Controls
         private bool _Collapsed;
         private int _PanelHeight;
         private int _HeaderHeight;
-        private int HeaderHeightComputed;
+        private bool _AutoSizeHeight;
+        private HeaderDisplayStyle _DisplayStyle;
+
         private bool InternalSetHeight;
+        private bool HasInitialized;
+        private int ComputedHeaderHeight;
+
+        private static Bitmap ArrowGlyph;
 
         [DefaultValue(false)]
         public bool Collapsed
@@ -28,31 +37,28 @@ namespace LDDModder.BrickEditor.UI.Controls
             set => SetCollapsed(value);
         }
 
-        [Browsable(true)]
-        public override string Text { get => base.Text; set => base.Text = value; }
-
-        #region MyRegion
-
-        [Designer(typeof(CollapsiblePanelContainerDesigner))]
-        public class CollapsiblePanelContainer : Panel
+        [DefaultValue(false)]
+        public bool AutoSizeHeight
         {
-            protected override void OnPaint(PaintEventArgs e)
+            get => _AutoSizeHeight;
+            set
             {
-                base.OnPaint(e);
-                if (DesignMode)
+                if (_AutoSizeHeight != value)
                 {
-                    ControlPaint.DrawFocusRectangle(e.Graphics, ClientRectangle);
+                    _AutoSizeHeight = value;
+                    PerformLayout();
                 }
             }
         }
 
-        #endregion
+        [Browsable(true), RefreshProperties(RefreshProperties.Repaint)]
+        [Localizable(true)]
+        public override string Text { get => base.Text; set => base.Text = value; }
 
         [Browsable(false)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         public CollapsiblePanelContainer ContentPanel { get; private set; }
 
-        [DefaultValue(-1)]
         public int PanelHeight
         {
             get => _PanelHeight;
@@ -66,28 +72,88 @@ namespace LDDModder.BrickEditor.UI.Controls
             }
         }
 
+        [DefaultValue(-1)]
+        public int HeaderHeight
+        {
+            get => _HeaderHeight;
+            set
+            {
+                if (_HeaderHeight != value && (value == -1 || value >= 6))
+                {
+                    _HeaderHeight = value;
+                    AdjustPanelSize();
+                }
+            }
+        }
+
+        [DefaultValue(HeaderDisplayStyle.Label)]
+        public HeaderDisplayStyle DisplayStyle
+        {
+            get => _DisplayStyle;
+            set
+            {
+                if (_DisplayStyle != value)
+                {
+                    _DisplayStyle = value;
+                    CalculateHeaderHeight(true);
+                    Invalidate();
+                }
+            }
+        }
+
+        public override Rectangle DisplayRectangle
+        {
+            get
+            {
+                return GetContainerRectangle();
+            }
+        }
+
+        #region Events
+
         public event EventHandler CollapsedChanged;
 
         public event EventHandler AfterCollapse;
 
         public event EventHandler AfterExpand;
 
+        #endregion
+
+        #region State variables
+
+        private bool IsOverHeader;
+
+        #endregion
+
+
         public CollapsiblePanel()
         {
             InitializeComponent();
+            _DisplayStyle = HeaderDisplayStyle.Label;
             ContentPanel = new CollapsiblePanelContainer();
             Controls.Add(ContentPanel);
             ContentPanel.Dock = DockStyle.Fill;
-            Padding = new Padding(3, 10, 3, 3);
             _HeaderHeight = -1;
             _PanelHeight = ContentPanel.Height;
-            
+            SetStyle(ControlStyles.ResizeRedraw, true);
         }
+
+        #region Base Control Events
 
         protected override void OnHandleCreated(EventArgs e)
         {
             base.OnHandleCreated(e);
             CalculateHeaderHeight();
+            HasInitialized = true;
+            if (ArrowGlyph == null && VisualStyleRenderer.IsSupported)
+            {
+                ArrowGlyph = new Bitmap(20, 20);
+                using (var g = Graphics.FromImage(ArrowGlyph))
+                {
+                    var vsr = new VisualStyleRenderer(VisualStyleElement.ToolBar.SplitButtonDropDown.Normal);
+                    vsr.DrawBackground(g, new Rectangle(0, 0, 20, 20));
+                }
+            }
         }
 
         protected override void OnFontChanged(EventArgs e)
@@ -96,18 +162,122 @@ namespace LDDModder.BrickEditor.UI.Controls
             CalculateHeaderHeight();
         }
 
+        protected override void OnPaddingChanged(EventArgs e)
+        {
+            base.OnPaddingChanged(e);
+            PerformLayout();
+        }
+
+        protected override void OnTextChanged(EventArgs e)
+        {
+            base.OnTextChanged(e);
+            Invalidate();
+        }
+
+        protected override void OnMouseClick(MouseEventArgs e)
+        {
+            base.OnMouseClick(e);
+            if (!DesignMode)
+            {
+                var headerRect = GetHeaderRectangle();
+                if (headerRect.Contains(e.Location) && e.Button == MouseButtons.Left)
+                    ToggleCollapsed();
+            }
+        }
+
+        protected override void OnMouseDoubleClick(MouseEventArgs e)
+        {
+            base.OnMouseDoubleClick(e);
+            if (DesignMode)
+            {
+                var headerRect = GetHeaderRectangle();
+                if (headerRect.Contains(e.Location) && e.Button == MouseButtons.Left)
+                    ToggleCollapsed();
+            }
+        }
+
+        protected override void OnMouseEnter(EventArgs e)
+        {
+            base.OnMouseEnter(e);
+        }
+
+        protected override void OnMouseMove(MouseEventArgs e)
+        {
+            base.OnMouseMove(e);
+            var headerRect = GetHeaderRectangle();
+            if (headerRect.Contains(e.Location))
+            {
+                if (!IsOverHeader)
+                {
+                    IsOverHeader = true;
+                    Invalidate();
+                }
+            }
+        }
+
+        protected override void OnMouseLeave(EventArgs e)
+        {
+            base.OnMouseLeave(e);
+            if (IsOverHeader)
+            {
+                IsOverHeader = false;
+                Invalidate();
+            }
+        }
+
+
+        #endregion
+
+
+        private int GetHeaderHeight()
+        {
+            if (HeaderHeight == -1)
+            {
+                if (ComputedHeaderHeight == 0)
+                    CalculateHeaderHeight();
+                return ComputedHeaderHeight;
+            }
+            return HeaderHeight;
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Advanced)]
+        public Rectangle GetContainerRectangle()
+        {
+            var rect = new Rectangle(0, 0, Width, Height);
+
+            if (!Collapsed)
+            {
+                int headerHeight = GetHeaderHeight();
+                if (!HasInitialized)
+                    headerHeight = Math.Max(headerHeight, Font.Height);
+                rect.X += Padding.Left;
+                rect.Y += Padding.Top + headerHeight;
+                rect.Width -= Padding.Horizontal;
+                rect.Height -= Padding.Vertical + headerHeight;
+            }
+
+            return rect;
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Advanced)]
+        public Rectangle GetHeaderRectangle()
+        {
+            return new Rectangle(0, 0, Width, GetHeaderHeight());
+        }
+
+        #region Size & layout functions
+
+
         private void AdjustPanelSize()
         {
             InternalSetHeight = true;
             if (!Collapsed)
             {
-                Padding = new Padding(3, HeaderHeightComputed, 3, 3);
-                Height = PanelHeight + Padding.Vertical;
+                Height = PanelHeight + GetHeaderHeight() + Padding.Vertical;
             }
             else
             {
-                Padding = new Padding(3, HeaderHeightComputed, 3, 3);
-                Height = HeaderHeightComputed;
+                Height = GetHeaderHeight();
             }
             InternalSetHeight = false;
         }
@@ -116,29 +286,62 @@ namespace LDDModder.BrickEditor.UI.Controls
         {
             if (specified.HasFlag(BoundsSpecified.Height))
             {
+                if (height == 0)
+                {
+                    height = Height;
+
+                }
                 if (!Collapsed && !InternalSetHeight)
-                    _PanelHeight = Math.Max(height - Padding.Vertical, 6);
+                    _PanelHeight = Math.Max(height - GetHeaderHeight() - Padding.Vertical, 6);
                 else if (Collapsed)
-                    height = HeaderHeightComputed;
+                    height = GetHeaderHeight();
             }
 
             base.SetBoundsCore(x, y, width, height, specified);
         }
 
-        private void CalculateHeaderHeight()
+        protected override void OnLayout(LayoutEventArgs levent)
+        {
+            base.OnLayout(levent);
+ 
+            if (AutoSizeHeight && !Collapsed)
+            {
+
+                var prefSize = ContentPanel.GetPreferredSize(DisplayRectangle.Size);
+                Height = GetHeaderHeight() + Padding.Vertical + prefSize.Height;
+            }
+        }
+
+        private void CalculateHeaderHeight(bool performLayout = false)
         {
             if (IsHandleCreated)
             {
                 using (var g = CreateGraphics())
-                    HeaderHeightComputed = (int)g.MeasureString("Wasdf123", Font).Height + 6;
-                Padding = new Padding(3, HeaderHeightComputed, 3, 3);
+                    ComputedHeaderHeight = (int)g.MeasureString("Wasdf123", Font).Height + 6;
+                if (DisplayStyle == HeaderDisplayStyle.Button)
+                    ComputedHeaderHeight += 4;
             }
+            else
+                ComputedHeaderHeight = Font.Height + 6;
+
+            if (HeaderHeight == -1 && performLayout)
+                PerformLayout();
         }
+
+
+        #endregion
+
+        #region Collapse/Expand functions
 
         public void Collapse()
         {
             if (!Collapsed)
                 SetCollapsed(true);
+        }
+
+        public void ToggleCollapsed()
+        {
+            SetCollapsed(!Collapsed);
         }
 
         public void Expand()
@@ -170,35 +373,109 @@ namespace LDDModder.BrickEditor.UI.Controls
                 }
 
                 AdjustPanelSize();
+
                 CollapsedChanged?.Invoke(this, EventArgs.Empty);
                 if (_Collapsed)
                     AfterCollapse?.Invoke(this, EventArgs.Empty);
                 else
                     AfterExpand?.Invoke(this, EventArgs.Empty);
+
+                if (!Collapsed && Parent is ScrollableControl scrollableControl)
+                {
+                    scrollableControl.ScrollControlIntoView(this);
+                }
             }
         }
 
-        protected override void OnClick(EventArgs e)
-        {
-            base.OnClick(e);
-            SetCollapsed(!Collapsed);
-        }
+
+        #endregion
+
 
         protected override void OnPaint(PaintEventArgs pe)
         {
             base.OnPaint(pe);
+            var headerRect = GetHeaderRectangle();
+
+            if (VisualStyleRenderer.IsSupported)
+            {
+                if (DisplayStyle == HeaderDisplayStyle.Button)
+                {
+                    var elemStyle = VisualStyleElement.Button.PushButton.Normal;
+                    if (IsOverHeader)
+                        elemStyle = VisualStyleElement.Button.PushButton.Hot;
+                    var vsr = new VisualStyleRenderer(elemStyle);
+                    vsr.DrawBackground(pe.Graphics, headerRect);
+                }
+                else if (DisplayStyle == HeaderDisplayStyle.Toolstrip)
+                {
+                    using(var test = new ToolStrip())
+                    {
+                        test.Width = Width;
+
+                        test.Renderer.DrawToolStripBackground(
+                            new ToolStripRenderEventArgs(pe.Graphics, test, headerRect, BackColor));
+                    }
+                    //var elemStyle = VisualStyleElement.ToolBar.Button.Normal;
+                    //var vsr = new VisualStyleRenderer(elemStyle);
+                    //vsr.DrawBackground(pe.Graphics, headerRect);
+                }
+            }
+
+            
+
+            if (ArrowGlyph != null)
+            {
+                pe.Graphics.TranslateTransform(10, headerRect.Height / 2);
+                if (Collapsed)
+                    pe.Graphics.RotateTransform(-90);
+                pe.Graphics.DrawImage(ArrowGlyph, new Rectangle(-10, -10, 20, 20));
+                pe.Graphics.ResetTransform();
+            }
 
             using (var brush = new SolidBrush(ForeColor))
             {
                 pe.Graphics.DrawString(Text, Font, brush,
-                    new RectangleF(3, 0, Width - 6, HeaderHeightComputed),
+                    new RectangleF(20, 0, Width - 6, headerRect.Height),
                     new StringFormat() { LineAlignment = StringAlignment.Center, Alignment = StringAlignment.Near });
             }
         }
+
+        #region MyRegion
+
+        public enum HeaderDisplayStyle
+        {
+            Label,
+            Button,
+            Toolstrip,
+            OwnerDraw
+        }
+
+        [Designer(typeof(CollapsiblePanelContainerDesigner))]
+        public class CollapsiblePanelContainer : Panel
+        {
+            protected override void OnPaint(PaintEventArgs e)
+            {
+                base.OnPaint(e);
+                if (DesignMode)
+                {
+                    ControlPaint.DrawFocusRectangle(e.Graphics, ClientRectangle);
+                }
+            }
+        }
+
+        #endregion
     }
+
+    #region Designer Classes
 
     internal class CollapsiblePanelDesigner : ParentControlDesigner
     {
+        private DesignerActionListCollection _ActionList;
+        private ISelectionService SelectionService;
+        private bool PassThrough;
+
+        protected override bool AllowControlLasso => false;
+
         private CollapsiblePanel Panel => Control as CollapsiblePanel;
 
         public override SelectionRules SelectionRules
@@ -210,15 +487,45 @@ namespace LDDModder.BrickEditor.UI.Controls
                 {
                     rules &= ~(SelectionRules.TopSizeable | SelectionRules.BottomSizeable);
                 }
+                if (Panel.AutoSizeHeight)
+                {
+                    rules &= ~(SelectionRules.BottomSizeable);
+                }
                 return rules;
             }
-        } 
+        }
+
+        public override DesignerActionListCollection ActionLists
+        {
+            get
+            {
+                if (_ActionList == null)
+                {
+                    _ActionList = new DesignerActionListCollection();
+                    _ActionList.Add(new CollapsiblePanelActionList(this));
+                }
+
+                return _ActionList;
+            }
+        }
 
         public override void Initialize(IComponent component)
         {
             base.Initialize(component);
             EnableDesignMode((Control as CollapsiblePanel).ContentPanel, "ContentPanel");
+            SelectionService = (ISelectionService)GetService(typeof(ISelectionService));
+            //Panel.MouseClick += Panel_MouseClick;
         }
+
+        private void Panel_MouseClick(object sender, MouseEventArgs e)
+        {
+            var headerRect = Panel.GetHeaderRectangle();
+            if (headerRect.Contains(e.Location))
+            {
+                PassThrough = true;
+            }
+        }
+        
 
         public override bool CanParent(Control control)
         {
@@ -226,6 +533,56 @@ namespace LDDModder.BrickEditor.UI.Controls
                 return true;
             return false;
         }
+
+        protected override bool GetHitTest(Point point)
+        {
+            if (PassThrough)
+                return base.GetHitTest(point);
+
+            var headerRect = Panel.GetHeaderRectangle();
+            Point pt = Control.PointToClient(point);
+            return headerRect.Contains(pt) || headerRect.Contains(point);
+            //return base.GetHitTest(point);
+        }
+
+        protected override void WndProc(ref Message m)
+        {
+            if (m.Msg == 0x0201 || m.Msg == 0x0204)
+            {
+                PassThrough = true;
+                var tmpMsg = new Message()
+                {
+                    Msg = 0x084,
+                    HWnd = m.HWnd,
+                    LParam = m.LParam,
+                    WParam = m.WParam
+                };
+                base.WndProc(ref tmpMsg);
+                PassThrough = false;
+            }
+
+            base.WndProc(ref m);
+        }
+
+        //protected override void OnMouseDragBegin(int x, int y)
+        //{
+        //    base.OnMouseDragBegin(x, y);
+        //    Control.Invalidate();
+        //}
+
+        private class CollapsiblePanelActionList : DesignerActionList
+        {
+            public bool Collapsed
+            {
+                get => (Component as CollapsiblePanel).Collapsed;
+                set => (Component as CollapsiblePanel).Collapsed = value;
+            }
+
+            public CollapsiblePanelActionList(CollapsiblePanelDesigner designer) : base(designer.Component)
+            {
+            }
+        }
+
     }
 
     internal class CollapsiblePanelContainerDesigner : ScrollableControlDesigner
@@ -234,9 +591,19 @@ namespace LDDModder.BrickEditor.UI.Controls
 
         protected override void PreFilterProperties(IDictionary properties)
         {
+            properties.Remove("AutoSize");
+            properties.Remove("AutoSizeMode");
             properties.Remove("Dock");
             properties.Remove("Margin");
+            properties.Remove("Visible");
+            //properties.Remove("Size");
+            properties.Remove("Anchor");
+            properties.Remove("MaximumSize");
+            properties.Remove("BorderStyle");
             base.PreFilterProperties(properties);
         }
     }
+
+    #endregion
+
 }
