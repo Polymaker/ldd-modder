@@ -156,6 +156,7 @@
     <Compile Include="LDD\Primitives\Primitive.cs" />
     <Compile Include="LDD\Primitives\Transform.cs" />
     <Compile Include="Maths\Line.cs" />
+    <Compile Include="Modding\Editing\ChangeTracking\CollectionChangeItemInfo.cs" />
     <Compile Include="Modding\Editing\ChangeTracking\ElementCollectionChangedEventArgs.cs" />
     <Compile Include="Modding\Editing\ChangeTracking\ElementCollection.cs" />
     <Compile Include="Utilities\Events\INotifyPropertyValueChanged.cs" />

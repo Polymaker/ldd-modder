@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,38 +11,28 @@ namespace LDDModder.Modding.Editing
     {
         public IElementCollection Collection { get; }
         public Type ElementType { get; }
-        public System.ComponentModel.CollectionChangeAction Action { get; }
-        public PartElement[] AddedElements { get; }
-        public PartElement[] RemovedElements { get; }
+        public CollectionChangeAction Action { get; }
 
-        public ElementCollectionChangedEventArgs(
-            IElementCollection collection, 
-            System.ComponentModel.CollectionChangeAction action, 
-            IEnumerable<PartElement> elements)
+        public CollectionChangeItemInfo[] ChangedItems { get; }
+
+        public IEnumerable<PartElement> ChangedElements => ChangedItems.Select(x => x.Element);
+
+        public IEnumerable<PartElement> AddedElements => ChangedItems.Where(x => x.OldIndex == -1).Select(x => x.Element);
+
+        public IEnumerable<PartElement> RemovedElements => ChangedItems.Where(x => x.NewIndex == -1).Select(x => x.Element);
+
+        public ElementCollectionChangedEventArgs(IElementCollection collection, 
+            CollectionChangeAction action, 
+            IEnumerable<CollectionChangeItemInfo> changedItems)
         {
-            
             Collection = collection;
-
-            var collectionType = collection.GetType().GetGenericArguments();
-            ElementType = collectionType.Length > 0 ? collectionType[0] : null;
-
             Action = action;
-            if (action == System.ComponentModel.CollectionChangeAction.Add)
-            {
-                AddedElements = elements.ToArray();
-                RemovedElements = new PartElement[0];
-            }
-            else
-            {
-                RemovedElements = elements.ToArray();
-                AddedElements = new PartElement[0];
-            }
+            ChangedItems = changedItems.ToArray();
         }
 
         public IEnumerable<PartElement> GetElementHierarchy()
         {
-            var elems = AddedElements.Concat(RemovedElements);
-            return elems.SelectMany(x => x.GetChildsHierarchy(true));
+            return ChangedElements.SelectMany(x => x.GetChildsHierarchy(true));
         }
     }
 }

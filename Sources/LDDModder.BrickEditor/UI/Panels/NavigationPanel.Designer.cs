@@ -53,16 +53,16 @@
             this.AddConnectionMenu_Slider = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.ElementsMenu_Delete = new System.Windows.Forms.ToolStripMenuItem();
-            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
+            this.NavigationImageList = new System.Windows.Forms.ImageList(this.components);
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.label1 = new System.Windows.Forms.Label();
             this.ViewModeComboBox = new System.Windows.Forms.ComboBox();
             this.LocalizedStrings = new LDDModder.BrickEditor.Localization.LocalizableStringList(this.components);
-            this.ViewModeAll = new LDDModder.BrickEditor.Localization.LocalizableString();
-            this.ViewModeBones = new LDDModder.BrickEditor.Localization.LocalizableString();
-            this.ViewModeCollisions = new LDDModder.BrickEditor.Localization.LocalizableString();
-            this.ViewModeConnections = new LDDModder.BrickEditor.Localization.LocalizableString();
-            this.ViewModeSurfaces = new LDDModder.BrickEditor.Localization.LocalizableString();
+            this.ViewModeAll = ((LDDModder.BrickEditor.Localization.LocalizableString)(new LDDModder.BrickEditor.Localization.LocalizableString()));
+            this.ViewModeBones = ((LDDModder.BrickEditor.Localization.LocalizableString)(new LDDModder.BrickEditor.Localization.LocalizableString()));
+            this.ViewModeCollisions = ((LDDModder.BrickEditor.Localization.LocalizableString)(new LDDModder.BrickEditor.Localization.LocalizableString()));
+            this.ViewModeConnections = ((LDDModder.BrickEditor.Localization.LocalizableString)(new LDDModder.BrickEditor.Localization.LocalizableString()));
+            this.ViewModeSurfaces = ((LDDModder.BrickEditor.Localization.LocalizableString)(new LDDModder.BrickEditor.Localization.LocalizableString()));
             ((System.ComponentModel.ISupportInitialize)(this.ProjectTreeView)).BeginInit();
             this.ElementsContextMenu.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -80,11 +80,9 @@
             resources.ApplyResources(this.ProjectTreeView, "ProjectTreeView");
             this.ProjectTreeView.FullRowSelect = true;
             this.ProjectTreeView.HideSelection = false;
-            this.ProjectTreeView.IsSimpleDragSource = true;
-            this.ProjectTreeView.IsSimpleDropSink = true;
             this.ProjectTreeView.Name = "ProjectTreeView";
             this.ProjectTreeView.ShowGroups = false;
-            this.ProjectTreeView.SmallImageList = this.imageList1;
+            this.ProjectTreeView.SmallImageList = this.NavigationImageList;
             this.ProjectTreeView.UseAlternatingBackColors = true;
             this.ProjectTreeView.UseCompatibleStateImageBehavior = false;
             this.ProjectTreeView.UseHotItem = true;
@@ -244,14 +242,11 @@
             resources.ApplyResources(this.ElementsMenu_Delete, "ElementsMenu_Delete");
             this.ElementsMenu_Delete.Click += new System.EventHandler(this.ElementsMenu_Delete_Click);
             // 
-            // imageList1
+            // NavigationImageList
             // 
-            this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
-            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
-            this.imageList1.Images.SetKeyName(0, "Surface_Main");
-            this.imageList1.Images.SetKeyName(1, "Surface_Decoration");
-            this.imageList1.Images.SetKeyName(2, "Model_MaleStud");
-            this.imageList1.Images.SetKeyName(3, "Mesh");
+            this.NavigationImageList.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
+            resources.ApplyResources(this.NavigationImageList, "NavigationImageList");
+            this.NavigationImageList.TransparentColor = System.Drawing.Color.Transparent;
             // 
             // tableLayoutPanel1
             // 
@@ -350,6 +345,6 @@
         private System.Windows.Forms.ToolStripMenuItem AddConnectionMenu_Rail;
         private System.Windows.Forms.ToolStripMenuItem AddConnectionMenu_Slider;
         private System.Windows.Forms.ToolStripMenuItem AddConnectionMenu_Fixed;
-        private System.Windows.Forms.ImageList imageList1;
+        private System.Windows.Forms.ImageList NavigationImageList;
     }
 }

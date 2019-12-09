@@ -41,8 +41,8 @@ namespace LDDModder.BrickEditor.ProjectHandling
             }
             else if (Data.Action == System.ComponentModel.CollectionChangeAction.Add)
             {
-                foreach (var item in Data.AddedElements)
-                    Data.Collection.Add(item);
+                foreach (var item in Data.ChangedItems)
+                    Data.Collection.Insert(item.NewIndex, item.Element);
             }
         }
 
@@ -50,8 +50,8 @@ namespace LDDModder.BrickEditor.ProjectHandling
         {
             if (Data.Action == System.ComponentModel.CollectionChangeAction.Remove)
             {
-                foreach (var item in Data.RemovedElements)
-                    Data.Collection.Add(item);
+                foreach (var item in Data.ChangedItems.Reverse())
+                    Data.Collection.Insert(item.OldIndex, item.Element);
             }
             else if (Data.Action == System.ComponentModel.CollectionChangeAction.Add)
             {
@@ -100,9 +100,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
         public override void Undo()
         {
-            var reversed = Actions.ToList();
-            reversed.Reverse();
-            foreach (var action in reversed)
+            foreach (var action in Actions.Reverse<ChangeAction>())
                 action.Undo();
         }
 

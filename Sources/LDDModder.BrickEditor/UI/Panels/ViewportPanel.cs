@@ -763,7 +763,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             {
                 if (e.Action == System.ComponentModel.CollectionChangeAction.Add)
                 {
-                    foreach (PartSurface surface in e.AddedElements)
+                    foreach (var surface in e.AddedElements.OfType<PartSurface>())
                         AddPartSurfaceModel(surface);
                 }
                 else

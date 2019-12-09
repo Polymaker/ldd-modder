@@ -118,13 +118,13 @@ namespace LDDModder.BrickEditor.ProjectHandling
                         if (colChange.Data.Collection == prevColChange.Data.Collection &&
                             colChange.Data.Action == prevColChange.Data.Action)
                         {
-                            var prevElements = prevColChange.Data.AddedElements.Concat(prevColChange.Data.RemovedElements);
-                            var currElements = colChange.Data.AddedElements.Concat(colChange.Data.RemovedElements);
+                            //var prevElements = prevColChange.Data.AddedElements.Concat(prevColChange.Data.RemovedElements);
+                            //var currElements = colChange.Data.AddedElements.Concat(colChange.Data.RemovedElements);
                             
                             prevColChange = new CollectionChangeAction(
                                 new Modding.Editing.ElementCollectionChangedEventArgs(
                                     colChange.Data.Collection, colChange.Data.Action,
-                                    prevElements.Concat(currElements)
+                                    prevColChange.Data.ChangedItems.Concat(colChange.Data.ChangedItems)
                                     ));
                         }
                         else

@@ -188,6 +188,19 @@ namespace LDDModder.Modding.Editing
             }
         }
 
+        public IElementCollection GetParentCollection()
+        {
+            if (Parent != null)
+            {
+                foreach (var collection in Parent.Collections)
+                {
+                    if (collection.Contains(this))
+                        return collection;
+                }
+            }
+            return null;
+        }
+
         public virtual bool TryRemove()
         {
             if (Project == null && Parent != null)
@@ -244,6 +257,9 @@ namespace LDDModder.Modding.Editing
                 return typeof(PartConnection);
             else if (this is StudReference)
                 return typeof(StudReference);
+            else if (this is ModelMeshReference)
+                return typeof(ModelMeshReference);
+
             return typeof(PartElement);
         }
 

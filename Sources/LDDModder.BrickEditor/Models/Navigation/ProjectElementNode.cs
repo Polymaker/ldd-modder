@@ -14,6 +14,8 @@ namespace LDDModder.BrickEditor.Models.Navigation
 
         public PartElement Element { get; set; }
 
+        public Type ElementType => Element?.GetElementType();
+
         public ProjectElementNode(PartElement element)
         {
             Element = element;
@@ -52,10 +54,14 @@ namespace LDDModder.BrickEditor.Models.Navigation
                 if (surfaceComponent is FemaleStudModel femaleStud && 
                     femaleStud.ReplacementMeshes.Any())
                 {
-                    AutoGroupElements(femaleStud.Meshes,
-                        ModelLocalizations.Label_DefaultMeshes, 0, 10, false);
-                    AutoGroupElements(femaleStud.ReplacementMeshes,
-                        ModelLocalizations.Label_AlternateMeshes, 0, 10, false);
+                    Childrens.Add(new ElementCollectionNode(femaleStud, 
+                        femaleStud.Meshes, ModelLocalizations.Label_DefaultMeshes));
+                    Childrens.Add(new ElementCollectionNode(femaleStud,
+                        femaleStud.ReplacementMeshes, ModelLocalizations.Label_AlternateMeshes));
+                    //AutoGroupElements(femaleStud.Meshes,
+                    //    ModelLocalizations.Label_DefaultMeshes, 0, 10, false);
+                    //AutoGroupElements(femaleStud.ReplacementMeshes,
+                    //    ModelLocalizations.Label_AlternateMeshes, 0, 10, false);
                 }
                 else
                 {
@@ -113,6 +119,58 @@ namespace LDDModder.BrickEditor.Models.Navigation
                     node.ImageKey = "Mesh";
             }
             return node;
+        }
+
+        public override bool CanDragDrop()
+        {
+            if (Element is ModelMeshReference)
+                return true;
+            return base.CanDragDrop();
+        }
+
+        public override bool CanDropOn(BaseProjectNode node)
+        {
+            if (ElementType == typeof(ModelMeshReference))
+            {
+                if (node is ProjectElementNode elementNode)
+                {
+                    if (elementNode.Element is SurfaceComponent)
+                        return true;
+                }
+                else if (node is ElementCollectionNode collectionNode)
+                {
+                    if (collectionNode.CollectionType == typeof(ModelMeshReference))
+                        return true;
+                }
+            }
+
+            return base.CanDropOn(node);
+        }
+
+        public override bool CanDropBefore(BaseProjectNode node)
+        {
+            if (ElementType == typeof(ModelMeshReference))
+            {
+                if (node is ProjectElementNode elementNode)
+                {
+                    if (elementNode.Element is ModelMeshReference)
+                        return true;
+                }
+            }
+            return base.CanDropBefore(node);
+        }
+
+        public override bool CanDropAfter(BaseProjectNode node)
+        {
+            if (ElementType == typeof(ModelMeshReference))
+            {
+                if (node is ProjectElementNode elementNode)
+                {
+                    if (elementNode.Element is ModelMeshReference)
+                        return true;
+                }
+            }
+            return base.CanDropAfter(node);
         }
     }
 }

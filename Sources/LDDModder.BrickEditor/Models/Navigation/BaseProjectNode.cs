@@ -91,18 +91,21 @@ namespace LDDModder.BrickEditor.Models.Navigation
         protected void AutoGroupElements(IEnumerable<PartElement> elements, string groupTitle, int groupWhen, int maxGroupSize, bool groupOnSameLevel = false)
         {
             int totalElements = elements.Count();
+
             if (totalElements > groupWhen)
             {
-                BaseProjectNode groupNode = null;
+                BaseProjectNode groupNode = this;
 
-                if (groupOnSameLevel)
-                    groupNode = this;
-                else
+                if (!groupOnSameLevel)
                 {
-                    groupNode = new BaseProjectNode(Project, groupTitle);
-                    groupNode.IsDirty = false;
+                    groupNode = new BaseProjectNode(Project, groupTitle)
+                    {
+                        IsDirty = false
+                    };
                     Childrens.Add(groupNode);
                 }
+
+                //var parentNode = groupNode.Parent;
 
                 if (totalElements > maxGroupSize)
                 {
@@ -113,20 +116,19 @@ namespace LDDModder.BrickEditor.Models.Navigation
                     {
                         int takeCount = Math.Min(remaining, maxGroupSize);
 
-                        string rangeText = "";
+                        string rangeText = string.Empty;
                         if (takeCount / (double)maxGroupSize < 0.5)
                             rangeText = string.Format(ModelLocalizations.NodeRangeFormat2, currIdx + 1);
                         else
                             rangeText = string.Format(ModelLocalizations.NodeRangeFormat1, currIdx + 1, currIdx + takeCount);
 
-                        var rangeNode = new BaseProjectNode(Project, rangeText);
+                        var rangeNode = new ElementGroupNode(Project, rangeText);
+
                         if (groupOnSameLevel)
                             rangeNode.Text = groupTitle + " " + rangeNode.Text;
 
-                        rangeNode.IsDirty = false;
+                        rangeNode.Elements.AddRange(elements.Skip(currIdx).Take(maxGroupSize));
                         groupNode.Childrens.Add(rangeNode);
-                        foreach (var elem in elements.Skip(currIdx).Take(maxGroupSize))
-                            rangeNode.Childrens.Add(ProjectElementNode.CreateDefault(elem));
                         currIdx += takeCount;
                         remaining -= takeCount;
                     }
@@ -142,6 +144,26 @@ namespace LDDModder.BrickEditor.Models.Navigation
                 foreach (var elem in elements)
                     Childrens.Add(ProjectElementNode.CreateDefault(elem));
             }
+        }
+    
+        public virtual bool CanDragDrop()
+        {
+            return false;
+        }
+
+        public virtual bool CanDropOn(BaseProjectNode node)
+        {
+            return false;
+        }
+
+        public virtual bool CanDropBefore(BaseProjectNode node)
+        {
+            return false;
+        }
+
+        public virtual bool CanDropAfter(BaseProjectNode node)
+        {
+            return false;
         }
     }
 }

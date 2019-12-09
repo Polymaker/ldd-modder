@@ -14,6 +14,8 @@ namespace LDDModder.BrickEditor.Models.Navigation
 
         public IElementCollection Collection { get; }
 
+        public Type ElementType => Collection.ElementType;
+
         public ProjectCollectionNode(IElementCollection collection)
         {
             Collection = collection;

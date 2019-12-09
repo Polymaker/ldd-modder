@@ -113,6 +113,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\Navigation\BaseProjectNode.cs" />
+    <Compile Include="Models\Navigation\ElementCollectionNode.cs" />
     <Compile Include="Models\Project\ElementExtention.cs" />
     <Compile Include="Models\Project\FemaleStudElement.cs" />
     <Compile Include="Models\Project\RenderableElement.cs" />
@@ -306,6 +307,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <EmbeddedResource Include="Resources\ModelLocalizations.fr.resx" />
     <EmbeddedResource Include="Resources\ModelLocalizations.resx">
@@ -403,6 +405,10 @@
   <ItemGroup />
   <ItemGroup>
     <Content Include="Resources\Data\Primitive connectors.xml" />
+    <Content Include="Resources\Images\DecorationSurfaceIcon.png" />
+    <Content Include="Resources\Images\MainSurfaceIcon.png" />
+    <Content Include="Resources\Images\MaleStudIcon.png" />
+    <Content Include="Resources\Images\MeshIcon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\AssimpNet.4.1.0\build\AssimpNet.targets" Condition="Exists('..\packages\AssimpNet.4.1.0\build\AssimpNet.targets')" />

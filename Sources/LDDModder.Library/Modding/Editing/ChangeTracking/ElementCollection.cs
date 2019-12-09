@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,6 +20,14 @@ namespace LDDModder.Modding.Editing
         IEnumerable<PartElement> GetElements();
 
         void Add(PartElement element);
+
+        void AddRange(IEnumerable<PartElement> elements);
+
+        void Insert(int index, PartElement element);
+
+        void InsertAllAt(int index, IEnumerable<PartElement> elements);
+
+        int IndexOf(PartElement element);
 
         void Remove(PartElement element);
 
@@ -70,25 +79,21 @@ namespace LDDModder.Modding.Editing
                 item.Parent = adding ? Owner : null;
         }
 
-        public void AddRange(IEnumerable<T> items)
-        {
-            PreventEvents = true;
-            List<T> addedItems = new List<T>();
+        
 
-            try
-            {
-                foreach (var item in items)
-                {
-                    addedItems.Add(item);
-                    Add(item);
-                }
-            }
-            finally
-            {
-                PreventEvents = false;
-                OnCollectionChanged(new ElementCollectionChangedEventArgs(this, 
-                    System.ComponentModel.CollectionChangeAction.Add, addedItems));
-            }
+        protected void RaiseCollectionChanged(
+            CollectionChangeAction action,
+            IEnumerable<CollectionChangeItemInfo> changedItems)
+        {
+            OnCollectionChanged(new ElementCollectionChangedEventArgs(this, action, changedItems));
+        }
+
+        protected void RaiseCollectionChanged(
+            CollectionChangeAction action,
+            CollectionChangeItemInfo changedItem)
+        {
+            OnCollectionChanged(new ElementCollectionChangedEventArgs(this, action, 
+                new CollectionChangeItemInfo[] { changedItem }));
         }
 
         protected void OnCollectionChanged(ElementCollectionChangedEventArgs e)
@@ -115,39 +120,82 @@ namespace LDDModder.Modding.Editing
             return InnerList.IndexOf(item);
         }
 
-        public void Insert(int index, T item)
+        protected CollectionChangeItemInfo InsertItem(int index, T item)
         {
+            if (index > Count)
+                index = Count;
+
             UpdateItemParent(item, true);
             InnerList.Insert(index, item);
-
-            OnCollectionChanged(new ElementCollectionChangedEventArgs(this,
-                    System.ComponentModel.CollectionChangeAction.Add, 
-                    new PartElement[] { item }));
+            return new CollectionChangeItemInfo(item, -1, index);
         }
+
+        protected CollectionChangeItemInfo AddItem(T item)
+        {
+            UpdateItemParent(item, true);
+            InnerList.Add(item);
+            return new CollectionChangeItemInfo(item, -1, Count - 1);
+        }
+
+        protected CollectionChangeItemInfo RemoveItem(T item, bool runDry = false)
+        {
+            int itemIndex = IndexOf(item);
+
+            if (itemIndex >= 0)
+            {
+                if (!runDry)
+                {
+                    InnerList.RemoveAt(itemIndex);
+                    UpdateItemParent(item, false);
+                }
+                
+                return new CollectionChangeItemInfo(item, itemIndex, -1);
+            }
+            return null;
+        }
+
+        protected CollectionChangeItemInfo RemoveItemAt(int index, bool runDry = false)
+        {
+            var item = InnerList[index];
+            if (item != null)
+            {
+                if (!runDry)
+                {
+                    InnerList.RemoveAt(index);
+                    UpdateItemParent(item, false);
+                }
+                
+                return new CollectionChangeItemInfo(item, index, -1);
+            }
+            return null;
+        }
+
+        
 
         public void RemoveAt(int index)
         {
-            var removedItem = InnerList[index];
-            UpdateItemParent(removedItem, true);
+            var removedItem = RemoveItemAt(index, true);
 
-            InnerList.RemoveAt(index);
+            if (removedItem != null)
+            {
+                //Raise event before dettaching parent
+                RaiseCollectionChanged(CollectionChangeAction.Remove, removedItem);
 
-            OnCollectionChanged(new ElementCollectionChangedEventArgs(this,
-                    System.ComponentModel.CollectionChangeAction.Remove,
-                    new PartElement[] { removedItem }));
+                InnerList.Remove((T)removedItem.Element);
+                UpdateItemParent(removedItem.Element, false);
+            }
         }
 
         public bool Remove(T item)
         {
-            if (InnerList.Remove(item))
+            var removedItem = RemoveItem(item, true);
+            if (removedItem != null)
             {
-                UpdateItemParent(item, false);
+                //Raise event before dettaching parent
+                RaiseCollectionChanged(CollectionChangeAction.Remove, removedItem);
 
-                OnCollectionChanged(new ElementCollectionChangedEventArgs(this,
-                    System.ComponentModel.CollectionChangeAction.Remove,
-                    new PartElement[] { item }));
-
-                return true;
+                InnerList.Remove((T)removedItem.Element);
+                UpdateItemParent(removedItem.Element, false);
             }
 
             return false;
@@ -155,46 +203,116 @@ namespace LDDModder.Modding.Editing
 
         public void Remove(IEnumerable<T> elements)
         {
-            var removedElements = new List<T>();
-            PreventEvents = true;
+            var removedItems = new List<CollectionChangeItemInfo>();
+            //var removedElements = new List<T>();
 
             foreach(var item in elements)
             {
-                if (Remove(item))
-                    removedElements.Add(item);
+                var removedItem = RemoveItem(item, true);
+
+                if (removedItem != null)
+                    removedItems.Add(removedItem);
             }
 
-            PreventEvents = false;
+            //Raise event before dettaching parent
+            if (removedItems.Any())
+                RaiseCollectionChanged(CollectionChangeAction.Remove, removedItems);
 
-            OnCollectionChanged(new ElementCollectionChangedEventArgs(this,
-                    System.ComponentModel.CollectionChangeAction.Remove,
-                    removedElements.ToArray()));
+            foreach (var item in removedItems)
+            {
+                InnerList.Remove((T)item.Element);
+                UpdateItemParent(item.Element, false);
+            }
+        }
+
+        public void RemoveAll(Func<T, bool> predicate)
+        {
+            var removedItems = new List<CollectionChangeItemInfo>();
+
+            foreach (var item in InnerList.ToArray())
+            {
+                if (predicate(item))
+                    removedItems.Add(RemoveItem(item, true));
+            }
+
+            //Raise event before dettaching parent
+            if (removedItems.Any())
+                RaiseCollectionChanged(CollectionChangeAction.Remove, removedItems);
+
+            foreach (var item in removedItems)
+            {
+                InnerList.Remove((T)item.Element);
+                UpdateItemParent(item.Element, false);
+            }
+        }
+
+        public void Insert(int index, T item)
+        {
+            var addedItem = InsertItem(index, item);
+            RaiseCollectionChanged(CollectionChangeAction.Add, addedItem);
+        }
+
+        public void InsertAllAt(int index, IEnumerable<T> items)
+        {
+            var addedItems = new List<CollectionChangeItemInfo>();
+            int curIndex = index;
+            foreach(var item in items)
+                addedItems.Add(InsertItem(curIndex++, item));
+            RaiseCollectionChanged(CollectionChangeAction.Add, addedItems);
         }
 
         public void Add(T item)
         {
-            UpdateItemParent(item, true);
-            InnerList.Add(item);
+            var addedItem = AddItem(item);
+            RaiseCollectionChanged(CollectionChangeAction.Add, addedItem);
+        }
 
-            OnCollectionChanged(new ElementCollectionChangedEventArgs(this,
-                    System.ComponentModel.CollectionChangeAction.Add,
-                    new PartElement[] { item }));
+        public void AddRange(IEnumerable<T> items)
+        {
+            var addedItems = new List<CollectionChangeItemInfo>();
+
+            try
+            {
+                foreach (var item in items)
+                    addedItems.Add(AddItem(item));
+            }
+            finally
+            {
+                RaiseCollectionChanged(CollectionChangeAction.Add, addedItems);
+            }
+        }
+
+        public void ReorderItem(T item, int newIndex)
+        {
+            int curIndex = IndexOf(item);
+            if (curIndex >= 0 && curIndex != newIndex)
+            {
+                InnerList.RemoveAt(curIndex);
+                if (newIndex > curIndex)
+                    InnerList.Insert(newIndex - 1, item);
+                else
+                    InnerList.Insert(newIndex, item);
+
+                var changedItem = new CollectionChangeItemInfo(item, curIndex, newIndex);
+                RaiseCollectionChanged(CollectionChangeAction.Refresh, changedItem);
+            }
         }
 
         public void Clear()
         {
-            var oldItems = this.ToArray();
+            var removedItems = new List<CollectionChangeItemInfo>();
+
+            for (int i = 0; i < Count; i++)
+                removedItems.Add(new CollectionChangeItemInfo(InnerList[i], i, -1));
+            
+
+            //Raise event before dettaching parent
+            if (removedItems.Any())
+                RaiseCollectionChanged(CollectionChangeAction.Remove, removedItems);
 
             InnerList.Clear();
-
-            if (oldItems.Length > 0)
-            {
-                OnCollectionChanged(new ElementCollectionChangedEventArgs(this,
-                    System.ComponentModel.CollectionChangeAction.Remove, oldItems));
-
-                foreach (var itm in oldItems)
-                    UpdateItemParent(itm, false);
-            }
+            foreach (var itm in removedItems)
+                UpdateItemParent(itm.Element, false);
         }
 
         public bool Contains(T item)
@@ -204,6 +322,8 @@ namespace LDDModder.Modding.Editing
 
         public bool Contains(PartElement item)
         {
+            if (!(item is T))
+                return false;
             return InnerList.Contains(item);
         }
 
@@ -233,10 +353,33 @@ namespace LDDModder.Modding.Editing
                 Add(typedElem);
         }
 
+        public void AddRange(IEnumerable<PartElement> elements)
+        {
+            AddRange(elements.OfType<T>());
+        }
+
+        public void Insert(int index, PartElement element)
+        {
+            if (element is T typedElem)
+                Insert(index, typedElem);
+        }
+
+        public void InsertAllAt(int index, IEnumerable<PartElement> elements)
+        {
+            InsertAllAt(index, elements.OfType<T>());
+        }
+
         public void Remove(PartElement element)
         {
             if (element is T typedElem)
                 Remove(typedElem);
+        }
+
+        public int IndexOf(PartElement element)
+        {
+            if (element is T typedElem)
+                return IndexOf(typedElem);
+            return -1;
         }
 
         //protected override IEnumerator<PartElement> GetEnumeratorBase()
