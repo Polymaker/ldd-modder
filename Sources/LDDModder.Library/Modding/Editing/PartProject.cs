@@ -774,6 +774,16 @@ namespace LDDModder.Modding.Editing
 
         #region Methods
 
+        public void UpdateConnectionIndexes()
+        {
+            var connectionIDs = new List<string>();
+            foreach (var conn in Connections)
+                connectionIDs.Add(conn.ID);
+
+            foreach (var model in GetAllElements<PartCullingModel>())
+                model.ConnectionIndex = connectionIDs.IndexOf(model.ConnectionID);
+        }
+
         private void LinkStudReferences()
         {
             foreach (var surf in Surfaces)
@@ -876,6 +886,12 @@ namespace LDDModder.Modding.Editing
                     GenerateElementIDs(elementHierarchy);
                     GenerateElementsNames(elementHierarchy);
                 }
+            }
+
+            if (!IsLoading && ccea.Collection.ElementType == typeof(PartConnection) && 
+                GetAllElements<PartCullingModel>().Any())
+            {
+                UpdateConnectionIndexes();
             }
 
             if (ccea.GetElementHierarchy().OfType<ModelMeshReference>().Any())

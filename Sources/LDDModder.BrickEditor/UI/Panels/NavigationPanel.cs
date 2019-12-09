@@ -362,6 +362,87 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         }
 
-        
+        private void ProjectTreeView_ModelCanDrop(object sender, BrightIdeasSoftware.ModelDropEventArgs e)
+        {
+
+        }
+
+        private void ProjectTreeView_CanDrop(object sender, BrightIdeasSoftware.OlvDropEventArgs e)
+        {
+            e.Effect = DragDropEffects.None;
+            e.DropSink.CanDropBetween = false;
+            e.DropSink.CanDropOnItem = true;
+
+            if (e.DataObject is BrightIdeasSoftware.OLVDataObject dataObj)
+            {
+                var elementNodes = dataObj.ModelObjects.OfType<ProjectElementNode>().ToList();
+                var elemType = elementNodes.FirstOrDefault()?.Element.GetType();
+
+                if (elementNodes.All(x => x.Element.GetType() == elemType))
+                {
+                    if (elemType == typeof(ModelMeshReference))
+                    {
+                        var targetNode = e.DropTargetItem.RowObject as BaseProjectNode;
+                        if (targetNode is ProjectElementNode targetElemNode)
+                        {
+                            if (targetElemNode.Element is SurfaceComponent)
+                            {
+                                e.Effect = DragDropEffects.Move;
+                            }
+                            else if (targetElemNode.Element is ModelMeshReference)
+                            {
+                                e.Effect = DragDropEffects.Move;
+                                e.DropSink.CanDropBetween = true;
+                                e.DropSink.CanDropOnItem = false;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private void ProjectTreeView_Dropped(object sender, BrightIdeasSoftware.OlvDropEventArgs e)
+        {
+            if (e.DataObject is BrightIdeasSoftware.OLVDataObject dataObj)
+            {
+                var elementNodes = dataObj.ModelObjects.OfType<ProjectElementNode>().ToList();
+                var elemType = elementNodes.FirstOrDefault()?.Element.GetType();
+
+                if (elementNodes.All(x => x.Element.GetType() == elemType))
+                {
+                    if (elemType == typeof(ModelMeshReference))
+                    {
+                        var meshRefElems = elementNodes.Select(x => x.Element).OfType<ModelMeshReference>().ToList();
+                        var targetNode = e.DropTargetItem.RowObject as BaseProjectNode;
+                        if (targetNode is ProjectElementNode targetElemNode)
+                        {
+                            if (targetElemNode.Element is SurfaceComponent surfaceComponent)
+                            {
+                                ProjectManager.StartBatchChanges();
+                                meshRefElems.ForEach(x => x.TryRemove());
+                                surfaceComponent.Meshes.AddRange(meshRefElems);
+                                ProjectManager.EndBatchChanges();
+                            }
+                            else if (targetElemNode.Element is ModelMeshReference modelRef)
+                            {
+                                var parentComponent = modelRef.Parent as SurfaceComponent;
+                                ProjectManager.StartBatchChanges();
+                                meshRefElems.ForEach(x => x.TryRemove());
+
+                                if (parentComponent is FemaleStudModel femaleStud &&
+                                    femaleStud.ReplacementMeshes.Contains(modelRef))
+                                {
+                                    femaleStud.ReplacementMeshes.AddRange(meshRefElems);
+                                }
+                                else
+                                    parentComponent.Meshes.AddRange(meshRefElems);
+
+                                ProjectManager.EndBatchChanges();
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }

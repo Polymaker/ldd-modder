@@ -29,9 +29,9 @@ namespace LDDModder.PaletteMaker.Generation
                     setPart.MatchingFlags = PartMatchingFlags.NonLegoPart;
                     continue;
                 }
+                setPart.RbPart = db.RbParts.FirstOrDefault(x => x.PartID == setPart.PartID);
 
-                var rbPart = db.RbParts.FirstOrDefault(x => x.PartID == setPart.PartID);
-                if (rbPart == null)
+                if (setPart.RbPart == null)
                 {
                     setPart.MatchingFlags = PartMatchingFlags.InvalidRbPart;
                     continue;
@@ -42,6 +42,15 @@ namespace LDDModder.PaletteMaker.Generation
                     setPart.MatchingFlags = PartMatchingFlags.InvalidRbColor;
                     continue;
                 }
+
+                var lddColor = rbColor.ColorMatches.Where(x => x.Platform == "LEGO").OrderBy(x => x.ColorID).FirstOrDefault();
+                if (lddColor == null)
+                {
+                    setPart.MatchingFlags = PartMatchingFlags.InvalidLddColor;
+                    continue;
+                }
+
+                setPart.LddColorID = lddColor.ColorID;
 
                 if (!string.IsNullOrEmpty(setPart.ElementID))
                 {
@@ -59,7 +68,7 @@ namespace LDDModder.PaletteMaker.Generation
                     }
                 }
 
-                var lddPart = FindLddPart(db, rbPart);
+                var lddPart = FindLddPart(db, setPart.RbPart);
 
                 if (lddPart == null)
                 {
@@ -185,6 +194,50 @@ namespace LDDModder.PaletteMaker.Generation
             }
 
             return null;
+        }
+    
+        public static LDDModder.LDD.Palettes.Palette GeneratePalette(PaletteDbContext db, List<SetPartWrapper> setParts)
+        {
+            var palette = new LDDModder.LDD.Palettes.Palette();
+
+            foreach (var setPart in setParts)
+            {
+                if (setPart.LddPart == null)
+                    continue;
+
+                if (setPart.LddElement != null)
+                {
+                    var item = setPart.LddElement.ToPaletteItem(setPart.Quantity);
+                    palette.Items.Add(item);
+                }
+                else if (!setPart.LddPart.IsAssembly)
+                {
+                    var brick = new LDD.Palettes.Brick(int.Parse(setPart.LddPartID), string.Empty, setPart.Quantity);
+                    brick.MaterialID = setPart.LddColorID;
+                    palette.Items.Add(brick);
+                }
+                else
+                {
+                    var existingElem = db.LddElements
+                        .Where(x => x.DesignID == setPart.LddPartID)
+                        .OrderByDescending(x => x.Parts.FirstOrDefault().MaterialID == setPart.LddColorID)
+                        .FirstOrDefault();
+
+                    if (existingElem != null)
+                    {
+                        existingElem = existingElem.Clone();
+                        existingElem.ChangeColor(setPart.LddColorID);
+                        var item = existingElem.ToPaletteItem(setPart.Quantity);
+                        palette.Items.Add(item);
+                    }
+                    else
+                    {
+                        var subParts = db.AssemblyParts.Where(x => x.AssemblyID == setPart.LddPartID).ToList();
+
+                    }
+                }
+            }
+            return palette;
         }
     }
 }

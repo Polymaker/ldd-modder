@@ -190,9 +190,13 @@ namespace LDDModder.Modding.Editing
 
             if (element.HasElement(nameof(GeometryBounding), out XElement gb))
                 GeometryBounding = XmlHelper.DefaultDeserialize<BoundingBox>(gb);
+            else
+                GeometryBounding = new BoundingBox();
 
             if (element.HasElement(nameof(Bounding), out XElement bb))
                 Bounding = XmlHelper.DefaultDeserialize<BoundingBox>(bb);
+            else
+                Bounding = new BoundingBox();
 
             if (element.HasElement(nameof(DefaultOrientation), out XElement defori))
                 DefaultOrientation = ItemTransform.FromXml(defori);

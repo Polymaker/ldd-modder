@@ -36,8 +36,8 @@ namespace LDDModder.PaletteMaker.DB
                 if (cancellationToken.IsCancellationRequested)
                     return;
 
-                var rbImporter = new RebrickableDataImporter(conn, LDDEnvironment.Current, cancellationToken);
-                rbImporter.ImportAllData();
+                //var rbImporter = new RebrickableDataImporter(conn, LDDEnvironment.Current, cancellationToken);
+                //rbImporter.ImportAllData();
 
             }
         }

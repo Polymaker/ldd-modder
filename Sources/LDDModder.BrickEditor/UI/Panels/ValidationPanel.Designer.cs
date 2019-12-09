@@ -45,13 +45,13 @@
             // 
             // collapsiblePanel2.ContentPanel
             // 
-            this.collapsiblePanel2.ContentPanel.BackColor = System.Drawing.SystemColors.ControlLight;
             this.collapsiblePanel2.ContentPanel.Controls.Add(this.label2);
             this.collapsiblePanel2.ContentPanel.Controls.Add(this.button2);
-            this.collapsiblePanel2.ContentPanel.Location = new System.Drawing.Point(0, 19);
+            this.collapsiblePanel2.ContentPanel.Location = new System.Drawing.Point(0, 23);
             this.collapsiblePanel2.ContentPanel.Name = "ContentPanel";
-            this.collapsiblePanel2.ContentPanel.Size = new System.Drawing.Size(470, 118);
+            this.collapsiblePanel2.ContentPanel.Size = new System.Drawing.Size(470, 114);
             this.collapsiblePanel2.ContentPanel.TabIndex = 0;
+            this.collapsiblePanel2.DisplayStyle = LDDModder.BrickEditor.UI.Controls.CollapsiblePanel.HeaderDisplayStyle.Button;
             this.collapsiblePanel2.Dock = System.Windows.Forms.DockStyle.Top;
             this.collapsiblePanel2.Location = new System.Drawing.Point(0, 117);
             this.collapsiblePanel2.Name = "collapsiblePanel2";

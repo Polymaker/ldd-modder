@@ -80,6 +80,8 @@
             resources.ApplyResources(this.ProjectTreeView, "ProjectTreeView");
             this.ProjectTreeView.FullRowSelect = true;
             this.ProjectTreeView.HideSelection = false;
+            this.ProjectTreeView.IsSimpleDragSource = true;
+            this.ProjectTreeView.IsSimpleDropSink = true;
             this.ProjectTreeView.Name = "ProjectTreeView";
             this.ProjectTreeView.ShowGroups = false;
             this.ProjectTreeView.SmallImageList = this.imageList1;
@@ -88,6 +90,8 @@
             this.ProjectTreeView.UseHotItem = true;
             this.ProjectTreeView.View = System.Windows.Forms.View.Details;
             this.ProjectTreeView.VirtualMode = true;
+            this.ProjectTreeView.CanDrop += new System.EventHandler<BrightIdeasSoftware.OlvDropEventArgs>(this.ProjectTreeView_CanDrop);
+            this.ProjectTreeView.Dropped += new System.EventHandler<BrightIdeasSoftware.OlvDropEventArgs>(this.ProjectTreeView_Dropped);
             this.ProjectTreeView.SelectionChanged += new System.EventHandler(this.ProjectTreeView_SelectionChanged);
             // 
             // olvColumn1

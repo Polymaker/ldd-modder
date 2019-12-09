@@ -59,6 +59,24 @@ namespace LDDModder.PaletteMaker.Models.LDD
 
         }
     
+        public void ChangeColor(int colorID)
+        {
+            if (!IsAssembly)
+            {
+                int mainColor = Parts.OrderByDescending(x => x.PartID == DesignID).FirstOrDefault().MaterialID;
+                foreach(var part in Parts)
+                {
+                    if (part.MaterialID == mainColor)
+                        part.MaterialID = colorID;
+                }
+            }
+            else
+            {
+                foreach (var part in Parts)
+                    part.MaterialID = colorID;
+            }
+        }
+
         public LddElement Clone(string newElementID = null)
         {
             var newElem = new LddElement()

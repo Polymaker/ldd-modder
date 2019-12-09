@@ -75,6 +75,7 @@ namespace LDDModder.PaletteMaker.UI
             var cts = new CancellationTokenSource();
             Task.Factory.StartNew(() =>
             {
+                DatabaseInitializer.ImportBaseData(DBFilePath, cts.Token);
                 //DatabaseInitializer.ImportRebrickableData(DBFilePath, cts.Token);
                 DatabaseInitializer.InitializeDefaultMappings(DBFilePath);
             });
@@ -107,6 +108,7 @@ namespace LDDModder.PaletteMaker.UI
                 using (var db = GetDbContext())
                 {
                     PalatteGenerator.FindLddPartsForSet(db, setParts);
+                    PalatteGenerator.GeneratePalette(db, setParts);
                 }
             });
         }

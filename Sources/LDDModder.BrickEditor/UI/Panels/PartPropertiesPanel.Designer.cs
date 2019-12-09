@@ -317,7 +317,7 @@
             this.collapsiblePanel1.ContentPanel.Location = new System.Drawing.Point(0, 23);
             this.collapsiblePanel1.ContentPanel.Name = "ContentPanel";
             this.collapsiblePanel1.ContentPanel.Padding = new System.Windows.Forms.Padding(0, 3, 0, 3);
-            this.collapsiblePanel1.ContentPanel.Size = new System.Drawing.Size(793, 139);
+            this.collapsiblePanel1.ContentPanel.Size = new System.Drawing.Size(793, 142);
             this.collapsiblePanel1.ContentPanel.TabIndex = 0;
             this.collapsiblePanel1.DisplayStyle = LDDModder.BrickEditor.UI.Controls.CollapsiblePanel.HeaderDisplayStyle.Button;
             this.collapsiblePanel1.Dock = System.Windows.Forms.DockStyle.Top;
@@ -364,7 +364,7 @@
             this.collapsiblePanel2.ContentPanel.Location = new System.Drawing.Point(0, 23);
             this.collapsiblePanel2.ContentPanel.Name = "ContentPanel";
             this.collapsiblePanel2.ContentPanel.Padding = new System.Windows.Forms.Padding(0, 3, 0, 3);
-            this.collapsiblePanel2.ContentPanel.Size = new System.Drawing.Size(793, 166);
+            this.collapsiblePanel2.ContentPanel.Size = new System.Drawing.Size(793, 169);
             this.collapsiblePanel2.ContentPanel.TabIndex = 0;
             this.collapsiblePanel2.DisplayStyle = LDDModder.BrickEditor.UI.Controls.CollapsiblePanel.HeaderDisplayStyle.Button;
             this.collapsiblePanel2.Dock = System.Windows.Forms.DockStyle.Top;
@@ -385,7 +385,7 @@
             this.collapsiblePanel3.ContentPanel.Location = new System.Drawing.Point(0, 23);
             this.collapsiblePanel3.ContentPanel.Name = "ContentPanel";
             this.collapsiblePanel3.ContentPanel.Padding = new System.Windows.Forms.Padding(0, 3, 0, 3);
-            this.collapsiblePanel3.ContentPanel.Size = new System.Drawing.Size(793, 88);
+            this.collapsiblePanel3.ContentPanel.Size = new System.Drawing.Size(793, 91);
             this.collapsiblePanel3.ContentPanel.TabIndex = 0;
             this.collapsiblePanel3.DisplayStyle = LDDModder.BrickEditor.UI.Controls.CollapsiblePanel.HeaderDisplayStyle.Button;
             this.collapsiblePanel3.Dock = System.Windows.Forms.DockStyle.Top;

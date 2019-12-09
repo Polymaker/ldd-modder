@@ -20,9 +20,13 @@ namespace LDDModder.PaletteMaker.Generation
 
         public PartMatchingFlags MatchingFlags { get; set; }
 
+        public Models.Rebrickable.RbPart RbPart { get; set; }
+
         public LddPart LddPart { get; set; }
 
         public LddElement LddElement { get; set; }
+
+        public int LddColorID { get; set; }
 
         public bool IsGeneratedElement { get; set; }
 
