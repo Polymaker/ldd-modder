@@ -178,10 +178,11 @@ namespace LDDModder.Modding.Editing
 
             if (removedItem != null)
             {
+                InnerList.Remove((T)removedItem.Element);
+
                 //Raise event before dettaching parent
                 RaiseCollectionChanged(CollectionChangeAction.Remove, removedItem);
 
-                InnerList.Remove((T)removedItem.Element);
                 UpdateItemParent(removedItem.Element, false);
             }
         }
@@ -191,10 +192,11 @@ namespace LDDModder.Modding.Editing
             var removedItem = RemoveItem(item, true);
             if (removedItem != null)
             {
+                InnerList.Remove((T)removedItem.Element);
+
                 //Raise event before dettaching parent
                 RaiseCollectionChanged(CollectionChangeAction.Remove, removedItem);
 
-                InnerList.Remove((T)removedItem.Element);
                 UpdateItemParent(removedItem.Element, false);
             }
 
@@ -212,6 +214,8 @@ namespace LDDModder.Modding.Editing
 
                 if (removedItem != null)
                     removedItems.Add(removedItem);
+
+                InnerList.Remove(item);
             }
 
             //Raise event before dettaching parent
@@ -219,10 +223,7 @@ namespace LDDModder.Modding.Editing
                 RaiseCollectionChanged(CollectionChangeAction.Remove, removedItems);
 
             foreach (var item in removedItems)
-            {
-                InnerList.Remove((T)item.Element);
                 UpdateItemParent(item.Element, false);
-            }
         }
 
         public void RemoveAll(Func<T, bool> predicate)
@@ -232,7 +233,10 @@ namespace LDDModder.Modding.Editing
             foreach (var item in InnerList.ToArray())
             {
                 if (predicate(item))
+                {
                     removedItems.Add(RemoveItem(item, true));
+                    InnerList.Remove(item);
+                }
             }
 
             //Raise event before dettaching parent
@@ -240,10 +244,7 @@ namespace LDDModder.Modding.Editing
                 RaiseCollectionChanged(CollectionChangeAction.Remove, removedItems);
 
             foreach (var item in removedItems)
-            {
-                InnerList.Remove((T)item.Element);
                 UpdateItemParent(item.Element, false);
-            }
         }
 
         public void Insert(int index, T item)
