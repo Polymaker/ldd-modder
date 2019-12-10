@@ -211,6 +211,7 @@
     <Compile Include="Utilities\ExtensionMethods\StreamExtensions.cs" />
     <Compile Include="Utilities\ExtensionMethods\StringExtensions.cs" />
     <Compile Include="Utilities\FileHelper.cs" />
+    <Compile Include="Utilities\FlagManager.cs" />
     <Compile Include="Utilities\FormattedMessage.cs" />
     <Compile Include="Utilities\ListIndexer.cs" />
     <Compile Include="Utilities\MathHelper.cs" />

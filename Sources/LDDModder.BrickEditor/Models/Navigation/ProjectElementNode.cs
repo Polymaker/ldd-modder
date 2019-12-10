@@ -20,12 +20,16 @@ namespace LDDModder.BrickEditor.Models.Navigation
         {
             Element = element;
             NodeID = element.ID;
+            if (string.IsNullOrEmpty(NodeID))
+                NodeID = element.GetHashCode().ToString();
         }
 
         public ProjectElementNode(PartElement element, string text)
         {
             Element = element;
             NodeID = element.ID;
+            if (string.IsNullOrEmpty(NodeID))
+                NodeID = element.GetHashCode().ToString();
             Text = text;
         }
 
@@ -98,6 +102,7 @@ namespace LDDModder.BrickEditor.Models.Navigation
                 if (surface.SurfaceID == 0)
                 {
                     node.Text = ModelLocalizations.Label_MainSurface;
+
                     node.ImageKey = "Surface_Main";
                 }
                 else

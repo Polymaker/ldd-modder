@@ -2,14 +2,15 @@
 using LDDModder.BrickEditor.Models.Navigation;
 using LDDModder.BrickEditor.ProjectHandling;
 using LDDModder.BrickEditor.Resources;
-using LDDModder.LDD.Meshes;
 using LDDModder.Modding.Editing;
+using LDDModder.Utilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,9 +30,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             Bones
         }
 
-        private bool InternalSelection;
-        private bool UpdatingNavigation;
-        private bool IsDragAndDrop;
+        private FlagManager FlagManager;
 
         //private class ViewModeModel
         //{
@@ -39,43 +38,30 @@ namespace LDDModder.BrickEditor.UI.Panels
         //    public string Name { get; set; }
         //}
 
-        private NavigationViewMode CurrentViewMode => (NavigationViewMode)ViewModeComboBox.SelectedIndex;
+        //private NavigationViewMode CurrentViewMode => (NavigationViewMode)ViewModeComboBox.SelectedIndex;
 
         internal NavigationPanel()
         {
             InitializeComponent();
             InitializeNavigationImageList();
+            FlagManager = new FlagManager();
         }
 
         public NavigationPanel(ProjectManager projectManager) : base (projectManager)
         {
             InitializeComponent();
-            InitializeNavigationImageList();
-
+            
+            FlagManager = new FlagManager();
             CloseButtonVisible = false;
             CloseButton = false;
-            ElementsMenu_Delete.ShortcutKeys = Keys.Delete;
+            ContextMenu_Delete.ShortcutKeys = Keys.Delete;
 
             DockAreas = DockAreas.DockLeft | DockAreas.DockRight | DockAreas.Float | DockAreas.Document;
 
-            ProjectTreeView.CanExpandGetter += (model) =>
-            {
-                if (model is BaseProjectNode node)
-                    return node.HasChildrens();
-                return false;
-            };
 
-            ProjectTreeView.ChildrenGetter += (model) =>
-            {
-                if (model is BaseProjectNode node)
-                    return node.Childrens;
-                return new ArrayList();
-            };
-
+            InitializeNavigationImageList();
             InitializeContextMenus();
-
-            ProjectTreeView.DropSink = new NavigationDropHandler();
-            ProjectTreeView.DragSource = new NavigationDragHandler();
+            InitializeNavigationTreeView();
         }
 
         protected override void OnLoad(EventArgs e)
@@ -103,8 +89,8 @@ namespace LDDModder.BrickEditor.UI.Panels
                 ViewModeComboBox.Items.Add(ViewModeCollisions.Text);
                 ViewModeComboBox.Items.Add(ViewModeConnections.Text);
             }
-            
-            
+
+
             ViewModeComboBox.SelectedIndex = 1;
         }
 
@@ -114,7 +100,37 @@ namespace LDDModder.BrickEditor.UI.Panels
             NavigationImageList.Images.Add("Surface_Decoration", Properties.Resources.DecorationSurfaceIcon);
             NavigationImageList.Images.Add("Model_MaleStud", Properties.Resources.MaleStudIcon);
             NavigationImageList.Images.Add("Mesh", Properties.Resources.MeshIcon);
+            NavigationImageList.Images.Add("Visible", Properties.Resources.VisibleIcon);
+            NavigationImageList.Images.Add("Hidden", Properties.Resources.VisibleIcon);
+            
+        }
+
+        private void InitializeNavigationTreeView()
+        {
+            ProjectTreeView.CanExpandGetter += (model) =>
+            {
+                if (model is BaseProjectNode node)
+                    return node.HasChildrens();
+                return false;
+            };
+
+            ProjectTreeView.ChildrenGetter += (model) =>
+            {
+                if (model is BaseProjectNode node)
+                    return node.Childrens;
+                return new ArrayList();
+            };
+
+            ProjectTreeView.DropSink = new NavigationDropHandler();
+            ProjectTreeView.DragSource = new NavigationDragHandler();
+
             ProjectTreeView.SmallImageList = NavigationImageList;
+            olvColumnVisible.HeaderImageKey = "Visible";
+            olvColumnVisible.ShowTextInHeader = false;
+            olvColumnVisible.Sortable = false;
+            olvColumnVisible.ImageGetter = (x) => "Visible";
+
+            ProjectTreeView.TreeColumnRenderer = new Controls.TreeRendererEx();
         }
 
         protected override void OnProjectChanged()
@@ -136,70 +152,69 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void RebuildNavigation(bool recreate)
         {
-            UpdatingNavigation = true;
-
-            if (ProjectManager.IsProjectOpen)
+            using (FlagManager.UseFlag("BuildingNavTree"))
             {
-                var selectedNodeIDs = ProjectTreeView.SelectedObjects
-                    .OfType<BaseProjectNode>().Select(x => x.NodeID).ToList();
-                selectedNodeIDs.RemoveAll(x => string.IsNullOrEmpty(x));
-
-                var expandedNodeIDs = ProjectTreeView.ExpandedObjects
-                    .OfType<BaseProjectNode>().Select(x => x.NodeID).ToList();
-                expandedNodeIDs.RemoveAll(x => string.IsNullOrEmpty(x));
-
-                if (recreate)
+                if (ProjectManager.IsProjectOpen)
                 {
-                    ProjectTreeView.ClearObjects();
+                    var selectedNodeIDs = ProjectTreeView.SelectedObjects
+                        .OfType<BaseProjectNode>().Select(x => x.NodeID).ToList();
+                    selectedNodeIDs.RemoveAll(x => string.IsNullOrEmpty(x));
 
-                    ProjectTreeView.AddObject(new ProjectCollectionNode(
-                        CurrentProject.Surfaces,
-                        ModelLocalizations.Label_Surfaces));
+                    var expandedNodeIDs = ProjectTreeView.ExpandedObjects
+                        .OfType<BaseProjectNode>().Select(x => x.NodeID).ToList();
+                    expandedNodeIDs.RemoveAll(x => string.IsNullOrEmpty(x));
 
-                    if (CurrentProject.Properties.Flexible)
+                    if (recreate)
                     {
+                        ProjectTreeView.ClearObjects();
+
                         ProjectTreeView.AddObject(new ProjectCollectionNode(
-                            CurrentProject.Bones,
-                            "Bones"));
+                            CurrentProject.Surfaces,
+                            ModelLocalizations.Label_Surfaces));
+
+                        if (CurrentProject.Properties.Flexible)
+                        {
+                            ProjectTreeView.AddObject(new ProjectCollectionNode(
+                                CurrentProject.Bones,
+                                "Bones"));
+                        }
+                        else
+                        {
+                            ProjectTreeView.AddObject(new ProjectCollectionNode(
+                            CurrentProject.Collisions,
+                            ModelLocalizations.Label_Collisions));
+
+                            ProjectTreeView.AddObject(new ProjectCollectionNode(
+                                CurrentProject.Connections,
+                                ModelLocalizations.Label_Connections));
+                        }
+
+                        foreach (ProjectCollectionNode node in ProjectTreeView.Roots)
+                            ProjectTreeView.Expand(node);
                     }
                     else
                     {
-                        ProjectTreeView.AddObject(new ProjectCollectionNode(
-                        CurrentProject.Collisions,
-                        ModelLocalizations.Label_Collisions));
-
-                        ProjectTreeView.AddObject(new ProjectCollectionNode(
-                            CurrentProject.Connections,
-                            ModelLocalizations.Label_Connections));
+                        foreach (BaseProjectNode node in ProjectTreeView.Roots)
+                        {
+                            node.IsDirty = true;
+                            ProjectTreeView.UpdateObject(node);
+                        }
                     }
 
-                    foreach (ProjectCollectionNode node in ProjectTreeView.Roots)
-                        ProjectTreeView.Expand(node);
+
+                    ExpandNodes(ProjectTreeView.Roots, expandedNodeIDs);
+
+                    if (selectedNodeIDs.Any())
+                    {
+                        var selectedNodes = GetTreeNodes().Where(x => selectedNodeIDs.Contains(x.NodeID));
+                        SetSelectedNodes(selectedNodes);
+                    }
                 }
                 else
-                {
-                    foreach (BaseProjectNode node in ProjectTreeView.Roots)
-                    {
-                        node.IsDirty = true;
-                        ProjectTreeView.UpdateObject(node);
-                    }
-                }
+                    ProjectTreeView.ClearObjects();
 
-
-                ExpandNodes(ProjectTreeView.Roots, expandedNodeIDs);
-
-                if (selectedNodeIDs.Any())
-                {
-                    var selectedNodes = GetTreeNodes().Where(x => selectedNodeIDs.Contains(x.NodeID));
-                    SetSelectedNodes(selectedNodes);
-                }
+                FilterNavigation();
             }
-            else
-                ProjectTreeView.ClearObjects();
-
-            FilterNavigation();
-
-            UpdatingNavigation = false;
         }
 
         private void ExpandNodes(IEnumerable nodes, List<string> nodeIDs)
@@ -242,6 +257,28 @@ namespace LDDModder.BrickEditor.UI.Panels
         private void FilterNavigation()
         {
 
+        }
+
+        private void ProjectTreeView_CellEditStarting(object sender, CellEditEventArgs e)
+        {
+            if (!(e.ListViewItem.RowObject is ProjectElementNode))
+                e.Cancel = true;
+        }
+
+        private void ProjectTreeView_CellEditFinishing(object sender, CellEditEventArgs e)
+        {
+            if (e.ListViewItem.RowObject is ProjectElementNode elementNode)
+            {
+                string newName = e.NewValue as string;
+                if (string.IsNullOrEmpty(newName))
+                {
+                    e.Cancel = true;
+                    return;
+                }
+
+                newName = CurrentProject.RenameElement(elementNode.Element, newName);
+                e.NewValue = newName;
+            }
         }
 
         #endregion
@@ -358,68 +395,24 @@ namespace LDDModder.BrickEditor.UI.Panels
             }
 
             var selectedNodes = ProjectTreeView.SelectedObjects.OfType<BaseProjectNode>();
-            if (selectedNodes.Any())
-            {
 
-            }
+            ContextMenu_Rename.Visible = selectedNodes.Count() == 1 && 
+                selectedNodes.First() is ProjectElementNode;
+
             var anyPojectElem = GetSelectedElements().Any();
-            ElementsMenu_Delete.Enabled = selectedNodes.Any(x => x is ProjectElementNode);
+            ContextMenu_Delete.Enabled = anyPojectElem;
         }
 
-        #endregion
-
-        protected override void OnProjectElementsChanged()
+        private void ContextMenu_Rename_Click(object sender, EventArgs e)
         {
-            base.OnProjectElementsChanged();
-
-            if (InvokeRequired)
-                BeginInvoke((Action)(() => RebuildNavigation(false)));
-            else
-                RebuildNavigation(false);
-        }
-
-        private void ProjectTreeView_SelectionChanged(object sender, EventArgs e)
-        {
-            if (!(InternalSelection || UpdatingNavigation || IsDragAndDrop))
+            if (ProjectTreeView.SelectedObject != null)
             {
-                ProjectManager.SelectElements(GetSelectedElements());
+                //ProjectTreeView.EditSubItem(ProjectTreeView.SelectedItem, 0);
+                ProjectTreeView.StartCellEdit(ProjectTreeView.SelectedItem, 0);
             }
         }
 
-        public IEnumerable<PartElement> GetSelectedElements()
-        {
-            var selectedNodes = ProjectTreeView.SelectedObjects.OfType<BaseProjectNode>();
-            var elementNodes = selectedNodes.SelectMany(x => x.GetChildHierarchy(true)).OfType<ProjectElementNode>();
-            return elementNodes.Select(x => x.Element);
-        }
-
-        public void SetSelectedNodes(IEnumerable<BaseProjectNode> nodes)
-        {
-            InternalSelection = true;
-            ProjectTreeView.SelectObjects(nodes.ToList());
-            InternalSelection = false;
-        }
-
-        private ProjectElementNode GetFocusedParentElement<T>() where T : PartElement
-        {
-            var focusedNode = ProjectTreeView.FocusedObject as BaseProjectNode;
-            return focusedNode.GetParents(true)
-                .OfType<ProjectElementNode>()
-                .FirstOrDefault(x => x.Element.GetType() == typeof(T));
-        }
-
-        protected override void OnElementSelectionChanged()
-        {
-            base.OnElementSelectionChanged();
-            InternalSelection = true;
-
-
-            InternalSelection = false;
-        }
-
-        
-
-        private void ElementsMenu_Delete_Click(object sender, EventArgs e)
+        private void ContextMenu_Delete_Click(object sender, EventArgs e)
         {
             var elements = GetSelectedElements().ToList();
 
@@ -439,6 +432,109 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             ProjectManager.EndBatchChanges();
 
+        }
+
+        #endregion
+
+        protected override void OnProjectElementsChanged()
+        {
+            base.OnProjectElementsChanged();
+
+            if (InvokeRequired)
+                BeginInvoke((Action)(() => RebuildNavigation(false)));
+            else
+                RebuildNavigation(false);
+        }
+
+        protected override void OnElementPropertyChanged(ElementValueChangedEventArgs e)
+        {
+            base.OnElementPropertyChanged(e);
+            if (e.PropertyName == nameof(PartElement.Name))
+            {
+                if (InvokeRequired)
+                    BeginInvoke((Action)(() => RefreshElementName(e.Element)));
+                else
+                    RefreshElementName(e.Element);
+            }
+        }
+
+        private void RefreshElementName(PartElement element)
+        {
+            var elementNodes = GetAllTreeNodes().OfType<ProjectElementNode>();
+            var node = elementNodes.FirstOrDefault(x => x.Element == element);
+            if (node != null)
+            {
+                node.Text = element.Name;
+                ProjectTreeView.RefreshObject(node);
+            }
+        }
+
+        public IEnumerable<PartElement> GetSelectedElements()
+        {
+            var selectedNodes = ProjectTreeView.SelectedObjects.OfType<BaseProjectNode>();
+            var elementNodes = selectedNodes.SelectMany(x => x.GetChildHierarchy(true)).OfType<ProjectElementNode>();
+            return elementNodes.Select(x => x.Element);
+        }
+
+        public IEnumerable<BaseProjectNode> GetAllTreeNodes()
+        {
+            var selectedNodes = ProjectTreeView.Objects.OfType<BaseProjectNode>();
+            return selectedNodes.SelectMany(x => x.GetChildHierarchy(true));
+        }
+
+        public void SetSelectedNodes(IEnumerable<BaseProjectNode> nodes)
+        {
+            using (FlagManager.UseFlag("ManualSelect"))
+            {
+                ProjectTreeView.SelectObjects(nodes.ToList());
+            }
+        }
+
+        private ProjectElementNode GetFocusedParentElement<T>() where T : PartElement
+        {
+            var focusedNode = ProjectTreeView.FocusedObject as BaseProjectNode;
+            return focusedNode.GetParents(true)
+                .OfType<ProjectElementNode>()
+                .FirstOrDefault(x => x.Element.GetType() == typeof(T));
+        }
+
+        protected override void OnElementSelectionChanged()
+        {
+            base.OnElementSelectionChanged();
+
+            if (FlagManager.IsSet("SelectElements"))
+                return;
+
+            if (InvokeRequired)
+                BeginInvoke(new MethodInvoker(SyncProjectSelection));
+            else
+                SyncProjectSelection();
+        }
+
+        private void SyncProjectSelection()
+        {
+            if (ProjectManager.SelectedElements.Any())
+            {
+                var elementNodes = GetAllTreeNodes().OfType<ProjectElementNode>();
+                var selectedNodes = elementNodes.Where(x => ProjectManager.SelectedElements.Contains(x.Element));
+                SetSelectedNodes(selectedNodes);
+            }
+            else
+            {
+                using (FlagManager.UseFlag("ManualSelect"))
+                    ProjectTreeView.SelectedObjects.Clear();
+            }
+        }
+
+        private void ProjectTreeView_SelectionChanged(object sender, EventArgs e)
+        {
+            if (!(FlagManager.IsSet("BuildingNavTree") ||
+                FlagManager.IsSet("ManualSelect") ||
+                FlagManager.IsSet("DragDropping")))
+            {
+                using (FlagManager.UseFlag("SelectElements"))
+                    ProjectManager.SelectElements(GetSelectedElements());
+            }
         }
 
         #region Drag&Drop Handling
@@ -484,20 +580,76 @@ namespace LDDModder.BrickEditor.UI.Panels
                     base.DrawFeedback(g, bounds);
             }
 
+            protected override void DrawFeedbackItemTarget(Graphics g, Rectangle bounds)
+            {
+                if (DropTargetItem != null)
+                {
+                    Rectangle rect = CalculateDropTargetRectangle(DropTargetItem, DropTargetSubItemIndex);
+                    //rect.Inflate(1, 1);
+                    float diameter = rect.Height / 3;
+                    var currentSmoothingMode = g.SmoothingMode;
+                    g.SmoothingMode = SmoothingMode.AntiAlias;
+                    using (GraphicsPath path = GetRoundedRect(rect, diameter))
+                    {
+                        using (SolidBrush brush = new SolidBrush(Color.FromArgb(48, FeedbackColor)))
+                        {
+                            g.FillPath(brush, path);
+                        }
+                        using (Pen pen = new Pen(FeedbackColor, 1f))
+                        {
+                            g.DrawPath(pen, path);
+                        }
+                    }
+                    g.SmoothingMode = currentSmoothingMode;
+                }
+                //base.DrawFeedbackItemTarget(g, bounds);
+            }
+
+            protected override void DrawBetweenLine(Graphics g, int x1, int y1, int x2, int y2)
+            {
+                using (Brush brush = new SolidBrush(FeedbackColor))
+                {
+                    int num = x1;
+                    int num2 = y1;
+                    using (GraphicsPath graphicsPath = new GraphicsPath())
+                    {
+                        graphicsPath.AddLine(num, num2 + 4, num + 6, num2);
+                        graphicsPath.AddLine(num + 6, num2, num, num2 - 4);
+                        //graphicsPath.AddLine(num, num2 + 6, num, num2 - 6);
+                        //graphicsPath.AddBezier(num, num2 - 6, num + 3, num2 - 2, num + 6, num2 - 1, num + 11, num2);
+                        //graphicsPath.AddBezier(num + 11, num2, num + 6, num2 + 1, num + 3, num2 + 2, num, num2 + 6);
+                        graphicsPath.CloseFigure();
+                        g.FillPath(brush, graphicsPath);
+                    }
+                    num = x2;
+                    num2 = y2;
+                    using (GraphicsPath graphicsPath2 = new GraphicsPath())
+                    {
+                        graphicsPath2.AddLine(num, num2 + 4, num - 6, num2);
+                        graphicsPath2.AddLine(num - 6, num2, num, num2 - 4);
+
+                        //graphicsPath2.AddLine(num, num2 + 6, num, num2 - 6);
+                        //graphicsPath2.AddBezier(num, num2 - 7, num - 3, num2 - 2, num - 6, num2 - 1, num - 11, num2);
+                        //graphicsPath2.AddBezier(num - 11, num2, num - 6, num2 + 1, num - 3, num2 + 2, num, num2 + 7);
+                        graphicsPath2.CloseFigure();
+                        g.FillPath(brush, graphicsPath2);
+                    }
+                }
+
+                using (Pen pen = new Pen(FeedbackColor, 2f))
+                {
+                    g.DrawLine(pen, x1 + 4, y1 - 0.5f, x2 - 4, y2 - 0.5f);
+                }
+            }
+
             protected override Rectangle CalculateDropTargetRectangle(OLVListItem item, int subItem)
             {
                 if (subItem > 0)
                     return item.SubItems[subItem].Bounds;
 
-                Rectangle result = item.Bounds;// ListView.CalculateCellTextBounds(item, subItem);
+                Rectangle result = item.Bounds;
                 result.X += 3;
                 result.Width -= 6;
-                //if (item.IndentCount > 0)
-                //{
-                //    int width = TreeListView.TreeRenderer.PIXELS_PER_LEVEL;
-                //    result.X += width * item.IndentCount;
-                //    result.Width -= width * item.IndentCount;
-                //}
                 return result;
             }
         }
@@ -574,29 +726,30 @@ namespace LDDModder.BrickEditor.UI.Panels
 
                         if (targetCollection != null)
                         {
-                            IsDragAndDrop = true;
-                            ProjectManager.StartBatchChanges();
+                            using (FlagManager.UseFlag("DragDropping"))
+                            {
+                                ProjectManager.StartBatchChanges();
 
-                            if (targetElement != null && e.DropTargetLocation == DropTargetLocation.AboveItem)
-                            {
-                                int itemIndex = targetCollection.IndexOf(targetElement);
-                                meshRefElems.ForEach(x => x.TryRemove());
-                                targetCollection.InsertAllAt(itemIndex, meshRefElems);
-                            }
-                            else if (targetElement != null && e.DropTargetLocation == DropTargetLocation.BelowItem)
-                            {
-                                int itemIndex = targetCollection.IndexOf(targetElement);
-                                meshRefElems.ForEach(x => x.TryRemove());
-                                targetCollection.InsertAllAt(itemIndex + 1, meshRefElems);
-                            }
-                            else
-                            {
-                                meshRefElems.ForEach(x => x.TryRemove());
-                                targetCollection.AddRange(meshRefElems);
-                            }
+                                if (targetElement != null && e.DropTargetLocation == DropTargetLocation.AboveItem)
+                                {
+                                    int itemIndex = targetCollection.IndexOf(targetElement);
+                                    meshRefElems.ForEach(x => x.TryRemove());
+                                    targetCollection.InsertAllAt(itemIndex, meshRefElems);
+                                }
+                                else if (targetElement != null && e.DropTargetLocation == DropTargetLocation.BelowItem)
+                                {
+                                    int itemIndex = targetCollection.IndexOf(targetElement);
+                                    meshRefElems.ForEach(x => x.TryRemove());
+                                    targetCollection.InsertAllAt(itemIndex + 1, meshRefElems);
+                                }
+                                else
+                                {
+                                    meshRefElems.ForEach(x => x.TryRemove());
+                                    targetCollection.AddRange(meshRefElems);
+                                }
 
-                            ProjectManager.EndBatchChanges();
-                            IsDragAndDrop = false;
+                                ProjectManager.EndBatchChanges();
+                            }
 
                             SetSelectedNodes(elementNodes);
                         }
@@ -606,8 +759,11 @@ namespace LDDModder.BrickEditor.UI.Panels
         }
 
 
+
+
         #endregion
 
+        
     }
     
 }

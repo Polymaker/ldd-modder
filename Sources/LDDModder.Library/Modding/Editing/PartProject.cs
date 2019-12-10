@@ -763,10 +763,21 @@ namespace LDDModder.Modding.Editing
             var elemList = GetAllElements().Where(x => x.GetFullElementType() == element.GetFullElementType()).ToList();
             int nameCount = 1;
             string elementName = suggestedName;
+
             while (elemList.Any(x => x.Name == elementName && x != element))
                 elementName = $"{suggestedName}_{nameCount++}";
 
             element.InternalSetName(elementName, true);
+
+            if (element is ModelMeshReference meshRef && meshRef.ModelMesh != null)
+            {
+                if (meshRef.ModelMesh.GetReferences().Count() == 1 && !Meshes.Any(x => x.Name == elementName))
+                {
+                    meshRef.ModelMesh.InternalSetName(elementName, true);
+                    //RenameElement(meshRef.ModelMesh, elementName);
+                }
+            }
+
             return elementName;
         }
 

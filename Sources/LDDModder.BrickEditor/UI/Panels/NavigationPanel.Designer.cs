@@ -31,7 +31,8 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(NavigationPanel));
             this.ProjectTreeView = new BrightIdeasSoftware.TreeListView();
-            this.olvColumn1 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvColumnElement = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvColumnVisible = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.ElementsContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.ContextMenu_AddSurface = new System.Windows.Forms.ToolStripMenuItem();
             this.ContextMenu_AddElement = new System.Windows.Forms.ToolStripMenuItem();
@@ -52,17 +53,18 @@
             this.AddConnectionMenu_Rail = new System.Windows.Forms.ToolStripMenuItem();
             this.AddConnectionMenu_Slider = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.ElementsMenu_Delete = new System.Windows.Forms.ToolStripMenuItem();
+            this.ContextMenu_Rename = new System.Windows.Forms.ToolStripMenuItem();
+            this.ContextMenu_Delete = new System.Windows.Forms.ToolStripMenuItem();
             this.NavigationImageList = new System.Windows.Forms.ImageList(this.components);
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.label1 = new System.Windows.Forms.Label();
             this.ViewModeComboBox = new System.Windows.Forms.ComboBox();
             this.LocalizedStrings = new LDDModder.BrickEditor.Localization.LocalizableStringList(this.components);
-            this.ViewModeAll = ((LDDModder.BrickEditor.Localization.LocalizableString)(new LDDModder.BrickEditor.Localization.LocalizableString()));
-            this.ViewModeBones = ((LDDModder.BrickEditor.Localization.LocalizableString)(new LDDModder.BrickEditor.Localization.LocalizableString()));
-            this.ViewModeCollisions = ((LDDModder.BrickEditor.Localization.LocalizableString)(new LDDModder.BrickEditor.Localization.LocalizableString()));
-            this.ViewModeConnections = ((LDDModder.BrickEditor.Localization.LocalizableString)(new LDDModder.BrickEditor.Localization.LocalizableString()));
-            this.ViewModeSurfaces = ((LDDModder.BrickEditor.Localization.LocalizableString)(new LDDModder.BrickEditor.Localization.LocalizableString()));
+            this.ViewModeAll = new LDDModder.BrickEditor.Localization.LocalizableString();
+            this.ViewModeBones = new LDDModder.BrickEditor.Localization.LocalizableString();
+            this.ViewModeCollisions = new LDDModder.BrickEditor.Localization.LocalizableString();
+            this.ViewModeConnections = new LDDModder.BrickEditor.Localization.LocalizableString();
+            this.ViewModeSurfaces = new LDDModder.BrickEditor.Localization.LocalizableString();
             ((System.ComponentModel.ISupportInitialize)(this.ProjectTreeView)).BeginInit();
             this.ElementsContextMenu.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -70,13 +72,15 @@
             // 
             // ProjectTreeView
             // 
-            this.ProjectTreeView.AllColumns.Add(this.olvColumn1);
+            this.ProjectTreeView.AllColumns.Add(this.olvColumnElement);
+            this.ProjectTreeView.AllColumns.Add(this.olvColumnVisible);
             this.ProjectTreeView.AlternateRowBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(250)))), ((int)(((byte)(250)))));
+            this.ProjectTreeView.CellEditActivation = BrightIdeasSoftware.ObjectListView.CellEditActivateMode.DoubleClick;
             this.ProjectTreeView.CellEditUseWholeCell = false;
             this.ProjectTreeView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.olvColumn1});
+            this.olvColumnElement,
+            this.olvColumnVisible});
             this.ProjectTreeView.ContextMenuStrip = this.ElementsContextMenu;
-            this.ProjectTreeView.Cursor = System.Windows.Forms.Cursors.Default;
             resources.ApplyResources(this.ProjectTreeView, "ProjectTreeView");
             this.ProjectTreeView.FullRowSelect = true;
             this.ProjectTreeView.HideSelection = false;
@@ -89,17 +93,26 @@
             this.ProjectTreeView.View = System.Windows.Forms.View.Details;
             this.ProjectTreeView.VirtualMode = true;
             this.ProjectTreeView.CanDrop += new System.EventHandler<BrightIdeasSoftware.OlvDropEventArgs>(this.ProjectTreeView_CanDrop);
+            this.ProjectTreeView.CellEditFinishing += new BrightIdeasSoftware.CellEditEventHandler(this.ProjectTreeView_CellEditFinishing);
+            this.ProjectTreeView.CellEditStarting += new BrightIdeasSoftware.CellEditEventHandler(this.ProjectTreeView_CellEditStarting);
             this.ProjectTreeView.Dropped += new System.EventHandler<BrightIdeasSoftware.OlvDropEventArgs>(this.ProjectTreeView_Dropped);
             this.ProjectTreeView.SelectionChanged += new System.EventHandler(this.ProjectTreeView_SelectionChanged);
             // 
-            // olvColumn1
+            // olvColumnElement
             // 
-            this.olvColumn1.AspectName = "Text";
-            this.olvColumn1.FillsFreeSpace = true;
-            this.olvColumn1.ImageAspectName = "ImageKey";
-            this.olvColumn1.IsEditable = false;
-            this.olvColumn1.Sortable = false;
-            resources.ApplyResources(this.olvColumn1, "olvColumn1");
+            this.olvColumnElement.AspectName = "Text";
+            this.olvColumnElement.CellEditUseWholeCell = true;
+            this.olvColumnElement.FillsFreeSpace = true;
+            this.olvColumnElement.ImageAspectName = "ImageKey";
+            this.olvColumnElement.Sortable = false;
+            resources.ApplyResources(this.olvColumnElement, "olvColumnElement");
+            // 
+            // olvColumnVisible
+            // 
+            this.olvColumnVisible.MinimumWidth = 20;
+            this.olvColumnVisible.ShowTextInHeader = false;
+            this.olvColumnVisible.Sortable = false;
+            resources.ApplyResources(this.olvColumnVisible, "olvColumnVisible");
             // 
             // ElementsContextMenu
             // 
@@ -109,7 +122,8 @@
             this.ContextMenu_AddCollision,
             this.ContextMenu_AddConnection,
             this.toolStripSeparator1,
-            this.ElementsMenu_Delete});
+            this.ContextMenu_Rename,
+            this.ContextMenu_Delete});
             this.ElementsContextMenu.Name = "contextMenuStrip1";
             resources.ApplyResources(this.ElementsContextMenu, "ElementsContextMenu");
             this.ElementsContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.ElementsContextMenu_Opening);
@@ -236,11 +250,17 @@
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             resources.ApplyResources(this.toolStripSeparator1, "toolStripSeparator1");
             // 
-            // ElementsMenu_Delete
+            // ContextMenu_Rename
             // 
-            this.ElementsMenu_Delete.Name = "ElementsMenu_Delete";
-            resources.ApplyResources(this.ElementsMenu_Delete, "ElementsMenu_Delete");
-            this.ElementsMenu_Delete.Click += new System.EventHandler(this.ElementsMenu_Delete_Click);
+            this.ContextMenu_Rename.Name = "ContextMenu_Rename";
+            resources.ApplyResources(this.ContextMenu_Rename, "ContextMenu_Rename");
+            this.ContextMenu_Rename.Click += new System.EventHandler(this.ContextMenu_Rename_Click);
+            // 
+            // ContextMenu_Delete
+            // 
+            this.ContextMenu_Delete.Name = "ContextMenu_Delete";
+            resources.ApplyResources(this.ContextMenu_Delete, "ContextMenu_Delete");
+            this.ContextMenu_Delete.Click += new System.EventHandler(this.ContextMenu_Delete_Click);
             // 
             // NavigationImageList
             // 
@@ -271,11 +291,12 @@
             // 
             // LocalizedStrings
             // 
-            this.LocalizedStrings.Items.Add(this.ViewModeAll);
-            this.LocalizedStrings.Items.Add(this.ViewModeBones);
-            this.LocalizedStrings.Items.Add(this.ViewModeCollisions);
-            this.LocalizedStrings.Items.Add(this.ViewModeConnections);
-            this.LocalizedStrings.Items.Add(this.ViewModeSurfaces);
+            this.LocalizedStrings.Items.AddRange(new LDDModder.BrickEditor.Localization.LocalizableString[] {
+            this.ViewModeAll,
+            this.ViewModeBones,
+            this.ViewModeCollisions,
+            this.ViewModeConnections,
+            this.ViewModeSurfaces});
             // 
             // ViewModeAll
             // 
@@ -314,7 +335,7 @@
         #endregion
 
         private BrightIdeasSoftware.TreeListView ProjectTreeView;
-        private BrightIdeasSoftware.OLVColumn olvColumn1;
+        private BrightIdeasSoftware.OLVColumn olvColumnElement;
         private System.Windows.Forms.ContextMenuStrip ElementsContextMenu;
         private System.Windows.Forms.ToolStripMenuItem ContextMenu_AddElement;
         private System.Windows.Forms.ToolStripMenuItem AddElementMenu_Part;
@@ -328,7 +349,7 @@
         private Localization.LocalizableString ViewModeConnections;
         private Localization.LocalizableString ViewModeBones;
         private Localization.LocalizableString ViewModeAll;
-        private System.Windows.Forms.ToolStripMenuItem ElementsMenu_Delete;
+        private System.Windows.Forms.ToolStripMenuItem ContextMenu_Delete;
         private System.Windows.Forms.ToolStripMenuItem ContextMenu_AddSurface;
         private System.Windows.Forms.ToolStripMenuItem AddElementMenu_FemaleStud;
         private System.Windows.Forms.ToolStripMenuItem AddElementMenu_BrickTube;
@@ -346,5 +367,7 @@
         private System.Windows.Forms.ToolStripMenuItem AddConnectionMenu_Slider;
         private System.Windows.Forms.ToolStripMenuItem AddConnectionMenu_Fixed;
         private System.Windows.Forms.ImageList NavigationImageList;
+        private BrightIdeasSoftware.OLVColumn olvColumnVisible;
+        private System.Windows.Forms.ToolStripMenuItem ContextMenu_Rename;
     }
 }

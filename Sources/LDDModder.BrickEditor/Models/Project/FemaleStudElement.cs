@@ -10,18 +10,18 @@ namespace LDDModder.BrickEditor.Models.Project
 {
     public class FemaleStudElement : RenderableElement
     {
-        private bool _DisplayReplacementMesh;
+        private bool _DisplayAlternateMesh;
 
-        public bool DisplayReplacementMesh
+        public bool DisplayAlternateMesh
         {
-            get => _DisplayReplacementMesh;
+            get => _DisplayAlternateMesh;
             set
             {
-                if (_DisplayReplacementMesh != value)
+                if (_DisplayAlternateMesh != value)
                 {
-                    _DisplayReplacementMesh = value;
+                    _DisplayAlternateMesh = value;
                     UpdateModelsVisibility();
-                    OnPropertyChanged(nameof(DisplayReplacementMesh));
+                    OnPropertyChanged(nameof(DisplayAlternateMesh));
                 }
             }
         }

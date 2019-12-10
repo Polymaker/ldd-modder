@@ -117,8 +117,15 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="olvColumn1.Text" xml:space="preserve">
+  <data name="olvColumnElement.Text" xml:space="preserve">
     <value>Elements</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="olvColumnElement.Width" type="System.Int32, mscorlib">
+    <value>120</value>
+  </data>
+  <data name="olvColumnVisible.Width" type="System.Int32, mscorlib">
+    <value>24</value>
   </data>
   <metadata name="ElementsContextMenu.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
@@ -235,14 +242,20 @@
   <data name="toolStripSeparator1.Size" type="System.Drawing.Size, System.Drawing">
     <value>176, 6</value>
   </data>
-  <data name="ElementsMenu_Delete.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="ContextMenu_Rename.Size" type="System.Drawing.Size, System.Drawing">
     <value>179, 22</value>
   </data>
-  <data name="ElementsMenu_Delete.Text" xml:space="preserve">
+  <data name="ContextMenu_Rename.Text" xml:space="preserve">
+    <value>Rename</value>
+  </data>
+  <data name="ContextMenu_Delete.Size" type="System.Drawing.Size, System.Drawing">
+    <value>179, 22</value>
+  </data>
+  <data name="ContextMenu_Delete.Text" xml:space="preserve">
     <value>Delete</value>
   </data>
   <data name="ElementsContextMenu.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 120</value>
+    <value>180, 142</value>
   </data>
   <data name="&gt;&gt;ElementsContextMenu.Name" xml:space="preserve">
     <value>ElementsContextMenu</value>
@@ -266,7 +279,6 @@
   <data name="NavigationImageList.ImageSize" type="System.Drawing.Size, System.Drawing">
     <value>20, 20</value>
   </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="ProjectTreeView.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
   </data>
@@ -399,10 +411,16 @@
   <data name="$this.Text" xml:space="preserve">
     <value>Navigation</value>
   </data>
-  <data name="&gt;&gt;olvColumn1.Name" xml:space="preserve">
-    <value>olvColumn1</value>
+  <data name="&gt;&gt;olvColumnElement.Name" xml:space="preserve">
+    <value>olvColumnElement</value>
   </data>
-  <data name="&gt;&gt;olvColumn1.Type" xml:space="preserve">
+  <data name="&gt;&gt;olvColumnElement.Type" xml:space="preserve">
+    <value>BrightIdeasSoftware.OLVColumn, ObjectListView, Version=2.9.1.1072, Culture=neutral, PublicKeyToken=b1c5bf581481bcd4</value>
+  </data>
+  <data name="&gt;&gt;olvColumnVisible.Name" xml:space="preserve">
+    <value>olvColumnVisible</value>
+  </data>
+  <data name="&gt;&gt;olvColumnVisible.Type" xml:space="preserve">
     <value>BrightIdeasSoftware.OLVColumn, ObjectListView, Version=2.9.1.1072, Culture=neutral, PublicKeyToken=b1c5bf581481bcd4</value>
   </data>
   <data name="&gt;&gt;ContextMenu_AddSurface.Name" xml:space="preserve">
@@ -519,10 +537,16 @@
   <data name="&gt;&gt;toolStripSeparator1.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;ElementsMenu_Delete.Name" xml:space="preserve">
-    <value>ElementsMenu_Delete</value>
+  <data name="&gt;&gt;ContextMenu_Rename.Name" xml:space="preserve">
+    <value>ContextMenu_Rename</value>
   </data>
-  <data name="&gt;&gt;ElementsMenu_Delete.Type" xml:space="preserve">
+  <data name="&gt;&gt;ContextMenu_Rename.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ContextMenu_Delete.Name" xml:space="preserve">
+    <value>ContextMenu_Delete</value>
+  </data>
+  <data name="&gt;&gt;ContextMenu_Delete.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;NavigationImageList.Name" xml:space="preserve">
@@ -535,42 +559,42 @@
     <value>LocalizedStrings</value>
   </data>
   <data name="&gt;&gt;LocalizedStrings.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableStringList, LDDModder.BrickEditor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableStringList, LDDModder.BrickEditor, Version=1.0.0.26346, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;ViewModeAll.Name" xml:space="preserve">
     <value>ViewModeAll</value>
   </data>
   <data name="&gt;&gt;ViewModeAll.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, LDDModder.BrickEditor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, LDDModder.BrickEditor, Version=1.0.0.26346, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;ViewModeBones.Name" xml:space="preserve">
     <value>ViewModeBones</value>
   </data>
   <data name="&gt;&gt;ViewModeBones.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, LDDModder.BrickEditor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, LDDModder.BrickEditor, Version=1.0.0.26346, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;ViewModeCollisions.Name" xml:space="preserve">
     <value>ViewModeCollisions</value>
   </data>
   <data name="&gt;&gt;ViewModeCollisions.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, LDDModder.BrickEditor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, LDDModder.BrickEditor, Version=1.0.0.26346, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;ViewModeConnections.Name" xml:space="preserve">
     <value>ViewModeConnections</value>
   </data>
   <data name="&gt;&gt;ViewModeConnections.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, LDDModder.BrickEditor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, LDDModder.BrickEditor, Version=1.0.0.26346, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;ViewModeSurfaces.Name" xml:space="preserve">
     <value>ViewModeSurfaces</value>
   </data>
   <data name="&gt;&gt;ViewModeSurfaces.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, LDDModder.BrickEditor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, LDDModder.BrickEditor, Version=1.0.0.26346, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>NavigationPanel</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Panels.ProjectDocumentPanel, LDDModder.BrickEditor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Panels.ProjectDocumentPanel, LDDModder.BrickEditor, Version=1.0.0.26346, Culture=neutral, PublicKeyToken=null</value>
   </data>
 </root>

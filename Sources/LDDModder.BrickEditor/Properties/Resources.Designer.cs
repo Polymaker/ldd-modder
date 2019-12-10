@@ -73,6 +73,16 @@ namespace LDDModder.BrickEditor.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap HiddenIcon {
+            get {
+                object obj = ResourceManager.GetObject("HiddenIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap MainSurfaceIcon {
             get {
                 object obj = ResourceManager.GetObject("MainSurfaceIcon", resourceCulture);
@@ -96,6 +106,16 @@ namespace LDDModder.BrickEditor.Properties {
         internal static System.Drawing.Bitmap MeshIcon {
             get {
                 object obj = ResourceManager.GetObject("MeshIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap VisibleIcon {
+            get {
+                object obj = ResourceManager.GetObject("VisibleIcon", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

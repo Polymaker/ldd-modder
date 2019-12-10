@@ -55,7 +55,7 @@
             this.collapsiblePanel2.Dock = System.Windows.Forms.DockStyle.Top;
             this.collapsiblePanel2.Location = new System.Drawing.Point(0, 117);
             this.collapsiblePanel2.Name = "collapsiblePanel2";
-            this.collapsiblePanel2.PanelHeight = 118;
+            this.collapsiblePanel2.PanelHeight = 114;
             this.collapsiblePanel2.Size = new System.Drawing.Size(470, 137);
             this.collapsiblePanel2.TabIndex = 2;
             this.collapsiblePanel2.Text = "collapsiblePanel2";

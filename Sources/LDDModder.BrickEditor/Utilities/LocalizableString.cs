@@ -44,12 +44,19 @@ namespace LDDModder.BrickEditor.Localization
 
         public void Dispose()
         {
+            if (_Site != null && _Site.Container != null)
+                _Site.Container.Remove(this);
             Disposed?.Invoke(this, EventArgs.Empty);
         }
     }
 
     internal class LocalizableStringConverter : ExpandableObjectConverter
     {
+        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
+        {
+            return base.CanConvertFrom(context, sourceType);
+        }
+
         public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
         {
             if (destinationType == typeof(InstanceDescriptor))
@@ -61,23 +68,17 @@ namespace LDDModder.BrickEditor.Localization
 
         public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
         {
-            //if (value is LocalizableString localizableString)
-            //{
-            //    if (destinationType == typeof(InstanceDescriptor))
-            //    {
-            //        var defaultCtor = typeof(LocalizableString).GetConstructor(new Type[] { typeof(string) });
-            //        return new InstanceDescriptor(defaultCtor, new object[] { localizableString.Text }, true);
-            //    }
-            //}
-
             if (destinationType == typeof(InstanceDescriptor))
             {
                 var defaultCtor = typeof(LocalizableString).GetConstructor(new Type[0]);
                 if (defaultCtor == null)
+                {
                     defaultCtor = typeof(LocalizableString).GetConstructors()
                         .OrderBy(x => x.GetParameters().Length).FirstOrDefault();
+                }
                 return new InstanceDescriptor(defaultCtor, new object[0], false);
             }
+            
 
             return base.ConvertTo(context, culture, value, destinationType);
         }

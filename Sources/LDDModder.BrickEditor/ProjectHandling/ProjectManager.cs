@@ -49,6 +49,8 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
         public event EventHandler ProjectChanged;
 
+        public event EventHandler ProjectModified;
+
         public event EventHandler<ElementCollectionChangedEventArgs> ElementCollectionChanged;
 
         public event EventHandler ProjectElementsChanged;
@@ -66,6 +68,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
             UndoRedoManager = new UndoRedoManager(this);
             UndoRedoManager.BeginUndoRedo += UndoRedoManager_BeginUndoRedo;
             UndoRedoManager.EndUndoRedo += UndoRedoManager_EndUndoRedo;
+            UndoRedoManager.UndoHistoryChanged += UndoRedoManager_UndoHistoryChanged;
             //ElementExtentions = new HashSet<ElementExtention>();
         }
 
@@ -112,6 +115,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
                 CurrentProject.Save(targetPath);
                 CurrentProject.ProjectPath = targetPath;
                 LastSavedChange = UndoRedoManager.CurrentChangeID;
+                ProjectModified?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -269,6 +273,11 @@ namespace LDDModder.BrickEditor.ProjectHandling
                 ElementsChanged = false;
                 ProjectElementsChanged?.Invoke(this, EventArgs.Empty);
             }
+        }
+
+        private void UndoRedoManager_UndoHistoryChanged(object sender, EventArgs e)
+        {
+            ProjectModified?.Invoke(this, EventArgs.Empty);
         }
 
         private void UndoRedoManager_BeginUndoRedo(object sender, EventArgs e)

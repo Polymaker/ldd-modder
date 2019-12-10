@@ -127,7 +127,10 @@ namespace LDDModder.BrickEditor.UI.Panels
             mainForm.Deactivate += MainForm_Deactivate;
 
             UpdateTitle();
+            ProjectManager.ProjectModified += ProjectManager_ProjectModified;
         }
+
+        
 
         #region Initialization
 
@@ -331,8 +334,6 @@ namespace LDDModder.BrickEditor.UI.Panels
         }
 
         #endregion
-
-        
 
         #region Render Loop
 
@@ -699,6 +700,12 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         #region Project Handling
 
+        protected override void OnProjectChanged()
+        {
+            base.OnProjectChanged();
+            UpdateTitle();
+        }
+
         protected override void OnProjectLoaded(PartProject project)
         {
             base.OnProjectLoaded(project);
@@ -707,19 +714,14 @@ namespace LDDModder.BrickEditor.UI.Panels
             RebuildCollisionModels();
             RebuildConnectionModels();
             SetupDefaultCamera();
-            UpdateTitle();
         }
 
-        protected override void OnProjectChangeApplied()
+        private void ProjectManager_ProjectModified(object sender, EventArgs e)
         {
-            BeginInvoke(new MethodInvoker(UpdateTitle));
-        }
-
-        protected override void OnElementPropertyChanged(ElementValueChangedEventArgs e)
-        {
-            base.OnElementPropertyChanged(e);
-            if (e.Element is PartProperties)
+            if (InvokeRequired)
                 BeginInvoke(new MethodInvoker(UpdateTitle));
+            else
+                UpdateTitle();
         }
 
         private void AddPartSurfaceModel(PartSurface surface)
@@ -854,12 +856,29 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void RebuildCollisionModels()
         {
-            CollisionModels.Clear();
-
-            if (CurrentProject != null)
+            if (ProjectManager.IsProjectOpen)
             {
-                foreach (var col in CurrentProject.Collisions)
-                    CollisionModels.Add(new CollisionModel(col));
+                var allCollisions = CurrentProject.GetAllElements<PartCollision>().ToList();
+
+                foreach (var colModel in CollisionModels.ToArray())
+                {
+                    if (!allCollisions.Contains(colModel.PartCollision))
+                    {
+                        colModel.Dispose();
+                        CollisionModels.Remove(colModel);
+                    }
+                }
+
+                foreach (var collision in allCollisions)
+                {
+                    if (!CollisionModels.Any(x => x.PartCollision == collision))
+                        CollisionModels.Add(new CollisionModel(collision));
+                }
+            }
+            else if (CollisionModels.Any())
+            {
+                CollisionModels.ForEach(x => x.Dispose());
+                CollisionModels.Clear();
             }
         }
 
@@ -867,10 +886,15 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             ConnectionModels.Clear();
 
-            if (CurrentProject != null)
+            if (ProjectManager.IsProjectOpen)
             {
                 foreach (var conn in CurrentProject.Connections)
                     ConnectionModels.Add(new ConnectionModel(conn));
+            }
+            else if (ConnectionModels.Any())
+            {
+                ConnectionModels.ForEach(x => x.Dispose());
+                ConnectionModels.Clear();
             }
         }
 
@@ -882,7 +906,6 @@ namespace LDDModder.BrickEditor.UI.Panels
             ConnectionModels.Clear();
             GC.Collect();
         }
-
 
         public IEnumerable<PartElementModel> GetAllElementModels()
         {
@@ -915,7 +938,6 @@ namespace LDDModder.BrickEditor.UI.Panels
                 foreach (var model in ConnectionModels)
                     yield return model;
             }
-
         }
 
         public IEnumerable<PartElementModel> GetSelectedModels(bool onlyVisible = false)
