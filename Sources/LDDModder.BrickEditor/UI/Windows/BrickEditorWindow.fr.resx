@@ -162,4 +162,7 @@
   <data name="Edit_ImportMeshMenu.Text" xml:space="preserve">
     <value>Importer un modèle 3D...</value>
   </data>
+  <data name="ExportBrickMenuItem.Text" xml:space="preserve">
+    <value>Exporter un modèle de brique...</value>
+  </data>
 </root>

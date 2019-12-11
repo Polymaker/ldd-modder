@@ -74,5 +74,20 @@ namespace LDDModder.Modding.Editing
             }));
             return fieldRef;
         }
+
+        public override List<ValidationMessage> ValidateElement()
+        {
+            var messages = base.ValidateElement();
+
+            void AddMessage(string code, ValidationLevel level, params object[] args)
+            {
+                messages.Add(new ValidationMessage("COMPONENT", code, level, args));
+            }
+
+            if (!GetStudReferences().Any())
+                AddMessage("COMPONENT_NO_STUDS", ValidationLevel.Error, Name);
+
+            return messages;
+        }
     }
 }

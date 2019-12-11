@@ -74,7 +74,7 @@ namespace LDDModder.Modding.Editing
         private void UpdateItemParent(PartElement item, bool adding)
         {
             if (_Project != null)
-                item._Project = adding ? Project : null;
+                item.AssignProject(adding ? Project : null);
             else if (Owner != null)
                 item.Parent = adding ? Owner : null;
         }

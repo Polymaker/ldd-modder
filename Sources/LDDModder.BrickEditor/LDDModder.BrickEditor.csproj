@@ -201,11 +201,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ModelLocalizations.resx</DependentUpon>
     </Compile>
-    <Compile Include="Resources\PartResources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>PartResources.resx</DependentUpon>
-    </Compile>
     <Compile Include="Resources\ResourceHelper.cs" />
     <Compile Include="Settings\AppSettings.cs" />
     <Compile Include="Settings\DisplaySettings.cs" />
@@ -316,11 +311,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ModelLocalizations.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\PartResources.fr.resx" />
-    <EmbeddedResource Include="Resources\PartResources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>PartResources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
     <EmbeddedResource Include="UI\Controls\ConnectorEditor.resx">
       <DependentUpon>ConnectorEditor.cs</DependentUpon>
     </EmbeddedResource>
@@ -333,12 +323,18 @@
     <EmbeddedResource Include="UI\Panels\LocalisationEditorPanel.resx">
       <DependentUpon>LocalisationEditorPanel.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\Panels\NavigationPanel.fr.resx">
+      <DependentUpon>NavigationPanel.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\Panels\NavigationPanel.resx">
       <DependentUpon>NavigationPanel.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Panels\PartPropertiesPanel.resx">
       <DependentUpon>PartPropertiesPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Panels\ValidationPanel.fr.resx">
+      <DependentUpon>ValidationPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Panels\ValidationPanel.resx">
       <DependentUpon>ValidationPanel.cs</DependentUpon>
@@ -412,6 +408,9 @@
     <Content Include="Resources\Images\MainSurfaceIcon.png" />
     <Content Include="Resources\Images\MaleStudIcon.png" />
     <Content Include="Resources\Images\MeshIcon.png" />
+    <Content Include="Resources\Images\StatusError.png" />
+    <Content Include="Resources\Images\StatusInfo.png" />
+    <Content Include="Resources\Images\StatusWarning.png" />
     <Content Include="Resources\Images\VisibleIcon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -19,8 +19,8 @@ namespace LDDModder.Modding.Editing
         public MeshGeometry Geometry { get; set; }
 
         private string _FileName;
-        private string _WorkingFilePath;
-        private int FileFlag = 0; 
+        private int FileFlag = 0;
+        private string TempFileName;
 
         #region Geometry Attributes
 
@@ -50,7 +50,7 @@ namespace LDDModder.Modding.Editing
             }
         }
 
-        public string WorkingFilePath => _WorkingFilePath;
+        public string WorkingFilePath { get; private set; }
 
         public PartSurface Surface => (Parent as SurfaceComponent)?.Parent as PartSurface;
 
@@ -91,7 +91,7 @@ namespace LDDModder.Modding.Editing
         {
             base.OnAfterRename(oldName, newName);
             FileFlag = 0;
-            _WorkingFilePath = null;
+            WorkingFilePath = null;
 
             if (Project != null)
             {
@@ -99,16 +99,20 @@ namespace LDDModder.Modding.Editing
 
                 if (!string.IsNullOrEmpty(_FileName) && Project.FileExist(_FileName))
                 {
+                    string oldFilePath = Project.GetFileFullPath(_FileName);
                     try
                     {
                         string newFilePath = Project.GetFileFullPath(newMeshFileName);
-                        File.Move(Project.GetFileFullPath(_FileName), newFilePath);
-                        _WorkingFilePath = newFilePath;
+                        File.Move(oldFilePath, newFilePath);
+                        WorkingFilePath = newFilePath;
                         FileFlag = 1;
                     }
                     catch
                     {
                         Debug.WriteLine("Error: Could not rename mesh file!");
+
+                        //WorkingFilePath = oldFilePath;
+                        //FileFlag = 1;
                     }
                 }
 
@@ -116,6 +120,12 @@ namespace LDDModder.Modding.Editing
             }
             else
                 _FileName = null;
+        }
+
+        public bool CanRename(string newName)
+        {
+            string newMeshFileName = Project.GenerateMeshFileName(newName);
+            return !Project.FileExist(newMeshFileName);
         }
 
         #region Xml Serialization
@@ -173,21 +183,88 @@ namespace LDDModder.Modding.Editing
                 Geometry = null;
         }
 
-        public void CheckFileExist()
+        public bool CheckFileExist()
         {
-            if (Project != null && !string.IsNullOrEmpty(FileName))
+            if (Project != null && 
+                Project.IsLoadedFromDisk && 
+                !string.IsNullOrEmpty(FileName))
             {
                 if (Project.FileExist(FileName))
                 {
-                    _WorkingFilePath = Project.GetFileFullPath(FileName);
+                    WorkingFilePath = Project.GetFileFullPath(FileName);
                     FileFlag = 1;
+                }
+                else if (Project.FileExist(Project.GenerateMeshFileName(ID)))
+                {
+                    try
+                    {
+                        var tmpFileName = Project.GetFileFullPath(Project.GenerateMeshFileName(ID));
+                        WorkingFilePath = Project.GetFileFullPath(FileName);
+                        File.Move(tmpFileName, WorkingFilePath);
+                        FileFlag = 1;
+                    }
+                    catch
+                    {
+                        WorkingFilePath = null;
+                        FileFlag = 3;
+                    }
+                    
                 }
                 else
                 {
-                    _WorkingFilePath = null;
+                    WorkingFilePath = null;
                     FileFlag = 2;
                 }
             }
+            else
+            {
+                if (string.IsNullOrEmpty(TempFileName))
+                    WorkingFilePath = null;
+                FileFlag = 0;
+            }
+
+
+            return FileFlag == 1;
         }
+    
+        internal void TempDeleteFile()
+        {
+            if (Project != null && CheckFileExist())
+            {
+                TempFileName = Project.GenerateMeshFileName(ID);
+                TempFileName = Project.GetFileFullPath(TempFileName);
+                
+                try
+                {
+                    File.Move(WorkingFilePath, TempFileName);
+                }
+                catch
+                {
+                    Debug.WriteLine("Error: Could not rename mesh file!");
+                }
+            }
+        }
+
+        protected override void OnProjectAssigned()
+        {
+            base.OnProjectAssigned();
+
+            if (Project != null && !string.IsNullOrEmpty(TempFileName))
+            {
+                if (string.IsNullOrEmpty(WorkingFilePath))
+                    WorkingFilePath = Project.GetFileFullPath(FileName);
+
+                File.Move(TempFileName, WorkingFilePath);
+
+                TempFileName = null;
+            }
+            else if (Project == null && MeshFileExists && 
+                string.IsNullOrEmpty(TempFileName))
+            {
+                TempDeleteFile();
+            }
+        }
+    
+        
     }
 }

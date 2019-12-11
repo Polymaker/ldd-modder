@@ -154,24 +154,35 @@ namespace LDDModder.BrickEditor.UI.Windows
             EditMenu_Redo.Enabled = ProjectManager.CanRedo;
         }
 
-        #endregion
-
-        private void Edit_ImportMeshMenu_Click(object sender, EventArgs e)
+        private void Edit_ValidatePartMenu_Click(object sender, EventArgs e)
         {
-            ImportMeshFile();
+            ProjectManager.ValidateProject();
+            ValidationPanel.Activate();
         }
 
         private void Edit_GenerateFilesMenu_Click(object sender, EventArgs e)
         {
             if (CurrentProject != null)
             {
+                if (!ProjectManager.IsPartValidated)
+                {
+                    ProjectManager.ValidateProject();
+                    ValidationPanel.Activate();
+                    return;
+                }
+                else if (!ProjectManager.IsPartValid)
+                {
+                    ValidationPanel.Activate();
+                    return;
+                }
+
                 try
                 {
                     var lddPart = CurrentProject.GenerateLddPart();
                     lddPart.ComputeEdgeOutlines();
                     var primitives = LDD.LDDEnvironment.Current.GetAppDataSubDir("db\\Primitives\\");
 
-                    lddPart.Primitive.Save(Path.Combine(primitives,$"{lddPart.PartID}.xml"));
+                    lddPart.Primitive.Save(Path.Combine(primitives, $"{lddPart.PartID}.xml"));
 
                     foreach (var surface in lddPart.Surfaces)
                         surface.Mesh.Save(Path.Combine(primitives, "LOD0", surface.GetFileName()));
@@ -182,6 +193,15 @@ namespace LDDModder.BrickEditor.UI.Windows
                 }
             }
         }
+
+        #endregion
+
+        private void Edit_ImportMeshMenu_Click(object sender, EventArgs e)
+        {
+            ImportMeshFile();
+        }
+
+        
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {

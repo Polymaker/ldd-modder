@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
+using System.Diagnostics;
 
 namespace LDDModder.BrickEditor.Rendering
 {
@@ -54,6 +55,12 @@ namespace LDDModder.BrickEditor.Rendering
             {
                 foreach (var meshRef in surfComp.Meshes)
                 {
+                    if (!meshRef.ModelMesh.CheckFileExist())
+                    {
+                        Debug.WriteLine($"Error: Could not load model: {meshRef.ModelMesh.FileName}");
+                        continue;
+                    }
+
                     var addedModel = AddMeshGeometry(meshRef, indices, vertices);
                     addedModel.Visible = true;
 
@@ -65,6 +72,12 @@ namespace LDDModder.BrickEditor.Rendering
                 {
                     foreach (var meshRef in femaleStud.ReplacementMeshes)
                     {
+                        if (!meshRef.ModelMesh.CheckFileExist())
+                        {
+                            Debug.WriteLine($"Error: Could not load model: {meshRef.ModelMesh.FileName}");
+                            continue;
+                        }
+
                         var addedModel = AddMeshGeometry(meshRef, indices, vertices);
                         addedModel.Visible = false;
                         addedModel.IsReplacementModel = true;

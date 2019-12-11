@@ -36,18 +36,6 @@ namespace LDDModder.BrickEditor.UI.Windows
             visualStudioToolStripExtender1.SetStyle(menuStrip1, 
                 VisualStudioToolStripExtender.VsVersion.Vs2015,
                 DockPanelControl.Theme);
-
-            ProjectManager = new ProjectManager();
-            ProjectManager.ProjectChanged += ProjectManager_ProjectChanged;
-            ProjectManager.UndoHistoryChanged += ProjectManager_UndoHistoryChanged;
-        }
-
-        private void ProjectManager_UndoHistoryChanged(object sender, EventArgs e)
-        {
-            if (InvokeRequired)
-                BeginInvoke(new MethodInvoker(UpdateUndoRedoMenus));
-            else
-                UpdateUndoRedoMenus();
         }
 
         protected override void OnLoad(EventArgs e)
@@ -55,6 +43,11 @@ namespace LDDModder.BrickEditor.UI.Windows
             base.OnLoad(e);
             SettingsManager.Initialize();
             ResourceHelper.LoadPlatformsAndCategories();
+
+            ProjectManager = new ProjectManager();
+            ProjectManager.ProjectChanged += ProjectManager_ProjectChanged;
+            ProjectManager.UndoHistoryChanged += ProjectManager_UndoHistoryChanged;
+
             InitializePanels();
             RebuildRecentFilesMenu();
             UpdateMenuItemStates();
@@ -109,6 +102,14 @@ namespace LDDModder.BrickEditor.UI.Windows
         {
             UpdateMenuItemStates();
             ProjectCreatedFromBrick = false;
+        }
+
+        private void ProjectManager_UndoHistoryChanged(object sender, EventArgs e)
+        {
+            if (InvokeRequired)
+                BeginInvoke(new MethodInvoker(UpdateUndoRedoMenus));
+            else
+                UpdateUndoRedoMenus();
         }
 
         public string GetTemporaryWorkingDir()
@@ -185,6 +186,8 @@ namespace LDDModder.BrickEditor.UI.Windows
                 return;
 
             ProjectManager.SetCurrentProject(project);
+            if (project != null)
+                AutoSaveTimer.Start();
         }
 
         public bool CloseCurrentProject()
@@ -210,6 +213,7 @@ namespace LDDModder.BrickEditor.UI.Windows
                 SettingsManager.SaveSettings();
 
                 ProjectManager.CloseCurrentProject();
+                AutoSaveTimer.Stop();
             }
 
             return true;
@@ -359,6 +363,9 @@ namespace LDDModder.BrickEditor.UI.Windows
             }
         }
 
-        
+        private void AutoSaveTimer_Tick(object sender, EventArgs e)
+        {
+            ProjectManager.SaveWorkingProject();
+        }
     }
 }

@@ -136,6 +136,8 @@ namespace LDDModder.Modding.Editing
 
             if (PrimitiveFileVersion != null)
                 propsElem.Add(PrimitiveFileVersion.ToXmlElement("PrimitiveVersion"));
+            else
+                PrimitiveFileVersion = new VersionInfo(1, 0);
 
             propsElem.Add(new XElement(nameof(Flexible), Flexible));
 
@@ -219,6 +221,41 @@ namespace LDDModder.Modding.Editing
                     groupElem.ReadAttribute("Name", string.Empty)
                 );
             }
+
+            if (element.HasElement("PrimitiveVersion", out XElement versionElem))
+            {
+                PrimitiveFileVersion = VersionInfo.FromXmlElement(versionElem);
+            }
+        }
+
+        public override List<ValidationMessage> ValidateElement()
+        {
+            var messages = new List<ValidationMessage>();
+
+            void AddMessage(string code, ValidationLevel level, params object[] args)
+            {
+                messages.Add(new ValidationMessage("PART", code, level, args));
+            }
+
+            if (string.IsNullOrEmpty(Description))
+                AddMessage("PART_EMPTY_DESCRIPTION", ValidationLevel.Error);
+
+            if (PartID <= 0)
+                AddMessage("PART_EMPTY_PART_ID", ValidationLevel.Error);
+
+            if (string.IsNullOrEmpty(Platform?.Name))
+                AddMessage("PART_NO_PLATFORM", ValidationLevel.Error);
+
+            if (string.IsNullOrEmpty(MainGroup?.Name))
+                AddMessage("PART_NO_MAINGROUP", ValidationLevel.Error);
+
+            if (Bounding == null || Bounding.IsEmpty)
+                AddMessage("PART_NO_BOUNDING", ValidationLevel.Error);
+
+            if (GeometryBounding == null || GeometryBounding.IsEmpty)
+                AddMessage("PART_NO_GEOMETRYBOUNDING", ValidationLevel.Error);
+
+            return messages;
         }
     }
 }

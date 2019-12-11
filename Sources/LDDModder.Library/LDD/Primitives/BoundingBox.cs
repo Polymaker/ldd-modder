@@ -61,6 +61,9 @@ namespace LDDModder.LDD.Primitives
         [XmlIgnore]
         public Vector3 Center => new Vector3((SizeX / 2f) + MinX, (SizeY / 2f) + MinY, (SizeZ / 2f) + MinZ);
 
+        [XmlIgnore]
+        public bool IsEmpty => Size == Vector3.Zero;
+
         public BoundingBox()
         {
         }

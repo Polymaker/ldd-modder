@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -117,32 +117,40 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="DecorationSurfaceIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\images\decorationsurfaceicon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="ContextMenu_AddCollision.Text" xml:space="preserve">
+    <value>Ajouter une collision</value>
   </data>
-  <data name="HiddenIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\images\hiddenicon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="ContextMenu_AddConnection.Text" xml:space="preserve">
+    <value>Ajouter une connexion</value>
   </data>
-  <data name="MainSurfaceIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\images\mainsurfaceicon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="ContextMenu_AddElement.Text" xml:space="preserve">
+    <value>Ajouter un modèle</value>
   </data>
-  <data name="MaleStudIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\images\malestudicon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="ContextMenu_AddSurface.Text" xml:space="preserve">
+    <value>Ajouter une surface</value>
   </data>
-  <data name="MeshIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\images\meshicon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="ContextMenu_Delete.Text" xml:space="preserve">
+    <value>Supprimer</value>
   </data>
-  <data name="StatusError" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\images\statuserror.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="ContextMenu_Rename.Text" xml:space="preserve">
+    <value>Renommer</value>
   </data>
-  <data name="StatusInfo" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\images\statusinfo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="olvColumnElement.Text" xml:space="preserve">
+    <value>Éléments</value>
   </data>
-  <data name="StatusWarning" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\images\statuswarning.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="ViewModeAll.Text" xml:space="preserve">
+    <value>Tous</value>
   </data>
-  <data name="VisibleIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\images\visibleicon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="ViewModeCollisions.Text" xml:space="preserve">
+    <value>Collisions</value>
+  </data>
+  <data name="ViewModeConnections.Text" xml:space="preserve">
+    <value>Connexions</value>
+  </data>
+  <data name="ViewModeSurfaces.Text" xml:space="preserve">
+    <value>Surfaces</value>
+  </data>
+  <data name="ViewModeBones.Text" xml:space="preserve">
+    <value>Armature</value>
   </data>
 </root>

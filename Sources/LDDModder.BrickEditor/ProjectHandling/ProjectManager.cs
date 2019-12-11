@@ -3,6 +3,7 @@ using LDDModder.BrickEditor.Resources;
 using LDDModder.Modding.Editing;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,9 +13,12 @@ namespace LDDModder.BrickEditor.ProjectHandling
     public class ProjectManager
     {
         private List<PartElement> _SelectedElements;
+        private List<ValidationMessage> _ValidationMessages;
+
         //private HashSet<ElementExtention> ElementExtentions;
         //private Dictionary<Type, Type> ElementExtenders;
 
+        private long LastValidation;
         private long LastSavedChange;
 
         public PartProject CurrentProject { get; private set; }
@@ -41,6 +45,13 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
         public IList<PartElement> SelectedElements => _SelectedElements.AsReadOnly();
 
+        public IList<ValidationMessage> ValidationMessages => _ValidationMessages.AsReadOnly();
+
+        public bool IsPartValidated => IsProjectOpen && LastValidation == UndoRedoManager.CurrentChangeID;
+
+        public bool IsPartValid => IsPartValidated &&
+            !ValidationMessages.Any(x => x.Level == ValidationLevel.Error);
+
         #region Events
 
         public event EventHandler SelectionChanged;
@@ -57,6 +68,14 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
         public event EventHandler<ElementValueChangedEventArgs> ElementPropertyChanged;
 
+        public event EventHandler ValidationStarted;
+
+        public event EventHandler ValidationFinished;
+
+        public event EventHandler GenerationStarted;
+
+        public event EventHandler GenerationFinished;
+
         #endregion
 
         private bool ElementsChanged;
@@ -65,17 +84,13 @@ namespace LDDModder.BrickEditor.ProjectHandling
         public ProjectManager()
         {
             _SelectedElements = new List<PartElement>();
+            _ValidationMessages = new List<ValidationMessage>();
+
             UndoRedoManager = new UndoRedoManager(this);
             UndoRedoManager.BeginUndoRedo += UndoRedoManager_BeginUndoRedo;
             UndoRedoManager.EndUndoRedo += UndoRedoManager_EndUndoRedo;
             UndoRedoManager.UndoHistoryChanged += UndoRedoManager_UndoHistoryChanged;
             //ElementExtentions = new HashSet<ElementExtention>();
-        }
-
-        private void InitializeExtenders()
-        {
-            //ElementExtenders = new Dictionary<Type, Type>();
-            //ElementExtenders.Add(typeof(part))
         }
 
         public void SetCurrentProject(PartProject project)
@@ -100,6 +115,10 @@ namespace LDDModder.BrickEditor.ProjectHandling
             if (CurrentProject != null)
             {
                 DettachPartProject(CurrentProject);
+                _SelectedElements.Clear();
+                _ValidationMessages.Clear();
+                LastSavedChange = 0;
+                LastValidation = 0;
                 ProjectClosed?.Invoke(this, EventArgs.Empty);
                 CurrentProject = null;
                 //ElementExtentions.Clear();
@@ -116,6 +135,15 @@ namespace LDDModder.BrickEditor.ProjectHandling
                 CurrentProject.ProjectPath = targetPath;
                 LastSavedChange = UndoRedoManager.CurrentChangeID;
                 ProjectModified?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public void SaveWorkingProject()
+        {
+            if (IsProjectOpen)
+            {
+                var projectXml = CurrentProject.GenerateProjectXml();
+                projectXml.Save(Path.Combine(CurrentProject.ProjectWorkingDir, PartProject.ProjectFileName));
             }
         }
 
@@ -295,5 +323,17 @@ namespace LDDModder.BrickEditor.ProjectHandling
         }
         #endregion
 
+        public void ValidateProject()
+        {
+            if (IsProjectOpen)
+            {
+                ValidationStarted?.Invoke(this, EventArgs.Empty);
+                _ValidationMessages.Clear();
+                _ValidationMessages.AddRange(CurrentProject.ValidatePart());
+                ValidationFinished?.Invoke(this, EventArgs.Empty);
+
+                LastValidation = UndoRedoManager.CurrentChangeID;
+            }
+        }
     }
 }

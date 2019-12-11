@@ -155,5 +155,54 @@ namespace LDDModder.Modding.Editing
                 VertexCount = vertexCount
             };
         }
+
+        public override List<ValidationMessage> ValidateElement()
+        {
+            var messages = new List<ValidationMessage>();
+
+            void AddMessage(string code, ValidationLevel level, params object[] args)
+            {
+                messages.Add(new ValidationMessage("SURFACE", code, level, args));
+            }
+
+            var allModels = GetAllModelMeshes();
+            var standardMeshes = Components.SelectMany(x => x.Meshes);
+            
+            if (!standardMeshes.Any())
+            {
+                AddMessage("SURFACE_NO_MODELS", 
+                    SurfaceID == 0 ? ValidationLevel.Error : ValidationLevel.Warning, SurfaceID);
+            }
+            else
+            {
+                if (SurfaceID > 0)
+                {
+                    if (allModels.Any(x => !x.IsTextured))
+                        AddMessage("SURFACE_NO_TEXTURED_MODEL", ValidationLevel.Warning, SurfaceID);
+                }
+                else
+                {
+                    if (allModels.Any(x => x.IsTextured))
+                        AddMessage("SURFACE_IGNORE_TEXTURED_MODEL", ValidationLevel.Info, SurfaceID);
+                }
+            }
+
+            if (Project.Flexible)
+            {
+                int notFlexibleModels = allModels.Count(x => !x.IsFlexible);
+                if (notFlexibleModels == allModels.Count())
+                    AddMessage("SURFACE_NO_FLEXIBLE_MODEL", ValidationLevel.Error, SurfaceID);
+                else if(notFlexibleModels > 0)
+                    AddMessage("SURFACE_MISSING_BONEWEIGHTS", ValidationLevel.Warning, SurfaceID);
+
+                if (Components.Any(x => x.ComponentType != ModelComponentType.Part))
+                    AddMessage("SURFACE_INVALID_COMPONENT", ValidationLevel.Error, SurfaceID);
+            }
+
+            foreach (var component in Components)
+                messages.AddRange(component.ValidateElement());
+
+            return messages;
+        }
     }
 }

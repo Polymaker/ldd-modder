@@ -771,10 +771,11 @@ namespace LDDModder.Modding.Editing
 
             if (element is ModelMeshReference meshRef && meshRef.ModelMesh != null)
             {
-                if (meshRef.ModelMesh.GetReferences().Count() == 1 && !Meshes.Any(x => x.Name == elementName))
+                if (meshRef.ModelMesh.GetReferences().Count() == 1 && 
+                    !Meshes.Any(x => x.Name == elementName))
                 {
-                    meshRef.ModelMesh.InternalSetName(elementName, true);
-                    //RenameElement(meshRef.ModelMesh, elementName);
+                    if (meshRef.ModelMesh.CanRename(elementName))
+                        meshRef.ModelMesh.InternalSetName(elementName, true);
                 }
             }
 
@@ -870,7 +871,10 @@ namespace LDDModder.Modding.Editing
             foreach(var mesh in allMeshes)
             {
                 if (!allRefs.Any(x => x.MeshID == mesh.ID || x.ModelMesh == mesh))
+                {
+                    mesh.TempDeleteFile();
                     Meshes.Remove(mesh);
+                }
             }
         }
 
@@ -946,38 +950,42 @@ namespace LDDModder.Modding.Editing
 
         #region LDD File Generation
 
-        public void ValidatePart()
+        public List<ValidationMessage> ValidatePart()
         {
-            if (Decorated != Surfaces.Any(x => x.SurfaceID > 0))
+            var validationMessages = new List<ValidationMessage>();
+
+            void AddMessage(string code, ValidationLevel level, params object[] args)
             {
-                //Marked as having decorations but does not have any decoration surfaces
+                validationMessages.Add(new ValidationMessage("PROJECT", code, level, args));
             }
+
+            if (!Surfaces.Any())
+                AddMessage("PROJECT_NO_SURFACES", ValidationLevel.Error);
+
+            if (!Flexible && !Connections.Any())
+                AddMessage("PROJECT_NO_CONNECTIONS", ValidationLevel.Warning);
+
+            if (!Flexible && !Collisions.Any())
+                AddMessage("PROJECT_NO_COLLISIONS", ValidationLevel.Warning);
+
+            if (Flexible && !Bones.Any())
+                AddMessage("PROJECT_NO_BONES", ValidationLevel.Error);
+
+            validationMessages.AddRange(Properties.ValidateElement());
 
             foreach (var surface in Surfaces)
-            {
-                var surfaceModels = surface.GetAllModelMeshes();
-                if (surface.SurfaceID == 0 && surfaceModels.Any(x => x.IsTextured))
-                {
+                validationMessages.AddRange(surface.ValidateElement());
 
-                }
-                else if (surface.SurfaceID > 0 && surfaceModels.Any(x => !x.IsTextured))
-                {
+            foreach (var conn in Connections)
+                validationMessages.AddRange(conn.ValidateElement());
 
-                }
-                else if (!surfaceModels.Any())
-                {
+            foreach (var coll in Collisions)
+                validationMessages.AddRange(coll.ValidateElement());
 
-                }
-            }
-
-            foreach (var mesh in Meshes)
-            {
-                bool isReferenced = mesh.GetReferences().Any();
-                if (isReferenced)
-                {
-                    //if (mesh.IsFlexible)
-                }
-            }
+            foreach (var bone in Bones)
+                validationMessages.AddRange(bone.ValidateElement());
+            
+            return validationMessages;
         }
 
 

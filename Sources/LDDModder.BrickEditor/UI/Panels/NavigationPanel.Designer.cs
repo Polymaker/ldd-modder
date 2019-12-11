@@ -89,6 +89,7 @@
             this.ProjectTreeView.SmallImageList = this.NavigationImageList;
             this.ProjectTreeView.UseAlternatingBackColors = true;
             this.ProjectTreeView.UseCompatibleStateImageBehavior = false;
+            this.ProjectTreeView.UseFiltering = true;
             this.ProjectTreeView.UseHotItem = true;
             this.ProjectTreeView.View = System.Windows.Forms.View.Details;
             this.ProjectTreeView.VirtualMode = true;

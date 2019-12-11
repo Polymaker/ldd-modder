@@ -60,6 +60,7 @@
             this.ExportBrickMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.StartLddMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.AutoSaveTimer = new System.Windows.Forms.Timer(this.components);
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -203,6 +204,7 @@
             // 
             this.Edit_ValidatePartMenu.Name = "Edit_ValidatePartMenu";
             resources.ApplyResources(this.Edit_ValidatePartMenu, "Edit_ValidatePartMenu");
+            this.Edit_ValidatePartMenu.Click += new System.EventHandler(this.Edit_ValidatePartMenu_Click);
             // 
             // Edit_GenerateFilesMenu
             // 
@@ -247,6 +249,11 @@
             // 
             this.StartLddMenuItem.Name = "StartLddMenuItem";
             resources.ApplyResources(this.StartLddMenuItem, "StartLddMenuItem");
+            // 
+            // AutoSaveTimer
+            // 
+            this.AutoSaveTimer.Interval = 15000;
+            this.AutoSaveTimer.Tick += new System.EventHandler(this.AutoSaveTimer_Tick);
             // 
             // BrickEditorWindow
             // 
@@ -295,5 +302,6 @@
         private System.Windows.Forms.ToolStripMenuItem EditMenu_Undo;
         private System.Windows.Forms.ToolStripMenuItem EditMenu_Redo;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
+        private System.Windows.Forms.Timer AutoSaveTimer;
     }
 }

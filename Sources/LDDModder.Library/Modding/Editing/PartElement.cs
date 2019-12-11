@@ -67,10 +67,31 @@ namespace LDDModder.Modding.Editing
             OwnedElements = new List<PartElement>();
         }
 
+        #region Project & Parent Handling
+
+        internal void AssignProject(PartProject project)
+        {
+            _Project = project;
+            OnProjectAssigned();
+        }
+
+        protected virtual void OnProjectAssigned()
+        {
+
+        }
+
         internal void AssignParent(PartElement parent)
         {
             Parent = parent;
+            OnParentAssigned();
         }
+
+        protected virtual void OnParentAssigned()
+        {
+
+        }
+
+        #endregion
 
         #region Xml
 
@@ -108,6 +129,8 @@ namespace LDDModder.Modding.Editing
         }
 
         #endregion
+
+        #region Property Assignation Handling
 
         protected bool SetPropertyValue<T>(ref T property, T value, [CallerMemberName] string propertyName = null)
         {
@@ -170,6 +193,9 @@ namespace LDDModder.Modding.Editing
                 Project.OnElementPropertyChanged(args);
             }
         }
+
+        #endregion
+
 
         public virtual IEnumerable<PartElement> GetAllChilds()
         {
@@ -241,6 +267,11 @@ namespace LDDModder.Modding.Editing
                 }
             }
             return false;
+        }
+
+        public virtual List<ValidationMessage> ValidateElement()
+        {
+            return new List<ValidationMessage>();
         }
 
         public Type GetElementType()

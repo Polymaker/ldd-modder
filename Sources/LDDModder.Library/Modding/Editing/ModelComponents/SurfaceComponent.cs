@@ -92,6 +92,21 @@ namespace LDDModder.Modding.Editing
             return GetAllMeshReferences().Select(s => s.ModelMesh).Distinct();
         }
 
+        public override List<ValidationMessage> ValidateElement()
+        {
+            var messages = new List<ValidationMessage>();
+
+            void AddMessage(string code, ValidationLevel level, params object[] args)
+            {
+                messages.Add(new ValidationMessage("COMPONENT", code, level, args));
+            }
+
+            if (!Meshes.Any())
+                AddMessage("COMPONENT_NO_MODELS", ValidationLevel.Error, Name);
+
+            return messages;
+        }
+
         #region Xml Serialization
 
         public override XElement SerializeToXml()

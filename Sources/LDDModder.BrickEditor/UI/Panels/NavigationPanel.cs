@@ -27,18 +27,33 @@ namespace LDDModder.BrickEditor.UI.Panels
             Surfaces,
             Collisions,
             Connections,
-            Bones
+            Bones,
+            Meshes
+        }
+
+        private class ViewModeInfo
+        {
+            public NavigationViewMode ViewMode { get; set; }
+            public string DisplayName { get; set; }
+
+            public ViewModeInfo(NavigationViewMode viewMode, string displayName)
+            {
+                ViewMode = viewMode;
+                DisplayName = displayName;
+            }
+        }
+
+        private NavigationViewMode SelectedView
+        {
+            get
+            {
+                if (ViewModeComboBox.SelectedItem != null)
+                    return (NavigationViewMode)ViewModeComboBox.SelectedValue;
+                return NavigationViewMode.All;
+            }
         }
 
         private FlagManager FlagManager;
-
-        //private class ViewModeModel
-        //{
-        //    public NavigationViewMode Value { get; set; }
-        //    public string Name { get; set; }
-        //}
-
-        //private NavigationViewMode CurrentViewMode => (NavigationViewMode)ViewModeComboBox.SelectedIndex;
 
         internal NavigationPanel()
         {
@@ -58,7 +73,6 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             DockAreas = DockAreas.DockLeft | DockAreas.DockRight | DockAreas.Float | DockAreas.Document;
 
-
             InitializeNavigationImageList();
             InitializeContextMenus();
             InitializeNavigationTreeView();
@@ -74,24 +88,35 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void InitializeViewComboBox()
         {
-            //int currentIndex = ViewModeComboBox.SelectedIndex;
-
-            ViewModeComboBox.Items.Clear();
-            ViewModeComboBox.Items.Add(ViewModeAll.Text);
-            ViewModeComboBox.Items.Add(ViewModeSurfaces.Text);
-
-            if (ProjectManager.IsProjectOpen && CurrentProject.Flexible)
+            using (FlagManager.UseFlag("ViewModeComboBox"))
             {
-                ViewModeComboBox.Items.Add(ViewModeBones.Text);
-            }
-            else
-            {
-                ViewModeComboBox.Items.Add(ViewModeCollisions.Text);
-                ViewModeComboBox.Items.Add(ViewModeConnections.Text);
-            }
+                var viewModes = new List<ViewModeInfo>();
 
+                var currentViewMode = ViewModeComboBox.SelectedItem != null ? 
+                    (NavigationViewMode)ViewModeComboBox.SelectedValue : NavigationViewMode.All;
 
-            ViewModeComboBox.SelectedIndex = 1;
+                viewModes.Add(new ViewModeInfo(NavigationViewMode.All, ViewModeAll.Text));
+                viewModes.Add(new ViewModeInfo(NavigationViewMode.Surfaces, ViewModeSurfaces.Text));
+
+                if (ProjectManager.IsProjectOpen && CurrentProject.Flexible)
+                {
+                    viewModes.Add(new ViewModeInfo(NavigationViewMode.Bones, ViewModeBones.Text));
+                }
+                else
+                {
+                    viewModes.Add(new ViewModeInfo(NavigationViewMode.Collisions, ViewModeCollisions.Text));
+                    viewModes.Add(new ViewModeInfo(NavigationViewMode.Connections, ViewModeConnections.Text));
+                }
+
+                ViewModeComboBox.DataSource = viewModes;
+                ViewModeComboBox.ValueMember = "ViewMode";
+                ViewModeComboBox.DisplayMember = "DisplayName";
+
+                if (viewModes.Any(x => x.ViewMode == currentViewMode))
+                    currentViewMode = NavigationViewMode.All;
+
+                ViewModeComboBox.SelectedValue = currentViewMode;
+            }
         }
 
         private void InitializeNavigationImageList()
@@ -133,18 +158,9 @@ namespace LDDModder.BrickEditor.UI.Panels
             ProjectTreeView.TreeColumnRenderer = new Controls.TreeRendererEx();
         }
 
-        protected override void OnProjectChanged()
-        {
-            base.OnProjectChanged();
-            RebuildNavigation(true);
-            string projectTitle = ProjectManager.GetProjectDisplayName();
-
-            label1.Text = ProjectManager.IsProjectOpen ? projectTitle : $"<{projectTitle}> ";
-        }
-
         private void ViewModeComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (ProjectManager.IsProjectOpen)
+            if (!FlagManager.IsSet("ViewModeComboBox") && ProjectManager.IsProjectOpen)
                 FilterNavigation();
         }
 
@@ -256,7 +272,38 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void FilterNavigation()
         {
+            ProjectTreeView.ModelFilter = new ModelFilter(x =>
+            {
+                if (x is BaseProjectNode projectNode)
+                    return IsNodeVisible(projectNode);
+                return true;
+            });
+        }
 
+        private bool IsNodeVisible(BaseProjectNode projectNode)
+        {
+            if (SelectedView == NavigationViewMode.All)
+                return true;
+
+            var rootNode = projectNode.RootNode ?? projectNode;
+            var collectionNode = rootNode as ProjectCollectionNode;
+
+            switch (SelectedView)
+            {
+                case NavigationViewMode.All:
+                    break;
+                case NavigationViewMode.Surfaces:
+                    return collectionNode != null && collectionNode.Collection == CurrentProject.Surfaces;
+                case NavigationViewMode.Collisions:
+                    return collectionNode != null && collectionNode.Collection == CurrentProject.Collisions;
+                case NavigationViewMode.Connections:
+                    return collectionNode != null && collectionNode.Collection == CurrentProject.Connections;
+                case NavigationViewMode.Bones:
+                    return collectionNode != null && collectionNode.Collection == CurrentProject.Bones;
+                case NavigationViewMode.Meshes:
+                    break;
+            }
+            return false;
         }
 
         private void ProjectTreeView_CellEditStarting(object sender, CellEditEventArgs e)
@@ -436,6 +483,29 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         #endregion
 
+        protected override void OnProjectChanged()
+        {
+            base.OnProjectChanged();
+
+            InitializeViewComboBox();
+            RebuildNavigation(true);
+
+            if (CurrentProject != null)
+            {
+                if (CurrentProject.Surfaces.Count == 1)
+                {
+                    var surfaceNode = FindElementNode(CurrentProject.Surfaces[0]);
+                    if (surfaceNode != null)
+                        ProjectTreeView.Expand(surfaceNode);
+                }
+            }
+
+            string projectTitle = ProjectManager.GetProjectDisplayName();
+
+            label1.Text = ProjectManager.IsProjectOpen ? projectTitle : $"<{projectTitle}> ";
+            
+        }
+
         protected override void OnProjectElementsChanged()
         {
             base.OnProjectElementsChanged();
@@ -480,6 +550,12 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             var selectedNodes = ProjectTreeView.Objects.OfType<BaseProjectNode>();
             return selectedNodes.SelectMany(x => x.GetChildHierarchy(true));
+        }
+
+        public ProjectElementNode FindElementNode(PartElement element)
+        {
+            return GetAllTreeNodes().OfType<ProjectElementNode>()
+                .FirstOrDefault(x => x.Element == element);
         }
 
         public void SetSelectedNodes(IEnumerable<BaseProjectNode> nodes)
@@ -549,7 +625,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                     int selectionLevel = selectedNodes.First().Level;
                     var parent = selectedNodes.First().Parent;
 
-                    if (selectedNodes.All(x => x.CanDragDrop() && x.Level == selectionLevel))
+                    if (selectedNodes.All(x => x.CanDragDrop()/* && x.Level == selectionLevel*/))
                         return base.StartDrag(olv, button, item);
                 }
 
@@ -763,7 +839,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         #endregion
 
-        
+
     }
-    
+
 }

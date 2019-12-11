@@ -122,19 +122,19 @@
      borderopacity="1.0"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:zoom="4.2426407"
-     inkscape:cx="-37.642673"
-     inkscape:cy="-3.670541"
+     inkscape:zoom="8.4852814"
+     inkscape:cx="4.4950362"
+     inkscape:cy="6.153842"
      inkscape:document-units="mm"
-     inkscape:current-layer="g4892"
+     inkscape:current-layer="layer9"
      showgrid="false"
      units="px"
      inkscape:pagecheckerboard="false"
-     inkscape:window-width="1259"
-     inkscape:window-height="865"
-     inkscape:window-x="2436"
-     inkscape:window-y="48"
-     inkscape:window-maximized="0"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     inkscape:window-x="1912"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
      inkscape:snap-grids="true">
     <inkscape:grid
        type="xygrid"
@@ -336,7 +336,8 @@
      inkscape:groupmode="layer"
      id="layer8"
      inkscape:label="Decoration Surface"
-     style="display:inline">
+     style="display:inline"
+     sodipodi:insensitive="true">
     <g
        inkscape:label="Cube Backgroud"
        inkscape:groupmode="layer"

@@ -24,7 +24,18 @@ namespace LDDModder.LDD.Data
 
         public XElement ToXmlElement(string elementName = "Version")
         {
-            return new XElement(elementName, new XAttribute("Major", Major), new XAttribute("Minor", Minor));
+            return new XElement(elementName, 
+                new XAttribute("Major", Major), 
+                new XAttribute("Minor", Minor));
+        }
+
+        public static VersionInfo FromXmlElement(XElement element)
+        {
+            return new VersionInfo()
+            {
+                Major = element.ReadAttribute("Major", 1),
+                Minor = element.ReadAttribute("Major", 0),
+            };
         }
     }
 }
