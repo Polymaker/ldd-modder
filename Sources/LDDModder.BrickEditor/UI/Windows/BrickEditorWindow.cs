@@ -47,6 +47,8 @@ namespace LDDModder.BrickEditor.UI.Windows
             ProjectManager = new ProjectManager();
             ProjectManager.ProjectChanged += ProjectManager_ProjectChanged;
             ProjectManager.UndoHistoryChanged += ProjectManager_UndoHistoryChanged;
+            ProjectManager.ValidationFinished += ProjectManager_ValidationFinished;
+            ProjectManager.GenerationFinished += ProjectManager_GenerationFinished;
 
             InitializePanels();
             RebuildRecentFilesMenu();
@@ -367,5 +369,7 @@ namespace LDDModder.BrickEditor.UI.Windows
         {
             ProjectManager.SaveWorkingProject();
         }
+
+        
     }
 }

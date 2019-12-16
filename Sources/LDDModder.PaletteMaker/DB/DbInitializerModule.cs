@@ -19,6 +19,9 @@ namespace LDDModder.PaletteMaker.DB
 
         public bool IsCancellationRequested => CancellationToken.IsCancellationRequested;
 
+        public IDbInitProgressHandler ProgressHandler { get; set; }
+
+
         public DbInitializerModule(SQLiteConnection connection, LDDEnvironment environment, CancellationToken cancellationToken)
         {
             Connection = connection;
@@ -28,12 +31,33 @@ namespace LDDModder.PaletteMaker.DB
 
         protected void NotifyIndefiniteProgress(string status)
         {
-            
+            ProgressHandler?.OnReportIndefiniteProgress();
         }
 
-        protected void NotifyTaskStart(long totalRecords, string status)
+        protected void NotifyIndefiniteProgress()
         {
+            ProgressHandler?.OnReportIndefiniteProgress();
+        }
 
+        protected void NotifyProgressStatus(string statusText)
+        {
+            ProgressHandler?.OnReportProgressStatus(statusText);
+        }
+
+        protected void NotifyBeginStep(string stepName)
+        {
+            ProgressHandler?.OnBeginStep(stepName);
+        }
+
+        protected void NotifyTaskStart(string statusText, int totalRecords)
+        {
+            ProgressHandler?.OnReportProgressStatus(statusText);
+            ProgressHandler?.OnReportProgress(0, totalRecords);
+        }
+
+        protected void ReportProgress(int currentRecord, int totalRecords)
+        {
+            ProgressHandler?.OnReportProgress(currentRecord, totalRecords);
         }
     }
 }

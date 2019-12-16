@@ -130,6 +130,7 @@
             // 
             resources.ApplyResources(this.File_OpenRecentMenu, "File_OpenRecentMenu");
             this.File_OpenRecentMenu.Name = "File_OpenRecentMenu";
+            this.File_OpenRecentMenu.DropDownOpening += new System.EventHandler(this.File_OpenRecentMenu_DropDownOpening);
             // 
             // toolStripSeparator1
             // 

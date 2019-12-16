@@ -12,9 +12,15 @@ namespace LDDModder.Modding.Editing
 
         public string Source { get; set; }
 
+        public string Message { get; set; }
+
         public ValidationLevel Level { get; set; }
 
         public object[] Arguments { get; set; }
+
+        public ValidationMessage()
+        {
+        }
 
         public ValidationMessage(string source, string code, ValidationLevel level, params object[] arguments)
         {

@@ -73,6 +73,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DB\IDbInitProgressHandler.cs" />
     <Compile Include="DB\LddDataImporter.cs" />
     <Compile Include="DB\DatabaseInitializer.cs" />
     <Compile Include="DB\DbHelper.cs" />
@@ -119,6 +120,13 @@
     <Compile Include="Rebrickable\Requests\Colors.cs" />
     <Compile Include="Rebrickable\Requests\IRequestParameters.cs" />
     <Compile Include="Rebrickable\Requests\PagingParameters.cs" />
+    <Compile Include="Settings\SettingsManager.cs" />
+    <Compile Include="UI\DatabaseInitProgressWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\DatabaseInitProgressWindow.Designer.cs">
+      <DependentUpon>DatabaseInitProgressWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\MainWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -141,6 +149,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="UI\DatabaseInitProgressWindow.resx">
+      <DependentUpon>DatabaseInitProgressWindow.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </EmbeddedResource>

@@ -16,19 +16,25 @@ namespace LDDModder.PaletteMaker.Generation
         public int ColorID { get; set; }
         public int Quantity { get; set; }
 
-        public string LddPartID => LddPart?.DesignID;
+        public Models.Rebrickable.RbPart RbPart { get; set; }
 
         public PartMatchingFlags MatchingFlags { get; set; }
 
-        public Models.Rebrickable.RbPart RbPart { get; set; }
-
         public LddPart LddPart { get; set; }
 
+        public string LddPartID => LddPart?.DesignID;
+
         public LddElement LddElement { get; set; }
+
+        public bool LddPartFound => LddPart != null;
 
         public int LddColorID { get; set; }
 
         public bool IsGeneratedElement { get; set; }
+
+        public bool IsValid => LddPartFound && LddColorID >= 0;
+
+        public List<string> LegoIDs { get; } = new List<string>();
 
         public SetPartWrapper()
         {

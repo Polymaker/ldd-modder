@@ -84,6 +84,7 @@ namespace LDDModder.BrickEditor.UI.Windows
         {
             File_OpenRecentMenu.DropDownItems.Clear();
 
+            int currentFileIndex = 1;
             foreach (var recentProject in SettingsManager.Current.RecentProjectFiles.ToArray())
             {
                 if (!File.Exists(recentProject.ProjectFile))
@@ -91,22 +92,31 @@ namespace LDDModder.BrickEditor.UI.Windows
                     SettingsManager.Current.RecentProjectFiles.Remove(recentProject);
                     continue;
                 }
-                string projectName = string.Empty;
-
-                if (recentProject.PartID > 0)
-                    projectName = recentProject.PartID.ToString();
-                else
-                    projectName = Path.GetFileName(recentProject.ProjectFile);
+                string projectName = $"{currentFileIndex++} - {Path.GetFileName(recentProject.ProjectFile)}";
+                
+                //if (recentProject.PartID > 0)
+                //    projectName = recentProject.PartID.ToString();
+                //else
+                //    projectName = Path.GetFileName(recentProject.ProjectFile);
 
                 if (!string.IsNullOrEmpty(recentProject.PartName))
-                    projectName += $" - {recentProject.PartName}";
+                    projectName += $" ({recentProject.PartName})";
 
                 var recentFileMenuEntry = File_OpenRecentMenu.DropDownItems.Add(projectName);
                 recentFileMenuEntry.Tag = recentProject;
+                recentFileMenuEntry.ToolTipText = recentProject.PartName;
                 recentFileMenuEntry.Click += RecentFileMenuEntry_Click;
             }
 
             File_OpenRecentMenu.Enabled = File_OpenRecentMenu.DropDownItems.Count > 0;
+        }
+
+        private void File_OpenRecentMenu_DropDownOpening(object sender, EventArgs e)
+        {
+            if (File_OpenRecentMenu.DropDown is ToolStripDropDownMenu downMenu)
+            {
+                downMenu.ShowImageMargin = false;
+            }
         }
 
         private void RecentFileMenuEntry_Click(object sender, EventArgs e)
@@ -154,8 +164,27 @@ namespace LDDModder.BrickEditor.UI.Windows
             EditMenu_Redo.Enabled = ProjectManager.CanRedo;
         }
 
+        private bool GenerateFileAfterValidation;
+
+        private void ProjectManager_ValidationFinished(object sender, EventArgs e)
+        {
+            if (GenerateFileAfterValidation)
+            {
+                GenerateFileAfterValidation = false;
+                if (!ProjectManager.IsPartValid)
+                {
+                    MessageBox.Show("Could not generate LDD Part. See validation panel.");
+                }
+                else
+                    ProjectManager.GenerateLddFiles();
+            }
+        }
+
         private void Edit_ValidatePartMenu_Click(object sender, EventArgs e)
         {
+            if (ProjectManager.IsValidatingProject || ProjectManager.IsGeneratingFiles)
+                return;
+
             ProjectManager.ValidateProject();
             ValidationPanel.Activate();
         }
@@ -164,8 +193,12 @@ namespace LDDModder.BrickEditor.UI.Windows
         {
             if (CurrentProject != null)
             {
+                if (ProjectManager.IsValidatingProject || ProjectManager.IsGeneratingFiles)
+                    return;
+
                 if (!ProjectManager.IsPartValidated)
                 {
+                    GenerateFileAfterValidation = true;
                     ProjectManager.ValidateProject();
                     ValidationPanel.Activate();
                     return;
@@ -176,22 +209,13 @@ namespace LDDModder.BrickEditor.UI.Windows
                     return;
                 }
 
-                try
-                {
-                    var lddPart = CurrentProject.GenerateLddPart();
-                    lddPart.ComputeEdgeOutlines();
-                    var primitives = LDD.LDDEnvironment.Current.GetAppDataSubDir("db\\Primitives\\");
-
-                    lddPart.Primitive.Save(Path.Combine(primitives, $"{lddPart.PartID}.xml"));
-
-                    foreach (var surface in lddPart.Surfaces)
-                        surface.Mesh.Save(Path.Combine(primitives, "LOD0", surface.GetFileName()));
-                }
-                catch (Exception ex)
-                {
-
-                }
+                ProjectManager.GenerateLddFiles();
             }
+        }
+
+        private void ProjectManager_GenerationFinished(object sender, EventArgs e)
+        {
+            MessageBox.Show("LDD Part files generated.");
         }
 
         #endregion
@@ -200,8 +224,6 @@ namespace LDDModder.BrickEditor.UI.Windows
         {
             ImportMeshFile();
         }
-
-        
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {

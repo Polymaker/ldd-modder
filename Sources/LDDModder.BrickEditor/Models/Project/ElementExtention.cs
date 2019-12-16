@@ -13,7 +13,28 @@ namespace LDDModder.BrickEditor.Models.Project
     public abstract class ElementExtention : INotifyPropertyChanged
     {
         public ProjectManager Manager { get; }
+
         public PartElement Element { get; }
+
+        private bool _IsHidden;
+        private bool _IsVisible;
+
+        public bool IsHidden
+        {
+            get => _IsHidden;
+            set
+            {
+                if (_IsHidden != value)
+                {
+                    _IsHidden = value;
+                }
+            }
+        }
+
+        public bool IsVisible
+        {
+            get => _IsVisible;
+        }
 
         protected ElementExtention(ProjectManager manager, PartElement element)
         {

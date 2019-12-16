@@ -17,11 +17,12 @@ namespace LDDModder.BrickEditor.Settings
 
         public static AppSettings Current { get; private set; }
 
+        public static int MaximumRecentFiles { get; set; } = 10;
+
         static SettingsManager()
         {
             AppDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            AppDataFolder = Path.Combine(AppDataFolder, "LDDBrickEditor");
-
+            AppDataFolder = Path.Combine(AppDataFolder, "LDDModder", "BrickEditor");
         }
 
         public static void Initialize()
@@ -63,12 +64,20 @@ namespace LDDModder.BrickEditor.Settings
             if (isSavedFile && !Current.RecentProjectFiles.Any(x => x.ProjectFile == project.ProjectPath))
             {
                 Current.RecentProjectFiles.Insert(0, new RecentFileInfo(project));
+
+                while (Current.RecentProjectFiles.Count > MaximumRecentFiles)
+                    Current.RecentProjectFiles.RemoveAt(Current.RecentProjectFiles.Count - 1);
+
                 SaveSettings();
             }
             else if (!isSavedFile)
             {
                 Current.RecentProjectFiles.RemoveAll(x => x.ProjectFile == project.ProjectPath);
                 Current.RecentProjectFiles.Insert(0, new RecentFileInfo(project));
+
+                while (Current.RecentProjectFiles.Count > MaximumRecentFiles)
+                    Current.RecentProjectFiles.RemoveAt(Current.RecentProjectFiles.Count - 1);
+
                 SaveSettings();
             }
         }

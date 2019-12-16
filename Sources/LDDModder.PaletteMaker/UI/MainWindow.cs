@@ -5,6 +5,7 @@ using LDDModder.PaletteMaker.Generation;
 using LDDModder.PaletteMaker.Models.Rebrickable;
 using LDDModder.PaletteMaker.Rebrickable;
 using LDDModder.PaletteMaker.Rebrickable.Models;
+using LDDModder.PaletteMaker.Settings;
 using LDDModder.Utilities;
 using System;
 using System.Collections.Generic;
@@ -43,14 +44,19 @@ namespace LDDModder.PaletteMaker.UI
             base.OnLoad(e);
             SetPartsGridView.AutoGenerateColumns = false;
 
+            if (!SettingsManager.HasInitialized)
+                SettingsManager.Initialize();
+
             LDDEnvironment.Initialize();
             RebrickableAPI.ApiKey = "aU49o5xulf";
             RebrickableAPI.InitializeClient();
+            
 
+            DBFilePath = SettingsManager.GetFilePath(SettingsManager.DATABASE_FILENAME);
             var currentFolder = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-            DBFilePath = Path.Combine(currentFolder, "BrickDatabase.db");
-            if (!File.Exists(DBFilePath))
-                File.Copy(currentFolder + "\\Resources\\EmptyDatabase.db", DBFilePath);
+            //DBFilePath = Path.Combine(currentFolder, "BrickDatabase.db");
+            //if (!File.Exists(DBFilePath))
+            //    File.Copy(currentFolder + "\\Resources\\EmptyDatabase.db", DBFilePath);
 
             ReloadRebrickableBaseData();
         }
@@ -75,13 +81,11 @@ namespace LDDModder.PaletteMaker.UI
 
         private void button1_Click(object sender, EventArgs e)
         {
-            var cts = new CancellationTokenSource();
-            Task.Factory.StartNew(() =>
+            using (var win = new DatabaseInitProgressWindow())
             {
-                DatabaseInitializer.ImportBaseData(DBFilePath, cts.Token);
-                //DatabaseInitializer.ImportRebrickableData(DBFilePath, cts.Token);
-                DatabaseInitializer.InitializeDefaultMappings(DBFilePath);
-            });
+                win.StartPosition = FormStartPosition.CenterParent;
+                win.ShowDialog();
+            }
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -138,44 +142,42 @@ namespace LDDModder.PaletteMaker.UI
                 return;
 
             var row = SetPartsGridView.Rows[e.RowIndex];
+
             if (row.DataBoundItem is SetPartWrapper setPart)
             {
                 if (SetPartsGridView.Columns[e.ColumnIndex] == ColorColumn)
                 {
                     var color = Colors.FirstOrDefault(x => x.ID == setPart.ColorID);
-                    
                     e.Value = color?.Name ?? "Invalid Color";
 
                 }
                 else if (SetPartsGridView.Columns[e.ColumnIndex] == MatchStatusColumn)
                 {
-                    switch (setPart.MatchingFlags)
-                    {
-                        case PartMatchingFlags.NotMatched:
-                            e.Value = "Not Matched";
-                            break;
-                        case PartMatchingFlags.Matched:
-                            e.Value = "Matched";
-                            break;
-                        case PartMatchingFlags.NonLegoPart:
-                            e.Value = "Non Lego";
-                            break;
-                        case PartMatchingFlags.InvalidRbColor:
-                            e.Value = "Invalid Color";
-                            break;
-                        case PartMatchingFlags.InvalidLddColor:
-                            e.Value = "LDD Color not found";
-                            break;
-                        case PartMatchingFlags.InvalidRbPart:
-                            e.Value = "Invalid Part";
-                            break;
-                        case PartMatchingFlags.LddPartNotFound:
-                            e.Value = "LDD Part not found";
-                            break;
-                        case PartMatchingFlags.DecorationNotFound:
-                            break;
-                    }
+                    var tooltipLines = new List<string>();
 
+                    if (setPart.MatchingFlags.HasFlag(PartMatchingFlags.InvalidRbPart))
+                        tooltipLines.Add("Invalid Rebrickable part");
+
+                    if (setPart.MatchingFlags.HasFlag(PartMatchingFlags.InvalidRbColor))
+                        tooltipLines.Add("Invalid Rebrickable color");
+
+                    if (setPart.MatchingFlags.HasFlag(PartMatchingFlags.InvalidLddColor))
+                        tooltipLines.Add("Could not find matching LDD color");
+
+                    row.Cells[e.ColumnIndex].ToolTipText = string.Join(Environment.NewLine, tooltipLines);
+
+                    if (setPart.IsValid)
+                    {
+                        e.Value = "Matched";
+                    }
+                    else if (setPart.LddPart != null)
+                    {
+                        e.Value = "Invalid LDD Color";
+                    }
+                    else
+                    {
+                        e.Value = "Invalid";
+                    }
                 }
             }
 

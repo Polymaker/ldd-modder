@@ -26,6 +26,7 @@ namespace LDDModder.BrickEditor.Settings
             PartID = project.PartID;
             PartName = project.PartDescription;
             ProjectFile = project.ProjectPath;
+
             if (includeWorkingDir)
                 WorkingDirectory = project.ProjectWorkingDir;
         }

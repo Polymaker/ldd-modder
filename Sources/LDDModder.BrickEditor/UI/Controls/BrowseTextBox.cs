@@ -63,6 +63,7 @@ namespace LDDModder.BrickEditor.UI.Controls
                 if (_Value != value)
                 {
                     ValueTextBox.Text = value;
+                    _Value = value;
                     ValueChanged?.Invoke(this, EventArgs.Empty);
                 }
             }

@@ -1,61 +1,112 @@
-﻿using HtmlAgilityPack;
-using LDDModder.LDD.Files;
-using LDDModder.LDD.Primitives;
-using LDDModder.PaletteMaker.Models.LDD;
-using LDDModder.PaletteMaker.Rebrickable;
-using System;
-using System.Collections.Generic;
-using System.Data.SQLite;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Text.RegularExpressions;
+﻿using System.Data.SQLite;
 using System.Threading;
-using System.Threading.Tasks;
 using LDDEnvironment = LDDModder.LDD.LDDEnvironment;
-using System.Reflection;
-using LDDModder.PaletteMaker.Models.Rebrickable;
-using LDDModder.Utilities;
 using LDDModder.PaletteMaker.Models;
+using System;
 
 namespace LDDModder.PaletteMaker.DB
 {
     static class DatabaseInitializer
     {
-        public static void ImportBaseData(string databasePath, CancellationToken cancellationToken)
+        [Flags]
+        public enum InitializationStep
+        {
+            LddPartsAndElements = 1,
+            RebrickableBaseData = 2,
+            RebrickablePartsAndRelationships = 4,
+            RebrickableLddMappings = 8,
+            All = LddPartsAndElements | RebrickableBaseData | RebrickablePartsAndRelationships | RebrickableLddMappings
+        }
+
+        public static void InitializeOrUpdateDatabase(string databasePath, 
+            InitializationStep steps, 
+            CancellationToken cancellationToken,
+            IDbInitProgressHandler progressHandler)
         {
             using (var conn = new SQLiteConnection($"Data Source={databasePath}"))
             {
                 conn.Open();
 
-                var lddImporter = new LddDataImporter(conn, LDDEnvironment.Current, cancellationToken);
-                lddImporter.ImportAllData();
+                if (steps.HasFlag(InitializationStep.LddPartsAndElements))
+                {
+                    var lddImporter = new LddDataImporter(conn, LDDEnvironment.Current, cancellationToken);
+                    lddImporter.ProgressHandler = progressHandler;
+                    lddImporter.ImportAllData();
+                }
 
                 if (cancellationToken.IsCancellationRequested)
                     return;
 
-                //var rbImporter = new RebrickableDataImporter(conn, LDDEnvironment.Current, cancellationToken);
-                //rbImporter.ImportAllData();
+                if (steps.HasFlag(InitializationStep.RebrickableBaseData) || 
+                    steps.HasFlag(InitializationStep.RebrickablePartsAndRelationships))
+                {
+                    var rbImporter = new RebrickableDataImporter(conn, LDDEnvironment.Current, cancellationToken);
+                    rbImporter.ProgressHandler = progressHandler;
 
+                    if (steps.HasFlag(InitializationStep.RebrickableBaseData))
+                        rbImporter.ImportBaseData();
+
+                    if (cancellationToken.IsCancellationRequested)
+                        return;
+
+                    if (steps.HasFlag(InitializationStep.RebrickablePartsAndRelationships))
+                        rbImporter.ImportPartsAndRelationships();
+                }
+
+                if (cancellationToken.IsCancellationRequested)
+                    return;
+
+                if (steps.HasFlag(InitializationStep.RebrickableLddMappings))
+                {
+                    InitializeDefaultMappings(databasePath, progressHandler);
+                }
             }
         }
 
-        public static void ImportRebrickableData(string databasePath, CancellationToken cancellationToken)
-        {
-            using (var conn = new SQLiteConnection($"Data Source={databasePath}"))
-            {
-                conn.Open();
-                var rbImporter = new RebrickableDataImporter(conn, LDDEnvironment.Current, cancellationToken);
-                rbImporter.ImportAllData();
-            }
-        }
+        //public static void ImportBaseData(string databasePath, CancellationToken cancellationToken)
+        //{
+        //    using (var conn = new SQLiteConnection($"Data Source={databasePath}"))
+        //    {
+        //        conn.Open();
 
-        public static void InitializeDefaultMappings(string databasePath)
+        //        var lddImporter = new LddDataImporter(conn, LDDEnvironment.Current, cancellationToken);
+        //        lddImporter.ImportAllData();
+
+        //        if (cancellationToken.IsCancellationRequested)
+        //            return;
+
+        //        //var rbImporter = new RebrickableDataImporter(conn, LDDEnvironment.Current, cancellationToken);
+        //        //rbImporter.ImportAllData();
+
+        //    }
+        //}
+
+        //public static void ImportLddPartsAndAssemblies(string databasePath, CancellationToken cancellationToken)
+        //{
+        //    using (var conn = new SQLiteConnection($"Data Source={databasePath}"))
+        //    {
+        //        var lddImporter = new LddDataImporter(conn, LDDEnvironment.Current, cancellationToken);
+        //        lddImporter.ImportAllData();
+        //    }
+        //}
+
+        //public static void ImportRebrickableData(string databasePath, CancellationToken cancellationToken)
+        //{
+        //    using (var conn = new SQLiteConnection($"Data Source={databasePath}"))
+        //    {
+        //        conn.Open();
+        //        var rbImporter = new RebrickableDataImporter(conn, LDDEnvironment.Current, cancellationToken);
+        //        rbImporter.ImportAllData();
+        //    }
+        //}
+
+        public static void InitializeDefaultMappings(string databasePath, IDbInitProgressHandler progressHandler)
         {
+            progressHandler.OnBeginStep("Initializing Rebrickable to LDD mappings");
+            progressHandler.OnReportIndefiniteProgress();
+            progressHandler.OnReportProgressStatus(string.Empty);
+
             using (var conn = new SQLiteConnection($"Data Source={databasePath}"))
-            //using (var db = new PaletteDbContext(conn))
             {
                 conn.Open();
 
@@ -73,6 +124,15 @@ namespace LDDModder.PaletteMaker.DB
                         "WHERE r.IsPrintOrPattern = 0";
                     cmd.ExecuteNonQuery(); // Insert exact matches
 
+                    cmd.CommandText = insertIntoSQL + " SELECT r.PartID, l.DesignID, 1, 1 FROM RbParts r " +
+                        "INNER JOIN LddParts l on l.Aliases LIKE '%;' || r.PartID || ';%' " +
+                        "WHERE LENGTH(l.Aliases) > 0 AND r.IsPrintOrPattern = 0 AND l.DesignID <> r.PartID";
+                    cmd.ExecuteNonQuery(); // Insert exact matches on LDD aliases
+
+                    cmd.CommandText = $"DELETE FROM {DbHelper.GetTableName<PartMapping>()} WHERE MatchLevel = 1 " +
+                        $"AND RebrickableID in (SELECT pm.RebrickableID from {DbHelper.GetTableName<PartMapping>()} pm WHERE pm.MatchLevel = 0) ";
+                    cmd.ExecuteNonQuery(); // remove possible duplicates
+
                     cmd.CommandText = insertIntoSQL + " SELECT r.PartID, '73200', 1, 1 FROM RbParts r " +
                         "WHERE r.IsPrintOrPattern = 0 and r.PartID like '970c%'";
                     cmd.ExecuteNonQuery(); // Insert minifigs legs alternates
@@ -84,12 +144,10 @@ namespace LDDModder.PaletteMaker.DB
                         "WHERE r2.IsPrintOrPattern = 1 and r2.ParentPartID like '973c%' ";
                     cmd.ExecuteNonQuery(); //Insert minifigs toros alternates
 
-
                     cmd.CommandText = insertIntoSQL + " SELECT r.PartID, l.DesignID, 2, 1 FROM RbParts r " +
                         "INNER JOIN LddParts l on l.DesignID = substr(r.PartID, 1, length(r.PartID) - 1) " +
                         "WHERE  r.IsPrintOrPattern = 0 and r.IsAssembly = 0 and (r.PartID like '%a' or r.PartID like '%b' or r.PartID like '%c')";
                     cmd.ExecuteNonQuery(); // Insert possible alternates (e.g.: 3245a, 3245b -> 3245)
-
 
                     trans.Commit();
                 }

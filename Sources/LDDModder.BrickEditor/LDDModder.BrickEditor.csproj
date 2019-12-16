@@ -122,8 +122,11 @@
     <Compile Include="Models\Navigation\ElementGroupNode.cs" />
     <Compile Include="Models\Navigation\ProjectElementNode.cs" />
     <Compile Include="Models\Navigation\ProjectCollectionNode.cs" />
+    <Compile Include="ProjectHandling\ElementExtention.cs" />
     <Compile Include="ProjectHandling\ProjectManager.cs" />
     <Compile Include="Models\Navigation\ProjectNodeCollection.cs" />
+    <Compile Include="ProjectHandling\ProjectWrapper.cs" />
+    <Compile Include="ProjectHandling\StudAltElement.cs" />
     <Compile Include="ProjectHandling\UndoRedoManager.cs" />
     <Compile Include="Rendering\MeshRenderMode.cs" />
     <Compile Include="UI\Controls\CollapsiblePanel.cs">
@@ -137,6 +140,12 @@
     </Compile>
     <Compile Include="UI\Controls\ConnectorEditor.Designer.cs">
       <DependentUpon>ConnectorEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Controls\PartAliasesEditControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Controls\PartAliasesEditControl.Designer.cs">
+      <DependentUpon>PartAliasesEditControl.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\Controls\TransformEditor.cs">
       <SubType>UserControl</SubType>
@@ -325,6 +334,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Controls\BrowseTextBox.resx">
       <DependentUpon>BrowseTextBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Controls\PartAliasesEditControl.resx">
+      <DependentUpon>PartAliasesEditControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Controls\TransformEditor.resx">
       <DependentUpon>TransformEditor.cs</DependentUpon>

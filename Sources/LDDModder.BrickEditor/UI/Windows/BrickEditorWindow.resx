@@ -292,7 +292,7 @@
     <value>Edit</value>
   </data>
   <data name="lDDEnvironmentToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>167, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="lDDEnvironmentToolStripMenuItem.Text" xml:space="preserve">
     <value>LDD Environment</value>

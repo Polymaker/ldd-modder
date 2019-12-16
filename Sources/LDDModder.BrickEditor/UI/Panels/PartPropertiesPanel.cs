@@ -49,8 +49,9 @@ namespace LDDModder.BrickEditor.UI.Panels
             Categories = ResourceHelper.Categories.ToList();
             CategoryComboBox.MouseWheel += ComboBox_MouseWheel;
             int test = AliasesButtonBox.Height;
-            UpdateCategoriesCombobox();
 
+            UpdateCategoriesCombobox();
+            InitializeAliasDropDown();
             UpdateControlBindings();
         }
 
@@ -100,15 +101,14 @@ namespace LDDModder.BrickEditor.UI.Panels
             if (CurrentProject != null)
             {
                 PartIDTextBox.Value = CurrentProject.PartID;
-                PartIDTextBox.ReadOnly = !(ProjectManager.IsNewProject);
-
+                //PartIDTextBox.ReadOnly = !(ProjectManager.IsNewProject);
+                AliasEdit.PartProperties = CurrentProject.Properties;
                 AliasesButtonBox.Value = string.Join("; ", CurrentProject.Aliases);
 
                 DescriptionTextBox.DataBindings.Add(new Binding("Text", 
                     CurrentProject.Properties, nameof(PartProperties.Description), 
                     true, DataSourceUpdateMode.OnValidation));
 
-                //DescriptionTextBox.Text = CurrentProject.PartDescription;
                 PlatformComboBox.SelectedValue = CurrentProject.Platform?.ID ?? 0;
                 UpdateCategoriesCombobox();
                 CategoryComboBox.SelectedValue = CurrentProject.MainGroup?.ID ?? 0;
@@ -126,6 +126,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                 PartIDTextBox.Value = 0;
                 DescriptionTextBox.Text = string.Empty;
                 AliasesButtonBox.Value = string.Empty;
+                AliasEdit.PartProperties = null;
                 PlatformComboBox.SelectedIndex = 0;
                 CategoryComboBox.SelectedIndex = 0;
                 BoundingEditor.Value = new LDD.Primitives.BoundingBox();
@@ -204,9 +205,25 @@ namespace LDDModder.BrickEditor.UI.Panels
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
+        private UI.Controls.PartAliasesEditControl AliasEdit;
+        private ToolStripDropDown AliasEditDropDown;
+
+        private void InitializeAliasDropDown()
+        {
+            AliasEdit = new UI.Controls.PartAliasesEditControl();
+
+            var controlHost = new ToolStripControlHost(AliasEdit);
+            controlHost.AutoSize = false;
+            AliasEdit.Dock = DockStyle.Fill;
+            AliasEditDropDown = new ToolStripDropDown();
+            AliasEditDropDown.Items.Add(controlHost);
+            AliasEditDropDown.Width = AliasesButtonBox.Width;
+        }
+
         private void AliasesButtonBox_BrowseButtonClicked(object sender, EventArgs e)
         {
-            
+            AliasEdit.ReloadAliases();
+            AliasEditDropDown.Show(AliasesButtonBox, new Point(0, AliasesButtonBox.Height));
         }
 
         private void SetControlDoubleBuffered(Control control)

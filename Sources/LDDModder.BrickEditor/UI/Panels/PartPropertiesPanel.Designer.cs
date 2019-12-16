@@ -79,9 +79,9 @@
             this.tableLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.tableLayoutPanel1.ColumnCount = 4;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 85F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 85F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 40F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 70F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 60F));
             this.tableLayoutPanel1.Controls.Add(this.LabelAliases, 2, 0);
             this.tableLayoutPanel1.Controls.Add(this.LabelPlatform, 0, 3);
             this.tableLayoutPanel1.Controls.Add(this.DescriptionTextBox, 0, 2);
@@ -111,7 +111,7 @@
             // 
             this.LabelAliases.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.LabelAliases.AutoSize = true;
-            this.LabelAliases.Location = new System.Drawing.Point(222, 6);
+            this.LabelAliases.Location = new System.Drawing.Point(198, 6);
             this.LabelAliases.Name = "LabelAliases";
             this.LabelAliases.Size = new System.Drawing.Size(40, 13);
             this.LabelAliases.TabIndex = 3;
@@ -169,7 +169,7 @@
             this.PartIDTextBox.Location = new System.Drawing.Point(88, 3);
             this.PartIDTextBox.MaximumValue = 9999999D;
             this.PartIDTextBox.Name = "PartIDTextBox";
-            this.PartIDTextBox.Size = new System.Drawing.Size(109, 20);
+            this.PartIDTextBox.Size = new System.Drawing.Size(92, 20);
             this.PartIDTextBox.TabIndex = 8;
             this.PartIDTextBox.ValueChanged += new System.EventHandler(this.PartIDTextBox_ValueChanged);
             // 
@@ -217,10 +217,10 @@
             this.AliasesButtonBox.ButtonText = "...";
             this.AliasesButtonBox.ButtonWidth = 26;
             this.AliasesButtonBox.Enabled = false;
-            this.AliasesButtonBox.Location = new System.Drawing.Point(288, 3);
+            this.AliasesButtonBox.Location = new System.Drawing.Point(256, 3);
             this.AliasesButtonBox.Name = "AliasesButtonBox";
             this.AliasesButtonBox.ReadOnly = true;
-            this.AliasesButtonBox.Size = new System.Drawing.Size(109, 20);
+            this.AliasesButtonBox.Size = new System.Drawing.Size(141, 20);
             this.AliasesButtonBox.TabIndex = 9;
             this.AliasesButtonBox.Value = "";
             this.AliasesButtonBox.BrowseButtonClicked += new System.EventHandler(this.AliasesButtonBox_BrowseButtonClicked);

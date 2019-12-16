@@ -28,6 +28,7 @@ namespace LDDModder.PaletteMaker.DB
         {
 
         }
+
         [Flags]
         public enum RebrickableDataType
         {   
@@ -35,6 +36,7 @@ namespace LDDModder.PaletteMaker.DB
             Categories = 2,
             Themes = 4,
             PartsAndRelationships = 8,
+            BaseData = Colors | Categories | Themes,
             All = Colors | Categories | Themes | PartsAndRelationships
         }
 
@@ -51,6 +53,20 @@ namespace LDDModder.PaletteMaker.DB
 
             if (!IsCancellationRequested && data.HasFlag(RebrickableDataType.PartsAndRelationships))
                 ImportPartsAndRelationships();
+        }
+
+        public void ImportBaseData()
+        {
+            NotifyBeginStep("Importing misc. data (Colors, categories and themes)");
+
+            if (!IsCancellationRequested)
+                ImportColors();
+
+            if (!IsCancellationRequested)
+                ImportCategories();
+
+            if (!IsCancellationRequested)
+                ImportThemes();
         }
 
         public void ImportColors()
@@ -72,7 +88,7 @@ namespace LDDModder.PaletteMaker.DB
 
                 var colors = RebrickableAPI.GetAllColors().ToList();
 
-                NotifyTaskStart(colors.Count, "Importing colors...");
+                NotifyTaskStart("Importing colors...", colors.Count);
 
                 DbHelper.InitializeInsertCommand<RbColor>(colorCmd, x =>
                 new
@@ -91,6 +107,9 @@ namespace LDDModder.PaletteMaker.DB
                     x.ColorID,
                     x.ColorName
                 });
+
+                int totalToProcess = colors.Count;
+                int totalProcessed = 0;
 
                 void AddColorMatches(int colorID, PaletteMaker.Rebrickable.Models.ColorIds colorIds, string platform)
                 {
@@ -122,8 +141,7 @@ namespace LDDModder.PaletteMaker.DB
                     AddColorMatches(rbColor.Id, rbColor.ExternalColorIds.LEGO, "LEGO");
                     AddColorMatches(rbColor.Id, rbColor.ExternalColorIds.BrickLink, "BrickLink");
 
-                    //progressTracker.Current++;
-                    //progress?.Report(progressTracker);
+                    ReportProgress(++totalProcessed, totalToProcess);
                 }
 
                 trans.Commit();
@@ -142,9 +160,12 @@ namespace LDDModder.PaletteMaker.DB
 
                 NotifyIndefiniteProgress("Downloading rebrickable categories...");
                 var categories = RebrickableAPI.GetAllCategories().ToList();
-                NotifyTaskStart(categories.Count, "Importing themes...");
+                NotifyTaskStart("Importing categories...", categories.Count);
 
                 DbHelper.InitializeInsertCommand<RbCategory>(cmd, x => new { x.ID, x.Name });
+
+                int totalToProcess = categories.Count;
+                int totalProcessed = 0;
 
                 foreach (var rbCat in categories)
                 {
@@ -152,6 +173,8 @@ namespace LDDModder.PaletteMaker.DB
                         break;
 
                     DbHelper.InsertWithParameters(cmd, rbCat.Id, rbCat.Name);
+
+                    ReportProgress(++totalProcessed, totalToProcess);
                 }
 
                 trans.Commit();
@@ -167,13 +190,15 @@ namespace LDDModder.PaletteMaker.DB
                 cmd.ExecuteNonQuery();
                 cmd.CommandText = $"DELETE FROM sqlite_sequence WHERE name='{DbHelper.GetTableName<RbTheme>()}'";
                 cmd.ExecuteNonQuery();
-
                 
                 NotifyIndefiniteProgress("Downloading rebrickable themes...");
                 var themes = RebrickableAPI.GetAllThemes().ToList();
-                NotifyTaskStart(themes.Count, "Importing themes...");
+                NotifyTaskStart("Importing themes...", themes.Count);
 
                 DbHelper.InitializeInsertCommand<RbTheme>(cmd, x => new { x.ID, x.Name, x.ParentThemeID });
+
+                int totalToProcess = themes.Count;
+                int totalProcessed = 0;
 
                 foreach (var rbTheme in themes)
                 {
@@ -182,6 +207,7 @@ namespace LDDModder.PaletteMaker.DB
 
                     DbHelper.InsertWithParameters(cmd, rbTheme.Id, rbTheme.Name, rbTheme.ParentID);
 
+                    ReportProgress(++totalProcessed, totalToProcess);
                 }
 
                 trans.Commit();
@@ -190,6 +216,8 @@ namespace LDDModder.PaletteMaker.DB
     
         public void ImportPartsAndRelationships()
         {
+            NotifyBeginStep("Importing parts and relationships");
+
             string tmpDownloadDir = null;
 
             try
@@ -222,9 +250,9 @@ namespace LDDModder.PaletteMaker.DB
             if (!File.Exists(PartsCsvFile))
                 return;
 
+            NotifyProgressStatus("Reading parts from file...");
             var partCsv = IO.CsvFile.Read(PartsCsvFile, IO.CsvFile.Separator.Comma);
             partCsv.Rows[0].IsHeader = true;
-
 
             using (var trans = Connection.BeginTransaction())
             using (var cmd = Connection.CreateCommand())
@@ -245,6 +273,9 @@ namespace LDDModder.PaletteMaker.DB
                     x.ParentPartID
                 });
 
+                int totalToProcess = partCsv.Rows.Count - 1;
+                int totalProcessed = 0;
+
                 foreach (var row in partCsv.Rows)
                 {
                     if (IsCancellationRequested)
@@ -252,6 +283,7 @@ namespace LDDModder.PaletteMaker.DB
 
                     if (row.IsHeader)
                         continue;
+
                     string partID = row[0];
                     string partName = row[1];
                     int? category = string.IsNullOrEmpty(row[2]) ? default(int?) : int.Parse(row[2]);
@@ -279,6 +311,7 @@ namespace LDDModder.PaletteMaker.DB
 
                     DbHelper.InsertWithParameters(cmd, partID, partName, category, isPrintOrPattern, isAssembly, parentPartID);
 
+                    ReportProgress(++totalProcessed, totalToProcess);
                 }
 
                 trans.Commit();
@@ -290,8 +323,9 @@ namespace LDDModder.PaletteMaker.DB
             if (!File.Exists(RelationshipsCsvFile))
                 return;
 
-            var partCsv = IO.CsvFile.Read(RelationshipsCsvFile, IO.CsvFile.Separator.Comma);
-            partCsv.Rows[0].IsHeader = true;
+            NotifyProgressStatus("Reading relationships from file...");
+            var relationsCsv = IO.CsvFile.Read(RelationshipsCsvFile, IO.CsvFile.Separator.Comma);
+            relationsCsv.Rows[0].IsHeader = true;
 
             using (var trans = Connection.BeginTransaction())
             using (var cmd = Connection.CreateCommand())
@@ -307,7 +341,10 @@ namespace LDDModder.PaletteMaker.DB
                     nameof(RbPartRelation.ChildPartID),
                     nameof(RbPartRelation.RelationType));
 
-                foreach (var row in partCsv.Rows)
+                int totalToProcess = relationsCsv.Rows.Count - 1;
+                int totalProcessed = 0;
+
+                foreach (var row in relationsCsv.Rows)
                 {
                     if (IsCancellationRequested)
                         break;
@@ -316,7 +353,7 @@ namespace LDDModder.PaletteMaker.DB
                         continue;
 
                     DbHelper.InsertWithParameters(cmd, row[2], row[1], row[0]);
-
+                    ReportProgress(++totalProcessed, totalToProcess);
                 }
 
                 cmd.Parameters.Clear();
@@ -356,10 +393,16 @@ namespace LDDModder.PaletteMaker.DB
             using (var wc = new WebClient())
             {
                 PartsCsvFile = Path.Combine(destinationFolder, PARTS_FILENAME);
-                wc.DownloadFile(partsLink, PartsCsvFile);
+                //wc.DownloadFile(partsLink, PartsCsvFile);
+                var downloadTask1 = wc.DownloadFileTaskAsync(partsLink, PartsCsvFile);
+                downloadTask1.Wait(CancellationToken);
+
                 RelationshipsCsvFile = Path.Combine(destinationFolder, RELATIONSHIPS_FILENAME);
                 wc.DownloadFile(relastionshipsLink, RelationshipsCsvFile);
+                var downloadTask2 = wc.DownloadFileTaskAsync(relastionshipsLink, RelationshipsCsvFile);
+                downloadTask2.Wait(CancellationToken);
             }
         }
+
     }
 }

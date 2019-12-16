@@ -24,14 +24,20 @@ namespace LDDModder.LDD.Palettes
 
         public Brick()
         {
+            Decorations = new List<Decoration>();
+            SubMaterials = new List<SubMaterial>();
         }
 
         public Brick(int designID, string elementID) : base(designID, elementID)
         {
+            Decorations = new List<Decoration>();
+            SubMaterials = new List<SubMaterial>();
         }
 
         public Brick(int designID, string elementID, int quantity) : base(designID, elementID, quantity)
         {
+            Decorations = new List<Decoration>();
+            SubMaterials = new List<SubMaterial>();
         }
     }
 }

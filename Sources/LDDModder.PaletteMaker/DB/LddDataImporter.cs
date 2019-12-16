@@ -30,6 +30,9 @@ namespace LDDModder.PaletteMaker.DB
 
         public void ImportLddParts()
         {
+            NotifyBeginStep("Importing LDD parts and elements");
+            NotifyIndefiniteProgress();
+            NotifyProgressStatus("Clearing previous data...");
             using (var trans = Connection.BeginTransaction())
             using (var cmd = Connection.CreateCommand())
             {
@@ -47,7 +50,7 @@ namespace LDDModder.PaletteMaker.DB
                 //Extract Primitives and Assemblies if needed
                 if (!Environment.DatabaseExtracted)
                 {
-                    NotifyIndefiniteProgress("Extracting primitives and assemblies from 'db.lif'");
+                    NotifyProgressStatus("Extracting primitives and assemblies from 'db.lif'");
 
                     string dbLifPath = Environment.GetDatabaseLifPath();
                     if (!File.Exists(dbLifPath))
@@ -99,8 +102,9 @@ namespace LDDModder.PaletteMaker.DB
 
         private void ImportPrimitivesFromDirectory(string directory)
         {
+            NotifyProgressStatus("Fetching primitive files...");
             var primitivesFiles = Directory.GetFiles(directory, "*.xml");
-            NotifyTaskStart(primitivesFiles.Length, "Importing primitives...");
+            NotifyTaskStart("Importing primitives...", primitivesFiles.Length);
 
             using (var trans = Connection.BeginTransaction())
             using (var cmd = Connection.CreateCommand())
@@ -111,8 +115,11 @@ namespace LDDModder.PaletteMaker.DB
                     x.DesignID,
                     x.Name,
                     x.Aliases,
+                    x.SubMaterials,
                     x.IsAssembly
                 });
+
+                int totalProcessed = 0;
 
                 foreach (var primitiveFile in primitivesFiles)
                 {
@@ -122,16 +129,23 @@ namespace LDDModder.PaletteMaker.DB
                     try
                     {
                         var primitiveInfo = Primitive.Load(primitiveFile);
+                        string aliasesStr = string.Join(";", primitiveInfo.Aliases.Where(x => x != primitiveInfo.ID));
+                        if (!string.IsNullOrEmpty(aliasesStr))
+                            aliasesStr = $";{aliasesStr};";
+
+                        string subMaterialsStr = primitiveInfo.SubMaterials != null ? 
+                            string.Join(";", primitiveInfo.SubMaterials) : string.Empty;
+
                         DbHelper.InsertWithParameters(cmd,
                             primitiveInfo.ID.ToString(),
                             primitiveInfo.Name,
-                            string.Join(";", primitiveInfo.Aliases),
+                            aliasesStr,
+                            subMaterialsStr,
                             false);
                     }
                     catch { }
 
-                    //progressTracker.Current++;
-                    //progress?.Report(progressTracker);
+                    ReportProgress(++totalProcessed, primitivesFiles.Length);
                 }
 
                 trans.Commit();
@@ -140,8 +154,9 @@ namespace LDDModder.PaletteMaker.DB
 
         private void ImportAssembliesFromDirectory(string directory)
         {
+            NotifyProgressStatus("Fetching assembly files...");
             var assemblyFiles = Directory.GetFiles(directory, "*.lxfml");
-            NotifyTaskStart(assemblyFiles.Length, "Importing assemblies...");
+            NotifyTaskStart("Importing assemblies...", assemblyFiles.Length);
 
             using (var trans = Connection.BeginTransaction())
             using (var mainCmd = Connection.CreateCommand())
@@ -164,6 +179,7 @@ namespace LDDModder.PaletteMaker.DB
                     x.DefaultMaterials
                 });
 
+                int totalProcessed = 0;
                 foreach (var assemFile in assemblyFiles)
                 {
                     if (IsCancellationRequested)
@@ -196,8 +212,7 @@ namespace LDDModder.PaletteMaker.DB
                     }
                     catch { }
 
-                    //progressTracker.Current++;
-                    //progress?.Report(progressTracker);
+                    ReportProgress(++totalProcessed, assemblyFiles.Length);
                 }
 
                 trans.Commit();
@@ -215,11 +230,6 @@ namespace LDDModder.PaletteMaker.DB
             var lddPalette = lddPaletteFile.Palettes.First();
 
             var duplicatedElements = lddPalette.Items.GroupBy(x => x.ElementID).Where(g => g.Count() > 1).Select(g => g.Key).ToList();
-
-            
-            //var progressTracker = new ProgressInfo { Total = lddPalette.Items.Count };
-            //progress?.Report(progressTracker);
-            NotifyTaskStart(lddPalette.Items.Count, "Importing element configurations...");
 
             var manualLddElements = new List<LddElement>();
 
@@ -253,6 +263,9 @@ namespace LDDModder.PaletteMaker.DB
                 cmd.ExecuteNonQuery();
                 trans.Commit();
             }
+
+            int totalToProcess = lddPalette.Items.Count + manualLddElements.Count;
+            NotifyTaskStart("Importing LDD elements...", totalToProcess);
 
             using (var trans = Connection.BeginTransaction())
             using (var elemCmd = Connection.CreateCommand())
@@ -297,16 +310,18 @@ namespace LDDModder.PaletteMaker.DB
 
                 rowidCmd.CommandText = "select last_insert_rowid()";
 
+                int totalProcessed = 0;
+
                 foreach (var item in lddPalette.Items)
                 {
                     if (IsCancellationRequested)
                         break;
-
-                    if (string.IsNullOrEmpty(item.ElementID))
+   
+                    if (string.IsNullOrEmpty(item.ElementID) || duplicatedElements.Contains(item.ElementID))
+                    {
+                        ReportProgress(++totalProcessed, totalToProcess);
                         continue;
-
-                    if (duplicatedElements.Contains(item.ElementID))
-                        continue;
+                    }
 
                     bool isAssembly = item is LDDModder.LDD.Palettes.Assembly;
                     DbHelper.InsertWithParameters(elemCmd, item.ElementID, item.DesignID.ToString(), isAssembly, 1);
@@ -334,8 +349,7 @@ namespace LDDModder.PaletteMaker.DB
                             DbHelper.InsertWithParameters(matCmd, partID, mat.SurfaceID, mat.MaterialID);
                     }
 
-                    //progressTracker.Current++;
-                    //progress?.Report(progressTracker);
+                    ReportProgress(++totalProcessed, totalToProcess);
                 }
 
                 foreach (var oldElem in manualLddElements)
@@ -354,6 +368,8 @@ namespace LDDModder.PaletteMaker.DB
                         foreach (var mat in part.SubMaterials)
                             DbHelper.InsertWithParameters(matCmd, partID, mat.SurfaceID, mat.MaterialID);
                     }
+
+                    ReportProgress(++totalProcessed, totalToProcess);
                 }
 
                 trans.Commit();

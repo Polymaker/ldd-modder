@@ -903,23 +903,30 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         public IEnumerable<PartElementModel> GetVisibleModels()
         {
-            if (!ModelRenderingOptions.Hidden)
+            foreach(var model in GetAllElementModels())
             {
-                foreach (var model in SurfaceModels.SelectMany(x => x.MeshModels).Where(x => x.Visible))
+                var elementExt = ProjectManager.GetExtension(model.Element);
+                if (elementExt?.IsVisible ?? true)
                     yield return model;
             }
 
-            if (ShowCollisions)
-            {
-                foreach (var model in CollisionModels.Where(x => x.Visible))
-                    yield return model;
-            }
+            //if (!ModelRenderingOptions.Hidden)
+            //{
+            //    foreach (var model in SurfaceModels.SelectMany(x => x.MeshModels).Where(x => x.Visible))
+            //        yield return model;
+            //}
 
-            if (ShowConnections)
-            {
-                foreach (var model in ConnectionModels)
-                    yield return model;
-            }
+            //if (ShowCollisions)
+            //{
+            //    foreach (var model in CollisionModels.Where(x => x.Visible))
+            //        yield return model;
+            //}
+
+            //if (ShowConnections)
+            //{
+            //    foreach (var model in ConnectionModels)
+            //        yield return model;
+            //}
         }
 
         public IEnumerable<PartElementModel> GetSelectedModels(bool onlyVisible = false)
@@ -1272,18 +1279,21 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void DisplayMenu_Collisions_CheckedChanged(object sender, EventArgs e)
         {
+            ProjectManager.ShowCollisions = DisplayMenu_Collisions.Checked;
             ShowCollisions = DisplayMenu_Collisions.Checked;
             UpdateGizmoFromSelection();
         }
 
         private void DisplayMenu_Connections_CheckedChanged(object sender, EventArgs e)
         {
+            ProjectManager.ShowConnections = DisplayMenu_Connections.Checked;
             ShowConnections = DisplayMenu_Connections.Checked;
             UpdateGizmoFromSelection();
         }
 
         private void DisplayMenu_Meshes_CheckedChanged(object sender, EventArgs e)
         {
+            ProjectManager.ShowModels = DisplayMenu_Meshes.Checked;
             ShowMeshes = DisplayMenu_Meshes.Checked;
             ModelRenderingOptions.Hidden = !DisplayMenu_Meshes.Checked;
             UpdateGizmoFromSelection();

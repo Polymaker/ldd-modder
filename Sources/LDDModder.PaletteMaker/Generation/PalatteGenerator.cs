@@ -29,6 +29,7 @@ namespace LDDModder.PaletteMaker.Generation
                     setPart.MatchingFlags = PartMatchingFlags.NonLegoPart;
                     continue;
                 }
+
                 setPart.RbPart = db.RbParts.FirstOrDefault(x => x.PartID == setPart.PartID);
 
                 if (setPart.RbPart == null)
@@ -39,18 +40,18 @@ namespace LDDModder.PaletteMaker.Generation
 
                 if (!rbColors.TryGetValue(setPart.ColorID, out RbColor rbColor))
                 {
-                    setPart.MatchingFlags = PartMatchingFlags.InvalidRbColor;
-                    continue;
+                    setPart.MatchingFlags |= PartMatchingFlags.InvalidRbColor;
+                    //continue;
                 }
 
                 var lddColor = rbColor.ColorMatches.Where(x => x.Platform == "LEGO").OrderBy(x => x.ColorID).FirstOrDefault();
                 if (lddColor == null)
                 {
-                    setPart.MatchingFlags = PartMatchingFlags.InvalidLddColor;
-                    continue;
+                    setPart.MatchingFlags |= PartMatchingFlags.InvalidLddColor;
+                    //continue;
                 }
 
-                setPart.LddColorID = lddColor.ColorID;
+                setPart.LddColorID = lddColor?.ColorID ?? -1;
 
                 if (!string.IsNullOrEmpty(setPart.ElementID))
                 {
@@ -58,6 +59,7 @@ namespace LDDModder.PaletteMaker.Generation
                     if (foundElem != null)
                     {
                         setPart.LddElement = foundElem;
+                        setPart.IsGeneratedElement = false;
                         setPart.LddPart = db.LddParts.FirstOrDefault(x => x.DesignID == foundElem.DesignID);
 
                         if (setPart.LddPart != null)
@@ -87,7 +89,7 @@ namespace LDDModder.PaletteMaker.Generation
                         if (p.PartID == aliasID)
                             p.PartID = lddPart.DesignID;
                     }
-                    //db.SaveChanges();
+                    db.SaveChanges();
                 }
 
                 setPart.LddPart = lddPart;
@@ -102,39 +104,62 @@ namespace LDDModder.PaletteMaker.Generation
             if (unmatchedParts.Any())
             {
                 Debug.WriteLine("Querying rebrickable....");
+                var newMappings = new List<Models.PartMapping>();
 
                 var partDetails = RebrickableAPI.GetPartsDetails(unmatchedParts.Select(x => x.PartID).Distinct()).ToList();
                 foreach (var partDetail in partDetails)
                 {
                     if (partDetail.ExternalIds.LEGO?.Count > 0)
                     {
+                        var relatedSetParts = unmatchedParts.Where(x => x.PartID == partDetail.PartNum).ToList();
+
                         var legoPartIDs = partDetail.ExternalIds.LEGO.ToArray();
+
+                        relatedSetParts.ForEach(x => x.LegoIDs.AddRange(legoPartIDs));
+
                         var matchingParts = db.LddParts.Where(x => legoPartIDs.Contains(x.DesignID)).ToList();
+
                         var foundPart = matchingParts.FirstOrDefault();
                         if (foundPart != null)
                         {
                             Debug.WriteLine($"Matched Part '{partDetail.Name}' ({partDetail.PartNum}) to LDD ID {foundPart.DesignID}");
                             var rbPart = db.RbParts.FirstOrDefault(x => x.PartID == partDetail.PartNum);
-                            db.PartMappings.Add(new Models.PartMapping()
+
+                            if (!newMappings.Any(x => x.RebrickableID == (rbPart.ParentPartID ?? rbPart.PartID)))
                             {
-                                RebrickableID = rbPart.ParentPartID ?? rbPart.PartID,
-                                LegoID = foundPart.DesignID,
-                                MatchLevel = 3,
-                                IsActive = true
-                            });
+                                newMappings.Add(new Models.PartMapping()
+                                {
+                                    RebrickableID = rbPart.ParentPartID ?? rbPart.PartID,
+                                    LegoID = foundPart.DesignID,
+                                    MatchLevel = 3,
+                                    IsActive = true
+                                });
+                            }
 
                             foreach (var setPart in unmatchedParts.Where(x => x.PartID == partDetail.PartNum))
                             {
                                 setPart.LddPart = foundPart;
-                                setPart.MatchingFlags = PartMatchingFlags.Matched;
+                                setPart.MatchingFlags |= PartMatchingFlags.Matched;
                             }
                         }
 
                     }
                 }
+            
+                if (newMappings.Any())
+                {
+                    db.PartMappings.AddRange(newMappings);
+                    db.SaveChanges();
+                }
             }
 
-            db.SaveChanges();
+            
+
+            foreach (var part in setParts.Where(x => x.LddPartFound && x.LddElement == null))
+            {
+                part.LddElement = GenererateElement(db, part);
+                part.IsGeneratedElement = (part.LddElement != null);
+            }
 
 
             foreach (var part in setParts.Where(x => x.MatchingFlags == PartMatchingFlags.LddPartNotFound))
@@ -153,7 +178,7 @@ namespace LDDModder.PaletteMaker.Generation
             else
                 testedIDs.Add(partIDToFind);
 
-            var matches = db.PartMappings.Where(x => x.RebrickableID == partIDToFind).ToList();
+            var matches = db.PartMappings.Where(x => x.RebrickableID == partIDToFind && x.IsActive).ToList();
 
             if (matches.Any())
             {
@@ -161,10 +186,12 @@ namespace LDDModder.PaletteMaker.Generation
                 {
                     string legoID = matches[0].LegoID;
                     var lddPart = db.LddParts.FirstOrDefault(x => x.DesignID == legoID);
+                    
                     return lddPart;
                 }
                 else
                 {
+                    Debug.WriteLine("Multiple matches for part!");
 
                 }
             }
@@ -212,7 +239,9 @@ namespace LDDModder.PaletteMaker.Generation
                 }
                 else if (!setPart.LddPart.IsAssembly)
                 {
-                    var brick = new LDD.Palettes.Brick(int.Parse(setPart.LddPartID), string.Empty, setPart.Quantity);
+                    var brick = new LDD.Palettes.Brick(int.Parse(setPart.LddPartID), 
+                        setPart.ElementID ?? string.Empty, setPart.Quantity);
+
                     brick.MaterialID = setPart.LddColorID;
                     palette.Items.Add(brick);
                 }
@@ -226,6 +255,7 @@ namespace LDDModder.PaletteMaker.Generation
                     if (existingElem != null)
                     {
                         existingElem = existingElem.Clone();
+                        existingElem.ElementID = setPart.ElementID ?? string.Empty;
                         existingElem.ChangeColor(setPart.LddColorID);
                         var item = existingElem.ToPaletteItem(setPart.Quantity);
                         palette.Items.Add(item);
@@ -238,6 +268,77 @@ namespace LDDModder.PaletteMaker.Generation
                 }
             }
             return palette;
+        }
+    
+        public static LddElement GenererateElement(PaletteDbContext db, SetPartWrapper partWrapper)
+        {
+            if (string.IsNullOrEmpty(partWrapper.ElementID))
+                return null;
+
+            var existingElem = db.LddElements.FirstOrDefault(x => x.DesignID == partWrapper.LddPartID);
+
+            if (existingElem != null)
+            {
+                var newElement = existingElem.Clone(partWrapper.ElementID);
+                newElement.ChangeColor(partWrapper.LddColorID);
+                newElement.RemoveDecorations();
+                return newElement;
+            }
+
+            void AddElementPart(LddElement lddElement, LddPart lddPart, int colorID)
+            {
+                var partConfig = new ElementPart()
+                {
+                    PartID = lddPart.DesignID,
+                    MaterialID = colorID
+                };
+
+                var subMats = lddPart.GetSubMaterials();
+
+                if (subMats.Length > 0)
+                {
+                    var addedIndices = new List<int>();
+                    for (int i = 0; i < subMats.Length; i++)
+                    {
+                        if (!addedIndices.Contains(subMats[i]) && subMats[i] != 0)
+                        {
+                            partConfig.SubMaterials.Add(new ElementMaterial(i, colorID));
+                            addedIndices.Add(subMats[i]);
+                        }
+                    }
+                }
+
+                lddElement.Parts.Add(partConfig);
+            }
+
+            if (!partWrapper.LddPart.IsAssembly)
+            {
+                var newElement = new LddElement()
+                {
+                    DesignID = partWrapper.LddPartID,
+                    ElementID = partWrapper.ElementID,
+                    Flag = 1,
+                    IsAssembly = false
+                };
+                AddElementPart(newElement, partWrapper.LddPart, partWrapper.LddColorID);
+                return newElement;
+            }
+            else
+            {
+                var newElement = new LddElement()
+                {
+                    DesignID = partWrapper.LddPartID,
+                    ElementID = partWrapper.ElementID,
+                    Flag = 1,
+                    IsAssembly = true
+                };
+                foreach (var assemPart in db.AssemblyParts.Where(x => x.AssemblyID == partWrapper.LddPartID))
+                {
+                    var subPart = db.LddParts.FirstOrDefault(x => x.DesignID == assemPart.PartID);
+                    AddElementPart(newElement, subPart, partWrapper.LddColorID);
+                }
+                return newElement;
+            }
         }
     }
 }

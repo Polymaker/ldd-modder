@@ -590,18 +590,43 @@ namespace LDDModder.BrickEditor.UI.Panels
                 SyncProjectSelection();
         }
 
+        private BaseProjectNode GetFirstVisibleParentNode(BaseProjectNode projectNode)
+        {
+            if (!IsNodeVisible(projectNode))
+                return projectNode;
+
+            var treeViewItem = ProjectTreeView.ModelToItem(projectNode);
+            if (treeViewItem != null)
+                return projectNode;
+
+            while (projectNode?.Parent != null)
+            {
+                treeViewItem = ProjectTreeView.ModelToItem(projectNode.Parent);
+                if (treeViewItem != null)
+                    return projectNode.Parent;
+
+                projectNode = projectNode.Parent;
+            }
+
+            return projectNode;
+        }
+
         private void SyncProjectSelection()
         {
             if (ProjectManager.SelectedElements.Any())
             {
                 var elementNodes = GetAllTreeNodes().OfType<ProjectElementNode>();
-                var selectedNodes = elementNodes.Where(x => ProjectManager.SelectedElements.Contains(x.Element));
+
+                var selectedNodes = elementNodes
+                    .Where(x => ProjectManager.SelectedElements.Contains(x.Element))
+                    .Select(x => GetFirstVisibleParentNode(x));
+
                 SetSelectedNodes(selectedNodes);
             }
             else
             {
                 using (FlagManager.UseFlag("ManualSelect"))
-                    ProjectTreeView.SelectedObjects.Clear();
+                    ProjectTreeView.SelectedObjects = null;
             }
         }
 

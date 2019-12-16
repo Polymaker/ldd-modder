@@ -15,11 +15,10 @@ namespace LDDModder.BrickEditor.ProjectHandling
         private List<PartElement> _SelectedElements;
         private List<ValidationMessage> _ValidationMessages;
 
-        //private HashSet<ElementExtention> ElementExtentions;
-        //private Dictionary<Type, Type> ElementExtenders;
-
         private long LastValidation;
         private long LastSavedChange;
+
+        private Dictionary<PartElement, ElementExtention> ElementExtensions;
 
         public PartProject CurrentProject { get; private set; }
 
@@ -45,12 +44,6 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
         public IList<PartElement> SelectedElements => _SelectedElements.AsReadOnly();
 
-        public IList<ValidationMessage> ValidationMessages => _ValidationMessages.AsReadOnly();
-
-        public bool IsPartValidated => IsProjectOpen && LastValidation == UndoRedoManager.CurrentChangeID;
-
-        public bool IsPartValid => IsPartValidated &&
-            !ValidationMessages.Any(x => x.Level == ValidationLevel.Error);
 
         #region Events
 
@@ -64,17 +57,9 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
         public event EventHandler<ElementCollectionChangedEventArgs> ElementCollectionChanged;
 
-        public event EventHandler ProjectElementsChanged;
-
         public event EventHandler<ElementValueChangedEventArgs> ElementPropertyChanged;
 
-        public event EventHandler ValidationStarted;
-
-        public event EventHandler ValidationFinished;
-
-        public event EventHandler GenerationStarted;
-
-        public event EventHandler GenerationFinished;
+        public event EventHandler ProjectElementsChanged;
 
         #endregion
 
@@ -90,8 +75,13 @@ namespace LDDModder.BrickEditor.ProjectHandling
             UndoRedoManager.BeginUndoRedo += UndoRedoManager_BeginUndoRedo;
             UndoRedoManager.EndUndoRedo += UndoRedoManager_EndUndoRedo;
             UndoRedoManager.UndoHistoryChanged += UndoRedoManager_UndoHistoryChanged;
-            //ElementExtentions = new HashSet<ElementExtention>();
+
+            ElementExtensions = new Dictionary<PartElement, ElementExtention>();
+
+            _ShowModels = true;
         }
+
+        #region Project Loading/Closing
 
         public void SetCurrentProject(PartProject project)
         {
@@ -99,8 +89,8 @@ namespace LDDModder.BrickEditor.ProjectHandling
             {
                 PreventProjectChange = true;
                 CloseCurrentProject();
+                LastValidation = -1;
                 PreventProjectChange = false;
-
                 CurrentProject = project;
 
                 if (project != null)
@@ -117,8 +107,9 @@ namespace LDDModder.BrickEditor.ProjectHandling
                 DettachPartProject(CurrentProject);
                 _SelectedElements.Clear();
                 _ValidationMessages.Clear();
+                ElementExtensions.Clear();
                 LastSavedChange = 0;
-                LastValidation = 0;
+                LastValidation = -1;
                 ProjectClosed?.Invoke(this, EventArgs.Empty);
                 CurrentProject = null;
                 //ElementExtentions.Clear();
@@ -126,6 +117,21 @@ namespace LDDModder.BrickEditor.ProjectHandling
                     ProjectChanged?.Invoke(this, EventArgs.Empty);
             }
         }
+
+        private void AttachPartProject(PartProject project)
+        {
+            project.ElementCollectionChanged += Project_ElementCollectionChanged;
+            project.ElementPropertyChanged += Project_ElementPropertyChanged;
+            project.UpdateModelStatistics();
+        }
+
+        private void DettachPartProject(PartProject project)
+        {
+            project.ElementCollectionChanged -= Project_ElementCollectionChanged;
+            project.ElementPropertyChanged -= Project_ElementPropertyChanged;
+        }
+
+        #endregion
 
         public void SaveProject(string targetPath)
         {
@@ -147,18 +153,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
             }
         }
 
-        private void AttachPartProject(PartProject project)
-        {
-            project.ElementCollectionChanged += Project_ElementCollectionChanged;
-            project.ElementPropertyChanged += Project_ElementPropertyChanged;
-            project.UpdateModelStatistics();
-        }
-
-        private void DettachPartProject(PartProject project)
-        {
-            project.ElementCollectionChanged -= Project_ElementCollectionChanged;
-            project.ElementPropertyChanged -= Project_ElementPropertyChanged;
-        }
+        #region Project Events
 
         private void Project_ElementCollectionChanged(object sender, ElementCollectionChangedEventArgs e)
         {
@@ -182,6 +177,8 @@ namespace LDDModder.BrickEditor.ProjectHandling
             ElementPropertyChanged?.Invoke(this, e);
         }
 
+        #endregion
+
         public string GetProjectDisplayName()
         {
             if (CurrentProject != null)
@@ -197,6 +194,87 @@ namespace LDDModder.BrickEditor.ProjectHandling
             }
 
             return ModelLocalizations.Label_NoActiveProject;
+        }
+
+        private bool _ShowModels;
+
+        private bool _ShowCollisions;
+
+        private bool _ShowConnections;
+
+        public bool ShowModels
+        {
+            get => _ShowModels;
+            set
+            {
+                if (_ShowModels != value)
+                {
+                    _ShowModels = true;
+
+                    if (IsProjectOpen)
+                        RecalculateElementsVisibillity(CurrentProject.Surfaces);
+                }
+            }
+        }
+
+        public bool ShowCollisions
+        {
+            get => _ShowCollisions;
+            set
+            {
+                if (_ShowCollisions != value)
+                {
+                    _ShowCollisions = true;
+
+                    if (IsProjectOpen)
+                    {
+                        RecalculateElementsVisibillity(CurrentProject.Collisions);
+                        RecalculateElementsVisibillity(CurrentProject.Bones);
+                    }
+                }
+            }
+        }
+
+        public bool ShowConnections
+        {
+            get => _ShowConnections;
+            set
+            {
+                if (_ShowConnections != value)
+                {
+                    _ShowConnections = true;
+
+                    if (IsProjectOpen)
+                    {
+                        RecalculateElementsVisibillity(CurrentProject.Connections);
+                        RecalculateElementsVisibillity(CurrentProject.Bones);
+                    }
+                }
+            }
+        }
+
+        private void RecalculateElementsVisibillity(IEnumerable<PartElement> elements)
+        {
+            foreach (var elem in elements)
+                GetExtension(elem)?.CalculateVisibillity();
+        }
+
+        public ElementExtention GetExtension(PartElement element)
+        {
+            if (ElementExtensions.ContainsKey(element))
+                return ElementExtensions[element];
+
+            ElementExtention extention = null;
+
+            if (element is FemaleStudModel femaleStudModel)
+            {
+                extention = new StudAltElement(this, femaleStudModel);
+            }
+            else
+                extention = new ElementExtention(this, element);
+
+            ElementExtensions.Add(element, extention);
+            return extention;
         }
 
         #region Selection Management
@@ -321,19 +399,91 @@ namespace LDDModder.BrickEditor.ProjectHandling
                 ProjectElementsChanged?.Invoke(this, EventArgs.Empty);
             }
         }
+
         #endregion
+
+        #region Validation Handling
+
+        public bool IsValidatingProject { get; private set; }
+
+        public IList<ValidationMessage> ValidationMessages => _ValidationMessages.AsReadOnly();
+
+        public bool IsPartValidated => IsProjectOpen && LastValidation == UndoRedoManager.CurrentChangeID;
+
+        public bool IsPartValid => IsPartValidated &&
+            !ValidationMessages.Any(x => x.Level == ValidationLevel.Error);
+
+        public event EventHandler ValidationStarted;
+
+        public event EventHandler ValidationFinished;
 
         public void ValidateProject()
         {
             if (IsProjectOpen)
             {
+                IsValidatingProject = true;
                 ValidationStarted?.Invoke(this, EventArgs.Empty);
+
                 _ValidationMessages.Clear();
-                _ValidationMessages.AddRange(CurrentProject.ValidatePart());
+
+                try
+                {
+                    _ValidationMessages.AddRange(CurrentProject.ValidatePart());
+                }
+                catch (Exception ex)
+                {
+                    _ValidationMessages.Add(new ValidationMessage("PROJECT", "UNHANDLED_EXCEPTION", ValidationLevel.Error)
+                    {
+                        Message = ex.ToString()
+                    });
+                }
+
+                IsValidatingProject = false;
+                LastValidation = UndoRedoManager.CurrentChangeID;
+
                 ValidationFinished?.Invoke(this, EventArgs.Empty);
 
-                LastValidation = UndoRedoManager.CurrentChangeID;
             }
         }
+
+        #endregion
+
+        #region LDD File Generation Handling
+
+        public bool IsGeneratingFiles { get; private set; }
+
+        public event EventHandler GenerationStarted;
+
+        public event EventHandler GenerationFinished;
+
+        //TODO: implement destination folder parameter to allow saving somewhere without overwritting LDD files
+        public void GenerateLddFiles()
+        {
+            if (IsProjectOpen)
+            {
+                IsGeneratingFiles = true;
+                GenerationStarted?.Invoke(this, EventArgs.Empty);
+
+                try
+                {
+                    var lddPart = CurrentProject.GenerateLddPart();
+                    lddPart.ComputeEdgeOutlines();
+                    var primitives = LDD.LDDEnvironment.Current.GetAppDataSubDir("db\\Primitives\\");
+
+                    lddPart.Primitive.Save(Path.Combine(primitives, $"{lddPart.PartID}.xml"));
+
+                    foreach (var surface in lddPart.Surfaces)
+                        surface.Mesh.Save(Path.Combine(primitives, "LOD0", surface.GetFileName()));
+                }
+                catch (Exception ex)
+                {
+
+                }
+                IsGeneratingFiles = false;
+                GenerationFinished?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        #endregion
     }
 }

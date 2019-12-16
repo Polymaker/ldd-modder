@@ -61,20 +61,34 @@ namespace LDDModder.PaletteMaker.Models.LDD
     
         public void ChangeColor(int colorID)
         {
-            if (!IsAssembly)
+            int mainColorId = 0;
+
+            if (IsAssembly)
             {
-                int mainColor = Parts.OrderByDescending(x => x.PartID == DesignID).FirstOrDefault().MaterialID;
-                foreach(var part in Parts)
-                {
-                    if (part.MaterialID == mainColor)
-                        part.MaterialID = colorID;
-                }
+                mainColorId = Parts.OrderByDescending(x => x.PartID == DesignID).FirstOrDefault().MaterialID;
             }
             else
             {
-                foreach (var part in Parts)
-                    part.MaterialID = colorID;
+                mainColorId = Parts.FirstOrDefault().MaterialID;
             }
+
+            foreach (var part in Parts)
+            {
+                if (part.MaterialID == mainColorId)
+                    part.MaterialID = colorID;
+
+                foreach(var subMat in part.SubMaterials)
+                {
+                    if (subMat.MaterialID == mainColorId)
+                        subMat.MaterialID = colorID;
+                }
+            }
+        }
+
+        public void RemoveDecorations()
+        {
+            foreach (var part in Parts)
+                part.Decorations.Clear();
         }
 
         public LddElement Clone(string newElementID = null)

@@ -1,6 +1,7 @@
 ﻿using LDDModder.PaletteMaker.Models;
 using LDDModder.PaletteMaker.Models.LDD;
 using LDDModder.PaletteMaker.Models.Rebrickable;
+using LDDModder.PaletteMaker.Settings;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -49,6 +50,12 @@ namespace LDDModder.PaletteMaker.DB
         public PaletteDbContext(string nameOrConnectionString) : base(new System.Data.SQLite.SQLiteConnection(nameOrConnectionString), true)
         {
             Database.SetInitializer<PaletteDbContext>(null);
+        }
+
+        public static PaletteDbContext CreateContext()
+        {
+            string databasePath = SettingsManager.GetFilePath(SettingsManager.DATABASE_FILENAME);
+            return new PaletteDbContext($"Data Source={databasePath}");
         }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
