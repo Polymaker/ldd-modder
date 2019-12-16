@@ -46,7 +46,7 @@ namespace LDDModder.BrickEditor.UI.Controls
                 if (_AutoSizeHeight != value)
                 {
                     _AutoSizeHeight = value;
-                    PerformLayout();
+                    AdjustContainerPanelDock();
                 }
             }
         }
@@ -67,7 +67,8 @@ namespace LDDModder.BrickEditor.UI.Controls
                 if (_PanelHeight != value && value > 6)
                 {
                     _PanelHeight = value;
-                    AdjustPanelSize();
+                    if (!AutoSizeHeight)
+                        AdjustPanelSize();
                 }
             }
         }
@@ -135,7 +136,7 @@ namespace LDDModder.BrickEditor.UI.Controls
             ContentPanel.Dock = DockStyle.Fill;
             _HeaderHeight = -1;
             _PanelHeight = ContentPanel.Height;
-            SetStyle(ControlStyles.ResizeRedraw, true);
+            SetStyle(ControlStyles.ResizeRedraw | ControlStyles.OptimizedDoubleBuffer, true);
         }
 
         #region Base Control Events
@@ -155,6 +156,21 @@ namespace LDDModder.BrickEditor.UI.Controls
                 }
             }
         }
+
+        //private bool AutoSizeInitialized;
+
+        //protected override void OnResize(EventArgs eventargs)
+        //{
+        //    base.OnResize(eventargs);
+
+        //    if (!Collapsed && AutoSizeHeight && !AutoSizeInitialized)
+        //    {
+                
+        //        ContentPanel.PerformLayout();
+        //        AdjustPanelToContent();
+        //        AutoSizeInitialized = true;
+        //    }
+        //}
 
         protected override void OnFontChanged(EventArgs e)
         {
@@ -228,7 +244,6 @@ namespace LDDModder.BrickEditor.UI.Controls
 
         #endregion
 
-
         private int GetHeaderHeight()
         {
             if (HeaderHeight == -1)
@@ -267,8 +282,7 @@ namespace LDDModder.BrickEditor.UI.Controls
 
         #region Size & layout functions
 
-
-        private void AdjustPanelSize()
+        internal void AdjustPanelSize()
         {
             InternalSetHeight = true;
             if (!Collapsed)
@@ -282,15 +296,25 @@ namespace LDDModder.BrickEditor.UI.Controls
             InternalSetHeight = false;
         }
 
+        internal void AdjustPanelToContent()
+        {
+            if (!Collapsed && AutoSizeHeight)
+            {
+                InternalSetHeight = true;
+                Height = CalculateHeight();
+                InternalSetHeight = false;
+            }
+        }
+
         protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified)
         {
             if (specified.HasFlag(BoundsSpecified.Height))
             {
                 if (height == 0)
-                {
                     height = Height;
 
-                }
+                if (AutoSizeHeight)
+                    height = CalculateHeight();
                 if (!Collapsed && !InternalSetHeight)
                     _PanelHeight = Math.Max(height - GetHeaderHeight() - Padding.Vertical, 6);
                 else if (Collapsed)
@@ -303,13 +327,19 @@ namespace LDDModder.BrickEditor.UI.Controls
         protected override void OnLayout(LayoutEventArgs levent)
         {
             base.OnLayout(levent);
- 
+
             if (AutoSizeHeight && !Collapsed)
             {
-
-                var prefSize = ContentPanel.GetPreferredSize(DisplayRectangle.Size);
-                Height = GetHeaderHeight() + Padding.Vertical + prefSize.Height;
+                int newHeight = CalculateHeight();
+                if (newHeight != Height)
+                    UpdateBounds(Left, Top, Width, newHeight);
             }
+        }
+
+        public int CalculateHeight()
+        {
+            var prefSize = ContentPanel.GetPreferredSize(DisplayRectangle.Size);
+            return GetHeaderHeight() + Padding.Vertical + prefSize.Height;
         }
 
         private void CalculateHeaderHeight(bool performLayout = false)
@@ -357,24 +387,35 @@ namespace LDDModder.BrickEditor.UI.Controls
 
                 _Collapsed = collapsed;
 
+                SuspendLayout();
                 if (collapsed)
                 {
                     var curSize = ContentPanel.Size;
                     var curPos = ContentPanel.Location;
                     ContentPanel.Visible = false;
+                    ContentPanel.AutoSize = false;
+                    ContentPanel.AutoSizeMode = AutoSizeMode.GrowOnly;
                     ContentPanel.Dock = DockStyle.None;
                     ContentPanel.Size = curSize;
                     ContentPanel.Location = curPos;
                 }
                 else
                 {
-                    ContentPanel.Dock = DockStyle.Fill;
+                    ContentPanel.Dock = AutoSizeHeight ? DockStyle.Top : DockStyle.Fill;
+                    ContentPanel.AutoSize = AutoSizeHeight;
+                    ContentPanel.AutoSizeMode = AutoSizeHeight ? AutoSizeMode.GrowAndShrink : AutoSizeMode.GrowOnly;
                     ContentPanel.Visible = true;
                 }
 
+                ResumeLayout();
+
                 AdjustPanelSize();
 
+                //if (!collapsed)
+                //    ContentPanel.PerformLayout();
+
                 CollapsedChanged?.Invoke(this, EventArgs.Empty);
+
                 if (_Collapsed)
                     AfterCollapse?.Invoke(this, EventArgs.Empty);
                 else
@@ -387,6 +428,20 @@ namespace LDDModder.BrickEditor.UI.Controls
             }
         }
 
+        private void AdjustContainerPanelDock()
+        {
+            if (!Collapsed && ContentPanel != null)
+            { 
+                ContentPanel.Dock = AutoSizeHeight ? DockStyle.Top : DockStyle.Fill;
+                ContentPanel.AutoSize = AutoSizeHeight;
+                ContentPanel.AutoSizeMode = AutoSizeHeight ? AutoSizeMode.GrowAndShrink : AutoSizeMode.GrowOnly;
+                if (AutoSizeHeight)
+                {
+                    ContentPanel.PerformLayout();
+                    Height = CalculateHeight();
+                }
+            }
+        }
 
         #endregion
 
@@ -453,6 +508,30 @@ namespace LDDModder.BrickEditor.UI.Controls
         [Designer(typeof(CollapsiblePanelContainerDesigner))]
         public class CollapsiblePanelContainer : Panel
         {
+            public CollapsiblePanel ParentPanel => Parent as CollapsiblePanel;
+
+            [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+            public new Size Size
+            {
+                get => base.Size;
+                set => base.Size = value;
+            }
+
+            public CollapsiblePanelContainer()
+            {
+                SetStyle(ControlStyles.ResizeRedraw | ControlStyles.OptimizedDoubleBuffer, true);
+            }
+
+            protected override void OnLayout(LayoutEventArgs levent)
+            {
+                base.OnLayout(levent);
+                if (Visible && ParentPanel.AutoSizeHeight)
+                {
+                    int newHeight = ParentPanel.CalculateHeight();
+                    ParentPanel.Height = newHeight;
+                }
+            }
+
             protected override void OnPaint(PaintEventArgs e)
             {
                 base.OnPaint(e);

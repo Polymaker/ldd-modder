@@ -119,6 +119,8 @@ namespace LDDModder.Modding.Editing
             PrimitiveFileVersion = new VersionInfo(1, 0);
             Aliases = new List<int>();
             PartVersion = 1;
+            Bounding = new BoundingBox();
+            GeometryBounding = new BoundingBox();
         }
 
         public override XElement SerializeToXml()

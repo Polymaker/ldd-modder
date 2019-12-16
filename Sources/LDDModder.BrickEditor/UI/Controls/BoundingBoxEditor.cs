@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LDDModder.LDD.Primitives;
+using System.Runtime.InteropServices;
 
 namespace LDDModder.BrickEditor.UI.Controls
 {
@@ -15,6 +16,7 @@ namespace LDDModder.BrickEditor.UI.Controls
     {
         private BoundingBox _Value;
         private bool InternalAssign = false;
+        private bool IsOnTwoLines;
         private int MinimumBoxWidth;
         const int BOX_MARGIN = 3;
 
@@ -43,53 +45,88 @@ namespace LDDModder.BrickEditor.UI.Controls
             InitializeComponent();
             Height = tableLayoutPanel1.Height;
             MinimumBoxWidth = 50;
+            IsOnTwoLines = false;
             _Value = new BoundingBox();
             AdjustTableLayoutPositions();
         }
 
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+            AdjustTableLayoutPositions();
+            Height = tableLayoutPanel2.Bottom;
+        }
+
         protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified)
         {
-            bool adjustLayout = false;
-
-            if (specified.HasFlag(BoundsSpecified.Width) || specified.HasFlag(BoundsSpecified.Height))
+            //var curSize = new Size(Width, Height);
+            //bool raiseSizeChanged = false;
+            if (width > 0 || height > 0)
             {
-                var prefSize = GetPreferredSize(new Size(width, height));
+                var prefSize = CalculateSize(new Size(width, height), out IsOnTwoLines);
                 width = prefSize.Width;
                 height = prefSize.Height;
-                adjustLayout = true;
-                specified |= BoundsSpecified.Width;
-                specified |= BoundsSpecified.Height;
+                //if (!specified.HasFlag(BoundsSpecified.Width) || !specified.HasFlag(BoundsSpecified.Height))
+                //    raiseSizeChanged = true;
+                specified |= BoundsSpecified.Size;
             }
 
             base.SetBoundsCore(x, y, width, height, specified);
 
-            if (adjustLayout)
-                AdjustTableLayoutPositions();
+            //if (curSize.Width != width || curSize.Height != height)
+            //    AdjustTableLayoutPositions();
+
+            //if (raiseSizeChanged)
+            //    UpdateBounds(Left, Top, width, height);
         }
 
-        protected override void OnLayout(LayoutEventArgs e)
+        protected override void OnSizeChanged(EventArgs e)
         {
-            //if (e.AffectedControl == tableLayoutPanel1 || e.AffectedControl == tableLayoutPanel2)
-            //{
-
-            //}
-            base.OnLayout(e);
+            base.OnSizeChanged(e);
             AdjustTableLayoutPositions();
         }
 
-        private void TableLayouts_SizeChanged(object sender, EventArgs e)
+        [StructLayout(LayoutKind.Sequential)]
+        public struct WINDOWPOS
         {
+            public IntPtr hwnd;
+            public IntPtr hwndInsertAfter;
+            public int x;
+            public int y;
+            public int cx;
+            public int cy;
+            public uint flags;
+        }
+
+        protected override void WndProc(ref Message m)
+        {
+            switch (m.Msg)
+            {
+                case 0x0046:
+                    {
+                        var posInfo = Marshal.PtrToStructure<WINDOWPOS>(m.LParam);
+                        var adjustedSize = CalculateSize(new Size(posInfo.cx, posInfo.cy), out IsOnTwoLines);
+                        posInfo.cx = adjustedSize.Width;
+                        posInfo.cy = adjustedSize.Height;
+                        Marshal.StructureToPtr(posInfo, m.LParam, true);
+                        break;
+                    }
+            }
+            base.WndProc(ref m);
 
         }
 
         public override Size GetPreferredSize(Size proposedSize)
         {
             var minHeight = tableLayoutPanel1.GetPreferredSize(new Size(999, 999)).Height;
+            if (proposedSize.Width < 6)
+                proposedSize.Width = Width;
 
-            if (proposedSize.Width >= (MinimumBoxWidth * 6) + (BOX_MARGIN * 5))
+            if (IsOnTwoLines/*   proposedSize.Width >= (MinimumBoxWidth * 6) + (BOX_MARGIN * 5)*/)
             {
                 int boxWidth = proposedSize.Width - (BOX_MARGIN * 5);
                 boxWidth = (int)Math.Floor(boxWidth / 6f);
+                boxWidth = Math.Max(boxWidth, MinimumBoxWidth);
                 return new Size((boxWidth * 6) + (BOX_MARGIN * 5), minHeight);
             }
             else
@@ -97,6 +134,28 @@ namespace LDDModder.BrickEditor.UI.Controls
                 int boxWidth = proposedSize.Width - (BOX_MARGIN * 2);
                 boxWidth = (int)Math.Floor(boxWidth / 3f);
                 boxWidth = Math.Max(boxWidth, MinimumBoxWidth);
+                return new Size((boxWidth * 3) + (BOX_MARGIN * 2), minHeight * 2);
+            }
+        }
+
+        private Size CalculateSize(Size proposedSize, out bool onTwoLines)
+        {
+            var minHeight = tableLayoutPanel1.GetPreferredSize(new Size(999, 999)).Height;
+            if (proposedSize.Width < 6)
+                proposedSize.Width = Width;
+            if (proposedSize.Width >= (MinimumBoxWidth * 6) + (BOX_MARGIN * 5))
+            {
+                int boxWidth = proposedSize.Width - (BOX_MARGIN * 5);
+                boxWidth = (int)Math.Floor(boxWidth / 6f);
+                onTwoLines = false;
+                return new Size((boxWidth * 6) + (BOX_MARGIN * 5), minHeight);
+            }
+            else
+            {
+                int boxWidth = proposedSize.Width - (BOX_MARGIN * 2);
+                boxWidth = (int)Math.Floor(boxWidth / 3f);
+                boxWidth = Math.Max(boxWidth, MinimumBoxWidth);
+                onTwoLines = true;
                 return new Size((boxWidth * 3) + (BOX_MARGIN * 2), minHeight * 2);
             }
         }
@@ -139,7 +198,7 @@ namespace LDDModder.BrickEditor.UI.Controls
                 MaxZ_Box.Margin = new Padding(2, 3, 0, 0);
             }
 
-            Height = tableLayoutPanel2.Bottom;
+            //Height = tableLayoutPanel2.Bottom;
         }
 
         private void OnValueChanged()

@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -32,6 +33,8 @@ namespace LDDModder.BrickEditor.UI.Panels
             CloseButton = false;
             
             DockAreas ^= WeifenLuo.WinFormsUI.Docking.DockAreas.Document;
+
+            SetControlDoubleBuffered(tableLayoutPanel2);
         }
 
         protected override void OnLoad(EventArgs e)
@@ -199,6 +202,18 @@ namespace LDDModder.BrickEditor.UI.Panels
                 }
             }
             return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+        private void AliasesButtonBox_BrowseButtonClicked(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void SetControlDoubleBuffered(Control control)
+        {
+            control.GetType().InvokeMember("DoubleBuffered", 
+                BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic, null,
+            control, new object[] { true });
         }
     }
 }

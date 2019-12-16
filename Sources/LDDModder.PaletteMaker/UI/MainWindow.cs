@@ -1,9 +1,11 @@
 ﻿using LDDModder.LDD;
+using LDDModder.LDD.Files;
 using LDDModder.PaletteMaker.DB;
 using LDDModder.PaletteMaker.Generation;
 using LDDModder.PaletteMaker.Models.Rebrickable;
 using LDDModder.PaletteMaker.Rebrickable;
 using LDDModder.PaletteMaker.Rebrickable.Models;
+using LDDModder.Utilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -26,6 +28,7 @@ namespace LDDModder.PaletteMaker.UI
         private List<RbColor> Colors;
         private List<RbTheme> Themes;
         private List<RbCategory> Categories;
+        private Set SetInfo;
 
         public MainWindow()
         {
@@ -85,8 +88,8 @@ namespace LDDModder.PaletteMaker.UI
         {
             Task.Factory.StartNew(() =>
             {
-                var setInfo = RebrickableAPI.GetSet("75252-1");
-                var setParts = RebrickableAPI.GetSetParts(setInfo.SetNum).ToList();
+                SetInfo = RebrickableAPI.GetSet("75252-1");
+                var setParts = RebrickableAPI.GetSetParts(SetInfo.SetNum).ToList();
                 BeginInvoke((Action)(() => LoadSetParts(setParts)));
                 //PalatteGenerator.CreatePaletteFromSet(DBFilePath, setInfo);
 
@@ -108,7 +111,23 @@ namespace LDDModder.PaletteMaker.UI
                 using (var db = GetDbContext())
                 {
                     PalatteGenerator.FindLddPartsForSet(db, setParts);
-                    PalatteGenerator.GeneratePalette(db, setParts);
+                    var palette = PalatteGenerator.GeneratePalette(db, setParts);
+
+                    var paletteFile = new PaletteFile(new LDD.Palettes.Bag()
+                    {
+                        Name = $"{SetInfo.SetNum} {SetInfo.Name}",
+                        Countable = true,
+                        ParentBrand = LDD.Data.Brand.LDD
+                    });
+
+                    paletteFile.Palettes.Add(palette);
+
+                    var userPaletteDir = LDD.LDDEnvironment.Current.GetAppDataSubDir("UserPalettes");
+                    string paletteFileName = FileHelper.GetSafeFileName(SetInfo.Name.Replace(" ", ""));
+
+                    paletteFile.SaveToDirectory(Path.Combine(userPaletteDir, paletteFileName), false);
+
+                    //paletteFile.SaveAsLif(Path.Combine(userPaletteDir, paletteFileName) + ".lif");
                 }
             });
         }

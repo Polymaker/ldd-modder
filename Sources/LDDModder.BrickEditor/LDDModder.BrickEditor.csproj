@@ -138,6 +138,12 @@
     <Compile Include="UI\Controls\ConnectorEditor.Designer.cs">
       <DependentUpon>ConnectorEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\Controls\TransformEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Controls\TransformEditor.Designer.cs">
+      <DependentUpon>TransformEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\Controls\TreeRendererEx.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -319,6 +325,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Controls\BrowseTextBox.resx">
       <DependentUpon>BrowseTextBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Controls\TransformEditor.resx">
+      <DependentUpon>TransformEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Panels\LocalisationEditorPanel.resx">
       <DependentUpon>LocalisationEditorPanel.cs</DependentUpon>

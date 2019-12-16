@@ -6,7 +6,7 @@
 *.user
 *.userosscache
 *.sln.docstates
-Modded Bricks/
+LDD Bricks/Tests
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

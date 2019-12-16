@@ -984,7 +984,10 @@ namespace LDDModder.Modding.Editing
 
             foreach (var bone in Bones)
                 validationMessages.AddRange(bone.ValidateElement());
-            
+
+            if (validationMessages.Count == 0)
+                AddMessage("PROJECT_NO_ISSUES", ValidationLevel.Info);
+
             return validationMessages;
         }
 

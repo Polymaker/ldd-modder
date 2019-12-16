@@ -12,6 +12,8 @@ namespace LDDModder.BrickEditor.Rendering
         public Vector3 Extents;
         public Vector3 Center;
 
+        public static readonly BBox Empty = new BBox();
+
         //public Vector3 Center => ((Max - Min) / 2f) + Min;
 
         public float SizeX => Max.X - Min.X;
@@ -23,6 +25,8 @@ namespace LDDModder.BrickEditor.Rendering
             get => Extents * 2f;
             set => Extents = value * 0.5f;
         }
+
+        public bool IsEmpty => Size == Vector3.Zero;
 
         #region Calculated bounds
 

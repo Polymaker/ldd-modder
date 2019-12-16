@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8"?>
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <asset>
+    <contributor>
+      <author>Blender User</author>
+      <authoring_tool>Blender 2.80.75 commit date:2019-07-29, commit time:14:47, hash:f6cb5f54494e</authoring_tool>
+    </contributor>
+    <created>2019-12-07T14:04:20</created>
+    <modified>2019-12-07T14:04:20</modified>
+    <unit name="meter" meter="1"/>
+    <up_axis>Z_UP</up_axis>
+  </asset>
+  <library_cameras>
+    <camera id="Camera-camera" name="Camera">
+      <optics>
+        <technique_common>
+          <perspective>
+            <xfov sid="xfov">39.59775</xfov>
+            <aspect_ratio>1.777778</aspect_ratio>
+            <znear sid="znear">0.1</znear>
+            <zfar sid="zfar">100</zfar>
+          </perspective>
+        </technique_common>
+      </optics>
+      <extra>
+        <technique profile="blender">
+          <shiftx sid="shiftx" type="float">0</shiftx>
+          <shifty sid="shifty" type="float">0</shifty>
+          <dof_distance sid="dof_distance" type="float">10</dof_distance>
+        </technique>
+      </extra>
+    </camera>
+  </library_cameras>
+  <library_lights>
+    <light id="Light-light" name="Light">
+      <technique_common>
+        <point>
+          <color sid="color">1000 1000 1000</color>
+          <constant_attenuation>1</constant_attenuation>
+          <linear_attenuation>0</linear_attenuation>
+          <quadratic_attenuation>0.00111109</quadratic_attenuation>
+        </point>
+      </technique_common>
+      <extra>
+        <technique profile="blender">
+          <type sid="type" type="int">0</type>
+          <flag sid="flag" type="int">0</flag>
+          <mode sid="mode" type="int">1</mode>
+          <gamma sid="blender_gamma" type="float">1</gamma>
+          <red sid="red" type="float">1</red>
+          <green sid="green" type="float">1</green>
+          <blue sid="blue" type="float">1</blue>
+          <shadow_r sid="blender_shadow_r" type="float">0</shadow_r>
+          <shadow_g sid="blender_shadow_g" type="float">0</shadow_g>
+          <shadow_b sid="blender_shadow_b" type="float">0</shadow_b>
+          <energy sid="blender_energy" type="float">1000</energy>
+          <dist sid="blender_dist" type="float">29.99998</dist>
+          <spotsize sid="spotsize" type="float">75</spotsize>
+          <spotblend sid="spotblend" type="float">0.15</spotblend>
+          <att1 sid="att1" type="float">0</att1>
+          <att2 sid="att2" type="float">1</att2>
+          <falloff_type sid="falloff_type" type="int">2</falloff_type>
+          <clipsta sid="clipsta" type="float">0.04999995</clipsta>
+          <clipend sid="clipend" type="float">30.002</clipend>
+          <bias sid="bias" type="float">1</bias>
+          <soft sid="soft" type="float">3</soft>
+          <bufsize sid="bufsize" type="int">2880</bufsize>
+          <samp sid="samp" type="int">3</samp>
+          <buffers sid="buffers" type="int">1</buffers>
+          <area_shape sid="area_shape" type="int">1</area_shape>
+          <area_size sid="area_size" type="float">0.1</area_size>
+          <area_sizey sid="area_sizey" type="float">0.1</area_sizey>
+          <area_sizez sid="area_sizez" type="float">1</area_sizez>
+        </technique>
+      </extra>
+    </light>
+  </library_lights>
+  <library_effects>
+    <effect id="Material_4_c-effect">
+      <profile_COMMON>
+        <technique sid="common">
+          <lambert>
+            <emission>
+              <color sid="emission">0 0 0 1</color>
+            </emission>
+            <diffuse>
+              <color sid="diffuse">0.8 0.8 0.8 1</color>
+            </diffuse>
+            <reflectivity>
+              <float sid="specular">0.5</float>
+            </reflectivity>
+          </lambert>
+        </technique>
+      </profile_COMMON>
+    </effect>
+  </library_effects>
+  <library_images/>
+  <library_materials>
+    <material id="Material_4_c-material" name="Material_4_c">
+      <instance_effect url="#Material_4_c-effect"/>
+    </material>
+  </library_materials>
+  <library_geometries>
+    <geometry id="Alt-mesh" name="Alt">
+      <mesh>
+        <source id="Alt-mesh-positions">
+          <float_array id="Alt-mesh-positions-array" count="12">-0.8 0.3999999 -0.96 -0.8 -0.4 -0.96 0.8 0.3999999 -0.96 0.8 -0.4 -0.96</float_array>
+          <technique_common>
+            <accessor source="#Alt-mesh-positions-array" count="4" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Alt-mesh-normals">
+          <float_array id="Alt-mesh-normals-array" count="3">0 0 -1</float_array>
+          <technique_common>
+            <accessor source="#Alt-mesh-normals-array" count="1" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="Alt-mesh-vertices">
+          <input semantic="POSITION" source="#Alt-mesh-positions"/>
+        </vertices>
+        <triangles material="Material_4_c-material" count="2">
+          <input semantic="VERTEX" source="#Alt-mesh-vertices" offset="0"/>
+          <input semantic="NORMAL" source="#Alt-mesh-normals" offset="1"/>
+          <p>2 0 1 0 0 0 2 0 3 0 1 0</p>
+        </triangles>
+      </mesh>
+    </geometry>
+    <geometry id="Main-mesh" name="Main">
+      <mesh>
+        <source id="Main-mesh-positions">
+          <float_array id="Main-mesh-positions-array" count="90">-0.8 0.3999999 -0.96 -0.8 -0.4 -0.96 0.8 -0.4 -0.96 0.8 -0.4 -0.8 -0.8 0.09384 -0.06087988 0.8 -0.33912 -0.4938399 -0.8 -0.33912 -0.4938399 0.8 -0.1656799 -0.2343199 0.8 0.09384 -0.06087988 -0.8 -0.1656799 -0.2343199 0.8 0.4 0 0.8 0.3999999 -0.96 -0.8 0.4 0 -0.8 -0.4 -0.8 0.8 -0.1656799 -0.2343199 0.8 0.09384 -0.06087988 0.8 0.4 0 0.8 0.4 0 -0.8 0.4 0 -0.8 0.4 0 0.8 0.3999999 -0.96 -0.8 0.3999999 -0.96 -0.8 -0.4 -0.96 0.8 -0.4 -0.96 -0.8 -0.4 -0.8 0.8 -0.4 -0.8 0.8 -0.33912 -0.4938399 -0.8 -0.33912 -0.4938399 -0.8 0.09384 -0.06087988 -0.8 -0.1656799 -0.2343199</float_array>
+          <technique_common>
+            <accessor source="#Main-mesh-positions-array" count="30" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Main-mesh-normals">
+          <float_array id="Main-mesh-normals-array" count="27">-1 0 0 1 0 0 0 -0.9238803 0.3826816 0 -0.9951899 0.09796553 0 -0.7071068 0.7071068 0 -0.3826816 0.9238803 0 -0.1950185 0.9807996 0 1 0 0 -1 0</float_array>
+          <technique_common>
+            <accessor source="#Main-mesh-normals-array" count="9" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="Main-mesh-vertices">
+          <input semantic="POSITION" source="#Main-mesh-positions"/>
+        </vertices>
+        <triangles material="Material_4_c-material" count="22">
+          <input semantic="VERTEX" source="#Main-mesh-vertices" offset="0"/>
+          <input semantic="NORMAL" source="#Main-mesh-normals" offset="1"/>
+          <p>21 0 24 0 19 0 20 1 25 1 23 1 17 1 26 1 25 1 26 1 15 1 7 1 27 0 19 0 24 0 9 0 28 0 27 0 5 2 13 3 3 3 14 4 6 2 5 2 8 5 29 4 14 4 16 6 4 5 8 5 10 7 0 7 12 7 3 3 1 8 2 8 21 0 22 0 24 0 20 1 17 1 25 1 17 1 15 1 26 1 27 0 28 0 19 0 5 2 6 2 13 3 14 4 29 4 6 2 8 5 4 5 29 4 16 6 18 6 4 5 10 7 11 7 0 7 3 3 13 3 1 8</p>
+        </triangles>
+      </mesh>
+    </geometry>
+    <geometry id="Female-mesh" name="Female">
+      <mesh>
+        <source id="Female-mesh-positions">
+          <float_array id="Female-mesh-positions-array" count="420">-0.1999999 -0.14 -0.96 -0.14 0.1999999 -0.96 -0.1999999 0.1399999 -0.96 0.64 0.2399999 -0.96 0.64 -0.24 -0.72 -0.64 0.2399999 -0.96 0.26 0.2399999 -0.96 -0.14 0.2399999 -0.96 -0.64 -0.24 -0.96 -0.14 -0.24 -0.96 0.26 -0.24 -0.96 0.64 -0.24 -0.96 0.64 0.05630397 -0.276528 -0.64 0.24 -0.24 -0.64 -0.09940797 -0.380592 -0.64 -0.203472 -0.5363039 0.64 -0.203472 -0.5363039 0.64 -0.09940797 -0.380592 -0.64 0.05630397 -0.276528 0.64 0.24 -0.24 0.26 -0.2 -0.96 0.26 -0.2 -0.52 0.26 -0.24 -0.52 0.1399999 -0.24 -0.52 0.1399999 -0.2 -0.52 0.1399999 -0.2 -0.96 0.1399999 -0.2 -0.44 0.1999999 -0.14 -0.96 0.1999999 -0.14 -0.44 0.26 -0.2 -0.44 -0.14 -0.24 -0.72 0.14 -0.24 -0.72 0.14 -0.24 -0.96 -0.1399999 -0.2 -0.96 -0.1399999 -0.2 -0.52 -0.1399999 -0.24 -0.52 -0.26 -0.24 -0.96 -0.26 -0.24 -0.52 -0.26 -0.2 -0.52 -0.26 -0.2 -0.96 -0.26 -0.2 -0.44 -0.1999999 -0.14 -0.44 -0.1399999 -0.2 -0.44 -0.26 0.1999999 -0.96 -0.26 0.24 -0.24 -0.1399999 0.24 -0.24 -0.1399999 0.1999999 -0.24 -0.1999999 0.1399999 -0.24 -0.26 0.1999999 -0.24 0.26 0.1999999 -0.96 0.1399999 0.1999999 -0.96 0.1399999 0.2399999 -0.96 0.1399999 0.1999999 -0.24 0.1399999 0.24 -0.24 0.26 0.24 -0.24 0.26 0.1999999 -0.24 0.1999999 0.1399999 -0.24 0.1999999 0.1399999 -0.9599999 0.26 -0.24 -0.72 -0.64 -0.24 -0.72 -0.26 -0.24 -0.72 -0.26 0.2399999 -0.9599999 -0.14 0.1999999 -0.96 -0.14 0.1999999 -0.96 -0.1999999 0.1399999 -0.96 -0.1999999 0.1399999 -0.96 0.1399999 -0.2 -0.96 0.1399999 -0.2 -0.96 0.1999999 -0.14 -0.96 0.1999999 -0.14 -0.96 0.1999999 -0.14 -0.44 0.14 -0.24 -0.96 0.14 -0.24 -0.96 -0.26 -0.24 -0.96 -0.26 -0.24 -0.96 0.1399999 0.1999999 -0.96 0.1399999 0.1999999 -0.96 0.1399999 0.2399999 -0.96 0.1399999 0.2399999 -0.96 0.1399999 0.1999999 -0.24 0.1399999 0.24 -0.24 0.26 0.24 -0.24 0.26 0.1999999 -0.24 0.8 0.3999999 -0.96 0.26 -0.2 -0.96 0.26 -0.2 -0.96 -0.26 -0.2 -0.96 -0.26 -0.2 -0.96 -0.1999999 -0.14 -0.96 -0.1999999 -0.14 -0.96 -0.1399999 -0.2 -0.96 -0.1399999 -0.2 -0.96 -0.26 0.1999999 -0.96 -0.26 0.1999999 -0.96 0.26 0.1999999 -0.96 0.26 0.1999999 -0.96 0.1999999 0.1399999 -0.9599999 0.1999999 0.1399999 -0.9599999 0.64 0.24 -0.24 0.64 0.24 -0.24 0.64 0.2399999 -0.96 0.64 0.2399999 -0.96 0.64 -0.24 -0.96 0.64 -0.24 -0.96 0.64 -0.24 -0.72 0.64 -0.24 -0.72 -0.64 -0.24 -0.72 -0.64 -0.24 -0.72 -0.64 -0.24 -0.96 -0.64 -0.24 -0.96 -0.64 0.2399999 -0.96 -0.64 0.2399999 -0.96 -0.64 0.24 -0.24 -0.64 0.24 -0.24 0.26 0.2399999 -0.96 0.26 0.2399999 -0.96 -0.8 0.3999999 -0.96 -0.14 0.2399999 -0.96 -0.14 0.2399999 -0.96 -0.26 0.2399999 -0.9599999 -0.26 0.2399999 -0.9599999 -0.8 -0.4 -0.96 0.8 -0.4 -0.96 -0.14 -0.24 -0.96 -0.14 -0.24 -0.96 0.26 -0.24 -0.96 0.26 -0.24 -0.96 0.64 -0.203472 -0.5363039 0.64 0.05630397 -0.276528 0.64 -0.09940797 -0.380592 -0.64 -0.203472 -0.5363039 -0.64 0.05630397 -0.276528 -0.64 -0.09940797 -0.380592 -0.1999999 -0.14 -0.44 -0.26 0.1999999 -0.24 -0.26 0.24 -0.24 -0.1399999 0.24 -0.24 -0.1399999 0.1999999 -0.24 -0.1999999 0.1399999 -0.24 0.1999999 0.1399999 -0.24</float_array>
+          <technique_common>
+            <accessor source="#Female-mesh-positions-array" count="140" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Female-mesh-normals">
+          <float_array id="Female-mesh-normals-array" count="42">0 0 -1 -1 0 0 1 0 0 0 0.9238803 -0.3826816 0 0.9807996 -0.1950185 0 0.7071068 -0.7071068 0 0.3826816 -0.9238803 0 0.1950185 -0.9807996 -0.7071068 0.7071068 0 0.7071068 0.7071068 0 0 1 0 0.7071068 -0.7071068 0 -0.7071068 -0.7071068 0 0 -1 0</float_array>
+          <technique_common>
+            <accessor source="#Female-mesh-normals-array" count="14" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="Female-mesh-vertices">
+          <input semantic="POSITION" source="#Female-mesh-positions"/>
+        </vertices>
+        <triangles material="Material_4_c-material" count="90">
+          <input semantic="VERTEX" source="#Female-mesh-vertices" offset="0"/>
+          <input semantic="NORMAL" source="#Female-mesh-normals" offset="1"/>
+          <p>67 0 69 0 84 0 87 0 88 0 90 0 62 0 64 0 92 0 94 0 96 0 75 0 100 1 104 1 98 1 107 2 110 2 112 2 83 0 101 0 114 0 83 0 114 0 77 0 77 0 116 0 83 0 117 0 119 0 116 0 119 0 111 0 116 0 111 0 121 0 116 0 121 0 109 0 74 0 121 0 74 0 123 0 123 0 122 0 121 0 72 0 125 0 122 0 125 0 103 0 122 0 103 0 83 0 122 0 16 1 98 1 104 1 129 1 128 1 16 1 112 2 15 2 107 2 15 2 131 2 132 2 130 3 105 4 59 4 14 5 127 3 130 3 18 6 17 5 14 5 113 7 12 6 18 6 72 0 84 0 125 0 21 2 126 2 85 2 23 1 66 1 32 1 25 8 70 8 68 8 28 9 20 9 27 9 31 10 124 10 30 10 87 0 123 0 74 0 34 2 9 2 91 2 37 1 39 1 73 1 86 8 133 8 89 8 41 9 33 9 0 9 117 0 92 0 119 0 48 1 120 1 93 1 136 2 63 2 118 2 1 11 47 11 65 11 138 12 43 12 2 12 7 13 53 13 45 13 94 0 77 0 114 0 79 1 51 1 76 1 115 2 82 2 95 2 97 11 55 11 139 11 57 12 52 12 50 12 54 13 3 13 19 13 58 10 11 10 10 10 60 10 8 10 106 10 61 13 13 13 5 13 100 1 102 1 104 1 107 2 108 2 110 2 77 0 117 0 116 0 111 0 109 0 121 0 123 0 72 0 122 0 103 0 101 0 83 0 16 1 128 1 98 1 112 2 131 2 15 2 130 3 127 3 105 4 14 5 17 5 127 3 18 6 12 6 17 5 113 7 99 7 12 6 72 0 67 0 84 0 21 2 22 2 126 2 23 1 24 1 66 1 25 8 26 8 70 8 28 9 29 9 20 9 31 10 71 10 124 10 87 0 90 0 123 0 34 2 35 2 9 2 37 1 38 1 39 1 86 8 40 8 133 8 41 9 42 9 33 9 117 0 62 0 92 0 48 1 135 1 120 1 136 2 137 2 63 2 1 11 46 11 47 11 138 12 134 12 43 12 7 13 78 13 53 13 94 0 75 0 77 0 79 1 80 1 51 1 115 2 81 2 82 2 97 11 49 11 55 11 57 12 56 12 52 12 54 13 6 13 3 13 58 10 4 10 11 10 60 10 36 10 8 10 61 13 44 13 13 13</p>
+        </triangles>
+      </mesh>
+    </geometry>
+  </library_geometries>
+  <library_visual_scenes>
+    <visual_scene id="Scene" name="Scene">
+      <node id="Alt" name="Alt" type="NODE">
+        <matrix sid="transform">1 0 0 0.4 0 1 0 1.49012e-8 0 0 1 0.96 0 0 0 1</matrix>
+        <instance_geometry url="#Alt-mesh" name="Alt">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="Material_4_c-material" target="#Material_4_c-material"/>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+      <node id="Main" name="Main" type="NODE">
+        <matrix sid="transform">1 0 0 0.4 0 1 0 1.49012e-8 0 0 1 0.96 0 0 0 1</matrix>
+        <instance_geometry url="#Main-mesh" name="Main">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="Material_4_c-material" target="#Material_4_c-material"/>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+      <node id="Female" name="Female" type="NODE">
+        <matrix sid="transform">1 0 0 0.4 0 1 0 1.49012e-8 0 0 1 0.96 0 0 0 1</matrix>
+        <instance_geometry url="#Female-mesh" name="Female">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="Material_4_c-material" target="#Material_4_c-material"/>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+      <node id="Camera" name="Camera" type="NODE">
+        <matrix sid="transform">0.6859207 -0.3240135 0.6515582 7.358891 0.7276763 0.3054208 -0.6141704 -6.925791 0 0.8953956 0.4452714 4.958309 0 0 0 1</matrix>
+        <instance_camera url="#Camera-camera"/>
+      </node>
+      <node id="Light" name="Light" type="NODE">
+        <matrix sid="transform">-0.2908646 -0.7711008 0.5663932 4.076245 0.9551712 -0.1998834 0.2183912 1.005454 -0.05518906 0.6045247 0.7946723 5.903862 0 0 0 1</matrix>
+        <instance_light url="#Light-light"/>
+      </node>
+    </visual_scene>
+  </library_visual_scenes>
+  <scene>
+    <instance_visual_scene url="#Scene"/>
+  </scene>
+</COLLADA>

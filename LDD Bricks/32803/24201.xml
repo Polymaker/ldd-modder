@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<LEGOPrimitive versionMajor="1" versionMinor="0">
+  <Annotations>
+    <Annotation aliases="24201"/>
+    <Annotation designname="PLATE W/ HALF BOW INV. 1X2X2/3"/>
+    <Annotation maingroupid="207"/>
+    <Annotation maingroupname="BRICKS WITH BOWS AND ARCHES"/>
+    <Annotation platformid="200"/>
+    <Annotation platformname="SYSTEM"/>
+    <Annotation version="1"/>
+  </Annotations>
+  <Collision>
+    <Box sX="0.390001" sY="0.096161" sZ="0.39" angle="180" ax="1" ay="0" az="0" tx="0" ty="-0.106161" tz="0"/>
+    <Box sX="0.390001" sY="0.086" sZ="0.39" angle="180" ax="1" ay="0" az="0" tx="0.800001" ty="0.224" tz="0"/>
+    <Box sX="0.416624" sY="0.086" sZ="0.39" angle="180" ax="0.979992" ay="0.199038" az="0" tx="0.769729" ty="0.049963" tz="0"/>
+    <Box sX="0.395069" sY="0.086" sZ="0.39" angle="180" ax="0.997451" ay="0.071359" az="0" tx="0.015574" ty="-0.164613" tz="0"/>
+  </Collision>
+  <Connectivity>
+    <Custom2DField type="23" width="2" height="2" angle="0" ax="0" ay="1" az="0" tx="-0.4" ty="0" tz="-0.4">
+      18:1:1,23:4:1,18:1:1,
+      23:4:1,0:4:1,29:0:1,
+      18:1:1,23:4:1,18:1:1
+    </Custom2DField>
+    <Custom2DField type="23" width="2" height="2" angle="0" ax="0" ay="1" az="0" tx="0.4" ty="0.32" tz="-0.4">
+      18:1:1,23:4:1,18:1:1,
+      23:4:1,0:4:1,23:4:1,
+      18:1:1,23:4:1,18:1:1
+    </Custom2DField>
+  </Connectivity>
+  <PhysicsAttributes inertiaTensor="0.109094,0,0,0,0.266667,0,0,0,0.269094" centerOfMass="0.4,0.089,0" mass="1" frictionType="0"/>
+  <Bounding>
+    <AABB minX="-0.4" minY="-0.32" minZ="-0.4" maxX="1.2" maxY="0.498" maxZ="0.4"/>
+  </Bounding>
+  <GeometryBounding>
+    <AABB minX="-0.4" minY="-0.32" minZ="-0.4" maxX="1.2" maxY="0.498" maxZ="0.4"/>
+  </GeometryBounding>
+</LEGOPrimitive>

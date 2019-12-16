@@ -34,7 +34,7 @@ namespace LDDModder.LDD.Data
             return new VersionInfo()
             {
                 Major = element.ReadAttribute("Major", 1),
-                Minor = element.ReadAttribute("Major", 0),
+                Minor = element.ReadAttribute("Minor", 0),
             };
         }
     }

@@ -68,7 +68,6 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.Size = new System.Drawing.Size(180, 42);
             this.tableLayoutPanel1.TabIndex = 0;
-            this.tableLayoutPanel1.SizeChanged += new System.EventHandler(this.TableLayouts_SizeChanged);
             // 
             // label3
             // 
@@ -188,7 +187,6 @@
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel2.Size = new System.Drawing.Size(180, 42);
             this.tableLayoutPanel2.TabIndex = 1;
-            this.tableLayoutPanel2.SizeChanged += new System.EventHandler(this.TableLayouts_SizeChanged);
             // 
             // MaxX_Box
             // 

@@ -727,6 +727,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         private void AddPartSurfaceModel(PartSurface surface)
         {
             var surfModel = new GLSurfaceModel(surface);
+
             surfModel.Material = new MaterialInfo
             {
                 Diffuse = new Vector4(0.6f, 0.6f, 0.6f, 1f),
@@ -756,101 +757,82 @@ namespace LDDModder.BrickEditor.UI.Panels
             UnloadModels();
         }
 
+        private bool SurfaceMeshesChanged;
+        private bool CollisionsChanged;
+        private bool ConnectionsChanged;
+
         protected override void OnElementCollectionChanged(ElementCollectionChangedEventArgs e)
         {
             base.OnElementCollectionChanged(e);
-
             
-            if (e.ElementType == typeof(PartSurface))
+            if (e.ElementType == typeof(PartSurface) || 
+                e.ElementType == typeof(SurfaceComponent) || 
+                e.ElementType == typeof(ModelMeshReference))
             {
-                if (e.Action == System.ComponentModel.CollectionChangeAction.Add)
-                {
-                    foreach (var surface in e.AddedElements.OfType<PartSurface>())
-                        AddPartSurfaceModel(surface);
-                }
-                else
-                {
-                    foreach (PartSurface surface in e.RemovedElements)
-                    {
-                        var model = SurfaceModels.FirstOrDefault(x => x.Surface == surface);
-                        if (model != null)
-                        {
-                            SurfaceModels.Remove(model);
-                            model.Dispose();
-                        }
-                    }
-                }
-            }
-            else if (e.ElementType == typeof(ModelMeshReference))
-            {
-                if (e.Collection.Owner is SurfaceComponent component)
-                {
-                    UpdateSurfacesModels(new PartSurface[] { component.Surface });
-                }
-                //var addedMeshes = e.AddedElements.OfType<ModelMeshReference>();
-                //var changedSurfaces = addedMeshes.Select(x => (x.Parent as SurfaceComponent)?.Surface).Distinct().ToList();
-
-                //UpdateSurfacesModels(changedSurfaces);
-
-            }
-            else if (e.ElementType == typeof(SurfaceComponent))
-            {
-                if (e.Collection.Owner is PartSurface surface)
-                {
-                    UpdateSurfacesModels(new PartSurface[] { surface });
-                }
-                //var changedSurfaces = e.AddedElements.OfType<SurfaceComponent>()
-                //    .Concat(e.RemovedElements.OfType<SurfaceComponent>()).Select(x=>x.Surface).Distinct();
-
-                //UpdateSurfacesModels(changedSurfaces);
+                SurfaceMeshesChanged = true;
             }
             else if (e.ElementType == typeof(PartCollision))
             {
-                RebuildCollisionModels();
+                CollisionsChanged = true;
             }
             else if (e.ElementType == typeof(PartConnection))
             {
-                RebuildConnectionModels();
+                ConnectionsChanged = true;
             }
+        }
+
+        protected override void OnProjectChangeApplied()
+        {
+            base.OnProjectChangeApplied();
+
+            if (SurfaceMeshesChanged)
+                RebuildSurfaceModels();
+
+            if (CollisionsChanged)
+                RebuildCollisionModels();
+
+            if (ConnectionsChanged)
+                RebuildConnectionModels();
+
+            SurfaceMeshesChanged = false;
+            CollisionsChanged = false;
+            ConnectionsChanged = false;
         }
 
         #endregion
 
         #region Model/Mesh Handling
 
-        private void UpdateSurfacesModels(IEnumerable<PartSurface> changedSurfaces)
-        {
-            foreach (var surface in changedSurfaces)
-            {
-                bool isRemoved = !CurrentProject.Surfaces.Contains(surface);
-                var model = SurfaceModels.FirstOrDefault(x => x.Surface == surface);
-                if (isRemoved && model != null)
-                {
-                    SurfaceModels.Remove(model);
-                    model.Dispose();
-                }
-                else if (!isRemoved)
-                {
-                    if (model != null)
-                        model.RebuildPartModels();
-                    else
-                        AddPartSurfaceModel(surface);
-                }
-            }
-        }
-
         private void RebuildSurfaceModels()
         {
-            if (SurfaceModels.Any())
+            if (ProjectManager.IsProjectOpen)
+            {
+                foreach (var surfaceModel in SurfaceModels.ToArray())
+                {
+                    if (!CurrentProject.Surfaces.Contains(surfaceModel.Surface))
+                    {
+                        surfaceModel.Dispose();
+                        SurfaceModels.Remove(surfaceModel);
+                    }
+                }
+
+                foreach (var surface in CurrentProject.Surfaces)
+                {
+                    if (!SurfaceModels.Any(x=>x.Surface == surface))
+                    {
+                        AddPartSurfaceModel(surface);
+                    }
+                    else
+                    {
+                        var model = SurfaceModels.FirstOrDefault(x => x.Surface == surface);
+                        model.RebuildPartModels();
+                    }
+                }
+            }
+            else if (SurfaceModels.Any())
             {
                 SurfaceModels.ForEach(x => x.Dispose());
                 SurfaceModels.Clear();
-            }
-
-            if (CurrentProject != null)
-            {
-                foreach (var surface in CurrentProject.Surfaces)
-                    AddPartSurfaceModel(surface);
             }
         }
 
@@ -1107,7 +1089,11 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             foreach (var model in modelMeshes)
             {
+                if (!(model is SurfaceModelMesh))
+                    continue;
+
                 var worldBounding = model.GetWorldBoundingBox();
+                
                 minPos = Vector3.ComponentMin(minPos, worldBounding.Min);
                 maxPos = Vector3.ComponentMax(maxPos, worldBounding.Max);
             }
@@ -1117,7 +1103,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         public void ResetCameraAlignment(CameraAlignment alignment)
         {
-            var visibleModels = GetVisibleModels();
+            var visibleModels = GetVisibleModels().OfType<SurfaceModelMesh>();
             var bounding = CalculateBoundingBox(visibleModels);
 
             Vector3 cameraDirection = Vector3.Zero;

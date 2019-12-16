@@ -558,10 +558,13 @@ namespace LDDModder.BrickEditor.UI.Panels
                 .FirstOrDefault(x => x.Element == element);
         }
 
+        private bool TreeViewItemsSelected = false;
+
         public void SetSelectedNodes(IEnumerable<BaseProjectNode> nodes)
         {
             using (FlagManager.UseFlag("ManualSelect"))
             {
+                TreeViewItemsSelected = true;
                 ProjectTreeView.SelectObjects(nodes.ToList());
             }
         }
@@ -608,6 +611,11 @@ namespace LDDModder.BrickEditor.UI.Panels
                 FlagManager.IsSet("ManualSelect") ||
                 FlagManager.IsSet("DragDropping")))
             {
+                if (TreeViewItemsSelected)
+                {
+                    TreeViewItemsSelected = false;
+                    return;
+                }
                 using (FlagManager.UseFlag("SelectElements"))
                     ProjectManager.SelectElements(GetSelectedElements());
             }

@@ -175,7 +175,7 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
             _Position = Matrix4.Identity;
             _Orientation = Matrix4.Identity;
 
-            RotationSnap = 10f * (float)Math.PI / 180f;
+            RotationSnap = 5f * (float)Math.PI / 180f;
             TranslationSnap = 0.4f;
 
             EditTransform = Matrix4.Identity;

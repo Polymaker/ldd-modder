@@ -1,0 +1,92 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LDDPART>
+  <Properties>
+    <PartID>36841</PartID>
+    <Description>ANGULAR PLATE 1,5 TOP 1X1 1/2</Description>
+    <PartVersion>3</PartVersion>
+    <PrimitiveVersion Major="1" Minor="0" />
+    <Flexible>false</Flexible>
+    <Decorated>false</Decorated>
+    <Platform ID="200" Name="SYSTEM" />
+    <MainGroup ID="216" Name="PLATES, SPECIAL" />
+    <PhysicsAttributes inertiaTensor="0.155379,0,0,0,0,0,0,0,0" centerOfMass="0.4,0.102,0.198238" mass="0.6" frictionType="0" />
+    <Bounding minX="-0.4" minY="-0.48" minZ="-0.4" maxX="1.2" maxY="0.498" maxZ="0.737" />
+    <GeometryBounding minX="-0.4" minY="-0.48" minZ="-0.4" maxX="1.2" maxY="0.498" maxZ="0.737" />
+  </Properties>
+  <ModelSurfaces>
+    <Surface SurfaceID="0" SubMaterialIndex="0">
+      <Component ID="185b947e" Name="Part0" Type="Part">
+        <Meshes>
+          <MeshRef ID="c590f948" Name="Base Mesh" MeshID="e538295e" />
+        </Meshes>
+      </Component>
+      <Component ID="366136e5" Name="FemaleStud0" Type="FemaleStud" ConnectionID="15cb18fa">
+        <Meshes>
+          <MeshRef ID="56816ce7" Name="FemaleStud" MeshID="dff4b6c5" />
+        </Meshes>
+        <ReplacementMeshes>
+          <MeshRef ID="bd22cf7e" Name="AltMesh" MeshID="c6333be6" />
+        </ReplacementMeshes>
+        <Studs>
+          <StudRef ID="790cbd41" FieldIndex="6" Value1="1" Value2="1" />
+        </Studs>
+      </Component>
+      <Component ID="158eeec7" Name="MaleStud0" Type="MaleStud" ConnectionID="99d939e7">
+        <Meshes>
+          <MeshRef ID="865aea12" Name="TopStud" MeshID="258c8460" />
+        </Meshes>
+        <StudRef ID="cb44aba0" FieldIndex="6" Value1="2" Value2="0" />
+      </Component>
+      <Component ID="97b4ccda" Name="MaleStud1" Type="MaleStud" ConnectionID="56f1cc49">
+        <Meshes>
+          <MeshRef ID="e2de2481" Name="FrontStud" MeshID="d02095fa" />
+        </Meshes>
+        <StudRef ID="9ee5c615" FieldIndex="6" Value1="2" Value2="0" />
+      </Component>
+    </Surface>
+  </ModelSurfaces>
+  <Collisions>
+    <Collision ID="b3e6067c" Name="Box0" Type="Box">
+      <!--<Transform angle="0" ax="1" ay="0" az="0" tx="0" ty="0.16" tz="0.08" />-->
+      <Transform X="0" Y="0.16" Z="0.08" Pitch="0" Yaw="0" Roll="0" />
+      <Size X="0.39" Y="0.15" Z="0.47" />
+    </Collision>
+    <Collision ID="e275d585" Name="Box1" Type="Box">
+      <!--<Transform angle="0" ax="1" ay="0" az="0" tx="0" ty="-0.08" tz="0.48" />-->
+      <Transform X="0" Y="-0.08" Z="0.48" Pitch="0" Yaw="0" Roll="0" />
+      <Size X="0.39" Y="0.39" Z="0.07" />
+    </Collision>
+  </Collisions>
+  <Connections>
+    <Connection ID="99d939e7" Name="Custom2DField0" Type="Custom2DField">
+      <!--<Transform angle="0" ax="1" ay="0" az="0" tx="-0.4" ty="0.32" tz="-0.4" />-->
+      <Transform X="-0.4" Y="0.32" Z="-0.4" Pitch="0" Yaw="0" Roll="0" />
+      <Properties Type="23" Width="2" Height="2" />
+      <StudsArray>18:1:1,23:4:1,18:1:1,23:4:1,0:4:1,23:4:1,18:1:1,23:4:1,18:1:1</StudsArray>
+    </Connection>
+    <Connection ID="56f1cc49" Name="Custom2DField1" Type="Custom2DField">
+      <!--<Transform angle="90" ax="1" ay="0" az="0" tx="-0.4" ty="0.32" tz="0.56" />-->
+      <Transform X="-0.4" Y="0.32" Z="0.56" Pitch="-90" Yaw="0" Roll="0" />
+      <Properties Type="23" Width="2" Height="2" />
+      <StudsArray>18:1:1,23:4:1,18:1:1,23:4:1,1:4,23:4:1,18:1:1,23:4:1,18:1:1</StudsArray>
+    </Connection>
+    <Connection ID="15cb18fa" Name="Custom2DField2" Type="Custom2DField">
+      <!--<Transform angle="0" ax="1" ay="0" az="0" tx="-0.4" ty="0" tz="-0.4" />-->
+      <Transform X="-0.4" Y="0" Z="-0.4" Pitch="0" Yaw="0" Roll="0" />
+      <Properties Type="22" Width="2" Height="2" />
+      <StudsArray>22:1:1,22:2:1,22:1:1,22:2:1,15:4:1,22:2:1,22:1:1,22:2:1,22:1:1</StudsArray>
+    </Connection>
+  </Connections>
+  <Meshes>
+    <!--Vertex count: 4 Triangle count: 2-->
+    <Mesh ID="c6333be6" Name="AltMesh" IsTextured="false" IsFlexible="false" FileName="Meshes\AltMesh.geom" />
+    <!--Vertex count: 96 Triangle count: 96-->
+    <Mesh ID="d02095fa" Name="FrontStud" IsTextured="false" IsFlexible="false" FileName="Meshes\FrontStud.geom" />
+    <!--Vertex count: 49 Triangle count: 48-->
+    <Mesh ID="258c8460" Name="TopStud" IsTextured="false" IsFlexible="false" FileName="Meshes\TopStud.geom" />
+    <!--Vertex count: 52 Triangle count: 30-->
+    <Mesh ID="dff4b6c5" Name="FemaleStud" IsTextured="false" IsFlexible="false" FileName="Meshes\FemaleStud.geom" />
+    <!--Vertex count: 62 Triangle count: 52-->
+    <Mesh ID="e538295e" Name="Base Mesh" IsTextured="false" IsFlexible="false" FileName="Meshes\Base Mesh.geom" />
+  </Meshes>
+</LDDPART>

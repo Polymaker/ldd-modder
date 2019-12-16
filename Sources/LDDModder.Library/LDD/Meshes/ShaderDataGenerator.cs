@@ -360,7 +360,7 @@ namespace LDDModder.LDD.Meshes
                 foreach (var edge in connectedEdges.Where(x => x.Face != triangle.Triangle))
                     projectedEdges.Add(triangle.ProjectEdge2D(edge));
 
-                projectedEdges.AddRange(triangle.PlanarEdges.Where(x => x.IsHard));
+                projectedEdges.AddRange(triangle.PlanarEdges/*.Where(x => x.IsHard)*/);
 
                 for (int coordPairIdx = 0; coordPairIdx < 3; coordPairIdx++)
                 {
@@ -381,6 +381,8 @@ namespace LDDModder.LDD.Meshes
                     }
 
                     RemoveDuplicateEdgeLines(vertEdges);
+
+                    vertEdges.RemoveAll(x => !x.IsHard);
 
                     if (vertEdges.Count > 2)
                     {
@@ -558,7 +560,17 @@ namespace LDDModder.LDD.Meshes
                 for (int j = edges.Count - 1; j > i; j--)
                 {
                     if (edges[i].IsColinear(edges[j]))
-                        edges.RemoveAt(j);
+                    {
+                        if (edges[i].IsHard != edges[j].IsHard)
+                        {
+                            edges.RemoveAt(j--);
+                            edges.RemoveAt(i--);
+                            break;
+                        }
+                        else
+                            edges.RemoveAt(j);
+
+                    }
                 }
             }
         }
