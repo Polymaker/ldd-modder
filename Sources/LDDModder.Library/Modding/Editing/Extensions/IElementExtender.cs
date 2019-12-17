@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace LDDModder.Modding.Editing
 {
-    public interface IPhysicalElement
+    public interface IElementExtender
     {
-        ItemTransform Transform { get; set; }
+
     }
 }

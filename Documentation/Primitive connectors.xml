@@ -1,6 +1,6 @@
 <Connectors>
 	<Axels>
-		<Connector type="Axel" subtype="2" gender="female" description="Technic hole" connectswith="3,19,5" />
+		<Connector type="Axel" subtype="2" gender="female" description="Technic hole Ø8mm" connectswith="3,19,5" />
 		
 		<!-- thick pin walls that cannot fit a bar inside -->
 		<Connector type="Axel" subtype="3" gender="male" description="Technic pin" connectswith="2" />
@@ -8,8 +8,8 @@
 		<Connector type="Axel" subtype="4" gender="female" description="Cross axle" connectswith="5,7" />
 		<Connector type="Axel" subtype="5" gender="male" description="Cross axle" connectswith="4" />
 		
-		<Connector type="Axel" subtype="6" gender="female" description="Bar" connectswith="7" />
-		<Connector type="Axel" subtype="7" gender="male" description="Bar" connectswith="4,6" />
+		<Connector type="Axel" subtype="6" gender="female" description="Bar Ø3.2mm" connectswith="7" />
+		<Connector type="Axel" subtype="7" gender="male" description="Bar Ø3.2mm" connectswith="4,6" />
 		
 		<!-- a technic hole that accepts cross axles and pins, generally used in plates -->
 		<Connector type="Axel" subtype="8" gender="female" description="Technic hole (plate/brick)" connectswith="3,5,13,19" /> 
@@ -22,8 +22,8 @@
 		<Connector type="Axel" subtype="13" gender="male" description="Technic axle (no snap)" connectswith="2" />
 		
 		<!-- Thin bar connector, like hat accessories (feather) -->
-		<Connector type="Axel" subtype="14" gender="female" description="Thin bar" connectswith="15" />
-		<Connector type="Axel" subtype="15" gender="male" description="Thin bar" connectswith="14" />
+		<Connector type="Axel" subtype="14" gender="female" description="Thin bar Ø1.5mm" connectswith="15" />
+		<Connector type="Axel" subtype="15" gender="male" description="Thin bar Ø1.5mm" connectswith="14" />
 		
 		<!-- part that fits in the recess/lip of a technic hole (subtype 2)
 			note: the handling of this connection seems bugged in LDD, 
@@ -36,8 +36,10 @@
 		<Connector type="Axel" subtype="19" gender="male" description="Technic Pin" connectswith="2" />
 		
 		<!-- the same as a bar connector (type 7) but physically has a thin hole (like type 14)
-			it is always combined with a type 14 connection-->
-		<Connector type="Axel" subtype="21" gender="male" description="Hollow bar" connectswith="6" />
+			it is always combined with a type 14 connection.
+			due to a bug in ldd, the type 14 connection collides and prevent a type 6 to connect.
+			-->
+		<Connector type="Axel" subtype="21" gender="male" description="Hollow bar (OD: Ø3.2mm ID: Ø1.5mm)" connectswith="6" />
 	</Axels>
 	<Balls>
 		<Connector type="Ball" subtype="2" gender="female" description="Tow ball cup" connectswith="3" />
@@ -70,8 +72,7 @@
 		<Connector type="Ball" subtype="18" gender="female" description="3M ball cup" connectswith="19" />
 		<Connector type="Ball" subtype="19" gender="male" description="3M ball" connectswith="18" />
 		
-		<!-- The following connectors seems to be only used on flex bones (flexible parts) -->
-		<!-- They do not seem to connect with anything -->
+		<!-- The following connectors are only used for flex bones (flexible parts) -->
 		<Connector type="Ball" subtype="999000" gender="" description="" />
 		<Connector type="Ball" subtype="999001" gender="" description="" />
 		<Connector type="Ball" subtype="999002" gender="" description="" />
@@ -82,14 +83,14 @@
 		<Connector type="Custom2DField" subtype="23" gender="male" description="Stud connection" />
 	</Custom2DFields>
 	<Fixed>
-		<Connector type="Fixed" subtype="2" gender="female" description="Tire Ø11mm" />
-		<Connector type="Fixed" subtype="3" gender="male" description="Wheel hub Ø11mm" />
+		<Connector type="Fixed" subtype="2" gender="female" description="Tire Ø11mm" connectswith="2" />
+		<Connector type="Fixed" subtype="3" gender="male" description="Wheel hub Ø11mm" connectswith="3" />
 		
-		<Connector type="Fixed" subtype="4" gender="female" description="Minifig legs" />
-		<Connector type="Fixed" subtype="5" gender="male" description="Minifig legs" />
+		<Connector type="Fixed" subtype="4" gender="female" description="Minifig legs" connectswith="4" />
+		<Connector type="Fixed" subtype="5" gender="male" description="Minifig legs" connectswith="5" />
 		
-		<Connector type="Fixed" subtype="6" gender="female" description="Glass frame 1X4X6" />
-		<Connector type="Fixed" subtype="7" gender="male" description="Glass 1X4X6" />
+		<Connector type="Fixed" subtype="6" gender="female" description="Glass frame 1X4X6" connectswith="6" />
+		<Connector type="Fixed" subtype="7" gender="male" description="Glass 1X4X6" connectswith="7" />
 		
 		<Connector type="Fixed" subtype="8" gender="female" description="Tire Ø30 X 13" />
 		<Connector type="Fixed" subtype="9" gender="male" description="Wheel hub Ø30 X 13" />
@@ -235,6 +236,8 @@
 		<Connector type="Fixed" subtype="156" gender="" description="" />
 		<Connector type="Fixed" subtype="158" gender="" description="" />
 		<Connector type="Fixed" subtype="159" gender="" description="" />
+		
+		<!-- The following connectors are only used for flex bones (flexible parts) -->
 		<Connector type="Fixed" subtype="999000" gender="" description="" />
 		<Connector type="Fixed" subtype="999001" gender="" description="" />
 		<Connector type="Fixed" subtype="999002" gender="" description="" />

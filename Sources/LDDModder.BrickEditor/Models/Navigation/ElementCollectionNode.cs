@@ -1,4 +1,5 @@
-﻿using LDDModder.Modding.Editing;
+﻿using LDDModder.BrickEditor.ProjectHandling;
+using LDDModder.Modding.Editing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,6 +34,22 @@ namespace LDDModder.BrickEditor.Models.Navigation
 
             foreach (var elem in Collection.GetElements())
                 Childrens.Add(ProjectElementNode.CreateDefault(elem));
+        }
+
+        public override bool CanToggleVisibility()
+        {
+            return true;
+        }
+
+        public override bool GetIsVisible()
+        {
+            var femaleModelExt = Element.GetExtension<FemaleStudModelExtension>();
+            if (femaleModelExt != null)
+            {
+                bool isAlternate = (Element as FemaleStudModel).ReplacementMeshes == Collection;
+                return isAlternate == femaleModelExt.ShowAlternateModels;
+            }
+            return base.GetIsVisible();
         }
     }
 }

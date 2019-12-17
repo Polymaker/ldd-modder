@@ -7,7 +7,7 @@ using LDDModder.Modding.Editing;
 
 namespace LDDModder.BrickEditor.ProjectHandling
 {
-    public class StudAltElement : ElementExtention
+    public class FemaleStudModelExtension : ModelElementExtension
     {
         private bool _ShowAlternateModels;
 
@@ -19,17 +19,22 @@ namespace LDDModder.BrickEditor.ProjectHandling
                 if (_ShowAlternateModels != value)
                 {
                     _ShowAlternateModels = value;
-                    CalculateVisibillity();
+                    CalculateVisibility();
                 }
             }
         }
 
-        internal StudAltElement(ProjectManager manager, FemaleStudModel element) : base(manager, element)
+        internal FemaleStudModelExtension(ProjectManager manager, FemaleStudModel element) : base(manager, element)
         {
             _ShowAlternateModels = false;
         }
 
-        protected override void PropagateVisibillity(PartElement element, bool parentIsVisible)
+        public FemaleStudModelExtension(PartElement element) : base(element)
+        {
+            _ShowAlternateModels = false;
+        }
+
+        protected override void PropagateVisibility(PartElement element, bool parentIsVisible)
         {
             if (Element is FemaleStudModel femaleStud)
             {
@@ -39,7 +44,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
                     parentIsVisible &= ShowAlternateModels;
             }
 
-            base.PropagateVisibillity(element, parentIsVisible);
+            base.PropagateVisibility(element, parentIsVisible);
         }
     }
 }

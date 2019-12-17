@@ -1,6 +1,6 @@
 <Connectors>
 	<Axels>
-		<Connector type="Axel" subtype="2" gender="female" description="Technic hole" connectswith="3,19,5" />
+		<Connector type="Axel" subtype="2" gender="female" description="Technic hole Ø8mm" connectswith="3,19,5" />
 		
 		<!-- thick pin walls that cannot fit a bar inside -->
 		<Connector type="Axel" subtype="3" gender="male" description="Technic pin" connectswith="2" />
@@ -36,8 +36,10 @@
 		<Connector type="Axel" subtype="19" gender="male" description="Technic Pin" connectswith="2" />
 		
 		<!-- the same as a bar connector (type 7) but physically has a thin hole (like type 14)
-			it is always combined with a type 14 connection-->
-		<Connector type="Axel" subtype="21" gender="male" description="Hollow bar" connectswith="6" />
+			it is always combined with a type 14 connection.
+			due to a bug in ldd, the type 14 connection collides and prevent a type 6 to connect.
+			-->
+		<Connector type="Axel" subtype="21" gender="male" description="Hollow bar (OD: Ø3.2mm ID: Ø1.5mm)" connectswith="6" />
 	</Axels>
 	<Balls>
 		<Connector type="Ball" subtype="2" gender="female" description="Tow ball cup" connectswith="3" />

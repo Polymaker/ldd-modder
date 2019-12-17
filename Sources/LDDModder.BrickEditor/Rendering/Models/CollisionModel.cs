@@ -26,6 +26,7 @@ namespace LDDModder.BrickEditor.Rendering
             PartCollision = collision;
 
             var baseTransform = collision.Transform.ToMatrix().ToGL();
+
             SetTransform(baseTransform, false);
 
             UpdateScaleTransform();

@@ -1,4 +1,5 @@
-﻿using LDDModder.BrickEditor.Resources;
+﻿using LDDModder.BrickEditor.ProjectHandling;
+using LDDModder.BrickEditor.Resources;
 using LDDModder.Modding.Editing;
 using System;
 using System.Collections.Generic;
@@ -55,17 +56,14 @@ namespace LDDModder.BrickEditor.Models.Navigation
             }
             else if (Element is SurfaceComponent surfaceComponent)
             {
-                if (surfaceComponent is FemaleStudModel femaleStud && 
-                    femaleStud.ReplacementMeshes.Any())
+                if (surfaceComponent is FemaleStudModel femaleStud/* && 
+                    femaleStud.ReplacementMeshes.Any()*/)
                 {
                     Childrens.Add(new ElementCollectionNode(femaleStud, 
                         femaleStud.Meshes, ModelLocalizations.Label_DefaultMeshes));
+
                     Childrens.Add(new ElementCollectionNode(femaleStud,
                         femaleStud.ReplacementMeshes, ModelLocalizations.Label_AlternateMeshes));
-                    //AutoGroupElements(femaleStud.Meshes,
-                    //    ModelLocalizations.Label_DefaultMeshes, 0, 10, false);
-                    //AutoGroupElements(femaleStud.ReplacementMeshes,
-                    //    ModelLocalizations.Label_AlternateMeshes, 0, 10, false);
                 }
                 else
                 {
@@ -176,6 +174,19 @@ namespace LDDModder.BrickEditor.Models.Navigation
                 }
             }
             return base.CanDropAfter(node);
+        }
+
+        public override bool CanToggleVisibility()
+        {
+            return true;
+        }
+
+        public override bool GetIsVisible()
+        {
+            var modelExt = Element.GetExtension<ModelElementExtension>();
+            if (modelExt != null)
+                return modelExt.IsVisible;
+            return base.GetIsVisible();
         }
     }
 }

@@ -127,10 +127,12 @@ namespace LDDModder.BrickEditor.UI.Panels
             mainForm.Deactivate += MainForm_Deactivate;
 
             UpdateTitle();
-            ProjectManager.ProjectModified += ProjectManager_ProjectModified;
-        }
 
-        
+            ProjectManager.ProjectModified += ProjectManager_ProjectModified;
+            ProjectManager.PartModelsVisibilityChanged += ProjectManager_ModelsVisibilityChanged;
+            ProjectManager.CollisionsVisibilityChanged += ProjectManager_ModelsVisibilityChanged;
+            ProjectManager.ConnectionsVisibilityChanged += ProjectManager_ModelsVisibilityChanged;
+        }
 
         #region Initialization
 
@@ -236,6 +238,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             RotateGizmoButton.Clicked += RotateGizmoButton_Clicked;
 
             var gizmoButtons = new UIButton[] { SelectGizmoButton, MoveGizmoButton, RotateGizmoButton };
+
             for (int i = 0; i < gizmoButtons.Length; i++)
             {
                 gizmoButtons[i].Bounds = new Vector4(buttonSpacing, 64 + (buttonSize + buttonSpacing) * i, buttonSize, buttonSize);
@@ -356,13 +359,13 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             RenderHelper.InitializeMatrices(Camera);
 
-            if (ShowCollisions)
+            if (ProjectManager.ShowCollisions)
                 DrawCollisions();
 
-            if (ShowConnections)
+            if (ProjectManager.ShowConnections)
                 DrawConnections();
 
-            if (!ModelRenderingOptions.Hidden)
+            if (ProjectManager.ShowPartModels)
                 DrawPartModels();
 
             DrawGrid();
@@ -372,7 +375,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             if (SelectionGizmo.Visible)
             {
                 GL.Clear(ClearBufferMask.DepthBufferBit);
-                SelectionGizmo.Render();
+                SelectionGizmo.Render(Camera);
             }
 
             GL.UseProgram(0);
@@ -392,7 +395,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         private void DrawCollisions()
         {
             GL.Disable(EnableCap.Texture2D);
-            if (CollisionModels.Any())
+            if (ProjectManager.ShowCollisions && CollisionModels.Any())
             {
                 RenderHelper.UnbindModelTexture();
                 foreach (var colModel in CollisionModels.Where(x => x.Visible))
@@ -905,7 +908,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             foreach(var model in GetAllElementModels())
             {
-                var elementExt = ProjectManager.GetExtension(model.Element);
+                var elementExt = model.Element.GetExtension<ModelElementExtension>();
                 if (elementExt?.IsVisible ?? true)
                     yield return model;
             }
@@ -1041,9 +1044,8 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             if (ray != null && visibleModels.Any())
             {
-
                 var intersectingModels = new List<Tuple<PartElementModel, float>>();
-                int ctr = 0;
+
                 foreach (var model in visibleModels)
                 {
                     if (model.RayIntersectsBoundingBox(ray, out float boxDist))
@@ -1053,7 +1055,6 @@ namespace LDDModder.BrickEditor.UI.Panels
                             intersectingModels.Add(new Tuple<PartElementModel, float>(model, triangleDist));
                         }
                     }
-                    ctr++;
                 }
 
                 var closestHit = intersectingModels.OrderBy(x => x.Item2).FirstOrDefault();
@@ -1277,31 +1278,41 @@ namespace LDDModder.BrickEditor.UI.Panels
             Camera.IsPerspective = !CameraMenu_Orthographic.Checked;
         }
 
+        private void ProjectManager_ModelsVisibilityChanged(object sender, EventArgs e)
+        {
+            if (SelectionGizmo.Visible)
+                SelectionGizmo.Deactivate();
+
+            using (FlagManager.UseFlag("ModelsVisibilityChanged"))
+            {
+                DisplayMenu_Collisions.Checked = ProjectManager.ShowCollisions;
+                DisplayMenu_Connections.Checked = ProjectManager.ShowConnections;
+                DisplayMenu_Meshes.Checked = ProjectManager.ShowPartModels;
+                UpdateGizmoFromSelection();
+            }
+        }
+
         private void DisplayMenu_Collisions_CheckedChanged(object sender, EventArgs e)
         {
-            ProjectManager.ShowCollisions = DisplayMenu_Collisions.Checked;
-            ShowCollisions = DisplayMenu_Collisions.Checked;
-            UpdateGizmoFromSelection();
+            if (!FlagManager.IsSet("ModelsVisibilityChanged"))
+                ProjectManager.ShowCollisions = DisplayMenu_Collisions.Checked;
         }
 
         private void DisplayMenu_Connections_CheckedChanged(object sender, EventArgs e)
         {
-            ProjectManager.ShowConnections = DisplayMenu_Connections.Checked;
-            ShowConnections = DisplayMenu_Connections.Checked;
-            UpdateGizmoFromSelection();
+            if (!FlagManager.IsSet("ModelsVisibilityChanged"))
+                ProjectManager.ShowConnections = DisplayMenu_Connections.Checked;
         }
 
         private void DisplayMenu_Meshes_CheckedChanged(object sender, EventArgs e)
         {
-            ProjectManager.ShowModels = DisplayMenu_Meshes.Checked;
-            ShowMeshes = DisplayMenu_Meshes.Checked;
-            ModelRenderingOptions.Hidden = !DisplayMenu_Meshes.Checked;
-            UpdateGizmoFromSelection();
+            if (!FlagManager.IsSet("ModelsVisibilityChanged"))
+                ProjectManager.ShowPartModels = DisplayMenu_Meshes.Checked;
         }
 
         private void xRayToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
         {
-            ModelRenderingOptions.DrawTransparent = xRayToolStripMenuItem.Checked;
+            //ModelRenderingOptions.DrawTransparent = xRayToolStripMenuItem.Checked;
         }
 
         #region Tranform Gizmo Settings

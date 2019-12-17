@@ -41,30 +41,6 @@ namespace LDDModder.BrickEditor.Rendering
             return SurfaceModel.RayIntersects(ray, this, out distance);
         }
 
-        private bool ChangingTransform;
-
-        protected override void OnTransformChanged()
-        {
-            base.OnTransformChanged();
-            Matrix4 transCopy = Transform;
-            transCopy.ClearScale();
-
-            ChangingTransform = true;
-            MeshReference.Transform = ItemTransform.FromMatrix(transCopy.ToLDD());
-            ChangingTransform = false;
-        }
-
-        protected override void OnElementPropertyChanged(ElementValueChangedEventArgs e)
-        {
-            base.OnElementPropertyChanged(e);
-
-            if (e.PropertyName == nameof(MeshReference.Transform) && !ChangingTransform)
-            {
-                var baseTransform = MeshReference.Transform.ToMatrix().ToGL();
-                SetTransform(baseTransform, true);
-            }
-        }
-
         public override void RenderModel(Camera camera)
         {
             SurfaceModel.RenderPartialModel(this);

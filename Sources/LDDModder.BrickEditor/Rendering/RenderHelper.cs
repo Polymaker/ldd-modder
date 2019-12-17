@@ -342,6 +342,26 @@ namespace LDDModder.BrickEditor.Rendering
             GL.PopAttrib();
         }
 
+        public static void DrawGizmoAxes(Matrix4 transform, float size, bool selected = false)
+        {
+            if (!selected)
+                DrawGizmoAxes(transform, size, 2f);
+            else
+            {
+                EnableStencilTest();
+                EnableStencilMask();
+
+                DrawGizmoAxes(transform, size, 2f);
+
+                ApplyStencilMask();
+
+                DrawGizmoAxes(transform, size, new Vector4(1f, 1f, 1f, 1f), 3f);
+
+                RemoveStencilMask();
+                DisableStencilTest();
+            }
+        }
+
         #region Default Materials and Colors (TODO: maybe put this elsewhere)
 
 

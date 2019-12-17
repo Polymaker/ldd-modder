@@ -146,6 +146,16 @@ namespace LDDModder.BrickEditor.Models.Navigation
             }
         }
     
+        public virtual bool CanToggleVisibility()
+        {
+            return false;
+        }
+
+        public virtual bool GetIsVisible()
+        {
+            return true;
+        }
+
         public virtual bool CanDragDrop()
         {
             return false;

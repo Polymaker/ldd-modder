@@ -159,6 +159,8 @@
     <Compile Include="Modding\Editing\ChangeTracking\CollectionChangeItemInfo.cs" />
     <Compile Include="Modding\Editing\ChangeTracking\ElementCollectionChangedEventArgs.cs" />
     <Compile Include="Modding\Editing\ChangeTracking\ElementCollection.cs" />
+    <Compile Include="Modding\Editing\Extensions\ElementExtenderFactory.cs" />
+    <Compile Include="Modding\Editing\Extensions\IElementExtender.cs" />
     <Compile Include="Modding\Editing\ValidationMessage.cs" />
     <Compile Include="Utilities\Events\INotifyPropertyValueChanged.cs" />
     <Compile Include="Utilities\Events\PropertyValueChangedEventArgs.cs" />

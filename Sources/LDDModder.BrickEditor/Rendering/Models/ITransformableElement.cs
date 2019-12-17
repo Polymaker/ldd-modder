@@ -17,7 +17,11 @@ namespace LDDModder.BrickEditor.Rendering
 
         Vector3 Origin { get; }
 
+        bool Visible { get; }
+
         event EventHandler TransformChanged;
+
+        event EventHandler VisibilityChanged;
 
         void BeginEditTransform();
 

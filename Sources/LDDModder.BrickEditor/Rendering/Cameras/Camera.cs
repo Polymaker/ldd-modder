@@ -198,6 +198,8 @@ namespace LDDModder.BrickEditor.Rendering
             return _ProjectionMatrix;
         }
 
+        #region Space Convertion Functions (World, Viewport, Screen)
+
         /// <summary>
         /// Transforms position from screen space into viewport space.
         /// </summary>
@@ -210,8 +212,35 @@ namespace LDDModder.BrickEditor.Rendering
                 (Viewport.Height - (screenPoint.Y - Viewport.Y)) / Viewport.Height);//up to bottom = 0 to 1 (invert Y)
         }
 
-        #region Viewport 
+        /// <summary>
+        /// Transforms position from viewport space into screen space.
+        /// </summary>
+        /// <param name="viewportPoint">Viewport point. The bottom-left is (0,0); the top-right is (1,1)</param>
+        /// <returns>Returns a screen space coordinate.</returns>
+        public Vector2 ViewportPointToScreen(Vector2 viewportPoint)
+        {
+            var viewRect = Viewport;
+            return new Vector2(
+                (int)(viewRect.X + viewRect.Width * viewportPoint.X),
+                (int)(viewRect.Y + viewRect.Height * (1f - viewportPoint.Y)));
+        }
 
+        /// <summary>
+        /// Transforms position from viewport space into screen space.
+        /// </summary>
+        /// <param name="viewportPoint">Viewport point. The bottom-left is (0,0); the top-right is (1,1); front is 0; back is 1</param>
+        /// <returns></returns>
+        public Vector2 ViewportPointToScreen(Vector3 viewportPoint)
+        {
+            return ViewportPointToScreen(viewportPoint.Xy); //we discard Z as it doesn't affect screen space, only world space
+        }
+
+        /// <summary>
+        /// Converts Viewport point (0.0 to 1.0) to 'Frustum' (3D) point (-1.0 to +1.0)
+        /// </summary>
+        /// <param name="viewportPoint"></param>
+        /// <param name="z"></param>
+        /// <returns>Returns a frustum space coordinate.</returns>
         public static Vector4 ViewportPointToFrustum(Vector3 viewportPoint)
         {
             return new Vector4(
@@ -221,6 +250,20 @@ namespace LDDModder.BrickEditor.Rendering
                 1f);
         }
 
+        private static Vector3 FrustumPointToViewPort(Vector4 frustumPoint)
+        {
+            var pos = frustumPoint.Xyz / frustumPoint.W;
+            return new Vector3((pos.X + 1f) / 2f, (pos.Y + 1f) / 2f, (pos.Z + 1f) / 2f);
+        }
+
+        public Vector4 WorldPointToFrustum(Vector3 worldPoint)
+        {
+            var transformMatrix = Matrix4.Mult(GetViewMatrix(), GetProjectionMatrix());
+            var result = Vector4.Transform(new Vector4(worldPoint, 1), transformMatrix);
+            //if result.Z < 0, point is behind camera (I think, not tested)
+            return result;
+        }
+
         private static Vector3 FrustumPointToWorld(Vector4 frustumPoint, Matrix4 cameraMatrix)
         {
             var result = Vector4.Transform(frustumPoint, cameraMatrix);
@@ -228,6 +271,21 @@ namespace LDDModder.BrickEditor.Rendering
                 throw new Exception("Problems");
             return result.Xyz / result.W;
         }
+
+        public Vector3 WorldPointToViewport(Vector3 worldPoint)
+        {
+            return FrustumPointToViewPort(WorldPointToFrustum(worldPoint));
+        }
+
+        public Vector2 WorldPointToScreen(Vector3 worldPoint)
+        {
+            return ViewportPointToScreen(WorldPointToViewport(worldPoint));
+        }
+
+        #endregion
+
+        #region Raycast 
+
 
         public Ray RaycastFromScreen(Vector2 point)
         {
@@ -253,6 +311,7 @@ namespace LDDModder.BrickEditor.Rendering
 
         #endregion
 
+        #region Viewport size and functions
 
         public float GetViewHeight(float distFromCamera)
         {
@@ -297,5 +356,8 @@ namespace LDDModder.BrickEditor.Rendering
             var vh = GetViewHeight(distFromCamera);
             return new Vector2(vh * AspectRatio, vh);
         }
+
+        #endregion
+
     }
 }

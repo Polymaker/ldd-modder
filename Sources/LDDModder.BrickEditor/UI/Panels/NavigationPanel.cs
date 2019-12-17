@@ -53,20 +53,16 @@ namespace LDDModder.BrickEditor.UI.Panels
             }
         }
 
-        private FlagManager FlagManager;
-
         internal NavigationPanel()
         {
             InitializeComponent();
             InitializeNavigationImageList();
-            FlagManager = new FlagManager();
         }
 
         public NavigationPanel(ProjectManager projectManager) : base (projectManager)
         {
             InitializeComponent();
             
-            FlagManager = new FlagManager();
             CloseButtonVisible = false;
             CloseButton = false;
             ContextMenu_Delete.ShortcutKeys = Keys.Delete;
@@ -126,7 +122,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             NavigationImageList.Images.Add("Model_MaleStud", Properties.Resources.MaleStudIcon);
             NavigationImageList.Images.Add("Mesh", Properties.Resources.MeshIcon);
             NavigationImageList.Images.Add("Visible", Properties.Resources.VisibleIcon);
-            NavigationImageList.Images.Add("Hidden", Properties.Resources.VisibleIcon);
+            NavigationImageList.Images.Add("Hidden", Properties.Resources.HiddenIcon);
             
         }
 
@@ -153,7 +149,34 @@ namespace LDDModder.BrickEditor.UI.Panels
             olvColumnVisible.HeaderImageKey = "Visible";
             olvColumnVisible.ShowTextInHeader = false;
             olvColumnVisible.Sortable = false;
-            olvColumnVisible.ImageGetter = (x) => "Visible";
+
+            olvColumnVisible.ImageGetter = (x) =>
+            {
+                if (x is BaseProjectNode projectNode)
+                {
+                    if (!projectNode.CanToggleVisibility())
+                        return string.Empty;
+
+                    return projectNode.GetIsVisible() ? "Visible" : "Hidden";
+                }
+
+                //if (x is ProjectElementNode elementNode)
+                //{
+                //    var modelExtension = elementNode.Element.GetExtension<ModelElementExtension>();
+                //    if (modelExtension != null)
+                //        return modelExtension.IsHidden ? "Hidden" : "Visible";
+                //}
+                //else if (x is ProjectCollectionNode collectionNode)
+                //{
+                //    if (collectionNode.Collection == CurrentProject.Surfaces)
+                //        return ProjectManager.ShowPartModels ? "Visible" : "Hidden";
+                //    else if (collectionNode.Collection == CurrentProject.Connections)
+                //        return ProjectManager.ShowConnections ? "Visible" : "Hidden";
+                //    else if (collectionNode.Collection == CurrentProject.Collisions)
+                //        return ProjectManager.ShowCollisions ? "Visible" : "Hidden";
+                //}
+                return string.Empty;
+            };
 
             ProjectTreeView.TreeColumnRenderer = new Controls.TreeRendererEx();
         }
@@ -206,7 +229,10 @@ namespace LDDModder.BrickEditor.UI.Panels
                         }
 
                         foreach (ProjectCollectionNode node in ProjectTreeView.Roots)
+                        {
+                            node.Manager = ProjectManager;
                             ProjectTreeView.Expand(node);
+                        }
                     }
                     else
                     {
@@ -303,6 +329,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                 case NavigationViewMode.Meshes:
                     break;
             }
+
             return false;
         }
 
@@ -867,12 +894,44 @@ namespace LDDModder.BrickEditor.UI.Panels
             }
         }
 
-
-
-
         #endregion
 
+        private void ProjectTreeView_CellClick(object sender, CellClickEventArgs e)
+        {
+            if (e.Column == olvColumnVisible)
+            {
+                e.Handled = true;
+                
+                if (e.Model is ProjectElementNode elementNode)
+                {
+                    var modelExt = elementNode.Element.GetExtension<ModelElementExtension>();
+                    if (modelExt != null)
+                    {
+                        modelExt.IsHidden = !modelExt.IsHidden;
+                        ProjectTreeView.RefreshObject(elementNode);
+                    }
+                }
+                else if (e.Model is ElementCollectionNode elementColNode)
+                {
+                    var femaleStudExt = elementColNode.Element.GetExtension<FemaleStudModelExtension>();
 
+                    if (femaleStudExt != null)
+                    {
+                        femaleStudExt.ShowAlternateModels = !femaleStudExt.ShowAlternateModels;
+                        ProjectTreeView.RefreshObject(elementColNode.Parent);
+                    }
+                }
+                else if (e.Model is ProjectCollectionNode collectionNode)
+                {
+                    if (collectionNode.Collection == CurrentProject.Surfaces)
+                        ProjectManager.ShowPartModels = !ProjectManager.ShowPartModels;
+                    else if (collectionNode.Collection == CurrentProject.Collisions)
+                        ProjectManager.ShowCollisions = !ProjectManager.ShowCollisions;
+                    else if (collectionNode.Collection == CurrentProject.Connections)
+                        ProjectManager.ShowConnections = !ProjectManager.ShowConnections;
+                }
+            }
+        }
     }
 
 }

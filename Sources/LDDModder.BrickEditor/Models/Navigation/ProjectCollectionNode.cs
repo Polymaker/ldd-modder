@@ -1,4 +1,5 @@
-﻿using LDDModder.BrickEditor.Resources;
+﻿using LDDModder.BrickEditor.ProjectHandling;
+using LDDModder.BrickEditor.Resources;
 using LDDModder.Modding.Editing;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,8 @@ namespace LDDModder.BrickEditor.Models.Navigation
     public class ProjectCollectionNode : BaseProjectNode
     {
         public override PartProject Project => Collection.Project;
+
+        public ProjectManager Manager { get; set; }
 
         public IElementCollection Collection { get; }
 
@@ -59,6 +62,25 @@ namespace LDDModder.BrickEditor.Models.Navigation
                 foreach (var elem in Collection.GetElements())
                     Childrens.Add(ProjectElementNode.CreateDefault(elem));
             }
+        }
+
+        public override bool CanToggleVisibility()
+        {
+            return true;
+        }
+
+        public override bool GetIsVisible()
+        {
+            if (Manager != null)
+            {
+                if (Collection == Project.Surfaces)
+                    return Manager.ShowPartModels;
+                if (Collection == Project.Collisions)
+                    return Manager.ShowCollisions;
+                if (Collection == Project.Connections)
+                    return Manager.ShowConnections;
+            }
+            return base.GetIsVisible();
         }
     }
 }

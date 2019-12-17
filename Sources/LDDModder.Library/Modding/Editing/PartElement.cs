@@ -1,6 +1,7 @@
 ﻿using LDDModder.Serialization;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -15,6 +16,7 @@ namespace LDDModder.Modding.Editing
         private string _Comments;
         private string _Name;
         internal PartProject _Project;
+        private Dictionary<Type, IElementExtender> _Extenders;
 
         [XmlAttribute]
         public string ID { get; set; }
@@ -59,12 +61,18 @@ namespace LDDModder.Modding.Editing
         [XmlIgnore]
         public PartElement Parent { get; internal set; }
 
+        [XmlIgnore]
+        public int HierarchyLevel => Parent == null ? 0 : Parent.HierarchyLevel + 1;
+
         public event EventHandler<ElementValueChangedEventArgs> PropertyChanged;
+
+        public event PropertyValueChangedEventHandler ExtendedPropertyChanged;
 
         public PartElement()
         {
             Collections = new List<IElementCollection>();
             OwnedElements = new List<PartElement>();
+            _Extenders = new Dictionary<Type, IElementExtender>();
         }
 
         #region Project & Parent Handling
@@ -197,6 +205,39 @@ namespace LDDModder.Modding.Editing
         #endregion
 
 
+        public T GetExtension<T>() where T : IElementExtender
+        {
+            if (_Extenders.TryGetValue(typeof(T), out IElementExtender extender))
+                return (T)extender;
+
+            if (_Extenders.Count > 0)
+            {
+                var test = _Extenders.FirstOrDefault(x => x.Key.IsAssignableFrom(typeof(T)));
+                if (test.Value != null)
+                    _Extenders.Add(typeof(T), test.Value);
+
+                return (T)test.Value;
+            }
+
+            if (ElementExtenderFactory.CanExtendElement(GetType(), typeof(T)))
+            {
+                extender = ElementExtenderFactory.CreateExtender(this, typeof(T));
+                _Extenders.Add(typeof(T), extender);
+
+                if (extender is INotifyPropertyValueChanged notifyProperty)
+                    notifyProperty.PropertyValueChanged += Extender_PropertyValueChanged;
+
+                return (T)extender;
+            }
+
+            return default(T);
+        }
+
+        private void Extender_PropertyValueChanged(object sender, PropertyValueChangedEventArgs e)
+        {
+            ExtendedPropertyChanged?.Invoke(sender, e);
+        }
+
         public virtual IEnumerable<PartElement> GetAllChilds()
         {
             return OwnedElements.Concat(Collections.SelectMany(x => x.GetElements()));
@@ -206,6 +247,7 @@ namespace LDDModder.Modding.Editing
         {
             if (includeSelf)
                 yield return this;
+
             foreach(var child in GetAllChilds())
             {
                 yield return child;
@@ -243,6 +285,7 @@ namespace LDDModder.Modding.Editing
                     }
                 }
             }
+
             else if (Project != null)
             {
                 if (Project.Collisions.Contains(this))

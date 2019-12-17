@@ -60,6 +60,12 @@ namespace LDDModder.BrickEditor.Rendering
 
         public virtual bool RayIntersectsBoundingBox(Ray ray, out float distance)
         {
+            if (BoundingBox.IsEmpty)
+            {
+                distance = float.NaN;
+                return false;
+            }
+
             var localRay = Ray.Transform(ray, Transform.Inverted());
             return Ray.IntersectsBox(localRay, BoundingBox, out distance);
         }

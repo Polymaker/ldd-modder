@@ -114,19 +114,14 @@
   <ItemGroup>
     <Compile Include="Models\Navigation\BaseProjectNode.cs" />
     <Compile Include="Models\Navigation\ElementCollectionNode.cs" />
-    <Compile Include="Models\Project\ElementExtention.cs" />
-    <Compile Include="Models\Project\FemaleStudElement.cs" />
-    <Compile Include="Models\Project\MeshElement.cs" />
-    <Compile Include="Models\Project\RenderableElement.cs" />
     <Compile Include="ProjectHandling\ChangeAction.cs" />
     <Compile Include="Models\Navigation\ElementGroupNode.cs" />
     <Compile Include="Models\Navigation\ProjectElementNode.cs" />
     <Compile Include="Models\Navigation\ProjectCollectionNode.cs" />
-    <Compile Include="ProjectHandling\ElementExtention.cs" />
+    <Compile Include="ProjectHandling\Extensions\ModelElementExtension.cs" />
     <Compile Include="ProjectHandling\ProjectManager.cs" />
     <Compile Include="Models\Navigation\ProjectNodeCollection.cs" />
-    <Compile Include="ProjectHandling\ProjectWrapper.cs" />
-    <Compile Include="ProjectHandling\StudAltElement.cs" />
+    <Compile Include="ProjectHandling\Extensions\FemaleStudModelExtension.cs" />
     <Compile Include="ProjectHandling\UndoRedoManager.cs" />
     <Compile Include="Rendering\MeshRenderMode.cs" />
     <Compile Include="UI\Controls\CollapsiblePanel.cs">

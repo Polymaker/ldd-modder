@@ -96,6 +96,7 @@
             this.ProjectTreeView.CanDrop += new System.EventHandler<BrightIdeasSoftware.OlvDropEventArgs>(this.ProjectTreeView_CanDrop);
             this.ProjectTreeView.CellEditFinishing += new BrightIdeasSoftware.CellEditEventHandler(this.ProjectTreeView_CellEditFinishing);
             this.ProjectTreeView.CellEditStarting += new BrightIdeasSoftware.CellEditEventHandler(this.ProjectTreeView_CellEditStarting);
+            this.ProjectTreeView.CellClick += new System.EventHandler<BrightIdeasSoftware.CellClickEventArgs>(this.ProjectTreeView_CellClick);
             this.ProjectTreeView.Dropped += new System.EventHandler<BrightIdeasSoftware.OlvDropEventArgs>(this.ProjectTreeView_Dropped);
             this.ProjectTreeView.SelectionChanged += new System.EventHandler(this.ProjectTreeView_SelectionChanged);
             // 

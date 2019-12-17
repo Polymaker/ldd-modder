@@ -446,12 +446,12 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
 
         #region Rendering
 
-        public void Render()
+        public void Render(Camera camera)
         {
             switch (DisplayStyle)
             {
                 case GizmoStyle.Plain:
-                    RenderPlainGizmo();
+                    //RenderPlainGizmo(camera);
                     break;
                 case GizmoStyle.Translation:
                     RenderTranslationGizmo();
@@ -464,22 +464,37 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
             }
         }
 
-        private void RenderPlainGizmo()
+        private void RenderPlainGizmo(Camera camera)
         {
             GL.PushAttrib(AttribMask.LineBit);
-            GL.LineWidth(2f);
+            GL.LineWidth(1f);
 
-            for (int i = 0; i < 3; i++)
-            {
-                var color = HandleColors[i];
-                
-                RenderHelper.BeginDrawColor(VertexBuffer, Transform, color);
-                GL.Begin(PrimitiveType.Lines);
-                GL.Vertex3(Vector3.Zero);
-                GL.Vertex3(TranslationHandles[i].Axis * UIScale * GizmoSize);
-                GL.End();
-            }
-            
+            var screenPos = camera.WorldPointToScreen(Position);
+
+            var uiTrans = Matrix4.CreateScale(20f) * 
+                Matrix4.CreateRotationX((float)Math.PI / 2f) * 
+                Matrix4.CreateTranslation(new Vector3(screenPos));
+            RenderHelper.BeginDrawColor(VertexBuffer, uiTrans, new Vector4(0, 0, 0, 1f));
+
+            RenderHelper.ColorShader.ViewMatrix.Set(Matrix4.Identity);
+            RenderHelper.ColorShader.Projection.Set(UIRenderHelper.ProjectionMatrix);
+
+            VertexBuffer.DrawArrays(PrimitiveType.LineLoop, 0, 32);
+
+            RenderHelper.ColorShader.ViewMatrix.Set(camera.GetViewMatrix());
+            RenderHelper.ColorShader.Projection.Set(camera.GetProjectionMatrix());
+
+            //for (int i = 0; i < 3; i++)
+            //{
+            //    var color = HandleColors[i];
+
+            //    RenderHelper.BeginDrawColor(VertexBuffer, Transform, color);
+            //    GL.Begin(PrimitiveType.Lines);
+            //    GL.Vertex3(Vector3.Zero);
+            //    GL.Vertex3(TranslationHandles[i].Axis * UIScale * GizmoSize);
+            //    GL.End();
+            //}
+
             GL.PopAttrib();
         }
 
@@ -637,10 +652,24 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
             {
                 EditedElements.Add(new TransformFollower(element));
                 element.TransformChanged += Element_TransformChanged;
+                element.VisibilityChanged += Element_VisibilityChanged;
             }
 
             RepositionGizmo();
             Visible = ActiveElements.Any();
+        }
+
+        private void Element_VisibilityChanged(object sender, EventArgs e)
+        {
+            if (!ApplyingTransform)
+            {
+                var elem = (ITransformableElement)sender;
+                if (!elem.Visible)
+                {
+                    EditedElements.RemoveAll(x => x.Element == elem);
+                    RepositionGizmo();
+                }
+            }
         }
 
         private void Element_TransformChanged(object sender, EventArgs e)
@@ -652,12 +681,22 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
         private void DetachActiveElements()
         {
             foreach (var follower in EditedElements)
+            {
                 follower.Element.TransformChanged -= Element_TransformChanged;
+                follower.Element.VisibilityChanged -= Element_VisibilityChanged;
+            }
             EditedElements.Clear();
         }
 
         public void RepositionGizmo()
         {
+            if (!ActiveElements.Any())
+            {
+                if (Visible)
+                    Deactivate();
+                return;
+            }
+
             Vector3 transformPosition = Vector3.Zero;
             switch (PivotPointMode)
             {
@@ -713,12 +752,15 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
                 follower.OriginalMatrix = follower.Element.Transform;
 
                 var localPos = Vector3.TransformPosition(follower.OriginalMatrix.ExtractTranslation(), invTrans);
+
                 var localRot = Quaternion.Multiply(Orientation.ExtractRotation().Inverted(),
                     follower.OriginalMatrix.ExtractRotation());
 
                 var localMatrix = Matrix4.Mult(Matrix4.CreateFromQuaternion(localRot),
                     Matrix4.CreateTranslation(localPos));
 
+                if (float.IsNaN(localMatrix.Determinant))
+                    localMatrix = Matrix4.Identity;
                 //var localMatrix = Matrix4.Mult(invTrans, model.OriginalMatrix);
                 follower.LocalMatrix = localMatrix;
             }

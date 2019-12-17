@@ -19,12 +19,10 @@ namespace LDDModder.BrickEditor.Rendering
     static class UIRenderHelper
     {
         public static Matrix4 ProjectionMatrix { get; set; }
+
         public static Matrix4 TextMatrix { get; set; }
 
         public static Vector2 ViewSize { get; set; }
-
-        
-        
 
         public static UIShaderProgram UIShader { get; private set; }
 

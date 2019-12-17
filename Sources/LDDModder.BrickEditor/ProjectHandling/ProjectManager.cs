@@ -1,4 +1,4 @@
-﻿using LDDModder.BrickEditor.Models.Project;
+﻿using LDDModder.BrickEditor.Rendering;
 using LDDModder.BrickEditor.Resources;
 using LDDModder.Modding.Editing;
 using System;
@@ -17,8 +17,6 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
         private long LastValidation;
         private long LastSavedChange;
-
-        private Dictionary<PartElement, ElementExtention> ElementExtensions;
 
         public PartProject CurrentProject { get; private set; }
 
@@ -65,6 +63,18 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
         private bool ElementsChanged;
         private bool PreventProjectChange;
+        private bool IsProjectAttached;
+
+        static ProjectManager()
+        {
+            ElementExtenderFactory.RegisterExtension(typeof(PartSurface), typeof(ModelElementExtension));
+            ElementExtenderFactory.RegisterExtension(typeof(SurfaceComponent), typeof(ModelElementExtension));
+            ElementExtenderFactory.RegisterExtension(typeof(FemaleStudModel), typeof(FemaleStudModelExtension));
+            ElementExtenderFactory.RegisterExtension(typeof(ModelMeshReference), typeof(ModelElementExtension));
+
+            ElementExtenderFactory.RegisterExtension(typeof(PartCollision), typeof(ModelElementExtension));
+            ElementExtenderFactory.RegisterExtension(typeof(PartConnection), typeof(ModelElementExtension));
+        }
 
         public ProjectManager()
         {
@@ -76,9 +86,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
             UndoRedoManager.EndUndoRedo += UndoRedoManager_EndUndoRedo;
             UndoRedoManager.UndoHistoryChanged += UndoRedoManager_UndoHistoryChanged;
 
-            ElementExtensions = new Dictionary<PartElement, ElementExtention>();
-
-            _ShowModels = true;
+            _ShowPartModels = true;
         }
 
         #region Project Loading/Closing
@@ -89,8 +97,8 @@ namespace LDDModder.BrickEditor.ProjectHandling
             {
                 PreventProjectChange = true;
                 CloseCurrentProject();
-                LastValidation = -1;
                 PreventProjectChange = false;
+
                 CurrentProject = project;
 
                 if (project != null)
@@ -105,14 +113,11 @@ namespace LDDModder.BrickEditor.ProjectHandling
             if (CurrentProject != null)
             {
                 DettachPartProject(CurrentProject);
-                _SelectedElements.Clear();
-                _ValidationMessages.Clear();
-                ElementExtensions.Clear();
-                LastSavedChange = 0;
-                LastValidation = -1;
+
                 ProjectClosed?.Invoke(this, EventArgs.Empty);
+
                 CurrentProject = null;
-                //ElementExtentions.Clear();
+
                 if (!PreventProjectChange)
                     ProjectChanged?.Invoke(this, EventArgs.Empty);
             }
@@ -123,12 +128,21 @@ namespace LDDModder.BrickEditor.ProjectHandling
             project.ElementCollectionChanged += Project_ElementCollectionChanged;
             project.ElementPropertyChanged += Project_ElementPropertyChanged;
             project.UpdateModelStatistics();
+            LastValidation = -1;
+            IsProjectAttached = true;
+            InitializeElementExtensions();
         }
 
         private void DettachPartProject(PartProject project)
         {
             project.ElementCollectionChanged -= Project_ElementCollectionChanged;
             project.ElementPropertyChanged -= Project_ElementPropertyChanged;
+
+            _SelectedElements.Clear();
+            _ValidationMessages.Clear();
+            LastSavedChange = 0;
+            LastValidation = -1;
+            IsProjectAttached = false;
         }
 
         #endregion
@@ -163,6 +177,11 @@ namespace LDDModder.BrickEditor.ProjectHandling
                 if (count > 0)
                     SelectionChanged?.Invoke(this, EventArgs.Empty);
             }
+            else
+            {
+                if (IsProjectAttached)
+                    InitializeElementExtensions();
+            }
 
             ElementCollectionChanged?.Invoke(this, e);
 
@@ -196,85 +215,100 @@ namespace LDDModder.BrickEditor.ProjectHandling
             return ModelLocalizations.Label_NoActiveProject;
         }
 
-        private bool _ShowModels;
+        #region Viewport Display Handling
 
+        private bool _ShowPartModels;
         private bool _ShowCollisions;
-
         private bool _ShowConnections;
 
-        public bool ShowModels
+        public bool ShowPartModels
         {
-            get => _ShowModels;
-            set
-            {
-                if (_ShowModels != value)
-                {
-                    _ShowModels = true;
-
-                    if (IsProjectOpen)
-                        RecalculateElementsVisibillity(CurrentProject.Surfaces);
-                }
-            }
+            get => _ShowPartModels;
+            set => SetPartModelsVisibility(value);
         }
 
         public bool ShowCollisions
         {
             get => _ShowCollisions;
-            set
-            {
-                if (_ShowCollisions != value)
-                {
-                    _ShowCollisions = true;
-
-                    if (IsProjectOpen)
-                    {
-                        RecalculateElementsVisibillity(CurrentProject.Collisions);
-                        RecalculateElementsVisibillity(CurrentProject.Bones);
-                    }
-                }
-            }
+            set => SetCollisionsVisibility(value);
         }
 
         public bool ShowConnections
         {
             get => _ShowConnections;
-            set
-            {
-                if (_ShowConnections != value)
-                {
-                    _ShowConnections = true;
+            set => SetConnectionsVisibility(value);
+        }
 
-                    if (IsProjectOpen)
-                    {
-                        RecalculateElementsVisibillity(CurrentProject.Connections);
-                        RecalculateElementsVisibillity(CurrentProject.Bones);
-                    }
-                }
+        public event EventHandler PartModelsVisibilityChanged;
+
+        public event EventHandler CollisionsVisibilityChanged;
+
+        public event EventHandler ConnectionsVisibilityChanged;
+
+        private void SetPartModelsVisibility(bool visible)
+        {
+            if (visible != ShowPartModels)
+            {
+                _ShowPartModels = visible;
+
+                if (IsProjectOpen)
+                    InvalidateElementsVisibility(CurrentProject.Surfaces);
+
+                PartModelsVisibilityChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
-        private void RecalculateElementsVisibillity(IEnumerable<PartElement> elements)
+        private void SetCollisionsVisibility(bool visible)
+        {
+            if (visible != ShowCollisions)
+            {
+                _ShowCollisions = visible;
+
+                if (IsProjectOpen)
+                {
+                    InvalidateElementsVisibility(CurrentProject.Collisions);
+                    InvalidateElementsVisibility(CurrentProject.Bones);
+                }
+
+                CollisionsVisibilityChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        private void SetConnectionsVisibility(bool visible)
+        {
+            if (visible != ShowConnections)
+            {
+                _ShowConnections = visible;
+
+                if (IsProjectOpen)
+                {
+                    InvalidateElementsVisibility(CurrentProject.Connections);
+                    InvalidateElementsVisibility(CurrentProject.Bones);
+                }
+
+                ConnectionsVisibilityChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        private void InvalidateElementsVisibility(IEnumerable<PartElement> elements)
         {
             foreach (var elem in elements)
-                GetExtension(elem)?.CalculateVisibillity();
+                elem.GetExtension<ModelElementExtension>()?.FlagVisibilityDirty();
         }
 
-        public ElementExtention GetExtension(PartElement element)
+        #endregion
+
+        public void InitializeElementExtensions()
         {
-            if (ElementExtensions.ContainsKey(element))
-                return ElementExtensions[element];
-
-            ElementExtention extention = null;
-
-            if (element is FemaleStudModel femaleStudModel)
+            if (IsProjectOpen)
             {
-                extention = new StudAltElement(this, femaleStudModel);
+                foreach (var elem in CurrentProject.GetAllElements())
+                {
+                    var modelExt = elem.GetExtension<ModelElementExtension>();
+                    if (modelExt != null && modelExt.Manager == null)
+                        modelExt.AssignManager(this);
+                }
             }
-            else
-                extention = new ElementExtention(this, element);
-
-            ElementExtensions.Add(element, extention);
-            return extention;
         }
 
         #region Selection Management

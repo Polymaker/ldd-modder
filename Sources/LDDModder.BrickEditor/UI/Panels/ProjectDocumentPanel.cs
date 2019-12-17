@@ -1,5 +1,6 @@
 ﻿using LDDModder.BrickEditor.ProjectHandling;
 using LDDModder.Modding.Editing;
+using LDDModder.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,16 +13,24 @@ namespace LDDModder.BrickEditor.UI.Panels
 {
     public /*abstract*/ class ProjectDocumentPanel : DockContent
     {
-        public ProjectManager ProjectManager { get; }
+        public ProjectManager ProjectManager { get; private set; }
 
         public PartProject CurrentProject => ProjectManager?.CurrentProject;
 
+        protected FlagManager FlagManager { get; }
+
         public ProjectDocumentPanel()
         {
-
+            FlagManager = new FlagManager();
         }
 
         protected ProjectDocumentPanel(ProjectManager projectManager)
+        {
+            FlagManager = new FlagManager();
+            InitializeProjectManager(projectManager);
+        }
+
+        protected virtual void InitializeProjectManager(ProjectManager projectManager)
         {
             ProjectManager = projectManager;
 
