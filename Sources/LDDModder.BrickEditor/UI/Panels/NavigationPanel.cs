@@ -9,6 +9,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
@@ -160,21 +161,6 @@ namespace LDDModder.BrickEditor.UI.Panels
                     return projectNode.GetIsVisible() ? "Visible" : "Hidden";
                 }
 
-                //if (x is ProjectElementNode elementNode)
-                //{
-                //    var modelExtension = elementNode.Element.GetExtension<ModelElementExtension>();
-                //    if (modelExtension != null)
-                //        return modelExtension.IsHidden ? "Hidden" : "Visible";
-                //}
-                //else if (x is ProjectCollectionNode collectionNode)
-                //{
-                //    if (collectionNode.Collection == CurrentProject.Surfaces)
-                //        return ProjectManager.ShowPartModels ? "Visible" : "Hidden";
-                //    else if (collectionNode.Collection == CurrentProject.Connections)
-                //        return ProjectManager.ShowConnections ? "Visible" : "Hidden";
-                //    else if (collectionNode.Collection == CurrentProject.Collisions)
-                //        return ProjectManager.ShowCollisions ? "Visible" : "Hidden";
-                //}
                 return string.Empty;
             };
 
@@ -247,10 +233,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                     ExpandNodes(ProjectTreeView.Roots, expandedNodeIDs);
 
                     if (selectedNodeIDs.Any())
-                    {
-                        var selectedNodes = GetTreeNodes().Where(x => selectedNodeIDs.Contains(x.NodeID));
-                        SetSelectedNodes(selectedNodes);
-                    }
+                        SetSelectedNodeIDs(selectedNodeIDs);
                 }
                 else
                     ProjectTreeView.ClearObjects();
@@ -276,7 +259,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             foreach (BaseProjectNode node in nodes)
             {
                 if (nodeIDs.Contains(node.NodeID))
-                    ProjectTreeView.SelectedObjects.Add(node); //ProjectTreeView.SelectObject(node);
+                    ProjectTreeView.SelectedObjects.Add(node);
                 
                 SelectNodes(node.Childrens, nodeIDs);
             }
@@ -585,15 +568,19 @@ namespace LDDModder.BrickEditor.UI.Panels
                 .FirstOrDefault(x => x.Element == element);
         }
 
-        private bool TreeViewItemsSelected = false;
-
         public void SetSelectedNodes(IEnumerable<BaseProjectNode> nodes)
         {
             using (FlagManager.UseFlag("ManualSelect"))
             {
-                TreeViewItemsSelected = true;
+                FlagManager.Set("WaitForManualSelect", true);
                 ProjectTreeView.SelectObjects(nodes.ToList());
             }
+        }
+
+        public void SetSelectedNodeIDs(IEnumerable<string> selectedNodeIDs)
+        {
+            var selectedNodes = GetTreeNodes().Where(x => selectedNodeIDs.Contains(x.NodeID));
+            SetSelectedNodes(selectedNodes);
         }
 
         private ProjectElementNode GetFocusedParentElement<T>() where T : PartElement
@@ -661,16 +648,23 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             if (!(FlagManager.IsSet("BuildingNavTree") ||
                 FlagManager.IsSet("ManualSelect") ||
-                FlagManager.IsSet("DragDropping")))
+                FlagManager.IsSet("DragDropping") ||
+                FlagManager.IsSet("WaitForManualSelect") ||
+                FlagManager.IsSet("PreventSelection")))
             {
-                if (TreeViewItemsSelected)
-                {
-                    TreeViewItemsSelected = false;
-                    return;
-                }
+
                 using (FlagManager.UseFlag("SelectElements"))
                     ProjectManager.SelectElements(GetSelectedElements());
             }
+
+            FlagManager.Set("WaitForManualSelect", false);
+            FlagManager.Set("PreventSelection", false);
+            //if (SelectedNodesCache != null)
+            //{
+            //    SetSelectedNodeIDs(SelectedNodesCache);
+            //    SelectedNodesCache = null;
+            //    FlagManager.Set("PreventSelection", false);
+            //}
         }
 
         #region Drag&Drop Handling
@@ -901,7 +895,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             if (e.Column == olvColumnVisible)
             {
                 e.Handled = true;
-                
+
                 if (e.Model is ProjectElementNode elementNode)
                 {
                     var modelExt = elementNode.Element.GetExtension<ModelElementExtension>();
@@ -932,6 +926,41 @@ namespace LDDModder.BrickEditor.UI.Panels
                 }
             }
         }
+
+        private List<ListViewItem> SelectedItemCache;
+
+        private void ProjectTreeView_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                var hit = ProjectTreeView.OlvHitTest(e.X, e.Y);
+
+                if (hit.Column == olvColumnVisible)
+                {
+                    FlagManager.Set("PreventSelection");
+                    //TODO, reselect nodes after ItemSelectionChanged
+                }
+            }
+        }
+
+        private void ProjectTreeView_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+                FlagManager.Unset("PreventSelection");
+        }
+
+        private void ProjectTreeView_ItemSelectionChanged(object sender, 
+            ListViewItemSelectionChangedEventArgs e)
+        {
+            if (FlagManager.IsSet("PreventSelection") && 
+                !FlagManager.IsSet("ItemSelectionChanged"))
+            {
+                using (FlagManager.UseFlag("ItemSelectionChanged"))
+                    e.Item.Selected = !e.IsSelected;
+            }
+        }
+
+        
     }
 
 }

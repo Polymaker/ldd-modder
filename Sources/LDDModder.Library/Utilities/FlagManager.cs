@@ -39,6 +39,21 @@ namespace LDDModder.Utilities
             return flag.Value;
         }
 
+        public void Set(string flagName)
+        {
+            var flag = GetFlag(flagName);
+            if (!string.IsNullOrEmpty(flag.Key))
+                flagName = flag.Key;
+            mFlags[flagName] = true;
+        }
+
+        public void Unset(string flagName)
+        {
+            var flag = GetFlag(flagName);
+            if (!string.IsNullOrEmpty(flag.Key))
+                mFlags[flagName] = false;
+        }
+
         public void Set(string flagName, bool value)
         {
             var flag = GetFlag(flagName);

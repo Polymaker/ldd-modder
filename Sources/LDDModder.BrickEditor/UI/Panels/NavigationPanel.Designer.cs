@@ -99,6 +99,9 @@
             this.ProjectTreeView.CellClick += new System.EventHandler<BrightIdeasSoftware.CellClickEventArgs>(this.ProjectTreeView_CellClick);
             this.ProjectTreeView.Dropped += new System.EventHandler<BrightIdeasSoftware.OlvDropEventArgs>(this.ProjectTreeView_Dropped);
             this.ProjectTreeView.SelectionChanged += new System.EventHandler(this.ProjectTreeView_SelectionChanged);
+            this.ProjectTreeView.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.ProjectTreeView_ItemSelectionChanged);
+            this.ProjectTreeView.MouseDown += new System.Windows.Forms.MouseEventHandler(this.ProjectTreeView_MouseDown);
+            this.ProjectTreeView.MouseUp += new System.Windows.Forms.MouseEventHandler(this.ProjectTreeView_MouseUp);
             // 
             // olvColumnElement
             // 
