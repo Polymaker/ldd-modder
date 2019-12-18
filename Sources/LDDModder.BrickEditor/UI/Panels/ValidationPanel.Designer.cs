@@ -32,6 +32,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ValidationPanel));
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.ValidatePartButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.ToggleErrorsButton = new System.Windows.Forms.ToolStripButton();
             this.ToggleWarningsButton = new System.Windows.Forms.ToolStripButton();
             this.ToggleMessagesButton = new System.Windows.Forms.ToolStripButton();
@@ -39,12 +40,11 @@
             this.ColumnMessageType = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.ColumnMessageCode = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.ColumnMessageDescription = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.ColumnSource = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.ColumnMessageSource = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.localizableStringList1 = new LDDModder.BrickEditor.Localization.LocalizableStringList(this.components);
-            this.ErrorCountText = ((LDDModder.BrickEditor.Localization.LocalizableString)(new LDDModder.BrickEditor.Localization.LocalizableString()));
-            this.WarningCountText = ((LDDModder.BrickEditor.Localization.LocalizableString)(new LDDModder.BrickEditor.Localization.LocalizableString()));
-            this.MessageCountText = ((LDDModder.BrickEditor.Localization.LocalizableString)(new LDDModder.BrickEditor.Localization.LocalizableString()));
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.ErrorCountText = new LDDModder.BrickEditor.Localization.LocalizableString();
+            this.WarningCountText = new LDDModder.BrickEditor.Localization.LocalizableString();
+            this.MessageCountText = new LDDModder.BrickEditor.Localization.LocalizableString();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ValidationMessageList)).BeginInit();
             this.SuspendLayout();
@@ -68,6 +68,11 @@
             resources.ApplyResources(this.ValidatePartButton, "ValidatePartButton");
             this.ValidatePartButton.Name = "ValidatePartButton";
             this.ValidatePartButton.Click += new System.EventHandler(this.ValidatePartButton_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            resources.ApplyResources(this.toolStripSeparator1, "toolStripSeparator1");
             // 
             // ToggleErrorsButton
             // 
@@ -106,12 +111,12 @@
             this.ValidationMessageList.AllColumns.Add(this.ColumnMessageType);
             this.ValidationMessageList.AllColumns.Add(this.ColumnMessageCode);
             this.ValidationMessageList.AllColumns.Add(this.ColumnMessageDescription);
-            this.ValidationMessageList.AllColumns.Add(this.ColumnSource);
+            this.ValidationMessageList.AllColumns.Add(this.ColumnMessageSource);
             this.ValidationMessageList.CellEditUseWholeCell = false;
             this.ValidationMessageList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.ColumnMessageType,
             this.ColumnMessageDescription,
-            this.ColumnSource});
+            this.ColumnMessageSource});
             this.ValidationMessageList.Cursor = System.Windows.Forms.Cursors.Default;
             resources.ApplyResources(this.ValidationMessageList, "ValidationMessageList");
             this.ValidationMessageList.FullRowSelect = true;
@@ -143,11 +148,11 @@
             this.ColumnMessageDescription.FillsFreeSpace = true;
             resources.ApplyResources(this.ColumnMessageDescription, "ColumnMessageDescription");
             // 
-            // ColumnSource
+            // ColumnMessageSource
             // 
-            this.ColumnSource.AspectName = "Source";
-            this.ColumnSource.MinimumWidth = 50;
-            resources.ApplyResources(this.ColumnSource, "ColumnSource");
+            this.ColumnMessageSource.AspectName = "SourceKey";
+            this.ColumnMessageSource.MinimumWidth = 50;
+            resources.ApplyResources(this.ColumnMessageSource, "ColumnMessageSource");
             // 
             // localizableStringList1
             // 
@@ -167,11 +172,6 @@
             // MessageCountText
             // 
             resources.ApplyResources(this.MessageCountText, "MessageCountText");
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            resources.ApplyResources(this.toolStripSeparator1, "toolStripSeparator1");
             // 
             // ValidationPanel
             // 
@@ -199,7 +199,7 @@
         private BrightIdeasSoftware.OLVColumn ColumnMessageType;
         private BrightIdeasSoftware.OLVColumn ColumnMessageCode;
         private BrightIdeasSoftware.OLVColumn ColumnMessageDescription;
-        private BrightIdeasSoftware.OLVColumn ColumnSource;
+        private BrightIdeasSoftware.OLVColumn ColumnMessageSource;
         private Localization.LocalizableStringList localizableStringList1;
         private Localization.LocalizableString ErrorCountText;
         private Localization.LocalizableString WarningCountText;

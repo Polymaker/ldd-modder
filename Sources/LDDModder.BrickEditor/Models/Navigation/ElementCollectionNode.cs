@@ -36,20 +36,21 @@ namespace LDDModder.BrickEditor.Models.Navigation
                 Childrens.Add(ProjectElementNode.CreateDefault(elem));
         }
 
-        public override bool CanToggleVisibility()
+        public override void UpdateVisibility()
         {
-            return true;
-        }
+            base.UpdateVisibility();
 
-        public override bool GetIsVisible()
-        {
             var femaleModelExt = Element.GetExtension<FemaleStudModelExtension>();
             if (femaleModelExt != null)
             {
                 bool isAlternate = (Element as FemaleStudModel).ReplacementMeshes == Collection;
-                return isAlternate == femaleModelExt.ShowAlternateModels;
+                bool isVisible = isAlternate == femaleModelExt.ShowAlternateModels;
+
+                if (!femaleModelExt.IsVisible)
+                    VisibilityImageKey = isVisible ? "NotVisible" : "Hidden2";
+                else
+                    VisibilityImageKey = isVisible ? "Visible" : "Hidden";
             }
-            return base.GetIsVisible();
         }
     }
 }

@@ -28,6 +28,8 @@ namespace LDDModder.BrickEditor.Models.Navigation
 
         public string ImageKey { get; set; }
 
+        public string VisibilityImageKey { get; set; }
+
         protected BaseProjectNode()
         {
             Childrens = new ProjectNodeCollection(this);
@@ -146,15 +148,12 @@ namespace LDDModder.BrickEditor.Models.Navigation
             }
         }
     
-        public virtual bool CanToggleVisibility()
+        public virtual void UpdateVisibility()
         {
-            return false;
+            VisibilityImageKey = string.Empty;
         }
 
-        public virtual bool GetIsVisible()
-        {
-            return true;
-        }
+        #region Drag & Drop
 
         public virtual bool CanDragDrop()
         {
@@ -175,5 +174,9 @@ namespace LDDModder.BrickEditor.Models.Navigation
         {
             return false;
         }
+
+        #endregion
+
+
     }
 }

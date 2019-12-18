@@ -909,27 +909,9 @@ namespace LDDModder.BrickEditor.UI.Panels
             foreach(var model in GetAllElementModels())
             {
                 var elementExt = model.Element.GetExtension<ModelElementExtension>();
-                if (elementExt?.IsVisible ?? true)
+                if (elementExt?.IsVisible ?? model.Visible)
                     yield return model;
             }
-
-            //if (!ModelRenderingOptions.Hidden)
-            //{
-            //    foreach (var model in SurfaceModels.SelectMany(x => x.MeshModels).Where(x => x.Visible))
-            //        yield return model;
-            //}
-
-            //if (ShowCollisions)
-            //{
-            //    foreach (var model in CollisionModels.Where(x => x.Visible))
-            //        yield return model;
-            //}
-
-            //if (ShowConnections)
-            //{
-            //    foreach (var model in ConnectionModels)
-            //        yield return model;
-            //}
         }
 
         public IEnumerable<PartElementModel> GetSelectedModels(bool onlyVisible = false)
@@ -941,9 +923,9 @@ namespace LDDModder.BrickEditor.UI.Panels
             else
                 selectedModels = GetAllElementModels().Where(x => x.IsSelected);
 
-            return selectedModels
+            return selectedModels/*
                 .Where(x => !onlyVisible || (onlyVisible && x.Visible))
-                .OrderBy(x => ProjectManager.GetSelectionIndex(x.Element));
+                .OrderBy(x => ProjectManager.GetSelectionIndex(x.Element))*/;
         }
 
         #endregion

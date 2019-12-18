@@ -41,6 +41,7 @@ namespace LDDModder.Modding.Editing
 
         public StudReference()
         {
+            FieldIndex = -1;
         }
 
         public StudReference(int connectorIndex, int studIndex, int value1, int value2)
@@ -106,6 +107,31 @@ namespace LDDModder.Modding.Editing
             var stud = new StudReference();
             stud.LoadFromXml(element);
             return stud;
+        }
+
+        public override List<ValidationMessage> ValidateElement()
+        {
+            var messages = base.ValidateElement();
+
+            void AddMessage(string code, ValidationLevel level, params object[] args)
+            {
+                messages.Add(new ValidationMessage(this, code, level)
+                {
+                    MessageArguments = args
+                });
+            }
+
+            if (Connector == null)
+                AddMessage("STUD_CONNECTION_NOT_DEFINED", ValidationLevel.Error);
+            else if (FieldNode == null)
+            {
+                if (FieldIndex < 0)
+                    AddMessage("STUD_CONNECTION_FIELD_NOT_DEFINED", ValidationLevel.Error);
+                else
+                    AddMessage("STUD_CONNECTION_FIELD_INVALID", ValidationLevel.Error);
+            }
+
+            return messages;
         }
     }
 }

@@ -39,28 +39,13 @@ namespace LDDModder.BrickEditor.Rendering
             Scale = scale;
             BoundingBox = BBox.FromCenterSize(Vector3.Zero, scale);
         }
-        
-        protected override void OnTransformChanged()
-        {
-            base.OnTransformChanged();
-            Matrix4 transCopy = Transform;
-            transCopy.ClearScale();
-
-            ChangingTransform = true;
-            PartCollision.Transform = ItemTransform.FromMatrix(transCopy.ToLDD());
-            ChangingTransform = false;
-        }
 
         protected override void OnElementPropertyChanged(ElementValueChangedEventArgs e)
         {
             base.OnElementPropertyChanged(e);
 
-            if (e.PropertyName == nameof(PartCollision.Transform) && !ChangingTransform)
-            {
-                var baseTransform = PartCollision.Transform.ToMatrix().ToGL();
-                SetTransform(baseTransform, true);
-            }
-            else if (e.PropertyName == "Size" || e.PropertyName == "Radius")
+            if (e.PropertyName == nameof(PartBoxCollision.Size) || 
+                e.PropertyName == nameof(PartSphereCollision.Radius))
             {
                 UpdateScaleTransform();
             }

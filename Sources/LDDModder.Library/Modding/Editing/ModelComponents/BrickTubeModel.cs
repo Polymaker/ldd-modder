@@ -79,5 +79,29 @@ namespace LDDModder.Modding.Editing
                     AdjacentStuds.Add(StudReference.FromXml(studElem));
             }
         }
+
+        public override List<ValidationMessage> ValidateElement()
+        {
+            var messages = base.ValidateElement();
+
+            void AddMessage(string code, ValidationLevel level, params object[] args)
+            {
+                messages.Add(new ValidationMessage(this, code, level)
+                {
+                    MessageArguments = args
+                });
+            }
+
+            if (!AdjacentStuds.Any() || TubeStud == null)
+                AddMessage("MODEL_STUDS_NOT_DEFINED", ValidationLevel.Warning);
+
+            if (TubeStud != null)
+                messages.AddRange(TubeStud.ValidateElement());
+
+            if (AdjacentStuds.Any())
+                messages.AddRange(AdjacentStuds.SelectMany(x => x.ValidateElement()));
+
+            return messages;
+        }
     }
 }

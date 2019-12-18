@@ -33,8 +33,6 @@ namespace LDDModder.BrickEditor.Rendering
             }
         }
 
-        private bool ChangingTransform;
-
         public ConnectionModel(PartConnection connection) : base (connection)
         {
             Connection = connection;
@@ -43,17 +41,6 @@ namespace LDDModder.BrickEditor.Rendering
             
 
             UpdateRenderingModel();
-        }
-
-        protected override void OnTransformChanged()
-        {
-            base.OnTransformChanged();
-            Matrix4 transCopy = Transform;
-            transCopy.ClearScale();
-
-            ChangingTransform = true;
-            Connection.Transform = ItemTransform.FromMatrix(transCopy.ToLDD());
-            ChangingTransform = false;
         }
 
         protected override void OnElementPropertyChanged(ElementValueChangedEventArgs e)

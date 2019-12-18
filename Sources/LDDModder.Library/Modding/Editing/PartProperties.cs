@@ -236,7 +236,10 @@ namespace LDDModder.Modding.Editing
 
             void AddMessage(string code, ValidationLevel level, params object[] args)
             {
-                messages.Add(new ValidationMessage("PART", code, level, args));
+                messages.Add(new ValidationMessage(this, code, level)
+                {
+                    MessageArguments = args
+                });
             }
 
             if (string.IsNullOrEmpty(Description))

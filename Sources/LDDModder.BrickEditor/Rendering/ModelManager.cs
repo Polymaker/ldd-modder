@@ -47,6 +47,7 @@ namespace LDDModder.BrickEditor.Rendering
             var primitiveType = OpenTK.Graphics.OpenGL.PrimitiveType.Triangles;
             if (mesh.Faces[0].IndexCount == 4)
                 primitiveType = OpenTK.Graphics.OpenGL.PrimitiveType.Quads;
+
             int curIdx = GeneralMeshBuffer.IndexCount;
             int curVert = GeneralMeshBuffer.VertexCount;
             GeneralMeshBuffer.LoadModelVertices(mesh, true);
@@ -68,6 +69,12 @@ namespace LDDModder.BrickEditor.Rendering
                 GeneralMeshBuffer.Dispose();
                 GeneralMeshBuffer = null;
             }
+
+            CubeModel = null;
+            SphereModel = null;
+            CrossAxleMaleModel = null;
+            CrossAxleFemaleModel = null;
+            CylinderModel = null;
         }
     }
 }

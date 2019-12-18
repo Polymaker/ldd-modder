@@ -565,6 +565,14 @@ namespace LDDModder.Modding.Editing
             return modelMesh;
         }
 
+        public PartSurface AddSurface()
+        {
+            var newSurface = new PartSurface(Surfaces.Count, 
+                Surfaces.Any() ? Surfaces.Max(x=>x.SubMaterialIndex) + 1 : 0);
+            Surfaces.Add(newSurface);
+            return newSurface;
+        }
+
         #endregion
 
         #region Element ID Handling

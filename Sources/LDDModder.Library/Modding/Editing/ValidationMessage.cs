@@ -10,13 +10,15 @@ namespace LDDModder.Modding.Editing
     {
         public string Code { get; set; }
 
-        public string Source { get; set; }
+        public ValidationLevel Level { get; set; }
+
+        public string SourceKey { get; set; }
+
+        public PartElement SourceElement { get; set; }
 
         public string Message { get; set; }
 
-        public ValidationLevel Level { get; set; }
-
-        public object[] Arguments { get; set; }
+        public object[] MessageArguments { get; set; }
 
         public ValidationMessage()
         {
@@ -24,10 +26,27 @@ namespace LDDModder.Modding.Editing
 
         public ValidationMessage(string source, string code, ValidationLevel level, params object[] arguments)
         {
-            Source = source;
+            SourceKey = source;
             Code = code;
             Level = level;
-            Arguments = arguments;
+            MessageArguments = arguments;
+        }
+
+        public ValidationMessage(PartElement sourceElement, string messageCode, ValidationLevel level)
+        {
+            Code = messageCode;
+            Level = level;
+            SourceElement = sourceElement;
+            if (sourceElement is PartSurface)
+                SourceKey = "SURFACE";
+            else if (sourceElement is SurfaceComponent)
+                SourceKey = "COMPONENT";
+            else if (sourceElement is PartProperties)
+                SourceKey = "PART";
+            else if (sourceElement is PartBone)
+                SourceKey = "BONE";
+            else
+                SourceKey = "PROJECT";
         }
     }
 

@@ -265,4 +265,40 @@
   <data name="Label_DefaultMeshes" xml:space="preserve">
     <value>Normal model</value>
   </data>
+  <data name="Label_Project" xml:space="preserve">
+    <value>Project</value>
+  </data>
+  <data name="PROJECT_NO_SURFACES" xml:space="preserve">
+    <value>The part must have at least one surface.</value>
+  </data>
+  <data name="PROJECT_NO_CONNECTIONS" xml:space="preserve">
+    <value>There is no connection defined. The part will not connect with anything.</value>
+  </data>
+  <data name="PROJECT_NO_COLLISIONS" xml:space="preserve">
+    <value>There is no collision defined.</value>
+  </data>
+  <data name="PROJECT_NO_BONES" xml:space="preserve">
+    <value>There is no bone defined. The part cannot be flexible.</value>
+  </data>
+  <data name="PROJECT_NO_ISSUES" xml:space="preserve">
+    <value>No configuration problem found.</value>
+  </data>
+  <data name="SURFACE_NO_MODELS" xml:space="preserve">
+    <value>The surface {0} does not contain any model.</value>
+  </data>
+  <data name="SURFACE_NO_TEXTURED_MODEL" xml:space="preserve">
+    <value>The surface {0} has some models without texture coordinates.</value>
+  </data>
+  <data name="PART_EMPTY_DESCRIPTION" xml:space="preserve">
+    <value>The part description is empty.</value>
+  </data>
+  <data name="PART_EMPTY_PART_ID" xml:space="preserve">
+    <value>You must enter a part ID.</value>
+  </data>
+  <data name="PART_NO_BOUNDING" xml:space="preserve">
+    <value>The part bounding box is not defined.</value>
+  </data>
+  <data name="PART_NO_GEOMETRYBOUNDING" xml:space="preserve">
+    <value>The geometry bounding box is not defined.</value>
+  </data>
 </root>

@@ -457,6 +457,15 @@ namespace LDDModder.BrickEditor.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Project.
+        /// </summary>
+        internal static string Label_Project {
+            get {
+                return ResourceManager.GetString("Label_Project", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Rails.
         /// </summary>
         internal static string Label_RailConnectors {
@@ -561,6 +570,105 @@ namespace LDDModder.BrickEditor.Resources {
         internal static string NodeRangeFormat2 {
             get {
                 return ResourceManager.GetString("NodeRangeFormat2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à The part description is empty..
+        /// </summary>
+        internal static string PART_EMPTY_DESCRIPTION {
+            get {
+                return ResourceManager.GetString("PART_EMPTY_DESCRIPTION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à You must enter a part ID..
+        /// </summary>
+        internal static string PART_EMPTY_PART_ID {
+            get {
+                return ResourceManager.GetString("PART_EMPTY_PART_ID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à The part bounding box is not defined..
+        /// </summary>
+        internal static string PART_NO_BOUNDING {
+            get {
+                return ResourceManager.GetString("PART_NO_BOUNDING", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à The geometry bounding box is not defined..
+        /// </summary>
+        internal static string PART_NO_GEOMETRYBOUNDING {
+            get {
+                return ResourceManager.GetString("PART_NO_GEOMETRYBOUNDING", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à There is no bone defined. The part cannot be flexible..
+        /// </summary>
+        internal static string PROJECT_NO_BONES {
+            get {
+                return ResourceManager.GetString("PROJECT_NO_BONES", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à There is no collision defined..
+        /// </summary>
+        internal static string PROJECT_NO_COLLISIONS {
+            get {
+                return ResourceManager.GetString("PROJECT_NO_COLLISIONS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à There is no connection defined. The part will not connect with anything..
+        /// </summary>
+        internal static string PROJECT_NO_CONNECTIONS {
+            get {
+                return ResourceManager.GetString("PROJECT_NO_CONNECTIONS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à No configuration problem found..
+        /// </summary>
+        internal static string PROJECT_NO_ISSUES {
+            get {
+                return ResourceManager.GetString("PROJECT_NO_ISSUES", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à The part must have at least one surface..
+        /// </summary>
+        internal static string PROJECT_NO_SURFACES {
+            get {
+                return ResourceManager.GetString("PROJECT_NO_SURFACES", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à The surface {0} does not contain any model..
+        /// </summary>
+        internal static string SURFACE_NO_MODELS {
+            get {
+                return ResourceManager.GetString("SURFACE_NO_MODELS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à The surface {0} has some models without texture coordinates..
+        /// </summary>
+        internal static string SURFACE_NO_TEXTURED_MODEL {
+            get {
+                return ResourceManager.GetString("SURFACE_NO_TEXTURED_MODEL", resourceCulture);
             }
         }
     }

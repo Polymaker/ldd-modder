@@ -185,6 +185,8 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
             ElementCollectionChanged?.Invoke(this, e);
 
+            UndoRedoManager.ProcessProjectElementsChanged(e);
+
             if (IsExecutingUndoRedo || IsExecutingBatchChanges)
                 ElementsChanged = true;
             else
@@ -194,6 +196,8 @@ namespace LDDModder.BrickEditor.ProjectHandling
         private void Project_ElementPropertyChanged(object sender, ElementValueChangedEventArgs e)
         {
             ElementPropertyChanged?.Invoke(this, e);
+
+            UndoRedoManager.ProcessElementPropertyChanged(e);
         }
 
         #endregion

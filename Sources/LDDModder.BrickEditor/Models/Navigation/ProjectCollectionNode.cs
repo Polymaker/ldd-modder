@@ -64,23 +64,19 @@ namespace LDDModder.BrickEditor.Models.Navigation
             }
         }
 
-        public override bool CanToggleVisibility()
+        public override void UpdateVisibility()
         {
-            return true;
-        }
-
-        public override bool GetIsVisible()
-        {
+            base.UpdateVisibility();
             if (Manager != null)
             {
                 if (Collection == Project.Surfaces)
-                    return Manager.ShowPartModels;
+                    VisibilityImageKey = Manager.ShowPartModels ? "Visible" : "Hidden";
                 if (Collection == Project.Collisions)
-                    return Manager.ShowCollisions;
+                    VisibilityImageKey = Manager.ShowCollisions ? "Visible" : "Hidden";
                 if (Collection == Project.Connections)
-                    return Manager.ShowConnections;
+                    VisibilityImageKey = Manager.ShowConnections ? "Visible" : "Hidden";
             }
-            return base.GetIsVisible();
+            
         }
     }
 }

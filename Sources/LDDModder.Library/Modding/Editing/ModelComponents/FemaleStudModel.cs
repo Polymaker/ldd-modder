@@ -83,5 +83,23 @@ namespace LDDModder.Modding.Editing
                     Studs.Add(StudReference.FromXml(studElem));
             }
         }
+
+        public override List<ValidationMessage> ValidateElement()
+        {
+            var messages = base.ValidateElement();
+
+            void AddMessage(string code, ValidationLevel level, params object[] args)
+            {
+                messages.Add(new ValidationMessage(this, code, level)
+                {
+                    MessageArguments = args
+                });
+            }
+
+            if (!Studs.Any())
+                AddMessage("MODEL_STUDS_NOT_DEFINED", ValidationLevel.Warning);
+
+            return messages;
+        }
     }
 }

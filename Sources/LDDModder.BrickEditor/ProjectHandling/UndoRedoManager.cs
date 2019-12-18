@@ -42,8 +42,6 @@ namespace LDDModder.BrickEditor.ProjectHandling
         {
             ProjectManager = projectManager;
             ProjectManager.ProjectChanged += ProjectManager_ProjectChanged;
-            ProjectManager.ElementPropertyChanged += ProjectManager_ElementPropertyChanged;
-            ProjectManager.ElementCollectionChanged += ProjectManager_ProjectElementsChanged;
             MaxHistory = 15;
 
             UndoHistory = new List<ChangeAction>();
@@ -59,7 +57,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
             CurrentChangeID = 0;
         }
 
-        private void ProjectManager_ProjectElementsChanged(object sender, Modding.Editing.ElementCollectionChangedEventArgs e)
+        internal void ProcessProjectElementsChanged(Modding.Editing.ElementCollectionChangedEventArgs e)
         {
             if (ExecutingUndoRedo)
                 return;
@@ -72,7 +70,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
                 AddAction(action);
         }
 
-        private void ProjectManager_ElementPropertyChanged(object sender, Modding.Editing.ElementValueChangedEventArgs e)
+        internal void ProcessElementPropertyChanged(Modding.Editing.ElementValueChangedEventArgs e)
         {
             if (ExecutingUndoRedo)
                 return;

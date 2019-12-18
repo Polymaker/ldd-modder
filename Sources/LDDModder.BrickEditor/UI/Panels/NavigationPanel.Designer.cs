@@ -81,6 +81,7 @@
             this.olvColumnElement,
             this.olvColumnVisible});
             this.ProjectTreeView.ContextMenuStrip = this.ElementsContextMenu;
+            this.ProjectTreeView.Cursor = System.Windows.Forms.Cursors.Default;
             resources.ApplyResources(this.ProjectTreeView, "ProjectTreeView");
             this.ProjectTreeView.FullRowSelect = true;
             this.ProjectTreeView.HideSelection = false;
@@ -99,7 +100,7 @@
             this.ProjectTreeView.CellClick += new System.EventHandler<BrightIdeasSoftware.CellClickEventArgs>(this.ProjectTreeView_CellClick);
             this.ProjectTreeView.Dropped += new System.EventHandler<BrightIdeasSoftware.OlvDropEventArgs>(this.ProjectTreeView_Dropped);
             this.ProjectTreeView.SelectionChanged += new System.EventHandler(this.ProjectTreeView_SelectionChanged);
-            this.ProjectTreeView.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.ProjectTreeView_ItemSelectionChanged);
+            this.ProjectTreeView.SelectedIndexChanged += new System.EventHandler(this.ProjectTreeView_SelectedIndexChanged);
             this.ProjectTreeView.MouseDown += new System.Windows.Forms.MouseEventHandler(this.ProjectTreeView_MouseDown);
             this.ProjectTreeView.MouseUp += new System.Windows.Forms.MouseEventHandler(this.ProjectTreeView_MouseUp);
             // 
@@ -137,6 +138,7 @@
             // 
             this.ContextMenu_AddSurface.Name = "ContextMenu_AddSurface";
             resources.ApplyResources(this.ContextMenu_AddSurface, "ContextMenu_AddSurface");
+            this.ContextMenu_AddSurface.Click += new System.EventHandler(this.ContextMenu_AddSurface_Click);
             // 
             // ContextMenu_AddElement
             // 
@@ -152,21 +154,25 @@
             // 
             this.AddElementMenu_Part.Name = "AddElementMenu_Part";
             resources.ApplyResources(this.AddElementMenu_Part, "AddElementMenu_Part");
+            this.AddElementMenu_Part.Tag = "Part";
             // 
             // AddElementMenu_MaleStud
             // 
             this.AddElementMenu_MaleStud.Name = "AddElementMenu_MaleStud";
             resources.ApplyResources(this.AddElementMenu_MaleStud, "AddElementMenu_MaleStud");
+            this.AddElementMenu_MaleStud.Tag = "MaleStud";
             // 
             // AddElementMenu_FemaleStud
             // 
             this.AddElementMenu_FemaleStud.Name = "AddElementMenu_FemaleStud";
             resources.ApplyResources(this.AddElementMenu_FemaleStud, "AddElementMenu_FemaleStud");
+            this.AddElementMenu_FemaleStud.Tag = "FemaleStud";
             // 
             // AddElementMenu_BrickTube
             // 
             this.AddElementMenu_BrickTube.Name = "AddElementMenu_BrickTube";
             resources.ApplyResources(this.AddElementMenu_BrickTube, "AddElementMenu_BrickTube");
+            this.AddElementMenu_BrickTube.Tag = "BrickTube";
             // 
             // ContextMenu_AddCollision
             // 

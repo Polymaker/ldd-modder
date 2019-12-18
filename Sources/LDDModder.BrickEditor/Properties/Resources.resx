@@ -121,6 +121,9 @@
   <data name="DecorationSurfaceIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\images\decorationsurfaceicon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Hidden2Icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\images\hidden2icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="HiddenIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\images\hiddenicon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -132,6 +135,9 @@
   </data>
   <data name="MeshIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\images\meshicon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="NotVisibleIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\images\notvisibleicon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="StatusError" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\images\statuserror.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>

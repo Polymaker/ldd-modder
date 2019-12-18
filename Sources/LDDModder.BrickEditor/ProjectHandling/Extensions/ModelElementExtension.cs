@@ -113,6 +113,37 @@ namespace LDDModder.BrickEditor.ProjectHandling
             CalculateVisibility(isParentVisible);
         }
 
+        public virtual bool IsHiddenByParent()
+        {
+            if (Element.Parent != null)
+            {
+                var parentExt = Element.Parent.GetExtension<ModelElementExtension>();
+                if (parentExt?.IsVisible == false)
+                    return true;
+            }
+
+            if (Manager != null)
+            {
+                if (Element is PartSurface)
+                    return !Manager.ShowPartModels;
+                else if (Element is PartCollision)
+                    return !Manager.ShowCollisions;
+                else if (Element is PartConnection)
+                    return !Manager.ShowConnections;
+            }
+
+            if (Element.Parent is FemaleStudModel femaleStudModel)
+            {
+                var parentExt = Element.Parent.GetExtension<FemaleStudModelExtension>();
+                bool isAlternateMesh = femaleStudModel.ReplacementMeshes.Contains(Element);
+
+                if (isAlternateMesh != parentExt.ShowAlternateModels)
+                    return true;
+            }
+
+            return false;
+        }
+
         protected void CalculateVisibility(bool parentIsVisible)
         {
             bool wasVisible = _IsVisible;
@@ -129,8 +160,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
         protected virtual void PropagateVisibility(PartElement element, bool parentIsVisible)
         {
-            var elemExt = element.GetExtension<ModelElementExtension>(); //Manager.GetExtension(element);
-            elemExt?.CalculateVisibility(parentIsVisible);
+            var elemExt = element.GetExtension<ModelElementExtension>();
 
             if (elemExt == null)
             {

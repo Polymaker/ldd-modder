@@ -162,12 +162,21 @@ namespace LDDModder.Modding.Editing
 
             void AddMessage(string code, ValidationLevel level, params object[] args)
             {
-                messages.Add(new ValidationMessage("SURFACE", code, level, args));
+                messages.Add(new ValidationMessage(this, code, level)
+                {
+                    MessageArguments = args
+                });
             }
 
             var allModels = GetAllModelMeshes();
             var standardMeshes = Components.SelectMany(x => x.Meshes);
-            
+
+            //if (!Components.Any())
+            //{
+            //    AddMessage("SURFACE_NO_COMPONENTS",
+            //        SurfaceID == 0 ? ValidationLevel.Error : ValidationLevel.Warning, SurfaceID);
+            //}
+
             if (!standardMeshes.Any())
             {
                 AddMessage("SURFACE_NO_MODELS", 

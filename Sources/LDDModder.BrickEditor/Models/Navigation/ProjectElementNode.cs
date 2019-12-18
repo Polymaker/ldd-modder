@@ -176,17 +176,23 @@ namespace LDDModder.BrickEditor.Models.Navigation
             return base.CanDropAfter(node);
         }
 
-        public override bool CanToggleVisibility()
+        public override void UpdateVisibility()
         {
-            return true;
-        }
+            base.UpdateVisibility();
 
-        public override bool GetIsVisible()
-        {
             var modelExt = Element.GetExtension<ModelElementExtension>();
             if (modelExt != null)
-                return modelExt.IsVisible;
-            return base.GetIsVisible();
+            {
+                if (modelExt.IsHidden)
+                {
+                    VisibilityImageKey = modelExt.IsHiddenByParent() ? "Hidden2" : "Hidden";
+                }
+                else
+                {
+                    VisibilityImageKey = modelExt.IsVisible ? "Visible" : "NotVisible";
+                }
+            }
+            
         }
     }
 }

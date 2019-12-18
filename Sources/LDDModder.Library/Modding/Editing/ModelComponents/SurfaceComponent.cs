@@ -66,6 +66,22 @@ namespace LDDModder.Modding.Editing
             return modelComponent;
         }
 
+        public static SurfaceComponent CreateEmpty(ModelComponentType componentType)
+        {
+            switch (componentType)
+            {
+                case ModelComponentType.Part:
+                    return new PartModel();
+                case ModelComponentType.MaleStud:
+                    return new MaleStudModel();
+                case ModelComponentType.FemaleStud:
+                    return new FemaleStudModel();
+                case ModelComponentType.BrickTube:
+                    return new BrickTubeModel();
+            }
+            return null;
+        }
+
         public MeshCullingType GetCullingType()
         {
             switch (ComponentType)
@@ -98,7 +114,10 @@ namespace LDDModder.Modding.Editing
 
             void AddMessage(string code, ValidationLevel level, params object[] args)
             {
-                messages.Add(new ValidationMessage("COMPONENT", code, level, args));
+                messages.Add(new ValidationMessage(this, code, level)
+                {
+                    MessageArguments = args
+                });
             }
 
             if (!Meshes.Any())

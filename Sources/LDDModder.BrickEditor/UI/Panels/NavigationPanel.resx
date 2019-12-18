@@ -138,25 +138,25 @@
     <value>Add Surface</value>
   </data>
   <data name="AddElementMenu_Part.Size" type="System.Drawing.Size, System.Drawing">
-    <value>139, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="AddElementMenu_Part.Text" xml:space="preserve">
     <value>Part Body</value>
   </data>
   <data name="AddElementMenu_MaleStud.Size" type="System.Drawing.Size, System.Drawing">
-    <value>139, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="AddElementMenu_MaleStud.Text" xml:space="preserve">
     <value>Male Stud</value>
   </data>
   <data name="AddElementMenu_FemaleStud.Size" type="System.Drawing.Size, System.Drawing">
-    <value>139, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="AddElementMenu_FemaleStud.Text" xml:space="preserve">
     <value>Female Stud</value>
   </data>
   <data name="AddElementMenu_BrickTube.Size" type="System.Drawing.Size, System.Drawing">
-    <value>139, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="AddElementMenu_BrickTube.Text" xml:space="preserve">
     <value>Brick Tube</value>
@@ -167,71 +167,11 @@
   <data name="ContextMenu_AddElement.Text" xml:space="preserve">
     <value>Add Model Element</value>
   </data>
-  <data name="AddCollisionMenu_Box.Size" type="System.Drawing.Size, System.Drawing">
-    <value>110, 22</value>
-  </data>
-  <data name="AddCollisionMenu_Box.Text" xml:space="preserve">
-    <value>Box</value>
-  </data>
-  <data name="AddCollisionMenu_Sphere.Size" type="System.Drawing.Size, System.Drawing">
-    <value>110, 22</value>
-  </data>
-  <data name="AddCollisionMenu_Sphere.Text" xml:space="preserve">
-    <value>Sphere</value>
-  </data>
   <data name="ContextMenu_AddCollision.Size" type="System.Drawing.Size, System.Drawing">
     <value>179, 22</value>
   </data>
   <data name="ContextMenu_AddCollision.Text" xml:space="preserve">
     <value>Add Collision</value>
-  </data>
-  <data name="AddConnectionMenu_Axel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>155, 22</value>
-  </data>
-  <data name="AddConnectionMenu_Axel.Text" xml:space="preserve">
-    <value>Axel</value>
-  </data>
-  <data name="AddConnectionMenu_Ball.Size" type="System.Drawing.Size, System.Drawing">
-    <value>155, 22</value>
-  </data>
-  <data name="AddConnectionMenu_Ball.Text" xml:space="preserve">
-    <value>Ball</value>
-  </data>
-  <data name="AddConnectionMenu_Custom2DField.Size" type="System.Drawing.Size, System.Drawing">
-    <value>155, 22</value>
-  </data>
-  <data name="AddConnectionMenu_Custom2DField.Text" xml:space="preserve">
-    <value>Custom2DField</value>
-  </data>
-  <data name="AddConnectionMenu_Fixed.Size" type="System.Drawing.Size, System.Drawing">
-    <value>155, 22</value>
-  </data>
-  <data name="AddConnectionMenu_Fixed.Text" xml:space="preserve">
-    <value>Fixed</value>
-  </data>
-  <data name="AddConnectionMenu_Gear.Size" type="System.Drawing.Size, System.Drawing">
-    <value>155, 22</value>
-  </data>
-  <data name="AddConnectionMenu_Gear.Text" xml:space="preserve">
-    <value>Gear</value>
-  </data>
-  <data name="AddConnectionMenu_Hinge.Size" type="System.Drawing.Size, System.Drawing">
-    <value>155, 22</value>
-  </data>
-  <data name="AddConnectionMenu_Hinge.Text" xml:space="preserve">
-    <value>Hinge</value>
-  </data>
-  <data name="AddConnectionMenu_Rail.Size" type="System.Drawing.Size, System.Drawing">
-    <value>155, 22</value>
-  </data>
-  <data name="AddConnectionMenu_Rail.Text" xml:space="preserve">
-    <value>Rail</value>
-  </data>
-  <data name="AddConnectionMenu_Slider.Size" type="System.Drawing.Size, System.Drawing">
-    <value>155, 22</value>
-  </data>
-  <data name="AddConnectionMenu_Slider.Text" xml:space="preserve">
-    <value>Slider</value>
   </data>
   <data name="ContextMenu_AddConnection.Size" type="System.Drawing.Size, System.Drawing">
     <value>179, 22</value>
@@ -293,6 +233,66 @@
   </data>
   <data name="&gt;&gt;ProjectTreeView.ZOrder" xml:space="preserve">
     <value>1</value>
+  </data>
+  <data name="AddCollisionMenu_Box.Size" type="System.Drawing.Size, System.Drawing">
+    <value>110, 22</value>
+  </data>
+  <data name="AddCollisionMenu_Box.Text" xml:space="preserve">
+    <value>Box</value>
+  </data>
+  <data name="AddCollisionMenu_Sphere.Size" type="System.Drawing.Size, System.Drawing">
+    <value>110, 22</value>
+  </data>
+  <data name="AddCollisionMenu_Sphere.Text" xml:space="preserve">
+    <value>Sphere</value>
+  </data>
+  <data name="AddConnectionMenu_Axel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>155, 22</value>
+  </data>
+  <data name="AddConnectionMenu_Axel.Text" xml:space="preserve">
+    <value>Axel</value>
+  </data>
+  <data name="AddConnectionMenu_Ball.Size" type="System.Drawing.Size, System.Drawing">
+    <value>155, 22</value>
+  </data>
+  <data name="AddConnectionMenu_Ball.Text" xml:space="preserve">
+    <value>Ball</value>
+  </data>
+  <data name="AddConnectionMenu_Custom2DField.Size" type="System.Drawing.Size, System.Drawing">
+    <value>155, 22</value>
+  </data>
+  <data name="AddConnectionMenu_Custom2DField.Text" xml:space="preserve">
+    <value>Custom2DField</value>
+  </data>
+  <data name="AddConnectionMenu_Fixed.Size" type="System.Drawing.Size, System.Drawing">
+    <value>155, 22</value>
+  </data>
+  <data name="AddConnectionMenu_Fixed.Text" xml:space="preserve">
+    <value>Fixed</value>
+  </data>
+  <data name="AddConnectionMenu_Gear.Size" type="System.Drawing.Size, System.Drawing">
+    <value>155, 22</value>
+  </data>
+  <data name="AddConnectionMenu_Gear.Text" xml:space="preserve">
+    <value>Gear</value>
+  </data>
+  <data name="AddConnectionMenu_Hinge.Size" type="System.Drawing.Size, System.Drawing">
+    <value>155, 22</value>
+  </data>
+  <data name="AddConnectionMenu_Hinge.Text" xml:space="preserve">
+    <value>Hinge</value>
+  </data>
+  <data name="AddConnectionMenu_Rail.Size" type="System.Drawing.Size, System.Drawing">
+    <value>155, 22</value>
+  </data>
+  <data name="AddConnectionMenu_Rail.Text" xml:space="preserve">
+    <value>Rail</value>
+  </data>
+  <data name="AddConnectionMenu_Slider.Size" type="System.Drawing.Size, System.Drawing">
+    <value>155, 22</value>
+  </data>
+  <data name="AddConnectionMenu_Slider.Text" xml:space="preserve">
+    <value>Slider</value>
   </data>
   <data name="tableLayoutPanel1.ColumnCount" type="System.Int32, mscorlib">
     <value>1</value>
@@ -559,42 +559,42 @@
     <value>LocalizedStrings</value>
   </data>
   <data name="&gt;&gt;LocalizedStrings.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableStringList, LDDModder.BrickEditor, Version=1.0.0.26741, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableStringList, LDDModder.BrickEditor, Version=1.0.0.24886, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;ViewModeAll.Name" xml:space="preserve">
     <value>ViewModeAll</value>
   </data>
   <data name="&gt;&gt;ViewModeAll.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, LDDModder.BrickEditor, Version=1.0.0.26741, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, LDDModder.BrickEditor, Version=1.0.0.24886, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;ViewModeBones.Name" xml:space="preserve">
     <value>ViewModeBones</value>
   </data>
   <data name="&gt;&gt;ViewModeBones.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, LDDModder.BrickEditor, Version=1.0.0.26741, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, LDDModder.BrickEditor, Version=1.0.0.24886, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;ViewModeCollisions.Name" xml:space="preserve">
     <value>ViewModeCollisions</value>
   </data>
   <data name="&gt;&gt;ViewModeCollisions.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, LDDModder.BrickEditor, Version=1.0.0.26741, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, LDDModder.BrickEditor, Version=1.0.0.24886, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;ViewModeConnections.Name" xml:space="preserve">
     <value>ViewModeConnections</value>
   </data>
   <data name="&gt;&gt;ViewModeConnections.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, LDDModder.BrickEditor, Version=1.0.0.26741, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, LDDModder.BrickEditor, Version=1.0.0.24886, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;ViewModeSurfaces.Name" xml:space="preserve">
     <value>ViewModeSurfaces</value>
   </data>
   <data name="&gt;&gt;ViewModeSurfaces.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, LDDModder.BrickEditor, Version=1.0.0.26741, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, LDDModder.BrickEditor, Version=1.0.0.24886, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>NavigationPanel</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Panels.ProjectDocumentPanel, LDDModder.BrickEditor, Version=1.0.0.26741, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Panels.ProjectDocumentPanel, LDDModder.BrickEditor, Version=1.0.0.24886, Culture=neutral, PublicKeyToken=null</value>
   </data>
 </root>

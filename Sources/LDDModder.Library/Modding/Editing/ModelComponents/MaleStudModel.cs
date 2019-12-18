@@ -49,5 +49,24 @@ namespace LDDModder.Modding.Editing
             if (element.HasElement(StudReference.NODE_NAME, out XElement studElem))
                 Stud = StudReference.FromXml(studElem);
         }
+
+        public override List<ValidationMessage> ValidateElement()
+        {
+            var messages = base.ValidateElement();
+            void AddMessage(string code, ValidationLevel level, params object[] args)
+            {
+                messages.Add(new ValidationMessage(this, code, level)
+                {
+                    MessageArguments = args
+                });
+            }
+
+            if (Stud == null)
+                AddMessage("MODEL_STUDS_NOT_DEFINED", ValidationLevel.Warning);
+            else
+                messages.AddRange(Stud.ValidateElement());
+
+            return messages;
+        }
     }
 }

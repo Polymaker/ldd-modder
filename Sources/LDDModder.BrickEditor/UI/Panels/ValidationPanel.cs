@@ -1,4 +1,5 @@
 ﻿using LDDModder.BrickEditor.ProjectHandling;
+using LDDModder.BrickEditor.Resources;
 using LDDModder.Modding.Editing;
 using System;
 using System.Collections.Generic;
@@ -62,6 +63,22 @@ namespace LDDModder.BrickEditor.UI.Panels
                     return IsMessageVisible(message);
                 return true;
             });
+
+            ColumnMessageDescription.AspectGetter = (x) =>
+            {
+                if (x is ValidationMessage message)
+                    return FormatMessageDescription(message);
+
+                return string.Empty;
+            };
+
+            ColumnMessageSource.AspectGetter = (x) =>
+            {
+                if (x is ValidationMessage message)
+                    return FormatMessageSource(message);
+
+                return string.Empty;
+            };
         }
 
         private void ValidatePartButton_Click(object sender, EventArgs e)
@@ -139,5 +156,38 @@ namespace LDDModder.BrickEditor.UI.Panels
                     return ToggleErrorsButton.Checked;
             }
         }
+
+        #region Listview Handling
+
+        private string FormatMessageDescription(ValidationMessage message)
+        {
+            string localizedText = ModelLocalizations.ResourceManager.GetString(message.Code);
+            if (!string.IsNullOrEmpty(localizedText))
+            {
+                if (message.SourceElement != null)
+                    localizedText = localizedText.Replace("{name}", message.SourceElement.Name);
+                if (localizedText.Contains("{0}"))
+                    return string.Format(localizedText, message.MessageArguments);
+                return localizedText;
+            }
+            return message.Code;
+        }
+
+        private string FormatMessageSource(ValidationMessage message)
+        {
+            if (message.SourceElement != null)
+            {
+                if (message.SourceElement is PartProperties)
+                    return ModelLocalizations.Label_Part;
+                return message.SourceElement.Name;
+            }
+
+            if (message.SourceKey == "PROJECT")
+                return ModelLocalizations.Label_Project;
+
+            return message.SourceKey;
+        }
+
+        #endregion
     }
 }

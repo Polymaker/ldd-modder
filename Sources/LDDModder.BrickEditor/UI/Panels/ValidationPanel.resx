@@ -120,11 +120,35 @@
   <metadata name="toolStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="toolStrip1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="toolStrip1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>516, 25</value>
+  </data>
   <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="toolStrip1.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="toolStrip1.Text" xml:space="preserve">
+    <value>toolStrip1</value>
+  </data>
+  <data name="&gt;&gt;toolStrip1.Name" xml:space="preserve">
+    <value>toolStrip1</value>
+  </data>
+  <data name="&gt;&gt;toolStrip1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStrip1.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;toolStrip1.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
   <data name="ValidatePartButton.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="ValidatePartButton.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
@@ -179,30 +203,6 @@
   <data name="ToggleMessagesButton.Text" xml:space="preserve">
     <value>{0} Messages</value>
   </data>
-  <data name="toolStrip1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
-  </data>
-  <data name="toolStrip1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>516, 25</value>
-  </data>
-  <data name="toolStrip1.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="toolStrip1.Text" xml:space="preserve">
-    <value>toolStrip1</value>
-  </data>
-  <data name="&gt;&gt;toolStrip1.Name" xml:space="preserve">
-    <value>toolStrip1</value>
-  </data>
-  <data name="&gt;&gt;toolStrip1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;toolStrip1.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;toolStrip1.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
   <data name="ColumnMessageType.Width" type="System.Int32, mscorlib">
     <value>24</value>
   </data>
@@ -221,10 +221,10 @@
   <data name="ColumnMessageDescription.Width" type="System.Int32, mscorlib">
     <value>322</value>
   </data>
-  <data name="ColumnSource.Text" xml:space="preserve">
+  <data name="ColumnMessageSource.Text" xml:space="preserve">
     <value>Source</value>
   </data>
-  <data name="ColumnSource.Width" type="System.Int32, mscorlib">
+  <data name="ColumnMessageSource.Width" type="System.Int32, mscorlib">
     <value>116</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
@@ -285,6 +285,12 @@
   <data name="&gt;&gt;ValidatePartButton.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;toolStripSeparator1.Name" xml:space="preserve">
+    <value>toolStripSeparator1</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparator1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;ToggleErrorsButton.Name" xml:space="preserve">
     <value>ToggleErrorsButton</value>
   </data>
@@ -321,46 +327,40 @@
   <data name="&gt;&gt;ColumnMessageDescription.Type" xml:space="preserve">
     <value>BrightIdeasSoftware.OLVColumn, ObjectListView, Version=2.9.1.1072, Culture=neutral, PublicKeyToken=b1c5bf581481bcd4</value>
   </data>
-  <data name="&gt;&gt;ColumnSource.Name" xml:space="preserve">
-    <value>ColumnSource</value>
+  <data name="&gt;&gt;ColumnMessageSource.Name" xml:space="preserve">
+    <value>ColumnMessageSource</value>
   </data>
-  <data name="&gt;&gt;ColumnSource.Type" xml:space="preserve">
+  <data name="&gt;&gt;ColumnMessageSource.Type" xml:space="preserve">
     <value>BrightIdeasSoftware.OLVColumn, ObjectListView, Version=2.9.1.1072, Culture=neutral, PublicKeyToken=b1c5bf581481bcd4</value>
   </data>
   <data name="&gt;&gt;localizableStringList1.Name" xml:space="preserve">
     <value>localizableStringList1</value>
   </data>
   <data name="&gt;&gt;localizableStringList1.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableStringList, LDDModder.BrickEditor, Version=1.0.0.23539, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableStringList, LDDModder.BrickEditor, Version=1.0.0.22514, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;ErrorCountText.Name" xml:space="preserve">
     <value>ErrorCountText</value>
   </data>
   <data name="&gt;&gt;ErrorCountText.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, LDDModder.BrickEditor, Version=1.0.0.23539, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, LDDModder.BrickEditor, Version=1.0.0.22514, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;WarningCountText.Name" xml:space="preserve">
     <value>WarningCountText</value>
   </data>
   <data name="&gt;&gt;WarningCountText.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, LDDModder.BrickEditor, Version=1.0.0.23539, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, LDDModder.BrickEditor, Version=1.0.0.22514, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;MessageCountText.Name" xml:space="preserve">
     <value>MessageCountText</value>
   </data>
   <data name="&gt;&gt;MessageCountText.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, LDDModder.BrickEditor, Version=1.0.0.23539, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;toolStripSeparator1.Name" xml:space="preserve">
-    <value>toolStripSeparator1</value>
-  </data>
-  <data name="&gt;&gt;toolStripSeparator1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, LDDModder.BrickEditor, Version=1.0.0.22514, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>ValidationPanel</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Panels.ProjectDocumentPanel, LDDModder.BrickEditor, Version=1.0.0.23539, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Panels.ProjectDocumentPanel, LDDModder.BrickEditor, Version=1.0.0.22514, Culture=neutral, PublicKeyToken=null</value>
   </data>
 </root>

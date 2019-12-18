@@ -14,6 +14,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
@@ -122,9 +123,11 @@ namespace LDDModder.BrickEditor.UI.Panels
             NavigationImageList.Images.Add("Surface_Decoration", Properties.Resources.DecorationSurfaceIcon);
             NavigationImageList.Images.Add("Model_MaleStud", Properties.Resources.MaleStudIcon);
             NavigationImageList.Images.Add("Mesh", Properties.Resources.MeshIcon);
+
             NavigationImageList.Images.Add("Visible", Properties.Resources.VisibleIcon);
+            NavigationImageList.Images.Add("NotVisible", Properties.Resources.NotVisibleIcon);
             NavigationImageList.Images.Add("Hidden", Properties.Resources.HiddenIcon);
-            
+            NavigationImageList.Images.Add("Hidden2", Properties.Resources.Hidden2Icon);
         }
 
         private void InitializeNavigationTreeView()
@@ -155,10 +158,8 @@ namespace LDDModder.BrickEditor.UI.Panels
             {
                 if (x is BaseProjectNode projectNode)
                 {
-                    if (!projectNode.CanToggleVisibility())
-                        return string.Empty;
-
-                    return projectNode.GetIsVisible() ? "Visible" : "Hidden";
+                    projectNode.UpdateVisibility();
+                    return projectNode.VisibilityImageKey;
                 }
 
                 return string.Empty;
@@ -318,7 +319,12 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void ProjectTreeView_CellEditStarting(object sender, CellEditEventArgs e)
         {
-            if (!(e.ListViewItem.RowObject is ProjectElementNode))
+            if (e.ListViewItem.RowObject is ProjectElementNode elementNode)
+            {
+                if (elementNode.Element is PartSurface)
+                    e.Cancel = true;
+            }
+            else
                 e.Cancel = true;
         }
 
@@ -344,9 +350,26 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void InitializeContextMenus()
         {
+            InitializeComponentContextMenu();
             InitializeCollisionContextMenu();
             InitializeConnectionContextMenu();
 
+        }
+
+        private void InitializeComponentContextMenu()
+        {
+            foreach (ToolStripMenuItem item in ContextMenu_AddElement.DropDownItems)
+            {
+                string connectionTypeStr = item.Tag as string;
+                if (!string.IsNullOrEmpty(connectionTypeStr) &&
+                    Enum.TryParse(connectionTypeStr, out ModelComponentType componentType))
+                {
+                    string menuText = ModelLocalizations.ResourceManager.GetString($"ModelComponentType_{connectionTypeStr}");
+                    menuText = menuText.Replace("&", "&&");
+                    item.Text = menuText;
+                    item.Click += AddComponentMenuItem_Click;
+                }
+            }
         }
 
         private void InitializeCollisionContextMenu()
@@ -381,13 +404,44 @@ namespace LDDModder.BrickEditor.UI.Panels
             }
         }
 
+        private void AddComponentMenuItem_Click(object sender, EventArgs e)
+        {
+            string connectionTypeStr = (sender as ToolStripMenuItem).Tag as string;
+
+            if (!string.IsNullOrEmpty(connectionTypeStr) &&
+                Enum.TryParse(connectionTypeStr,
+                out ModelComponentType componentType))
+            {
+                var focusedSurfaceNode = GetFocusedParentElement<PartSurface>();
+
+                if (focusedSurfaceNode != null)
+                {
+                    var selectedSurface = focusedSurfaceNode.Element as PartSurface;
+                    var newComponent = SurfaceComponent.CreateEmpty(componentType);
+                    selectedSurface.Components.Add(newComponent);
+
+                    ProjectManager.SelectElement(newComponent);
+
+                    BeginInvoke((Action)(() =>
+                    {
+                        var surfaceNode = FindElementNode(selectedSurface);
+                        ProjectTreeView.Expand(surfaceNode);
+                    }));
+                }
+            }
+        }
+
         private void AddConnectionMenuItem_Click(object sender, EventArgs e)
         {
             string connectionTypeStr = (sender as ToolStripMenuItem).Tag as string;
 
             if (!string.IsNullOrEmpty(connectionTypeStr) &&
-                Enum.TryParse(connectionTypeStr, out LDD.Primitives.Connectors.ConnectorType connectorType))
+                Enum.TryParse(connectionTypeStr, 
+                out LDD.Primitives.Connectors.ConnectorType connectorType))
             {
+                if (!ProjectManager.ShowConnections)
+                    ProjectManager.ShowConnections = true;
+
                 var newConnection = PartConnection.Create(connectorType);
 
                 var focusedBoneNode = GetFocusedParentElement<PartBone>();
@@ -408,6 +462,9 @@ namespace LDDModder.BrickEditor.UI.Panels
             if (!string.IsNullOrEmpty(collisionTypeStr) &&
                 Enum.TryParse(collisionTypeStr, out LDD.Primitives.Collisions.CollisionType collisionType))
             {
+                if (!ProjectManager.ShowCollisions)
+                    ProjectManager.ShowCollisions = true;
+
                 var newCollision = PartCollision.Create(collisionType, 0.4f);
 
                 var focusedBoneNode = GetFocusedParentElement<PartBone>();
@@ -418,6 +475,15 @@ namespace LDDModder.BrickEditor.UI.Panels
                     CurrentProject.Collisions.Add(newCollision);
 
                 ProjectManager.SelectElement(newCollision);
+            }
+        }
+
+        private void ContextMenu_AddSurface_Click(object sender, EventArgs e)
+        {
+            if (CurrentProject != null)
+            {
+                var newSurface = CurrentProject.AddSurface();
+                ProjectManager.SelectElement(newSurface);
             }
         }
 
@@ -453,8 +519,14 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             var selectedNodes = ProjectTreeView.SelectedObjects.OfType<BaseProjectNode>();
 
-            ContextMenu_Rename.Visible = selectedNodes.Count() == 1 && 
-                selectedNodes.First() is ProjectElementNode;
+            bool canRenameNode = (selectedNodes.Count() == 1 &&
+                selectedNodes.First() is ProjectElementNode);
+
+            if (canRenameNode && (selectedNodes.First() as ProjectElementNode).Element is PartSurface)
+                canRenameNode = false;
+
+            ContextMenu_Rename.Visible = canRenameNode;
+
 
             var anyPojectElem = GetSelectedElements().Any();
             ContextMenu_Delete.Enabled = anyPojectElem;
@@ -476,10 +548,11 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             if (elements.Count > 1)
             {
-                //TODO: show confirmation message whene deleting more than one
+                //TODO: show confirmation message when deleting more than one
             }
 
             ProjectManager.ClearSelection();
+
             ProjectManager.StartBatchChanges();
 
             var removedElements = elements.Where(x => x.TryRemove()).ToList();
@@ -540,12 +613,11 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void RefreshElementName(PartElement element)
         {
-            var elementNodes = GetAllTreeNodes().OfType<ProjectElementNode>();
-            var node = elementNodes.FirstOrDefault(x => x.Element == element);
-            if (node != null)
+            var elemNode = FindElementNode(element);
+            if (elemNode != null)
             {
-                node.Text = element.Name;
-                ProjectTreeView.RefreshObject(node);
+                elemNode.Text = element.Name;
+                ProjectTreeView.RefreshObject(elemNode);
             }
         }
 
@@ -659,12 +731,6 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             FlagManager.Set("WaitForManualSelect", false);
             FlagManager.Set("PreventSelection", false);
-            //if (SelectedNodesCache != null)
-            //{
-            //    SetSelectedNodeIDs(SelectedNodesCache);
-            //    SelectedNodesCache = null;
-            //    FlagManager.Set("PreventSelection", false);
-            //}
         }
 
         #region Drag&Drop Handling
@@ -923,11 +989,13 @@ namespace LDDModder.BrickEditor.UI.Panels
                         ProjectManager.ShowCollisions = !ProjectManager.ShowCollisions;
                     else if (collectionNode.Collection == CurrentProject.Connections)
                         ProjectManager.ShowConnections = !ProjectManager.ShowConnections;
+
+                    ProjectTreeView.RefreshObject(collectionNode); 
                 }
             }
         }
 
-        private List<ListViewItem> SelectedItemCache;
+        private List<BaseProjectNode> SelectedItemCache;
 
         private void ProjectTreeView_MouseDown(object sender, MouseEventArgs e)
         {
@@ -938,7 +1006,8 @@ namespace LDDModder.BrickEditor.UI.Panels
                 if (hit.Column == olvColumnVisible)
                 {
                     FlagManager.Set("PreventSelection");
-                    //TODO, reselect nodes after ItemSelectionChanged
+                    SelectedItemCache = new List<BaseProjectNode>();
+                    SelectedItemCache.AddRange(ProjectTreeView.SelectedObjects.OfType<BaseProjectNode>());
                 }
             }
         }
@@ -949,14 +1018,13 @@ namespace LDDModder.BrickEditor.UI.Panels
                 FlagManager.Unset("PreventSelection");
         }
 
-        private void ProjectTreeView_ItemSelectionChanged(object sender, 
-            ListViewItemSelectionChangedEventArgs e)
+        private void ProjectTreeView_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (FlagManager.IsSet("PreventSelection") && 
+            if (FlagManager.IsSet("PreventSelection") &&
                 !FlagManager.IsSet("ItemSelectionChanged"))
             {
                 using (FlagManager.UseFlag("ItemSelectionChanged"))
-                    e.Item.Selected = !e.IsSelected;
+                    ProjectTreeView.SelectObjects(SelectedItemCache);
             }
         }
 

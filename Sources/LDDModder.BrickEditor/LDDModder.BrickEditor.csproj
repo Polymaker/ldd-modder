@@ -420,10 +420,12 @@
   <ItemGroup>
     <Content Include="Resources\Data\Primitive connectors.xml" />
     <Content Include="Resources\Images\DecorationSurfaceIcon.png" />
+    <Content Include="Resources\Images\Hidden2Icon.png" />
     <Content Include="Resources\Images\HiddenIcon.png" />
     <Content Include="Resources\Images\MainSurfaceIcon.png" />
     <Content Include="Resources\Images\MaleStudIcon.png" />
     <Content Include="Resources\Images\MeshIcon.png" />
+    <Content Include="Resources\Images\NotVisibleIcon.png" />
     <Content Include="Resources\Images\StatusError.png" />
     <Content Include="Resources\Images\StatusInfo.png" />
     <Content Include="Resources\Images\StatusWarning.png" />
