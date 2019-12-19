@@ -735,7 +735,6 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
                 _Orientation = Matrix4.CreateFromQuaternion(avgRot);
             }
 
-            //_SelectionOrientation = _Orientation;
             _Transform = _Orientation * _Position;
             RecalculateBounds = true;
 
@@ -745,19 +744,23 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
 
         private void SetupElementsMatrices()
         {
-            var invTrans = Transform.Inverted();
+            //var invTrans = Transform.Inverted();
+            var gizmoTransInverted = Transform.ToMatrix4d().Inverted();
 
             foreach (var follower in EditedElements)
             {
                 follower.OriginalMatrix = follower.Element.Transform;
+                var currentTransform = follower.OriginalMatrix.ToMatrix4d();
 
-                var localPos = Vector3.TransformPosition(follower.OriginalMatrix.ExtractTranslation(), invTrans);
+                var resultMatrix = currentTransform * gizmoTransInverted;
+                var localMatrix = resultMatrix.ToMatrix4();
+                //var localPos = Vector3.TransformPosition(follower.OriginalMatrix.ExtractTranslation(), invTrans);
 
-                var localRot = Quaternion.Multiply(Orientation.ExtractRotation().Inverted(),
-                    follower.OriginalMatrix.ExtractRotation());
+                //var localRot = Quaternion.Multiply(Orientation.ExtractRotation().Inverted(),
+                //    follower.OriginalMatrix.ExtractRotation());
 
-                var localMatrix = Matrix4.Mult(Matrix4.CreateFromQuaternion(localRot),
-                    Matrix4.CreateTranslation(localPos));
+                //var localMatrix = Matrix4.Mult(Matrix4.CreateFromQuaternion(localRot),
+                //    Matrix4.CreateTranslation(localPos));
 
                 if (float.IsNaN(localMatrix.Determinant))
                     localMatrix = Matrix4.Identity;

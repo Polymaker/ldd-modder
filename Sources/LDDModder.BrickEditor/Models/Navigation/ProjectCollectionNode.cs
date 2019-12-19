@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace LDDModder.BrickEditor.Models.Navigation
 {
-    public class ProjectCollectionNode : BaseProjectNode
+    public class ProjectCollectionNode : ProjectTreeNode
     {
-        public override PartProject Project => Collection.Project;
+        //public override PartProject Project => Collection.Project;
 
-        public ProjectManager Manager { get; set; }
+        //public ProjectManager Manager { get; set; }
 
         public IElementCollection Collection { get; }
 
@@ -25,18 +25,16 @@ namespace LDDModder.BrickEditor.Models.Navigation
             NodeID = collection.GetHashCode().ToString();
         }
 
-        public ProjectCollectionNode(IElementCollection collection, string text)
+        public ProjectCollectionNode(IElementCollection collection, string text) : base (text)
         {
             Collection = collection;
             NodeID = collection.GetHashCode().ToString();
             Text = text;
         }
 
-        public override void RebuildChildrens()
+        protected override void RebuildChildrens()
         {
             base.RebuildChildrens();
-
-            Childrens.Clear();
 
             if (Collection.ElementType == typeof(PartConnection))
             {
@@ -60,7 +58,7 @@ namespace LDDModder.BrickEditor.Models.Navigation
             else
             {
                 foreach (var elem in Collection.GetElements())
-                    Childrens.Add(ProjectElementNode.CreateDefault(elem));
+                    Nodes.Add(ProjectElementNode.CreateDefault(elem));
             }
         }
 
@@ -69,11 +67,11 @@ namespace LDDModder.BrickEditor.Models.Navigation
             base.UpdateVisibility();
             if (Manager != null)
             {
-                if (Collection == Project.Surfaces)
+                if (Collection == Manager.CurrentProject.Surfaces)
                     VisibilityImageKey = Manager.ShowPartModels ? "Visible" : "Hidden";
-                if (Collection == Project.Collisions)
+                if (Collection == Manager.CurrentProject.Collisions)
                     VisibilityImageKey = Manager.ShowCollisions ? "Visible" : "Hidden";
-                if (Collection == Project.Connections)
+                if (Collection == Manager.CurrentProject.Connections)
                     VisibilityImageKey = Manager.ShowConnections ? "Visible" : "Hidden";
             }
             

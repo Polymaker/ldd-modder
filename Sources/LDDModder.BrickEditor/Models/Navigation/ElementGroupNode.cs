@@ -7,28 +7,26 @@ using LDDModder.Modding.Editing;
 
 namespace LDDModder.BrickEditor.Models.Navigation
 {
-    public class ElementGroupNode : BaseProjectNode
+    public class ElementGroupNode : ProjectTreeNode
     {
         public List<PartElement> Elements { get; set; }
 
-        public ElementGroupNode(PartProject project) : base(project)
+        public ElementGroupNode()
         {
             Elements = new List<PartElement>();
         }
 
-        public ElementGroupNode(PartProject project, string text) : base(project, text)
+        public ElementGroupNode(string text) : base(text)
         {
             Elements = new List<PartElement>();
         }
 
-        public override void RebuildChildrens()
+        protected override void RebuildChildrens()
         {
             base.RebuildChildrens();
 
-            Childrens.Clear();
-
             foreach (var elem in Elements)
-                Childrens.Add(ProjectElementNode.CreateDefault(elem));
+                Nodes.Add(ProjectElementNode.CreateDefault(elem));
         }
     }
 }

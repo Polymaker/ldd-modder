@@ -112,15 +112,17 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\Navigation\BaseProjectNode.cs" />
     <Compile Include="Models\Navigation\ElementCollectionNode.cs" />
+    <Compile Include="Models\Navigation\ProjectTreeNode.cs" />
     <Compile Include="ProjectHandling\ChangeAction.cs" />
     <Compile Include="Models\Navigation\ElementGroupNode.cs" />
     <Compile Include="Models\Navigation\ProjectElementNode.cs" />
     <Compile Include="Models\Navigation\ProjectCollectionNode.cs" />
+    <Compile Include="ProjectHandling\Extensions\BoneElementExtension.cs" />
     <Compile Include="ProjectHandling\Extensions\ModelElementExtension.cs" />
+    <Compile Include="ProjectHandling\IProjectManager.cs" />
     <Compile Include="ProjectHandling\ProjectManager.cs" />
-    <Compile Include="Models\Navigation\ProjectNodeCollection.cs" />
+    <Compile Include="Models\Navigation\ProjectTreeNodeCollection.cs" />
     <Compile Include="ProjectHandling\Extensions\FemaleStudModelExtension.cs" />
     <Compile Include="ProjectHandling\UndoRedoManager.cs" />
     <Compile Include="Rendering\MeshRenderMode.cs" />

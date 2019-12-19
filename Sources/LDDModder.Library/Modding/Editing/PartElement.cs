@@ -212,14 +212,20 @@ namespace LDDModder.Modding.Editing
 
             if (_Extenders.Count > 0)
             {
-                var test = _Extenders.FirstOrDefault(x => x.Key.IsAssignableFrom(typeof(T)));
+                if (typeof(T).IsInterface)
+                {
+                    return (T)_Extenders.Values.FirstOrDefault(x => 
+                        typeof(T).IsAssignableFrom(x.GetType()));
+                }
+
+                var test = _Extenders.FirstOrDefault(x => typeof(T).IsAssignableFrom(x.Value.GetType()));
                 if (test.Value != null)
                     _Extenders.Add(typeof(T), test.Value);
 
                 return (T)test.Value;
             }
 
-            if (ElementExtenderFactory.CanExtendElement(GetType(), typeof(T)))
+            if (!typeof(T).IsInterface && ElementExtenderFactory.CanExtendElement(GetType(), typeof(T)))
             {
                 extender = ElementExtenderFactory.CreateExtender(this, typeof(T));
                 _Extenders.Add(typeof(T), extender);

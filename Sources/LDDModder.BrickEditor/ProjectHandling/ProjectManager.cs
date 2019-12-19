@@ -1,4 +1,5 @@
-﻿using LDDModder.BrickEditor.Rendering;
+﻿using LDDModder.BrickEditor.Models.Navigation;
+using LDDModder.BrickEditor.Rendering;
 using LDDModder.BrickEditor.Resources;
 using LDDModder.Modding.Editing;
 using System;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace LDDModder.BrickEditor.ProjectHandling
 {
-    public class ProjectManager
+    public class ProjectManager : IProjectManager
     {
         private List<PartElement> _SelectedElements;
         private List<ValidationMessage> _ValidationMessages;
@@ -42,6 +43,8 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
         public IList<PartElement> SelectedElements => _SelectedElements.AsReadOnly();
 
+        public ProjectTreeNodeCollection NavigationTreeNodes { get; private set; }
+
 
         #region Events
 
@@ -71,6 +74,8 @@ namespace LDDModder.BrickEditor.ProjectHandling
             ElementExtenderFactory.RegisterExtension(typeof(SurfaceComponent), typeof(ModelElementExtension));
             ElementExtenderFactory.RegisterExtension(typeof(FemaleStudModel), typeof(FemaleStudModelExtension));
             ElementExtenderFactory.RegisterExtension(typeof(ModelMeshReference), typeof(ModelElementExtension));
+            
+            ElementExtenderFactory.RegisterExtension(typeof(PartBone), typeof(BoneElementExtension));
 
             ElementExtenderFactory.RegisterExtension(typeof(PartCollision), typeof(ModelElementExtension));
             ElementExtenderFactory.RegisterExtension(typeof(PartConnection), typeof(ModelElementExtension));
@@ -80,6 +85,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
         {
             _SelectedElements = new List<PartElement>();
             _ValidationMessages = new List<ValidationMessage>();
+            NavigationTreeNodes = new ProjectTreeNodeCollection(this);
 
             UndoRedoManager = new UndoRedoManager(this);
             UndoRedoManager.BeginUndoRedo += UndoRedoManager_BeginUndoRedo;
@@ -138,6 +144,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
             project.ElementCollectionChanged -= Project_ElementCollectionChanged;
             project.ElementPropertyChanged -= Project_ElementPropertyChanged;
 
+            NavigationTreeNodes.Clear();
             _SelectedElements.Clear();
             _ValidationMessages.Clear();
             LastSavedChange = 0;
@@ -297,7 +304,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
         private void InvalidateElementsVisibility(IEnumerable<PartElement> elements)
         {
             foreach (var elem in elements)
-                elem.GetExtension<ModelElementExtension>()?.FlagVisibilityDirty();
+                elem.GetExtension<ModelElementExtension>()?.InvalidateVisibility();
         }
 
         #endregion
@@ -519,6 +526,43 @@ namespace LDDModder.BrickEditor.ProjectHandling
                 }
                 IsGeneratingFiles = false;
                 GenerationFinished?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+
+
+        #endregion
+
+        #region Navigation Tree
+
+        public ProjectElementNode GetElementTreeNode(PartElement element)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RebuildNavigationTree()
+        {
+            NavigationTreeNodes.Clear();
+
+            NavigationTreeNodes.Add(new ProjectCollectionNode(
+                CurrentProject.Surfaces,
+                ModelLocalizations.Label_Surfaces));
+
+            if (CurrentProject.Properties.Flexible)
+            {
+                NavigationTreeNodes.Add(new ProjectCollectionNode(
+                    CurrentProject.Bones,
+                    "Bones"));
+            }
+            else
+            {
+                NavigationTreeNodes.Add(new ProjectCollectionNode(
+                    CurrentProject.Collisions,
+                    ModelLocalizations.Label_Collisions));
+
+                NavigationTreeNodes.Add(new ProjectCollectionNode(
+                    CurrentProject.Connections,
+                    ModelLocalizations.Label_Connections));
             }
         }
 

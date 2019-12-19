@@ -79,13 +79,13 @@ namespace LDDModder.Modding.Editing
         {
             var messages = base.ValidateElement();
 
-            void AddMessage(string code, ValidationLevel level, params object[] args)
-            {
-                messages.Add(new ValidationMessage("COMPONENT", code, level, args));
-            }
+            //void AddMessage(string code, ValidationLevel level, params object[] args)
+            //{
+            //    messages.Add(new ValidationMessage("COMPONENT", code, level, args));
+            //}
 
-            if (!GetStudReferences().Any())
-                AddMessage("COMPONENT_NO_STUDS", ValidationLevel.Error, Name);
+            //if (!GetStudReferences().Any())
+            //    AddMessage("COMPONENT_NO_STUDS", ValidationLevel.Error, Name);
 
             return messages;
         }

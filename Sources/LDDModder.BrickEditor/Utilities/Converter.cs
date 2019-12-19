@@ -56,6 +56,15 @@ namespace LDDModder.BrickEditor
                 matrix.D1, matrix.D2, matrix.D3, matrix.D4);
         }
 
+        public static OpenTK.Matrix4d ToGL(this LDDModder.Simple3D.Matrix4d matrix)
+        {
+            return new OpenTK.Matrix4d(
+                matrix.A1, matrix.A2, matrix.A3, matrix.A4,
+                matrix.B1, matrix.B2, matrix.B3, matrix.B4,
+                matrix.C1, matrix.C2, matrix.C3, matrix.C4,
+                matrix.D1, matrix.D2, matrix.D3, matrix.D4);
+        }
+
         public static OpenTK.Matrix4 ToGL(this Assimp.Matrix4x4 matrix)
         {
             var m = matrix;
@@ -65,6 +74,24 @@ namespace LDDModder.BrickEditor
                 m.B1, m.B2, m.B3, m.B4,
                 m.C1, m.C2, m.C3, m.C4,
                 m.D1, m.D2, m.D3, m.D4);
+        }
+
+        public static OpenTK.Matrix4d ToMatrix4d(this OpenTK.Matrix4 matrix)
+        {
+            var result = new OpenTK.Matrix4d();
+            for (int y = 0; y < 4; y++)
+                for (int x = 0; x < 4; x++)
+                    result[y, x] = matrix[y, x];
+            return result;
+        }
+
+        public static OpenTK.Matrix4 ToMatrix4(this OpenTK.Matrix4d matrix)
+        {
+            var result = new OpenTK.Matrix4();
+            for (int y = 0; y < 4; y++)
+                for (int x = 0; x < 4; x++)
+                    result[y, x] = (float)matrix[y, x];
+            return result;
         }
 
         public static OpenTK.Quaternion ToGL(this Assimp.Quaternion quaternion)
@@ -162,6 +189,11 @@ namespace LDDModder.BrickEditor
             return new Simple3D.Vector4(vector.X, vector.Y, vector.Z, vector.W);
         }
 
+        public static LDDModder.Simple3D.Vector4d ToLDD(this OpenTK.Vector4d vector)
+        {
+            return new Simple3D.Vector4d(vector.X, vector.Y, vector.Z, vector.W);
+        }
+
         public static LDDModder.Simple3D.Matrix3 ToLDD(this OpenTK.Matrix3 matrix)
         {
             return new Simple3D.Matrix3(matrix.Row0.ToLDD(), matrix.Row1.ToLDD(), matrix.Row2.ToLDD());
@@ -170,6 +202,11 @@ namespace LDDModder.BrickEditor
         public static LDDModder.Simple3D.Matrix4 ToLDD(this OpenTK.Matrix4 matrix)
         {
             return new Simple3D.Matrix4(matrix.Row0.ToLDD(), matrix.Row1.ToLDD(), matrix.Row2.ToLDD(), matrix.Row3.ToLDD());
+        }
+
+        public static LDDModder.Simple3D.Matrix4d ToLDD(this OpenTK.Matrix4d matrix)
+        {
+            return new Simple3D.Matrix4d(matrix.Row0.ToLDD(), matrix.Row1.ToLDD(), matrix.Row2.ToLDD(), matrix.Row3.ToLDD());
         }
 
         public static LDDModder.Simple3D.Matrix3 ToLDD(this Assimp.Matrix3x3 matrix)

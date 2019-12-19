@@ -37,8 +37,9 @@ namespace LDDModder.Modding.Editing
         public override XElement SerializeToXml()
         {
             var elem = base.SerializeToXml();
+
             if (Stud != null)
-                elem.Add(Stud.SerializeToXml());
+                elem.Add(Stud.SerializeToXml2());
 
             return elem;
         }

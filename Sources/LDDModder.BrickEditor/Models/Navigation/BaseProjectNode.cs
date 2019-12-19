@@ -24,7 +24,7 @@ namespace LDDModder.BrickEditor.Models.Navigation
 
         public int Level => Parent == null ? 0 : Parent.Level + 1;
 
-        public ProjectNodeCollection Childrens { get; private set; }
+        public ProjectTreeNodeCollection Childrens { get; private set; }
 
         public string ImageKey { get; set; }
 
@@ -32,19 +32,19 @@ namespace LDDModder.BrickEditor.Models.Navigation
 
         protected BaseProjectNode()
         {
-            Childrens = new ProjectNodeCollection(this);
+            Childrens = new ProjectTreeNodeCollection(this);
         }
 
         public BaseProjectNode(PartProject project)
         {
             Project = project;
-            Childrens = new ProjectNodeCollection(this);
+            Childrens = new ProjectTreeNodeCollection(this);
         }
 
         public BaseProjectNode(PartProject project, string text) : this(project)
         {
             Text = text;
-            Childrens = new ProjectNodeCollection(this);
+            Childrens = new ProjectTreeNodeCollection(this);
         }
 
         public IEnumerable<BaseProjectNode> GetParents(bool includeSelf = false)

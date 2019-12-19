@@ -16,10 +16,10 @@ namespace LDDModder.Modding.Editing
         public const string NODE_NAME = "StudRef";
 
         //public string RefID { get; set; }
-        public string ConnectionID { get; set; }
+        //public string ConnectionID { get; set; }
 
-        [XmlIgnore]
-        public int ConnectorIndex { get; set; } = -1;
+        //[XmlIgnore]
+        //public int ConnectorIndex { get; set; } = -1;
 
         [XmlIgnore]
         public PartConnection Connection => (Parent as PartCullingModel)?.GetLinkedConnection();
@@ -34,7 +34,7 @@ namespace LDDModder.Modding.Editing
         public int Value2 { get; set; }
 
         [XmlIgnore]
-        public Custom2DFieldConnector Connector => Connection?.GetConnector< Custom2DFieldConnector>();
+        public Custom2DFieldConnector Connector => Connection?.GetConnector<Custom2DFieldConnector>();
 
         [XmlIgnore]
         public Custom2DFieldConnector.FieldNode FieldNode => Connector?.GetNode(FieldIndex);
@@ -44,34 +44,16 @@ namespace LDDModder.Modding.Editing
             FieldIndex = -1;
         }
 
-        public StudReference(int connectorIndex, int studIndex, int value1, int value2)
+        public StudReference(int fieldIndex, int value1, int value2)
         {
-            ConnectorIndex = connectorIndex;
-            FieldIndex = studIndex;
+            FieldIndex = fieldIndex;
             Value1 = value1;
             Value2 = value2;
         }
-
-        public StudReference(string refID, int studIndex, int value1, int value2)
-        {
-            ID = refID;
-            FieldIndex = studIndex;
-            Value1 = value1;
-            Value2 = value2;
-        }
-
-        //public StudReference(PartConnection/*<Custom2DFieldConnector>*/ connection, int studIndex, int value1, int value2)
-        //{
-        //    RefID = connection.RefID;
-        //    Connection = connection;
-        //    FieldIndex = studIndex;
-        //    Value1 = value1;
-        //    Value2 = value2;
-        //}
 
         public StudReference(Custom2DFieldReference fieldReference)
         {
-            ConnectorIndex = fieldReference.ConnectorIndex;
+            //ConnectorIndex = fieldReference.ConnectorIndex;
             FieldIndex = fieldReference.FieldIndices[0].Index;
             Value1 = fieldReference.FieldIndices[0].Value2;
             Value2 = fieldReference.FieldIndices[0].Value4;
@@ -80,26 +62,35 @@ namespace LDDModder.Modding.Editing
         protected internal override void LoadFromXml(XElement element)
         {
             base.LoadFromXml(element);
-            ConnectionID = element.ReadAttribute("ConnectionID", "");
 
-            if (element.TryGetIntAttribute("FieldIndex", out int v1))
+            if (element.TryGetIntAttribute(nameof(FieldIndex), out int v1))
                 FieldIndex = v1;
-            if (element.TryGetIntAttribute("Value1", out int v2))
+            if (element.TryGetIntAttribute(nameof(Value1), out int v2))
                 Value1 = v2;
-            if (element.TryGetIntAttribute("Value2", out int v3))
+            if (element.TryGetIntAttribute(nameof(Value2), out int v3))
                 Value2 = v3;
         }
 
         public override XElement SerializeToXml()
         {
             var elem = SerializeToXmlBase(NODE_NAME);
-            elem.Add(XmlHelper.ToXml(() => ConnectionID));
-            //elem.Add(XmlHelper.ToXml(() => ConnectorIndex));
-            elem.Add(XmlHelper.ToXml(() => FieldIndex));
-            elem.Add(XmlHelper.ToXml(() => Value1));
-            elem.Add(XmlHelper.ToXml(() => Value2));
+
+            elem.AddNumberAttribute(nameof(FieldIndex), FieldIndex);
+            elem.AddNumberAttribute(nameof(Value1), Value1);
+            elem.AddNumberAttribute(nameof(Value2), Value2);
 
             return elem;
+        }
+
+        public XNode[] SerializeToXml2()
+        {
+            var studElem = SerializeToXml();
+
+            if (FieldNode == null)
+                return new XNode[] { studElem };
+
+            var info = new XComment($"Stud position X: {FieldNode.X} Y: {FieldNode.Y}");
+            return new XNode[] { info, studElem };
         }
 
         public static StudReference FromXml(XElement element)

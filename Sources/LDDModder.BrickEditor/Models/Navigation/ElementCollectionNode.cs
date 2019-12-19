@@ -8,15 +8,17 @@ using System.Threading.Tasks;
 
 namespace LDDModder.BrickEditor.Models.Navigation
 {
-    public class ElementCollectionNode : BaseProjectNode
+    public class ElementCollectionNode : ProjectTreeNode
     {
-        public override PartProject Project => Element.Project;
+        //public override PartProject Project => Element.Project;
 
         public PartElement Element { get;}
 
         public IElementCollection Collection { get; }
 
         public Type CollectionType => Collection.ElementType;
+
+        public string CollectionName { get; set; }
 
         public ElementCollectionNode(PartElement element, IElementCollection collection, string text)
         {
@@ -26,14 +28,13 @@ namespace LDDModder.BrickEditor.Models.Navigation
             Text = text;
         }
 
-        public override void RebuildChildrens()
+        protected override void RebuildChildrens()
         {
             base.RebuildChildrens();
 
-            Childrens.Clear();
-
-            foreach (var elem in Collection.GetElements())
-                Childrens.Add(ProjectElementNode.CreateDefault(elem));
+            AutoGroupElements(Collection.GetElements(), null, 10, 20, true);
+            //foreach (var elem in Collection.GetElements())
+            //    Nodes.Add(ProjectElementNode.CreateDefault(elem));
         }
 
         public override void UpdateVisibility()

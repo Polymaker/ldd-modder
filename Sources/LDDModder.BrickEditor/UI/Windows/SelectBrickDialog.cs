@@ -192,7 +192,13 @@ namespace LDDModder.BrickEditor.UI.Windows
             //int processed = 0;
             TotalBricksToLoad = primitiveFiles.Count;
 
-            foreach (var primitiveFi in primitiveFiles)
+            int GetPrimitiveFileID(FileInfo fi)
+            {
+                string filename = Path.GetFileNameWithoutExtension(fi.Name);
+                return int.TryParse(filename, out int pid) ? pid : 9999999;
+            }
+
+            foreach (var primitiveFi in primitiveFiles.OrderBy(x => GetPrimitiveFileID(x)))
             {
                 if (CTS.IsCancellationRequested)
                     return;
@@ -219,18 +225,23 @@ namespace LDDModder.BrickEditor.UI.Windows
                             continue;
                         }
                     }
-
-                    var primitive = Primitive.Load(primitiveFi.FullName);
-                    var meshFilenames = meshFileInfos.Select(x => x.Name).ToArray();
-
-                    var brick = new BrickInfo(primitive, primitiveFi.Name, meshFilenames)
+                    try
                     {
-                        LastUpdate = partLastUpdate
-                    };
+                        var primitive = Primitive.Load(primitiveFi.FullName);
+                        var meshFilenames = meshFileInfos.Select(x => x.Name).ToArray();
 
-                    BrickLoadingQueue.Enqueue(brick);
+                        var brick = new BrickInfo(primitive, primitiveFi.Name, meshFilenames)
+                        {
+                            LastUpdate = partLastUpdate
+                        };
+
+                        BrickLoadingQueue.Enqueue(brick);
+                    }
+                    catch { }
+                    
                 }
             }
+
             if (CachedBrickList != null)
             {
                 CachedBrickList.Bricks.Clear();

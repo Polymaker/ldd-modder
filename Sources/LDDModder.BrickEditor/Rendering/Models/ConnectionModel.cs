@@ -18,6 +18,8 @@ namespace LDDModder.BrickEditor.Rendering
 
         public Matrix4 ModelTransform { get; set; }
 
+        public Matrix4 ParentTransform { get; set; }
+
         private bool _DisplayInvertedGender;
 
         public bool DisplayInvertedGender
@@ -36,11 +38,37 @@ namespace LDDModder.BrickEditor.Rendering
         public ConnectionModel(PartConnection connection) : base (connection)
         {
             Connection = connection;
-            var baseTransform = connection.Transform.ToMatrix().ToGL();
-            SetTransform(baseTransform, false);
-            
+
+            SetTransformFromElement();
 
             UpdateRenderingModel();
+        }
+
+
+        protected override Matrix4 GetElementTransform()
+        {
+            var baseTransform = Connection.Transform.ToMatrixD().ToGL();
+
+            if (Connection.Parent is PartBone partBone)
+            {
+                ParentTransform = partBone.Transform.ToMatrix().ToGL();
+                baseTransform = baseTransform * partBone.Transform.ToMatrixD().ToGL();
+            }
+
+            return baseTransform.ToMatrix4();
+        }
+
+        protected override void ApplyTransformToElement(Matrix4 transform)
+        {
+            if (Connection.Parent is PartBone partBone)
+            {
+                var parentTrans = partBone.Transform.ToMatrixD().ToGL();
+                var localTrans = transform.ToMatrix4d() * parentTrans.Inverted();
+                //transform = localTrans.ToMatrix4();
+                Connection.Transform = ItemTransform.FromMatrix(localTrans.ToLDD());
+            }
+            else
+                base.ApplyTransformToElement(transform);
         }
 
         protected override void OnElementPropertyChanged(ElementValueChangedEventArgs e)

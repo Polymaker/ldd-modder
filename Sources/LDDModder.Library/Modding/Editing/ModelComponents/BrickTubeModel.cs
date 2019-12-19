@@ -39,10 +39,7 @@ namespace LDDModder.Modding.Editing
             {
                 foreach (var fIdx in culling.AdjacentStuds[0].FieldIndices)
                 {
-                    var studRef = new StudReference(
-                        culling.AdjacentStuds[0].ConnectorIndex,
-                        fIdx.Index, fIdx.Value2, fIdx.Value4
-                    );
+                    var studRef = new StudReference(fIdx.Index, fIdx.Value2, fIdx.Value4);
                     AdjacentStuds.Add(studRef);
                 }
             }
@@ -54,29 +51,68 @@ namespace LDDModder.Modding.Editing
             culling.AdjacentStuds.Add(GetFieldReference(AdjacentStuds));
         }
 
+        #region Xml Serialization
+
         public override XElement SerializeToXml()
         {
             var elem = base.SerializeToXml();
-            if (TubeStud != null)
-                elem.Add(TubeStud.SerializeToXml());
 
-            elem.Add(new XComment("The following 4 studs are adjacent to the tube"));
-            var studsElem = elem.AddElement("AdjacentStuds");
-            foreach (var stud in AdjacentStuds)
-                studsElem.Add(stud.SerializeToXml());
+            if (TubeStud != null)
+                elem.Add(TubeStud.SerializeToXml2());
+
+            if (AdjacentStuds.Any())
+            {
+                elem.Add(new XComment("The following 4 studs are adjacent to the tube"));
+                var studsElem = elem.AddElement(nameof(AdjacentStuds));
+                foreach (var stud in AdjacentStuds)
+                    studsElem.Add(stud.SerializeToXml2());
+            }
+            
             return elem;
         }
 
         protected internal override void LoadFromXml(XElement element)
         {
             base.LoadFromXml(element);
-            if (element.Element(StudReference.NODE_NAME) != null)
-                TubeStud = StudReference.FromXml(element.Element(StudReference.NODE_NAME));
 
-            if (element.Element("AdjacentStuds") != null)
+            if (element.HasElement(StudReference.NODE_NAME, out XElement tubeStudElem))
+                TubeStud = StudReference.FromXml(tubeStudElem);
+
+            if (element.HasElement(nameof(AdjacentStuds), out XElement adjStudsElem))
             {
-                foreach (var studElem in element.Element("AdjacentStuds").Elements(StudReference.NODE_NAME))
-                    AdjacentStuds.Add(StudReference.FromXml(studElem));
+                foreach (var adjStudElem in adjStudsElem.Elements(StudReference.NODE_NAME))
+                    AdjacentStuds.Add(StudReference.FromXml(adjStudElem));
+            }
+        }
+
+        #endregion
+
+        public void AutoGenerateAdjacentStuds()
+        {
+            if (TubeStud != null && TubeStud.FieldNode != null)
+            {
+                AdjacentStuds.Clear();
+                var custom2DField = TubeStud.Connector;
+
+                int posX = TubeStud.FieldNode.X;
+                int posY = TubeStud.FieldNode.Y;
+                int[] offsets = new int[] { -1, 1 };
+
+                for (int i = 0; i < 2; i++)
+                {
+                    for (int j = 0; j < 2; j++)
+                    {
+                        var adjField = custom2DField.GetNode(
+                            posX + offsets[j], 
+                            posY + offsets[i]);
+
+                        if (adjField != null)
+                        {
+                            var studRef = new StudReference(adjField.Index, 1, 0);
+                            AdjacentStuds.Add(studRef);
+                        }
+                    }
+                }
             }
         }
 

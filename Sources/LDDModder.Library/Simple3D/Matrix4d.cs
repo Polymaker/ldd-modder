@@ -462,42 +462,73 @@ namespace LDDModder.Simple3D
 
         public void Invert()
         {
+            this = Invert(this);
+        }
+
+        public static Matrix4d Invert(Matrix4d mat)
+        {
             int[] colIdx = new int[4];
             int[] rowIdx = new int[4];
-            int[] pivotIdx = new int[4] { -1, -1, -1, -1 };
-            double[,] obj = new double[4, 4];
-            for (int i = 0; i < 4; i++)
+            int[] pivotIdx = new int[4]
             {
-                for (int j = 0; j < 4; j++)
-                    obj[i, j] = this[i, j];
-            }
-
-            double[,] inverse = obj;
+        -1,
+        -1,
+        -1,
+        -1
+            };
+            double[,] inverse = new double[4, 4]
+            {
+        {
+            mat.RowA.X,
+            mat.RowA.Y,
+            mat.RowA.Z,
+            mat.RowA.W
+        },
+        {
+            mat.RowB.X,
+            mat.RowB.Y,
+            mat.RowB.Z,
+            mat.RowB.W
+        },
+        {
+            mat.RowC.X,
+            mat.RowC.Y,
+            mat.RowC.Z,
+            mat.RowC.W
+        },
+        {
+            mat.RowD.X,
+            mat.RowD.Y,
+            mat.RowD.Z,
+            mat.RowD.W
+        }
+            };
             int icol = 0;
             int irow = 0;
             for (int i2 = 0; i2 < 4; i2++)
             {
-                double maxPivot = 0d;
+                double maxPivot = 0.0;
                 for (int n = 0; n < 4; n++)
                 {
-                    if (pivotIdx[n] != 0)
+                    if (pivotIdx[n] == 0)
                     {
-                        for (int i = 0; i < 4; i++)
+                        continue;
+                    }
+                    for (int i = 0; i < 4; i++)
+                    {
+                        if (pivotIdx[i] == -1)
                         {
-                            if (pivotIdx[i] == -1)
+                            double absVal = Math.Abs(inverse[n, i]);
+                            if (absVal > maxPivot)
                             {
-                                double absVal = Math.Abs(inverse[n, i]);
-                                if (absVal > maxPivot)
-                                {
-                                    maxPivot = absVal;
-                                    irow = n;
-                                    icol = i;
-                                }
+                                maxPivot = absVal;
+                                irow = n;
+                                icol = i;
                             }
-                            else if (pivotIdx[i] > 0)
-                            {
-                                return;
-                            }
+                        }
+                        else if (pivotIdx[i] > 0)
+                        {
+                            return mat;
                         }
                     }
                 }
@@ -507,23 +538,19 @@ namespace LDDModder.Simple3D
                     for (int m = 0; m < 4; m++)
                     {
                         double f2 = inverse[irow, m];
-                        double[,] array = inverse;
-                        int num = irow;
-                        int num2 = m;
-                        double num3 = inverse[icol, m];
-                        array[num, num2] = num3;
+                        inverse[irow, m] = inverse[icol, m];
                         inverse[icol, m] = f2;
                     }
                 }
                 rowIdx[i2] = irow;
                 colIdx[i2] = icol;
                 double pivot = inverse[icol, icol];
-                if (pivot == 0d)
+                if (pivot == 0.0)
                 {
                     throw new InvalidOperationException("Matrix is singular and cannot be inverted.");
                 }
-                double oneOverPivot = 1d / pivot;
-                inverse[icol, icol] = 1d;
+                double oneOverPivot = 1.0 / pivot;
+                inverse[icol, icol] = 1.0;
                 for (int l = 0; l < 4; l++)
                 {
                     inverse[icol, l] *= oneOverPivot;
@@ -533,7 +560,7 @@ namespace LDDModder.Simple3D
                     if (icol != k)
                     {
                         double f = inverse[k, icol];
-                        inverse[k, icol] = 0d;
+                        inverse[k, icol] = 0.0;
                         for (int j = 0; j < 4; j++)
                         {
                             inverse[k, j] -= inverse[icol, j] * f;
@@ -548,20 +575,15 @@ namespace LDDModder.Simple3D
                 for (int k2 = 0; k2 < 4; k2++)
                 {
                     double f3 = inverse[k2, ir];
-                    double[,] array2 = inverse;
-                    int num4 = k2;
-                    int num5 = ir;
-                    double num6 = inverse[k2, ic];
-                    array2[num4, num5] = num6;
+                    inverse[k2, ir] = inverse[k2, ic];
                     inverse[k2, ic] = f3;
                 }
             }
-
-            for (int i = 0; i < 4; i++)
-            {
-                for (int j = 0; j < 4; j++)
-                    this[i, j] = inverse[i, j];
-            }
+            mat.RowA = new Vector4d(inverse[0, 0], inverse[0, 1], inverse[0, 2], inverse[0, 3]);
+            mat.RowB = new Vector4d(inverse[1, 0], inverse[1, 1], inverse[1, 2], inverse[1, 3]);
+            mat.RowC = new Vector4d(inverse[2, 0], inverse[2, 1], inverse[2, 2], inverse[2, 3]);
+            mat.RowD = new Vector4d(inverse[3, 0], inverse[3, 1], inverse[3, 2], inverse[3, 3]);
+            return mat;
         }
 
         #endregion

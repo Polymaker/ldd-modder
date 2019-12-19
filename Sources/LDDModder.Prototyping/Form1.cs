@@ -28,7 +28,29 @@ namespace LDDModder.Prototyping
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            
+
+
+            var trans1 = (Matrix4d)Matrix4.FromTranslation(new Vector3(3,3,0));
+            var trans2 = (Matrix4d)Matrix4.FromTranslation(new Vector3(-1, 0, 0));
+            var trans3 = trans2 * trans1;
+
+            var trans1Inv = trans1.Inverted();
+
+            Matrix4d testTrans = trans3 * trans1.Inverted();
+            if (testTrans.Equals(trans2))
+                Debug.WriteLine("YAY! 1");
+
+            testTrans = trans1.Inverted() * trans3;
+            if (testTrans.Equals(trans2))
+                Debug.WriteLine("YAY! 2");
+
+            testTrans = trans3.Inverted() * trans1;
+            if (testTrans.Equals(trans2))
+                Debug.WriteLine("YAY! 3");
+
+            testTrans = trans1 * trans3.Inverted();
+            if (testTrans.Equals(trans2))
+                Debug.WriteLine("YAY! 4");
             //TestPrimitives();
             //TestGFiles();
             //SolveShaderData();

@@ -109,7 +109,7 @@ namespace LDDModder.Simple3D
 
         public bool Equals(Vector3d other)
         {
-            return Equals(other, 0.00001d);
+            return Equals(other, 0.000001d);
         }
 
         public bool Equals(Vector3d other, double tolerence)

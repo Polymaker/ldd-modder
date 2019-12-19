@@ -19,14 +19,9 @@ namespace LDDModder.BrickEditor.ProjectHandling
                 if (_ShowAlternateModels != value)
                 {
                     _ShowAlternateModels = value;
-                    CalculateVisibility();
+                    InvalidateVisibility(true);
                 }
             }
-        }
-
-        internal FemaleStudModelExtension(ProjectManager manager, FemaleStudModel element) : base(manager, element)
-        {
-            _ShowAlternateModels = false;
         }
 
         public FemaleStudModelExtension(PartElement element) : base(element)
@@ -34,17 +29,17 @@ namespace LDDModder.BrickEditor.ProjectHandling
             _ShowAlternateModels = false;
         }
 
-        protected override void PropagateVisibility(PartElement element, bool parentIsVisible)
+
+        protected override bool OverrideChildVisibility(PartElement element)
         {
             if (Element is FemaleStudModel femaleStud)
             {
                 if (femaleStud.Meshes.Contains(element))
-                    parentIsVisible &= !ShowAlternateModels;
+                    return ShowAlternateModels;
                 else if (femaleStud.ReplacementMeshes.Contains(element))
-                    parentIsVisible &= ShowAlternateModels;
+                    return !ShowAlternateModels;
             }
-
-            base.PropagateVisibility(element, parentIsVisible);
+            return base.OverrideChildVisibility(element);
         }
     }
 }

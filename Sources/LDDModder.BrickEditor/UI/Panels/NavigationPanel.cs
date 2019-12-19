@@ -81,7 +81,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             base.OnLoad(e);
             InitializeViewComboBox();
 
-            label1.Text = "<No active project>";
+            label1.Text = $"<{ModelLocalizations.Label_NoActiveProject}> ";
         }
 
         private void InitializeViewComboBox()
@@ -134,15 +134,18 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             ProjectTreeView.CanExpandGetter += (model) =>
             {
-                if (model is BaseProjectNode node)
+                if (model is ProjectTreeNode node)
                     return node.HasChildrens();
                 return false;
             };
 
             ProjectTreeView.ChildrenGetter += (model) =>
             {
-                if (model is BaseProjectNode node)
-                    return node.Childrens;
+                if (model is ProjectTreeNode node)
+                {
+
+                    return node.Nodes;
+                }
                 return new ArrayList();
             };
 
@@ -156,7 +159,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             olvColumnVisible.ImageGetter = (x) =>
             {
-                if (x is BaseProjectNode projectNode)
+                if (x is ProjectTreeNode projectNode)
                 {
                     projectNode.UpdateVisibility();
                     return projectNode.VisibilityImageKey;
@@ -183,37 +186,21 @@ namespace LDDModder.BrickEditor.UI.Panels
                 if (ProjectManager.IsProjectOpen)
                 {
                     var selectedNodeIDs = ProjectTreeView.SelectedObjects
-                        .OfType<BaseProjectNode>().Select(x => x.NodeID).ToList();
+                        .OfType<ProjectTreeNode>().Select(x => x.NodeID).ToList();
                     selectedNodeIDs.RemoveAll(x => string.IsNullOrEmpty(x));
 
                     var expandedNodeIDs = ProjectTreeView.ExpandedObjects
-                        .OfType<BaseProjectNode>().Select(x => x.NodeID).ToList();
+                        .OfType<ProjectTreeNode>().Select(x => x.NodeID).ToList();
                     expandedNodeIDs.RemoveAll(x => string.IsNullOrEmpty(x));
 
                     if (recreate)
                     {
                         ProjectTreeView.ClearObjects();
 
-                        ProjectTreeView.AddObject(new ProjectCollectionNode(
-                            CurrentProject.Surfaces,
-                            ModelLocalizations.Label_Surfaces));
+                        ProjectManager.RebuildNavigationTree();
 
-                        if (CurrentProject.Properties.Flexible)
-                        {
-                            ProjectTreeView.AddObject(new ProjectCollectionNode(
-                                CurrentProject.Bones,
-                                "Bones"));
-                        }
-                        else
-                        {
-                            ProjectTreeView.AddObject(new ProjectCollectionNode(
-                            CurrentProject.Collisions,
-                            ModelLocalizations.Label_Collisions));
+                        ProjectTreeView.AddObjects(ProjectManager.NavigationTreeNodes.ToList());
 
-                            ProjectTreeView.AddObject(new ProjectCollectionNode(
-                                CurrentProject.Connections,
-                                ModelLocalizations.Label_Connections));
-                        }
 
                         foreach (ProjectCollectionNode node in ProjectTreeView.Roots)
                         {
@@ -223,9 +210,9 @@ namespace LDDModder.BrickEditor.UI.Panels
                     }
                     else
                     {
-                        foreach (BaseProjectNode node in ProjectTreeView.Roots)
+                        foreach (ProjectTreeNode node in ProjectTreeView.Roots)
                         {
-                            node.IsDirty = true;
+                            node.InvalidateChildrens();
                             ProjectTreeView.UpdateObject(node);
                         }
                     }
@@ -245,37 +232,37 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void ExpandNodes(IEnumerable nodes, List<string> nodeIDs)
         {
-            foreach (BaseProjectNode node in nodes)
+            foreach (ProjectTreeNode node in nodes)
             {
                 if(nodeIDs.Contains(node.NodeID))
                 {
                     ProjectTreeView.Expand(node);
-                    ExpandNodes(node.Childrens, nodeIDs);
+                    ExpandNodes(node.Nodes, nodeIDs);
                 }
             }
         }
 
         private void SelectNodes(IEnumerable nodes, List<string> nodeIDs)
         {
-            foreach (BaseProjectNode node in nodes)
+            foreach (ProjectTreeNode node in nodes)
             {
                 if (nodeIDs.Contains(node.NodeID))
                     ProjectTreeView.SelectedObjects.Add(node);
                 
-                SelectNodes(node.Childrens, nodeIDs);
+                SelectNodes(node.Nodes, nodeIDs);
             }
         }
 
-        private IEnumerable<BaseProjectNode> GetTreeNodes(IEnumerable nodes = null)
+        private IEnumerable<ProjectTreeNode> GetTreeNodes(IEnumerable nodes = null)
         {
             if (nodes == null)
                 nodes = ProjectTreeView.Roots;
 
-            foreach (var node in nodes.OfType<BaseProjectNode>())
+            foreach (var node in nodes.OfType<ProjectTreeNode>())
             {
                 yield return node;
 
-                foreach(var subNode in GetTreeNodes(node.Childrens))
+                foreach(var subNode in GetTreeNodes(node.Nodes))
                     yield return subNode;
             }
         }
@@ -284,13 +271,13 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             ProjectTreeView.ModelFilter = new ModelFilter(x =>
             {
-                if (x is BaseProjectNode projectNode)
+                if (x is ProjectTreeNode projectNode)
                     return IsNodeVisible(projectNode);
                 return true;
             });
         }
 
-        private bool IsNodeVisible(BaseProjectNode projectNode)
+        private bool IsNodeVisible(ProjectTreeNode projectNode)
         {
             if (SelectedView == NavigationViewMode.All)
                 return true;
@@ -311,7 +298,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                 case NavigationViewMode.Bones:
                     return collectionNode != null && collectionNode.Collection == CurrentProject.Bones;
                 case NavigationViewMode.Meshes:
-                    break;
+                    return collectionNode != null && collectionNode.Collection == CurrentProject.Meshes;
             }
 
             return false;
@@ -421,12 +408,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                     selectedSurface.Components.Add(newComponent);
 
                     ProjectManager.SelectElement(newComponent);
-
-                    BeginInvoke((Action)(() =>
-                    {
-                        var surfaceNode = FindElementNode(selectedSurface);
-                        ProjectTreeView.Expand(surfaceNode);
-                    }));
+                    SelectElementNodeDelayed(newComponent);
                 }
             }
         }
@@ -452,6 +434,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                     CurrentProject.Connections.Add(newConnection);
 
                 ProjectManager.SelectElement(newConnection);
+                SelectElementNodeDelayed(newConnection);
             }
         }
 
@@ -475,6 +458,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                     CurrentProject.Collisions.Add(newCollision);
 
                 ProjectManager.SelectElement(newCollision);
+                SelectElementNodeDelayed(newCollision);
             }
         }
 
@@ -484,6 +468,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             {
                 var newSurface = CurrentProject.AddSurface();
                 ProjectManager.SelectElement(newSurface);
+                SelectElementNodeDelayed(newSurface);
             }
         }
 
@@ -517,7 +502,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                 }
             }
 
-            var selectedNodes = ProjectTreeView.SelectedObjects.OfType<BaseProjectNode>();
+            var selectedNodes = ProjectTreeView.SelectedObjects.OfType<ProjectTreeNode>();
 
             bool canRenameNode = (selectedNodes.Count() == 1 &&
                 selectedNodes.First() is ProjectElementNode);
@@ -623,14 +608,14 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         public IEnumerable<PartElement> GetSelectedElements()
         {
-            var selectedNodes = ProjectTreeView.SelectedObjects.OfType<BaseProjectNode>();
+            var selectedNodes = ProjectTreeView.SelectedObjects.OfType<ProjectTreeNode>();
             var elementNodes = selectedNodes.SelectMany(x => x.GetChildHierarchy(true)).OfType<ProjectElementNode>();
             return elementNodes.Select(x => x.Element);
         }
 
-        public IEnumerable<BaseProjectNode> GetAllTreeNodes()
+        public IEnumerable<ProjectTreeNode> GetAllTreeNodes()
         {
-            var selectedNodes = ProjectTreeView.Objects.OfType<BaseProjectNode>();
+            var selectedNodes = ProjectTreeView.Objects.OfType<ProjectTreeNode>();
             return selectedNodes.SelectMany(x => x.GetChildHierarchy(true));
         }
 
@@ -640,7 +625,19 @@ namespace LDDModder.BrickEditor.UI.Panels
                 .FirstOrDefault(x => x.Element == element);
         }
 
-        public void SetSelectedNodes(IEnumerable<BaseProjectNode> nodes)
+        private void SelectElementNodeDelayed(PartElement element)
+        {
+            BeginInvoke((Action)(() =>
+            {
+                var elementNode = FindElementNode(element);
+                if (elementNode.Parent != null)
+                    ProjectTreeView.Expand(elementNode.Parent);
+                using (FlagManager.UseFlag("ManualSelect"))
+                    ProjectTreeView.SelectObject(elementNode);
+            }));
+        }
+
+        public void SetSelectedNodes(IEnumerable<ProjectTreeNode> nodes)
         {
             using (FlagManager.UseFlag("ManualSelect"))
             {
@@ -657,7 +654,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private ProjectElementNode GetFocusedParentElement<T>() where T : PartElement
         {
-            var focusedNode = ProjectTreeView.FocusedObject as BaseProjectNode;
+            var focusedNode = ProjectTreeView.FocusedObject as ProjectTreeNode;
             return focusedNode.GetParents(true)
                 .OfType<ProjectElementNode>()
                 .FirstOrDefault(x => x.Element.GetType() == typeof(T));
@@ -676,7 +673,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                 SyncProjectSelection();
         }
 
-        private BaseProjectNode GetFirstVisibleParentNode(BaseProjectNode projectNode)
+        private ProjectTreeNode GetFirstVisibleParentNode(ProjectTreeNode projectNode)
         {
             if (!IsNodeVisible(projectNode))
                 return projectNode;
@@ -739,10 +736,10 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             public override object StartDrag(ObjectListView olv, MouseButtons button, OLVListItem item)
             {
-                var selectedNodes = olv.SelectedObjects.OfType<BaseProjectNode>();
+                var selectedNodes = olv.SelectedObjects.OfType<ProjectTreeNode>();
                 if (selectedNodes.Any())
                 {
-                    int selectionLevel = selectedNodes.First().Level;
+                    int selectionLevel = selectedNodes.First().TreeLevel;
                     var parent = selectedNodes.First().Parent;
 
                     if (selectedNodes.All(x => x.CanDragDrop()/* && x.Level == selectionLevel*/))
@@ -857,7 +854,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             if (e.DropTargetItem != null &&
                 e.DataObject is BrightIdeasSoftware.OLVDataObject dataObj)
             {
-                var targetNode = e.DropTargetItem.RowObject as BaseProjectNode;
+                var targetNode = e.DropTargetItem.RowObject as ProjectTreeNode;
 
                 var elementNodes = dataObj.ModelObjects.OfType<ProjectElementNode>().ToList();
 
@@ -891,7 +888,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                     if (elemType == typeof(ModelMeshReference))
                     {
                         var meshRefElems = elementNodes.Select(x => x.Element).OfType<ModelMeshReference>().ToList();
-                        var targetNode = e.DropTargetItem.RowObject as BaseProjectNode;
+                        var targetNode = e.DropTargetItem.RowObject as ProjectTreeNode;
                         var targetElement = (targetNode as ProjectElementNode)?.Element;
 
                         IElementCollection targetCollection = null;
@@ -995,7 +992,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             }
         }
 
-        private List<BaseProjectNode> SelectedItemCache;
+        private List<ProjectTreeNode> SelectedItemCache;
 
         private void ProjectTreeView_MouseDown(object sender, MouseEventArgs e)
         {
@@ -1006,8 +1003,8 @@ namespace LDDModder.BrickEditor.UI.Panels
                 if (hit.Column == olvColumnVisible)
                 {
                     FlagManager.Set("PreventSelection");
-                    SelectedItemCache = new List<BaseProjectNode>();
-                    SelectedItemCache.AddRange(ProjectTreeView.SelectedObjects.OfType<BaseProjectNode>());
+                    SelectedItemCache = new List<ProjectTreeNode>();
+                    SelectedItemCache.AddRange(ProjectTreeView.SelectedObjects.OfType<ProjectTreeNode>());
                 }
             }
         }

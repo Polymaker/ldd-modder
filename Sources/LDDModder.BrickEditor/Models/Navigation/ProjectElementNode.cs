@@ -2,16 +2,13 @@
 using LDDModder.BrickEditor.Resources;
 using LDDModder.Modding.Editing;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LDDModder.BrickEditor.Models.Navigation
 {
-    public class ProjectElementNode : BaseProjectNode
+    public class ProjectElementNode : ProjectTreeNode
     {
-        public override PartProject Project => Element.Project;
+        //public override PartProject Project => Element.Project;
 
         public PartElement Element { get; set; }
 
@@ -34,10 +31,9 @@ namespace LDDModder.BrickEditor.Models.Navigation
             Text = text;
         }
 
-        public override void RebuildChildrens()
+        protected override void RebuildChildrens()
         {
             base.RebuildChildrens();
-            Childrens.Clear();
 
             if (Element is PartSurface surface)
             {
@@ -56,13 +52,12 @@ namespace LDDModder.BrickEditor.Models.Navigation
             }
             else if (Element is SurfaceComponent surfaceComponent)
             {
-                if (surfaceComponent is FemaleStudModel femaleStud/* && 
-                    femaleStud.ReplacementMeshes.Any()*/)
+                if (surfaceComponent is FemaleStudModel femaleStud)
                 {
-                    Childrens.Add(new ElementCollectionNode(femaleStud, 
+                    Nodes.Add(new ElementCollectionNode(femaleStud, 
                         femaleStud.Meshes, ModelLocalizations.Label_DefaultMeshes));
 
-                    Childrens.Add(new ElementCollectionNode(femaleStud,
+                    Nodes.Add(new ElementCollectionNode(femaleStud,
                         femaleStud.ReplacementMeshes, ModelLocalizations.Label_AlternateMeshes));
                 }
                 else
@@ -70,6 +65,16 @@ namespace LDDModder.BrickEditor.Models.Navigation
                     AutoGroupElements(surfaceComponent.Meshes,
                         ModelLocalizations.Label_Models, 10, 10, true);
                 }
+            }
+            else if (Element is PartBone partBone)
+            {
+                if (partBone.Collisions.Any())
+                    Nodes.Add(new ElementCollectionNode(partBone, partBone.Collisions,
+                        ModelLocalizations.Label_Collisions));
+
+                if (partBone.Connections.Any())
+                    Nodes.Add(new ElementCollectionNode(partBone, partBone.Connections, 
+                        ModelLocalizations.Label_Connections));
             }
             else
             {
@@ -86,7 +91,7 @@ namespace LDDModder.BrickEditor.Models.Navigation
                 {
                     if (childElem is StudReference)
                         continue;
-                    Childrens.Add(CreateDefault(childElem));
+                    Nodes.Add(CreateDefault(childElem));
                 }
             }
         }
@@ -131,7 +136,7 @@ namespace LDDModder.BrickEditor.Models.Navigation
             return base.CanDragDrop();
         }
 
-        public override bool CanDropOn(BaseProjectNode node)
+        public override bool CanDropOn(ProjectTreeNode node)
         {
             if (ElementType == typeof(ModelMeshReference))
             {
@@ -150,7 +155,7 @@ namespace LDDModder.BrickEditor.Models.Navigation
             return base.CanDropOn(node);
         }
 
-        public override bool CanDropBefore(BaseProjectNode node)
+        public override bool CanDropBefore(ProjectTreeNode node)
         {
             if (ElementType == typeof(ModelMeshReference))
             {
@@ -163,7 +168,7 @@ namespace LDDModder.BrickEditor.Models.Navigation
             return base.CanDropBefore(node);
         }
 
-        public override bool CanDropAfter(BaseProjectNode node)
+        public override bool CanDropAfter(ProjectTreeNode node)
         {
             if (ElementType == typeof(ModelMeshReference))
             {
@@ -181,11 +186,16 @@ namespace LDDModder.BrickEditor.Models.Navigation
             base.UpdateVisibility();
 
             var modelExt = Element.GetExtension<ModelElementExtension>();
+
             if (modelExt != null)
             {
+
+                if (modelExt.Manager == null)
+                    modelExt.AssignManager(Manager);
+
                 if (modelExt.IsHidden)
                 {
-                    VisibilityImageKey = modelExt.IsHiddenByParent() ? "Hidden2" : "Hidden";
+                    VisibilityImageKey = modelExt.IsHiddenOverride() ? "Hidden2" : "Hidden";
                 }
                 else
                 {

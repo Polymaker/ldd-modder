@@ -86,6 +86,9 @@
             this.ProjectTreeView.FullRowSelect = true;
             this.ProjectTreeView.HideSelection = false;
             this.ProjectTreeView.Name = "ProjectTreeView";
+            this.ProjectTreeView.SelectColumnsOnRightClick = false;
+            this.ProjectTreeView.SelectColumnsOnRightClickBehaviour = BrightIdeasSoftware.ObjectListView.ColumnSelectBehaviour.None;
+            this.ProjectTreeView.ShowFilterMenuOnRightClick = false;
             this.ProjectTreeView.ShowGroups = false;
             this.ProjectTreeView.SmallImageList = this.NavigationImageList;
             this.ProjectTreeView.UseAlternatingBackColors = true;

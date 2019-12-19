@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
@@ -24,6 +25,9 @@ namespace LDDModder.Simple3D
             }
         }
 
+        [XmlIgnore]
+        public bool IsEmpty => float.IsNaN(X);
+
         public Vector4(float x, float y, float z, float w)
         {
             X = x;
@@ -39,6 +43,7 @@ namespace LDDModder.Simple3D
             Z = vector.Z;
             W = w;
         }
+
 
         #region Operators
 
@@ -83,7 +88,24 @@ namespace LDDModder.Simple3D
 
         public bool Equals(Vector4 other)
         {
-            return X == other.X && Y == other.Y && Z == other.Z && W == other.W;
+            return Equals(other, 0.0001f);
+        }
+
+        public bool Equals(Vector4 other, float tolerence)
+        {
+            if (IsEmpty || other.IsEmpty)
+                return IsEmpty == other.IsEmpty;
+            return Distance(this, other) <= tolerence;
+            //return Math.Abs(X - other.X) < tolerence && Math.Abs(Y - other.Y) < tolerence && Math.Abs(Z - other.Z) < tolerence;
+        }
+
+        public static float Distance(Vector4 left, Vector4 right)
+        {
+            var dx = left.X - right.X;
+            var dy = left.Y - right.Y;
+            var dz = left.Z - right.Z;
+            var dw = left.W - right.W;
+            return (float)Math.Sqrt((dx * dx) + (dy * dy) + (dz * dz) + (dw * dw));
         }
 
         public override string ToString()

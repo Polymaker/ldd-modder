@@ -13,7 +13,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
 {
     public class ModelElementExtension : IElementExtender/* : INotifyPropertyChanged*/
     {
-        public ProjectManager Manager { get; internal set; }
+        public IProjectManager Manager { get; internal set; }
 
         public PartElement Element { get; }
 
@@ -29,7 +29,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
                 if (_IsHidden != value)
                 {
                     _IsHidden = value;
-                    CalculateVisibility();
+                    InvalidateVisibility();
                 }
             }
         }
@@ -45,15 +45,9 @@ namespace LDDModder.BrickEditor.ProjectHandling
             //protected set => _IsVisible = value;
         }
 
-        public event EventHandler VisibilityChanged;
+        public bool HasInitialized { get; private set; }
 
-        internal ModelElementExtension(ProjectManager manager, PartElement element)
-        {
-            Manager = manager;
-            Element = element;
-            _IsVisible = true;
-            visbilityDirty = true;
-        }
+        public event EventHandler VisibilityChanged;
 
         public ModelElementExtension(PartElement element)
         {
@@ -62,55 +56,41 @@ namespace LDDModder.BrickEditor.ProjectHandling
             visbilityDirty = true;
         }
 
-        internal void AssignManager(ProjectManager manager)
+        internal void AssignManager(IProjectManager manager)
         {
-            Manager = manager;
-            visbilityDirty = true;
+            if (Manager != manager)
+            {
+                Manager = manager;
+                visbilityDirty = true;
+            }
         }
 
-        public void FlagVisibilityDirty()
+        public bool IsParentVisible()
         {
-            visbilityDirty = true;
-        }
-
-        public void CalculateVisibility()
-        {
-            bool isParentVisible = true;
-
             if (Element.Parent != null)
             {
-                var parentExt = Element.Parent.GetExtension<ModelElementExtension>();//  Manager.GetExtension(Element.Parent);
-                if (parentExt.visbilityDirty)
-                {
-                    parentExt.CalculateVisibility();
-                    return;
-                }
-                isParentVisible = parentExt?.IsVisible ?? true;
+                var parentExt = Element.Parent.GetExtension<ModelElementExtension>();
+                if (parentExt != null)
+                    return parentExt.IsVisible;
             }
+            return true;
+        }
 
+        public bool IsHiddenByConfigs()
+        {
             if (Manager != null)
             {
                 if (Element is PartSurface)
-                    isParentVisible &= Manager.ShowPartModels;
+                    return !Manager.ShowPartModels;
 
                 if (Element is PartCollision)
-                    isParentVisible &= Manager.ShowCollisions;
+                    return !Manager.ShowCollisions;
 
                 if (Element is PartConnection)
-                    isParentVisible &= Manager.ShowConnections;
+                    return !Manager.ShowConnections;
             }
 
-
-            if (Element.Parent is FemaleStudModel femaleStudModel)
-            {
-                var parentExt = Element.Parent.GetExtension<FemaleStudModelExtension>();
-                if (parentExt.ShowAlternateModels)
-                    isParentVisible &= femaleStudModel.ReplacementMeshes.Contains(Element);
-                else
-                    isParentVisible &= femaleStudModel.Meshes.Contains(Element);
-            }
-
-            CalculateVisibility(isParentVisible);
+            return false;
         }
 
         public virtual bool IsHiddenByParent()
@@ -118,58 +98,45 @@ namespace LDDModder.BrickEditor.ProjectHandling
             if (Element.Parent != null)
             {
                 var parentExt = Element.Parent.GetExtension<ModelElementExtension>();
-                if (parentExt?.IsVisible == false)
-                    return true;
+                if (parentExt != null)
+                    return parentExt.OverrideChildVisibility(Element);
             }
-
-            if (Manager != null)
-            {
-                if (Element is PartSurface)
-                    return !Manager.ShowPartModels;
-                else if (Element is PartCollision)
-                    return !Manager.ShowCollisions;
-                else if (Element is PartConnection)
-                    return !Manager.ShowConnections;
-            }
-
-            if (Element.Parent is FemaleStudModel femaleStudModel)
-            {
-                var parentExt = Element.Parent.GetExtension<FemaleStudModelExtension>();
-                bool isAlternateMesh = femaleStudModel.ReplacementMeshes.Contains(Element);
-
-                if (isAlternateMesh != parentExt.ShowAlternateModels)
-                    return true;
-            }
-
             return false;
         }
 
-        protected void CalculateVisibility(bool parentIsVisible)
+        protected virtual bool OverrideChildVisibility(PartElement element)
+        {
+            return false;
+        }
+
+        public bool IsHiddenOverride()
+        {
+            bool isParentVisible = IsParentVisible();
+            bool isHiddenByConfigs = IsHiddenByConfigs();
+            bool isHiddenByParent = IsHiddenByParent();
+
+            return !isParentVisible || isHiddenByConfigs || isHiddenByParent;
+        }
+
+        public void CalculateVisibility()
         {
             bool wasVisible = _IsVisible;
 
-            _IsVisible = parentIsVisible && !IsHidden;
+            _IsVisible = !IsHidden && !IsHiddenOverride();
+            
             visbilityDirty = false;
-
-            foreach (var elem in Element.GetAllChilds())
-                PropagateVisibility(elem, _IsVisible);
 
             if (_IsVisible != wasVisible)
                 VisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        protected virtual void PropagateVisibility(PartElement element, bool parentIsVisible)
+        public void InvalidateVisibility(bool childrensOnly = false)
         {
-            var elemExt = element.GetExtension<ModelElementExtension>();
-
-            if (elemExt == null)
+            foreach (var element in Element.GetChildsHierarchy(!childrensOnly))
             {
-                foreach(var childElem in element.GetAllChilds())
-                    PropagateVisibility(childElem, parentIsVisible);
-            }
-            else
-            {
-                elemExt.CalculateVisibility(parentIsVisible);
+                var modelExt = element.GetExtension<ModelElementExtension>();
+                if (modelExt != null)
+                    modelExt.visbilityDirty = true;
             }
         }
     }

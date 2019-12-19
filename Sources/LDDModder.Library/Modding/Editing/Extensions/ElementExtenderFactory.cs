@@ -13,8 +13,6 @@ namespace LDDModder.Modding.Editing
         static ElementExtenderFactory()
         {
             ElementExtensions = new Dictionary<Type, List<Type>>();
-
-
         }
 
         public static void RegisterExtension(Type elementType, Type extensionType)
@@ -26,7 +24,7 @@ namespace LDDModder.Modding.Editing
 
             if (previousExtenders.Count > 0)
             {
-                if (previousExtenders.Count(x=>x.IsAssignableFrom(extensionType)) > 1)
+                if (previousExtenders.Count(x => x.IsAssignableFrom(extensionType)) > 1)
                 {
                     throw new InvalidOperationException("");
                 }

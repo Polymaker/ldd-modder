@@ -368,43 +368,19 @@ namespace LDDModder.Simple3D
         public override bool Equals(object obj)
         {
             return obj is Matrix4 matrix &&
-                   A1 == matrix.A1 &&
-                   A2 == matrix.A2 &&
-                   A3 == matrix.A3 &&
-                   A4 == matrix.A4 &&
-                   B1 == matrix.B1 &&
-                   B2 == matrix.B2 &&
-                   B3 == matrix.B3 &&
-                   B4 == matrix.B4 &&
-                   C1 == matrix.C1 &&
-                   C2 == matrix.C2 &&
-                   C3 == matrix.C3 &&
-                   C4 == matrix.C4 &&
-                   D1 == matrix.D1 &&
-                   D2 == matrix.D2 &&
-                   D3 == matrix.D3 &&
-                   D4 == matrix.D4;
+                   RowA.Equals(matrix.RowA) &&
+                   RowB.Equals(matrix.RowB) &&
+                   RowC.Equals(matrix.RowC) &&
+                   RowD.Equals(matrix.RowD);
         }
 
         public override int GetHashCode()
         {
             var hashCode = -58098712;
-            hashCode = hashCode * -1521134295 + A1.GetHashCode();
-            hashCode = hashCode * -1521134295 + A2.GetHashCode();
-            hashCode = hashCode * -1521134295 + A3.GetHashCode();
-            hashCode = hashCode * -1521134295 + A4.GetHashCode();
-            hashCode = hashCode * -1521134295 + B1.GetHashCode();
-            hashCode = hashCode * -1521134295 + B2.GetHashCode();
-            hashCode = hashCode * -1521134295 + B3.GetHashCode();
-            hashCode = hashCode * -1521134295 + B4.GetHashCode();
-            hashCode = hashCode * -1521134295 + C1.GetHashCode();
-            hashCode = hashCode * -1521134295 + C2.GetHashCode();
-            hashCode = hashCode * -1521134295 + C3.GetHashCode();
-            hashCode = hashCode * -1521134295 + C4.GetHashCode();
-            hashCode = hashCode * -1521134295 + D1.GetHashCode();
-            hashCode = hashCode * -1521134295 + D2.GetHashCode();
-            hashCode = hashCode * -1521134295 + D3.GetHashCode();
-            hashCode = hashCode * -1521134295 + D4.GetHashCode();
+            hashCode = hashCode * -1521134295 + RowA.GetHashCode();
+            hashCode = hashCode * -1521134295 + RowB.GetHashCode();
+            hashCode = hashCode * -1521134295 + RowC.GetHashCode();
+            hashCode = hashCode * -1521134295 + RowD.GetHashCode();
             return hashCode;
         }
 
@@ -456,44 +432,70 @@ namespace LDDModder.Simple3D
             result.D4 = left.D1 * right.A4 + left.D2 * right.B4 + left.D3 * right.C4 + left.D4 * right.D4;
         }
 
-        public void Invert()
+        public static Matrix4 Invert(Matrix4 mat)
         {
             int[] colIdx = new int[4];
             int[] rowIdx = new int[4];
-            int[] pivotIdx = new int[4] { -1, -1, -1, -1 };
-            float[,] obj = new float[4, 4];
-            for (int i = 0; i < 4; i++)
+            int[] pivotIdx = new int[4]
             {
-                for (int j = 0; j < 4; j++)
-                    obj[i, j] = this[i, j];
-            }
-
-            float[,] inverse = obj;
+        -1,
+        -1,
+        -1,
+        -1
+            };
+            float[,] inverse = new float[4, 4]
+            {
+        {
+            mat.RowA.X,
+            mat.RowA.Y,
+            mat.RowA.Z,
+            mat.RowA.W
+        },
+        {
+            mat.RowB.X,
+            mat.RowB.Y,
+            mat.RowB.Z,
+            mat.RowB.W
+        },
+        {
+            mat.RowC.X,
+            mat.RowC.Y,
+            mat.RowC.Z,
+            mat.RowC.W
+        },
+        {
+            mat.RowD.X,
+            mat.RowD.Y,
+            mat.RowD.Z,
+            mat.RowD.W
+        }
+            };
             int icol = 0;
             int irow = 0;
             for (int i2 = 0; i2 < 4; i2++)
             {
-                float maxPivot = 0f;
+                float maxPivot = 0.0f;
                 for (int n = 0; n < 4; n++)
                 {
-                    if (pivotIdx[n] != 0)
+                    if (pivotIdx[n] == 0)
                     {
-                        for (int i = 0; i < 4; i++)
+                        continue;
+                    }
+                    for (int i = 0; i < 4; i++)
+                    {
+                        if (pivotIdx[i] == -1)
                         {
-                            if (pivotIdx[i] == -1)
+                            float absVal = (float)Math.Abs(inverse[n, i]);
+                            if (absVal > maxPivot)
                             {
-                                float absVal = Math.Abs(inverse[n, i]);
-                                if (absVal > maxPivot)
-                                {
-                                    maxPivot = absVal;
-                                    irow = n;
-                                    icol = i;
-                                }
+                                maxPivot = absVal;
+                                irow = n;
+                                icol = i;
                             }
-                            else if (pivotIdx[i] > 0)
-                            {
-                                return;
-                            }
+                        }
+                        else if (pivotIdx[i] > 0)
+                        {
+                            return mat;
                         }
                     }
                 }
@@ -503,23 +505,19 @@ namespace LDDModder.Simple3D
                     for (int m = 0; m < 4; m++)
                     {
                         float f2 = inverse[irow, m];
-                        float[,] array = inverse;
-                        int num = irow;
-                        int num2 = m;
-                        float num3 = inverse[icol, m];
-                        array[num, num2] = num3;
+                        inverse[irow, m] = inverse[icol, m];
                         inverse[icol, m] = f2;
                     }
                 }
                 rowIdx[i2] = irow;
                 colIdx[i2] = icol;
                 float pivot = inverse[icol, icol];
-                if (pivot == 0f)
+                if (pivot == 0.0f)
                 {
                     throw new InvalidOperationException("Matrix is singular and cannot be inverted.");
                 }
-                float oneOverPivot = 1f / pivot;
-                inverse[icol, icol] = 1f;
+                float oneOverPivot = 1.0f / pivot;
+                inverse[icol, icol] = 1.0f;
                 for (int l = 0; l < 4; l++)
                 {
                     inverse[icol, l] *= oneOverPivot;
@@ -529,7 +527,7 @@ namespace LDDModder.Simple3D
                     if (icol != k)
                     {
                         float f = inverse[k, icol];
-                        inverse[k, icol] = 0f;
+                        inverse[k, icol] = 0.0f;
                         for (int j = 0; j < 4; j++)
                         {
                             inverse[k, j] -= inverse[icol, j] * f;
@@ -544,20 +542,20 @@ namespace LDDModder.Simple3D
                 for (int k2 = 0; k2 < 4; k2++)
                 {
                     float f3 = inverse[k2, ir];
-                    float[,] array2 = inverse;
-                    int num4 = k2;
-                    int num5 = ir;
-                    float num6 = inverse[k2, ic];
-                    array2[num4, num5] = num6;
+                    inverse[k2, ir] = inverse[k2, ic];
                     inverse[k2, ic] = f3;
                 }
             }
+            mat.RowA = new Vector4(inverse[0, 0], inverse[0, 1], inverse[0, 2], inverse[0, 3]);
+            mat.RowB = new Vector4(inverse[1, 0], inverse[1, 1], inverse[1, 2], inverse[1, 3]);
+            mat.RowC = new Vector4(inverse[2, 0], inverse[2, 1], inverse[2, 2], inverse[2, 3]);
+            mat.RowD = new Vector4(inverse[3, 0], inverse[3, 1], inverse[3, 2], inverse[3, 3]);
+            return mat;
+        }
 
-            for (int i = 0; i < 4; i++)
-            {
-                for (int j = 0; j < 4; j++)
-                    this[i, j] = inverse[i, j];
-            }
+        public void Invert()
+        {
+            this = Invert(this);
         }
 
         #endregion
@@ -573,6 +571,30 @@ namespace LDDModder.Simple3D
         public static Matrix4 FromAngleAxis(float radians, Vector3 axis)
         {
             return new Matrix4(Matrix3.FromAngleAxis(radians, axis));
+        }
+
+        public static Matrix4 CreateRotationX(float angle)
+        {
+            float cos = (float)Math.Cos(angle);
+            float sin = (float)Math.Sin(angle);
+            Matrix4 result = Identity;
+            result.B2 = cos;
+            result.B3 = sin;
+            result.C2 = 0f - sin;
+            result.C3 = cos;
+            return result;
+        }
+
+        public static Matrix4 CreateRotationY(float angle)
+        {
+            float cos = (float)Math.Cos(angle);
+            float sin = (float)Math.Sin(angle);
+            Matrix4 result = Identity;
+            result.A1 = cos;
+            result.A3 = 0f - sin;
+            result.C1 = sin;
+            result.C3 = cos;
+            return result;
         }
 
         public static Matrix4 FromTranslation(Vector3 translation)

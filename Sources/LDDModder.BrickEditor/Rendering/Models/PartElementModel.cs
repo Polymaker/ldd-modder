@@ -41,23 +41,40 @@ namespace LDDModder.BrickEditor.Rendering
         {
             base.OnTransformChanged();
 
+            Matrix4 transCopy = Transform;
+            transCopy.ClearScale();
+
+            IsApplyingTransform = true;
+            ApplyTransformToElement(transCopy);
+            IsApplyingTransform = false;
+            
+        }
+
+        protected virtual void ApplyTransformToElement(Matrix4 transform)
+        {
+            if (Element is IPhysicalElement physicalElement)
+                physicalElement.Transform = ItemTransform.FromMatrix(transform.ToLDD());
+        }
+
+        protected void SetTransformFromElement()
+        {
+            SetTransform(GetElementTransform(), false);
+        }
+
+        protected virtual Matrix4 GetElementTransform()
+        {
             if (Element is IPhysicalElement physicalElement)
             {
-                Matrix4 transCopy = Transform;
-                transCopy.ClearScale();
-                IsApplyingTransform = true;
-                physicalElement.Transform = ItemTransform.FromMatrix(transCopy.ToLDD());
-                IsApplyingTransform = false;
+                var baseTransform = physicalElement.Transform.ToMatrix().ToGL();
+                return baseTransform;
             }
+            return Matrix4.Identity;
         }
 
         private void Element_PropertyChanged(object sender, ElementValueChangedEventArgs e)
         {
             if (e.PropertyName == nameof(IPhysicalElement.Transform) && !IsApplyingTransform)
-            {
-                var baseTransform = (Element as IPhysicalElement).Transform.ToMatrix().ToGL();
-                SetTransform(baseTransform, true);
-            }
+                SetTransformFromElement();
 
             OnElementPropertyChanged(e);
         }

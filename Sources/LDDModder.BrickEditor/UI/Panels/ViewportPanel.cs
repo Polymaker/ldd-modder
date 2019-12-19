@@ -873,8 +873,22 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             if (ProjectManager.IsProjectOpen)
             {
-                foreach (var conn in CurrentProject.Connections)
-                    ConnectionModels.Add(new ConnectionModel(conn));
+                var allConnections = CurrentProject.GetAllElements<PartConnection>().ToList();
+
+                foreach (var conModel in ConnectionModels.ToArray())
+                {
+                    if (!allConnections.Contains(conModel.Connection))
+                    {
+                        conModel.Dispose();
+                        ConnectionModels.Remove(conModel);
+                    }
+                }
+
+                foreach (var connection in allConnections)
+                {
+                    if (!ConnectionModels.Any(x => x.Connection == connection))
+                        ConnectionModels.Add(new ConnectionModel(connection));
+                }
             }
             else if (ConnectionModels.Any())
             {
