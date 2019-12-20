@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.ReturnButton = new System.Windows.Forms.Button();
+            this.browseTextBox1 = new LDDModder.BrickEditor.UI.Controls.BrowseTextBox();
             this.ModelsGridView = new System.Windows.Forms.DataGridView();
             this.SelectionColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.ModelNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -37,10 +37,11 @@
             this.TexturedColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.FlexibleColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.SurfaceColumn = new System.Windows.Forms.DataGridViewComboBoxColumn();
-            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.label1 = new System.Windows.Forms.Label();
-            this.browseTextBox1 = new LDDModder.BrickEditor.UI.Controls.BrowseTextBox();
             this.ImportButton = new System.Windows.Forms.Button();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.ReturnButton = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ModelsGridView)).BeginInit();
             this.SuspendLayout();
@@ -49,34 +50,41 @@
             // 
             this.tableLayoutPanel1.ColumnCount = 4;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel1.Controls.Add(this.browseTextBox1, 1, 0);
-            this.tableLayoutPanel1.Controls.Add(this.ModelsGridView, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.ModelsGridView, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.label1, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.ImportButton, 2, 2);
-            this.tableLayoutPanel1.Controls.Add(this.progressBar1, 0, 2);
-            this.tableLayoutPanel1.Controls.Add(this.ReturnButton, 3, 2);
+            this.tableLayoutPanel1.Controls.Add(this.ImportButton, 2, 3);
+            this.tableLayoutPanel1.Controls.Add(this.progressBar1, 0, 3);
+            this.tableLayoutPanel1.Controls.Add(this.ReturnButton, 3, 3);
+            this.tableLayoutPanel1.Controls.Add(this.button1, 0, 1);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 3;
+            this.tableLayoutPanel1.RowCount = 4;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 29F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.Size = new System.Drawing.Size(574, 276);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
-            // ReturnButton
+            // browseTextBox1
             // 
-            this.ReturnButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.ReturnButton.Location = new System.Drawing.Point(496, 250);
-            this.ReturnButton.Name = "ReturnButton";
-            this.ReturnButton.Size = new System.Drawing.Size(75, 23);
-            this.ReturnButton.TabIndex = 0;
-            this.ReturnButton.Text = "Cancel";
-            this.ReturnButton.UseVisualStyleBackColor = true;
+            this.browseTextBox1.AutoSizeButton = true;
+            this.browseTextBox1.ButtonText = "Select model...";
+            this.browseTextBox1.ButtonWidth = 87;
+            this.tableLayoutPanel1.SetColumnSpan(this.browseTextBox1, 3);
+            this.browseTextBox1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.browseTextBox1.Location = new System.Drawing.Point(84, 3);
+            this.browseTextBox1.Name = "browseTextBox1";
+            this.browseTextBox1.ReadOnly = true;
+            this.browseTextBox1.Size = new System.Drawing.Size(487, 20);
+            this.browseTextBox1.TabIndex = 2;
+            this.browseTextBox1.Value = "";
+            this.browseTextBox1.BrowseButtonClicked += new System.EventHandler(this.browseTextBox1_BrowseButtonClicked);
             // 
             // ModelsGridView
             // 
@@ -93,10 +101,10 @@
             this.SurfaceColumn});
             this.tableLayoutPanel1.SetColumnSpan(this.ModelsGridView, 4);
             this.ModelsGridView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ModelsGridView.Location = new System.Drawing.Point(3, 29);
+            this.ModelsGridView.Location = new System.Drawing.Point(3, 58);
             this.ModelsGridView.Name = "ModelsGridView";
             this.ModelsGridView.RowHeadersVisible = false;
-            this.ModelsGridView.Size = new System.Drawing.Size(568, 215);
+            this.ModelsGridView.Size = new System.Drawing.Size(568, 186);
             this.ModelsGridView.TabIndex = 2;
             this.ModelsGridView.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.ModelsGridView_CellEnter);
             this.ModelsGridView.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.ModelsGridView_CellValueChanged);
@@ -145,15 +153,6 @@
             this.SurfaceColumn.Name = "SurfaceColumn";
             this.SurfaceColumn.Width = 150;
             // 
-            // progressBar1
-            // 
-            this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.tableLayoutPanel1.SetColumnSpan(this.progressBar1, 2);
-            this.progressBar1.Location = new System.Drawing.Point(3, 251);
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(406, 21);
-            this.progressBar1.TabIndex = 3;
-            // 
             // label1
             // 
             this.label1.Anchor = System.Windows.Forms.AnchorStyles.Left;
@@ -163,21 +162,6 @@
             this.label1.Size = new System.Drawing.Size(66, 13);
             this.label1.TabIndex = 1;
             this.label1.Text = "File to import";
-            // 
-            // browseTextBox1
-            // 
-            this.browseTextBox1.AutoSizeButton = true;
-            this.browseTextBox1.ButtonText = "Select model...";
-            this.browseTextBox1.ButtonWidth = 87;
-            this.tableLayoutPanel1.SetColumnSpan(this.browseTextBox1, 3);
-            this.browseTextBox1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.browseTextBox1.Location = new System.Drawing.Point(75, 3);
-            this.browseTextBox1.Name = "browseTextBox1";
-            this.browseTextBox1.ReadOnly = true;
-            this.browseTextBox1.Size = new System.Drawing.Size(496, 20);
-            this.browseTextBox1.TabIndex = 2;
-            this.browseTextBox1.Value = "";
-            this.browseTextBox1.BrowseButtonClicked += new System.EventHandler(this.browseTextBox1_BrowseButtonClicked);
             // 
             // ImportButton
             // 
@@ -189,6 +173,35 @@
             this.ImportButton.Text = "Import";
             this.ImportButton.UseVisualStyleBackColor = true;
             this.ImportButton.Click += new System.EventHandler(this.ImportButton_Click);
+            // 
+            // progressBar1
+            // 
+            this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.tableLayoutPanel1.SetColumnSpan(this.progressBar1, 2);
+            this.progressBar1.Location = new System.Drawing.Point(3, 251);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(406, 21);
+            this.progressBar1.TabIndex = 3;
+            // 
+            // ReturnButton
+            // 
+            this.ReturnButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.ReturnButton.Location = new System.Drawing.Point(496, 250);
+            this.ReturnButton.Name = "ReturnButton";
+            this.ReturnButton.Size = new System.Drawing.Size(75, 23);
+            this.ReturnButton.TabIndex = 0;
+            this.ReturnButton.Text = "Cancel";
+            this.ReturnButton.UseVisualStyleBackColor = true;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(3, 29);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 4;
+            this.button1.Text = "button1";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // ImportModelsDialog
             // 
@@ -224,5 +237,6 @@
         private System.Windows.Forms.Label label1;
         private Controls.BrowseTextBox browseTextBox1;
         private System.Windows.Forms.Button ImportButton;
+        private System.Windows.Forms.Button button1;
     }
 }

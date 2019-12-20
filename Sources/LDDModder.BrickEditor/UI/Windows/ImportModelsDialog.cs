@@ -231,5 +231,11 @@ namespace LDDModder.BrickEditor.UI.Windows
                 }
             }
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            foreach (var model in ModelsToImport)
+                model.Selected = false;
+        }
     }
 }

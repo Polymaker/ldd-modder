@@ -38,7 +38,9 @@ namespace LDDModder.Modding.Editing
             foreach (var keyVal in ElementExtensions)
             {
                 if (keyVal.Key == elementType || keyVal.Key.IsAssignableFrom(elementType))
-                    return keyVal.Value.Contains(extensionType);
+                {
+                    return keyVal.Value.Any(x => x == extensionType || extensionType.IsAssignableFrom(x));
+                }
             }
             return false;
         }

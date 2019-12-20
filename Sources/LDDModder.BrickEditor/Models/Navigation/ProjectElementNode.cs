@@ -31,6 +31,8 @@ namespace LDDModder.BrickEditor.Models.Navigation
             Text = text;
         }
 
+        
+
         protected override void RebuildChildrens()
         {
             base.RebuildChildrens();
