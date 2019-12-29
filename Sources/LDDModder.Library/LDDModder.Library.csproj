@@ -82,6 +82,8 @@
     <Compile Include="LDD\Data\MainGroup.cs" />
     <Compile Include="LDD\Data\Material.cs" />
     <Compile Include="LDD\Data\MaterialType.cs" />
+    <Compile Include="LDD\LddDirectory.cs" />
+    <Compile Include="LDD\LddLif.cs" />
     <Compile Include="LDD\Models\Assembly.cs" />
     <Compile Include="LDD\Models\Bone.cs" />
     <Compile Include="LDD\Models\Brick.cs" />

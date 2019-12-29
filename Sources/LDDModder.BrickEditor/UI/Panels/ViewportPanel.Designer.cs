@@ -46,7 +46,6 @@
             this.DisplayMenu_Collisions = new System.Windows.Forms.ToolStripMenuItem();
             this.DisplayMenu_Connections = new System.Windows.Forms.ToolStripMenuItem();
             this.DisplayMenu_Meshes = new System.Windows.Forms.ToolStripMenuItem();
-            this.xRayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.GizmoOrientationMenu = new System.Windows.Forms.ToolStripDropDownButton();
             this.globalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.localToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -176,8 +175,7 @@
             this.DisplayMenuDropDown.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.DisplayMenu_Collisions,
             this.DisplayMenu_Connections,
-            this.DisplayMenu_Meshes,
-            this.xRayToolStripMenuItem});
+            this.DisplayMenu_Meshes});
             resources.ApplyResources(this.DisplayMenuDropDown, "DisplayMenuDropDown");
             this.DisplayMenuDropDown.Name = "DisplayMenuDropDown";
             // 
@@ -203,13 +201,6 @@
             this.DisplayMenu_Meshes.Name = "DisplayMenu_Meshes";
             resources.ApplyResources(this.DisplayMenu_Meshes, "DisplayMenu_Meshes");
             this.DisplayMenu_Meshes.CheckedChanged += new System.EventHandler(this.DisplayMenu_Meshes_CheckedChanged);
-            // 
-            // xRayToolStripMenuItem
-            // 
-            this.xRayToolStripMenuItem.CheckOnClick = true;
-            this.xRayToolStripMenuItem.Name = "xRayToolStripMenuItem";
-            resources.ApplyResources(this.xRayToolStripMenuItem, "xRayToolStripMenuItem");
-            this.xRayToolStripMenuItem.CheckedChanged += new System.EventHandler(this.xRayToolStripMenuItem_CheckedChanged);
             // 
             // GizmoOrientationMenu
             // 
@@ -440,7 +431,6 @@
         private System.Windows.Forms.ToolStripMenuItem DisplayMenu_Collisions;
         private System.Windows.Forms.ToolStripMenuItem DisplayMenu_Connections;
         private System.Windows.Forms.ToolStripMenuItem DisplayMenu_Meshes;
-        private System.Windows.Forms.ToolStripMenuItem xRayToolStripMenuItem;
         private System.Windows.Forms.ToolStripDropDownButton GizmoOrientationMenu;
         private System.Windows.Forms.ToolStripMenuItem globalToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem localToolStripMenuItem;

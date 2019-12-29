@@ -28,8 +28,8 @@ namespace LDDModder.BrickEditor.Settings
             var currEnv = LDD.LDDEnvironment.Current;
             return new AppSettings()
             {
-                LddApplicationDataPath = currEnv.ApplicationDataPath,
-                LddProgramFilesPath = currEnv.ProgramFilesPath
+                LddApplicationDataPath = currEnv?.ApplicationDataPath,
+                LddProgramFilesPath = currEnv?.ProgramFilesPath
             };
         }
     }

@@ -151,10 +151,10 @@
     <value>0</value>
   </data>
   <metadata name="vS2015DarkTheme1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>122, 17</value>
+    <value>21, 13</value>
   </metadata>
   <metadata name="visualStudioToolStripExtender1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>282, 17</value>
+    <value>237, 15</value>
   </metadata>
   <metadata name="menuStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>665, 17</value>
@@ -292,7 +292,7 @@
     <value>Edit</value>
   </data>
   <data name="lDDEnvironmentToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>167, 22</value>
   </data>
   <data name="lDDEnvironmentToolStripMenuItem.Text" xml:space="preserve">
     <value>LDD Environment</value>
@@ -351,6 +351,15 @@
   <metadata name="AutoSaveTimer.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>780, 17</value>
   </metadata>
+  <metadata name="localizableStringList1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>943, 17</value>
+  </metadata>
+  <data name="StartLddText.Text" xml:space="preserve">
+    <value>Start LDD...</value>
+  </data>
+  <data name="RestartLddText.Text" xml:space="preserve">
+    <value>Restart LDD...</value>
+  </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
@@ -539,6 +548,24 @@
   </data>
   <data name="&gt;&gt;AutoSaveTimer.Type" xml:space="preserve">
     <value>System.Windows.Forms.Timer, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;localizableStringList1.Name" xml:space="preserve">
+    <value>localizableStringList1</value>
+  </data>
+  <data name="&gt;&gt;localizableStringList1.Type" xml:space="preserve">
+    <value>LDDModder.BrickEditor.Localization.LocalizableStringList, LDDModder.BrickEditor, Version=1.0.0.16124, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;StartLddText.Name" xml:space="preserve">
+    <value>StartLddText</value>
+  </data>
+  <data name="&gt;&gt;StartLddText.Type" xml:space="preserve">
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, LDDModder.BrickEditor, Version=1.0.0.16124, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;RestartLddText.Name" xml:space="preserve">
+    <value>RestartLddText</value>
+  </data>
+  <data name="&gt;&gt;RestartLddText.Type" xml:space="preserve">
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, LDDModder.BrickEditor, Version=1.0.0.16124, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>BrickEditorWindow</value>

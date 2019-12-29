@@ -61,6 +61,9 @@
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.StartLddMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.AutoSaveTimer = new System.Windows.Forms.Timer(this.components);
+            this.localizableStringList1 = new LDDModder.BrickEditor.Localization.LocalizableStringList(this.components);
+            this.StartLddText = new LDDModder.BrickEditor.Localization.LocalizableString();
+            this.RestartLddText = new LDDModder.BrickEditor.Localization.LocalizableString();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -234,6 +237,7 @@
             this.StartLddMenuItem});
             this.ToolsMenuItem.Name = "ToolsMenuItem";
             resources.ApplyResources(this.ToolsMenuItem, "ToolsMenuItem");
+            this.ToolsMenuItem.DropDownOpening += new System.EventHandler(this.ToolsMenuItem_DropDownOpening);
             // 
             // ExportBrickMenuItem
             // 
@@ -250,11 +254,26 @@
             // 
             this.StartLddMenuItem.Name = "StartLddMenuItem";
             resources.ApplyResources(this.StartLddMenuItem, "StartLddMenuItem");
+            this.StartLddMenuItem.Click += new System.EventHandler(this.StartLddMenuItem_Click);
             // 
             // AutoSaveTimer
             // 
             this.AutoSaveTimer.Interval = 15000;
             this.AutoSaveTimer.Tick += new System.EventHandler(this.AutoSaveTimer_Tick);
+            // 
+            // localizableStringList1
+            // 
+            this.localizableStringList1.Items.AddRange(new LDDModder.BrickEditor.Localization.LocalizableString[] {
+            this.StartLddText,
+            this.RestartLddText});
+            // 
+            // StartLddText
+            // 
+            resources.ApplyResources(this.StartLddText, "StartLddText");
+            // 
+            // RestartLddText
+            // 
+            resources.ApplyResources(this.RestartLddText, "RestartLddText");
             // 
             // BrickEditorWindow
             // 
@@ -304,5 +323,8 @@
         private System.Windows.Forms.ToolStripMenuItem EditMenu_Redo;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
         private System.Windows.Forms.Timer AutoSaveTimer;
+        private Localization.LocalizableStringList localizableStringList1;
+        private Localization.LocalizableString StartLddText;
+        private Localization.LocalizableString RestartLddText;
     }
 }

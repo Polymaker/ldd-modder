@@ -52,7 +52,7 @@ namespace LDDModder.PaletteMaker.DB
                 {
                     NotifyProgressStatus("Extracting primitives and assemblies from 'db.lif'");
 
-                    string dbLifPath = Environment.GetDatabaseLifPath();
+                    string dbLifPath = Environment.GetLifFilePath(LddLif.DB);
                     if (!File.Exists(dbLifPath))
                         return;
 
@@ -386,7 +386,7 @@ namespace LDDModder.PaletteMaker.DB
             if (Directory.Exists(Path.Combine(appDataPalettes, "LDD")))
                 return PaletteFile.FromDirectory(Path.Combine(appDataPalettes, "LDD"));
 
-            string dbLifPath = environment.GetDatabaseLifPath();
+            string dbLifPath = environment.GetLifFilePath(LddLif.DB);
 
             if (File.Exists(dbLifPath))
             {

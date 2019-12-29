@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using System.Windows.Forms;
 using System.Linq;
+using System.Diagnostics;
 
 namespace LDDModder.BrickEditor.UI.Windows
 {
@@ -164,6 +165,11 @@ namespace LDDModder.BrickEditor.UI.Windows
             EditMenu_Redo.Enabled = ProjectManager.CanRedo;
         }
 
+        private void Edit_ImportMeshMenu_Click(object sender, EventArgs e)
+        {
+            ImportMeshFile();
+        }
+
         private bool GenerateFileAfterValidation;
 
         private void ProjectManager_ValidationFinished(object sender, EventArgs e)
@@ -220,25 +226,83 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         #endregion
 
-        private void Edit_ImportMeshMenu_Click(object sender, EventArgs e)
+
+        private void StartLddMenuItem_Click(object sender, EventArgs e)
         {
-            ImportMeshFile();
+            if (LDD.LDDEnvironment.Current != null)
+            {
+                try
+                {
+                    var currentProc = GetRunningLDDProcess();
+                    if (currentProc != null)
+                    {
+                        currentProc.Kill();
+                        currentProc.WaitForExit(5000);
+                    }
+                }
+                catch { }
+                
+
+                var exePath = LDD.LDDEnvironment.Current.GetExecutablePath();
+                if (File.Exists(exePath))
+                    Process.Start(exePath);
+            }
         }
+
+        private Process GetRunningLDDProcess()
+        {
+            var lddProcs = Process.GetProcessesByName("LDD", Environment.MachineName);
+            return lddProcs.Length > 0 ? lddProcs[0] : null;
+        }
+
+        private void ToolsMenuItem_DropDownOpening(object sender, EventArgs e)
+        {
+            if (LDD.LDDEnvironment.Current != null)
+            {
+                var lddProc = GetRunningLDDProcess();
+                if (lddProc != null)
+                    StartLddMenuItem.Text = RestartLddText;
+                else
+                    StartLddMenuItem.Text = StartLddText;
+            }
+            else
+                StartLddMenuItem.Enabled = false;
+        }
+
+        
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
-            if (keyData.HasFlag(Keys.Z) && keyData.HasFlag(Keys.Control))
+            if (!IsEditControlFocused())
             {
-                ProjectManager.Undo();
-                return true;
-            }
-            else if (keyData.HasFlag(Keys.Y) && keyData.HasFlag(Keys.Control))
-            {
-                ProjectManager.Redo();
-                return true;
+                if (keyData.HasFlag(Keys.Z) && keyData.HasFlag(Keys.Control))
+                {
+                    ProjectManager.Undo();
+                    return true;
+                }
+                else if (keyData.HasFlag(Keys.Y) && keyData.HasFlag(Keys.Control))
+                {
+                    ProjectManager.Redo();
+                    return true;
+                }
             }
 
             return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+        public bool IsEditControlFocused()
+        {
+            var focusedControl = GetFocusedControl(ActiveControl);
+            if (focusedControl is TextBox)
+                return true;
+            return false;
+        }
+
+        public static Control GetFocusedControl(Control parent)
+        {
+            if (parent is ContainerControl container && container.ActiveControl != null)
+                return GetFocusedControl(container.ActiveControl);
+            return parent;
         }
     }
 }

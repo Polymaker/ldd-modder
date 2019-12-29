@@ -173,6 +173,8 @@ namespace LDDModder.BrickEditor.UI.Panels
             medianOriginsToolStripMenuItem.Tag = PivotPointMode.MedianOrigin.ToString();
             activeElementToolStripMenuItem.Tag = PivotPointMode.ActiveElement.ToString();
 
+            DisplayMenuDropDown.DropDown.Closing += DisplayDropDown_Closing;
+
             SelectCurrentGizmoOptions();
         }
 
@@ -1107,7 +1109,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         public void ResetCameraAlignment(CameraAlignment alignment)
         {
-            var visibleModels = GetVisibleModels().OfType<SurfaceModelMesh>();
+            var visibleModels = GetAllElementModels().OfType<SurfaceModelMesh>();
             var bounding = CalculateBoundingBox(visibleModels);
 
             Vector3 cameraDirection = Vector3.Zero;
@@ -1306,9 +1308,10 @@ namespace LDDModder.BrickEditor.UI.Panels
                 ProjectManager.ShowPartModels = DisplayMenu_Meshes.Checked;
         }
 
-        private void xRayToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
+        private void DisplayDropDown_Closing(object sender, ToolStripDropDownClosingEventArgs e)
         {
-            //ModelRenderingOptions.DrawTransparent = xRayToolStripMenuItem.Checked;
+            if (e.CloseReason == ToolStripDropDownCloseReason.ItemClicked)
+                e.Cancel = true;
         }
 
         #region Tranform Gizmo Settings

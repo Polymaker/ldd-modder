@@ -138,10 +138,7 @@ namespace LDDModder.BrickEditor.Models.Navigation
                         else
                             rangeText = string.Format(ModelLocalizations.NodeRangeFormat1, currIdx + 1, currIdx + takeCount);
 
-                        var rangeNode = new ElementGroupNode(rangeText)
-                        {
-                            nodesDirty = false
-                        };
+                        var rangeNode = new ElementGroupNode(rangeText);
 
                         if (groupOnSameLevel)
                             rangeNode.Text = groupTitle + " " + rangeNode.Text;

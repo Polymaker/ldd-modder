@@ -13,6 +13,10 @@ namespace LDDModder.BrickEditor.Rendering
     {
         public PartElement Element { get; set; }
 
+        public ModelElementExtension ModelExtension { get; private set; }
+
+        public bool IsHidden => ModelExtension?.IsHidden ?? false;
+
         public bool IsSelected { get; set; }
 
         protected bool IsApplyingTransform { get; set; }
@@ -22,12 +26,12 @@ namespace LDDModder.BrickEditor.Rendering
             Element = element;
             Element.PropertyChanged += Element_PropertyChanged;
 
-            var extender = element.GetExtension<ModelElementExtension>();
+            ModelExtension = element.GetExtension<ModelElementExtension>();
 
-            if (extender != null)
+            if (ModelExtension != null)
             {
-                Visible = extender.IsVisible;
-                extender.VisibilityChanged += Extender_VisibilityChanged;
+                Visible = ModelExtension.IsVisible;
+                ModelExtension.VisibilityChanged += Extender_VisibilityChanged;
             }
         }
 

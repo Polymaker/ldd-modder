@@ -10,14 +10,14 @@ namespace LDDModder.LDD
     public class LDDEnvironment
     {
         public const string EXE_NAME = "LDD.exe";
+        public const string ASSETS_LIF = "Assets.lif";
+        public const string DB_LIF = "db.lif";
         public const string APP_DIR = "LEGO Company\\LEGO Digital Designer";
+        public const string USER_CREATION_FOLDER = "LEGO Creations";
 
-        public string ProgramFilesPath { get; set; }
-        public string ApplicationDataPath { get; set; }
-
-        public string AssetsPath { get; set; }
-
-        public string DatabasePath { get; set; }
+        public string ProgramFilesPath { get; private set; }
+        public string ApplicationDataPath { get; private set; }
+        public string UserCreationPath { get; private set; }
 
         public bool AssetsExtracted { get; private set; }
 
@@ -28,12 +28,24 @@ namespace LDDModder.LDD
 
         public static bool HasInitialized { get; private set; }
 
+        protected LDDEnvironment()
+        {
+        }
+
+        public LDDEnvironment(string programFilesPath, string applicationDataPath)
+        {
+            ProgramFilesPath = programFilesPath;
+            ApplicationDataPath = applicationDataPath;
+            CheckLifStatus();
+        }
+
         public static void Initialize()
         {
             var lddEnv = new LDDEnvironment()
             {
                 ProgramFilesPath = FindInstallFolder(),
-                ApplicationDataPath = FindAppDataFolder()
+                ApplicationDataPath = FindAppDataFolder(),
+                UserCreationPath = FindUserFolder()
             };
             lddEnv.CheckLifStatus();
             Current = lddEnv;
@@ -65,6 +77,15 @@ namespace LDDModder.LDD
             return string.Empty;
         }
 
+        public static string FindUserFolder()
+        {
+            string userDocuments = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            userDocuments = Path.Combine(userDocuments, USER_CREATION_FOLDER);
+            if (Directory.Exists(userDocuments))
+                return userDocuments;
+            return string.Empty;
+        }
+
         public void CheckLifStatus()
         {
             DatabaseExtracted = false;
@@ -77,19 +98,83 @@ namespace LDDModder.LDD
 
         }
 
-        public string GetAppDataSubDir(string path)
+        public bool IsLifExtracted(LddLif lif)
         {
-            return Path.Combine(ApplicationDataPath, path);
+            switch (lif)
+            {
+                case LddLif.Assets:
+                    return AssetsExtracted;
+                case LddLif.DB:
+                    return DatabaseExtracted;
+                default:
+                    return false;
+            }
         }
 
-        public DirectoryInfo GetAppDataSubDirInfo(string path)
+        public string GetExecutablePath()
         {
-            return new DirectoryInfo(GetAppDataSubDir(path));
+            return Path.Combine(ProgramFilesPath, EXE_NAME);
         }
 
-        public string GetDatabaseLifPath()
+        public string GetLifFilePath(LddLif lif)
         {
-            return Path.Combine(ApplicationDataPath, "db.lif");
+            switch (lif)
+            {
+                case LddLif.Assets:
+                    return Path.Combine(ProgramFilesPath, ASSETS_LIF);
+                case LddLif.DB:
+                    return Path.Combine(ApplicationDataPath, DB_LIF);
+                default:
+                    return null;
+            }
+        }
+
+        public string GetLifFolderPath(LddLif lif)
+        {
+            switch (lif)
+            {
+                case LddLif.Assets:
+                    return Path.Combine(ProgramFilesPath, "Assets");
+                case LddLif.DB:
+                    return Path.Combine(ApplicationDataPath, "db");
+                default:
+                    return null;
+            }
+        }
+
+        public string GetLddDirectoryPath(LddDirectory directory)
+        {
+            switch (directory)
+            {
+                case LddDirectory.ProgramFiles:
+                    return ProgramFilesPath;
+                case LddDirectory.ApplicationData:
+                    return ApplicationDataPath;
+                case LddDirectory.UserDocuments:
+                    return UserCreationPath;
+                default:
+                    return null;
+            }
+        }
+   
+        public string GetLddSubdirectory(LddDirectory directory, string subfolder)
+        {
+            return Path.Combine(GetLddDirectoryPath(directory), subfolder);
+        }
+
+        public DirectoryInfo GetLddSubdirectoryInfo(LddDirectory directory, string subfolder)
+        {
+            return new DirectoryInfo(GetLddSubdirectory(directory, subfolder));
+        }
+
+        public string GetAppDataSubDir(string subfolder)
+        {
+            return GetLddSubdirectory(LddDirectory.ApplicationData, subfolder);
+        }
+
+        public DirectoryInfo GetAppDataSubDirInfo(string subfolder)
+        {
+            return GetLddSubdirectoryInfo(LddDirectory.ApplicationData, subfolder);
         }
     }
 }

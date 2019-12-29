@@ -374,6 +374,14 @@ namespace LDDModder.Modding.Editing
                     Collisions.Add(PartCollision.FromXml(connElem));
             }
 
+            if (rootElem.HasElement(nameof(Bones), out XElement bonesElem))
+            {
+                foreach (var boneElem in bonesElem.Elements(PartBone.NODE_NAME))
+                    Bones.Add(PartBone.FromXml(boneElem));
+            }
+
+            Properties.Flexible = Bones.Any() || Properties.Flexible;
+
             if (rootElem.HasElement(nameof(Meshes), out XElement meshesElem))
             {
                 foreach (var meshElem in meshesElem.Elements(ModelMesh.NODE_NAME))
@@ -859,7 +867,7 @@ namespace LDDModder.Modding.Editing
                 var vertices = new List<Vertex>();
                 foreach(var meshRef in meshRefs)
                 {
-                    var meshGeom = meshRef.GetGeometry();
+                    var meshGeom = meshRef.GetGeometry(true);
                     if (meshGeom != null)
                         vertices.AddRange(meshGeom.Vertices);
                 }

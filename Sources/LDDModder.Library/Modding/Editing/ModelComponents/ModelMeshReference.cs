@@ -97,7 +97,7 @@ namespace LDDModder.Modding.Editing
             return _ModelMesh;
         }
 
-        public MeshGeometry GetGeometry()
+        public MeshGeometry GetGeometry(bool applyTransform = false)
         {
             var modelMesh = GetModelMesh();
             MeshGeometry modelGeometry = null;
@@ -116,7 +116,7 @@ namespace LDDModder.Modding.Editing
                     else
                         modelGeometry = modelMesh.Geometry;
 
-                    if (!Transform.IsEmpty)
+                    if (!Transform.IsEmpty && applyTransform)
                     {
                         modelGeometry.TransformVertices(Transform.ToMatrix());
                     }

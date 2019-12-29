@@ -191,9 +191,10 @@ namespace LDDModder.BrickEditor.Rendering
 
         private void RenderCustom2DField(Custom2DFieldConnector connector)
         {
+            var color = IsSelected ? new Vector4(1f) : new Vector4(0, 0, 0, 1);
             RenderHelper.DrawRectangle(Transform, 
-                new Vector2(connector.StudWidth * 0.8f, connector.StudHeight * 0.8f), 
-                new Vector4(0, 0, 0, 1), 3f);
+                new Vector2(connector.StudWidth * 0.8f, connector.StudHeight * 0.8f),
+                color, 3f);
         }
 
         private void RenderTechnicAxle(AxelConnector axel)
@@ -218,8 +219,14 @@ namespace LDDModder.BrickEditor.Rendering
 
         public override bool RayIntersects(Ray ray, out float distance)
         {
+            distance = float.NaN;
+
             if (RenderingModel != null)
-                return RayIntersectsBoundingBox(ray, out distance);
+            {
+                var modelRay = Ray.Transform(ray, Transform.Inverted());
+                return RenderingModel.RayIntersects(modelRay, ModelTransform, out distance);
+                //return RayIntersectsBoundingBox(ray, out distance);
+            }
 
             var localRay = Ray.Transform(ray, Transform.Inverted());
 
@@ -237,9 +244,23 @@ namespace LDDModder.BrickEditor.Rendering
                     return true;
                 }
             }
-            
-            var bsphere = new BSphere(Vector3.Zero, 0.5f);
-            return Ray.IntersectsSphere(localRay, bsphere, out distance);
+
+            for (int i = 0; i < 3; i++)
+            {
+                var axe = new Vector3(0.08f);
+                axe[i] = 0.5f;
+                var center = Vector3.Zero;
+                center[i] = axe[i] / 2f;
+                var axeBox = BBox.FromCenterSize(center, axe);
+                if (Ray.IntersectsBox(localRay, axeBox, out float hitDist))
+                    distance = float.IsNaN(distance) ? hitDist : Math.Min(hitDist, distance);
+            }
+
+            return !float.IsNaN(distance);
+
+            //var bsphere = new BSphere(Vector3.Zero, 0.5f);
+            //return Ray.IntersectsSphere(localRay, bsphere, out distance);
+
         }
     }
 }

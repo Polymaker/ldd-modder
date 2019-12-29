@@ -6,12 +6,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OpenTK.Graphics.OpenGL;
+using OpenTK;
 
 namespace LDDModder.BrickEditor.Rendering
 {
     public interface IVertexBuffer
     {
         Buffer<int> IndexBuffer { get; }
+
+        Vector3 GetVertex(int index);
 
         void Bind();
 

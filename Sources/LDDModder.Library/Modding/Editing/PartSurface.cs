@@ -142,7 +142,7 @@ namespace LDDModder.Modding.Editing
             int fromVertex = builder.VertexCount;
 
             foreach (var meshRef in models)
-                builder.CombineGeometry(meshRef.GetGeometry());
+                builder.CombineGeometry(meshRef.GetGeometry(true));
 
             int indexCount = builder.IndexCount - fromIndex;
             int vertexCount = builder.VertexCount - fromVertex;

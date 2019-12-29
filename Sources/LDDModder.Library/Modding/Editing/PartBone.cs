@@ -122,6 +122,13 @@ namespace LDDModder.Modding.Editing
             return elem;
         }
 
+        public static PartBone FromXml(XElement element)
+        {
+            var bone = new PartBone();
+            bone.LoadFromXml(element);
+            return bone;
+        }
+
         protected internal override void LoadFromXml(XElement element)
         {
             base.LoadFromXml(element);

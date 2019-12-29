@@ -15,6 +15,8 @@ namespace LDDModder.LDD.Files
 {
     public class LifFile : IDisposable
     {
+        public const string EXTENSION = ".lif";
+
         private Stream BaseStream;
 
         public FolderEntry RootFolder { get; private set; }

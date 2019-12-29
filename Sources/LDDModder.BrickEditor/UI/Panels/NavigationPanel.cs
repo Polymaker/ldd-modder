@@ -319,6 +319,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             if (e.ListViewItem.RowObject is ProjectElementNode elementNode)
             {
+
                 string newName = e.NewValue as string;
                 if (string.IsNullOrEmpty(newName))
                 {
@@ -326,8 +327,11 @@ namespace LDDModder.BrickEditor.UI.Panels
                     return;
                 }
 
-                newName = CurrentProject.RenameElement(elementNode.Element, newName);
-                e.NewValue = newName;
+                if (!e.Cancel)
+                {
+                    newName = CurrentProject.RenameElement(elementNode.Element, newName);
+                    e.NewValue = newName;
+                }
             }
         }
 

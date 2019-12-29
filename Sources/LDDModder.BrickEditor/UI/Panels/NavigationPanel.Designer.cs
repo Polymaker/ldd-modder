@@ -110,6 +110,8 @@
             // olvColumnElement
             // 
             this.olvColumnElement.AspectName = "Text";
+            this.olvColumnElement.AutoCompleteEditor = false;
+            this.olvColumnElement.AutoCompleteEditorMode = System.Windows.Forms.AutoCompleteMode.None;
             this.olvColumnElement.CellEditUseWholeCell = true;
             this.olvColumnElement.FillsFreeSpace = true;
             this.olvColumnElement.ImageAspectName = "ImageKey";

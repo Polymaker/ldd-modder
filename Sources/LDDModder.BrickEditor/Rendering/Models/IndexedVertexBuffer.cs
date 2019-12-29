@@ -148,6 +148,18 @@ namespace LDDModder.BrickEditor.Rendering
                 SetIndices(indices);
         }
 
+        public Vector3 GetVertex(int index)
+        {
+            var vert = VertexBuffer.Content[index];
+            if (vert is VertVN vn)
+                return vn.Position;
+            else if (vert is VertVNT vnt)
+                return vnt.Position;
+            else if (vert is VertVT vt)
+                return vt.Position;
+            return Vector3.Zero;
+        }
+
         #region Draw Methods
 
         public void DrawElementsBaseVertex(PrimitiveType mode, int baseVertex, int count, int offset = 0)

@@ -186,6 +186,9 @@ namespace LDDModder.Modding.Editing
             Description = element.ReadElement(nameof(Description), string.Empty);
             PartVersion = element.ReadElement(nameof(PartVersion), 1);
 
+            Decorated = element.ReadElement(nameof(Decorated), false);
+            Flexible = element.ReadElement(nameof(Flexible), false);
+
             if (element.HasElement(nameof(PhysicsAttributes), out XElement pA))
             {
                 PhysicsAttributes = new PhysicsAttributes();

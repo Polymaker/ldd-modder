@@ -29,7 +29,6 @@ namespace LDDModder.BrickEditor.Rendering
 
         #endregion
 
-
         public static void InitializeResources()
         {
             ColorShader = ProgramFactory.Create<ColorShaderProgram>();

@@ -56,10 +56,11 @@ namespace LDDModder.BrickEditor.Rendering
 
             var bounding = BBox.FromVertices(vertices.Select(x => x.Position));
 
-            return new PartialModel(GeneralMeshBuffer, curIdx, curVert, idxCount, primitiveType)
-            {
-                BoundingBox = bounding
-            };
+            var model = new PartialModel(GeneralMeshBuffer, curIdx, curVert, idxCount, primitiveType);
+
+            model.LoadVertices();
+            model.CalculateBoundingBox();
+            return model;
         }
 
         public static void ReleaseResources()
