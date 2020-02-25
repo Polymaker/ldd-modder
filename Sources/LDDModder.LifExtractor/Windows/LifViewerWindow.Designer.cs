@@ -32,6 +32,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LifViewerWindow));
             this.StatusToolStrip = new System.Windows.Forms.StatusStrip();
             this.CurrentFileStripLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
             this.MainMenuToolStrip = new System.Windows.Forms.MenuStrip();
             this.MainMenu_FileMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.FileMenu_OpenItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -90,7 +91,8 @@
             // 
             this.StatusToolStrip.Dock = System.Windows.Forms.DockStyle.None;
             this.StatusToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.CurrentFileStripLabel});
+            this.CurrentFileStripLabel,
+            this.toolStripProgressBar1});
             this.StatusToolStrip.Location = new System.Drawing.Point(0, 0);
             this.StatusToolStrip.Name = "StatusToolStrip";
             this.StatusToolStrip.Size = new System.Drawing.Size(784, 22);
@@ -100,8 +102,18 @@
             // CurrentFileStripLabel
             // 
             this.CurrentFileStripLabel.Name = "CurrentFileStripLabel";
-            this.CurrentFileStripLabel.Size = new System.Drawing.Size(168, 17);
+            this.CurrentFileStripLabel.Size = new System.Drawing.Size(636, 17);
+            this.CurrentFileStripLabel.Spring = true;
             this.CurrentFileStripLabel.Text = "...\\LEGO Digital Designer\\db.lif";
+            this.CurrentFileStripLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // toolStripProgressBar1
+            // 
+            this.toolStripProgressBar1.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripProgressBar1.Name = "toolStripProgressBar1";
+            this.toolStripProgressBar1.Size = new System.Drawing.Size(100, 16);
+            this.toolStripProgressBar1.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
+            this.toolStripProgressBar1.Visible = false;
             // 
             // MainMenuToolStrip
             // 
@@ -472,7 +484,7 @@
             this.ActionsMenu_Extract.Image = global::LDDModder.LifExtractor.Properties.Resources.Folder_32x32;
             this.ActionsMenu_Extract.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.ActionsMenu_Extract.Name = "ActionsMenu_Extract";
-            this.ActionsMenu_Extract.Size = new System.Drawing.Size(46, 51);
+            this.ActionsMenu_Extract.Size = new System.Drawing.Size(47, 51);
             this.ActionsMenu_Extract.Text = "Extract";
             this.ActionsMenu_Extract.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.ActionsMenu_Extract.Click += new System.EventHandler(this.ActionsMenu_Extract_Click);
@@ -512,6 +524,7 @@
             this.Controls.Add(this.toolStripContainer1);
             this.Name = "LifViewerWindow";
             this.Text = "Lif Viewer";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.LifViewerWindow_FormClosing);
             this.StatusToolStrip.ResumeLayout(false);
             this.StatusToolStrip.PerformLayout();
             this.MainMenuToolStrip.ResumeLayout(false);
@@ -579,5 +592,6 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripButton ActionsMenu_AddFile;
         private System.Windows.Forms.ToolStripButton ActionsMenu_EnableEdit;
+        private System.Windows.Forms.ToolStripProgressBar toolStripProgressBar1;
     }
 }

@@ -65,8 +65,6 @@ namespace LDDModder.BrickEditor
                 matrix.D1, matrix.D2, matrix.D3, matrix.D4);
         }
 
-        
-
         public static OpenTK.Matrix4 ToGL(this Assimp.Matrix4x4 matrix)
         {
             var m = matrix;

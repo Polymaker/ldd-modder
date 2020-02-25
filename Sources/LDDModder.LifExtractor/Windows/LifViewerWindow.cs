@@ -34,6 +34,8 @@ namespace LDDModder.LifExtractor.Windows
 
         public int MAX_HISTORY = 25;
 
+        private bool IsOpeningFile;
+
         public LifViewerWindow()
         {
             InitializeComponent();
@@ -127,7 +129,7 @@ namespace LDDModder.LifExtractor.Windows
             AdjustFolderComboWidth();
         }
 
-        private void OpenLifFile(LifFile file)
+        private void LoadLifFile(LifFile file)
         {
             LifTreeView.Nodes.Clear();
             FolderListView.DataSource = null;
@@ -137,14 +139,17 @@ namespace LDDModder.LifExtractor.Windows
             CurrentFile = file;
             CurrentFolder = null;
             
-            ActionsMenu_Extract.Enabled = ActionsMenu_EnableEdit.Enabled = 
-                FileMenu_ExtractItem.Enabled = !string.IsNullOrEmpty(file.FilePath);
+            ActionsMenu_Extract.Enabled = 
+                ActionsMenu_EnableEdit.Enabled = 
+                FileMenu_ExtractItem.Enabled = !string.IsNullOrEmpty(file?.FilePath);
 
             CurrentFileStripLabel.Text = file?.FilePath;
 
-            FillTreeView();
-
-            NavigateToFolder(file.RootFolder);
+            if (file != null)
+            {
+                FillTreeView();
+                NavigateToFolder(file.RootFolder);
+            }
         }
 
         #region TreeView Handling
@@ -240,12 +245,33 @@ namespace LDDModder.LifExtractor.Windows
         {
             FolderListView.DataSource = null;
             CurrentFolderItems.Clear();
-            
+            Application.DoEvents();
+
             if (CurrentFolder != null)
             {
+                toolStripProgressBar1.Visible = true;
+                
+                //int totalAdded = 0;
+                //const int MAX_ITEMS = 500;
+                //if (CurrentFolder.Entries.Count > MAX_ITEMS)
+                //{
+                //    CurrentFolderItems.RaiseListChangedEvents = false;
+                //    FolderListView.DataSource = CurrentFolderItems;
+                //}
+
                 foreach (var entry in CurrentFolder.Entries
                     .OrderBy(x => x is LifFile.FileEntry))
                 {
+                    //bool triggerUpdate = false;
+                    //totalAdded++;
+
+                    //if ((totalAdded % MAX_ITEMS) == 0 || 
+                    //    totalAdded == CurrentFolder.Entries.Count)
+                    //{
+                    //    CurrentFolderItems.RaiseListChangedEvents = true;
+                    //    triggerUpdate = true;
+                    //}
+
                     if (entry is LifFile.FileEntry file)
                     {
                         var fileInfo = new LifFileInfo(file)
@@ -259,10 +285,20 @@ namespace LDDModder.LifExtractor.Windows
                     {
                         CurrentFolderItems.Add(new LifFolderInfo(folder));
                     }
+
+                    //if (triggerUpdate)
+                    //{
+                    //    CurrentFolderItems.RaiseListChangedEvents = false;
+                    //    Application.DoEvents();
+                    //}
                 }
 
-                FolderListView.DataSource = CurrentFolderItems;
+                //CurrentFolderItems.RaiseListChangedEvents = true;
+                //if (CurrentFolder.Entries.Count <= MAX_ITEMS)
+                    FolderListView.DataSource = CurrentFolderItems;
+
                 FolderListView.SelectedIndex = -1;
+                toolStripProgressBar1.Visible = false;
             }
         }
 
@@ -522,6 +558,7 @@ namespace LDDModder.LifExtractor.Windows
             using (var ofd = new OpenFileDialog())
             {
                 ofd.Filter = "LDD Lif files (*.lif)|*.lif|All files|*.*";
+
                 if (ofd.ShowDialog() == DialogResult.OK)
                 {
                     if (Path.GetExtension(ofd.FileName).ToUpper() != ".LIF")
@@ -530,17 +567,51 @@ namespace LDDModder.LifExtractor.Windows
                         return;
                     }
 
-                    try
-                    {
-                        var file = LifFile.Open(ofd.FileName);
-                        OpenLifFile(file);
-                    }
-                    catch
-                    {
-
-                    }
+                    OpenLifFileAsync(ofd.FileName);
                 }
             }
+        }
+
+        private void OpenLifFileAsync(string filepath)
+        {
+            BeginOpenFile();
+
+            Task.Factory.StartNew(() =>
+            {
+                LifFile openedFile = null;
+                Exception error = null;
+
+                try
+                {
+                    openedFile = LifFile.Open(filepath);
+                }
+                catch (Exception ex) { error = ex; }
+
+                BeginInvoke((Action)(() => FinishOpenFile(openedFile, error)));
+            });
+        }
+
+        private void BeginOpenFile()
+        {
+            toolStripProgressBar1.Visible = true;
+            toolStripProgressBar1.Style = ProgressBarStyle.Marquee;
+            IsOpeningFile = true;
+            toolStripContainer1.Enabled = false;
+        }
+
+
+        private void FinishOpenFile(LifFile result, Exception error)
+        {
+            
+            IsOpeningFile = false;
+            toolStripContainer1.Enabled = true;
+
+            if (result != null)
+                LoadLifFile(result);
+            else
+                MessageBox.Show("An error occured:\r\n" + error, "Error");
+
+            toolStripProgressBar1.Visible = false;
         }
 
         private void FileMenu_ExtractItem_Click(object sender, EventArgs e)
@@ -559,7 +630,6 @@ namespace LDDModder.LifExtractor.Windows
         }
 
         #endregion
-
 
         private void ActionsMenu_Extract_Click(object sender, EventArgs e)
         {
@@ -774,8 +844,13 @@ namespace LDDModder.LifExtractor.Windows
         }
 
 
+
         #endregion
 
-
+        private void LifViewerWindow_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (IsOpeningFile)
+                e.Cancel = true;
+        }
     }
 }
