@@ -97,7 +97,14 @@ namespace LDDModder.Modding.Editing
             }
 
             if (!Studs.Any())
-                AddMessage("MODEL_STUDS_NOT_DEFINED", ValidationLevel.Warning);
+            {
+                if (ReplacementMeshes.Any())
+                    AddMessage("MODEL_STUDS_NOT_DEFINED_ALT", ValidationLevel.Warning);
+                else
+                    AddMessage("MODEL_STUDS_NOT_DEFINED", ValidationLevel.Warning);
+            }
+            else
+                messages.AddRange(Studs.SelectMany(x => x.ValidateElement()));
 
             return messages;
         }

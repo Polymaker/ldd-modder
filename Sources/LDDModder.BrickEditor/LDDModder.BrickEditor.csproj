@@ -193,6 +193,12 @@
     <Compile Include="UI\Windows\ErrorMessageBox.Designer.cs">
       <DependentUpon>ErrorMessageBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\Windows\SelectOutputLocationWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Windows\SelectOutputLocationWindow.Designer.cs">
+      <DependentUpon>SelectOutputLocationWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="Utilities\LocalizableString.cs" />
     <Compile Include="Utilities\LocalizableStringList.cs">
       <SubType>Component</SubType>
@@ -428,6 +434,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Windows\SelectBrickDialog.resx">
       <DependentUpon>SelectBrickDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Windows\SelectOutputLocationWindow.resx">
+      <DependentUpon>SelectOutputLocationWindow.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="OpenTK.dll.config" />
     <None Include="packages.config" />

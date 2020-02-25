@@ -112,9 +112,10 @@ namespace LDDModder.Modding.Editing
                 });
             }
 
-            if (Connector == null)
-                AddMessage("STUD_CONNECTION_NOT_DEFINED", ValidationLevel.Error);
-            else if (FieldNode == null)
+            //if (Connector == null)
+            //    AddMessage("STUD_CONNECTION_NOT_DEFINED", ValidationLevel.Error);
+            //else 
+            if (Connector != null && FieldNode == null)
             {
                 if (FieldIndex < 0)
                     AddMessage("STUD_CONNECTION_FIELD_NOT_DEFINED", ValidationLevel.Error);

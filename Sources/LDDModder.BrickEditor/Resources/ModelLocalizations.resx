@@ -301,4 +301,19 @@
   <data name="PART_NO_GEOMETRYBOUNDING" xml:space="preserve">
     <value>The geometry bounding box is not defined.</value>
   </data>
+  <data name="MODEL_STUDS_NOT_DEFINED" xml:space="preserve">
+    <value>The model does not reference any stud.</value>
+  </data>
+  <data name="STUD_CONNECTION_NOT_DEFINED" xml:space="preserve">
+    <value>The connection is not set or invalid.</value>
+  </data>
+  <data name="STUD_CONNECTION_FIELD_NOT_DEFINED" xml:space="preserve">
+    <value>The referenced stud is not defined.</value>
+  </data>
+  <data name="STUD_CONNECTION_FIELD_INVALID" xml:space="preserve">
+    <value>The referenced stud is invalid.</value>
+  </data>
+  <data name="MODEL_STUDS_NOT_DEFINED_ALT" xml:space="preserve">
+    <value>The model does not reference any stud. Therefore the alternate model will never be displayed.</value>
+  </data>
 </root>

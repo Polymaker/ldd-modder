@@ -156,6 +156,29 @@ namespace LDDModder.LDD.Parts
 
         #endregion
 
+        #region Saving
 
+        public void SaveToLdd(LDDEnvironment environment)
+        {
+            var primitivesDir = environment.GetAppDataSubDir("db\\Primitives\\");
+            //var meshesDir = environment.GetAppDataSubDir("db\\Primitives\\LOD0\\");
+
+            Primitive.Save(Path.Combine(primitivesDir, $"{PartID}.xml"));
+
+            foreach (var surface in Surfaces)
+                surface.Mesh.Save(Path.Combine(primitivesDir, "LOD0", surface.GetFileName()));
+        }
+
+        public void SaveToDirectory(string targetPath)
+        {
+            Directory.CreateDirectory(targetPath);
+
+            Primitive.Save(Path.Combine(targetPath, $"{PartID}.xml"));
+
+            foreach (var surface in Surfaces)
+                surface.Mesh.Save(Path.Combine(targetPath, surface.GetFileName()));
+        }
+
+        #endregion
     }
 }

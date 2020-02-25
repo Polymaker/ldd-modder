@@ -3,6 +3,7 @@ using System.Linq;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using LDDModder.LDD.Meshes;
+using LDDModder.LDD.Primitives.Connectors;
 
 namespace LDDModder.Modding.Editing
 {
@@ -29,6 +30,11 @@ namespace LDDModder.Modding.Editing
             if (Project != null)
                 return Project.Connections.FirstOrDefault(x => x.ID == ConnectionID);
             return null;
+        }
+
+        public Custom2DFieldConnector GetCustom2DField()
+        {
+            return GetLinkedConnection()?.GetConnector<Custom2DFieldConnector>();
         }
 
         public virtual IEnumerable<StudReference> GetStudReferences()
@@ -79,13 +85,16 @@ namespace LDDModder.Modding.Editing
         {
             var messages = base.ValidateElement();
 
-            //void AddMessage(string code, ValidationLevel level, params object[] args)
-            //{
-            //    messages.Add(new ValidationMessage("COMPONENT", code, level, args));
-            //}
+            void AddMessage(string code, ValidationLevel level, params object[] args)
+            {
+                messages.Add(new ValidationMessage(this, code, level)
+                {
+                    MessageArguments = args
+                });
+            }
 
-            //if (!GetStudReferences().Any())
-            //    AddMessage("COMPONENT_NO_STUDS", ValidationLevel.Error, Name);
+            if (GetStudReferences().Any() && GetCustom2DField() == null)
+                AddMessage("STUD_CONNECTION_NOT_DEFINED", ValidationLevel.Error);
 
             return messages;
         }

@@ -321,4 +321,19 @@
   <data name="PART_NO_GEOMETRYBOUNDING" xml:space="preserve">
     <value>Le cadre de délimitation de la géométrie n'est pas défini.</value>
   </data>
+  <data name="MODEL_STUDS_NOT_DEFINED" xml:space="preserve">
+    <value>Le modèle ne fait référence à aucun Stud.</value>
+  </data>
+  <data name="STUD_CONNECTION_NOT_DEFINED" xml:space="preserve">
+    <value>La connexion n'est pas définie ou invalide.</value>
+  </data>
+  <data name="STUD_CONNECTION_FIELD_NOT_DEFINED" xml:space="preserve">
+    <value>Le Stud référencé n'est pas défini.</value>
+  </data>
+  <data name="STUD_CONNECTION_FIELD_INVALID" xml:space="preserve">
+    <value>Le Stud référencé n'est pas valide.</value>
+  </data>
+  <data name="MODEL_STUDS_NOT_DEFINED_ALT" xml:space="preserve">
+    <value>Le modèle ne fait référence à aucun Stud. Par conséquent, le modèle alternatif ne sera jamais affiché.</value>
+  </data>
 </root>

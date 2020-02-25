@@ -223,8 +223,11 @@ namespace LDDModder.BrickEditor.UI.Windows
             {
                 if (ProjectManager.IsModified || ProjectManager.IsNewProject)
                 {
-                    var result = MessageBox.Show(Messages.Message_SaveBeforeClose, "", 
-                        MessageBoxButtons.YesNoCancel);
+                    var messageText = ProjectManager.IsNewProject ? 
+                        Messages.Message_SaveNewProject : 
+                        Messages.Message_SaveChanges;
+
+                    var result = MessageBox.Show(messageText, Messages.Caption_SaveBeforeClose, MessageBoxButtons.YesNoCancel);
 
                     if (result == DialogResult.Yes)
                         SaveProject(CurrentProject);
@@ -270,7 +273,7 @@ namespace LDDModder.BrickEditor.UI.Windows
                         if (project.PartID > 0)
                             sfd.FileName = $"{project.PartID}.lpp";
                         else
-                            sfd.FileName = $"new part.lpp";
+                            sfd.FileName = $"New part.lpp";
                     }
 
                     sfd.Filter = "LDD Part Project|*.lpp|All Files|*.*";

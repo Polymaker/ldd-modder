@@ -116,7 +116,23 @@ Some features will not work properly.</value>
   <data name="Caption_OpeningProject" xml:space="preserve">
     <value>Opening project</value>
   </data>
-  <data name="Message_SaveBeforeClose" xml:space="preserve">
+  <data name="Message_SaveChanges" xml:space="preserve">
     <value>Do you want to save the changes made?</value>
+  </data>
+  <data name="Message_SaveNewProject" xml:space="preserve">
+    <value>Do you want to save the project?</value>
+  </data>
+  <data name="Caption_SaveBeforeClose" xml:space="preserve">
+    <value>Save project</value>
+  </data>
+  <data name="Message_RecoverProject" xml:space="preserve">
+    <value>TODO</value>
+  </data>
+  <data name="Message_FileGenerationError" xml:space="preserve">
+    <value>Could not generate LDD part files.
+Check validation panel for more details.</value>
+  </data>
+  <data name="Caption_LddPartGeneration" xml:space="preserve">
+    <value>LDD part files generation</value>
   </data>
 </root>

@@ -189,5 +189,17 @@ namespace LDDModder.BrickEditor.UI.Panels
         }
 
         #endregion
+
+        private void ValidationMessageList_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (ValidationMessageList.FocusedItem != null)
+            {
+                var message = ValidationMessageList.FocusedObject as ValidationMessage;
+                if (message?.SourceElement != null)
+                {
+                    ProjectManager.SelectElement(message.SourceElement);
+                }
+            }
+        }
     }
 }

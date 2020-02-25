@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using System.Linq;
 using System.Diagnostics;
 using LDDModder.LDD;
+using LDDModder.BrickEditor.Resources;
 
 namespace LDDModder.BrickEditor.UI.Windows
 {
@@ -185,7 +186,7 @@ namespace LDDModder.BrickEditor.UI.Windows
                 GenerateFileAfterValidation = false;
                 if (!ProjectManager.IsPartValid)
                 {
-                    MessageBox.Show("Could not generate LDD Part. See validation panel.");
+                    MessageBox.Show(Messages.Message_FileGenerationError, Messages.Caption_LddPartGeneration);
                 }
                 else
                     ProjectManager.GenerateLddFiles();
@@ -227,7 +228,11 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         private void ProjectManager_GenerationFinished(object sender, EventArgs e)
         {
-            MessageBox.Show("LDD Part files generated.");
+            //TODO: localize and improve messages
+            if (ProjectManager.GenerationSuccessful)
+                MessageBox.Show("LDD Part files generated.");
+            else
+                MessageBox.Show("An error occured.");
         }
 
         #endregion

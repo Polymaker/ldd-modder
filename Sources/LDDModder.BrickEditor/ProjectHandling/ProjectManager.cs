@@ -497,28 +497,43 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
         public bool IsGeneratingFiles { get; private set; }
 
+        //todo: move to GenerationFinished eventargs
+        public bool GenerationSuccessful { get; private set; }
+
         public event EventHandler GenerationStarted;
 
         public event EventHandler GenerationFinished;
 
         //TODO: implement destination folder parameter to allow saving somewhere without overwritting LDD files
-        public void GenerateLddFiles()
+        public void GenerateLddFiles(string targetDirectory = null)
         {
             if (IsProjectOpen)
             {
                 IsGeneratingFiles = true;
+                GenerationSuccessful = false;
                 GenerationStarted?.Invoke(this, EventArgs.Empty);
 
                 try
                 {
                     var lddPart = CurrentProject.GenerateLddPart();
                     lddPart.ComputeEdgeOutlines();
-                    var primitives = LDD.LDDEnvironment.Current.GetAppDataSubDir("db\\Primitives\\");
+                    //var primitivesDir = LDD.LDDEnvironment.Current.GetAppDataSubDir("db\\Primitives\\");
+                    //var meshesDir = LDD.LDDEnvironment.Current.GetAppDataSubDir("db\\Primitives\\LOD0\\");
 
-                    lddPart.Primitive.Save(Path.Combine(primitives, $"{lddPart.PartID}.xml"));
+                    ////check for old decoration meshes
+                    //var meshFiles = Directory.GetFiles(meshesDir, "*.g*");
 
-                    foreach (var surface in lddPart.Surfaces)
-                        surface.Mesh.Save(Path.Combine(primitives, "LOD0", surface.GetFileName()));
+                    //if (meshFiles.Length != CurrentProject.Surfaces.Count - 1)
+                    //{
+
+                    //}
+
+                    if (string.IsNullOrEmpty(targetDirectory))
+                        lddPart.SaveToLdd(LDD.LDDEnvironment.Current);
+                    else
+                        lddPart.SaveToDirectory(targetDirectory);
+
+                    GenerationSuccessful = true;
                 }
                 catch (Exception ex)
                 {
@@ -528,8 +543,6 @@ namespace LDDModder.BrickEditor.ProjectHandling
                 GenerationFinished?.Invoke(this, EventArgs.Empty);
             }
         }
-
-
 
         #endregion
 

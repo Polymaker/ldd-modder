@@ -126,6 +126,7 @@
             this.ValidationMessageList.UseCompatibleStateImageBehavior = false;
             this.ValidationMessageList.UseFiltering = true;
             this.ValidationMessageList.View = System.Windows.Forms.View.Details;
+            this.ValidationMessageList.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.ValidationMessageList_MouseDoubleClick);
             // 
             // ColumnMessageType
             // 
