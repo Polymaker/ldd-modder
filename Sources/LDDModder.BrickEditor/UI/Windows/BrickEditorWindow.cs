@@ -2,6 +2,7 @@
 using LDDModder.BrickEditor.Resources;
 using LDDModder.BrickEditor.Settings;
 using LDDModder.BrickEditor.UI.Panels;
+using LDDModder.LDD;
 using LDDModder.Modding.Editing;
 using LDDModder.Utilities;
 using System;
@@ -42,14 +43,17 @@ namespace LDDModder.BrickEditor.UI.Windows
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            SettingsManager.Initialize();
-            ResourceHelper.LoadPlatformsAndCategories();
 
             ProjectManager = new ProjectManager();
             ProjectManager.ProjectChanged += ProjectManager_ProjectChanged;
             ProjectManager.UndoHistoryChanged += ProjectManager_UndoHistoryChanged;
             ProjectManager.ValidationFinished += ProjectManager_ValidationFinished;
             ProjectManager.GenerationFinished += ProjectManager_GenerationFinished;
+
+
+            InitialCheckUp();
+
+            ResourceHelper.LoadPlatformsAndCategories();
 
             InitializePanels();
             RebuildRecentFilesMenu();
@@ -65,6 +69,16 @@ namespace LDDModder.BrickEditor.UI.Windows
                 Thread.Sleep(200);
                 Invoke(new MethodInvoker(CheckCanRecoverProject));
             });
+        }
+
+        private void InitialCheckUp()
+        {
+            SettingsManager.Initialize();
+
+            if (!LDDEnvironment.IsInstalled)
+            {
+                MessageBox.Show(Messages.LddInstallNotFound, "", MessageBoxButtons.OK);
+            }
         }
 
         #region UI Layout
@@ -136,7 +150,9 @@ namespace LDDModder.BrickEditor.UI.Windows
             }
             catch (Exception ex)
             {
-                MessageBox.Show(this, "There was an error:\r\n" + ex.ToString(), "Error opening file");
+                ErrorMessageBox.Show(this, 
+                    Messages.Error_OpeningProject, 
+                    Messages.Caption_OpeningProject, ex.ToString());
             }
 
             if (loadedProject != null)
@@ -163,7 +179,10 @@ namespace LDDModder.BrickEditor.UI.Windows
             }
             catch (Exception ex)
             {
-                MessageBox.Show(this, "There was an error:\r\n" + ex.ToString(), "Error opening project");
+                ErrorMessageBox.Show(this,
+                    Messages.Error_OpeningProject,
+                    Messages.Caption_OpeningProject, ex.ToString());
+                
             }
 
             if (loadedProject != null)
@@ -180,7 +199,12 @@ namespace LDDModder.BrickEditor.UI.Windows
                 SettingsManager.SaveSettings();
                 LoadPartProject(project);
             }
-            catch { }
+            catch (Exception ex)
+            {
+                ErrorMessageBox.Show(this,
+                    Messages.Error_CreatingProject,
+                    Messages.Caption_OpeningProject, ex.ToString());
+            }
         }
 
         private void LoadPartProject(PartProject project)
@@ -199,7 +223,9 @@ namespace LDDModder.BrickEditor.UI.Windows
             {
                 if (ProjectManager.IsModified || ProjectManager.IsNewProject)
                 {
-                    var result = MessageBox.Show("Do you want to save?", "", MessageBoxButtons.YesNoCancel);
+                    var result = MessageBox.Show(Messages.Message_SaveBeforeClose, "", 
+                        MessageBoxButtons.YesNoCancel);
+
                     if (result == DialogResult.Yes)
                         SaveProject(CurrentProject);
                     else if (result == DialogResult.Cancel)

@@ -23,8 +23,9 @@ namespace LDDModder.LDD
 
         public bool DatabaseExtracted { get; private set; }
 
-
         public static LDDEnvironment Current { get; private set; }
+
+        public static bool IsInstalled => !string.IsNullOrEmpty(Current?.ProgramFilesPath);
 
         public static bool HasInitialized { get; private set; }
 
@@ -41,15 +42,51 @@ namespace LDDModder.LDD
 
         public static void Initialize()
         {
-            var lddEnv = new LDDEnvironment()
+            var lddEnv = GetInstalledEnvironment();
+
+            if (lddEnv != null)
             {
-                ProgramFilesPath = FindInstallFolder(),
-                ApplicationDataPath = FindAppDataFolder(),
-                UserCreationPath = FindUserFolder()
-            };
-            lddEnv.CheckLifStatus();
-            Current = lddEnv;
+                lddEnv.CheckLifStatus();
+                Current = lddEnv;
+            }
+            
             HasInitialized = true;
+        }
+
+        public static LDDEnvironment GetInstalledEnvironment()
+        {
+            string installDir = FindInstallFolder();
+            if (!string.IsNullOrEmpty(installDir))
+            {
+                var lddEnv = new LDDEnvironment()
+                {
+                    ProgramFilesPath = installDir,
+                    ApplicationDataPath = FindAppDataFolder(),
+                    UserCreationPath = FindUserFolder()
+                };
+
+                return lddEnv;
+            }
+
+            return null;
+        }
+
+        public static void SetEnvironment(LDDEnvironment environment)
+        {
+            Current = environment;
+        }
+
+        public static void SetEnvironmentPaths(string programFilesPath, string applicationDataPath)
+        {
+            if (Current == null)
+                Current = new LDDEnvironment();
+
+            string exePath = Path.Combine(programFilesPath, EXE_NAME);
+            if (!File.Exists(exePath))
+                programFilesPath = string.Empty;
+
+            Current.ProgramFilesPath = programFilesPath;
+            Current.ApplicationDataPath = applicationDataPath;
         }
 
         public static string FindInstallFolder()
@@ -140,6 +177,12 @@ namespace LDDModder.LDD
                 default:
                     return null;
             }
+        }
+
+        public bool DirectoryExists(LddDirectory directory)
+        {
+            string path = GetLddDirectoryPath(directory);
+            return Utilities.FileHelper.IsValidDirectory(path) && Directory.Exists(path);
         }
 
         public string GetLddDirectoryPath(LddDirectory directory)

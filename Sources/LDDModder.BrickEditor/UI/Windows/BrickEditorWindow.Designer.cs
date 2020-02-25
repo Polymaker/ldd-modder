@@ -54,16 +54,16 @@
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.Edit_ValidatePartMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.Edit_GenerateFilesMenu = new System.Windows.Forms.ToolStripMenuItem();
-            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.lDDEnvironmentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ExportBrickMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.StartLddMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.Tools_SettingsMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.AutoSaveTimer = new System.Windows.Forms.Timer(this.components);
             this.localizableStringList1 = new LDDModder.BrickEditor.Localization.LocalizableStringList(this.components);
             this.StartLddText = new LDDModder.BrickEditor.Localization.LocalizableString();
             this.RestartLddText = new LDDModder.BrickEditor.Localization.LocalizableString();
+            this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -85,7 +85,6 @@
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.editToolStripMenuItem,
-            this.settingsToolStripMenuItem,
             this.ToolsMenuItem});
             resources.ApplyResources(this.menuStrip1, "menuStrip1");
             this.menuStrip1.Name = "menuStrip1";
@@ -216,25 +215,14 @@
             resources.ApplyResources(this.Edit_GenerateFilesMenu, "Edit_GenerateFilesMenu");
             this.Edit_GenerateFilesMenu.Click += new System.EventHandler(this.Edit_GenerateFilesMenu_Click);
             // 
-            // settingsToolStripMenuItem
-            // 
-            this.settingsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.lDDEnvironmentToolStripMenuItem});
-            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            resources.ApplyResources(this.settingsToolStripMenuItem, "settingsToolStripMenuItem");
-            // 
-            // lDDEnvironmentToolStripMenuItem
-            // 
-            this.lDDEnvironmentToolStripMenuItem.Name = "lDDEnvironmentToolStripMenuItem";
-            resources.ApplyResources(this.lDDEnvironmentToolStripMenuItem, "lDDEnvironmentToolStripMenuItem");
-            this.lDDEnvironmentToolStripMenuItem.Click += new System.EventHandler(this.LDDEnvironmentToolStripMenuItem_Click);
-            // 
             // ToolsMenuItem
             // 
             this.ToolsMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ExportBrickMenuItem,
             this.toolStripSeparator3,
-            this.StartLddMenuItem});
+            this.StartLddMenuItem,
+            this.toolStripSeparator7,
+            this.Tools_SettingsMenu});
             this.ToolsMenuItem.Name = "ToolsMenuItem";
             resources.ApplyResources(this.ToolsMenuItem, "ToolsMenuItem");
             this.ToolsMenuItem.DropDownOpening += new System.EventHandler(this.ToolsMenuItem_DropDownOpening);
@@ -256,6 +244,12 @@
             resources.ApplyResources(this.StartLddMenuItem, "StartLddMenuItem");
             this.StartLddMenuItem.Click += new System.EventHandler(this.StartLddMenuItem_Click);
             // 
+            // Tools_SettingsMenu
+            // 
+            this.Tools_SettingsMenu.Name = "Tools_SettingsMenu";
+            resources.ApplyResources(this.Tools_SettingsMenu, "Tools_SettingsMenu");
+            this.Tools_SettingsMenu.Click += new System.EventHandler(this.Settings_EnvironmentMenu_Click);
+            // 
             // AutoSaveTimer
             // 
             this.AutoSaveTimer.Interval = 15000;
@@ -274,6 +268,11 @@
             // RestartLddText
             // 
             resources.ApplyResources(this.RestartLddText, "RestartLddText");
+            // 
+            // toolStripSeparator7
+            // 
+            this.toolStripSeparator7.Name = "toolStripSeparator7";
+            resources.ApplyResources(this.toolStripSeparator7, "toolStripSeparator7");
             // 
             // BrickEditorWindow
             // 
@@ -300,8 +299,7 @@
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem File_NewProjectMenu;
         private System.Windows.Forms.ToolStripMenuItem File_OpenProjectMenu;
-        private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem lDDEnvironmentToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem Tools_SettingsMenu;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem File_CreateFromBrickMenu;
         private System.Windows.Forms.ToolStripMenuItem ToolsMenuItem;
@@ -326,5 +324,6 @@
         private Localization.LocalizableStringList localizableStringList1;
         private Localization.LocalizableString StartLddText;
         private Localization.LocalizableString RestartLddText;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
     }
 }

@@ -117,64 +117,58 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="File_NewProjectMenu.Text" xml:space="preserve">
-    <value>Nouveau projet</value>
+  <data name="CloseButton.Text" xml:space="preserve">
+    <value>Fermer</value>
   </data>
-  <data name="File_CreateFromBrickMenu.Text" xml:space="preserve">
-    <value>Créer depuis une brique...</value>
+  <data name="ExtractAssetsButton.Text" xml:space="preserve">
+    <value>Extraire</value>
   </data>
-  <data name="File_OpenProjectMenu.Text" xml:space="preserve">
-    <value>Ouvrir un projet...</value>
+  <data name="ExtractDBButton.Text" xml:space="preserve">
+    <value>Extraire</value>
   </data>
-  <data name="File_OpenRecentMenu.Text" xml:space="preserve">
-    <value>Projet recents</value>
+  <data name="LddDataGroupBox.Text" xml:space="preserve">
+    <value>Données LDD</value>
   </data>
-  <data name="File_SaveMenu.Text" xml:space="preserve">
-    <value>Sauvegarder</value>
+  <data name="LddPathsGroupBox.Text" xml:space="preserve">
+    <value>Chemins LDD</value>
   </data>
-  <data name="File_SaveAsMenu.Text" xml:space="preserve">
-    <value>Sauvegarder sous...</value>
+  <data name="$this.Text" xml:space="preserve">
+    <value>Paramètres de l'application</value>
   </data>
-  <data name="fileToolStripMenuItem.Text" xml:space="preserve">
-    <value>Fichier</value>
+  <data name="AppDataPathLabel.Text" xml:space="preserve">
+    <value>Chemin AppData:</value>
   </data>
-  <data name="ToolsMenuItem.Text" xml:space="preserve">
-    <value>Outils</value>
+  <data name="PrgmFilePathLabel.Text" xml:space="preserve">
+    <value>Chemin d'installation:</value>
   </data>
-  <data name="editToolStripMenuItem.Text" xml:space="preserve">
-    <value>Édition</value>
+  <data name="label2.Text" xml:space="preserve">
+    <value>Contenu principal:</value>
   </data>
-  <data name="Edit_ValidatePartMenu.Text" xml:space="preserve">
-    <value>Valider la pièce</value>
+  <data name="label1.Text" xml:space="preserve">
+    <value>Fichiers du programme:</value>
   </data>
-  <data name="Edit_GenerateFilesMenu.Text" xml:space="preserve">
-    <value>Générer les fichiers LDD</value>
+  <data name="UserCreationPathLabel.Text" xml:space="preserve">
+    <value>Dossier utilisateur:</value>
   </data>
-  <data name="File_CloseProjectMenu.Text" xml:space="preserve">
-    <value>Fermer le projet</value>
+  <data name="DbInfoLabel.Text" xml:space="preserve">
+    <value>* L'extraction de ce contenu est nécessaire pour charger des briques personnalisées dans LDD.</value>
   </data>
-  <data name="StartLddMenuItem.Text" xml:space="preserve">
-    <value>Démarrer LDD...</value>
+  <data name="AssetsInfoLabel.Text" xml:space="preserve">
+    <value>* L'extraction de ce contenu est facultatif.</value>
   </data>
-  <data name="Edit_ImportMeshMenu.Text" xml:space="preserve">
-    <value>Importer un modèle 3D...</value>
+  <data name="LifExtractedMessage.Text" xml:space="preserve">
+    <value>LIF extrait</value>
   </data>
-  <data name="ExportBrickMenuItem.Text" xml:space="preserve">
-    <value>Exporter un modèle de brique...</value>
+  <data name="LifNotExtractedMessage.Text" xml:space="preserve">
+    <value>LIF non-extrait</value>
   </data>
-  <data name="RestartLddText.Text" xml:space="preserve">
-    <value>Redémarrer LDD...</value>
+  <data name="SaveButton.Text" xml:space="preserve">
+    <value>Enregistrer</value>
   </data>
-  <data name="StartLddText.Text" xml:space="preserve">
-    <value>Démarrer LDD...</value>
+  <data name="LifNotFoundMessage.Text" xml:space="preserve">
+    <value>LIF non-trouvé</value>
   </data>
-  <data name="EditMenu_Redo.Text" xml:space="preserve">
-    <value>Rétablir</value>
-  </data>
-  <data name="EditMenu_Undo.Text" xml:space="preserve">
-    <value>Annuler</value>
-  </data>
-  <data name="Tools_SettingsMenu.Text" xml:space="preserve">
-    <value>Paramètres</value>
+  <data name="LddExeNotFound.Text" xml:space="preserve">
+    <value>L'application LDD n'a pas été trouvée.</value>
   </data>
 </root>

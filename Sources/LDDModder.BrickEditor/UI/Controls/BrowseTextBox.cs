@@ -60,6 +60,7 @@ namespace LDDModder.BrickEditor.UI.Controls
             get => _Value;
             set
             {
+                value = value ?? string.Empty;
                 if (_Value != value)
                 {
                     ValueTextBox.Text = value;

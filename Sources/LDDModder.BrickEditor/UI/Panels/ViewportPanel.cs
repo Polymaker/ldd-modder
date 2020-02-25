@@ -1008,10 +1008,15 @@ namespace LDDModder.BrickEditor.UI.Panels
                 else
                 {
                     var translation = activeObject.Transform.ExtractTranslation();
-
+                    var rotation = activeObject.Transform.ExtractRotation();
+                    var euler = LDDModder.Simple3D.Quaternion.ToEuler(rotation.ToLDD());
                     PosXNumBox.Value = translation.X;
                     PosYNumBox.Value = translation.Y;
                     PosZNumBox.Value = translation.Z;
+                    RotXNumBox.Value = euler.X;
+                    RotYNumBox.Value = euler.Y;
+                    RotZNumBox.Value = euler.Z;
+
                 }
                 UpdatingInfo = false;
             }
@@ -1032,6 +1037,26 @@ namespace LDDModder.BrickEditor.UI.Panels
                 var trans = Matrix4.CreateTranslation((float)PosXNumBox.Value, (float)PosYNumBox.Value, (float)PosZNumBox.Value);
                 var rot = activeObject.Transform.ExtractRotation();
                 activeObject.Transform = Matrix4.CreateFromQuaternion(rot) * trans;
+                activeObject.EndEditTransform(false);
+            }
+        }
+
+        private void RotationNumBoxes_ValueChanged(object sender, EventArgs e)
+        {
+            if (UpdatingInfo)
+                return;
+
+            var activeObject = SelectionGizmo.ActiveElements.FirstOrDefault();
+            if (activeObject != null)
+            {
+                activeObject.BeginEditTransform();
+                var trans = Matrix4.CreateTranslation(activeObject.Transform.ExtractTranslation()).ToMatrix4d();
+                var rot = LDDModder.Simple3D.Quaterniond.FromEuler(
+                    RotXNumBox.Value, 
+                    RotYNumBox.Value, 
+                    RotZNumBox.Value).ToGL();
+
+                activeObject.Transform = (Matrix4d.CreateFromQuaternion(rot) * trans).ToMatrix4();
                 activeObject.EndEditTransform(false);
             }
         }
@@ -1384,5 +1409,6 @@ namespace LDDModder.BrickEditor.UI.Panels
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
+        
     }
 }

@@ -9,7 +9,7 @@
     <ProjectGuid>{5379F456-A474-4108-ACD8-3B179CF4D041}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>LDDModder.BrickEditor</RootNamespace>
-    <AssemblyName>LDDModder.BrickEditor</AssemblyName>
+    <AssemblyName>Brick Studio</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -61,6 +61,38 @@
   <PropertyGroup>
     <StartupObject>LDDModder.BrickEditor.Program</StartupObject>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'PrepRelease|AnyCPU'">
+    <OutputPath>bin\PrepRelease\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'PrepRelease|x64'">
+    <OutputPath>bin\x64\PrepRelease\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'PrepRelease|x86'">
+    <OutputPath>bin\x86\PrepRelease\</OutputPath>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="AssimpNet, Version=4.1.0.0, Culture=neutral, PublicKeyToken=0d51b391f59f42a6, processorArchitecture=MSIL">
       <HintPath>..\packages\AssimpNet.4.1.0\lib\net40\AssimpNet.dll</HintPath>
@@ -76,9 +108,6 @@
     </Reference>
     <Reference Include="ObjectTK">
       <HintPath>..\References\ObjectTK.dll</HintPath>
-    </Reference>
-    <Reference Include="ObjectTK.Tools">
-      <HintPath>..\References\ObjectTK.Tools.dll</HintPath>
     </Reference>
     <Reference Include="OpenTK, Version=3.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <HintPath>..\packages\OpenTK.3.1.0\lib\net20\OpenTK.dll</HintPath>
@@ -126,6 +155,11 @@
     <Compile Include="ProjectHandling\Extensions\FemaleStudModelExtension.cs" />
     <Compile Include="ProjectHandling\UndoRedoManager.cs" />
     <Compile Include="Rendering\MeshRenderMode.cs" />
+    <Compile Include="Resources\Messages.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Messages.resx</DependentUpon>
+    </Compile>
     <Compile Include="UI\Controls\CollapsiblePanel.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -152,6 +186,12 @@
     </Compile>
     <Compile Include="UI\Controls\TreeRendererEx.cs">
       <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\Windows\ErrorMessageBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Windows\ErrorMessageBox.Designer.cs">
+      <DependentUpon>ErrorMessageBox.cs</DependentUpon>
     </Compile>
     <Compile Include="Utilities\LocalizableString.cs" />
     <Compile Include="Utilities\LocalizableStringList.cs">
@@ -291,11 +331,11 @@
     <Compile Include="UI\Windows\ImportModelsDialog.Designer.cs">
       <DependentUpon>ImportModelsDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Windows\LddEnvironmentConfigWindow.cs">
+    <Compile Include="UI\Windows\AppSettingsWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\Windows\LddEnvironmentConfigWindow.Designer.cs">
-      <DependentUpon>LddEnvironmentConfigWindow.cs</DependentUpon>
+    <Compile Include="UI\Windows\AppSettingsWindow.Designer.cs">
+      <DependentUpon>AppSettingsWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\Windows\SelectBrickDialog.cs">
       <SubType>Form</SubType>
@@ -318,6 +358,11 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="Resources\Messages.fr.resx" />
+    <EmbeddedResource Include="Resources\Messages.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Messages.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources\ModelLocalizations.fr.resx" />
     <EmbeddedResource Include="Resources\ModelLocalizations.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -360,11 +405,17 @@
     <EmbeddedResource Include="UI\Panels\ViewportPanel.resx">
       <DependentUpon>ViewportPanel.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\Windows\AppSettingsWindow.fr.resx">
+      <DependentUpon>AppSettingsWindow.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\Windows\BrickEditorWindow.fr.resx">
       <DependentUpon>BrickEditorWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Windows\BrickEditorWindow.resx">
       <DependentUpon>BrickEditorWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Windows\ErrorMessageBox.resx">
+      <DependentUpon>ErrorMessageBox.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Windows\ExportPartModelWindow.resx">
       <DependentUpon>ExportPartModelWindow.cs</DependentUpon>
@@ -372,8 +423,8 @@
     <EmbeddedResource Include="UI\Windows\ImportModelsDialog.resx">
       <DependentUpon>ImportModelsDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Windows\LddEnvironmentConfigWindow.resx">
-      <DependentUpon>LddEnvironmentConfigWindow.cs</DependentUpon>
+    <EmbeddedResource Include="UI\Windows\AppSettingsWindow.resx">
+      <DependentUpon>AppSettingsWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Windows\SelectBrickDialog.resx">
       <DependentUpon>SelectBrickDialog.cs</DependentUpon>
@@ -443,4 +494,11 @@
     <Error Condition="!Exists('..\packages\SharpFont.Dependencies.2.6\build\SharpFont.Dependencies.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SharpFont.Dependencies.2.6\build\SharpFont.Dependencies.props'))" />
     <Error Condition="!Exists('..\packages\SharpFont.4.0.1\build\SharpFont.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SharpFont.4.0.1\build\SharpFont.props'))" />
   </Target>
+  <PropertyGroup>
+    <PostBuildEvent>if "$(ConfigurationName)" == "PrepRelease" (
+del *.pdb
+del *.xml
+
+)</PostBuildEvent>
+  </PropertyGroup>
 </Project>

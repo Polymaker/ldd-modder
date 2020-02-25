@@ -43,11 +43,11 @@ namespace LDDModder.Utilities
             return true;
         }
 
-        public static bool IsValidDirectory(string directory)
+        public static bool IsValidDirectory(string directory, bool checkExists = false)
         {
             if (directory.ContainsAny(Path.GetInvalidPathChars()))
                 return false;
-            return true;
+            return !checkExists || Directory.Exists(directory);
         }
 
         public static bool IsValidDirectoryName(string directory)

@@ -125,7 +125,7 @@
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="CameraMenu_ResetCamera.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>165, 22</value>
   </data>
   <data name="CameraMenu_ResetCamera.Text" xml:space="preserve">
     <value>Reset</value>
@@ -195,19 +195,19 @@
     <value>Left</value>
   </data>
   <data name="CameraMenu_AlignTo.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>165, 22</value>
   </data>
   <data name="CameraMenu_AlignTo.Text" xml:space="preserve">
     <value>Align to</value>
   </data>
   <data name="CameraMenu_LookAt.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>165, 22</value>
   </data>
   <data name="CameraMenu_LookAt.Text" xml:space="preserve">
     <value>Look at selection</value>
   </data>
   <data name="CameraMenu_Orthographic.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>165, 22</value>
   </data>
   <data name="CameraMenu_Orthographic.Text" xml:space="preserve">
     <value>Orthographic</value>
@@ -237,19 +237,19 @@
     <value>Camera</value>
   </data>
   <data name="DisplayMenu_Collisions.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>141, 22</value>
   </data>
   <data name="DisplayMenu_Collisions.Text" xml:space="preserve">
     <value>Collisions</value>
   </data>
   <data name="DisplayMenu_Connections.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>141, 22</value>
   </data>
   <data name="DisplayMenu_Connections.Text" xml:space="preserve">
     <value>Connections</value>
   </data>
   <data name="DisplayMenu_Meshes.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>141, 22</value>
   </data>
   <data name="DisplayMenu_Meshes.Text" xml:space="preserve">
     <value>Meshes</value>
@@ -279,13 +279,13 @@
     <value>Display</value>
   </data>
   <data name="globalToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>108, 22</value>
   </data>
   <data name="globalToolStripMenuItem.Text" xml:space="preserve">
     <value>Global</value>
   </data>
   <data name="localToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>108, 22</value>
   </data>
   <data name="localToolStripMenuItem.Text" xml:space="preserve">
     <value>Local</value>
@@ -315,31 +315,31 @@
     <value>Transform orientation</value>
   </data>
   <data name="boundingBoxCenterToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>237, 22</value>
+    <value>238, 22</value>
   </data>
   <data name="boundingBoxCenterToolStripMenuItem.Text" xml:space="preserve">
     <value>Bounding Box Center</value>
   </data>
   <data name="medianOriginsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>237, 22</value>
+    <value>238, 22</value>
   </data>
   <data name="medianOriginsToolStripMenuItem.Text" xml:space="preserve">
     <value>Median (Origins)</value>
   </data>
   <data name="medianBoundingBoxToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>237, 22</value>
+    <value>238, 22</value>
   </data>
   <data name="medianBoundingBoxToolStripMenuItem.Text" xml:space="preserve">
     <value>Median (Bounding Box Center)</value>
   </data>
   <data name="activeElementToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>237, 22</value>
+    <value>238, 22</value>
   </data>
   <data name="activeElementToolStripMenuItem.Text" xml:space="preserve">
     <value>Active Element</value>
   </data>
   <data name="cursorToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>237, 22</value>
+    <value>238, 22</value>
   </data>
   <data name="cursorToolStripMenuItem.Text" xml:space="preserve">
     <value>3D Cursor</value>
@@ -424,7 +424,7 @@
     <value>PosZNumBox</value>
   </data>
   <data name="&gt;&gt;PosZNumBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, LDDModder.BrickEditor, Version=1.0.0.16618, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.0.22523, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;PosZNumBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -544,7 +544,7 @@
     <value>PosXNumBox</value>
   </data>
   <data name="&gt;&gt;PosXNumBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, LDDModder.BrickEditor, Version=1.0.0.16618, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.0.22523, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;PosXNumBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -574,7 +574,7 @@
     <value>PosYNumBox</value>
   </data>
   <data name="&gt;&gt;PosYNumBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, LDDModder.BrickEditor, Version=1.0.0.16618, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.0.22523, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;PosYNumBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -700,7 +700,7 @@
     <value>RotXNumBox</value>
   </data>
   <data name="&gt;&gt;RotXNumBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, LDDModder.BrickEditor, Version=1.0.0.16618, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.0.22523, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;RotXNumBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -796,7 +796,7 @@
     <value>RotYNumBox</value>
   </data>
   <data name="&gt;&gt;RotYNumBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, LDDModder.BrickEditor, Version=1.0.0.16618, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.0.22523, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;RotYNumBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -826,7 +826,7 @@
     <value>RotZNumBox</value>
   </data>
   <data name="&gt;&gt;RotZNumBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, LDDModder.BrickEditor, Version=1.0.0.16618, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.0.22523, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;RotZNumBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -1051,6 +1051,6 @@
     <value>ViewportPanel</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Panels.ProjectDocumentPanel, LDDModder.BrickEditor, Version=1.0.0.16618, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Panels.ProjectDocumentPanel, Brick Studio, Version=1.0.0.22523, Culture=neutral, PublicKeyToken=null</value>
   </data>
 </root>

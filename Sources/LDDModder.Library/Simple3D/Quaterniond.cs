@@ -103,6 +103,11 @@ namespace LDDModder.Simple3D
             return result;
         }
 
+        public static Quaterniond FromEuler(double x, double y, double z)
+        {
+            return FromEuler(new Vector3d(x, y, z));
+        }
+
         public static Quaterniond FromEuler(Vector3d angles)
         {
             var roll = FromAxisAngle(Vector3d.UnitZ * -1d, angles.Z);

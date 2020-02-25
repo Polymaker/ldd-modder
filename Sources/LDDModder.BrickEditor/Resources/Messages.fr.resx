@@ -117,64 +117,26 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="File_NewProjectMenu.Text" xml:space="preserve">
-    <value>Nouveau projet</value>
+  <data name="LddInstallNotFound" xml:space="preserve">
+    <value>LDD ne semble pas être installé.
+Certaines fonctionnalités ne fonctionneront pas correctement.</value>
   </data>
-  <data name="File_CreateFromBrickMenu.Text" xml:space="preserve">
-    <value>Créer depuis une brique...</value>
+  <data name="Error_OpeningFile" xml:space="preserve">
+    <value>Une erreur s'est produite lors de l'ouverture d'un fichier.</value>
   </data>
-  <data name="File_OpenProjectMenu.Text" xml:space="preserve">
-    <value>Ouvrir un projet...</value>
+  <data name="Caption_OpeningFile" xml:space="preserve">
+    <value>Ouverture de fichier</value>
   </data>
-  <data name="File_OpenRecentMenu.Text" xml:space="preserve">
-    <value>Projet recents</value>
+  <data name="Error_OpeningProject" xml:space="preserve">
+    <value>ne erreur s'est produite lors de l'ouverture du projet.</value>
   </data>
-  <data name="File_SaveMenu.Text" xml:space="preserve">
-    <value>Sauvegarder</value>
+  <data name="Error_CreatingProject" xml:space="preserve">
+    <value>Une erreur s'est produite lors de la création du projet.</value>
   </data>
-  <data name="File_SaveAsMenu.Text" xml:space="preserve">
-    <value>Sauvegarder sous...</value>
+  <data name="Caption_OpeningProject" xml:space="preserve">
+    <value>Ouverture d'un projet</value>
   </data>
-  <data name="fileToolStripMenuItem.Text" xml:space="preserve">
-    <value>Fichier</value>
-  </data>
-  <data name="ToolsMenuItem.Text" xml:space="preserve">
-    <value>Outils</value>
-  </data>
-  <data name="editToolStripMenuItem.Text" xml:space="preserve">
-    <value>Édition</value>
-  </data>
-  <data name="Edit_ValidatePartMenu.Text" xml:space="preserve">
-    <value>Valider la pièce</value>
-  </data>
-  <data name="Edit_GenerateFilesMenu.Text" xml:space="preserve">
-    <value>Générer les fichiers LDD</value>
-  </data>
-  <data name="File_CloseProjectMenu.Text" xml:space="preserve">
-    <value>Fermer le projet</value>
-  </data>
-  <data name="StartLddMenuItem.Text" xml:space="preserve">
-    <value>Démarrer LDD...</value>
-  </data>
-  <data name="Edit_ImportMeshMenu.Text" xml:space="preserve">
-    <value>Importer un modèle 3D...</value>
-  </data>
-  <data name="ExportBrickMenuItem.Text" xml:space="preserve">
-    <value>Exporter un modèle de brique...</value>
-  </data>
-  <data name="RestartLddText.Text" xml:space="preserve">
-    <value>Redémarrer LDD...</value>
-  </data>
-  <data name="StartLddText.Text" xml:space="preserve">
-    <value>Démarrer LDD...</value>
-  </data>
-  <data name="EditMenu_Redo.Text" xml:space="preserve">
-    <value>Rétablir</value>
-  </data>
-  <data name="EditMenu_Undo.Text" xml:space="preserve">
-    <value>Annuler</value>
-  </data>
-  <data name="Tools_SettingsMenu.Text" xml:space="preserve">
-    <value>Paramètres</value>
+  <data name="Message_SaveBeforeClose" xml:space="preserve">
+    <value>Voulez-vous enregistrer les modifications faites?</value>
   </data>
 </root>

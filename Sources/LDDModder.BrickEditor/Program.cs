@@ -17,7 +17,7 @@ namespace LDDModder.BrickEditor
         [STAThread]
         static void Main()
         {
-            LDD.LDDEnvironment.Initialize();
+            //LDD.LDDEnvironment.Initialize();
 
             //Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("fr-CA");
 

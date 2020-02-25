@@ -65,6 +65,8 @@ namespace LDDModder.BrickEditor
                 matrix.D1, matrix.D2, matrix.D3, matrix.D4);
         }
 
+        
+
         public static OpenTK.Matrix4 ToGL(this Assimp.Matrix4x4 matrix)
         {
             var m = matrix;
@@ -99,11 +101,21 @@ namespace LDDModder.BrickEditor
             return OpenTK.Quaternion.FromMatrix(quaternion.GetMatrix().ToGL());
         }
 
-        public static OpenTK.Quaternion ToGL(this Simple3D.Quaternion quaternion)
+        public static OpenTK.Quaternion ToGL(this LDDModder.Simple3D.Quaternion quaternion)
         {
-            var mat = Simple3D.Matrix4.FromQuaternion(quaternion);
-            return mat.ToGL().ExtractRotation();
+            return new OpenTK.Quaternion(quaternion.X, quaternion.Y, quaternion.Z, quaternion.W);
         }
+
+        public static OpenTK.Quaterniond ToGL(this LDDModder.Simple3D.Quaterniond quaternion)
+        {
+            return new OpenTK.Quaterniond(quaternion.X, quaternion.Y, quaternion.Z, quaternion.W);
+        }
+
+        //public static OpenTK.Quaternion ToGL(this Simple3D.Quaternion quaternion)
+        //{
+        //    var mat = Simple3D.Matrix4.FromQuaternion(quaternion);
+        //    return mat.ToGL().ExtractRotation();
+        //}
 
         #endregion
 
@@ -202,6 +214,16 @@ namespace LDDModder.BrickEditor
         public static LDDModder.Simple3D.Matrix4 ToLDD(this OpenTK.Matrix4 matrix)
         {
             return new Simple3D.Matrix4(matrix.Row0.ToLDD(), matrix.Row1.ToLDD(), matrix.Row2.ToLDD(), matrix.Row3.ToLDD());
+        }
+
+        public static LDDModder.Simple3D.Quaternion ToLDD(this OpenTK.Quaternion quaternion)
+        {
+            return new Simple3D.Quaternion(quaternion.X, quaternion.Y, quaternion.Z, quaternion.W);
+        }
+
+        public static LDDModder.Simple3D.Quaterniond ToLDD(this OpenTK.Quaterniond quaternion)
+        {
+            return new Simple3D.Quaterniond(quaternion.X, quaternion.Y, quaternion.Z, quaternion.W);
         }
 
         public static LDDModder.Simple3D.Matrix4d ToLDD(this OpenTK.Matrix4d matrix)

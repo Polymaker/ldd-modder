@@ -367,6 +367,7 @@
             this.RotXNumBox.MinDisplayedDecimalPlaces = 2;
             this.RotXNumBox.MinimumValue = -360D;
             this.RotXNumBox.Name = "RotXNumBox";
+            this.RotXNumBox.ValueChanged += new System.EventHandler(this.RotationNumBoxes_ValueChanged);
             // 
             // label7
             // 
@@ -387,6 +388,7 @@
             this.RotYNumBox.MinDisplayedDecimalPlaces = 2;
             this.RotYNumBox.MinimumValue = -360D;
             this.RotYNumBox.Name = "RotYNumBox";
+            this.RotYNumBox.ValueChanged += new System.EventHandler(this.RotationNumBoxes_ValueChanged);
             // 
             // RotZNumBox
             // 
@@ -395,6 +397,7 @@
             this.RotZNumBox.MinDisplayedDecimalPlaces = 2;
             this.RotZNumBox.MinimumValue = -360D;
             this.RotZNumBox.Name = "RotZNumBox";
+            this.RotZNumBox.ValueChanged += new System.EventHandler(this.RotationNumBoxes_ValueChanged);
             // 
             // ViewportPanel
             // 

@@ -5,6 +5,7 @@ using System.IO;
 using System.Windows.Forms;
 using System.Linq;
 using System.Diagnostics;
+using LDDModder.LDD;
 
 namespace LDDModder.BrickEditor.UI.Windows
 {
@@ -13,6 +14,9 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         public void UpdateMenuItemStates()
         {
+            File_CreateFromBrickMenu.Enabled = LDDEnvironment.IsInstalled;
+            ExportBrickMenuItem.Enabled = LDDEnvironment.IsInstalled;
+
             File_SaveMenu.Enabled = ProjectManager.IsProjectOpen;
             File_SaveAsMenu.Enabled = ProjectManager.IsProjectOpen;
             File_CloseProjectMenu.Enabled = ProjectManager.IsProjectOpen;
@@ -24,10 +28,12 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         #region Main menu
 
-        private void LDDEnvironmentToolStripMenuItem_Click(object sender, EventArgs e)
+        private void Settings_EnvironmentMenu_Click(object sender, EventArgs e)
         {
-            using (var dlg = new LddEnvironmentConfigWindow())
+            using (var dlg = new AppSettingsWindow())
                 dlg.ShowDialog();
+
+            File_CreateFromBrickMenu.Enabled = LDDEnvironment.IsInstalled;
         }
 
         private void ExportBrickMenuItem_Click(object sender, EventArgs e)

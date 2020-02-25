@@ -1,4 +1,5 @@
-﻿using LDDModder.Modding.Editing;
+﻿using LDDModder.LDD;
+using LDDModder.Modding.Editing;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -37,12 +38,25 @@ namespace LDDModder.BrickEditor.Settings
         {
             string settingsPath = Path.Combine(AppDataFolder, AppSettingsFileName);
 
+            if (!LDDEnvironment.HasInitialized)
+                LDDEnvironment.Initialize();
+
             if (File.Exists(settingsPath))
             {
-                Current = JsonConvert.DeserializeObject<AppSettings>(File.ReadAllText(settingsPath));
+                try
+                {
+                    Current = JsonConvert.DeserializeObject<AppSettings>(File.ReadAllText(settingsPath));
+
+                    LDDEnvironment.SetEnvironmentPaths(Current.LddProgramFilesPath, Current.LddApplicationDataPath);
+                }
+                catch
+                {
+
+                }
             }
             else
             {
+                
                 Current = AppSettings.CreateDefault();
                 SaveSettings();
             }
