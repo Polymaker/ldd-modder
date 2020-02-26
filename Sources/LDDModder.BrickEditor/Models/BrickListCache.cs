@@ -19,21 +19,23 @@ namespace LDDModder.BrickEditor.Models
         private static FileSystemWatcher FSW;
         private static HashSet<int> ChangedParts;
 
-        public static BrickListInfo CachedList { get; private set; }
-
-        public static List<BrickInfo> Bricks => CachedList?.Bricks;
+        public static ThreadSafeList<BrickInfo> Bricks { get; private set; }
 
         public static CacheSource Source { get; private set; }
+
         public static string SourcePath { get; private set; }
+
+        public static DateTime LastUpdate { get; private set; }
 
         public static bool IsCacheDirty { get; private set; }
 
-        public static bool IsCacheEmpty => Bricks == null || Bricks.Count == 0;
+        public static bool IsCacheEmpty => Bricks.Count == 0;
 
         static BrickListCache()
         {
             ChangedParts = new HashSet<int>();
             Source = CacheSource.None;
+            Bricks = new ThreadSafeList<BrickInfo>();
         }
 
         public enum CacheSource
@@ -54,7 +56,7 @@ namespace LDDModder.BrickEditor.Models
 
             if (LDD.LDDEnvironment.Current != null)
             {
-                string oldSource = CachedList?.SourcePath;
+                string oldSource = SourcePath;
                 SourcePath = string.Empty;
                 
                 if (LDD.LDDEnvironment.Current.IsLifExtracted(LDD.LddLif.DB))
@@ -70,17 +72,12 @@ namespace LDDModder.BrickEditor.Models
 
                 if (SourcePath != oldSource)
                 {
-                    CachedList = null;
+                    Bricks.ForEach(x => x.Validated = false);
                     IsCacheDirty = true;
                 }
 
-                if (CachedList != null)
-                {
+                if (Bricks.Any() && !IsCacheDirty)
                     CheckIfCacheIsOutdated();
-
-                }
-
-                //RebuildCache();
 
                 if (Source == CacheSource.ExtractedContent)
                     InitializeFolderWatcher();
@@ -90,20 +87,17 @@ namespace LDDModder.BrickEditor.Models
 
         public static void CheckIfCacheIsOutdated()
         {
-            if (CachedList == null)
-                return;
-
-            CachedList.Bricks.ForEach(x => x.Validated = false);
+            Bricks.ForEach(x => x.Validated = false);
 
             if (Source == CacheSource.LIF)
             {
                 var lifInfo = new FileInfo(SourcePath);
 
-                if (lifInfo.LastWriteTime > CachedList.LastUpdate ||
-                    lifInfo.CreationTime > CachedList.LastUpdate)
+                if (lifInfo.LastWriteTime > LastUpdate ||
+                    lifInfo.CreationTime > LastUpdate)
                     IsCacheDirty = true;
                 else
-                    CachedList.Bricks.ForEach(x => x.Validated = true);
+                    Bricks.ForEach(x => x.Validated = true);
             }
             else if (Source == CacheSource.ExtractedContent)
             {
@@ -113,8 +107,8 @@ namespace LDDModder.BrickEditor.Models
                 {
                     if (GetFilenamePartID(fi.Name, out int partID))
                     {
-                        var brickInfo = CachedList.GetBrick(partID);
-                        var lastUpdate = brickInfo?.LastUpdate ?? CachedList.LastUpdate;
+                        var brickInfo = GetBrick(partID);
+                        var lastUpdate = brickInfo?.LastUpdate ?? LastUpdate;
 
                         if (brickInfo == null || 
                             fi.CreationTime > lastUpdate ||
@@ -139,30 +133,43 @@ namespace LDDModder.BrickEditor.Models
         public static bool LoadCachedList()
         {
             string brickListCache = Path.Combine(SettingsManager.AppDataFolder, BRICK_LIST_CACHE_FILENAME);
-            
+
             if (File.Exists(brickListCache))
             {
                 try
                 {
-                    CachedList = JsonConvert.DeserializeObject<BrickListInfo>(
+                    var cachedData = JsonConvert.DeserializeObject<BrickListInfo>(
                         File.ReadAllText(brickListCache)
                         );
+
+                    SourcePath = cachedData.SourcePath;
+                    LastUpdate = cachedData.LastUpdate;
+                    Bricks.Clear();
+                    Bricks.AddRange(cachedData.Bricks);
                     return true;
                 }
                 catch { }
             }
-
             return false;
         }
 
         public static void SaveCachedList()
         {
-            if (CachedList != null)
+            if (Bricks.Any())
             {
                 if (!IsCacheDirty)
-                    CachedList.LastUpdate = DateTime.Now;
-                File.WriteAllText(Path.Combine(SettingsManager.AppDataFolder, BRICK_LIST_CACHE_FILENAME),
-                JsonConvert.SerializeObject(CachedList));
+                    LastUpdate = DateTime.Now;
+
+                var list = new BrickListInfo()
+                {
+                    LastUpdate = LastUpdate,
+                    Bricks = Bricks.ToList(),
+                    SourcePath = SourcePath
+                };
+
+                File.WriteAllText(
+                    Path.Combine(SettingsManager.AppDataFolder, BRICK_LIST_CACHE_FILENAME),
+                    JsonConvert.SerializeObject(list));
             }
         }
 
@@ -170,21 +177,7 @@ namespace LDDModder.BrickEditor.Models
 
         public static void RebuildCache(CancellationToken ct)
         {
-            //if (FSW != null)
-            //    FSW.EnableRaisingEvents = false;
-
-
-            //if (!force && !IsCacheDirty)
-            //    return;
             CurrentProgress = null;
-
-            if (CachedList == null)
-            {
-                CachedList = new BrickListInfo()
-                {
-                    SourcePath = SourcePath
-                };
-            }
 
             if (ChangedParts.Count > 0)
             {
@@ -195,12 +188,23 @@ namespace LDDModder.BrickEditor.Models
                 RebuildAll(ct);
             }
 
-            CachedList.Bricks.RemoveAll(x => !x.Validated);
+            Bricks.RemoveAll(x => !x.Validated);
 
             if (!ct.IsCancellationRequested)
                 IsCacheDirty = false;
 
             SaveCachedList();
+        }
+
+        public static List<BrickInfo> GetValidatedBricks()
+        {
+
+            return Bricks.Where(x => x.Validated).ToList();
+        }
+
+        public static BrickInfo GetBrick(int partID)
+        {
+            return Bricks.FirstOrDefault(x => x.PartId == partID);
         }
 
         #region Building
@@ -221,15 +225,7 @@ namespace LDDModder.BrickEditor.Models
 
         private static void RebuildAll(CancellationToken ct)
         {
-            if (CachedList == null)
-            {
-                CachedList = new BrickListInfo()
-                {
-                    SourcePath = SourcePath
-                };
-            }
-
-            CachedList.Bricks.Clear();
+            Bricks.Clear();
 
             using (var content = new LifContentWrapper(Source, SourcePath))
             {
@@ -249,7 +245,7 @@ namespace LDDModder.BrickEditor.Models
                             Validated = true,
                             LastUpdate = DateTime.Now
                         };
-                        CachedList.Bricks.Add(brickInfo);
+                        Bricks.Add(brickInfo);
                     }
                     catch { }
 
@@ -260,7 +256,7 @@ namespace LDDModder.BrickEditor.Models
 
         private static void DifferencialRebuild(CancellationToken ct)
         {
-            foreach (var brickInfo in CachedList.Bricks)
+            foreach (var brickInfo in Bricks)
             {
                 if (ChangedParts.Contains(brickInfo.PartId))
                     brickInfo.Validated = false;
@@ -273,7 +269,7 @@ namespace LDDModder.BrickEditor.Models
                 if (ct.IsCancellationRequested)
                     break;
 
-                var brickInfo = CachedList.GetBrick(partID);
+                var brickInfo = GetBrick(partID);
 
                 PartWrapper partInfo = null;
                 try
@@ -284,7 +280,7 @@ namespace LDDModder.BrickEditor.Models
                 
                 if (brickInfo != null && partInfo == null)
                 {
-                    CachedList.Bricks.Remove(brickInfo);
+                    Bricks.Remove(brickInfo);
                     continue;
                 }
                 else if (partInfo != null)
@@ -296,7 +292,7 @@ namespace LDDModder.BrickEditor.Models
                             LastUpdate = DateTime.Now,
                             Validated = true
                         };
-                        CachedList.Bricks.Add(brickInfo);
+                        Bricks.Add(brickInfo);
                     }
                     else
                     {

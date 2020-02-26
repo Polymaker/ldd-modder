@@ -97,7 +97,7 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         private void FillValidatedParts(bool onlyOnce = false)
         {
-            var validBricks = BrickListCache.Bricks.Where(x => x.Validated).ToList();
+            var validBricks = BrickListCache.GetValidatedBricks();
             var newBricks = validBricks.Except(BrickList).ToList();
 
             const int MAX_ADD = 200;
