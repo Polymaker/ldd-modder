@@ -16,6 +16,8 @@ namespace LDDModder.BrickEditor.UI.Windows
 {
     public partial class AppSettingsWindow : Form
     {
+        private bool LoadingSettings;
+
         public AppSettingsWindow()
         {
             InitializeComponent();
@@ -29,13 +31,22 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         private void FillSettings(LDD.LDDEnvironment environment)
         {
+            LoadingSettings = true;
+
             PrgmFilePathTextBox.Value = environment?.ProgramFilesPath;
             AppDataPathTextBox.Value = environment?.ApplicationDataPath;
             UserCreationPathTextBox.Value = environment?.UserCreationPath;
 
+            UpdateLifsStatus(environment);
+
+            LoadingSettings = false;
+        }
+
+        private void UpdateLifsStatus(LDD.LDDEnvironment environment)
+        {
             if (environment != null && environment.DirectoryExists(LDD.LddDirectory.ApplicationData))
             {
-                
+
                 DbStatusLabel.ForeColor = environment.DatabaseExtracted ? Color.Green : Color.Red;
                 DbStatusLabel.Text = environment.DatabaseExtracted ? LifExtractedMessage : LifNotExtractedMessage;
                 ExtractDBButton.Enabled = !environment.DatabaseExtracted;
@@ -59,7 +70,19 @@ namespace LDDModder.BrickEditor.UI.Windows
                 AssetsStatusLabel.Text = LifNotFoundMessage;
                 ExtractAssetsButton.Enabled = false;
             }
+
         }
+
+        private void LddPathTextBoxes_ValueChanged(object sender, EventArgs e)
+        {
+            if (LoadingSettings)
+                return;
+            var tmpEnv = new LDD.LDDEnvironment(PrgmFilePathTextBox.Value, AppDataPathTextBox.Value);
+            tmpEnv.CheckLifStatus();
+            UpdateLifsStatus(tmpEnv);
+        }
+
+
 
         private void CloseButton_Click(object sender, EventArgs e)
         {
@@ -79,21 +102,30 @@ namespace LDDModder.BrickEditor.UI.Windows
         private void PrgmFilePathTextBox_BrowseButtonClicked(object sender, EventArgs e)
         {
             var sourceBox = sender as BrowseTextBox;
-            string oldValue = sourceBox.Value;
+
             using (var fbd = new FolderBrowserDialog())
             {
                 if (FileHelper.IsValidDirectory(sourceBox.Value , true))
                     fbd.SelectedPath = sourceBox.Value;
+                else
+                {
+                    if (sourceBox == PrgmFilePathTextBox)
+                        fbd.SelectedPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
+                    else if (sourceBox == AppDataPathTextBox)
+                        fbd.SelectedPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                }
 
                 if (fbd.ShowDialog() == DialogResult.OK)
                 {
-                    sourceBox.Value = fbd.SelectedPath;
+                    
+                    string selectedDir = fbd.SelectedPath;
 
-                    if (sourceBox == PrgmFilePathTextBox && !ValidateProgramPath())
+                    if (sourceBox == PrgmFilePathTextBox && !ValidateProgramPath(ref selectedDir))
                     {
                         MessageBox.Show(this, LddExeNotFound, this.Text, MessageBoxButtons.OK);
-                        sourceBox.Value = oldValue;
                     }
+                    else
+                        sourceBox.Value = selectedDir;
                 }
             }
         }
@@ -112,12 +144,18 @@ namespace LDDModder.BrickEditor.UI.Windows
                 MessageBox.Show(this, LddExeNotFound, this.Text, MessageBoxButtons.OK);
         }
 
-        private bool ValidateProgramPath()
+        private bool ValidateProgramPath(ref string programDir)
         {
-            if (!FileHelper.IsValidDirectory(PrgmFilePathTextBox.Value, true))
+            //string programDir = PrgmFilePathTextBox.Value;
+            if (!FileHelper.IsValidDirectory(programDir, true))
                 return false;
 
-            string exePath = Path.Combine(PrgmFilePathTextBox.Value, LDD.LDDEnvironment.EXE_NAME);
+            var dirInfo = new DirectoryInfo(programDir);
+            if (dirInfo.Name == "LEGO Company")
+                programDir = Path.Combine(programDir, "LEGO Digital Designer");
+
+            string exePath = Path.Combine(programDir, LDD.LDDEnvironment.EXE_NAME);
+
             return File.Exists(exePath);
         }
 
@@ -125,13 +163,17 @@ namespace LDDModder.BrickEditor.UI.Windows
         {
             if (!string.IsNullOrEmpty(PrgmFilePathTextBox.Value))
             {
-                if (!ValidateProgramPath())
+                string selectedDir = PrgmFilePathTextBox.Value;
+                if (!ValidateProgramPath(ref selectedDir))
                     MessageBox.Show(this, LddExeNotFound, this.Text, MessageBoxButtons.OK);
                 else
-                    SettingsManager.Current.LddProgramFilesPath = PrgmFilePathTextBox.Value;
+                    SettingsManager.Current.LddProgramFilesPath = selectedDir;
             }
 
             SettingsManager.SaveSettings();
+
         }
+
+        
     }
 }

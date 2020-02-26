@@ -151,7 +151,7 @@ namespace LDDModder.BrickEditor.UI.Windows
 
             try
             {
-                partInfo = PartWrapper.LoadPart(LDDEnvironment.Current, partID);
+                partInfo = PartWrapper.LoadPart(LDDEnvironment.Current, partID, true);
             }
             catch (Exception ex) 
             {

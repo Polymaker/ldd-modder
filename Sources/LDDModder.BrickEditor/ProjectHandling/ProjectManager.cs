@@ -517,16 +517,6 @@ namespace LDDModder.BrickEditor.ProjectHandling
                 {
                     var lddPart = CurrentProject.GenerateLddPart();
                     lddPart.ComputeEdgeOutlines();
-                    //var primitivesDir = LDD.LDDEnvironment.Current.GetAppDataSubDir("db\\Primitives\\");
-                    //var meshesDir = LDD.LDDEnvironment.Current.GetAppDataSubDir("db\\Primitives\\LOD0\\");
-
-                    ////check for old decoration meshes
-                    //var meshFiles = Directory.GetFiles(meshesDir, "*.g*");
-
-                    //if (meshFiles.Length != CurrentProject.Surfaces.Count - 1)
-                    //{
-
-                    //}
 
                     if (string.IsNullOrEmpty(targetDirectory))
                         lddPart.SaveToLdd(LDD.LDDEnvironment.Current);
@@ -537,8 +527,12 @@ namespace LDDModder.BrickEditor.ProjectHandling
                 }
                 catch (Exception ex)
                 {
-
+                    _ValidationMessages.Add(new ValidationMessage("PROJECT", "UNHANDLED_EXCEPTION", ValidationLevel.Error)
+                    {
+                        Message = ex.ToString()
+                    });
                 }
+
                 IsGeneratingFiles = false;
                 GenerationFinished?.Invoke(this, EventArgs.Empty);
             }

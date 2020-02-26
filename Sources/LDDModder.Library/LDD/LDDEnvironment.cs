@@ -15,13 +15,15 @@ namespace LDDModder.LDD
         public const string APP_DIR = "LEGO Company\\LEGO Digital Designer";
         public const string USER_CREATION_FOLDER = "LEGO Creations";
 
+        private int LifStatusFlags;
+
         public string ProgramFilesPath { get; private set; }
         public string ApplicationDataPath { get; private set; }
         public string UserCreationPath { get; private set; }
 
-        public bool AssetsExtracted { get; private set; }
+        public bool AssetsExtracted => IsLifExtracted(LddLif.Assets);
 
-        public bool DatabaseExtracted { get; private set; }
+        public bool DatabaseExtracted => IsLifExtracted(LddLif.DB);
 
         public static LDDEnvironment Current { get; private set; }
 
@@ -125,27 +127,45 @@ namespace LDDModder.LDD
 
         public void CheckLifStatus()
         {
-            DatabaseExtracted = false;
-            if (Directory.Exists(Path.Combine(ApplicationDataPath, "db")))
-                DatabaseExtracted = File.Exists(Path.Combine(ApplicationDataPath, "db", "info.xml"));
+            LifStatusFlags = 0;
+            //DatabaseExtracted = false;
 
-            AssetsExtracted = false;
-            if (Directory.Exists(Path.Combine(ProgramFilesPath, "Assets")))
-                AssetsExtracted = Directory.EnumerateFiles(Path.Combine(ProgramFilesPath, "Assets"), "*", SearchOption.AllDirectories).Any();
 
+            foreach (LddLif lif in Enum.GetValues(typeof(LddLif)))
+            {
+                if (File.Exists(GetLifFilePath(lif)))
+                    LifStatusFlags |= 1 << ((int)lif * 3); //.lif file exist
+
+                string lifFolder = GetLifFolderPath(lif);
+
+                if (Directory.Exists(lifFolder))
+                {
+                    LifStatusFlags |= 2 << ((int)lif * 3); //extracted folder exist
+                    bool contentPresent = false;
+
+                    if (lif == LddLif.DB)
+                    {
+                        contentPresent = File.Exists(Path.Combine(lifFolder, "info.xml"));
+                    }
+                    else if (lif == LddLif.Assets)
+                    {
+                        contentPresent = Directory.EnumerateFiles(lifFolder, "*", SearchOption.AllDirectories).Any();
+                    }
+                    
+                    if(contentPresent)
+                        LifStatusFlags |= 4 << ((int)lif * 3); //the folder has content
+                }
+            }
+        }
+
+        public bool IsLifPresent(LddLif lif)
+        {
+            return ((LifStatusFlags >> ((int)lif * 3)) & 1) == 1;
         }
 
         public bool IsLifExtracted(LddLif lif)
         {
-            switch (lif)
-            {
-                case LddLif.Assets:
-                    return AssetsExtracted;
-                case LddLif.DB:
-                    return DatabaseExtracted;
-                default:
-                    return false;
-            }
+            return ((LifStatusFlags >> ((int)lif * 3)) & 4) == 4;
         }
 
         public string GetExecutablePath()

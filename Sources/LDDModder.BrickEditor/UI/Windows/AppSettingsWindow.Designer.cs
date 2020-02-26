@@ -100,6 +100,7 @@
             this.PrgmFilePathTextBox.Name = "PrgmFilePathTextBox";
             this.PrgmFilePathTextBox.Value = "";
             this.PrgmFilePathTextBox.BrowseButtonClicked += new System.EventHandler(this.PrgmFilePathTextBox_BrowseButtonClicked);
+            this.PrgmFilePathTextBox.ValueChanged += new System.EventHandler(this.LddPathTextBoxes_ValueChanged);
             // 
             // AppDataPathTextBox
             // 
@@ -110,6 +111,7 @@
             this.AppDataPathTextBox.Name = "AppDataPathTextBox";
             this.AppDataPathTextBox.Value = "";
             this.AppDataPathTextBox.BrowseButtonClicked += new System.EventHandler(this.PrgmFilePathTextBox_BrowseButtonClicked);
+            this.AppDataPathTextBox.ValueChanged += new System.EventHandler(this.LddPathTextBoxes_ValueChanged);
             // 
             // UserCreationPathTextBox
             // 

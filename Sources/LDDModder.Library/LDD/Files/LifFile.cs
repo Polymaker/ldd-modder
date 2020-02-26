@@ -826,7 +826,7 @@ namespace LDDModder.LDD.Files
 
             public string Name { get; protected set; }
 
-            public string Fullname => !string.IsNullOrEmpty(Parent?.Name) ? Path.Combine(Parent.Fullname, Name) : (Name ?? string.Empty);
+            public string FullName => !string.IsNullOrEmpty(Parent?.Name) ? Path.Combine(Parent.FullName, Name) : (Name ?? string.Empty);
 
             internal LifEntry(string name)
             {
@@ -955,15 +955,15 @@ namespace LDDModder.LDD.Files
 
             public FolderEntry GetFolder(string folderName)
             {
-                string fullName = Path.Combine(Fullname, folderName);
-                return GetEntryHierarchy(false).OfType<FolderEntry>().FirstOrDefault(x => x.Fullname.Equals(fullName, StringComparison.InvariantCultureIgnoreCase));
+                string fullName = Path.Combine(FullName, folderName);
+                return GetEntryHierarchy(false).OfType<FolderEntry>().FirstOrDefault(x => x.FullName.Equals(fullName, StringComparison.InvariantCultureIgnoreCase));
             }
 
             public FileEntry GetFile(string filename)
             {
-                string fullName = Path.Combine(Fullname, filename);
+                string fullName = Path.Combine(FullName, filename);
                 return GetEntryHierarchy(false).OfType<FileEntry>()
-                    .FirstOrDefault(x => x.Fullname.Equals(fullName, StringComparison.InvariantCultureIgnoreCase));
+                    .FirstOrDefault(x => x.FullName.Equals(fullName, StringComparison.InvariantCultureIgnoreCase));
             }
 
             public IEnumerable<FileEntry> GetFiles(string searchFilter)

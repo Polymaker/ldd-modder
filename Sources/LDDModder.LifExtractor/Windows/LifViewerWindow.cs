@@ -190,7 +190,7 @@ namespace LDDModder.LifExtractor.Windows
         {
             return new TreeNode
             {
-                Name = folderInfo.Folder.Fullname,
+                Name = folderInfo.Folder.FullName,
                 Text = folderInfo.Name,
                 Tag = folderInfo.Folder
             };
@@ -207,7 +207,7 @@ namespace LDDModder.LifExtractor.Windows
 
         private TreeNode FindFolderNode(LifFile.FolderEntry folder)
         {
-            var result = LifTreeView.Nodes.Find(folder.Fullname, true);
+            var result = LifTreeView.Nodes.Find(folder.FullName, true);
             return result?.Length > 0 ? result[0] : null;
         }
 
@@ -801,7 +801,7 @@ namespace LDDModder.LifExtractor.Windows
 
                 folderInfo.Folder.Rename(e.NewValue as string);
                 folderNode.Text = folderInfo.Name;
-                folderNode.Name = folderInfo.Folder.Fullname;
+                folderNode.Name = folderInfo.Folder.FullName;
             }
             else if (e.RowObject is LifFileInfo fileInfo)
             {

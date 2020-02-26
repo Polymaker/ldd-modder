@@ -178,7 +178,7 @@ namespace LDDModder.Modding.Editing
 
         public static PartProject CreateFromLddPart(LDD.LDDEnvironment environment, int partID)
         {
-            var lddPart = LDD.Parts.PartWrapper.LoadPart(environment, partID);
+            var lddPart = LDD.Parts.PartWrapper.LoadPart(environment, partID, true);
 
             var project = new PartProject()
             {
@@ -1007,7 +1007,6 @@ namespace LDDModder.Modding.Editing
             return validationMessages;
         }
 
-
         public Primitive GeneratePrimitive()
         {
             var primitive = new Primitive()
@@ -1063,6 +1062,12 @@ namespace LDDModder.Modding.Editing
             }
 
             return part;
+        }
+
+        public void ComputeEdgeOutlines()
+        {
+            var allMeshes = Surfaces.SelectMany(x => x.GetAllModelMeshes());
+            ShaderDataGenerator.ComputeEdgeOutlines(allMeshes.SelectMany(x => x.Geometry.Triangles));
         }
 
         #endregion

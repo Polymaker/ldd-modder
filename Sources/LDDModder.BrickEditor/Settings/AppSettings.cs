@@ -25,7 +25,7 @@ namespace LDDModder.BrickEditor.Settings
 
         public static AppSettings CreateDefault()
         {
-            var currEnv = LDD.LDDEnvironment.Current;
+            var currEnv = LDD.LDDEnvironment.GetInstalledEnvironment();
             return new AppSettings()
             {
                 LddApplicationDataPath = currEnv?.ApplicationDataPath,

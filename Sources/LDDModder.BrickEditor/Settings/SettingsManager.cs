@@ -68,6 +68,10 @@ namespace LDDModder.BrickEditor.Settings
             using (var fs = File.Open(settingsPath, FileMode.Create))
             using (var sw = new StreamWriter(fs))
                 sw.Write(JsonConvert.SerializeObject(Current, Formatting.Indented));
+
+            LDDEnvironment.SetEnvironmentPaths(
+                Current.LddProgramFilesPath, 
+                Current.LddApplicationDataPath);
         }
 
         public static void AddRecentProject(PartProject project, bool isSavedFile = false)

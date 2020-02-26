@@ -141,6 +141,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\BrickInfo.cs" />
+    <Compile Include="Models\BrickListCache.cs" />
+    <Compile Include="Models\BrickListInfo.cs" />
     <Compile Include="Models\Navigation\ElementCollectionNode.cs" />
     <Compile Include="Models\Navigation\ProjectTreeNode.cs" />
     <Compile Include="ProjectHandling\ChangeAction.cs" />

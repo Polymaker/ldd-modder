@@ -19,7 +19,7 @@ namespace LDDModder.LifExtractor.Models
 
         public string ItemImageKey { get; set; }
 
-        public string FullName => Entry.Parent == null ? Name : LifName + "\\" + Entry.Fullname;
+        public string FullName => Entry.Parent == null ? Name : LifName + "\\" + Entry.FullName;
 
         LifFile.LifEntry ILifItemInfo.Entry => Entry;
 

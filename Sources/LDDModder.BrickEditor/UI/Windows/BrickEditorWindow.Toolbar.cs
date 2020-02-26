@@ -232,7 +232,10 @@ namespace LDDModder.BrickEditor.UI.Windows
             if (ProjectManager.GenerationSuccessful)
                 MessageBox.Show("LDD Part files generated.");
             else
+            {
                 MessageBox.Show("An error occured.");
+                ValidationPanel.Activate();
+            }
         }
 
         #endregion

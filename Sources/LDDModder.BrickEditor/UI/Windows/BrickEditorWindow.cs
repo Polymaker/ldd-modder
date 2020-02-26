@@ -79,6 +79,13 @@ namespace LDDModder.BrickEditor.UI.Windows
             {
                 MessageBox.Show(Messages.LddInstallNotFound, "", MessageBoxButtons.OK);
             }
+            else
+            {
+                Task.Factory.StartNew(() =>
+                {
+                    Models.BrickListCache.Initialize();
+                });
+            }
         }
 
         #region UI Layout
