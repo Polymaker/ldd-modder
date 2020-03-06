@@ -16,7 +16,7 @@ namespace LDDModder.PaletteMaker
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new UI.MainWindow());
+            Application.Run(new UI.SetBuyingSuggestionWindow());
         }
     }
 }

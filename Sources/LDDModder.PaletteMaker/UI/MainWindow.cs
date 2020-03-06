@@ -57,8 +57,10 @@ namespace LDDModder.PaletteMaker.UI
             //DBFilePath = Path.Combine(currentFolder, "BrickDatabase.db");
             //if (!File.Exists(DBFilePath))
             //    File.Copy(currentFolder + "\\Resources\\EmptyDatabase.db", DBFilePath);
-
-            ReloadRebrickableBaseData();
+            if (SettingsManager.DatabaseExists())
+                ReloadRebrickableBaseData();
+            else
+                InitDatabase();
         }
 
         private void ReloadRebrickableBaseData()
@@ -81,10 +83,16 @@ namespace LDDModder.PaletteMaker.UI
 
         private void button1_Click(object sender, EventArgs e)
         {
+            InitDatabase();
+        }
+
+        private void InitDatabase()
+        {
             using (var win = new DatabaseInitProgressWindow())
             {
                 win.StartPosition = FormStartPosition.CenterParent;
                 win.ShowDialog();
+                ReloadRebrickableBaseData();
             }
         }
 

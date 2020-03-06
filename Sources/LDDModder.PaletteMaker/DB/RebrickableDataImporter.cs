@@ -24,6 +24,10 @@ namespace LDDModder.PaletteMaker.DB
 
         public string RelationshipsCsvFile { get; set; }
 
+        public string InventoriesCsvFile { get; set; }
+
+        public string InventoryPartsCsvFile { get; set; }
+
         public RebrickableDataImporter(SQLiteConnection connection, LDDEnvironment environment, CancellationToken cancellationToken) : base(connection, environment, cancellationToken)
         {
 
@@ -213,6 +217,127 @@ namespace LDDModder.PaletteMaker.DB
                 trans.Commit();
             }
         }
+
+        public void ImportSets()
+        {
+            using (var trans = Connection.BeginTransaction())
+            using (var cmd = Connection.CreateCommand())
+            {
+                cmd.CommandText = $"DELETE FROM {DbHelper.GetTableName<RbSet>()}";
+                cmd.ExecuteNonQuery();
+                cmd.CommandText = $"DELETE FROM sqlite_sequence WHERE name='{DbHelper.GetTableName<RbSet>()}'";
+                cmd.ExecuteNonQuery();
+
+                NotifyIndefiniteProgress("Downloading rebrickable sets...");
+                var sets = RebrickableAPI.GetSets(minYear:2018).ToList();
+                NotifyTaskStart("Importing sets...", sets.Count);
+
+                DbHelper.InitializeInsertCommand<RbSet>(cmd, x => new { x.SetID, x.Name, x.ThemeID, x.Year });
+
+                int totalToProcess = sets.Count;
+                int totalProcessed = 0;
+
+                foreach (var rbSet in sets)
+                {
+                    if (IsCancellationRequested)
+                        break;
+
+                    DbHelper.InsertWithParameters(cmd, rbSet.SetNum, rbSet.Name, rbSet.ThemeId, rbSet.Year);
+
+                    ReportProgress(++totalProcessed, totalToProcess);
+                }
+
+                trans.Commit();
+            }
+        }
+
+        public void ImportSetParts()
+        {
+            NotifyBeginStep("Importing set parts");
+            string tmpDownloadDir = null;
+
+            try
+            {
+                if (string.IsNullOrEmpty(InventoriesCsvFile) || string.IsNullOrEmpty(InventoryPartsCsvFile))
+                {
+                    NotifyIndefiniteProgress("Downloading rebrickable csv files...");
+                    tmpDownloadDir = FileHelper.GetTempDirectory();
+                    DownloadRebrickableCsvFiles(RbDatabaseFile.Inventories | RbDatabaseFile.InventoryParts, tmpDownloadDir);
+                    InventoriesCsvFile = GetDatabaseFileName(RbDatabaseFile.Inventories, tmpDownloadDir);
+                    InventoryPartsCsvFile = GetDatabaseFileName(RbDatabaseFile.InventoryParts, tmpDownloadDir);
+                }
+
+                if (!File.Exists(InventoriesCsvFile) || !File.Exists(InventoryPartsCsvFile))
+                    return;
+
+                var inventoryCsv = IO.CsvFile.Read(InventoriesCsvFile, IO.CsvFile.Separator.Comma);
+                inventoryCsv.Rows[0].IsHeader = true;
+
+                var partsCsv = IO.CsvFile.Read(InventoryPartsCsvFile, IO.CsvFile.Separator.Comma);
+                partsCsv.Rows[0].IsHeader = true;
+
+                var existingSetIDs = new List<string>();
+                using (var db = new PaletteDbContext(Connection))
+                    existingSetIDs.AddRange(db.RbSets.Select(x => x.SetID));
+
+                var invIdToSetNum = new Dictionary<string, string>();
+                var setNumToSetId = new Dictionary<string, string>();
+
+                foreach (var row in inventoryCsv.Rows.Where(x => !x.IsHeader))
+                {
+                    if (existingSetIDs.Contains(row[2]) && !setNumToSetId.ContainsKey(row[2]))
+                    {
+                        setNumToSetId.Add(row[2], row[0]);
+                        invIdToSetNum.Add(row[0], row[2]);
+                    }
+                }
+
+                using (var trans = Connection.BeginTransaction())
+                using (var cmd = Connection.CreateCommand())
+                {
+                    DbHelper.InitializeInsertCommand<RbSetPart>(cmd, x =>
+                    new
+                    {
+                        x.SetID,
+                        x.PartID,
+                        //x.ElementID,
+                        x.ColorID,
+                        x.Quantity,
+                        x.IsSpare
+                    });
+
+                    var validRows = partsCsv.Rows.Where(x => !x.IsHeader && invIdToSetNum.ContainsKey(x[0])).ToList();
+                    int totalToProcess = validRows.Count;
+                    int totalProcessed = 0;
+
+                    foreach (var partRow in validRows)
+                    {
+                        string invID = partRow[0];
+
+                        if (!invIdToSetNum.TryGetValue(invID, out string setNum))
+                            continue;
+
+                        int? colorID = null;
+                        if (int.TryParse(partRow[2], out int tmp))
+                            colorID = tmp;
+                        if (!int.TryParse(partRow[3], out int quantity))
+                            continue;
+
+                        DbHelper.InsertWithParameters(cmd, setNum, partRow[1], colorID, quantity, partRow[4].Trim() != "f");
+                        ReportProgress(++totalProcessed, totalToProcess);
+                    }
+
+                    trans.Commit();
+                }
+
+                    
+            }
+            finally
+            {
+                if (!string.IsNullOrEmpty(tmpDownloadDir))
+                    Task.Factory.StartNew(() => FileHelper.DeleteFileOrFolder(tmpDownloadDir, true, true));
+            }
+        }
     
         public void ImportPartsAndRelationships()
         {
@@ -226,11 +351,13 @@ namespace LDDModder.PaletteMaker.DB
                 {
                     NotifyIndefiniteProgress("Downloading rebrickable csv files...");
                     tmpDownloadDir = FileHelper.GetTempDirectory();
-                    DownloadRebrickableCsvFiles(tmpDownloadDir);
+                    DownloadRebrickableCsvFiles(RbDatabaseFile.Parts | RbDatabaseFile.PartRelationships, tmpDownloadDir);
+                    PartsCsvFile = GetDatabaseFileName(RbDatabaseFile.Parts, tmpDownloadDir);
+                    RelationshipsCsvFile = GetDatabaseFileName(RbDatabaseFile.PartRelationships, tmpDownloadDir);
                 }
 
                 if (!IsCancellationRequested)
-                     ImportRebrickableParts();
+                    ImportRebrickableParts();
 
                 if (!IsCancellationRequested)
                     ImportRebrickableRelationships();
@@ -366,8 +493,20 @@ namespace LDDModder.PaletteMaker.DB
 
         public const string RELATIONSHIPS_FILENAME = "part_relationships.csv";
 
-        public static List<Tuple<string, string>> GetRebrickableDownloadLinks()
+
+        private static Dictionary<RbDatabaseFile, DbFileInfo> DatabaseFileLinks = new Dictionary<RbDatabaseFile, DbFileInfo>();
+
+        class DbFileInfo
         {
+            public RbDatabaseFile FileType { get; set; }
+            public string DownloadUrl { get; set; }
+            public string FileName { get; set; }
+        }
+
+        public static void FetchRebrickableDownloadLinks()
+        {
+            DatabaseFileLinks.Clear();
+
             var web = new HtmlWeb();
 
             var htmlDoc = web.Load("https://rebrickable.com/downloads/");
@@ -377,32 +516,58 @@ namespace LDDModder.PaletteMaker.DB
 
             foreach (var linkNode in downloadLinkNodes)
             {
-                downloadLinks.Add(new Tuple<string, string>(linkNode.InnerText, linkNode.Attributes["href"].Value));
+                string fileName = Path.GetFileNameWithoutExtension(linkNode.InnerText);
+
+                if (Enum.TryParse(fileName.Replace("_", string.Empty), true, out RbDatabaseFile fileType))
+                {
+                    DatabaseFileLinks[fileType] = new DbFileInfo()
+                    {
+                        FileType = fileType,
+                        DownloadUrl = linkNode.Attributes["href"].Value,
+                        FileName = fileName + ".csv"
+                    };
+                   
+                }
             }
-            return downloadLinks;
         }
 
-        public void DownloadRebrickableCsvFiles(string destinationFolder)
+        public static string GetDatabaseFileName(RbDatabaseFile databaseFile, string destinationFolder)
         {
-            Directory.CreateDirectory(destinationFolder);
+            if (DatabaseFileLinks.Count == 0)
+                FetchRebrickableDownloadLinks();
 
-            var links = GetRebrickableDownloadLinks();
-            var partsLink = links.FirstOrDefault(x => x.Item1 == PARTS_FILENAME)?.Item2;
-            var relastionshipsLink = links.FirstOrDefault(x => x.Item1 == RELATIONSHIPS_FILENAME)?.Item2;
+            if (DatabaseFileLinks.ContainsKey(databaseFile))
+                return Path.Combine(destinationFolder, DatabaseFileLinks[databaseFile].FileName);
+
+            return string.Empty;
+        }
+
+        public void DownloadRebrickableCsvFiles(RbDatabaseFile databaseFiles, string destinationFolder)
+        {
+            if (DatabaseFileLinks.Count == 0)
+                FetchRebrickableDownloadLinks();
+
+            var downloadTasks = new List<Task>();
 
             using (var wc = new WebClient())
             {
-                PartsCsvFile = Path.Combine(destinationFolder, PARTS_FILENAME);
-                //wc.DownloadFile(partsLink, PartsCsvFile);
-                var downloadTask1 = wc.DownloadFileTaskAsync(partsLink, PartsCsvFile);
-                downloadTask1.Wait(CancellationToken);
+                foreach (var dbFileInfo in DatabaseFileLinks.Values)
+                {
+                    if (databaseFiles.HasFlag(dbFileInfo.FileType))
+                    {
+                        string destinationPath = Path.Combine(destinationFolder, dbFileInfo.FileName);
+                        var downloadTask = wc.DownloadFileTaskAsync(dbFileInfo.DownloadUrl, destinationPath);
+                        downloadTasks.Add(downloadTask);
+                    }
+                }
 
-                RelationshipsCsvFile = Path.Combine(destinationFolder, RELATIONSHIPS_FILENAME);
-                wc.DownloadFile(relastionshipsLink, RelationshipsCsvFile);
-                var downloadTask2 = wc.DownloadFileTaskAsync(relastionshipsLink, RelationshipsCsvFile);
-                downloadTask2.Wait(CancellationToken);
+                foreach(var downloadTask in downloadTasks)
+                {
+                    downloadTask.Wait(CancellationToken);
+                    if (CancellationToken.IsCancellationRequested)
+                        break;
+                }
             }
         }
-
     }
 }

@@ -15,7 +15,9 @@ namespace LDDModder.PaletteMaker.DB
             RebrickableBaseData = 2,
             RebrickablePartsAndRelationships = 4,
             RebrickableLddMappings = 8,
-            All = LddPartsAndElements | RebrickableBaseData | RebrickablePartsAndRelationships | RebrickableLddMappings
+            RebrickableSets = 16,
+            RebrickableSetParts = 32,
+            All = LddPartsAndElements | RebrickableBaseData | RebrickablePartsAndRelationships | RebrickableLddMappings | RebrickableSets | RebrickableSetParts
         }
 
         public static void InitializeOrUpdateDatabase(string databasePath, 
@@ -38,11 +40,15 @@ namespace LDDModder.PaletteMaker.DB
                     return;
 
                 if (steps.HasFlag(InitializationStep.RebrickableBaseData) || 
-                    steps.HasFlag(InitializationStep.RebrickablePartsAndRelationships))
+                    steps.HasFlag(InitializationStep.RebrickablePartsAndRelationships) ||
+                    steps.HasFlag(InitializationStep.RebrickableSets) ||
+                    steps.HasFlag(InitializationStep.RebrickableSetParts))
                 {
                     var rbImporter = new RebrickableDataImporter(conn, LDDEnvironment.Current, cancellationToken);
                     rbImporter.ProgressHandler = progressHandler;
-
+                    rbImporter.InventoriesCsvFile = @"C:\Users\JWTurner\Downloads\inventories.csv";
+                    rbImporter.InventoryPartsCsvFile = @"C:\Users\JWTurner\Downloads\inventory_parts.csv";
+                    
                     if (steps.HasFlag(InitializationStep.RebrickableBaseData))
                         rbImporter.ImportBaseData();
 
@@ -51,15 +57,27 @@ namespace LDDModder.PaletteMaker.DB
 
                     if (steps.HasFlag(InitializationStep.RebrickablePartsAndRelationships))
                         rbImporter.ImportPartsAndRelationships();
+
+                    if (cancellationToken.IsCancellationRequested)
+                        return;
+
+                    if (steps.HasFlag(InitializationStep.RebrickableSets))
+                        rbImporter.ImportSets();
+
+                    if (cancellationToken.IsCancellationRequested)
+                        return;
+
+                    if (steps.HasFlag(InitializationStep.RebrickableSetParts))
+                        rbImporter.ImportSetParts();
                 }
 
                 if (cancellationToken.IsCancellationRequested)
                     return;
 
                 if (steps.HasFlag(InitializationStep.RebrickableLddMappings))
-                {
                     InitializeDefaultMappings(databasePath, progressHandler);
-                }
+
+
             }
         }
 

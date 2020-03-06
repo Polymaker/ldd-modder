@@ -28,6 +28,6 @@ namespace LDDModder.PaletteMaker.Rebrickable.Models
         public string SetUrl { get; set; }
 
         [JsonProperty("last_modified_dt")]
-        public DateTime LastModifiedDate { get; set; }
+        public DateTime? LastModifiedDate { get; set; }
     }
 }

@@ -22,7 +22,10 @@ namespace LDDModder.PaletteMaker.Models.Rebrickable
 
         public string ElementID { get; set; }
 
-        public int ColorID { get; set; }
+        public int? ColorID { get; set; }
+
+        [ForeignKey("ColorID")]
+        public virtual RbColor Color { get; set; }
 
         public int Quantity { get; set; }
 

@@ -38,6 +38,10 @@ namespace LDDModder.PaletteMaker.DB
 
         public DbSet<RbPartRelation> RbPartRelationships { get; set; }
 
+        public DbSet<RbSet> RbSets { get; set; }
+
+        public DbSet<RbSetPart> RbSetParts { get; set; }
+
         #endregion
 
         public DbSet<PartMapping> PartMappings { get; set; }

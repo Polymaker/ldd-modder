@@ -273,17 +273,35 @@ namespace LDDModder.IO
 
                 csv.CsvSeparator = separatorChar.ToString();
 
-                foreach (var line in allLines)
+                for (int lineIndex = 0; lineIndex < allLines.Count; lineIndex++)
                 {
+                    string currentLine = allLines[lineIndex];
+
                     var escapedValues = new List<string>();
 
-                    var cleanedLine = QuoteCleaner.Replace(line, (m) =>
+                    var cleanedLine = QuoteCleaner.Replace(currentLine, (m) =>
                     {
                         escapedValues.Add(m.Groups[1].Value.Replace("\"\"", "\""));
                         return $"#{escapedValues.Count - 1}#";
                     });
 
                     var lineValues = cleanedLine.Split(separatorChar);
+
+                    //handle new lines in escaped value
+                    while (lineValues.Length > 0 && lineValues[lineValues.Length - 1].StartsWith("\""))
+                    {
+                        currentLine += Environment.NewLine + allLines[lineIndex + 1];
+                        lineIndex++;
+                        escapedValues.Clear();
+
+                        cleanedLine = QuoteCleaner.Replace(currentLine, (m) =>
+                        {
+                            escapedValues.Add(m.Groups[1].Value.Replace("\"\"", "\""));
+                            return $"#{escapedValues.Count - 1}#";
+                        });
+                        lineValues = cleanedLine.Split(separatorChar);
+                    }
+
                     if (escapedValues.Count > lineValues.Length)
                     {
                         Debug.WriteLine("Incorrect separator or invalid CSV file.");

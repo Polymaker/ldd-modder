@@ -42,6 +42,31 @@ namespace LDDModder.PaletteMaker.Rebrickable
             return GetRequestAllPages<Theme>(request);
         }
 
+        public static IEnumerable<Set> GetAllSets()
+        {
+            var request = new RestRequest("lego/sets/", Method.GET, DataFormat.Json);
+            return GetRequestAllPages<Set>(request);
+        }
+
+        public static IEnumerable<Set> GetSets(
+            int? themeID = null,
+            int? minYear = null,
+            int? maxYear = null,
+            string search = null)
+        {
+            var request = new RestRequest("lego/sets/", Method.GET, DataFormat.Json);
+            if (themeID.HasValue)
+                request.AddParameter("theme_id", themeID.Value);
+            if (minYear.HasValue)
+                request.AddParameter("min_year", minYear.Value);
+            if (maxYear.HasValue)
+                request.AddParameter("max_year", maxYear.Value);
+            if (!string.IsNullOrEmpty(search))
+                request.AddParameter("search", search);
+
+            return GetRequestAllPages<Set>(request);
+        }
+
         public static IEnumerable<SetPart> GetSetParts(string setID)
         {
             var request = new RestRequest("lego/sets/{set_num}/parts/", Method.GET, DataFormat.Json);

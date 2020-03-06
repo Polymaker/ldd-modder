@@ -38,6 +38,12 @@ namespace LDDModder.PaletteMaker.Settings
             return File.Exists(dbPath);
         }
 
+        public static DB.PaletteDbContext GetDbContext()
+        {
+            var dbPath = Path.Combine(AppDataFolder, DATABASE_FILENAME);
+            return new DB.PaletteDbContext($"Data Source={dbPath}");
+        }
+
         public static string GetFilePath(string filename)
         {
             return Path.Combine(AppDataFolder, filename);

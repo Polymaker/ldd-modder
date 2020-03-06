@@ -79,7 +79,7 @@ namespace LDDModder.PaletteMaker.UI
             try
             {
                 DatabaseInitializer.InitializeOrUpdateDatabase(databasePath,
-                    DatabaseInitializer.InitializationStep.All, CTS.Token, this);
+                    DatabaseInitializer.InitializationStep.RebrickableSetParts, CTS.Token, this);
             }
             catch (Exception ex)
             {

@@ -10,7 +10,9 @@ namespace LDDModder.PaletteMaker.Models.Rebrickable
         [Key]
         public string SetID { get; set; }
 
-        public int ThemeID { get; set; }
+        public int? ThemeID { get; set; }
+
+        public int? Year { get; set; }
 
         [ForeignKey("ThemeID")]
         public virtual RbTheme Theme { get; set; }
