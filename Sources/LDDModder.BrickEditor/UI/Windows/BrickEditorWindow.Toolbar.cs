@@ -100,7 +100,7 @@ namespace LDDModder.BrickEditor.UI.Windows
                     SettingsManager.Current.RecentProjectFiles.Remove(recentProject);
                     continue;
                 }
-                string projectName = $"{currentFileIndex++} - {Path.GetFileName(recentProject.ProjectFile)}";
+                string projectName = $"{currentFileIndex++}: {Path.GetFileName(recentProject.ProjectFile)}";
                 
                 //if (recentProject.PartID > 0)
                 //    projectName = recentProject.PartID.ToString();

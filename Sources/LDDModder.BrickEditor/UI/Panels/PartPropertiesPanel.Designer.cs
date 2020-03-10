@@ -28,8 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            LDDModder.LDD.Primitives.BoundingBox boundingBox2 = new LDDModder.LDD.Primitives.BoundingBox();
-            LDDModder.LDD.Primitives.BoundingBox boundingBox1 = new LDDModder.LDD.Primitives.BoundingBox();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PartPropertiesPanel));
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.LabelAliases = new System.Windows.Forms.Label();
@@ -254,15 +252,6 @@
             this.GeomBoundingEditor.Name = "GeomBoundingEditor";
             this.GeomBoundingEditor.Size = new System.Drawing.Size(393, 39);
             this.GeomBoundingEditor.TabIndex = 13;
-            boundingBox2.Max = ((LDDModder.Simple3D.Vector3)(resources.GetObject("boundingBox2.Max")));
-            boundingBox2.MaxX = 0F;
-            boundingBox2.MaxY = 0F;
-            boundingBox2.MaxZ = 0F;
-            boundingBox2.Min = ((LDDModder.Simple3D.Vector3)(resources.GetObject("boundingBox2.Min")));
-            boundingBox2.MinX = 0F;
-            boundingBox2.MinY = 0F;
-            boundingBox2.MinZ = 0F;
-            this.GeomBoundingEditor.Value = boundingBox2;
             // 
             // CalcBoundingButton
             // 
@@ -285,15 +274,6 @@
             this.BoundingEditor.Name = "BoundingEditor";
             this.BoundingEditor.Size = new System.Drawing.Size(393, 39);
             this.BoundingEditor.TabIndex = 9;
-            boundingBox1.Max = ((LDDModder.Simple3D.Vector3)(resources.GetObject("boundingBox1.Max")));
-            boundingBox1.MaxX = 0F;
-            boundingBox1.MaxY = 0F;
-            boundingBox1.MaxZ = 0F;
-            boundingBox1.Min = ((LDDModder.Simple3D.Vector3)(resources.GetObject("boundingBox1.Min")));
-            boundingBox1.MinX = 0F;
-            boundingBox1.MinY = 0F;
-            boundingBox1.MinZ = 0F;
-            this.BoundingEditor.Value = boundingBox1;
             // 
             // CalcGeomBoundingButton
             // 

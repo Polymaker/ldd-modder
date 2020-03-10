@@ -111,12 +111,6 @@
     <Compile Include="Windows\CreateFolderDialog.Designer.cs">
       <DependentUpon>CreateFolderDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="Windows\LifExtractionWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Windows\LifExtractionWindow.Designer.cs">
-      <DependentUpon>LifExtractionWindow.cs</DependentUpon>
-    </Compile>
     <Compile Include="Models\LifFileInfo.cs" />
     <Compile Include="Models\LifFolderInfo.cs" />
     <Compile Include="Models\ILifItemInfo.cs" />

@@ -28,9 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            LDDModder.LDD.Primitives.BoundingBox boundingBox1 = new LDDModder.LDD.Primitives.BoundingBox();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TransformEditor));
-            LDDModder.LDD.Primitives.BoundingBox boundingBox2 = new LDDModder.LDD.Primitives.BoundingBox();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.boundingBoxEditor2 = new LDDModder.BrickEditor.UI.Controls.BoundingBoxEditor();
             this.boundingBoxEditor1 = new LDDModder.BrickEditor.UI.Controls.BoundingBoxEditor();
@@ -61,15 +59,6 @@
             this.boundingBoxEditor2.Name = "boundingBoxEditor2";
             this.boundingBoxEditor2.Size = new System.Drawing.Size(333, 39);
             this.boundingBoxEditor2.TabIndex = 1;
-            boundingBox1.Max = ((LDDModder.Simple3D.Vector3)(resources.GetObject("boundingBox1.Max")));
-            boundingBox1.MaxX = 0F;
-            boundingBox1.MaxY = 0F;
-            boundingBox1.MaxZ = 0F;
-            boundingBox1.Min = ((LDDModder.Simple3D.Vector3)(resources.GetObject("boundingBox1.Min")));
-            boundingBox1.MinX = 0F;
-            boundingBox1.MinY = 0F;
-            boundingBox1.MinZ = 0F;
-            this.boundingBoxEditor2.Value = boundingBox1;
             // 
             // boundingBoxEditor1
             // 
@@ -78,15 +67,6 @@
             this.boundingBoxEditor1.Name = "boundingBoxEditor1";
             this.boundingBoxEditor1.Size = new System.Drawing.Size(333, 39);
             this.boundingBoxEditor1.TabIndex = 0;
-            boundingBox2.Max = ((LDDModder.Simple3D.Vector3)(resources.GetObject("boundingBox2.Max")));
-            boundingBox2.MaxX = 0F;
-            boundingBox2.MaxY = 0F;
-            boundingBox2.MaxZ = 0F;
-            boundingBox2.Min = ((LDDModder.Simple3D.Vector3)(resources.GetObject("boundingBox2.Min")));
-            boundingBox2.MinX = 0F;
-            boundingBox2.MinY = 0F;
-            boundingBox2.MinZ = 0F;
-            this.boundingBoxEditor1.Value = boundingBox2;
             // 
             // TransformEditor
             // 

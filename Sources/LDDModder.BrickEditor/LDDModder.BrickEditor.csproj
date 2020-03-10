@@ -169,26 +169,41 @@
     <Compile Include="UI\Controls\CollapsiblePanel.Designer.cs">
       <DependentUpon>CollapsiblePanel.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Controls\ConnectorEditor.cs">
+    <Compile Include="UI\Editors\ConnectorEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UI\Controls\ConnectorEditor.Designer.cs">
+    <Compile Include="UI\Editors\ConnectorEditor.Designer.cs">
       <DependentUpon>ConnectorEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Controls\PartAliasesEditControl.cs">
+    <Compile Include="UI\Editors\PartAliasesEditControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UI\Controls\PartAliasesEditControl.Designer.cs">
+    <Compile Include="UI\Editors\PartAliasesEditControl.Designer.cs">
       <DependentUpon>PartAliasesEditControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Controls\TransformEditor.cs">
+    <Compile Include="UI\Controls\ToolStripCheckBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\Editors\TransformEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UI\Controls\TransformEditor.Designer.cs">
+    <Compile Include="UI\Editors\TransformEditor.Designer.cs">
       <DependentUpon>TransformEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\Controls\TreeRendererEx.cs">
       <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\Editors\StudConnectionEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Editors\StudConnectionEditor.Designer.cs">
+      <DependentUpon>StudConnectionEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Panels\ElementDetailPanel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Panels\ElementDetailPanel.Designer.cs">
+      <DependentUpon>ElementDetailPanel.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\Windows\ErrorMessageBox.cs">
       <SubType>Form</SubType>
@@ -267,10 +282,10 @@
     <Compile Include="Settings\DisplaySettings.cs" />
     <Compile Include="Settings\RecentFileInfo.cs" />
     <Compile Include="Settings\SettingsManager.cs" />
-    <Compile Include="UI\Controls\BoundingBoxEditor.cs">
+    <Compile Include="UI\Editors\BoundingBoxEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UI\Controls\BoundingBoxEditor.Designer.cs">
+    <Compile Include="UI\Editors\BoundingBoxEditor.Designer.cs">
       <DependentUpon>BoundingBoxEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\Controls\BrowseTextBox.cs">
@@ -377,20 +392,26 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ModelLocalizations.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Controls\ConnectorEditor.resx">
+    <EmbeddedResource Include="UI\Editors\ConnectorEditor.resx">
       <DependentUpon>ConnectorEditor.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Controls\BoundingBoxEditor.resx">
+    <EmbeddedResource Include="UI\Editors\BoundingBoxEditor.resx">
       <DependentUpon>BoundingBoxEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Controls\BrowseTextBox.resx">
       <DependentUpon>BrowseTextBox.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Controls\PartAliasesEditControl.resx">
+    <EmbeddedResource Include="UI\Editors\PartAliasesEditControl.resx">
       <DependentUpon>PartAliasesEditControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Controls\TransformEditor.resx">
+    <EmbeddedResource Include="UI\Editors\TransformEditor.resx">
       <DependentUpon>TransformEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Editors\StudConnectionEditor.resx">
+      <DependentUpon>StudConnectionEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Panels\ElementDetailPanel.resx">
+      <DependentUpon>ElementDetailPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Panels\LocalisationEditorPanel.resx">
       <DependentUpon>LocalisationEditorPanel.cs</DependentUpon>

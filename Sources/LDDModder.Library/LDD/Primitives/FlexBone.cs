@@ -62,7 +62,7 @@ namespace LDDModder.LDD.Primitives
             if (Bounding != null)
             {
                 var boundingElem = boneElem.AddElement("Bounding");
-                boundingElem.Add(XmlHelper.DefaultSerialize(Bounding, "AABB"));
+                boundingElem.Add(Bounding.SerializeToXml("AABB"));
             }
 
             return boneElem;
@@ -76,8 +76,11 @@ namespace LDDModder.LDD.Primitives
             if (element.HasElement("PhysicsAttributes", out XElement physicsElem))
                 PhysicsAttributes = XmlHelper.DefaultDeserialize<PhysicsAttributes>(physicsElem);
 
-            if (element.HasElement("Bounding", out XElement boundingElem))
+            if (element.HasElement("Bounding", out XElement boundingElem) && 
+                boundingElem.HasElement("AABB"))
+            {
                 Bounding = XmlHelper.DefaultDeserialize<BoundingBox>(boundingElem.Element("AABB"));
+            }
 
             if (element.HasAttribute("flexCheckConnection", out XAttribute checkAttr))
             {

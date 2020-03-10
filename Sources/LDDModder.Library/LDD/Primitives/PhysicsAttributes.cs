@@ -9,9 +9,9 @@ namespace LDDModder.LDD.Primitives
     {
         public Matrix3 InertiaTensor { get; set; }
 
-        public Vector3 CenterOfMass { get; set; }
+        public Vector3d CenterOfMass { get; set; }
 
-        public float Mass { get; set; }
+        public double Mass { get; set; }
 
         public int FrictionType { get; set; }
 
@@ -32,13 +32,13 @@ namespace LDDModder.LDD.Primitives
             var centerValues = centerOfMass.Split(',');
             if (centerValues.Length == 3)
             {
-                CenterOfMass = new Vector3(
-                    float.Parse(centerValues[0].Trim(), CultureInfo.InvariantCulture),
-                    float.Parse(centerValues[1].Trim(), CultureInfo.InvariantCulture),
-                    float.Parse(centerValues[2].Trim(), CultureInfo.InvariantCulture));
+                CenterOfMass = new Vector3d(
+                    double.Parse(centerValues[0].Trim(), CultureInfo.InvariantCulture),
+                    double.Parse(centerValues[1].Trim(), CultureInfo.InvariantCulture),
+                    double.Parse(centerValues[2].Trim(), CultureInfo.InvariantCulture));
             }
 
-            Mass = element.ReadAttribute<float>("mass");
+            Mass = element.ReadAttribute("mass", 0d);
             FrictionType = element.ReadAttribute<int>("frictionType");
         }
 

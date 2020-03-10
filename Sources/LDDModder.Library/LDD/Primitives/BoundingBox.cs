@@ -1,68 +1,74 @@
 ﻿using LDDModder.LDD.Meshes;
+using LDDModder.Serialization;
 using LDDModder.Simple3D;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using System.Xml.Serialization;
 
 namespace LDDModder.LDD.Primitives
 {
-    public class BoundingBox
+    public class BoundingBox : IXmlObject
     {
-        [XmlAttribute("minX")]
-        public float MinX { get; set; }
-        [XmlAttribute("minY")]
-        public float MinY { get; set; }
-        [XmlAttribute("minZ")]
-        public float MinZ { get; set; }
-        [XmlAttribute("maxX")]
-        public float MaxX { get; set; }
-        [XmlAttribute("maxY")]
-        public float MaxY { get; set; }
-        [XmlAttribute("maxZ")]
-        public float MaxZ { get; set; }
+        private Vector3d _Min;
+        private Vector3d _Max;
 
-        [XmlIgnore]
-        public float SizeX => MaxX - MinX;
-        [XmlIgnore]
-        public float SizeY => MaxY - MinY;
-        [XmlIgnore]
-        public float SizeZ => MaxZ - MinZ;
-
-        [XmlIgnore]
-        public Vector3 Min
+        public Vector3d Min
         {
-            get => new Vector3(MinX, MinY, MinZ);
-            set
-            {
-                MinX = value.X;
-                MinY = value.Y;
-                MinZ = value.Z;
-            }
+            get => _Min;
+            set => _Min = value;
         }
 
-        [XmlIgnore]
-        public Vector3 Max
+        public Vector3d Max
         {
-            get => new Vector3(MaxX, MaxY, MaxZ);
-            set
-            {
-                MaxX = value.X;
-                MaxY = value.Y;
-                MaxZ = value.Z;
-            }
+            get => _Max;
+            set => _Max = value;
         }
 
-        [XmlIgnore]
-        public Vector3 Size => new Vector3(SizeX, SizeY, SizeZ);
+        public Vector3d Size => Max - Min;
 
-        [XmlIgnore]
-        public Vector3 Center => new Vector3((SizeX / 2f) + MinX, (SizeY / 2f) + MinY, (SizeZ / 2f) + MinZ);
+        public Vector3d Center => Min + (Size / 2d);
 
-        [XmlIgnore]
-        public bool IsEmpty => Size == Vector3.Zero;
+        public bool IsEmpty => Size == Vector3d.Zero;
+
+        public double MinX
+        {
+            get => _Min.X;
+            set => _Min.X = value;
+        }
+
+        public double MinY
+        {
+            get => _Min.Y;
+            set => _Min.Y = value;
+        }
+
+        public double MinZ
+        {
+            get => _Min.Z;
+            set => _Min.Z = value;
+        }
+
+        public double MaxX
+        {
+            get => _Max.X;
+            set => _Max.X = value;
+        }
+
+        public double MaxY
+        {
+            get => _Max.Y;
+            set => _Max.Y = value;
+        }
+
+        public double MaxZ
+        {
+            get => _Max.Z;
+            set => _Max.Z = value;
+        }
 
         public BoundingBox()
         {
@@ -70,18 +76,20 @@ namespace LDDModder.LDD.Primitives
 
         public BoundingBox(float minX, float minY, float minZ, float maxX, float maxY, float maxZ)
         {
-            MinX = minX;
-            MinY = minY;
-            MinZ = minZ;
-            MaxX = maxX;
-            MaxY = maxY;
-            MaxZ = maxZ;
+            _Min = new Vector3d(minX, minY, minZ);
+            _Max = new Vector3d(maxX, maxY, maxZ);
         }
 
         public BoundingBox(Vector3 min, Vector3 max)
         {
-            Min = min;
-            Max = max;
+            _Min = (Vector3d)min;
+            _Max = (Vector3d)max;
+        }
+
+        public BoundingBox(Vector3d min, Vector3d max)
+        {
+            _Min = min;
+            _Max = max;
         }
 
         public BoundingBox Clone()
@@ -154,6 +162,19 @@ namespace LDDModder.LDD.Primitives
                    Max.Equals(box.Max);
         }
 
+        public static bool operator ==(BoundingBox left, BoundingBox right)
+        {
+            if (left is null || right is null)
+                return left is null && right is null;
+
+            return left.Min == right.Min && left.Max == right.Max;
+        }
+
+        public static bool operator !=(BoundingBox left, BoundingBox right)
+        {
+            return !(left == right);
+        }
+
         public override int GetHashCode()
         {
             var hashCode = 1537547080;
@@ -162,16 +183,39 @@ namespace LDDModder.LDD.Primitives
             return hashCode;
         }
 
-        public static bool operator ==(BoundingBox left, BoundingBox right)
+        public XElement SerializeToXml()
         {
-            if (!ReferenceEquals(left, null))
-                return left.Equals(right);
-            return ReferenceEquals(right, null);
+            return SerializeToXml("AABB");
         }
 
-        public static bool operator !=(BoundingBox left, BoundingBox right)
+        public XElement SerializeToXml(string elementName)
         {
-            return !(left == right);
+            var elem = new XElement(elementName);
+            elem.AddNumberAttribute("MinX", Min.X);
+            elem.AddNumberAttribute("MinY", Min.Y);
+            elem.AddNumberAttribute("MinZ", Min.Z);
+
+            elem.AddNumberAttribute("MaxX", Max.X);
+            elem.AddNumberAttribute("MaxY", Max.Y);
+            elem.AddNumberAttribute("MaxZ", Max.Z);
+            return elem;
         }
+
+        public void LoadFromXml(XElement element)
+        {
+            element.TryReadAttribute("MinX", out double minX);
+            element.TryReadAttribute("MinY", out double minY);
+            element.TryReadAttribute("MinZ", out double minZ);
+
+            Min = new Vector3d(minX, minY, minZ);
+
+            element.TryReadAttribute("MaxX", out double maxX);
+            element.TryReadAttribute("MaxY", out double maxY);
+            element.TryReadAttribute("MaxZ", out double maxZ);
+
+            Max = new Vector3d(maxX, maxY, maxZ);
+        }
+
+        
     }
 }

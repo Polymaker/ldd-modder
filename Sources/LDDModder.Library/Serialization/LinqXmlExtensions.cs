@@ -10,6 +10,251 @@ namespace System.Xml.Linq
 {
     public static class LinqXmlExtensions
     {
+        #region Attributes
+
+        public static XAttribute GetAttribute(this XElement element, string name)
+        {
+            return element.Attributes().FirstOrDefault(x => x.Name.LocalName.Equals(name, StringComparison.InvariantCultureIgnoreCase));
+        }
+
+        public static bool HasAttribute(this XElement element, string attributeName, out XAttribute attribute)
+        {
+            attribute = GetAttribute(element, attributeName);
+            return attribute != null;
+        }
+
+        public static bool HasAttribute(this XElement element, string attributeName)
+        {
+            return HasAttribute(element, attributeName, out _);
+        }
+
+        public static bool TryReadAttribute(this XElement element, string attributeName, Type valueType, out object result)
+        {
+            result = null;
+
+            var attr = GetAttribute(element, attributeName);
+            if (attr == null)
+                return false;
+
+            if (valueType == typeof(int) &&
+                int.TryParse(attr.Value, out int intVal))
+            {
+                result = intVal;
+                return true;
+            }
+            else if (valueType == typeof(float) &&
+                float.TryParse(attr.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out float floatVal))
+            {
+                result = floatVal;
+                return true;
+            }
+            else if (valueType == typeof(double) &&
+                double.TryParse(attr.Value, NumberStyles.Number, CultureInfo.InvariantCulture, out double dblVal))
+            {
+                result = dblVal;
+                return true;
+            }
+            else if (valueType == typeof(decimal) &&
+                decimal.TryParse(attr.Value, NumberStyles.Number, CultureInfo.InvariantCulture, out decimal decVal))
+            {
+                result = decVal;
+                return true;
+            }
+            else if (valueType == typeof(string))
+            {
+                result = attr.Value;
+                return true;
+            }
+            else if (valueType == typeof(bool))
+            {
+                switch (attr.Value.Trim().ToLower())
+                {
+                    case "1":
+                    case "true":
+                    case "yes":
+                        result = true;
+                        return true;
+                    case "0":
+                    case "false":
+                    case "no":
+                        result = false;
+                        return true;
+                }
+            }
+            else if (valueType.IsEnum)
+            {
+                if (int.TryParse(attr.Value, out int intEnumVal) &&
+                    Enum.IsDefined(valueType, intEnumVal))
+                {
+                    result = Enum.ToObject(valueType, intEnumVal);
+                    return true;
+                }
+
+                try
+                {
+                    result = Enum.Parse(valueType, attr.Value, true);
+                    return true;
+                }
+                catch { }
+            }
+
+            return false;
+        }
+
+        public static bool TryReadAttribute<T>(this XElement element, string attributeName, out T result)
+        {
+            if (TryReadAttribute(element, attributeName, typeof(T), out object objResult))
+            {
+                result = (T)objResult;
+                return true;
+            }
+
+            result = default(T);
+            return false;
+        }
+
+        public static T ReadAttribute<T>(this XElement element, string attributeName)
+        {
+            if (TryReadAttribute(element, attributeName, out T result))
+                return result;
+
+            if (element.HasAttribute(attributeName))
+                throw new InvalidCastException($"The value '{element.Attribute(attributeName).Value}' could not be converted to {typeof(T).Name}");
+
+            throw new KeyNotFoundException($"The attribute '{attributeName}' was not found");
+        }
+
+        public static T ReadAttribute<T>(this XElement element, string attributeName, T defaultValue)
+        {
+            if (TryReadAttribute(element, attributeName, out T result))
+                return result;
+            return defaultValue;
+        }
+
+        #endregion
+
+        #region Get/Read Element
+
+        public static XElement GetElement(this XElement element, string elementName)
+        {
+            return element.Elements()
+                .FirstOrDefault(x =>
+                x.Name.LocalName.Equals(elementName, StringComparison.InvariantCultureIgnoreCase));
+        }
+
+        public static bool HasElement(this XElement element, string elementName, out XElement childElement)
+        {
+            childElement = GetElement(element, elementName);
+            return childElement != null;
+        }
+
+        public static bool HasElement(this XElement parentElem, string elementName)
+        {
+            return HasElement(parentElem, elementName, out _);
+        }
+
+        public static bool TryReadElement<T>(this XElement element, string elementName, out T result)
+        {
+            result = default;
+
+            if (TryReadElement(element, elementName, typeof(T), out object objResult))
+            {
+                result = (T)objResult;
+                return true;
+            }
+
+            return false;
+        }
+
+        public static bool TryReadElement(this XElement element, string elementName, Type valueType, out object result)
+        {
+            result = null;
+
+            var elem = GetElement(element, elementName);
+            if (elem == null)
+                return false;
+
+            if (valueType == typeof(int) &&
+                int.TryParse(elem.Value, out int intVal))
+            {
+                result = intVal;
+                return true;
+            }
+            else if (valueType == typeof(float) &&
+                float.TryParse(elem.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out float floatVal))
+            {
+                result = floatVal;
+                return true;
+            }
+            else if (valueType == typeof(double) &&
+                double.TryParse(elem.Value, NumberStyles.Number, CultureInfo.InvariantCulture, out double dblVal))
+            {
+                result = dblVal;
+                return true;
+            }
+            else if (valueType == typeof(decimal) &&
+                decimal.TryParse(elem.Value, NumberStyles.Number, CultureInfo.InvariantCulture, out decimal decVal))
+            {
+                result = decVal;
+                return true;
+            }
+            else if (valueType == typeof(string))
+            {
+                result = elem.Value;
+                return true;
+            }
+            else if (valueType == typeof(bool))
+            {
+                switch (elem.Value.Trim().ToLower())
+                {
+                    case "1":
+                    case "true":
+                    case "yes":
+                        result = true;
+                        return true;
+                    case "0":
+                    case "false":
+                    case "no":
+                        result = false;
+                        return true;
+                }
+            }
+            else if (valueType.IsEnum)
+            {
+                if (int.TryParse(elem.Value, out int intEnumVal) &&
+                    Enum.IsDefined(valueType, intEnumVal))
+                {
+                    result = Enum.ToObject(valueType, intEnumVal);
+                    return true;
+                }
+                try
+                {
+                    result = Enum.Parse(valueType, elem.Value, true);
+                    return true;
+                }
+                catch { }
+            }
+
+            return false;
+        }
+
+        public static T ReadElement<T>(this XElement element, string elementName, T defaultValue)
+        {
+            if (TryReadElement(element, elementName, out T result))
+                return result;
+            return defaultValue;
+        }
+
+        public static T ReadElementAttribute<T>(this XElement element, string elementName, string attributeName, T defaultValue)
+        {
+            var elem = GetElement(element, elementName);
+            if (TryReadAttribute(elem, attributeName, out T result))
+                return result;
+            return defaultValue;
+        }
+
+        #endregion
+
         public static void AddNumberAttribute(this XElement element, string attributeName, int number)
         {
             element.Add(new XAttribute(attributeName, number.ToString(CultureInfo.InvariantCulture)));
@@ -23,28 +268,6 @@ namespace System.Xml.Linq
         public static void AddNumberAttribute(this XElement element, string attributeName, double number)
         {
             element.Add(new XAttribute(attributeName, number.ToString(CultureInfo.InvariantCulture)));
-        }
-
-        public static bool HasAttribute(this XElement element, string attributeName)
-        {
-            return GetAttribute(element, attributeName) != null; 
-        }
-
-        public static bool HasAttribute(this XElement element, string attributeName, out XAttribute attribute)
-        {
-            attribute = GetAttribute(element, attributeName);
-            return attribute != null;
-        }
-
-        public static bool HasElement(this XElement baseElement, string elementName)
-        {
-            return HasElement(baseElement, elementName, out XElement _);
-        }
-
-        public static bool HasElement(this XElement baseElement, string elementName, out XElement element)
-        {
-            element = GetElement(baseElement, elementName);
-            return element != null;
         }
 
         public static XElement AddElement(this XElement element, string elementName)
@@ -66,16 +289,6 @@ namespace System.Xml.Linq
             TrueFalse,
             YesNo,
             OneZero
-        }
-
-        public static XAttribute GetAttribute(this XElement element, string name)
-        {
-            return element.Attributes().FirstOrDefault(x => x.Name.LocalName.Equals(name, StringComparison.InvariantCultureIgnoreCase));
-        }
-
-        public static XElement GetElement(this XElement element, string name)
-        {
-            return element.Elements().FirstOrDefault(x => x.Name.LocalName.Equals(name, StringComparison.InvariantCultureIgnoreCase));
         }
 
         public static void AddBooleanAttribute(this XElement element, string attributeName, bool value, BooleanXmlRepresentation representation = BooleanXmlRepresentation.OneZero)
@@ -100,173 +313,6 @@ namespace System.Xml.Linq
             value = 0;
             var attr = GetAttribute(element, attributeName);
             return attr != null && int.TryParse(attr.Value, out value);
-        }
-
-        public static T ReadAttribute<T>(this XElement element, string attributeName)
-        {
-            if (TryReadAttribute(element, attributeName, out T result))
-                return result;
-
-            if (element.HasAttribute(attributeName))
-                throw new InvalidCastException($"The value '{element.Attribute(attributeName).Value}' could not be converted to {typeof(T).Name}");
-
-            throw new KeyNotFoundException($"The attribute '{attributeName}' was not found");
-        }
-
-        public static T ReadAttribute<T>(this XElement element, string attributeName, T defaultValue)
-        {
-            if (TryReadAttribute(element, attributeName, out T result))
-                return result;
-            return defaultValue;
-        }
-
-        public static bool TryReadAttribute<T>(this XElement element, string attributeName, out T result)
-        {
-            result = default;
-            var attr = GetAttribute(element, attributeName);
-            if (attr == null)
-                return false;
-
-            if (typeof(T) == typeof(int) && 
-                int.TryParse(attr.Value, out int intVal))
-            {
-                result = (T)(object)intVal;
-                return true;
-            }
-            else if (typeof(T) == typeof(float) && 
-                float.TryParse(attr.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out float floatVal))
-            {
-                result = (T)(object)floatVal;
-                return true;
-            }
-            else if (typeof(T) == typeof(double) &&
-                double.TryParse(attr.Value, NumberStyles.Number, CultureInfo.InvariantCulture, out double dblVal))
-            {
-                result = (T)(object)dblVal;
-                return true;
-            }
-            else if (typeof(T) == typeof(decimal) &&
-                decimal.TryParse(attr.Value, NumberStyles.Number, CultureInfo.InvariantCulture, out decimal decVal))
-            {
-                result = (T)(object)decVal;
-                return true;
-            }
-            else if (typeof(T) == typeof(string))
-            {
-                result = (T)(object)attr.Value;
-                return true;
-            }
-            else if(typeof(T) == typeof(bool))
-            {
-                switch (attr.Value.Trim().ToLower())
-                {
-                    case "1":
-                    case "true":
-                    case "yes":
-                        result = (T)(object)true;
-                        return true;
-                    case "0":
-                    case "false":
-                    case "no":
-                        result = (T)(object)false;
-                        return true;
-                }
-            }
-            else if (typeof(T).IsEnum)
-            {
-                if (int.TryParse(attr.Value, out int intEnumVal) &&
-                    Enum.IsDefined(typeof(T), intEnumVal))
-                {
-                    result = (T)Enum.ToObject(typeof(T), intEnumVal);
-                    return true;
-                }
-                try
-                {
-                    result = (T)Enum.Parse(typeof(T), attr.Value, true);
-                    return true;
-                }
-                catch { }
-            }
-
-            return false;
-        }
-
-        public static T ReadElement<T>(this XElement element, string elementName, T defaultValue)
-        {
-            if (TryReadElement(element, elementName, out T result))
-                return result;
-            return defaultValue;
-        }
-
-        public static bool TryReadElement<T>(this XElement element, string elementName, out T result)
-        {
-            result = default;
-            var attr = GetElement(element, elementName);
-            if (attr == null)
-                return false;
-
-            if (typeof(T) == typeof(int) &&
-                int.TryParse(attr.Value, out int intVal))
-            {
-                result = (T)(object)intVal;
-                return true;
-            }
-            else if (typeof(T) == typeof(float) &&
-                float.TryParse(attr.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out float floatVal))
-            {
-                result = (T)(object)floatVal;
-                return true;
-            }
-            else if (typeof(T) == typeof(double) &&
-                double.TryParse(attr.Value, NumberStyles.Number, CultureInfo.InvariantCulture, out double dblVal))
-            {
-                result = (T)(object)dblVal;
-                return true;
-            }
-            else if (typeof(T) == typeof(decimal) &&
-                decimal.TryParse(attr.Value, NumberStyles.Number, CultureInfo.InvariantCulture, out decimal decVal))
-            {
-                result = (T)(object)decVal;
-                return true;
-            }
-            else if (typeof(T) == typeof(string))
-            {
-                result = (T)(object)attr.Value;
-                return true;
-            }
-            else if (typeof(T) == typeof(bool))
-            {
-                switch (attr.Value.Trim().ToLower())
-                {
-                    case "1":
-                    case "true":
-                    case "yes":
-                        result = (T)(object)true;
-                        return true;
-                    case "0":
-                    case "false":
-                    case "no":
-                        result = (T)(object)false;
-                        return true;
-                }
-            }
-            else if (typeof(T).IsEnum)
-            {
-                if (int.TryParse(attr.Value, out int intEnumVal) &&
-                    Enum.IsDefined(typeof(T), intEnumVal))
-                {
-                    result = (T)Enum.ToObject(typeof(T), intEnumVal);
-                    return true;
-                }
-                try
-                {
-                    result = (T)Enum.Parse(typeof(T), attr.Value, true);
-                    return true;
-                }
-                catch { }
-            }
-
-            return false;
         }
 
         public static bool GetBoolAttribute(this XElement element, string attributeName, BooleanXmlRepresentation representation = BooleanXmlRepresentation.OneZero)

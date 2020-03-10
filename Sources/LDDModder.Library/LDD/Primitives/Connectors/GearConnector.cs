@@ -13,7 +13,7 @@ namespace LDDModder.LDD.Primitives.Connectors
 
         public int ToothCount { get; set; }
 
-        public float Radius { get; set; }
+        public double Radius { get; set; }
 
         protected override void SerializeBeforeTransform(XElement element)
         {
@@ -28,7 +28,7 @@ namespace LDDModder.LDD.Primitives.Connectors
             if (element.TryReadAttribute("toothCount", out int toothCount))
                 ToothCount = toothCount;
 
-            if (element.TryReadAttribute("radius", out float radius))
+            if (element.TryReadAttribute("radius", out double radius))
                 Radius = radius;
         }
     }

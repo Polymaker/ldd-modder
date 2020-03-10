@@ -1044,9 +1044,10 @@ namespace LDDModder.Modding.Editing
 
         public LDD.Parts.PartWrapper GenerateLddPart()
         {
-            if (Bounding == null)
+            if (Bounding is null)
                 Bounding = CalculateBoundingBox();
-            if (GeometryBounding == null)
+
+            if (GeometryBounding is null)
                 GeometryBounding = Bounding;
 
             var part = new LDD.Parts.PartWrapper()

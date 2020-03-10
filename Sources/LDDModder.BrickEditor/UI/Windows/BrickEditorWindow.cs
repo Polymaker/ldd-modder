@@ -94,6 +94,7 @@ namespace LDDModder.BrickEditor.UI.Windows
         private ViewportPanel ViewportPanel;
         private ValidationPanel ValidationPanel;
         private PartPropertiesPanel PropertiesPanel;
+        private ElementDetailPanel DetailPanel;
 
         private void InitializePanels()
         {
@@ -101,7 +102,7 @@ namespace LDDModder.BrickEditor.UI.Windows
             ViewportPanel = new ViewportPanel(ProjectManager);
             ValidationPanel = new ValidationPanel(ProjectManager);
             PropertiesPanel = new PartPropertiesPanel(ProjectManager);
-
+            DetailPanel = new ElementDetailPanel(ProjectManager);
 
             ViewportPanel.Show(DockPanelControl, DockState.Document);
 
@@ -112,6 +113,7 @@ namespace LDDModder.BrickEditor.UI.Windows
             DockPanelControl.DockBottomPortion = 200;
 
             PropertiesPanel.Show(DockPanelControl, DockState.DockBottom);
+            DetailPanel.Show(PropertiesPanel.Pane, null);
             ValidationPanel.Show(PropertiesPanel.Pane, null);
 
             PropertiesPanel.Activate();

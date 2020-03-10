@@ -102,7 +102,7 @@
             // CurrentFileStripLabel
             // 
             this.CurrentFileStripLabel.Name = "CurrentFileStripLabel";
-            this.CurrentFileStripLabel.Size = new System.Drawing.Size(636, 17);
+            this.CurrentFileStripLabel.Size = new System.Drawing.Size(769, 17);
             this.CurrentFileStripLabel.Spring = true;
             this.CurrentFileStripLabel.Text = "...\\LEGO Digital Designer\\db.lif";
             this.CurrentFileStripLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;

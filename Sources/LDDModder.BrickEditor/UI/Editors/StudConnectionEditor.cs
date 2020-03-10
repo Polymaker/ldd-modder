@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace LDDModder.LifExtractor
+namespace LDDModder.BrickEditor.UI.Editors
 {
-    public partial class LifExtractionWindow : Form
+    public partial class StudConnectionEditor : UserControl
     {
-        public LifExtractionWindow()
+        public StudConnectionEditor()
         {
             InitializeComponent();
         }

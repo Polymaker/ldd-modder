@@ -21,6 +21,7 @@ namespace LDDModder.BrickEditor.UI.Controls
         const int BOX_MARGIN = 3;
 
         [Browsable(false), Bindable(true)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public BoundingBox Value
         {
             get => _Value;
@@ -231,12 +232,12 @@ namespace LDDModder.BrickEditor.UI.Controls
 
             if (Value != null)
             {
-                _Value.MinX = (float)MinX_Box.Value;
-                _Value.MinY = (float)MinY_Box.Value;
-                _Value.MinZ = (float)MinZ_Box.Value;
-                _Value.MaxX = (float)MaxX_Box.Value;
-                _Value.MaxY = (float)MaxY_Box.Value;
-                _Value.MaxZ = (float)MaxZ_Box.Value;
+                _Value.MinX = MinX_Box.Value;
+                _Value.MinY = MinY_Box.Value;
+                _Value.MinZ = MinZ_Box.Value;
+                _Value.MaxX = MaxX_Box.Value;
+                _Value.MaxY = MaxY_Box.Value;
+                _Value.MaxZ = MaxZ_Box.Value;
 
                 OnValueChanged();
             }

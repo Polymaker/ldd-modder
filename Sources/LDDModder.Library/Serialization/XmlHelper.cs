@@ -79,6 +79,14 @@ namespace LDDModder.Serialization
             if (string.IsNullOrEmpty(elementName))
                 elementName = GetTypeXmlRootName(typeof(T));
 
+            if (typeof(T).GetInterface("IXmlObject") != null)
+            {
+                var resultElem = (obj as IXmlObject).SerializeToXml();
+                if (elementName != typeof(T).Name)
+                    resultElem.Name = elementName;
+                return resultElem;
+            }
+
             var doc = new XDocument();
             var ns = new XmlSerializerNamespaces();
             ns.Add("", "");

@@ -75,9 +75,17 @@ namespace LDDModder.PaletteMaker.UI
             public PartMatchInfo(Rebrickable.Models.SetPart setPart)
             {
                 PartID = setPart.Part.PartNum;
-                ColorID = setPart.Color?.Id ?? 0;
+                ColorID = setPart.Color?.Id ?? -1;
                 NeededQty = setPart.Quantity;
                 IsSpare = setPart.IsSpare;
+            }
+
+            public PartMatchInfo(PartToFind part)
+            {
+                PartID = part.PartID;
+                ColorID = part.ColorID;
+                NeededQty = part.Quantity;
+                IsSpare = part.IsSpare;
             }
         }
 
@@ -105,13 +113,67 @@ namespace LDDModder.PaletteMaker.UI
             }
         }
 
+        class PartToFind
+        {
+            public string PartID { get; set; }
+            public int ColorID { get; set; }
+            public int Quantity { get; set; }
+            public List<string> Alternates { get; set; }
+            public bool IsSpare { get; set; }
+            public PartToFind()
+            {
+                Alternates = new List<string>();
+            }
+
+            public PartToFind(Rebrickable.Models.SetPart setPart)
+            {
+                Alternates = new List<string>();
+                PartID = setPart.Part.PartNum;
+                ColorID = setPart.Color?.Id ?? -1;
+                Quantity = setPart.Quantity;
+                IsSpare = setPart.IsSpare;
+            }
+
+            public bool MatchesPart(string partID)
+            {
+                return PartID == partID || Alternates.Contains(partID);
+            }
+        }
+
         private void LoadSetParts(List<Rebrickable.Models.SetPart> parts)
         {
             var distinctPartIDs = parts.Select(x => x.Part.PartNum).Distinct().ToList();
+
+
             var matchingSetInfos = new List<SetPartMatchInfo>();
+            var partsToFind = new List<PartToFind>();
 
             using (var db = SettingsManager.GetDbContext())
             {
+                var baseParts = db.RbParts.Where(x => distinctPartIDs.Contains(x.PartID)).ToList();
+
+                foreach (var setPart in parts)
+                {
+                    var rbPart = baseParts.FirstOrDefault(x => x.PartID == setPart.Part.PartNum);
+                    if (rbPart == null)
+                        continue;
+
+                    var partToFind = new PartToFind(setPart);
+                    // var altParts = rbPart.Relationships.Where(x=>x.RelationTypeFlag)
+                    if (!string.IsNullOrEmpty(rbPart.ParentPartID))
+                        partToFind.Alternates.Add(rbPart.ParentPartID);
+
+                    partToFind.Alternates.AddRange(
+                        rbPart.Relationships
+                        .Where(x => x.RelationType == "A")
+                        .Select(x => x.ChildPartID));
+
+                    partsToFind.Add(partToFind);
+                }
+
+                distinctPartIDs.AddRange(partsToFind.SelectMany(x => x.Alternates));
+                distinctPartIDs = distinctPartIDs.Distinct().ToList();
+
                 var matchingSetIDs = db.RbSetParts.Where(x => distinctPartIDs.Contains(x.PartID))
                     .Select(x => x.SetID)
                     .Distinct().ToList();
@@ -125,11 +187,12 @@ namespace LDDModder.PaletteMaker.UI
                     var setMatchInfo = new SetPartMatchInfo() { Set = setinfo };
                     var setParts = setinfo.Parts.Where(x => distinctPartIDs.Contains(x.PartID)).ToList();
 
-                    foreach (var neededPart in parts)
+                    foreach (var neededPart in partsToFind)
                     {
                         var partMatchInfo = new PartMatchInfo(neededPart);
+                        var altIDs = neededPart.Alternates.ToList();
                         var foundPart = setParts.FirstOrDefault(x =>
-                            x.PartID == partMatchInfo.PartID &&
+                            (x.PartID == partMatchInfo.PartID || altIDs.Contains(x.PartID)) &&
                             x.ColorID == partMatchInfo.ColorID);
                         if (foundPart != null)
                             partMatchInfo.SetQty += foundPart.Quantity;

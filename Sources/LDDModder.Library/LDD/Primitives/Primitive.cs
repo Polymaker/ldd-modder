@@ -105,13 +105,13 @@ namespace LDDModder.LDD.Primitives
             if (Bounding != null)
             {
                 var boundingElem = rootElem.AddElement("Bounding");
-                boundingElem.Add(XmlHelper.DefaultSerialize(Bounding, "AABB"));
+                boundingElem.Add(Bounding.SerializeToXml("AABB"));
             }
 
             if (GeometryBounding != null)
             {
                 var boundingElem = rootElem.AddElement("GeometryBounding");
-                boundingElem.Add(XmlHelper.DefaultSerialize(GeometryBounding, "AABB"));
+                boundingElem.Add(GeometryBounding.SerializeToXml("AABB"));
             }
 
             if (SubMaterials != null)
@@ -254,11 +254,14 @@ namespace LDDModder.LDD.Primitives
                         break;
 
                     case "Bounding":
-                        Bounding = XmlHelper.DefaultDeserialize<BoundingBox>(element.Element("AABB"));
+                        Bounding = new BoundingBox();
+                        Bounding.LoadFromXml(element.Element("AABB"));
+                        
                         break;
 
                     case "GeometryBounding":
-                        GeometryBounding = XmlHelper.DefaultDeserialize<BoundingBox>(element.Element("AABB"));
+                        GeometryBounding = new BoundingBox();
+                        GeometryBounding.LoadFromXml(element.Element("AABB"));
                         break;
 
                     case "Decoration":
