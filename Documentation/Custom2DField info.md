@@ -64,8 +64,8 @@ Conn. type  | Gender | Description
   3:4:38    |        |
 ——————— | —————— |———————————————————————————————————
 **TYPE 4**  |  Male  | Door stud
- 4:4:32     |        | Used only for part 76041 'DOOR FOR FRAME 1X4X6'
- 4:4:33     |        | Used only for part 47899 'LEFT SHOP DOOR 4X5'
+  4:4:32    |        | Used only for part 76041 'DOOR FOR FRAME 1X4X6'
+  4:4:33    |        | Used only for part 47899 'LEFT SHOP DOOR 4X5'
 ——————— | —————— |———————————————————————————————————
 **TYPE 5**  | Female | Circular connector that surrounds a stud
   5:4:32    |        | 

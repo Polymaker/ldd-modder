@@ -32,6 +32,7 @@
             this.SelectedElementLabel = new System.Windows.Forms.ToolStripLabel();
             this.SelectedElementComboBox = new System.Windows.Forms.ToolStripComboBox();
             this.SyncSelectionCheckBox = new LDDModder.BrickEditor.UI.Controls.ToolStripCheckBox();
+            this.studGridControl1 = new LDDModder.BrickEditor.UI.Editors.StudGridControl();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -67,11 +68,20 @@
             this.SyncSelectionCheckBox.Size = new System.Drawing.Size(165, 22);
             this.SyncSelectionCheckBox.Text = "Synchronise with viewport";
             // 
+            // studGridControl1
+            // 
+            this.studGridControl1.Location = new System.Drawing.Point(12, 28);
+            this.studGridControl1.Name = "studGridControl1";
+            this.studGridControl1.Size = new System.Drawing.Size(166, 76);
+            this.studGridControl1.TabIndex = 1;
+            this.studGridControl1.Text = "studGridControl1";
+            // 
             // ElementDetailPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(618, 325);
+            this.Controls.Add(this.studGridControl1);
             this.Controls.Add(this.toolStrip1);
             this.Name = "ElementDetailPanel";
             this.Text = "ElementDetailPanel";
@@ -88,5 +98,6 @@
         private System.Windows.Forms.ToolStripLabel SelectedElementLabel;
         private System.Windows.Forms.ToolStripComboBox SelectedElementComboBox;
         private Controls.ToolStripCheckBox SyncSelectionCheckBox;
+        private Editors.StudGridControl studGridControl1;
     }
 }

@@ -23,10 +23,12 @@ namespace LDDModder.LDD.Primitives.Connectors
 
         protected override void SerializeBeforeTransform(XElement element)
         {
-            element.AddNumberAttribute("length", Length);
-            element.AddBooleanAttribute(IsGrabbingRequired ? "requireGrabbing" : "grabbing", Grabbing);
-            element.AddBooleanAttribute("startCapped", StartCapped);
-            element.AddBooleanAttribute("endCapped", EndCapped);
+            element.WriteAttribute("length", Length);
+            element.WriteAttribute(
+                IsGrabbingRequired ? "requireGrabbing" : "grabbing", 
+                Grabbing, LinqXmlExtensions.BooleanXmlRepresentation.OneZero);
+            element.WriteAttribute("startCapped", StartCapped, LinqXmlExtensions.BooleanXmlRepresentation.OneZero);
+            element.WriteAttribute("endCapped", EndCapped, LinqXmlExtensions.BooleanXmlRepresentation.OneZero);
         }
 
         public override void LoadFromXml(XElement element)

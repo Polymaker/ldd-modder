@@ -36,10 +36,28 @@ namespace System.Xml.Linq
             if (attr == null)
                 return false;
 
-            if (valueType == typeof(int) &&
+            if (valueType == typeof(byte) &&
+                byte.TryParse(attr.Value, out byte byteVal))
+            {
+                result = byteVal;
+                return true;
+            }
+            else if (valueType == typeof(short) &&
+                short.TryParse(attr.Value, out short shortVal))
+            {
+                result = shortVal;
+                return true;
+            }
+            else if (valueType == typeof(int) &&
                 int.TryParse(attr.Value, out int intVal))
             {
                 result = intVal;
+                return true;
+            }
+            else if (valueType == typeof(long) &&
+                long.TryParse(attr.Value, out long longVal))
+            {
+                result = longVal;
                 return true;
             }
             else if (valueType == typeof(float) &&
@@ -129,6 +147,49 @@ namespace System.Xml.Linq
             if (TryReadAttribute(element, attributeName, out T result))
                 return result;
             return defaultValue;
+        }
+
+        public static void WriteAttribute(this XElement element, string attributeName, Type valueType, object value)
+        {
+            if (value != null)
+            {
+                element.Add(new XAttribute(attributeName,
+                    string.Format(CultureInfo.InvariantCulture, "{0}", value))
+                    );
+            }
+
+            //if (valueType == typeof(byte) ||
+            //    valueType == typeof(short) ||
+            //    valueType == typeof(int) ||
+            //    valueType == typeof(long) ||
+            //    valueType == typeof(float) ||
+            //    valueType == typeof(double) ||
+            //    valueType == typeof(decimal))
+            //{
+            //    element.Add(new XAttribute(attributeName, 
+            //        string.Format(CultureInfo.InvariantCulture, "{0}", value))
+            //        );
+            //}
+        }
+
+        public static void WriteAttribute<T>(this XElement element, string attributeName, T value)
+        {
+            WriteAttribute(element, attributeName, typeof(T), value);
+        }
+
+        public static void WriteAttribute(this XElement element, string attributeName, bool value, BooleanXmlRepresentation representation)
+        {
+            string stringValue = string.Empty;
+            switch (representation)
+            {
+                case BooleanXmlRepresentation.OneZero:
+                    stringValue = value ? "1" : "0"; break;
+                case BooleanXmlRepresentation.TrueFalse:
+                    stringValue = value ? "true" : "false"; break;
+                case BooleanXmlRepresentation.YesNo:
+                    stringValue = value ? "yes" : "no"; break;
+            }
+            WriteAttribute(element, attributeName, typeof(bool), stringValue);
         }
 
         #endregion

@@ -1,4 +1,6 @@
 ﻿using LDDModder.BrickEditor.ProjectHandling;
+using LDDModder.LDD.Primitives.Connectors;
+using LDDModder.Modding.Editing;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -31,7 +33,15 @@ namespace LDDModder.BrickEditor.UI.Panels
             base.OnElementSelectionChanged();
             if (SyncSelectionCheckBox.Checked)
             {
+                
+            }
 
+            if (ProjectManager.SelectedElement is PartConnection partConnection)
+            {
+                if (partConnection.ConnectorType == ConnectorType.Custom2DField)
+                {
+                    studGridControl1.StudConnector = partConnection.GetConnector<Custom2DFieldConnector>();
+                }
             }
         }
 

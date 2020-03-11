@@ -184,6 +184,12 @@
     <Compile Include="UI\Controls\ToolStripCheckBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="UI\Editors\StudGridControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\Editors\StudGridControl.Designer.cs">
+      <DependentUpon>StudGridControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\Editors\TransformEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
