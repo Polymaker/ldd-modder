@@ -120,5 +120,13 @@ namespace LDDModder.BrickEditor.UI.Panels
             foreach (var ctrl in controls)
                 ctrl.Enabled = enabled;
         }
+
+        protected void ExecuteOnThread(Action action)
+        {
+            if (InvokeRequired)
+                BeginInvoke(action);
+            else
+                action();
+        }
     }
 }

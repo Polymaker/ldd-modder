@@ -29,9 +29,21 @@ namespace LDDModder.BrickEditor.UI.Panels
         protected override void OnElementSelectionChanged()
         {
             base.OnElementSelectionChanged();
+            
+
+            ExecuteOnThread(() =>
+            {
+                FillSelectionDetails();
+            });
+
+            
+        }
+
+        private void FillSelectionDetails()
+        {
             if (SyncSelectionCheckBox.Checked)
             {
-                
+
             }
 
             studGridControl1.StudConnector = null;

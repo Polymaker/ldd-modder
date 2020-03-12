@@ -97,7 +97,7 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         private void FillValidatedParts(bool onlyOnce = false)
         {
-            var validBricks = BrickListCache.GetValidatedBricks();
+            var validBricks = BrickListCache.GetValidatedBricks().OrderBy(x => x.PartId).ToList();
             var newBricks = validBricks.Except(BrickList).ToList();
 
             const int MAX_ADD = 200;
@@ -106,8 +106,12 @@ namespace LDDModder.BrickEditor.UI.Windows
             while (newBricks.Count > 0)
             {
                 var range = newBricks.Take(MAX_ADD).ToList();
+                //bool firstAdd = BrickList.Count == 0;
 
                 BrickList.AddRange(range);
+
+                //if (!firstAdd)
+                //    BrickList.ApplySort("PartId", ListSortDirection.Ascending);
 
                 if (IsListFiltered)
                     FilteredBrickList.AddRange(range.Where(x => IsBrickVisible(x)));

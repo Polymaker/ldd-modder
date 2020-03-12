@@ -124,9 +124,9 @@ void main()
 	
 	if (IsSelected)
 	{
-		float baseBrightness = getBrightness(baseColor.rgb);
-		
-		baseColor.rgb = clamp(max(baseColor.rgb,baseBrightness * 0.5) * 1.15, vec3(0), vec3(1));
+		//float baseBrightness = getBrightness(baseColor.rgb);
+		baseColor.rgb = clamp(baseColor.rgb * 1.15 + (0.05), vec3(0), vec3(1));
+		//baseColor.rgb = clamp(max(baseColor.rgb, baseBrightness * 0.5) * 1.15, vec3(0), vec3(1));
 	}
 	
 	vec3 finalColor = baseColor.rgb * 0.1;

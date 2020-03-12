@@ -155,23 +155,23 @@ namespace LDDModder.BrickEditor.Rendering
 
             switch (Connection.ConnectorType)
             {
-                case LDD.Primitives.Connectors.ConnectorType.Axel:
+                case ConnectorType.Axel:
                     RenderTechnicAxle(Connection.GetConnector<AxelConnector>());
                     break;
-                case LDD.Primitives.Connectors.ConnectorType.Ball:
+                case ConnectorType.Ball:
                     break;
-                case LDD.Primitives.Connectors.ConnectorType.Custom2DField:
+                case ConnectorType.Custom2DField:
                     RenderCustom2DField(Connection.GetConnector<Custom2DFieldConnector>());
                     break;
-                case LDD.Primitives.Connectors.ConnectorType.Fixed:
+                case ConnectorType.Fixed:
                     break;
-                case LDD.Primitives.Connectors.ConnectorType.Gear:
+                case ConnectorType.Gear:
                     break;
-                case LDD.Primitives.Connectors.ConnectorType.Hinge:
+                case ConnectorType.Hinge:
                     break;
-                case LDD.Primitives.Connectors.ConnectorType.Rail:
+                case ConnectorType.Rail:
                     break;
-                case LDD.Primitives.Connectors.ConnectorType.Slider:
+                case ConnectorType.Slider:
                     break;
             }
 

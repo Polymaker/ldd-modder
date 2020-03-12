@@ -53,6 +53,15 @@ namespace System.Collections.Generic
             get { return true; }
         }
 
+        public void ApplySort(string propertyName, ListSortDirection direction)
+        {
+            var properties = TypeDescriptor.GetProperties(typeof(T));
+            var propdesc = properties.Find(propertyName, true);
+
+            if (propdesc != null)
+                ApplySortCore(propdesc, direction);
+        }
+
         public void ApplySort(PropertyDescriptor property, ListSortDirection direction)
         {
             ApplySortCore(property, direction);

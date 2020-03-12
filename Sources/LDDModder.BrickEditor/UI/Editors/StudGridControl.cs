@@ -16,10 +16,13 @@ namespace LDDModder.BrickEditor.UI.Editors
         private Custom2DFieldConnector _StudConnector;
         private Size GridCellSize;
         private ComboBox EditCombo;
+        private Size _MaxGridSize;
 
         private Tuple<int, int> SelectionStart;
         private Tuple<int, int> SelectionEnd;
         private Tuple<int, int> FocusedCell;
+
+        private Point ScrollOffset;
 
         private Size SelectionSize
         {
@@ -39,6 +42,8 @@ namespace LDDModder.BrickEditor.UI.Editors
             }
         }
 
+        
+
         [Browsable(false)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public Custom2DFieldConnector StudConnector
@@ -51,18 +56,33 @@ namespace LDDModder.BrickEditor.UI.Editors
             }
         }
 
+        public Size MaxGridSize
+        {
+            get => _MaxGridSize;
+            set
+            {
+                if (value != _MaxGridSize)
+                {
+                    _MaxGridSize = value;
+                    UpdateControlSize();
+                }
+            }
+        }
+
         private Custom2DFieldNode SelectedNode;
 
         public StudGridControl()
         {
             InitializeComponent();
+            CausesValidation = true;
+            _MaxGridSize = new Size(10, 10);
+
             SetStyle(ControlStyles.ResizeRedraw | 
                 ControlStyles.OptimizedDoubleBuffer |
                 ControlStyles.Selectable, true);
 
             InitEditCombo();
-
-
+            
             BindConnector(null);
         }
 
@@ -80,6 +100,10 @@ namespace LDDModder.BrickEditor.UI.Editors
 
         protected void BindConnector(Custom2DFieldConnector connector)
         {
+            SelectionStart = null;
+            SelectionEnd = null;
+            FocusedCell = null;
+
             if (_StudConnector != null)
             {
                 _StudConnector.PropertyChanged -= StudConnector_PropertyChanged;
@@ -110,23 +134,40 @@ namespace LDDModder.BrickEditor.UI.Editors
             if (StudConnector == null)
                 return;
 
-            var cellSize = TextRenderer.MeasureText("15:4:96", Font);
+            var cellSize = TextRenderer.MeasureText("15:4:96", Font, Size, TextFormatFlags.TextBoxControl);
 
-            cellSize.Width += 12;
+            cellSize.Width += 24;
             cellSize.Height += 12;
             GridCellSize = cellSize;
 
-            Width = (cellSize.Width * StudConnector.ArrayWidth) + 1;
-            Height = (cellSize.Height * StudConnector.ArrayHeight) + 1;
+            var calculatedSize = CalculateControlSize();
+            Size = calculatedSize;
+        }
 
+        private Size CalculateControlSize()
+        {
+            int visibleCols = Math.Min(StudConnector.ArrayWidth, MaxGridSize.Width);
+            int visibleRows = Math.Min(StudConnector.ArrayHeight, MaxGridSize.Height);
+
+            int width = (GridCellSize.Width * visibleCols) + 1;
+            int height = (GridCellSize.Height * visibleRows) + 1;
+
+            if (StudConnector.ArrayWidth > MaxGridSize.Width)
+                height += SystemInformation.HorizontalScrollBarHeight;
+
+            if (StudConnector.ArrayHeight > MaxGridSize.Height)
+                width += SystemInformation.VerticalScrollBarWidth;
+
+            return new Size(width, height);
         }
 
         protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified)
         {
             if (StudConnector != null)
             {
-                width = (GridCellSize.Width * StudConnector.ArrayWidth) + 1;
-                height = (GridCellSize.Height * StudConnector.ArrayHeight) + 1;
+                var calculatedSize = CalculateControlSize();
+                width = calculatedSize.Width;
+                height = calculatedSize.Height;
             }
 
             base.SetBoundsCore(x, y, width, height, specified);
@@ -142,37 +183,23 @@ namespace LDDModder.BrickEditor.UI.Editors
             if (StudConnector == null)
                 return;
 
-            float studWidth = (Width - 1) / (float)StudConnector.StudWidth;
-            float studHeight = (Height - 1) / (float)StudConnector.StudHeight;
-            float cellWidth = (Width - 1) / (float)StudConnector.ArrayWidth;
-            float cellHeight = (Height - 1) / (float)StudConnector.ArrayHeight;
-
-            //for (int x = 0; x <= StudConnector.StudWidth; x++)
-            //{
-            //    g.DrawLine(Pens.Gray, studWidth * x, 0, studWidth * x,
-            //        studHeight * StudConnector.StudHeight);
-            //}
-
-            //for (int y = 0; y <= StudConnector.StudHeight; y++)
-            //{
-            //    g.DrawLine(Pens.Gray, 0, studHeight * y,
-            //        studWidth * StudConnector.StudWidth, studHeight * y);
-            //}
-
             var evenColor = Color.FromArgb(80, 180, 180, 180);
 
             var columnRects = new List<RectangleF>();
             var rowRects = new List<RectangleF>();
 
-            for (int x = 0; x <= StudConnector.ArrayWidth; x++)
+            int visibleRows = Math.Min(StudConnector.ArrayHeight, MaxGridSize.Height);
+            int visibleCols = Math.Min(StudConnector.ArrayWidth, MaxGridSize.Width);
+
+            for (int x = 0; x < visibleCols; x++)
             {
-                var colRect = new RectangleF(cellWidth * x, 0, cellWidth, cellHeight * StudConnector.ArrayHeight);
+                var colRect = new RectangleF(GridCellSize.Width * x, 0, GridCellSize.Width, GridCellSize.Height * visibleRows);
                 columnRects.Add(colRect);
             }
 
-            for (int y = 0; y <= StudConnector.ArrayHeight; y++)
+            for (int y = 0; y < visibleRows; y++)
             {
-                var rowRect = new RectangleF(0, cellHeight * y, cellWidth * StudConnector.ArrayWidth, cellHeight);
+                var rowRect = new RectangleF(0, GridCellSize.Height * y, GridCellSize.Width * visibleCols, GridCellSize.Height);
                 rowRects.Add(rowRect);
             }
 
@@ -208,13 +235,11 @@ namespace LDDModder.BrickEditor.UI.Editors
 
             var selectionBrush = new SolidBrush(selectionColor);
 
-            for (int y = 0; y < StudConnector.ArrayHeight; y++)
+            for (int y = ScrollOffset.Y; y < visibleRows; y++)
             {
-                for (int x = 0; x < StudConnector.ArrayWidth; x++)
+                for (int x = ScrollOffset.X; x < visibleCols; x++)
                 {
-                    var cellRect = new RectangleF(
-                        cellWidth * x, cellHeight * y,
-                        cellWidth, cellHeight);
+                    var cellRect = GetCellRect(x, y);
 
                     if (IsInSelection(x, y))
                         g.FillRectangle(selectionBrush, cellRect.X, cellRect.Y, cellRect.Width, cellRect.Height);
@@ -224,34 +249,6 @@ namespace LDDModder.BrickEditor.UI.Editors
 
             DrawBorders(columnRects);
             DrawBorders(rowRects);
-
-            //for (int x = 0; x <= StudConnector.ArrayWidth; x++)
-            //{
-            //    var colRect = columnRects[x];
-
-            //    if ((x % 2) == 0)
-            //    {
-            //        using (var brush = new SolidBrush(evenColor))
-            //            g.FillRectangle(brush, colRect);
-            //    }
-
-            //    g.DrawLine(Pens.Black, cellWidth * x, 0, cellWidth * x,
-            //        cellHeight * StudConnector.ArrayHeight);
-            //}
-
-            //for (int y = 0; y <= StudConnector.ArrayHeight; y++)
-            //{
-            //    var rowRect = rowRects[y];
-
-            //    if ((y % 2) == 0)
-            //    {
-            //        using (var brush = new SolidBrush(evenColor))
-            //            g.FillRectangle(brush, rowRect);
-            //    }
-
-            //    g.DrawLine(Pens.Black, 0, cellHeight * y,
-            //        cellWidth * StudConnector.ArrayWidth, cellHeight * y);
-            //}
 
 
             var sf = new StringFormat()
@@ -267,21 +264,17 @@ namespace LDDModder.BrickEditor.UI.Editors
             //    focusedBorderPen = SystemPens.
             //}
 
-            for (int y = 0; y < StudConnector.ArrayHeight; y++)
+            for (int y = ScrollOffset.Y; y < visibleRows; y++)
             {
-                for (int x = 0; x < StudConnector.ArrayWidth; x++)
+                for (int x = ScrollOffset.X; x < visibleCols; x++)
                 {
-                    var cellRect = new RectangleF(
-                        cellWidth * x, cellHeight * y,
-                        cellWidth, cellHeight);
+                    var cellRect = GetCellRect(x, y);
 
                     if (IsInSelection(x,y))
-                    {
-
-                        g.DrawRectangle(focusedBorderPen, cellRect.X, cellRect.Y, cellRect.Width, cellRect.Height);
-                    }
-
-                    g.DrawString(StudConnector[x, y].ToString(), Font, Brushes.Black, cellRect, sf);
+                        g.DrawRectangle(focusedBorderPen, cellRect);
+                    TextRenderer.DrawText(g, StudConnector[x, y].ToString(), Font, cellRect, ForeColor, 
+                        TextFormatFlags.TextBoxControl | TextFormatFlags.NoClipping | TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
+                    //g.DrawString(StudConnector[x, y].ToString(), Font, Brushes.Black, cellRect, sf);
                 }
             }
 
@@ -385,6 +378,13 @@ namespace LDDModder.BrickEditor.UI.Editors
         {
             base.OnLostFocus(e);
             Invalidate();
+        }
+
+        protected override void OnValidating(CancelEventArgs e)
+        {
+            if (IsEditingNode && !FinishEditNode())
+                e.Cancel = true;
+            base.OnValidating(e);
         }
 
         protected override void OnKeyDown(KeyEventArgs e)
@@ -631,24 +631,27 @@ namespace LDDModder.BrickEditor.UI.Editors
 
         private Tuple<int, int> GetCellAddressFromPosition(Point point)
         {
-            int x = point.X / GridCellSize.Width;
-            int y = point.Y / GridCellSize.Height;
+
+            int x = (point.X + (ScrollOffset.X * GridCellSize.Width)) / GridCellSize.Width;
+            int y = (point.Y + (ScrollOffset.Y * GridCellSize.Height)) / GridCellSize.Height;
             return new Tuple<int, int>(x, y);
         }
 
 
         private Custom2DFieldNode GetNodeFromPosition(Point point)
         {
-            int x = point.X / GridCellSize.Width;
-            int y = point.Y / GridCellSize.Height;
+            int x = (point.X + (ScrollOffset.X * GridCellSize.Width)) / GridCellSize.Width;
+            int y = (point.Y + (ScrollOffset.Y * GridCellSize.Height)) / GridCellSize.Height;
 
             return StudConnector.GetNode(x, y);
         }
 
         private Rectangle GetCellRect(int x, int y)
         {
+            int offsetX = ScrollOffset.X * GridCellSize.Width;
+            int offsetY = ScrollOffset.Y * GridCellSize.Height;
             return new Rectangle(
-                        GridCellSize.Width * x, GridCellSize.Height * y,
+                        (GridCellSize.Width * x) - offsetX, (GridCellSize.Height * y) - offsetY,
                         GridCellSize.Width, GridCellSize.Height);
         }
     }
