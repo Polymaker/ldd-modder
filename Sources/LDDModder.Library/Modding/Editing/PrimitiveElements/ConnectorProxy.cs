@@ -24,6 +24,10 @@ namespace LDDModder.Modding.Editing
         {
             Connector = connector;
             Properties = new Dictionary<string, PropertyInfo>();
+            if (Connector is INotifyPropertyChanging)
+            {
+
+            }
         }
 
         private PropertyInfo GetProperty(string propertyName)

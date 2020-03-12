@@ -37,7 +37,7 @@ namespace LDDModder.Modding.Editing
         public Custom2DFieldConnector Connector => Connection?.GetConnector<Custom2DFieldConnector>();
 
         [XmlIgnore]
-        public Custom2DFieldConnector.FieldNode FieldNode => Connector?.GetNode(FieldIndex);
+        public Custom2DFieldNode FieldNode => Connector?.GetNode(FieldIndex);
 
         public StudReference()
         {

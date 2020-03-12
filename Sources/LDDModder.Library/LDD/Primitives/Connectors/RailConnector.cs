@@ -9,9 +9,15 @@ namespace LDDModder.LDD.Primitives.Connectors
 {
     public class RailConnector : Connector
     {
+        private float _Length;
+
         public override ConnectorType Type => ConnectorType.Rail;
 
-        public float Length { get; set; }
+        public float Length
+        {
+            get => _Length;
+            set => SetPropertyValue(ref _Length, value);
+        }
 
         protected override void SerializeBeforeTransform(XElement element)
         {

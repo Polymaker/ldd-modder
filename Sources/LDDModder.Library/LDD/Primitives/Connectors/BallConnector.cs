@@ -11,10 +11,16 @@ namespace LDDModder.LDD.Primitives.Connectors
     {
         public override ConnectorType Type => ConnectorType.Ball;
 
+        private string _FlexAttributes;
+
         /// <summary>
         /// Only used when the node is a descendant of Flex
         /// </summary>
-        public string FlexAttributes { get; set; }
+        public string FlexAttributes
+        {
+            get => _FlexAttributes;
+            set => SetPropertyValue(ref _FlexAttributes, value);
+        }
 
         public override void LoadFromXml(XElement element)
         {

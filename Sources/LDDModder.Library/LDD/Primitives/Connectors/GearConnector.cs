@@ -9,11 +9,22 @@ namespace LDDModder.LDD.Primitives.Connectors
 {
     public class GearConnector : Connector
     {
+        private int _ToothCount;
+        private double _Radius;
+
         public override ConnectorType Type => ConnectorType.Gear;
 
-        public int ToothCount { get; set; }
+        public int ToothCount
+        {
+            get => _ToothCount;
+            set => SetPropertyValue(ref _ToothCount, value);
+        }
 
-        public double Radius { get; set; }
+        public double Radius
+        {
+            get => _Radius;
+            set => SetPropertyValue(ref _Radius, value);
+        }
 
         protected override void SerializeBeforeTransform(XElement element)
         {

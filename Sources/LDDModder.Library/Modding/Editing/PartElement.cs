@@ -142,7 +142,7 @@ namespace LDDModder.Modding.Editing
 
         protected bool SetPropertyValue<T>(ref T property, T value, [CallerMemberName] string propertyName = null)
         {
-            if (!EqualityComparer<T>.Default.Equals(property, value))
+            if (!ChangeTrackingObject.AreEquals(property, value))
             {
                 if (property is PartElement oldElem)
                 {

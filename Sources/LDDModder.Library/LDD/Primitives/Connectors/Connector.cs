@@ -1,6 +1,7 @@
 ﻿using LDDModder.Serialization;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,11 +16,24 @@ namespace LDDModder.LDD.Primitives.Connectors
         Transform Transform { get; set; }
     }
 
-    public abstract class Connector : IXmlObject, IConnector
+    public abstract class Connector : ChangeTrackingObject, IXmlObject, IConnector
     {
+        private int _SubType;
+        private Transform _Transform;
+
         public abstract ConnectorType Type { get; }
-        public int SubType { get; set; }
-        public Transform Transform { get; set; }
+
+        public int SubType
+        {
+            get => _SubType;
+            set => SetPropertyValue(ref _SubType, value);
+        }
+
+        public Transform Transform
+        {
+            get => _Transform;
+            set => SetPropertyValue(ref _Transform, value);
+        }
 
         public Connector()
         {

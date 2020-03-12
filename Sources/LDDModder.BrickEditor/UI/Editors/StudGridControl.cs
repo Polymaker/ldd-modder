@@ -17,6 +17,28 @@ namespace LDDModder.BrickEditor.UI.Editors
         private Size GridCellSize;
         private ComboBox EditCombo;
 
+        private Tuple<int, int> SelectionStart;
+        private Tuple<int, int> SelectionEnd;
+        private Tuple<int, int> FocusedCell;
+
+        private Size SelectionSize
+        {
+            get
+            {
+                if (SelectionStart != null)
+                {
+                    var end = SelectionEnd ?? SelectionStart;
+                    int minX = Math.Min(SelectionStart.Item1, end.Item1);
+                    int maxX = Math.Max(SelectionStart.Item1, end.Item1);
+                    int minY = Math.Min(SelectionStart.Item2, end.Item2);
+                    int maxY = Math.Max(SelectionStart.Item2, end.Item2);
+                    return new Size((maxX - minX) + 1, (maxY - minY) + 1);
+                }
+
+                return Size.Empty;
+            }
+        }
+
         [Browsable(false)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public Custom2DFieldConnector StudConnector
@@ -29,7 +51,7 @@ namespace LDDModder.BrickEditor.UI.Editors
             }
         }
 
-        private Custom2DFieldConnector.FieldNode SelectedNode;
+        private Custom2DFieldNode SelectedNode;
 
         public StudGridControl()
         {
@@ -55,8 +77,6 @@ namespace LDDModder.BrickEditor.UI.Editors
                 Affinity = affinity;
             }
         }
-
-        
 
         protected void BindConnector(Custom2DFieldConnector connector)
         {
@@ -112,6 +132,8 @@ namespace LDDModder.BrickEditor.UI.Editors
             base.SetBoundsCore(x, y, width, height, specified);
         }
 
+        #region Drawing
+
         protected override void OnPaint(PaintEventArgs pe)
         {
             var g = pe.Graphics;
@@ -139,47 +161,125 @@ namespace LDDModder.BrickEditor.UI.Editors
 
             var evenColor = Color.FromArgb(80, 180, 180, 180);
 
+            var columnRects = new List<RectangleF>();
+            var rowRects = new List<RectangleF>();
+
             for (int x = 0; x <= StudConnector.ArrayWidth; x++)
             {
                 var colRect = new RectangleF(cellWidth * x, 0, cellWidth, cellHeight * StudConnector.ArrayHeight);
-                
-                if ((x % 2) == 0)
-                {
-                    using (var brush = new SolidBrush(evenColor))
-                        g.FillRectangle(brush, colRect);
-                }
-
-                g.DrawLine(Pens.Black, cellWidth * x, 0, cellWidth * x, 
-                    cellHeight * StudConnector.ArrayHeight);
+                columnRects.Add(colRect);
             }
 
             for (int y = 0; y <= StudConnector.ArrayHeight; y++)
             {
                 var rowRect = new RectangleF(0, cellHeight * y, cellWidth * StudConnector.ArrayWidth, cellHeight);
-
-                if ((y % 2) == 0)
-                {
-                    using (var brush = new SolidBrush(evenColor))
-                        g.FillRectangle(brush, rowRect);
-                }
-
-                g.DrawLine(Pens.Black, 0, cellHeight * y, 
-                    cellWidth * StudConnector.ArrayWidth, cellHeight * y);
+                rowRects.Add(rowRect);
             }
 
-            var sf = new StringFormat() 
-            { 
-                LineAlignment = StringAlignment.Center, 
-                Alignment = StringAlignment.Center 
-            };
+            void DrawBackground(List<RectangleF> rects)
+            {
+                for (int i = 0; i < rects.Count; i++)
+                {
+                    var colRowRect = rects[i];
+
+                    if ((i % 2) == 0)
+                    {
+                        using (var brush = new SolidBrush(evenColor))
+                            g.FillRectangle(brush, colRowRect);
+                    }
+                }
+            }
+
+            void DrawBorders(List<RectangleF> rects)
+            {
+                for (int i = 0; i < rects.Count; i++)
+                {
+                    var colRowRect = rects[i];
+                    g.DrawRectangle(Pens.Black, colRowRect.X, colRowRect.Y, colRowRect.Width, colRowRect.Height);
+                }
+            }
+
+            DrawBackground(columnRects);
+            DrawBackground(rowRects);
+
+            var selectionColor = Color.FromArgb(50, 180, 180, 200);
+            if (ContainsFocus || Focused)
+                selectionColor = Color.FromArgb(100, 180, 180, 255);
+
+            var selectionBrush = new SolidBrush(selectionColor);
 
             for (int y = 0; y < StudConnector.ArrayHeight; y++)
             {
                 for (int x = 0; x < StudConnector.ArrayWidth; x++)
                 {
                     var cellRect = new RectangleF(
-                        cellWidth * x, cellHeight * y, 
+                        cellWidth * x, cellHeight * y,
                         cellWidth, cellHeight);
+
+                    if (IsInSelection(x, y))
+                        g.FillRectangle(selectionBrush, cellRect.X, cellRect.Y, cellRect.Width, cellRect.Height);
+                }
+            }
+            selectionBrush.Dispose();
+
+            DrawBorders(columnRects);
+            DrawBorders(rowRects);
+
+            //for (int x = 0; x <= StudConnector.ArrayWidth; x++)
+            //{
+            //    var colRect = columnRects[x];
+
+            //    if ((x % 2) == 0)
+            //    {
+            //        using (var brush = new SolidBrush(evenColor))
+            //            g.FillRectangle(brush, colRect);
+            //    }
+
+            //    g.DrawLine(Pens.Black, cellWidth * x, 0, cellWidth * x,
+            //        cellHeight * StudConnector.ArrayHeight);
+            //}
+
+            //for (int y = 0; y <= StudConnector.ArrayHeight; y++)
+            //{
+            //    var rowRect = rowRects[y];
+
+            //    if ((y % 2) == 0)
+            //    {
+            //        using (var brush = new SolidBrush(evenColor))
+            //            g.FillRectangle(brush, rowRect);
+            //    }
+
+            //    g.DrawLine(Pens.Black, 0, cellHeight * y,
+            //        cellWidth * StudConnector.ArrayWidth, cellHeight * y);
+            //}
+
+
+            var sf = new StringFormat()
+            {
+                LineAlignment = StringAlignment.Center,
+                Alignment = StringAlignment.Center
+            };
+
+            Pen focusedBorderPen = SystemPens.Highlight;
+
+            //if (!(Focused || ContainsFocus))
+            //{
+            //    focusedBorderPen = SystemPens.
+            //}
+
+            for (int y = 0; y < StudConnector.ArrayHeight; y++)
+            {
+                for (int x = 0; x < StudConnector.ArrayWidth; x++)
+                {
+                    var cellRect = new RectangleF(
+                        cellWidth * x, cellHeight * y,
+                        cellWidth, cellHeight);
+
+                    if (IsInSelection(x,y))
+                    {
+
+                        g.DrawRectangle(focusedBorderPen, cellRect.X, cellRect.Y, cellRect.Width, cellRect.Height);
+                    }
 
                     g.DrawString(StudConnector[x, y].ToString(), Font, Brushes.Black, cellRect, sf);
                 }
@@ -188,25 +288,166 @@ namespace LDDModder.BrickEditor.UI.Editors
             sf.Dispose();
         }
 
+        #endregion
+
+        #region Selection
+
+        private bool IsSelectingRange;
+
+        protected override void OnMouseDown(MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                if (EditCombo.Visible)
+                    FinishEditNode();
+
+                var clickedNode = GetNodeFromPosition(e.Location);
+                if (clickedNode != null)
+                {
+                    IsSelectingRange = true;
+                    FocusedCell = GetCellAddressFromPosition(e.Location);
+                    SelectionStart = FocusedCell;
+                    SelectionEnd = null;
+                    Invalidate();
+                }
+            }
+
+            base.OnMouseDown(e);
+        }
+
+        protected override void OnMouseUp(MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left && IsSelectingRange)
+            {
+                
+                IsSelectingRange = false;
+            }
+            base.OnMouseUp(e);
+        }
+
+        protected override void OnMouseDoubleClick(MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                SelectionEnd = null;
+                Invalidate();
+                var curNode = GetNodeFromPosition(e.Location);
+                if (curNode != null)
+                {
+                    BeginEditNode(curNode);
+                }
+            }
+            base.OnMouseDoubleClick(e);
+        }
+
+        protected override void OnMouseMove(MouseEventArgs e)
+        {
+            if (IsSelectingRange)
+            {
+                var curCell = GetCellAddressFromPosition(e.Location);
+
+                var end = SelectionEnd ?? SelectionStart;
+                if (!end.Equals(curCell))
+                {
+                    SelectionEnd = curCell;
+                    FocusedCell = curCell;
+                    Invalidate();
+                }
+            }
+            base.OnMouseMove(e);
+        }
+
+        public bool IsInSelection(int x, int y)
+        {
+            if (SelectionStart != null)
+            {
+                var end = SelectionEnd ?? SelectionStart;
+
+                int minX = Math.Min(SelectionStart.Item1, end.Item1);
+                int maxX = Math.Max(SelectionStart.Item1, end.Item1);
+                int minY = Math.Min(SelectionStart.Item2, end.Item2);
+                int maxY = Math.Max(SelectionStart.Item2, end.Item2);
+
+                return x >= minX && x <= maxX && y >= minY && y <= maxY;
+            }
+
+            return false;
+        }
+
+        #endregion
+
         protected override void OnMouseClick(MouseEventArgs e)
         {
             base.OnMouseClick(e);
-            if (e.Button == MouseButtons.Left)
-            {
-                var clickedNode = GetNodeFromPosition(e.Location);
-                if (clickedNode != null)
-                    BeginEditNode(clickedNode);
-            }
         }
 
+        protected override void OnLostFocus(EventArgs e)
+        {
+            base.OnLostFocus(e);
+            Invalidate();
+        }
 
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.C && e.Modifiers == Keys.Control)
+            {
 
+            }
+            else if (e.KeyCode == Keys.V && e.Modifiers == Keys.Control)
+            {
+                string clipContent = Clipboard.GetText();
+                if (!string.IsNullOrEmpty(clipContent))
+                {
+                    var lines = clipContent.Split('\r', '\n').ToList();
+                    lines.RemoveAll(x => string.IsNullOrWhiteSpace(x?.Trim()));
+                    
+
+                    for (int i = 0; i < lines.Count; i++)
+                    {
+                        var rowValues = lines[i].Trim().Split(',', ';', '\t');
+                    }
+                }
+            }
+
+            if (e.KeyCode >= Keys.D0 && e.KeyCode <= Keys.D9)
+            {
+                if (!IsEditingNode && FocusedCell != null)
+                {
+                    var focusedNode = StudConnector.GetNode(FocusedCell.Item1, FocusedCell.Item2);
+                    if (focusedNode != null)
+                    {
+                        if (BeginEditNode(focusedNode))
+                        {
+                            EditCombo.SelectAll();
+                            EditCombo.SelectedText = ((char)e.KeyCode).ToString();
+                        }
+                    }
+                }
+            }
+            else if (e.KeyCode == Keys.Enter || e.KeyCode == Keys.Space)
+            {
+                if (!IsEditingNode && FocusedCell != null)
+                {
+                    var focusedNode = StudConnector.GetNode(FocusedCell.Item1, FocusedCell.Item2);
+                    if (focusedNode != null)
+                        BeginEditNode(focusedNode);
+                }
+            }
+
+            if (e.KeyCode == Keys.Escape && IsEditingNode)
+            {
+                CancelEditNode();
+            }
+
+            base.OnKeyDown(e);
+        }
 
         #region Edit ComboBox Handling
 
         private bool IsEditingNode;
         private bool NodeValueChanged;
         private bool LoadingCombobox;
+        private bool IsCancelingEdit;
 
         private void InitEditCombo()
         {
@@ -264,21 +505,18 @@ namespace LDDModder.BrickEditor.UI.Editors
             EditCombo.LostFocus += EditCombo_LostFocus;
             EditCombo.TextChanged += EditCombo_TextChanged;
             EditCombo.SelectedValueChanged += EditCombo_SelectedValueChanged;
+            EditCombo.KeyDown += EditCombo_KeyDown;
         }
 
-        
-
-        private void BeginEditNode(Custom2DFieldConnector.FieldNode node)
+        private bool BeginEditNode(Custom2DFieldNode node)
         {
-            
-            if (IsEditingNode)
-            {
-                this.Focus();
-                if (NodeValueChanged)
-                    return;
-            }
+            if (IsEditingNode && !FinishEditNode())
+                return false;
 
             SelectedNode = null;
+            SelectionEnd = null;
+            SelectionStart = new Tuple<int, int>(node.X, node.Y);
+            FocusedCell = new Tuple<int, int>(node.X, node.Y);
             var rectangle = GetCellRect(node.X, node.Y);
             LoadingCombobox = true;
             EditCombo.Visible = true;
@@ -292,10 +530,46 @@ namespace LDDModder.BrickEditor.UI.Editors
             EditCombo.Focus();
             EditCombo.SelectionStart = 0;
             EditCombo.SelectionLength = 0;
+
             LoadingCombobox = false;
 
             SelectedNode = node;
             IsEditingNode = true;
+            Invalidate();
+
+            return true;
+        }
+
+        private void CancelEditNode()
+        {
+            if (IsEditingNode || EditCombo.Visible)
+            {
+                IsCancelingEdit = true;
+                Focus();
+                EditCombo.Hide();
+                IsCancelingEdit = false;
+                IsEditingNode = false;
+                SelectedNode = null;
+                NodeValueChanged = false;
+            }
+        }
+
+        private bool FinishEditNode()
+        {
+            if (IsEditingNode || EditCombo.Visible)
+            {
+                if (!EditCombo.Focused)
+                    EditCombo.Focus();
+                this.Focus();
+                if (NodeValueChanged)
+                    return false;
+            }
+
+            if (EditCombo.Visible)
+            {
+                EditCombo.Visible = false;
+            }
+            return true;
         }
 
         private void EditCombo_TextChanged(object sender, EventArgs e)
@@ -316,6 +590,9 @@ namespace LDDModder.BrickEditor.UI.Editors
 
         private void EditCombo_Validating(object sender, CancelEventArgs e)
         {
+            if (IsCancelingEdit)
+                return;
+
             if (!Custom2DFieldConnector.TryParseNode(EditCombo.Text))
             {
                 e.Cancel = true;
@@ -324,10 +601,18 @@ namespace LDDModder.BrickEditor.UI.Editors
 
         private void EditCombo_Validated(object sender, EventArgs e)
         {
-            if (IsEditingNode && SelectedNode != null)
+            if (IsEditingNode && SelectedNode != null && !IsCancelingEdit)
             {
                 SelectedNode.Parse(EditCombo.Text);
                 NodeValueChanged = false;
+            }
+        }
+
+        private void EditCombo_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Escape && IsEditingNode)
+            {
+                CancelEditNode();
             }
         }
 
@@ -344,8 +629,15 @@ namespace LDDModder.BrickEditor.UI.Editors
 
         #endregion
 
+        private Tuple<int, int> GetCellAddressFromPosition(Point point)
+        {
+            int x = point.X / GridCellSize.Width;
+            int y = point.Y / GridCellSize.Height;
+            return new Tuple<int, int>(x, y);
+        }
 
-        private Custom2DFieldConnector.FieldNode GetNodeFromPosition(Point point)
+
+        private Custom2DFieldNode GetNodeFromPosition(Point point)
         {
             int x = point.X / GridCellSize.Width;
             int y = point.Y / GridCellSize.Height;

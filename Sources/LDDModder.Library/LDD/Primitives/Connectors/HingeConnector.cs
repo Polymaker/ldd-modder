@@ -9,19 +9,50 @@ namespace LDDModder.LDD.Primitives.Connectors
 {
     public class HingeConnector : Connector
     {
+        private bool _Oriented;
+        private float _LimitMin;
+        private float _LimitMax;
+        private float _FlipLimitMin;
+        private float _FlipLimitMax;
+        private string _Tag;
+
         public override ConnectorType Type => ConnectorType.Hinge;
 
-        public bool Oriented { get; set; }
+        public bool Oriented
+        {
+            get => _Oriented;
+            set => SetPropertyValue(ref _Oriented, value);
+        }
 
-        public float LimitMin { get; set; }
+        public float LimitMin
+        {
+            get => _LimitMin;
+            set => SetPropertyValue(ref _LimitMin, value);
+        }
 
-        public float LimitMax { get; set; }
+        public float LimitMax
+        {
+            get => _LimitMax;
+            set => SetPropertyValue(ref _LimitMax, value);
+        }
 
-        public float FlipLimitMin { get; set; }
+        public float FlipLimitMin
+        {
+            get => _FlipLimitMin;
+            set => SetPropertyValue(ref _FlipLimitMin, value);
+        }
 
-        public float FlipLimitMax { get; set; }
+        public float FlipLimitMax
+        {
+            get => _FlipLimitMax;
+            set => SetPropertyValue(ref _FlipLimitMax, value);
+        }
 
-        public string Tag { get; set; }
+        public string Tag
+        {
+            get => _Tag;
+            set => SetPropertyValue(ref _Tag, value);
+        }
 
         protected override void SerializeBeforeTransform(XElement element)
         {

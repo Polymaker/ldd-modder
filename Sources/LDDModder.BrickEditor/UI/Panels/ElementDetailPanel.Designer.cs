@@ -70,7 +70,7 @@
             // 
             // studGridControl1
             // 
-            this.studGridControl1.Location = new System.Drawing.Point(12, 28);
+            this.studGridControl1.Location = new System.Drawing.Point(12, 46);
             this.studGridControl1.Name = "studGridControl1";
             this.studGridControl1.Size = new System.Drawing.Size(166, 76);
             this.studGridControl1.TabIndex = 1;

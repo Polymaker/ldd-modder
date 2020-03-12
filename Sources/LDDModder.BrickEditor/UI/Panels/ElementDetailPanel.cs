@@ -26,8 +26,6 @@ namespace LDDModder.BrickEditor.UI.Panels
             SelectedElementComboBox.ComboBox.DrawItem += SelectedElementComboBox_DrawItem;
         }
 
-        
-
         protected override void OnElementSelectionChanged()
         {
             base.OnElementSelectionChanged();
@@ -35,6 +33,8 @@ namespace LDDModder.BrickEditor.UI.Panels
             {
                 
             }
+
+            studGridControl1.StudConnector = null;
 
             if (ProjectManager.SelectedElement is PartConnection partConnection)
             {

@@ -9,17 +9,43 @@ namespace LDDModder.LDD.Primitives.Connectors
 {
     public class AxelConnector : Connector
     {
+        private float _Length;
+        private bool _IsGrabbingRequired;
+        private bool _Grabbing;
+        private bool _StartCapped;
+        private bool _EndCapped;
+
         public override ConnectorType Type => ConnectorType.Axel;
 
-        public float Length { get; set; }
+        public float Length
+        {
+            get => _Length;
+            set => SetPropertyValue(ref _Length, value);
+        }
 
-        public bool IsGrabbingRequired { get; set; }
+        public bool IsGrabbingRequired
+        {
+            get => _IsGrabbingRequired;
+            set => SetPropertyValue(ref _IsGrabbingRequired, value);
+        }
 
-        public bool Grabbing { get; set; }
+        public bool Grabbing
+        {
+            get => _Grabbing;
+            set => SetPropertyValue(ref _Grabbing, value);
+        }
 
-        public bool StartCapped { get; set; }
+        public bool StartCapped
+        {
+            get => _StartCapped;
+            set => SetPropertyValue(ref _StartCapped, value);
+        }
 
-        public bool EndCapped { get; set; }
+        public bool EndCapped
+        {
+            get => _EndCapped;
+            set => SetPropertyValue(ref _EndCapped, value);
+        }
 
         protected override void SerializeBeforeTransform(XElement element)
         {

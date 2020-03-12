@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace System.ComponentModel
 {
-    public class PropertyValueChangedEventArgs : PropertyChangedEventArgs
+    public class PropertyValueChangingEventArgs : PropertyChangingEventArgs
     {
         public int? Index { get; set; }
 
@@ -14,14 +14,14 @@ namespace System.ComponentModel
 
         public object NewValue { get; }
 
-        public PropertyValueChangedEventArgs(string propertyName, object oldValue, object newValue) 
+        public PropertyValueChangingEventArgs(string propertyName, object oldValue, object newValue)
             : base(propertyName)
         {
             OldValue = oldValue;
             NewValue = newValue;
         }
 
-        public PropertyValueChangedEventArgs(string propertyName, int index, object oldValue, object newValue)
+        public PropertyValueChangingEventArgs(string propertyName, int index, object oldValue, object newValue)
             : base(propertyName)
         {
             Index = index;
@@ -30,5 +30,5 @@ namespace System.ComponentModel
         }
     }
 
-    public delegate void PropertyValueChangedEventHandler(object sender, PropertyValueChangedEventArgs e);
+    public delegate void PropertyValueChangingEventHandler(object sender, PropertyValueChangingEventArgs e);
 }

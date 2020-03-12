@@ -12,7 +12,13 @@ namespace LDDModder.LDD.Primitives.Collisions
 {
     public class CollisionBox : Collision
     {
-        public Vector3 Size { get; set; }
+        private Vector3 _Size;
+
+        public Vector3 Size
+        {
+            get => _Size;
+            set => SetPropertyValue(ref _Size, value);
+        }
 
         public CollisionBox()
         {

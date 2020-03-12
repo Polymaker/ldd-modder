@@ -1,6 +1,7 @@
 ﻿using LDDModder.Simple3D;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -9,13 +10,31 @@ using System.Xml.Linq;
 
 namespace LDDModder.LDD.Primitives
 {
-    public class Transform
+    public class Transform : ChangeTrackingObject
     {
+        private Vector3d _Axis;
+        private double _Angle;
+        private Vector3d _Translation;
+
         public static readonly string[] AttributeNames = new string[] { "angle", "ax", "ay", "az", "tx", "ty", "tz" };
 
-        public double Angle { get; set; }
-        public Vector3d Axis { get; set; }
-        public Vector3d Translation { get; set; }
+        public double Angle
+        {
+            get => _Angle;
+            set => SetPropertyValue(ref _Angle, value);
+        }
+
+        public Vector3d Axis
+        {
+            get => _Axis;
+            set => SetPropertyValue(ref _Axis, value);
+        }
+
+        public Vector3d Translation
+        {
+            get => _Translation;
+            set => SetPropertyValue(ref _Translation, value);
+        }
 
         public double Ax { get => Axis.X; set => Axis = new Vector3d(value, Axis.Y, Axis.Z); }
         public double Ay { get => Axis.Y; set => Axis = new Vector3d(Axis.X, value, Axis.Z); }

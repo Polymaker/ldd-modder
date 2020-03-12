@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,14 +9,13 @@ using System.Xml.Linq;
 
 namespace LDDModder.LDD.Primitives.Connectors
 {
-    public class Custom2DFieldConnector : Connector, IEnumerable<Custom2DFieldConnector.FieldNode>, INotifyPropertyChanged
+    public partial class Custom2DFieldConnector : Connector, IEnumerable<Custom2DFieldNode>
     {
-        private FieldNode[,] NodeArray;
+        private Custom2DFieldNode[,] NodeArray;
         private int _Width;
         private int _Height;
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        public event PropertyChangedEventHandler NodeValueChanged;
+        public event PropertyValueChangedEventHandler NodeValueChanged;
 
         public override ConnectorType Type => ConnectorType.Custom2DField;
 
@@ -29,11 +27,10 @@ namespace LDDModder.LDD.Primitives.Connectors
             get => _Width;
             set
             {
-                if (value != _Width && value % 2 == 0 && value > 0)
+                if ((value % 2) == 0 && value > 0)
                 {
-                    _Width = value;
-                    Initialize2DArray();
-                    OnPropertyChanged(nameof(Width));
+                    if (SetPropertyValue(ref _Width, value))
+                        Initialize2DArray();
                 }
             }
         }
@@ -54,11 +51,10 @@ namespace LDDModder.LDD.Primitives.Connectors
             get => _Height;
             set
             {
-                if (value != _Height && value % 2 == 0 && value > 0)
+                if ((value % 2) == 0 && value > 0)
                 {
-                    _Height = value;
-                    Initialize2DArray();
-                    OnPropertyChanged(nameof(Height));
+                    if (SetPropertyValue(ref _Height, value))
+                        Initialize2DArray();
                 }
             }
         }
@@ -71,17 +67,18 @@ namespace LDDModder.LDD.Primitives.Connectors
             set => Height = value * 2;
         }
 
-        public FieldNode this[int x, int y]
+        public Custom2DFieldNode this[int x, int y]
         {
             get => NodeArray[x, y];
         }
 
-        public FieldNode this[int index]
+        public Custom2DFieldNode this[int index]
         {
             get
             {
-                int x = index % (Width + 1);
-                int y = (int)Math.Floor(index / (Width + 1d));
+                int x = index % ArrayWidth;
+                //int y = (int)Math.Floor(index / (double)ArrayWidth);
+                int y = (index - x) / ArrayWidth;
                 return NodeArray[x, y];
             }
         }
@@ -93,14 +90,19 @@ namespace LDDModder.LDD.Primitives.Connectors
             Initialize2DArray();
         }
 
-        public FieldNode GetNode(int x, int y)
+        public int PositionToIndex(int x, int y)
+        {
+            return (y * ArrayWidth) + x;
+        }
+
+        public Custom2DFieldNode GetNode(int x, int y)
         {
             if (x >= 0 && x <= Width && y >= 0 && y <= Height)
                 return NodeArray[x, y];
             return null;
         }
 
-        public FieldNode GetNode(int index)
+        public Custom2DFieldNode GetNode(int index)
         {
             if (index >= 0 && index < (Width + 1) * (Height + 1))
                 return this[index];
@@ -114,14 +116,14 @@ namespace LDDModder.LDD.Primitives.Connectors
             if (NodeArray != null)
                 DettachNodeEvents(NodeArray);
 
-            NodeArray = new FieldNode[Width + 1, Height + 1];
+            NodeArray = new Custom2DFieldNode[Width + 1, Height + 1];
             int nodeIndex = 0;
 
             for (int y = 0; y < Height + 1; y++)
             {
                 for (int x = 0; x < Width + 1; x++)
                 {
-                    NodeArray[x, y] = new FieldNode(x, y, nodeIndex++);
+                    NodeArray[x, y] = new Custom2DFieldNode(x, y, nodeIndex++);
                 }
             }
 
@@ -138,7 +140,7 @@ namespace LDDModder.LDD.Primitives.Connectors
             AttachNodeEvents(NodeArray);
         }
 
-        private void AttachNodeEvents(FieldNode[,] nodeArray)
+        private void AttachNodeEvents(Custom2DFieldNode[,] nodeArray)
         {
             int width = nodeArray.GetLength(0);
             int height = nodeArray.GetLength(1);
@@ -146,25 +148,30 @@ namespace LDDModder.LDD.Primitives.Connectors
             {
                 for (int y = 0; y < height; y++)
                 {
-                    nodeArray[x, y].PropertyChanged += NodeArray_PropertyChanged;
+                    nodeArray[x, y].PropertyValueChanged += FieldNode_PropertyValueChanged;
                 }
             }
         }
 
-
-        private void DettachNodeEvents(FieldNode[,] nodeArray)
+        private void DettachNodeEvents(Custom2DFieldNode[,] nodeArray)
         {
             int width = nodeArray.GetLength(0);
             int height = nodeArray.GetLength(1);
+
             for (int y = 0; y < width; y++)
             {
                 for (int x = 0; x < height; x++)
                 {
-                    nodeArray[x, y].PropertyChanged -= NodeArray_PropertyChanged;
+                    nodeArray[x, y].PropertyValueChanged -= FieldNode_PropertyValueChanged;
                 }
             }
         }
-        
+
+        private void FieldNode_PropertyValueChanged(object sender, PropertyValueChangedEventArgs e)
+        {
+            RaiseChildObjectEvent(new ForwardedEventArgs(sender, "PropertyValueChanged", e));
+            NodeValueChanged?.Invoke(sender, e);
+        }
 
         public override void LoadFromXml(XElement element)
         {
@@ -218,185 +225,14 @@ namespace LDDModder.LDD.Primitives.Connectors
             return true;
         }
 
-        public IEnumerator<FieldNode> GetEnumerator()
+        public IEnumerator<Custom2DFieldNode> GetEnumerator()
         {
-            return NodeArray.Cast<FieldNode>().GetEnumerator();
+            return NodeArray.Cast<Custom2DFieldNode>().GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
-        }
-
-        protected void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        protected void OnNodePropertyChanged(FieldNode node, string propertyName)
-        {
-            NodeValueChanged?.Invoke(node, new PropertyChangedEventArgs(propertyName));
-        }
-
-        private void NodeArray_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            OnNodePropertyChanged(sender as FieldNode, e.PropertyName);
-        }
-
-        public class FieldNode : INotifyPropertyChanged
-        {
-            private int[] _Values;
-
-            public int Value1
-            {
-                get => _Values[0];
-                set
-                {
-                    if (_Values[0] != value)
-                    {
-                        _Values[0] = value;
-                        OnPropertyChanged(nameof(Value1));
-                    }
-                }
-            }
-
-            public int Value2
-            {
-                get => _Values[1];
-                set
-                {
-                    if (_Values[1] != value)
-                    {
-                        _Values[1] = value;
-                        OnPropertyChanged(nameof(Value2));
-                    }
-                }
-            }
-
-            public int Value3
-            {
-                get => _Values[2];
-                set
-                {
-                    if (_Values[2] != value)
-                    {
-                        _Values[2] = value;
-                        OnPropertyChanged(nameof(Value3));
-                    }
-                }
-            }
-
-            public Tuple<int,int,int> Values
-            {
-                get => new Tuple<int, int, int>(Value1, Value2, Value3);
-                set
-                {
-                    _Values[0] = value.Item1;
-                    _Values[1] = value.Item2;
-                    _Values[2] = value.Item3;
-                    OnPropertyChanged(nameof(Values));
-                }
-            }
-
-            public int X { get; }
-            public int Y { get; }
-
-            public int Index { get; }
-
-            public int this[int index]
-            {
-                get
-                {
-                    switch(index)
-                    {
-                        case 0:
-                            return Value1;
-                        case 1:
-                            return Value2;
-                        case 2:
-                            return Value3;
-                        default:
-                            throw new IndexOutOfRangeException("index");
-                    }
-                }
-                set
-                {
-                    switch (index)
-                    {
-                        case 0:
-                            Value1 = value;
-                            break;
-                        case 1:
-                            Value2 = value;
-                            break;
-                        case 2:
-                            Value3 = value;
-                            break;
-                        default:
-                            throw new IndexOutOfRangeException("index");
-                    }
-                }
-            }
-
-            public event PropertyChangedEventHandler PropertyChanged;
-
-            internal FieldNode()
-            {
-                _Values = new int[3];
-            }
-
-            public FieldNode(int x, int y, int index)
-            {
-                X = x;
-                Y = y;
-                Index = index;
-                _Values = new int[3];
-            }
-
-            public void Parse(string value)
-            {
-                string[] values = value.Trim().Split(':');
-                if (value.Length > 0 )
-                {
-                    
-                }
-
-                if (value.Length > 0)
-                {
-                    if (int.TryParse(values[0], out int v0))
-                        _Values[0] = v0;
-                    else
-                        Trace.WriteLine("Invalid value");
-                }
-
-                for (int i = 0; i < 3; i++)
-                {
-                    if (i < values.Length)
-                    {
-                        if (int.TryParse(values[i], out int val))
-                            _Values[i] = val;
-                        else
-                            Trace.WriteLine($"Invalid value {i + 1}: {values[i]}");
-                    }
-                    else
-                        _Values[i] = -1;
-                }
-
-                if (values.Length < 2 || values.Length > 3)
-                    Trace.WriteLine("Invalid Custom2DField node");
-            }
-
-            public override string ToString()
-            {
-                if (Value3 == -1)
-                    return $"{Value1}:{Value2}";
-                return $"{Value1}:{Value2}:{Value3}";
-            }
-
-            protected void OnPropertyChanged(string propertyName)
-            {
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            }
         }
     }
 }

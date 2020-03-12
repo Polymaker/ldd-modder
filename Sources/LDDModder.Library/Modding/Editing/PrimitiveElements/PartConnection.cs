@@ -20,6 +20,7 @@ namespace LDDModder.Modding.Editing
         public const string NODE_NAME = "Connection";
 
         private ItemTransform _Transform;
+        private Connector _Connector;
 
         public ItemTransform Transform
         {
@@ -27,13 +28,13 @@ namespace LDDModder.Modding.Editing
             set => SetPropertyValue(ref _Transform, value);
         }
 
-        public dynamic ConnectorProxy { get; private set; }
+        //public dynamic ConnectorProxy { get; private set; }
         private bool IsAssigningConnectorProperties;
 
         [XmlIgnore]
         public Connector Connector
         {
-            get => ConnectorProxy/* != null ? _ConnectorProxy : null*/;
+            get => _Connector/* != null ? _ConnectorProxy : null*/;
             set => SetConnector(value);
         }
 
@@ -62,20 +63,38 @@ namespace LDDModder.Modding.Editing
 
         private void SetConnector(Connector connector)
         {
-            if (ConnectorProxy != null)
+            if (_Connector != null)
             {
-                (ConnectorProxy as INotifyPropertyValueChanged)
-                    .PropertyValueChanged -= PartConnection_PropertyValueChanged;
+                _Connector.PropertyValueChanged -= PartConnection_PropertyValueChanged;
+                _Connector.ChildEventForwarded -= Connector_ChildEventForwarded;
             }
 
-            if (connector != null)
+            _Connector = connector;
+
+            if (_Connector != null)
             {
-                ConnectorProxy = new ConnectorProxy(connector);
-                (ConnectorProxy as INotifyPropertyValueChanged)
-                    .PropertyValueChanged += PartConnection_PropertyValueChanged;
+                _Connector.PropertyValueChanged += PartConnection_PropertyValueChanged;
+                _Connector.ChildEventForwarded += Connector_ChildEventForwarded;
             }
-            else
-                ConnectorProxy = null;
+        }
+
+        private void Connector_ChildEventForwarded(object sender, ForwardedEventArgs e)
+        {
+            if (IsAssigningConnectorProperties)
+                return;
+
+            if (e.ForwardedEvent is PropertyValueChangedEventArgs eventArgs)
+            {
+                if (e.ChildObject is LDDModder.LDD.Primitives.Transform)
+                {
+                    return;
+                }
+
+                var changeArgs = new ElementValueChangedEventArgs(this, 
+                    e.ChildObject, eventArgs.PropertyName, 
+                    eventArgs.OldValue, eventArgs.NewValue);
+                RaisePropertyValueChanged(changeArgs);
+            }
         }
 
         private void PartConnection_PropertyValueChanged(object sender, PropertyValueChangedEventArgs e)
@@ -109,7 +128,7 @@ namespace LDDModder.Modding.Editing
 
         public T GetConnector<T>() where T : Connector
         {
-            return ConnectorProxy;
+            return _Connector as T;
         }
 
         public Connector GenerateLDD()

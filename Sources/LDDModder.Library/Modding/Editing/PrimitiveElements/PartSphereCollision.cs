@@ -6,9 +6,9 @@ namespace LDDModder.Modding.Editing
 {
     public class PartSphereCollision : PartCollision
     {
-        private float _Radius;
+        private double _Radius;
 
-        public float Radius
+        public double Radius
         {
             get => _Radius;
             set => SetPropertyValue(ref _Radius, value);
@@ -18,7 +18,7 @@ namespace LDDModder.Modding.Editing
 
         public PartSphereCollision()
         {
-            _Radius = 1f;
+            _Radius = 1d;
         }
 
         public PartSphereCollision(float radius)
@@ -33,7 +33,7 @@ namespace LDDModder.Modding.Editing
 
         public override Vector3 GetSize()
         {
-            return new Vector3(Radius);
+            return new Vector3((float)Radius);
         }
 
         public override Collision GenerateLDD()

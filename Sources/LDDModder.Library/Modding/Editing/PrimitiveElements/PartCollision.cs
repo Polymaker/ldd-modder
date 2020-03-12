@@ -54,6 +54,7 @@ namespace LDDModder.Modding.Editing
                     Radius = sphere.Radius
                 };
             }
+
             return null;
         }
 

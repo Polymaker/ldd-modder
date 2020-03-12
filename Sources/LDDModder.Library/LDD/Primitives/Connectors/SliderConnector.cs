@@ -11,27 +11,61 @@ namespace LDDModder.LDD.Primitives.Connectors
 {
     public class SliderConnector : Connector
     {
+        private float _Length;
+        private bool _StartCapped;
+        private bool _EndCapped;
+        private bool _Cylindrical;
+        private Vector3? _Spring;
+        private string _Tag;
+
         public override ConnectorType Type => ConnectorType.Slider;
 
-        public float Length { get; set; }
+        public float Length
+        {
+            get => _Length;
+            set => SetPropertyValue(ref _Length, value);
+        }
 
-        public bool StartCapped { get; set; }
+        public bool StartCapped
+        {
+            get => _StartCapped;
+            set => SetPropertyValue(ref _StartCapped, value);
+        }
 
-        public bool EndCapped { get; set; }
+        public bool EndCapped
+        {
+            get => _EndCapped;
+            set => SetPropertyValue(ref _EndCapped, value);
+        }
 
-        public bool Cylindrical { get; set; }
+        public bool Cylindrical
+        {
+            get => _Cylindrical;
+            set => SetPropertyValue(ref _Cylindrical, value);
+        }
 
-        public Vector3? Spring { get; set; }
+        public Vector3? Spring
+        {
+            get => _Spring;
+            set => SetPropertyValue(ref _Spring, value);
+        }
 
-        public string Tag { get; set; }
+        public string Tag
+        {
+            get => _Tag;
+            set => SetPropertyValue(ref _Tag, value);
+        }
 
         protected override void SerializeBeforeTransform(XElement element)
         {
             element.AddNumberAttribute("length", Length);
+
             if (Cylindrical)
                 element.AddBooleanAttribute("cylindrical", Cylindrical);
+
             if (!string.IsNullOrEmpty(Tag))
                 element.Add(new XAttribute("tag", Tag));
+
             element.AddBooleanAttribute("startCapped", StartCapped);
             element.AddBooleanAttribute("endCapped", EndCapped);
 
@@ -60,6 +94,8 @@ namespace LDDModder.LDD.Primitives.Connectors
                     float.Parse(springValues[1].Trim(), CultureInfo.InvariantCulture),
                     float.Parse(springValues[2].Trim(), CultureInfo.InvariantCulture));
             }
+            else
+                Spring = null;
         }
     }
 }

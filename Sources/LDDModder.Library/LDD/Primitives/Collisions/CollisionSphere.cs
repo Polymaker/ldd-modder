@@ -4,13 +4,19 @@ namespace LDDModder.LDD.Primitives.Collisions
 {
     public class CollisionSphere : Collision
     {
-        public float Radius { get; set; }
+        private double _Radius;
+        
+        public double Radius
+        {
+            get => _Radius;
+            set => SetPropertyValue(ref _Radius, value);
+        }
 
         public CollisionSphere()
         {
         }
 
-        public CollisionSphere(float radius, Transform transform)
+        public CollisionSphere(double radius, Transform transform)
         {
             Radius = radius;
             Transform = transform;
@@ -27,7 +33,7 @@ namespace LDDModder.LDD.Primitives.Collisions
         public override void LoadFromXml(XElement element)
         {
             Transform = Transform.FromElementAttributes(element);
-            Radius = element.ReadAttribute<float>("radius");
+            Radius = element.ReadAttribute("radius", 1d);
         }
     }
 }

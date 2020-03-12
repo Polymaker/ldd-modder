@@ -9,11 +9,22 @@ namespace LDDModder.LDD.Primitives.Connectors
 {
     public class FixedConnector : Connector
     {
+        private int _Axes;
+        private string _Tag;
+
         public override ConnectorType Type => ConnectorType.Fixed;
 
-        public int Axes { get; set; }
+        public int Axes
+        {
+            get => _Axes;
+            set => SetPropertyValue(ref _Axes, value);
+        }
 
-        public string Tag { get; set; }
+        public string Tag
+        {
+            get => _Tag;
+            set => SetPropertyValue(ref _Tag, value);
+        }
 
         protected override void SerializeBeforeTransform(XElement element)
         {
