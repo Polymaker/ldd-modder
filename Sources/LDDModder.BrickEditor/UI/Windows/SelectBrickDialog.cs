@@ -40,6 +40,7 @@ namespace LDDModder.BrickEditor.UI.Windows
             LoadingProgressBar.Visible = false;
             BrickGridView.AutoGenerateColumns = false;
             BrickGridView.DataSource = BrickList;
+            BrickGridView.Sort(PartIdColumn, ListSortDirection.Ascending);
         }
 
         protected override void OnLoad(EventArgs e)
@@ -97,8 +98,9 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         private void FillValidatedParts(bool onlyOnce = false)
         {
-            var validBricks = BrickListCache.GetValidatedBricks().OrderBy(x => x.PartId).ToList();
-            var newBricks = validBricks.Except(BrickList).ToList();
+            var validBricks = BrickListCache.GetValidatedBricks();
+            var newBricks = validBricks.Except(BrickList)
+                .OrderBy(x=>x.PartId).ToList();
 
             const int MAX_ADD = 200;
 
@@ -106,13 +108,8 @@ namespace LDDModder.BrickEditor.UI.Windows
             while (newBricks.Count > 0)
             {
                 var range = newBricks.Take(MAX_ADD).ToList();
-                //bool firstAdd = BrickList.Count == 0;
 
                 BrickList.AddRange(range);
-
-                //if (!firstAdd)
-                //    BrickList.ApplySort("PartId", ListSortDirection.Ascending);
-
                 if (IsListFiltered)
                     FilteredBrickList.AddRange(range.Where(x => IsBrickVisible(x)));
 

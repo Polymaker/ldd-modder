@@ -15,7 +15,6 @@ namespace System.Collections.Generic
         public ListSortDirection SortDirection { get; private set; }
         public PropertyDescriptor PropertyDescriptor { get; private set; }
 
-
         public SortableBindingList()
             : base(new List<T>())
         {
@@ -127,14 +126,35 @@ namespace System.Collections.Generic
 
         public void AddRange(IEnumerable<T> items)
         {
-            foreach (var item in items)
-                Add(item);
+            if (IsSorted)
+            {
+                List<T> itemsList = (List<T>)this.Items;
+                itemsList.AddRange(items);
+                ApplySort(PropertyDescriptor, SortDirection);
+            }
+            else
+            {
+                RaiseListChangedEvents = false;
+                foreach (var item in items)
+                    Add(item);
+                RaiseListChangedEvents = true;
+                OnListChanged(new ListChangedEventArgs(ListChangedType.Reset, -1));
+            }
+            
         }
 
         public void InsertRange(int index, IEnumerable<T> items)
         {
+            RaiseListChangedEvents = false;
             foreach (var item in items)
                 Insert(index++, item);
+            RaiseListChangedEvents = true;
+            OnListChanged(new ListChangedEventArgs(ListChangedType.Reset, -1));
+        }
+
+        protected override void OnListChanged(ListChangedEventArgs e)
+        {
+            base.OnListChanged(e);
         }
     }
 
