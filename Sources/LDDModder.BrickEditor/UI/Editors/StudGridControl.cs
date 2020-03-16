@@ -122,6 +122,8 @@ namespace LDDModder.BrickEditor.UI.Editors
         private int ColumnHeaderHeight;
         private int RowHeaderWidth;
 
+        private bool SizesInitialized;
+
         private void CalculateElementSizes()
         {
             var cellSize = TextRenderer.MeasureText("15:4:96", Font, Size, TextFormatFlags.TextBoxControl);
@@ -129,15 +131,74 @@ namespace LDDModder.BrickEditor.UI.Editors
             cellSize.Height += 12;
 
             GridCellSize = cellSize;
+
+            int maxCols = StudConnector?.ArrayWidth ?? 3;
+            var headerTextSize = TextRenderer.MeasureText(maxCols.ToString(), Font, Size);
+            ColumnHeaderHeight = headerTextSize.Height + 3;
+
+            int maxRows = StudConnector?.ArrayHeight ?? 3;
+            headerTextSize = TextRenderer.MeasureText(maxRows.ToString(), Font, Size);
+            RowHeaderWidth = headerTextSize.Width + 6;
+
+            SizesInitialized = true;
         }
 
-        private Size CalculateControlSize()
-        {
-            int gridWidth = StudConnector?.ArrayWidth ?? 3;
-            int gridHeight = StudConnector?.ArrayHeight ?? 3;
+        //private Size CalculateControlSize()
+        //{
+        //    int gridWidth = StudConnector?.ArrayWidth ?? 3;
+        //    int gridHeight = StudConnector?.ArrayHeight ?? 3;
 
-            int visibleCols = Math.Min(gridWidth, MaxGridSize.Width);
-            int visibleRows = Math.Min(gridHeight, MaxGridSize.Height);
+        //    int visibleCols = Math.Min(gridWidth, MaxGridSize.Width);
+        //    int visibleRows = Math.Min(gridHeight, MaxGridSize.Height);
+
+        //    CurrentGridSize = new Size(visibleCols, visibleRows);
+
+        //    int width = (GridCellSize.Width * visibleCols) + 1;
+        //    int height = (GridCellSize.Height * visibleRows) + 1;
+
+        //    CellGridBounds = new Rectangle(
+        //        RowHeaderWidth, 
+        //        ColumnHeaderHeight, 
+        //        width, height);
+
+        //    if (gridWidth > MaxGridSize.Width)
+        //        height += SystemInformation.HorizontalScrollBarHeight;
+
+        //    if (gridHeight > MaxGridSize.Height)
+        //        width += SystemInformation.VerticalScrollBarWidth;
+
+        //    return new Size(
+        //        width + RowHeaderWidth, 
+        //        height + ColumnHeaderHeight
+        //    );
+        //}
+
+        private void UpdateControlSize()
+        {
+            if (!SizesInitialized)
+                CalculateElementSizes();
+
+            var availableSize = Size;
+            availableSize.Width -= RowHeaderWidth;
+            availableSize.Height -= ColumnHeaderHeight;
+
+            int visibleCols = (int)Math.Floor(availableSize.Width / (double)GridCellSize.Width);
+            int visibleRows = (int)Math.Floor(availableSize.Height / (double)GridCellSize.Height);
+
+            if (visibleCols < (StudConnector?.ArrayWidth ?? 1))
+                availableSize.Height -= SystemInformation.HorizontalScrollBarHeight;
+
+            if (visibleRows < (StudConnector?.ArrayHeight ?? 1))
+                availableSize.Width -= SystemInformation.VerticalScrollBarArrowHeight;
+
+            visibleCols = (int)Math.Floor(availableSize.Width / (double)GridCellSize.Width);
+            visibleRows = (int)Math.Floor(availableSize.Height / (double)GridCellSize.Height);
+
+            if (StudConnector != null)
+            {
+                visibleCols = Math.Min(visibleCols, StudConnector.ArrayWidth);
+                visibleRows = Math.Min(visibleRows, StudConnector.ArrayHeight);
+            }
 
             CurrentGridSize = new Size(visibleCols, visibleRows);
 
@@ -145,25 +206,11 @@ namespace LDDModder.BrickEditor.UI.Editors
             int height = (GridCellSize.Height * visibleRows) + 1;
 
             CellGridBounds = new Rectangle(
-                RowHeaderWidth, 
-                ColumnHeaderHeight, 
+                RowHeaderWidth,
+                ColumnHeaderHeight,
                 width, height);
 
-            if (gridWidth > MaxGridSize.Width)
-                height += SystemInformation.HorizontalScrollBarHeight;
-
-            if (gridHeight > MaxGridSize.Height)
-                width += SystemInformation.VerticalScrollBarWidth;
-
-            return new Size(
-                width + RowHeaderWidth, 
-                height + ColumnHeaderHeight
-            );
-        }
-
-        private void UpdateControlSize()
-        {
-            Size = CalculateControlSize();
+            //Size = CalculateControlSize();
             UpdateScrollbars();
         }
 
@@ -174,102 +221,40 @@ namespace LDDModder.BrickEditor.UI.Editors
             UpdateControlSize();
         }
 
+        protected override void OnSizeChanged(EventArgs e)
+        {
+            base.OnSizeChanged(e);
+            UpdateControlSize();
+        }
+
         #endregion
 
-        protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified)
-        {
-            if (specified.HasFlag(BoundsSpecified.Width) ||
-                specified.HasFlag(BoundsSpecified.Height))
-            {
-                var size = CalculateControlSize();
-                width = size.Width;
-                height = size.Height;
-            }
+        //protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified)
+        //{
+        //    if (specified.HasFlag(BoundsSpecified.Width) ||
+        //        specified.HasFlag(BoundsSpecified.Height))
+        //    {
+        //        var size = CalculateControlSize();
+        //        width = size.Width;
+        //        height = size.Height;
+        //    }
 
-            base.SetBoundsCore(x, y, width, height, specified);
-        }
+        //    base.SetBoundsCore(x, y, width, height, specified);
+        //}
 
         #region Drawing
 
         protected override void OnPaint(PaintEventArgs pe)
         {
             var g = pe.Graphics;
-            g.Clear(Color.White);
+            g.Clear(BackColor);
 
             if (StudConnector == null)
                 return;
 
             DrawGridBackground(pe.Graphics);
-            var evenColor = Color.FromArgb(80, 180, 180, 180);
 
-            var columnRects = new List<RectangleF>();
-            var rowRects = new List<RectangleF>();
-
-            int visibleRows = Math.Min(StudConnector.ArrayHeight, MaxGridSize.Height);
-            int visibleCols = Math.Min(StudConnector.ArrayWidth, MaxGridSize.Width);
-
-            for (int x = 0; x < visibleCols; x++)
-            {
-                var colRect = new RectangleF(GridCellSize.Width * x, 0, GridCellSize.Width, GridCellSize.Height * visibleRows);
-                columnRects.Add(colRect);
-            }
-
-            for (int y = 0; y < visibleRows; y++)
-            {
-                var rowRect = new RectangleF(0, GridCellSize.Height * y, GridCellSize.Width * visibleCols, GridCellSize.Height);
-                rowRects.Add(rowRect);
-            }
-
-            void DrawBackground(List<RectangleF> rects, int offset)
-            {
-                for (int i = 0; i < rects.Count; i++)
-                {
-                    var colRowRect = rects[i];
-
-                    if (((i + offset) % 2) == 0)
-                    {
-                        using (var brush = new SolidBrush(evenColor))
-                            g.FillRectangle(brush, colRowRect);
-                    }
-                }
-            }
-
-            void DrawBorders(List<RectangleF> rects)
-            {
-                for (int i = 0; i < rects.Count; i++)
-                {
-                    var colRowRect = rects[i];
-                    g.DrawRectangle(Pens.Black, colRowRect.X, colRowRect.Y, colRowRect.Width, colRowRect.Height);
-                }
-            }
-
-            DrawBackground(columnRects, ScrollOffset.X);
-            DrawBackground(rowRects, ScrollOffset.Y);
-
-            var selectionColor = Color.FromArgb(50, 180, 180, 200);
-            if (ContainsFocus || Focused)
-                selectionColor = Color.FromArgb(100, 180, 180, 255);
-
-            var selectionBrush = new SolidBrush(selectionColor);
-
-            for (int y = 0; y < visibleRows; y++)
-            {
-                for (int x = 0; x < visibleCols; x++)
-                {
-                    int cellX = x + ScrollOffset.X;
-                    int cellY = y + ScrollOffset.Y;
-
-                    var cellRect = GetCellRect(cellX, cellY);
-
-                    if (IsInSelection(cellX, cellY))
-                        g.FillRectangle(selectionBrush, cellRect.X, cellRect.Y, cellRect.Width, cellRect.Height);
-                }
-            }
-            selectionBrush.Dispose();
-
-            DrawBorders(columnRects);
-            DrawBorders(rowRects);
-
+            DrawGridHeaders(pe.Graphics);
 
             var sf = new StringFormat()
             {
@@ -284,21 +269,26 @@ namespace LDDModder.BrickEditor.UI.Editors
             //    focusedBorderPen = SystemPens.
             //}
 
-            for (int y = 0; y < visibleRows; y++)
+            for (int y = 0; y < CurrentGridSize.Height; y++)
             {
-                for (int x = 0; x < visibleCols; x++)
+                for (int x = 0; x < CurrentGridSize.Width; x++)
                 {
                     int cellX = x + ScrollOffset.X;
                     int cellY = y + ScrollOffset.Y;
 
                     var cellRect = GetCellRect(cellX, cellY);
+                    var cellNode = StudConnector.GetNode(cellX, cellY);
+                    if (cellNode == null)
+                        continue;
 
-                    if (IsInSelection(cellX, cellY))
+                    //if (IsInSelection(cellX, cellY))
+                    if (SelectedNode == cellNode)
                         g.DrawRectangle(focusedBorderPen, cellRect);
 
-                    TextRenderer.DrawText(g, StudConnector[cellX, cellY].ToString(), Font, cellRect, ForeColor, 
-                        TextFormatFlags.TextBoxControl | TextFormatFlags.NoClipping | TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
-                    //g.DrawString(StudConnector[cellX, cellY].ToString(), Font, Brushes.Black, cellRect, sf);
+                    TextRenderer.DrawText(g, cellNode.ToString(), Font, cellRect, ForeColor, 
+                        TextFormatFlags.TextBoxControl | TextFormatFlags.NoClipping | 
+                        TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
+                    //g.DrawString(cellNode.ToString(), Font, Brushes.Black, cellRect, sf);
                 }
             }
 
@@ -307,7 +297,98 @@ namespace LDDModder.BrickEditor.UI.Editors
 
         private void DrawGridBackground(Graphics g)
         {
+            var gridRects = new List<Rectangle>();
+
+            g.FillRectangle(Brushes.White, CellGridBounds);
+
+            using (var evenLineBrush = new SolidBrush(Color.FromArgb(70, 180, 180, 180)))
+            {
+                for (int x = 0; x < CurrentGridSize.Width; x++)
+                {
+                    var colRect = new Rectangle(
+                        GridCellSize.Width * x, 0,
+                        GridCellSize.Width,
+                        GridCellSize.Height * CurrentGridSize.Height);
+                    colRect.X += CellGridBounds.Left;
+                    colRect.Y += CellGridBounds.Top;
+                    gridRects.Add(colRect);
+
+                    if ((x + ScrollOffset.X) % 2 == 0)
+                        g.FillRectangle(evenLineBrush, colRect);
+                }
+
+                for (int y = 0; y < CurrentGridSize.Height; y++)
+                {
+                    var rowRect = new Rectangle(
+                        0, GridCellSize.Height * y,
+                        GridCellSize.Width * CurrentGridSize.Width,
+                        GridCellSize.Height);
+                    rowRect.X += CellGridBounds.Left;
+                    rowRect.Y += CellGridBounds.Top;
+                    gridRects.Add(rowRect);
+
+                    if ((y + ScrollOffset.Y) % 2 == 0)
+                        g.FillRectangle(evenLineBrush, rowRect);
+                }
+            }
             
+            var selectionColor = Color.FromArgb(70, 180, 180, 200);
+            if (ContainsFocus || Focused)
+                selectionColor = Color.FromArgb(100, 180, 180, 255);
+
+            if (SelectionStart.HasValue)
+            {
+                var selectionRect = GetCellRect(SelectionStart.Value);
+
+                if (SelectionEnd.HasValue)
+                {
+                    var endRect = GetCellRect(SelectionEnd.Value);
+
+                    int minX = Math.Min(selectionRect.X, endRect.X);
+                    int minY = Math.Min(selectionRect.Y, endRect.Y);
+                    int maxX = Math.Max(selectionRect.Right, endRect.Right);
+                    int maxY = Math.Max(selectionRect.Bottom, endRect.Bottom);
+
+                    selectionRect = Rectangle.FromLTRB(minX, minY, maxX, maxY);
+                }
+                selectionRect = Rectangle.Intersect(selectionRect, CellGridBounds);
+
+                if (selectionRect != Rectangle.Empty)
+                {
+                    using (var selectionBrush = new SolidBrush(selectionColor))
+                        g.FillRectangle(selectionBrush, selectionRect);
+                }
+            }
+
+            foreach(var rect in gridRects)
+                g.DrawRectangle(Pens.Black, rect);
+        }
+
+        private void DrawGridHeaders(Graphics g)
+        {
+            for (int x = 0; x < CurrentGridSize.Width; x++)
+            {
+                var headerRect = new Rectangle(
+                    CellGridBounds.Left + (x * GridCellSize.Width), 0,
+                    GridCellSize.Width, ColumnHeaderHeight);
+
+                TextRenderer.DrawText(g, $"{ScrollOffset.X + x}", Font, headerRect, ForeColor,
+                        TextFormatFlags.NoClipping | 
+                        TextFormatFlags.HorizontalCenter | 
+                        TextFormatFlags.VerticalCenter);
+            }
+
+            for (int y = 0; y < CurrentGridSize.Height; y++)
+            {
+                var headerRect = new Rectangle(
+                    0, CellGridBounds.Top + (y * GridCellSize.Height),
+                    RowHeaderWidth, GridCellSize.Height);
+
+                TextRenderer.DrawText(g, $"{ScrollOffset.Y + y}", Font, headerRect, ForeColor,
+                        TextFormatFlags.NoClipping |
+                        TextFormatFlags.HorizontalCenter |
+                        TextFormatFlags.VerticalCenter);
+            }
         }
 
         #endregion
@@ -318,18 +399,22 @@ namespace LDDModder.BrickEditor.UI.Editors
         {
             if (e.Button == MouseButtons.Left)
             {
-                if (EditCombo.Visible)
-                    FinishEditNode();
-
-                var clickedNode = GetNodeFromPosition(e.Location);
-                if (clickedNode != null)
+                if (CellGridBounds.Contains(e.Location))
                 {
-                    IsSelectingRange = true;
-                    FocusedCell = GetCellAddressFromPosition(e.Location);
-                    SelectionStart = FocusedCell;
-                    SelectionEnd = null;
-                    Invalidate();
+                    var clickedNode = GetNodeFromPosition(e.Location);
+                    if (clickedNode != null)
+                    {
+                        if (IsEditingNode && !FinishEditNode())
+                            return;
+
+                        IsSelectingRange = true;
+                        FocusedCell = GetCellAddressFromPosition(e.Location);
+                        SelectionStart = FocusedCell;
+                        SelectionEnd = null;
+                        Invalidate();
+                    }
                 }
+                
             }
 
             base.OnMouseDown(e);
@@ -349,14 +434,10 @@ namespace LDDModder.BrickEditor.UI.Editors
         {
             if (e.Button == MouseButtons.Left)
             {
-                SelectionEnd = null;
-                Invalidate();
-                var curNode = GetNodeFromPosition(e.Location);
-                if (curNode != null)
-                {
-                    BeginEditNode(curNode);
-                }
+                if (SelectedNode != null)
+                    BeginEditNode();
             }
+
             base.OnMouseDoubleClick(e);
         }
 
@@ -369,7 +450,6 @@ namespace LDDModder.BrickEditor.UI.Editors
             }
             base.OnMouseMove(e);
         }
-
         
         #endregion
 
@@ -409,10 +489,32 @@ namespace LDDModder.BrickEditor.UI.Editors
             keyData &= ~activeModifiers;
 
 
-            if (ARROW_KEYS.Contains(keyData))
+            if (ARROW_KEYS.Contains(keyData) && !IsEditingNode)
             {
                 ProcessArrowKeys(keyData, activeModifiers);
                 return true;
+            }
+
+            if (keyData == Keys.Tab && SelectedNode != null)
+            {
+                var nextNode = StudConnector.GetNode(SelectedNode.X + 1, SelectedNode.Y);
+                if (nextNode == null)
+                    nextNode = StudConnector.GetNode(0, SelectedNode.Y + 1);
+
+                bool wasEditing = IsEditingNode;
+
+                if (nextNode != null && (!IsEditingNode || FinishEditNode()))
+                {
+                    FocusedCell = new Point(nextNode.X, nextNode.Y);
+                    SelectionStart = FocusedCell;
+                    SelectionEnd = null;
+                    Invalidate();
+
+                    if (wasEditing)
+                        BeginEditNode();
+
+                    return true;
+                }
             }
 
             return base.ProcessCmdKey(ref msg, keyData);
@@ -452,7 +554,7 @@ namespace LDDModder.BrickEditor.UI.Editors
             {
                 if (!IsEditingNode && SelectedNode != null)
                 {
-                    if (BeginEditNode(SelectedNode))
+                    if (BeginEditNode())
                     {
                         EditCombo.SelectAll();
                         EditCombo.SelectedText = ((char)e.KeyCode).ToString();
@@ -461,12 +563,8 @@ namespace LDDModder.BrickEditor.UI.Editors
             }
             else if (e.KeyCode == Keys.Enter || e.KeyCode == Keys.Space)
             {
-                if (!IsEditingNode && FocusedCell != null)
-                {
-                    var focusedNode = StudConnector.GetNode(FocusedCell.Value.X, FocusedCell.Value.Y);
-                    if (focusedNode != null)
-                        BeginEditNode(focusedNode);
-                }
+                if (!IsEditingNode && SelectedNode != null)
+                    BeginEditNode();
             }
 
 
@@ -516,7 +614,6 @@ namespace LDDModder.BrickEditor.UI.Editors
             }
         }
 
-
         #endregion
 
         #region Copy / Pasting
@@ -550,7 +647,6 @@ namespace LDDModder.BrickEditor.UI.Editors
         }
 
         #endregion
-
 
         #region Selection Handling
 
@@ -637,6 +733,8 @@ namespace LDDModder.BrickEditor.UI.Editors
             if (InternalScroll)
                 return;
             ScrollOffset.X = e.NewValue;
+            if (IsEditingNode)
+                PositionEditCombo();
             Invalidate();
         }
 
@@ -645,6 +743,8 @@ namespace LDDModder.BrickEditor.UI.Editors
             if (InternalScroll)
                 return;
             ScrollOffset.Y = e.NewValue;
+            if (IsEditingNode)
+                PositionEditCombo();
             Invalidate();
         }
 
@@ -713,20 +813,22 @@ namespace LDDModder.BrickEditor.UI.Editors
 
         private void UpdateScrollbars()
         {
-            int visibleCols = Math.Min(StudConnector.ArrayWidth, MaxGridSize.Width);
-            int visibleRows = Math.Min(StudConnector.ArrayHeight, MaxGridSize.Height);
+            //int visibleCols = Math.Min(StudConnector.ArrayWidth, MaxGridSize.Width);
+            //int visibleRows = Math.Min(StudConnector.ArrayHeight, MaxGridSize.Height);
 
             InternalScroll = true;
             
-            bool hScrollBarVisible = visibleCols < StudConnector.ArrayWidth;
-            bool vScrollBarVisible = visibleRows < StudConnector.ArrayHeight;
+            bool hScrollBarVisible = CurrentGridSize.Width < StudConnector.ArrayWidth;
+            bool vScrollBarVisible = CurrentGridSize.Height < StudConnector.ArrayHeight;
 
             HScrollBar.Visible = hScrollBarVisible;
             VScrollBar.Visible = vScrollBarVisible;
 
             if (hScrollBarVisible)
             {
-                int remainingCols = StudConnector.ArrayWidth - visibleCols;
+                int remainingCols = StudConnector.ArrayWidth - CurrentGridSize.Width;
+                if (ScrollOffset.X > remainingCols)
+                    ScrollOffset.X = remainingCols;
                 HScrollBar.Value = 0;
                 HScrollBar.Maximum = remainingCols + HScrollBar.LargeChange - 1;
                 HScrollBar.Value = ScrollOffset.X;
@@ -734,17 +836,23 @@ namespace LDDModder.BrickEditor.UI.Editors
                 HScrollBar.Width = Width - (vScrollBarVisible ? VScrollBar.Width : 0);
                 HScrollBar.Top = Height - HScrollBar.Height;    
             }
+            else
+                ScrollOffset.X = 0;
 
             if (vScrollBarVisible)
             {
-                int remainingRows = StudConnector.ArrayHeight - visibleRows;
+                int remainingRows = StudConnector.ArrayHeight - CurrentGridSize.Height;
+                if (ScrollOffset.Y > remainingRows)
+                    ScrollOffset.Y = remainingRows;
                 VScrollBar.Value = 0;
                 VScrollBar.Maximum = remainingRows + VScrollBar.LargeChange - 1;
                 VScrollBar.Value = ScrollOffset.Y;
 
-                VScrollBar.Height   = Height - (hScrollBarVisible ? HScrollBar.Height : 0);
+                VScrollBar.Height = Height - (hScrollBarVisible ? HScrollBar.Height : 0);
                 VScrollBar.Left = Width - VScrollBar.Width;
             }
+            else
+                ScrollOffset.Y = 0;
 
             InternalScroll = false;
         }
@@ -790,6 +898,15 @@ namespace LDDModder.BrickEditor.UI.Editors
 
         }
 
+        private bool IsCellVisible(Point cellPos)
+        {
+            var gridSize = GetVisibleGridSize();
+            return !(cellPos.X < ScrollOffset.X ||
+                    cellPos.X >= gridSize.Width + ScrollOffset.X ||
+                    cellPos.Y < ScrollOffset.Y ||
+                    cellPos.Y >= gridSize.Height + ScrollOffset.Y);
+        }
+
         private void ScrollIntoView(Point cellPos)
         {
             var gridSize = GetVisibleGridSize();
@@ -825,7 +942,9 @@ namespace LDDModder.BrickEditor.UI.Editors
         #region Edit ComboBox Handling
 
         private ComboBox EditCombo;
-        private bool IsEditingNode;
+        [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public bool IsEditingNode { get; private set; }
+
         private bool NodeValueChanged;
         private bool LoadingCombobox;
         private bool IsCancelingEdit;
@@ -901,31 +1020,28 @@ namespace LDDModder.BrickEditor.UI.Editors
             EditCombo.KeyDown += EditCombo_KeyDown;
         }
 
-        private bool BeginEditNode(Custom2DFieldNode node)
+        public bool BeginEditNode()
         {
+            if (FocusedCell == null)
+                return false;
+
             if (IsEditingNode && !FinishEditNode())
                 return false;
 
-            SelectionStart = new Point(node.X, node.Y);
+            SelectionStart = new Point(SelectedNode.X, SelectedNode.Y);
             SelectionEnd = null;
             IsSelectingRange = false;
 
-            if (node != SelectedNode)
-                FocusedCell = SelectionStart;
-
             ScrollIntoView(FocusedCell.Value);
 
-            var rectangle = GetCellRect(node.X, node.Y);
 
             LoadingCombobox = true;
-            
-            EditCombo.Width = rectangle.Width - 1;
-            EditCombo.Left = rectangle.X + 1;
-            EditCombo.Top = rectangle.Y + (rectangle.Height - EditCombo.Height) / 2;
+
+            PositionEditCombo();
             EditCombo.Visible = true;
 
             EditCombo.SelectedIndex = -1;
-            EditCombo.Text = node.ToString();
+            EditCombo.Text = SelectedNode.ToString();
             EditCombo.Focus();
             EditCombo.SelectionStart = 0;
             EditCombo.SelectionLength = 0;
@@ -939,20 +1055,21 @@ namespace LDDModder.BrickEditor.UI.Editors
             return true;
         }
 
-        private void CancelEditNode()
+        public void CancelEditNode()
         {
             if (IsEditingNode || EditCombo.Visible)
             {
                 IsCancelingEdit = true;
                 Focus();
-                EditCombo.Hide();
+                
                 IsCancelingEdit = false;
                 IsEditingNode = false;
                 NodeValueChanged = false;
+                EditCombo.Hide();
             }
         }
 
-        private bool FinishEditNode()
+        public bool FinishEditNode()
         {
             if (IsEditingNode || EditCombo.Visible)
             {
@@ -963,11 +1080,18 @@ namespace LDDModder.BrickEditor.UI.Editors
                     return false;
             }
 
-            if (EditCombo.Visible)
-            {
-                EditCombo.Visible = false;
-            }
+            IsEditingNode = false;
+            EditCombo.Hide();
+            
             return true;
+        }
+
+        private void PositionEditCombo()
+        {
+            var rectangle = GetCellRect(FocusedCell.Value);
+            EditCombo.Width = rectangle.Width - 1;
+            EditCombo.Left = rectangle.X + 1;
+            EditCombo.Top = rectangle.Y + (rectangle.Height - EditCombo.Height) / 2;
         }
 
         private void EditCombo_TextChanged(object sender, EventArgs e)
@@ -1055,10 +1179,15 @@ namespace LDDModder.BrickEditor.UI.Editors
             return GetNodeFromCell(cellPos);
         }
 
+        private Rectangle GetCellRect(Point pt)
+        {
+            return GetCellRect(pt.X, pt.Y);
+        }
+
         private Rectangle GetCellRect(int x, int y)
         {
-            int offsetX = (ScrollOffset.X * GridCellSize.Width) + CellGridBounds.Left;
-            int offsetY = (ScrollOffset.Y * GridCellSize.Height) + CellGridBounds.Top;
+            int offsetX = (ScrollOffset.X * GridCellSize.Width) - CellGridBounds.Left;
+            int offsetY = (ScrollOffset.Y * GridCellSize.Height) - CellGridBounds.Top;
             return new Rectangle(
                         (GridCellSize.Width * x) - offsetX, (GridCellSize.Height * y) - offsetY,
                         GridCellSize.Width, GridCellSize.Height);
@@ -1086,5 +1215,6 @@ namespace LDDModder.BrickEditor.UI.Editors
 
             yield break;
         }
+    
     }
 }

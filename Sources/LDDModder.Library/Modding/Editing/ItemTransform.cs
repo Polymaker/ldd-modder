@@ -2,6 +2,7 @@
 using LDDModder.Simple3D;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -14,11 +15,22 @@ using System.Xml.Serialization;
 namespace LDDModder.Modding.Editing
 {
     [XmlRoot("Transform")]
-    public class ItemTransform : IXmlSerializable
+    public class ItemTransform : ChangeTrackingObject, IXmlSerializable
     {
-        public Vector3 Position { get; set; }
+        private Vector3 _Position;
+        private Vector3 _Rotation;
 
-        public Vector3 Rotation { get; set; }
+        public Vector3 Position
+        {
+            get => _Position;
+            set => SetPropertyValue(ref _Position, value);
+        }
+
+        public Vector3 Rotation
+        {
+            get => _Rotation;
+            set => SetPropertyValue(ref _Rotation, value);
+        }
 
         public bool IsEmpty => Position == Vector3.Zero && Rotation == Vector3.Zero;
 

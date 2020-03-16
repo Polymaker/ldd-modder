@@ -407,6 +407,9 @@
     <EmbeddedResource Include="UI\Controls\BrowseTextBox.resx">
       <DependentUpon>BrowseTextBox.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\Editors\PartAliasesEditControl.fr.resx">
+      <DependentUpon>PartAliasesEditControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\Editors\PartAliasesEditControl.resx">
       <DependentUpon>PartAliasesEditControl.cs</DependentUpon>
     </EmbeddedResource>

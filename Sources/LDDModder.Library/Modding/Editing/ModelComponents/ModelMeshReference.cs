@@ -38,6 +38,8 @@ namespace LDDModder.Modding.Editing
 
         public int TriangleCount => (IndexCount > 0) ? IndexCount / 3 : (ModelMesh?.IndexCount ?? 0) / 3;
 
+        public event EventHandler TranformChanged;
+
         public ModelMeshReference()
         {
             _Transform = new ItemTransform();
@@ -85,6 +87,13 @@ namespace LDDModder.Modding.Editing
             MeshID = model.ID;
             _ModelMesh = model;
             _Transform = new ItemTransform();
+        }
+
+        protected override void OnPropertyChanged(ElementValueChangedEventArgs args)
+        {
+            base.OnPropertyChanged(args);
+            if (args.PropertyName == nameof(Transform))
+                TranformChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public ModelMesh GetModelMesh()

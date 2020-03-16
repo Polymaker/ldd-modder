@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using LDDModder.LDD.Primitives;
 using System.Runtime.InteropServices;
+using LDDModder.Simple3D;
 
 namespace LDDModder.BrickEditor.UI.Controls
 {
@@ -25,17 +26,7 @@ namespace LDDModder.BrickEditor.UI.Controls
         public BoundingBox Value
         {
             get => _Value;
-            set
-            {
-                var notNullValue = value ?? new BoundingBox();
-                if (!notNullValue.Equals(Value))
-                {
-
-                    _Value = notNullValue.Clone();
-                    LoadBoundingBox();
-                    OnValueChanged();
-                }
-            }
+            set => SetCurrentValue(value);
         }
 
         public event EventHandler ValueChanged;
@@ -208,6 +199,38 @@ namespace LDDModder.BrickEditor.UI.Controls
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Value"));
         }
 
+        private void SetCurrentValue(BoundingBox value)
+        {
+            var notNullValue = value ?? new BoundingBox();
+            if (_Value != notNullValue)
+            {
+                _Value = notNullValue;
+                LoadBoundingBox();
+                OnValueChanged();
+            }
+        }
+
+        private void SetValueFromControls()
+        {
+            var min = new Vector3()
+            {
+                X = (float)MinX_Box.Value,
+                Y = (float)MinY_Box.Value,
+                Z = (float)MinZ_Box.Value
+            };
+
+            var max = new Vector3()
+            {
+                X = (float)MaxX_Box.Value,
+                Y = (float)MaxY_Box.Value,
+                Z = (float)MaxZ_Box.Value
+            };
+
+            _Value = new BoundingBox(min, max);
+
+            OnValueChanged();
+        }
+
         private void LoadBoundingBox()
         {
             InternalAssign = true;
@@ -230,19 +253,7 @@ namespace LDDModder.BrickEditor.UI.Controls
             if (InternalAssign)
                 return;
 
-            if (Value != null)
-            {
-                _Value.MinX = MinX_Box.Value;
-                _Value.MinY = MinY_Box.Value;
-                _Value.MinZ = MinZ_Box.Value;
-                _Value.MaxX = MaxX_Box.Value;
-                _Value.MaxY = MaxY_Box.Value;
-                _Value.MaxZ = MaxZ_Box.Value;
-
-                OnValueChanged();
-            }
+            SetValueFromControls();
         }
-
-        
     }
 }

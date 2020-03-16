@@ -48,6 +48,8 @@ namespace LDDModder.Modding.Editing
 
         public ElementCollection<PartCollision> Collisions { get; }
 
+        public event EventHandler TranformChanged;
+
         public PartBone()
         {
             Connections = new ElementCollection<PartConnection>(this);
@@ -62,6 +64,13 @@ namespace LDDModder.Modding.Editing
             Transform = new ItemTransform();
             _BoneID = boneID;
             InternalSetName($"Bone{boneID}");
+        }
+
+        protected override void OnPropertyChanged(ElementValueChangedEventArgs args)
+        {
+            base.OnPropertyChanged(args);
+            if (args.PropertyName == nameof(Transform))
+                TranformChanged?.Invoke(this, EventArgs.Empty);
         }
 
         internal void LoadFromLDD(FlexBone flexBone)

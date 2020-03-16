@@ -33,6 +33,7 @@
             this.SelectedElementComboBox = new System.Windows.Forms.ToolStripComboBox();
             this.SyncSelectionCheckBox = new LDDModder.BrickEditor.UI.Controls.ToolStripCheckBox();
             this.studGridControl1 = new LDDModder.BrickEditor.UI.Editors.StudGridControl();
+            this.transformEditor1 = new LDDModder.BrickEditor.UI.Controls.TransformEditor();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -70,18 +71,33 @@
             // 
             // studGridControl1
             // 
-            this.studGridControl1.Location = new System.Drawing.Point(0, 28);
+            this.studGridControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.studGridControl1.Location = new System.Drawing.Point(0, 102);
             this.studGridControl1.MaxGridSize = new System.Drawing.Size(8, 5);
             this.studGridControl1.Name = "studGridControl1";
-            this.studGridControl1.Size = new System.Drawing.Size(202, 76);
+            this.studGridControl1.Size = new System.Drawing.Size(618, 224);
             this.studGridControl1.TabIndex = 1;
             this.studGridControl1.Text = "studGridControl1";
+            this.studGridControl1.Visible = false;
+            // 
+            // transformEditor1
+            // 
+            this.transformEditor1.AutoSize = true;
+            this.transformEditor1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.transformEditor1.Location = new System.Drawing.Point(0, 28);
+            this.transformEditor1.Name = "transformEditor1";
+            this.transformEditor1.Size = new System.Drawing.Size(293, 68);
+            this.transformEditor1.TabIndex = 2;
+            this.transformEditor1.Visible = false;
             // 
             // ElementDetailPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(618, 325);
+            this.Controls.Add(this.transformEditor1);
             this.Controls.Add(this.studGridControl1);
             this.Controls.Add(this.toolStrip1);
             this.Name = "ElementDetailPanel";
@@ -100,5 +116,6 @@
         private System.Windows.Forms.ToolStripComboBox SelectedElementComboBox;
         private Controls.ToolStripCheckBox SyncSelectionCheckBox;
         private Editors.StudGridControl studGridControl1;
+        private Controls.TransformEditor transformEditor1;
     }
 }

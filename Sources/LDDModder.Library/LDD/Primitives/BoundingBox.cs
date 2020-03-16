@@ -3,6 +3,7 @@ using LDDModder.Serialization;
 using LDDModder.Simple3D;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,7 +12,7 @@ using System.Xml.Serialization;
 
 namespace LDDModder.LDD.Primitives
 {
-    public class BoundingBox : IXmlObject
+    public class BoundingBox : ChangeTrackingObject, IXmlObject
     {
         private Vector3d _Min;
         private Vector3d _Max;
@@ -19,13 +20,13 @@ namespace LDDModder.LDD.Primitives
         public Vector3d Min
         {
             get => _Min;
-            set => _Min = value;
+            set => SetPropertyValue(ref _Min, value);
         }
 
         public Vector3d Max
         {
             get => _Max;
-            set => _Max = value;
+            set => SetPropertyValue(ref _Max, value);
         }
 
         public Vector3d Size => Max - Min;
@@ -162,18 +163,18 @@ namespace LDDModder.LDD.Primitives
                    Max.Equals(box.Max);
         }
 
-        public static bool operator ==(BoundingBox left, BoundingBox right)
-        {
-            if (left is null || right is null)
-                return left is null && right is null;
+        //public static bool operator ==(BoundingBox left, BoundingBox right)
+        //{
+        //    if (left is null || right is null)
+        //        return left is null && right is null;
 
-            return left.Min == right.Min && left.Max == right.Max;
-        }
+        //    return left.Min == right.Min && left.Max == right.Max;
+        //}
 
-        public static bool operator !=(BoundingBox left, BoundingBox right)
-        {
-            return !(left == right);
-        }
+        //public static bool operator !=(BoundingBox left, BoundingBox right)
+        //{
+        //    return !(left == right);
+        //}
 
         public override int GetHashCode()
         {

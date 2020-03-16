@@ -96,16 +96,13 @@ namespace LDDModder.BrickEditor.Rendering
 
         private Matrix4 OriginalTrans;
 
-        protected void SetTransform(Matrix4 transform, bool fireChange)
+        protected void SetTransform(Matrix4 transform, bool fireChange = true)
         {
             if (_Transform != transform)
             {
                 _Transform = transform;
                 if (fireChange)
-                {
-                    TransformChanged?.Invoke(this, EventArgs.Empty);
                     OnTransformChanged();
-                }
             }
         }
 
@@ -125,7 +122,6 @@ namespace LDDModder.BrickEditor.Rendering
                     _Transform = OriginalTrans;
                 else
                 {
-                    TransformChanged?.Invoke(this, EventArgs.Empty);
                     OnTransformChanged();
                 }
             }
@@ -138,7 +134,7 @@ namespace LDDModder.BrickEditor.Rendering
 
         protected virtual void OnTransformChanged()
         {
-
+            TransformChanged?.Invoke(this, EventArgs.Empty);
         }
 
         #endregion

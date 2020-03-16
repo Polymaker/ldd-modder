@@ -25,9 +25,18 @@ namespace LDDModder.Modding.Editing
 
         public abstract CollisionType CollisionType { get; }
 
+        public event EventHandler TranformChanged;
+
         public PartCollision()
         {
             Transform = new ItemTransform();
+        }
+
+        protected override void OnPropertyChanged(ElementValueChangedEventArgs args)
+        {
+            base.OnPropertyChanged(args);
+            if (args.PropertyName == nameof(Transform))
+                TranformChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public abstract void SetSize(Vector3 size);

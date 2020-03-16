@@ -29,30 +29,50 @@ namespace LDDModder.BrickEditor.UI.Panels
         protected override void OnElementSelectionChanged()
         {
             base.OnElementSelectionChanged();
-            
-
+ 
             ExecuteOnThread(() =>
             {
                 FillSelectionDetails();
             });
-
-            
         }
 
         private void FillSelectionDetails()
         {
-            if (SyncSelectionCheckBox.Checked)
-            {
+            //if (SyncSelectionCheckBox.Checked)
+            //{
 
+
+            //}
+
+            if (studGridControl1.Tag != null)
+            {
+                if (studGridControl1.IsEditingNode)
+                    studGridControl1.CancelEditNode();
+                studGridControl1.StudConnector = null;
+                studGridControl1.Visible = false;
+                studGridControl1.Tag = null;
             }
 
-            studGridControl1.StudConnector = null;
+            if (transformEditor1.Tag != null)
+            {
+                transformEditor1.BindPhysicalElement(null);
+                transformEditor1.Visible = false;
+            }
+            
+            if (ProjectManager.SelectedElement is IPhysicalElement physicalElement)
+            {
+                transformEditor1.BindPhysicalElement(physicalElement);
+                transformEditor1.Tag = physicalElement;
+                transformEditor1.Visible = true;
+            }
 
             if (ProjectManager.SelectedElement is PartConnection partConnection)
             {
                 if (partConnection.ConnectorType == ConnectorType.Custom2DField)
                 {
                     studGridControl1.StudConnector = partConnection.GetConnector<Custom2DFieldConnector>();
+                    studGridControl1.Visible = true;
+                    studGridControl1.Tag = partConnection;
                 }
             }
         }

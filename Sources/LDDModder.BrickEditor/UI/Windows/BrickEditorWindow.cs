@@ -50,7 +50,6 @@ namespace LDDModder.BrickEditor.UI.Windows
             ProjectManager.ValidationFinished += ProjectManager_ValidationFinished;
             ProjectManager.GenerationFinished += ProjectManager_GenerationFinished;
 
-
             InitialCheckUp();
 
             ResourceHelper.LoadPlatformsAndCategories();
@@ -332,6 +331,7 @@ namespace LDDModder.BrickEditor.UI.Windows
             {
                 imd.Project = CurrentProject;
                 imd.SelectFileOnStart = true;
+
                 if (imd.ShowDialog() == DialogResult.OK)
                 {
                     ImportAssimpModel(imd);

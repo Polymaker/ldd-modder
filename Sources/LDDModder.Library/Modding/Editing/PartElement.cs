@@ -193,14 +193,21 @@ namespace LDDModder.Modding.Editing
             _Name = name;
         }
 
+        protected virtual void OnPropertyChanged(ElementValueChangedEventArgs args)
+        {
+            PropertyChanged?.Invoke(this, args);
+        }
+
         protected void RaisePropertyValueChanged(ElementValueChangedEventArgs args)
         {
             if (Project != null && !IsLoading)
             {
-                PropertyChanged?.Invoke(this, args);
+                OnPropertyChanged(args);
                 Project.OnElementPropertyChanged(args);
             }
         }
+
+
 
         #endregion
 

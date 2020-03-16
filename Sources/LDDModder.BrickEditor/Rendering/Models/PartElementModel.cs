@@ -3,6 +3,7 @@ using LDDModder.Modding.Editing;
 using OpenTK;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,6 +21,7 @@ namespace LDDModder.BrickEditor.Rendering
         public bool IsSelected { get; set; }
 
         protected bool IsApplyingTransform { get; set; }
+        protected bool IsUpdatingTransform { get; set; }
 
         protected PartElementModel(PartElement element)
         {
@@ -45,24 +47,27 @@ namespace LDDModder.BrickEditor.Rendering
         {
             base.OnTransformChanged();
 
-            Matrix4 transCopy = Transform;
-            transCopy.ClearScale();
-
-            IsApplyingTransform = true;
-            ApplyTransformToElement(transCopy);
-            IsApplyingTransform = false;
-            
+            if (!IsUpdatingTransform)
+            {
+                Matrix4 transCopy = Transform;
+                transCopy.ClearScale();
+                ApplyTransformToElement(transCopy);
+            }
         }
 
         protected virtual void ApplyTransformToElement(Matrix4 transform)
         {
+            IsApplyingTransform = true;
             if (Element is IPhysicalElement physicalElement)
                 physicalElement.Transform = ItemTransform.FromMatrix(transform.ToLDD());
+            IsApplyingTransform = false;
         }
 
         protected void SetTransformFromElement()
         {
-            SetTransform(GetElementTransform(), false);
+            IsUpdatingTransform = true;
+            SetTransform(GetElementTransform(), true);
+            IsUpdatingTransform = false;
         }
 
         protected virtual Matrix4 GetElementTransform()
@@ -77,8 +82,11 @@ namespace LDDModder.BrickEditor.Rendering
 
         private void Element_PropertyChanged(object sender, ElementValueChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(IPhysicalElement.Transform) && !IsApplyingTransform)
-                SetTransformFromElement();
+            if (e.PropertyName == nameof(IPhysicalElement.Transform))
+            {
+                if (!IsApplyingTransform)
+                    SetTransformFromElement();
+            }
 
             OnElementPropertyChanged(e);
         }

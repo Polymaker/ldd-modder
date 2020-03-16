@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -41,6 +42,8 @@ namespace LDDModder.Modding.Editing
         [XmlAttribute]
         public ConnectorType ConnectorType { get; set; }
 
+        public event EventHandler TranformChanged;
+
         public PartConnection()
         {
             Transform = new ItemTransform();
@@ -57,6 +60,20 @@ namespace LDDModder.Modding.Editing
             ConnectorType = connector.Type;
             SetConnector(connector);
             Transform = ItemTransform.FromLDD(connector.Transform);
+        }
+
+        protected override void OnPropertyChanged(ElementValueChangedEventArgs args)
+        {
+            base.OnPropertyChanged(args);
+            if (args.PropertyName == nameof(Transform))
+            {
+                //if (args.OldValue is ItemTransform oldTransform)
+                //{
+                //    oldTransform.
+                //}
+                Trace.WriteLine("PartConnection.OnPropertyChanged: Transform");
+                TranformChanged?.Invoke(this, EventArgs.Empty);
+            }
         }
 
         #region Connector Handling

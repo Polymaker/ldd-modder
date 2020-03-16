@@ -257,10 +257,10 @@ namespace LDDModder.Modding.Editing
             if (string.IsNullOrEmpty(MainGroup?.Name))
                 AddMessage("PART_NO_MAINGROUP", ValidationLevel.Error);
 
-            if (Bounding == null || Bounding.IsEmpty)
+            if (Bounding is null || Bounding.IsEmpty)
                 AddMessage("PART_NO_BOUNDING", ValidationLevel.Error);
 
-            if (GeometryBounding == null || GeometryBounding.IsEmpty)
+            if (GeometryBounding is null || GeometryBounding.IsEmpty)
                 AddMessage("PART_NO_GEOMETRYBOUNDING", ValidationLevel.Error);
 
             return messages;

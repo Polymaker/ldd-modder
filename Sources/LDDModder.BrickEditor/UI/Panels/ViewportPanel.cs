@@ -97,8 +97,8 @@ namespace LDDModder.BrickEditor.UI.Panels
             glControl1.MouseMove += GlControl_MouseMove;
             glControl1.GotFocus += GlControl1_GotFocus;
             glControl1.LostFocus += GlControl1_LostFocus;
+            glControl1.MouseDown += GlControl1_MouseDown;
 
-            
 
             LoopController = new LoopController(glControl1);
             LoopController.TargetRenderFrequency = 40;
@@ -555,12 +555,15 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             if (InputManager.ContainsFocus)
             {
-                if (InputManager.IsKeyPressed(Key.S))
-                    SelectionGizmo.DisplayStyle = GizmoStyle.Plain;
-                else if (InputManager.IsKeyPressed(Key.R))
-                    SelectionGizmo.DisplayStyle = GizmoStyle.Rotation;
-                else if (InputManager.IsKeyPressed(Key.T))
-                    SelectionGizmo.DisplayStyle = GizmoStyle.Translation;
+                if (!InputManager.IsShiftDown() && !InputManager.IsControlDown())
+                {
+                    if (InputManager.IsKeyPressed(Key.S))
+                        SelectionGizmo.DisplayStyle = GizmoStyle.Plain;
+                    else if (InputManager.IsKeyPressed(Key.R))
+                        SelectionGizmo.DisplayStyle = GizmoStyle.Rotation;
+                    else if (InputManager.IsKeyPressed(Key.T))
+                        SelectionGizmo.DisplayStyle = GizmoStyle.Translation;
+                }
             }
 
             if (SelectionGizmo.Visible)
@@ -587,23 +590,27 @@ namespace LDDModder.BrickEditor.UI.Panels
                         elem.SetIsOver(false);
                 }
 
-                if (!InputManager.MouseClickHandled)
+                if (InputManager.ContainsFocus)
                 {
-                    if (overElement != null)
+                    if (!InputManager.MouseClickHandled)
                     {
-                        if (InputManager.IsButtonClicked(MouseButton.Left))
-                            overElement.PerformClick(InputManager.LocalMousePos, MouseButton.Left);
-                        else if (InputManager.IsButtonClicked(MouseButton.Right))
-                            overElement.PerformClick(InputManager.LocalMousePos, MouseButton.Right);
-                        InputManager.MouseClickHandled = true;
+                        if (overElement != null)
+                        {
+                            if (InputManager.IsButtonClicked(MouseButton.Left))
+                                overElement.PerformClick(InputManager.LocalMousePos, MouseButton.Left);
+                            else if (InputManager.IsButtonClicked(MouseButton.Right))
+                                overElement.PerformClick(InputManager.LocalMousePos, MouseButton.Right);
+                            InputManager.MouseClickHandled = true;
+                        }
+                    }
+
+                    if (!InputManager.MouseClickHandled && InputManager.IsButtonClicked(MouseButton.Left))
+                    {
+                        var ray = Camera.RaycastFromScreen(InputManager.LocalMousePos);
+                        PerformRaySelection(ray);
                     }
                 }
-
-                if (!InputManager.MouseClickHandled && InputManager.IsButtonClicked(MouseButton.Left))
-                {
-                    var ray = Camera.RaycastFromScreen(InputManager.LocalMousePos);
-                    PerformRaySelection(ray);
-                }
+                
             }
         }
 
@@ -993,6 +1000,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                 var activeObject = SelectionGizmo.ActiveElements.FirstOrDefault();
 
                 UpdatingInfo = true;
+
                 if (activeObject is PartElementModel elementModel && 
                     elementModel.Element is IPhysicalElement physicalElement)
                 {
@@ -1016,8 +1024,8 @@ namespace LDDModder.BrickEditor.UI.Panels
                     RotXNumBox.Value = euler.X;
                     RotYNumBox.Value = euler.Y;
                     RotZNumBox.Value = euler.Z;
-
                 }
+
                 UpdatingInfo = false;
             }
 
@@ -1246,13 +1254,28 @@ namespace LDDModder.BrickEditor.UI.Panels
                 elem.SetIsOver(false);
         }
 
+        private void GlControl1_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                if (glControl1.ContainsFocus && !InputManager.ContainsFocus)
+                {
+                    //Trace.WriteLine("GlControl1_GotFocus FIX");
+                    InputManager.ContainsFocus = true;
+                    glControl1.Focus();
+                }
+            }
+        }
+
         private void GlControl1_GotFocus(object sender, EventArgs e)
         {
+            //Trace.WriteLine("GlControl1_GotFocus");
             InputManager.ContainsFocus = true;
         }
 
         private void GlControl1_LostFocus(object sender, EventArgs e)
         {
+            //Trace.WriteLine("GlControl1_LostFocus");
             InputManager.ContainsFocus = false;
         }
 
@@ -1409,6 +1432,5 @@ namespace LDDModder.BrickEditor.UI.Panels
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
-        
     }
 }

@@ -9,5 +9,7 @@ namespace LDDModder.Modding.Editing
     public interface IPhysicalElement
     {
         ItemTransform Transform { get; set; }
+
+        event EventHandler TranformChanged;
     }
 }
