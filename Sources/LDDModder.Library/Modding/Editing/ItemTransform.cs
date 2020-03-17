@@ -15,32 +15,32 @@ using System.Xml.Serialization;
 namespace LDDModder.Modding.Editing
 {
     [XmlRoot("Transform")]
-    public class ItemTransform : ChangeTrackingObject, IXmlSerializable
+    public class ItemTransform : ChangeTrackingObject
     {
-        private Vector3 _Position;
-        private Vector3 _Rotation;
+        private Vector3d _Position;
+        private Vector3d _Rotation;
 
-        public Vector3 Position
+        public Vector3d Position
         {
             get => _Position;
             set => SetPropertyValue(ref _Position, value);
         }
 
-        public Vector3 Rotation
+        public Vector3d Rotation
         {
             get => _Rotation;
             set => SetPropertyValue(ref _Rotation, value);
         }
 
-        public bool IsEmpty => Position == Vector3.Zero && Rotation == Vector3.Zero;
+        public bool IsEmpty => Position == Vector3d.Zero && Rotation == Vector3d.Zero;
 
         public ItemTransform()
         {
-            Position = Vector3.Zero;
-            Rotation = Vector3.Zero;
+            Position = Vector3d.Zero;
+            Rotation = Vector3d.Zero;
         }
 
-        public ItemTransform(Vector3 position, Vector3 rotation)
+        public ItemTransform(Vector3d position, Vector3d rotation)
         {
             Position = position;
             Rotation = rotation;
@@ -60,8 +60,9 @@ namespace LDDModder.Modding.Editing
         {
             var rot = matrix.ExtractRotation();
 
-            return new ItemTransform((Vector3)matrix.ExtractTranslation(),
-                (Vector3)(Quaterniond.ToEuler(rot) * (180d / Math.PI)));
+            return new ItemTransform(
+                matrix.ExtractTranslation(),
+                Quaterniond.ToEuler(rot) * (180d / Math.PI));
         }
 
         public static ItemTransform FromLDD(LDD.Primitives.Transform transform)
@@ -113,45 +114,17 @@ namespace LDDModder.Modding.Editing
         {
             var trans = new ItemTransform
             {
-                Position = new Vector3(
-                    element.ReadAttribute("X", 0f),
-                    element.ReadAttribute("Y", 0f),
-                    element.ReadAttribute("Z", 0f)),
+                Position = new Vector3d(
+                    element.ReadAttribute("X", 0d),
+                    element.ReadAttribute("Y", 0d),
+                    element.ReadAttribute("Z", 0d)),
 
-                Rotation = new Vector3(
-                    element.ReadAttribute("Pitch", 0f),
-                    element.ReadAttribute("Yaw", 0f),
-                    element.ReadAttribute("Roll", 0f))
+                Rotation = new Vector3d(
+                    element.ReadAttribute("Pitch", 0d),
+                    element.ReadAttribute("Yaw", 0d),
+                    element.ReadAttribute("Roll", 0d))
             };
             return trans;
-        }
-
-        public XmlSchema GetSchema()
-        {
-            return null;
-        }
-
-        public void ReadXml(XmlReader reader)
-        {
-            reader.MoveToContent();
-            float x = float.Parse(reader.GetAttribute("X"), CultureInfo.InvariantCulture);
-            float y = float.Parse(reader.GetAttribute("Y"), CultureInfo.InvariantCulture);
-            float z = float.Parse(reader.GetAttribute("Z"), CultureInfo.InvariantCulture);
-            Position = new Vector3(x, y, z);
-            x = float.Parse(reader.GetAttribute("Pitch"), CultureInfo.InvariantCulture);
-            y = float.Parse(reader.GetAttribute("Yaw"), CultureInfo.InvariantCulture);
-            z = float.Parse(reader.GetAttribute("Roll"), CultureInfo.InvariantCulture);
-            Rotation = new Vector3(x, y, z);
-        }
-
-        public void WriteXml(XmlWriter writer)
-        {
-            writer.WriteAttributeString("X", Position.X.ToString(CultureInfo.InvariantCulture));
-            writer.WriteAttributeString("Y", Position.Y.ToString(CultureInfo.InvariantCulture));
-            writer.WriteAttributeString("Z", Position.Z.ToString(CultureInfo.InvariantCulture));
-            writer.WriteAttributeString("Pitch", Rotation.X.ToString(CultureInfo.InvariantCulture));
-            writer.WriteAttributeString("Yaw", Rotation.Y.ToString(CultureInfo.InvariantCulture));
-            writer.WriteAttributeString("Roll", Rotation.Z.ToString(CultureInfo.InvariantCulture));
         }
     }
 }

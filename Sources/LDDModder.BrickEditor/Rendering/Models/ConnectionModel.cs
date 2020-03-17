@@ -191,6 +191,8 @@ namespace LDDModder.BrickEditor.Rendering
 
         private void RenderCustom2DField(Custom2DFieldConnector connector)
         {
+            RenderHelper.DrawStudConnector2(Transform, connector);
+
             var color = IsSelected ? new Vector4(1f) : new Vector4(0, 0, 0, 1);
             RenderHelper.DrawRectangle(Transform, 
                 new Vector2(connector.StudWidth * 0.8f, connector.StudHeight * 0.8f),
@@ -262,5 +264,7 @@ namespace LDDModder.BrickEditor.Rendering
             //return Ray.IntersectsSphere(localRay, bsphere, out distance);
 
         }
+
+
     }
 }

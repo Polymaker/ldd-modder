@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using LDDModder.BrickEditor.Rendering.Models;
 using LDDModder.BrickEditor.Rendering.Shaders;
+using ObjectTK.Buffers;
 using ObjectTK.Shaders;
 using ObjectTK.Textures;
 using OpenTK;
@@ -15,6 +16,7 @@ namespace LDDModder.BrickEditor.Rendering
 {
     public static class RenderHelper
     {
+
         #region Shaders
 
         public static ColorShaderProgram ColorShader { get; private set; }
@@ -25,7 +27,13 @@ namespace LDDModder.BrickEditor.Rendering
 
         public static ModelShaderProgram ModelShader { get; private set; }
 
+        public static StudConnectionShaderProgram StudConnectionShader { get; private set; }
+
+        public static SimpleTextureShaderProgram SimpleTextureShader { get; private set; }
+
         public static IndexedVertexBuffer<Vector3> BoundingBoxBufffer;
+
+        //public static Buffer<StudGridCell> StudGridBuffer { get; private set; }
 
         #endregion
 
@@ -35,6 +43,8 @@ namespace LDDModder.BrickEditor.Rendering
             WireframeShader = ProgramFactory.Create<WireframeShaderProgram>();
             ModelShader = ProgramFactory.Create<ModelShaderProgram>();
             WireframeShader2 = ProgramFactory.Create<WireframeShader2Program>();
+            StudConnectionShader = ProgramFactory.Create<StudConnectionShaderProgram>();
+            SimpleTextureShader = ProgramFactory.Create<SimpleTextureShaderProgram>();
 
             BoundingBoxBufffer = new IndexedVertexBuffer<Vector3>();
             var box = BBox.FromCenterSize(Vector3.Zero, Vector3.One);
@@ -53,6 +63,9 @@ namespace LDDModder.BrickEditor.Rendering
             }
 
             BoundingBoxBufffer.SetIndices(bboxIndices);
+
+            //StudGridBuffer = new Buffer<StudGridCell>();
+            
 
             CollisionMaterial = new MaterialInfo
             {
@@ -104,6 +117,18 @@ namespace LDDModder.BrickEditor.Rendering
                 BoundingBoxBufffer.Dispose();
                 BoundingBoxBufffer = null;
             }
+
+            if (StudConnectionShader != null)
+            {
+                StudConnectionShader.Dispose();
+                StudConnectionShader = null;
+            }
+
+            if (SimpleTextureShader != null)
+            {
+                SimpleTextureShader.Dispose();
+                SimpleTextureShader = null;
+            }
         }
 
         public static void InitializeMatrices(Camera camera)
@@ -127,6 +152,14 @@ namespace LDDModder.BrickEditor.Rendering
             ModelShader.ViewMatrix.Set(viewMatrix);
             ModelShader.Projection.Set(projection);
             ModelShader.ViewPosition.Set(camera.Position);
+
+            StudConnectionShader.Use();
+            StudConnectionShader.ViewMatrix.Set(viewMatrix);
+            StudConnectionShader.Projection.Set(projection);
+
+            SimpleTextureShader.Use();
+            SimpleTextureShader.ViewMatrix.Set(viewMatrix);
+            SimpleTextureShader.Projection.Set(projection);
 
             GL.UseProgram(0);
         }
@@ -178,6 +211,64 @@ namespace LDDModder.BrickEditor.Rendering
 
         #endregion
 
+
+        public static void DrawStudConnector2(Matrix4 transform, LDDModder.LDD.Primitives.Connectors.Custom2DFieldConnector connector)
+        {
+            float offset = connector.SubType == 23 ? 0.0001f : -0.0001f;
+            DrawTexturedQuad(transform, TextureManager.StudConnectionGrid,
+                new Vector2(connector.StudWidth * 0.8f, connector.StudHeight * 0.8f),
+                new Vector4(0, 0, connector.StudWidth, connector.StudHeight), offset);
+        }
+
+        public static void DrawStudConnector(Matrix4 transform, LDDModder.LDD.Primitives.Connectors.Custom2DFieldConnector connector)
+        {
+            bool wasTexEnabled = GL.IsEnabled(EnableCap.Texture2D);
+            GL.Enable(EnableCap.Texture2D);
+            //GL.DepthMask(false);
+            StudConnectionShader.Use();
+            StudConnectionShader.ModelMatrix.Set(transform);
+            var cellSize = new Vector2(0.8f) * new Vector2(connector.StudWidth, connector.StudHeight);
+            cellSize.X /= connector.ArrayWidth;
+            cellSize.Y /= connector.ArrayHeight;
+            StudConnectionShader.CellSize.Set(cellSize);
+            StudConnectionShader.IsMale.Set(connector.SubType == 23);
+            TextureManager.StudGridTexture.Bind(TextureUnit.Texture5);
+            StudConnectionShader.Texture.Set(TextureUnit.Texture5);
+
+            var items = new List<StudGridCell>();
+
+            for (int y = 0; y < connector.ArrayHeight; y++)
+            {
+                for (int x = 0; x < connector.ArrayWidth; x++)
+                {
+                    var node = connector[x, y];
+                    items.Add(new StudGridCell()
+                    {
+                        Position = new Vector3(x, y, 0),
+                        Values = new Vector3(node.Value1, node.Value2, node.Value3)
+                    });
+                }
+            }
+
+            var gridBuffer = new Buffer<StudGridCell>();
+            gridBuffer.Init(BufferTarget.ArrayBuffer, items.ToArray());
+            var vao = new VertexArray();
+            vao.Bind();
+            vao.BindAttribute(StudConnectionShader.Position, gridBuffer, 0);
+            vao.BindAttribute(StudConnectionShader.Values, gridBuffer, 12);
+            vao.DrawArrays(PrimitiveType.Points, 0, items.Count);
+            vao.UnbindAttribute(StudConnectionShader.Position);
+            vao.UnbindAttribute(StudConnectionShader.Values);
+            gridBuffer.Dispose();
+            vao.Dispose();
+
+            StudConnectionShader.Texture.Set(TextureUnit.Texture0);
+            TextureManager.StudGridTexture.Bind(TextureUnit.Texture0);
+            //GL.DepthMask(true);
+            if (!wasTexEnabled)
+                GL.Disable(EnableCap.Texture2D);
+        }
+
         public static void BeginDrawColorModel(IVertexBuffer vertexBuffer, Matrix4 transform, MaterialInfo material)
         {
             BeginDrawColor(vertexBuffer, transform, material.Diffuse);
@@ -226,7 +317,6 @@ namespace LDDModder.BrickEditor.Rendering
             vertexBuffer.UnbindAttribute(WireframeShader.Normal);
         }
 
-
         public static void DrawLine(Vector4 color, Vector3 p1, Vector3 p2, float thickness = 1f)
         {
             DrawLine(Matrix4.Identity, color, p1, p2, thickness);
@@ -245,6 +335,49 @@ namespace LDDModder.BrickEditor.Rendering
             GL.Vertex3(p2);
             GL.End();
             GL.PopAttrib();
+        }
+
+        public static void DrawTexturedQuad(Matrix4 transform, Texture2D texture, Vector2 size, Vector4 texCoords, float yOffset = 0)
+        {
+            bool wasTexEnabled = GL.IsEnabled(EnableCap.Texture2D);
+            GL.Enable(EnableCap.Texture2D);
+
+            var positions = new Vector4(0, 0, size.X, size.Y);
+
+            VertVT CreateVert(Vector2 pos, Vector2 tex)
+            {
+                return new VertVT(new Vector3(pos.X, yOffset, pos.Y), tex);
+            }
+
+            var quadVerts = new VertVT[]
+            {
+                CreateVert(positions.Xy, texCoords.Xy),
+                CreateVert(positions.Xw, texCoords.Xw),
+                CreateVert(positions.Zw, texCoords.Zw),
+                CreateVert(positions.Zy, texCoords.Zy)
+            };
+
+            SimpleTextureShader.Use();
+            SimpleTextureShader.ModelMatrix.Set(transform);
+            texture.Bind(TextureUnit.Texture5);
+            SimpleTextureShader.Texture.Set(TextureUnit.Texture5);
+            //SimpleTextureShader.Texture.BindTexture(TextureUnit.Texture5, texture);
+
+            var vertBuffer = new VertexArrayBuffer<VertVT>();
+            
+            vertBuffer.SetElements(quadVerts);
+            vertBuffer.Bind();
+            vertBuffer.BindAttribute(SimpleTextureShader.Position, 0);
+            vertBuffer.BindAttribute(SimpleTextureShader.TexCoord, 12);
+
+            vertBuffer.DrawArray(PrimitiveType.Quads, 0, 4);
+            vertBuffer.Dispose();
+
+            SimpleTextureShader.Texture.Set(TextureUnit.Texture0);
+            texture.Bind(TextureUnit.Texture0);
+
+            if (!wasTexEnabled)
+                GL.Disable(EnableCap.Texture2D);
         }
 
         public static void DrawRectangle(Matrix4 transform, Vector2 size, Vector4 color, float thickness = 1f)
@@ -360,6 +493,8 @@ namespace LDDModder.BrickEditor.Rendering
                 DisableStencilTest();
             }
         }
+
+        
 
         #region Default Materials and Colors (TODO: maybe put this elsewhere)
 

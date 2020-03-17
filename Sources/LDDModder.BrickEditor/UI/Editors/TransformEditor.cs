@@ -121,18 +121,18 @@ namespace LDDModder.BrickEditor.UI.Controls
 
         private void SetValueFromControls()
         {
-            var pos = new Vector3()
+            var pos = new Vector3d()
             {
-                X = (float)PosX_TextBox.Value,
-                Y = (float)PosY_TextBox.Value,
-                Z = (float)PosZ_TextBox.Value
+                X = PosX_TextBox.Value,
+                Y = PosY_TextBox.Value,
+                Z = PosZ_TextBox.Value
             };
 
-            var rot = new Vector3()
+            var rot = new Vector3d()
             {
-                X = (float)RotX_TextBox.Value,
-                Y = (float)RotY_TextBox.Value,
-                Z = (float)RotZ_TextBox.Value
+                X = RotX_TextBox.Value,
+                Y = RotY_TextBox.Value,
+                Z = RotZ_TextBox.Value
             };
 
             _Value = new ItemTransform(pos, rot);

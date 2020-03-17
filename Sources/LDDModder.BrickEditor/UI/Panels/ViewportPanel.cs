@@ -180,9 +180,10 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void InitializeTextures()
         {
+            TextureManager.InitializeResources();
+
             var checkboardImage = (Bitmap)Bitmap.FromStream(System.Reflection.Assembly.GetExecutingAssembly()
                 .GetManifestResourceStream("LDDModder.BrickEditor.Resources.Textures.DefaultTexture.png"));
-
 
             BitmapTexture.CreateCompatible(checkboardImage, out CheckboardTexture, 1);
             CheckboardTexture.LoadBitmap(checkboardImage, 0);
@@ -336,6 +337,8 @@ namespace LDDModder.BrickEditor.UI.Panels
             RenderHelper.ModelShader.Lights.Set(lights);
             RenderHelper.ModelShader.LightCount.Set(lights.Length);
             RenderHelper.ModelShader.UseTexture.Set(false);
+
+
         }
 
         #endregion
@@ -361,14 +364,17 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             RenderHelper.InitializeMatrices(Camera);
 
+            //DrawGrid();
+            DrawGrid();
+
             if (ProjectManager.ShowCollisions)
                 DrawCollisions();
 
-            if (ProjectManager.ShowConnections)
-                DrawConnections();
-
             if (ProjectManager.ShowPartModels)
                 DrawPartModels();
+
+            if (ProjectManager.ShowConnections)
+                DrawConnections();
 
             DrawGrid();
 
@@ -388,8 +394,9 @@ namespace LDDModder.BrickEditor.UI.Panels
             GL.Disable(EnableCap.Texture2D);
             if (ConnectionModels.Any())
             {
-                RenderHelper.UnbindModelTexture();
-                foreach (var connModel in ConnectionModels.Where(x => x.Visible))
+                var orderedModels = ConnectionModels.OrderByDescending(x => Camera.DistanceFromCamera(x.Transform));
+                //RenderHelper.UnbindModelTexture();
+                foreach (var connModel in orderedModels.Where(x => x.Visible))
                     connModel.RenderModel(Camera);
             }
         }
@@ -399,7 +406,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             GL.Disable(EnableCap.Texture2D);
             if (ProjectManager.ShowCollisions && CollisionModels.Any())
             {
-                RenderHelper.UnbindModelTexture();
+                //RenderHelper.UnbindModelTexture();
                 foreach (var colModel in CollisionModels.Where(x => x.Visible))
                     colModel.RenderModel(Camera);
             }
@@ -466,14 +473,16 @@ namespace LDDModder.BrickEditor.UI.Panels
             GridShader.MVMatrix.Set(Camera.GetViewMatrix());
             GridShader.PMatrix.Set(Camera.GetProjectionMatrix());
             GridShader.FadeDistance.Set(Camera.IsPerspective ? 20f : 0f);
-
+            GL.DepthMask(false);
             GL.Begin(PrimitiveType.Quads);
             GL.Vertex3(-40, 0, -40);
             GL.Vertex3(-40, 0, 40);
             GL.Vertex3(40, 0, 40);
             GL.Vertex3(40, 0, -40);
             GL.End();
+            GL.DepthMask(true);
         }
+        
         private double AvgRenderFPS = 0;
 
         private void RenderUI()
@@ -703,6 +712,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             UIRenderHelper.ReleaseResources();
             RenderHelper.ReleaseResources();
             ModelManager.ReleaseResources();
+            TextureManager.ReleaseResources();
 
             SelectionGizmo.Dispose();
 

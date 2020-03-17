@@ -55,7 +55,6 @@ namespace LDDModder.BrickEditor.Rendering
         {
             if (BufferInitialized)
                 Vao.UnbindAttribute(attribute);
-            
         }
 
         public void CreateBuffers()

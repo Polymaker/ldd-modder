@@ -9,6 +9,7 @@ namespace LDDModder.BrickEditor.Rendering.Shaders
 {
     public interface IShaderMVP
     {
-        //void SetMatrices(Matrix4 view, Matrix4 projection);
+        void SetMatrices(Matrix4 v, Matrix4 p);
+        void SetMatrices(Matrix4 m, Matrix4 v, Matrix4 p);
     }
 }

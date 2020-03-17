@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -39,6 +40,14 @@ namespace LDDModder.BrickEditor.Resources
             var stream = Assembly.GetExecutingAssembly()
                 .GetManifestResourceStream("LDDModder.BrickEditor.Resources." + resourceName);
             return stream;
+        }
+
+        public static Bitmap GetResourceImage(string resourceName)
+        {
+            var stream = GetResourceStream(resourceName);
+            if (stream != null)
+                return (Bitmap)Image.FromStream(stream);
+            return null;
         }
 
         public static string GetResourceText(string resourceName)

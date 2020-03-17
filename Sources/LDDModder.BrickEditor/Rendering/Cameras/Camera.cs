@@ -359,5 +359,10 @@ namespace LDDModder.BrickEditor.Rendering
 
         #endregion
 
+        public float DistanceFromCamera(Matrix4 transform)
+        {
+            var pos = Vector3.TransformPosition(Vector3.Zero, transform);
+            return Vector3.Distance(pos, Position);
+        }
     }
 }
