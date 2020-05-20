@@ -21,14 +21,14 @@ namespace LDDModder.LifExtractor.Windows
     public partial class LifViewerWindow : Form
     {
         private LifFile CurrentFile;
-
+        private bool IsNewLif;
         private LifFile.FolderEntry CurrentFolder;
 
         private bool IsLoadingTreeView;
 
-        private BindingList<ILifItemInfo> CurrentFolderItems;
+        private SortableBindingList<ILifItemInfo> CurrentFolderItems;
 
-        private BindingList<LifFolderInfo> CurrentLifFolders;
+        private SortableBindingList<LifFolderInfo> CurrentLifFolders;
 
         private bool LifEditingEnabled { get; set; }
 
@@ -41,8 +41,11 @@ namespace LDDModder.LifExtractor.Windows
             InitializeComponent();
             BackHistory = new List<LifFile.FolderEntry>();
             FwrdHistory = new List<LifFile.FolderEntry>();
-            CurrentFolderItems = new BindingList<ILifItemInfo>();
-            CurrentLifFolders = new BindingList<LifFolderInfo>();
+            CurrentFolderItems = new SortableBindingList<ILifItemInfo>();
+            CurrentFolderItems.ListChanged += CurrentFolderItems_ListChanged;
+            CurrentLifFolders = new SortableBindingList<LifFolderInfo>();
+            CurrentLifFolders.ApplySort("FullName", ListSortDirection.Ascending);
+
             NativeMethods.SetWindowTheme(LifTreeView.Handle, "Explorer", null);
 
 
@@ -52,6 +55,8 @@ namespace LDDModder.LifExtractor.Windows
             ToolBarFolderCombo.ComboBox.SelectedIndexChanged += ComboBox_SelectedIndexChanged;
         }
 
+        
+
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -59,8 +64,10 @@ namespace LDDModder.LifExtractor.Windows
             LoadFileTypesIcons();
 
             InitializeFolderListView();
+            UpdateMenuItems();
 
             ToolBarFolderCombo.ComboBox.ItemHeight = LifTreeView.ItemHeight;
+            ActionsMenu_SaveLif.DefaultItem = SaveMenu_Save;
         }
 
         #region TreeView & ListView Icon Handling
@@ -131,25 +138,33 @@ namespace LDDModder.LifExtractor.Windows
 
         private void LoadLifFile(LifFile file)
         {
+            
             LifTreeView.Nodes.Clear();
             FolderListView.DataSource = null;
             ToolBarFolderCombo.ComboBox.DataSource = null;
             CurrentFolderItems.Clear();
 
+            if (CurrentFile != null && CurrentFile != file)
+            {
+                CurrentFile.Dispose();
+                CurrentFile = null;
+            }
+
             CurrentFile = file;
             CurrentFolder = null;
-            
-            ActionsMenu_Extract.Enabled = 
-                ActionsMenu_EnableEdit.Enabled = 
-                FileMenu_ExtractItem.Enabled = !string.IsNullOrEmpty(file?.FilePath);
-
+            IsNewLif = string.IsNullOrEmpty(file?.FilePath);
+ 
             CurrentFileStripLabel.Text = file?.FilePath;
 
             if (file != null)
             {
                 FillTreeView();
                 NavigateToFolder(file.RootFolder);
+                if (IsNewLif)
+                    LifEditingEnabled = true;
             }
+
+            UpdateMenuItems();
         }
 
         #region TreeView Handling
@@ -239,6 +254,9 @@ namespace LDDModder.LifExtractor.Windows
 
             FlvModifiedColumn.IsVisible = false;
             FolderListView.RebuildColumns();
+
+            FolderListView.SecondarySortOrder = SortOrder.Ascending;
+            FolderListView.SecondarySortColumn = FlvNameColumn;
         }
 
         private void FillFolderListView()
@@ -296,24 +314,43 @@ namespace LDDModder.LifExtractor.Windows
                 //CurrentFolderItems.RaiseListChangedEvents = true;
                 //if (CurrentFolder.Entries.Count <= MAX_ITEMS)
                     FolderListView.DataSource = CurrentFolderItems;
-
+                
                 FolderListView.SelectedIndex = -1;
                 toolStripProgressBar1.Visible = false;
             }
         }
 
+        private bool CurrentItemsChanged;
+
+        private void CurrentFolderItems_ListChanged(object sender, ListChangedEventArgs e)
+        {
+            CurrentItemsChanged = true;
+        }
+
         private void FolderListView_BeforeSorting(object sender, BrightIdeasSoftware.BeforeSortingEventArgs e)
         {
+            if (CurrentItemsChanged)
+            {
+                CurrentItemsChanged = false;
+                return;
+            }
+
             if (e.ColumnToSort != null && FolderListView.PrimarySortColumn == e.ColumnToSort)
             {
                 if (e.SortOrder == SortOrder.Ascending)
                 {
                     e.Canceled = true;
+
                     BeginInvoke((Action)(() =>
                     {
-                        FolderListView.Sort(FlvTypeColumn, SortOrder.Ascending);
                         FolderListView.PrimarySortOrder = SortOrder.None;
                         FolderListView.PrimarySortColumn = null;
+                        
+                        FolderListView.Sort(FlvTypeColumn, SortOrder.Ascending);
+
+                        FolderListView.PrimarySortOrder = SortOrder.None;
+                        FolderListView.PrimarySortColumn = null;
+
                     }));
                 }
             }
@@ -336,6 +373,7 @@ namespace LDDModder.LifExtractor.Windows
             ViewModeDetailsMenuItem.Checked = false;
             ViewModeSmallMenuItem.Checked = false;
             ViewModeLargeMenuItem.Checked = false;
+
             switch (viewMode)
             {
                 case View.Details:
@@ -399,6 +437,12 @@ namespace LDDModder.LifExtractor.Windows
 
         #endregion
 
+        private string GetTmpExtractionDirectory()
+        {
+            string tmpFolderName = "LIF" + LDDModder.Utilities.StringUtils.GenerateUID(8);
+            return Path.Combine(Path.GetTempPath(), tmpFolderName);
+        }
+
         #region Folder ComboBox Handling
 
         private void AdjustFolderComboWidth()
@@ -420,6 +464,13 @@ namespace LDDModder.LifExtractor.Windows
             }
 
             ToolBarFolderCombo.Width = remainingWidth - ToolBarFolderCombo.Margin.Horizontal;
+        }
+
+        private void UpdateFolderList()
+        {
+            CurrentLifFolders.RaiseListChangedEvents = false;
+            CurrentLifFolders.Clear();
+            //var allFolders = CurrentFile.RootFolder.get
         }
 
         private void SelectFolderCombo(LifFile.FolderEntry folder)
@@ -551,20 +602,26 @@ namespace LDDModder.LifExtractor.Windows
 
         #endregion
 
-        #region Main ToolStrip Menu
+        #region File Loading / Saving
 
-        private void FileOpenMenuItem_Click(object sender, EventArgs e)
+        private void OpenLifFile()
         {
             using (var ofd = new OpenFileDialog())
             {
-                ofd.Filter = "LDD Lif files (*.lif)|*.lif|All files|*.*";
+                ofd.Filter = $"{Localizations.FileFilter_LifFiles}|*.lif|{Localizations.FileFilter_AllFiles}|*.*";
 
                 if (ofd.ShowDialog() == DialogResult.OK)
                 {
                     if (Path.GetExtension(ofd.FileName).ToUpper() != ".LIF")
                     {
-                        MessageBox.Show("Invalid Lif File.");
-                        return;
+                        using (var fs = File.OpenRead(ofd.FileName))
+                        {
+                            if (!LifFile.CheckIsLif(fs))
+                            {
+                                MessageBox.Show("Invalid Lif File.");
+                                return;
+                            }
+                        }
                     }
 
                     OpenLifFileAsync(ofd.FileName);
@@ -599,10 +656,9 @@ namespace LDDModder.LifExtractor.Windows
             toolStripContainer1.Enabled = false;
         }
 
-
         private void FinishOpenFile(LifFile result, Exception error)
         {
-            
+
             IsOpeningFile = false;
             toolStripContainer1.Enabled = true;
 
@@ -612,6 +668,73 @@ namespace LDDModder.LifExtractor.Windows
                 MessageBox.Show("An error occured:\r\n" + error, "Error");
 
             toolStripProgressBar1.Visible = false;
+        }
+
+        private bool SaveLifFile(LifFile lifFile, bool selectPath)
+        {
+            string targetPath = lifFile.FilePath;
+
+            if (string.IsNullOrEmpty(targetPath) || selectPath)
+            {
+                using (var sfd = new SaveFileDialog())
+                {
+                    sfd.Filter = $"{Localizations.FileFilter_LifFiles}|*.lif|{Localizations.FileFilter_AllFiles}|*.*";
+                    sfd.DefaultExt = ".lif";
+
+                    if (!string.IsNullOrEmpty(targetPath))
+                        sfd.FileName = targetPath;
+
+                    if (sfd.ShowDialog() == DialogResult.OK)
+                        targetPath = sfd.FileName;
+                    else
+                        return false;
+                }
+            }
+
+            try
+            {
+                lifFile.SaveAs(targetPath, false);
+                IsNewLif = false;
+                LifEditingEnabled = false;
+                LoadLifFile(lifFile);
+                return true;
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return false;
+        }
+
+        #endregion
+
+
+        private void UpdateMenuItems()
+        {
+            FileMenu_OpenItem.Enabled = 
+                ActionsMenu_Open.Enabled = !LifEditingEnabled;
+
+            FileMenu_ExtractItem.Enabled =
+                ActionsMenu_Extract.Enabled = !LifEditingEnabled && !string.IsNullOrEmpty(CurrentFile?.FilePath);
+
+            ActionsMenu_AddFile.Enabled = LifEditingEnabled && CurrentFile != null;
+            ActionsMenu_EnableEdit.Enabled = CurrentFile != null;
+            ActionsMenu_EnableEdit.Visible = !LifEditingEnabled;
+            ActionsMenu_CancelEdit.Visible = LifEditingEnabled;
+            ActionsMenu_SaveLif.Visible = LifEditingEnabled;
+        }
+
+        #region Main ToolStrip Menu
+
+        private void FileOpenMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenLifFile();
+        }
+
+        private void FileMenu_NewLif_Click(object sender, EventArgs e)
+        {
+            LoadLifFile(new LifFile());
         }
 
         private void FileMenu_ExtractItem_Click(object sender, EventArgs e)
@@ -631,6 +754,13 @@ namespace LDDModder.LifExtractor.Windows
 
         #endregion
 
+        #region Action Menu
+
+        private void ActionsMenu_Open_Click(object sender, EventArgs e)
+        {
+            OpenLifFile();
+        }
+
         private void ActionsMenu_Extract_Click(object sender, EventArgs e)
         {
             if (CurrentFile != null)
@@ -642,16 +772,46 @@ namespace LDDModder.LifExtractor.Windows
             }
         }
 
-        private void ActionsMenu_EnableEdit_CheckedChanged(object sender, EventArgs e)
+        private void ActionsMenu_EnableEdit_Click(object sender, EventArgs e)
         {
-            ToggleLifEditing(ActionsMenu_EnableEdit.Checked);
+            if (!LifEditingEnabled && CurrentFile != null)
+            {
+                LifEditingEnabled = true;
+                UpdateMenuItems();
+            }
         }
 
-        private string GetTmpExtractionDirectory()
+        private void SaveMenu_Save_Click(object sender, EventArgs e)
         {
-            string tmpFolderName = "LIF" + LDDModder.Utilities.StringUtils.GenerateUID(8);
-            return Path.Combine(Path.GetTempPath(), tmpFolderName);
+            if (CurrentFile != null)
+                SaveLifFile(CurrentFile, false);
         }
+
+        private void SaveMenu_SaveAs_Click(object sender, EventArgs e)
+        {
+            if (CurrentFile != null)
+                SaveLifFile(CurrentFile, true);
+        }
+
+        private void ActionsMenu_CancelEdit_Click(object sender, EventArgs e)
+        {
+            if (LifEditingEnabled)
+            {
+                LifEditingEnabled = false;
+
+                if (CurrentFile != null)
+                {
+                    if (IsNewLif)
+                        LoadLifFile(null);
+                    else
+                        OpenLifFileAsync(CurrentFile.FilePath);
+                }
+                //ToggleLifEditing(false);
+            }
+
+        }
+
+        #endregion
 
         #region Folder ListView Context Menu
 
@@ -666,7 +826,7 @@ namespace LDDModder.LifExtractor.Windows
             if (FolderListContextMenu.SourceControl == FolderListView)
             {
                 ListMenu_RenameItem.Enabled = LifEditingEnabled && FolderListView.SelectedObjects.Count == 1;
-                ListMenu_ExtractItem.Enabled = LifEditingEnabled && FolderListView.SelectedObjects.Count >= 1;
+                ListMenu_ExtractItem.Enabled = !LifEditingEnabled && FolderListView.SelectedObjects.Count >= 1;
                 ListMenu_DeleteItem.Enabled = LifEditingEnabled && FolderListView.SelectedObjects.Count >= 1;
                 ListMenu_AddFileItem.Enabled = LifEditingEnabled;
                 ListMenu_CreateFolderItem.Enabled = LifEditingEnabled;
@@ -674,12 +834,11 @@ namespace LDDModder.LifExtractor.Windows
             else if (FolderListContextMenu.SourceControl == LifTreeView)
             {
                 ListMenu_RenameItem.Enabled = LifEditingEnabled && LifTreeView.SelectedNode != null;
-                ListMenu_ExtractItem.Enabled = LifEditingEnabled && LifTreeView.SelectedNode != null;
+                ListMenu_ExtractItem.Enabled = !LifEditingEnabled && LifTreeView.SelectedNode != null;
                 ListMenu_DeleteItem.Enabled = LifEditingEnabled && LifTreeView.SelectedNode != null;
                 ListMenu_AddFileItem.Enabled = LifEditingEnabled;
                 ListMenu_CreateFolderItem.Enabled = LifEditingEnabled;
             }
-            
         }
 
         private void ListMenu_CreateFolderItem_Click(object sender, EventArgs e)
@@ -688,9 +847,26 @@ namespace LDDModder.LifExtractor.Windows
                 AddNewFolder(CurrentFolder);
         }
 
+        private void ListMenu_AddFileItem_Click(object sender, EventArgs e)
+        {
+            if (CurrentFolder != null)
+                AddNewFile(CurrentFolder);
+        }
+
         private void ListMenu_RenameItem_Click(object sender, EventArgs e)
         {
-            FolderListView.EditSubItem(FolderListView.SelectedItem, 0);
+            if (FolderListContextMenu.SourceControl == FolderListView)
+            {
+                if (FolderListView.SelectedItem != null)
+                    FolderListView.EditSubItem(FolderListView.SelectedItem, 0);
+            }
+            else if (FolderListContextMenu.SourceControl == LifTreeView)
+            {
+                if (LifTreeView.SelectedNode != null)
+                {
+                    LifTreeView.SelectedNode.BeginEdit();
+                }
+            }
         }
 
         private void ListMenu_DeleteItem_Click(object sender, EventArgs e)
@@ -734,16 +910,38 @@ namespace LDDModder.LifExtractor.Windows
             }
         }
 
-
         #endregion
 
         #region LIF Editing
 
-        private void ToggleLifEditing(bool state)
+        /// <summary>
+        /// Adds the item in the listview (if needed) and keeps the default order (Folders A-Z then Files A-Z)
+        /// </summary>
+        /// <param name="itemInfo"></param>
+        private void AddLifItemInfo(ILifItemInfo itemInfo)
         {
-            LifEditingEnabled = state;
-            ActionsMenu_AddFile.Enabled = CurrentFile != null && state;
-
+            if (itemInfo.Entry.Parent == CurrentFolder)
+            {
+                if (itemInfo is LifFolderInfo folderInfo)
+                {
+                    var folderNames = CurrentFolderItems.OfType<LifFolderInfo>()
+                            .Select(x => x.Name).ToList();
+                    folderNames.Add(itemInfo.Name);
+                    folderNames.Sort();
+                    int folderIndex = folderNames.IndexOf(itemInfo.Name);
+                    CurrentFolderItems.Insert(folderIndex, itemInfo);
+                }
+                else if (itemInfo is LifFileInfo fileInfo)
+                {
+                    var fileNames = CurrentFolderItems.OfType<LifFileInfo>()
+                            .Select(x => x.Name).ToList();
+                    fileNames.Add(itemInfo.Name);
+                    fileNames.Sort();
+                    int folderCount = CurrentFolderItems.OfType<LifFolderInfo>().Count();
+                    int fileIndex = fileNames.IndexOf(itemInfo.Name);
+                    CurrentFolderItems.Insert(fileIndex + folderCount, itemInfo);
+                }
+            }
         }
 
         private void AddNewFolder(LifFile.FolderEntry parentFolder)
@@ -751,19 +949,54 @@ namespace LDDModder.LifExtractor.Windows
             using (var cfd = new CreateFolderDialog())
             {
                 cfd.ParentFolder = parentFolder;
+
                 if (cfd.ShowDialog() == DialogResult.OK)
                 {
                     var newFolder = parentFolder.CreateFolder(cfd.FolderName);
                     var folderInfo = new LifFolderInfo(newFolder) { LifName = CurrentFile.Name };
                     var parentNode = FindFolderNode(parentFolder);
                     parentNode.Nodes.Add(CreateFolderTreeNode(folderInfo));
-                    if (parentFolder == CurrentFolder)
-                        CurrentFolderItems.Add(folderInfo);
+
+                    //if (parentFolder == CurrentFolder)
+                    //{
+                    //    var folderNames = CurrentFolderItems
+                    //        .Where(x => x.Entry is LifFile.FolderEntry)
+                    //        .Select(x => x.Name).ToList();
+                    //    folderNames.Add(newFolder.Name);
+                    //    folderNames.Sort();
+                    //    int folderIndex = folderNames.IndexOf(newFolder.Name);
+                    //    CurrentFolderItems.InsertSorted(folderIndex, folderInfo);
+                    //    //FolderListView.AddObject(folderInfo);
+                    //}
+                    AddLifItemInfo(folderInfo);
                     CurrentLifFolders.Add(folderInfo);
                 }
             }
         }
-  
+
+        private void AddNewFile(LifFile.FolderEntry parentFolder)
+        {
+            using (var ofd = new OpenFileDialog())
+            {
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    
+                    var fs = File.OpenRead(ofd.FileName);
+                    try
+                    {
+                        var createdFile = parentFolder.AddFile(fs);
+                        var fileInfo = new LifFileInfo(createdFile)
+                        {
+                            Description = FileTypeInfoHelper.GetFileTypeDescription(ofd.FileName)
+                        };
+                        SetFileTypeIcon(fileInfo);
+                        AddLifItemInfo(fileInfo);
+                    }
+                    catch { }
+                }
+            }
+        }
+
         private void FolderListView_CellEditValidating(object sender, BrightIdeasSoftware.CellEditEventArgs e)
         {
             if (e.RowObject is ILifItemInfo itemInfo)
@@ -780,13 +1013,15 @@ namespace LDDModder.LifExtractor.Windows
                     var newExt = Path.GetExtension(newName);
                     if (newExt != oldExt)
                     {
-                        if (MessageBox.Show(this,"Are you sure you want to change the extension?","Rename", 
+                        if (MessageBox.Show(this, "Are you sure you want to change the extension?", "Rename", 
                             MessageBoxButtons.YesNo, MessageBoxIcon.Warning, 
                             MessageBoxDefaultButton.Button2) == DialogResult.No)
                         {
                             e.Cancel = true;
                             FolderListView.CancelCellEdit();
                         }
+
+                        SetFileTypeIcon(fileInfo);
                     }
                 }
             }
@@ -794,7 +1029,6 @@ namespace LDDModder.LifExtractor.Windows
 
         private void FolderListView_CellEditFinished(object sender, BrightIdeasSoftware.CellEditEventArgs e)
         {
-
             if (e.RowObject is LifFolderInfo folderInfo)
             {
                 var folderNode = FindFolderNode(folderInfo.Folder);
@@ -821,7 +1055,7 @@ namespace LDDModder.LifExtractor.Windows
 
             if (selectedEntries.Any())
             {
-                if(MessageBox.Show(this,"Are you sure you want to delete the selected item(s)?","Confirmation", 
+                if(MessageBox.Show(this, "Are you sure you want to delete the selected item(s)?", "Confirmation", 
                     MessageBoxButtons.YesNo, 
                     MessageBoxIcon.Warning, 
                     MessageBoxDefaultButton.Button2) == DialogResult.Yes)
@@ -843,8 +1077,6 @@ namespace LDDModder.LifExtractor.Windows
             }
         }
 
-
-
         #endregion
 
         private void LifViewerWindow_FormClosing(object sender, FormClosingEventArgs e)
@@ -852,5 +1084,7 @@ namespace LDDModder.LifExtractor.Windows
             if (IsOpeningFile)
                 e.Cancel = true;
         }
+
+        
     }
 }

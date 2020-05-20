@@ -15,6 +15,8 @@ namespace LDDModder.BrickEditor.Settings
         public string LddApplicationDataPath { get; set; }
         [JsonProperty]
         public string ProjectWorkspace { get; set; }
+        
+
         [JsonProperty]
         public RecentFileInfo LastOpenProject { get; set; }
         [JsonProperty]

@@ -99,5 +99,66 @@ namespace LDDModder.Utilities
                 return false;
             }
         }
+
+        public static bool CopyFiles(IEnumerable<string> items, string destination, bool silent)
+        {
+            try
+            {
+                var fs = new Native.Shell32.SHFILEOPSTRUCT
+                {
+                    wFunc = Native.Shell32.FileOperationType.FO_COPY,
+                    pFrom = string.Join("\0", items.ToArray()) + '\0' + '\0',
+                    pTo = destination + '\0' + '\0'
+                };
+
+                if (silent)
+                {
+                    fs.fFlags |= Native.Shell32.FileOperationFlags.FOF_NOCONFIRMATION |
+                        Native.Shell32.FileOperationFlags.FOF_NOERRORUI |
+                        Native.Shell32.FileOperationFlags.FOF_SILENT;
+                }
+
+                int result = Native.Shell32.SHFileOperation(ref fs);
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public static bool MoveFile(string sourceFileName, string destFileName, bool silent)
+        {
+            return MoveFiles(new string[] { sourceFileName }, destFileName, silent);
+        }
+
+        public static bool MoveFiles(IEnumerable<string> items, string destination, bool silent)
+        {
+            try
+            {
+                var fs = new Native.Shell32.SHFILEOPSTRUCT
+                {
+                    wFunc = Native.Shell32.FileOperationType.FO_MOVE,
+                    pFrom = string.Join("\0", items.ToArray()) + '\0' + '\0',
+                    pTo = destination + '\0' + '\0'
+                };
+
+                if (silent)
+                {
+                    fs.fFlags |= Native.Shell32.FileOperationFlags.FOF_NOCONFIRMATION |
+                        Native.Shell32.FileOperationFlags.FOF_NOERRORUI |
+                        Native.Shell32.FileOperationFlags.FOF_SILENT;
+                }
+
+                int result = Native.Shell32.SHFileOperation(ref fs);
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
     }
 }

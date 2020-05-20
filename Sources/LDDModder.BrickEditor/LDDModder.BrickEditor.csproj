@@ -382,7 +382,6 @@
     <Compile Include="Utilities\Converter.cs" />
     <Compile Include="Utilities\NumberHelper.cs" />
     <Compile Include="Utilities\OpenTKHelper.cs" />
-    <Compile Include="Utilities\SortableBindingList.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

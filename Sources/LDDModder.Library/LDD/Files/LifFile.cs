@@ -263,6 +263,16 @@ namespace LDDModder.LDD.Files
 
         #region LIF READING
 
+        public static bool CheckIsLif(Stream stream)
+        {
+            using (var br = new BinaryReaderEx(stream, Encoding.UTF8, true))
+            {
+                br.DefaultEndian = Endianness.BigEndian;
+                var header = br.ReadStruct<LIFFHeader>();
+                return header.Header == "LIFF";
+            }
+        }
+
         public static LifFile Open(string filename)
         {
             return Read(File.OpenRead(filename));
@@ -438,14 +448,15 @@ namespace LDDModder.LDD.Files
             if (BaseStream != null)
             {
                 var tmpPath = Path.GetTempFileName();
-                SaveAs(tmpPath);
+                SaveAs(tmpPath, true);
 
                 if (BaseStream is FileStream baseFs)
                 {
                     string origPath = baseFs.Name;
                     BaseStream.SafelyDispose();
-                    File.Delete(origPath);
-                    File.Move(tmpPath, origPath);
+                    FileHelper.MoveFile(tmpPath, origPath, true);
+                    //File.Delete(origPath);
+                    //File.Move(tmpPath, origPath);
                     LoadFromStream(File.OpenRead(origPath));
                 }
                 else
@@ -453,25 +464,42 @@ namespace LDDModder.LDD.Files
                     ClearBaseStream();
 
                     var ms = new MemoryStream();
-                    using (var fs = File.Open(tmpPath, FileMode.Create))
+                    using (var fs = File.Open(tmpPath, FileMode.Open))
                         fs.CopyTo(ms);
 
+                    ms.Position = 0;
                     LoadFromStream(ms);
                 }
-                File.Delete(tmpPath);
+                FileHelper.DeleteFileOrFolder(tmpPath, true, true);
+                //File.Delete(tmpPath);
             }
             //else
             //    throw new InvalidOperationException("");
         }
 
-        public void SaveAs(string filename)
+        public void SaveAs(string filename, bool asCopy = false)
         {
             filename = Path.GetFullPath(filename);
-            if (BaseStream is FileStream baseFs && baseFs.Name == filename)
-                throw new InvalidOperationException("Cannot overwrite the same LIF file.");
 
-            using (var fs = File.Open(filename, FileMode.Create))
-                WriteToStream(fs);
+            if (filename.Equals(FilePath, StringComparison.InvariantCultureIgnoreCase))
+            {
+                if (asCopy)
+                    throw new InvalidOperationException("Cannot overwrite the same LIF file.");
+
+                Save();
+                return;
+            }
+
+            var fs = File.Open(filename, FileMode.Create);
+            WriteToStream(fs);
+
+            if (!asCopy)
+            {
+                fs.Position = 0;
+                LoadFromStream(fs);
+            }
+            else
+                fs.Dispose();
         }
 
 		public void WriteToStream(Stream stream)
@@ -1048,7 +1076,6 @@ namespace LDDModder.LDD.Files
             public FolderEntry CreateFolder(string folderName)
             {
                 folderName = folderName.Trim();
-                
 
                 string[] subDirs = folderName.Split(Path.PathSeparator);
 
@@ -1056,9 +1083,15 @@ namespace LDDModder.LDD.Files
                 {
                     ValidateEntryName(folderName, true);
 
-                    var newFolder = new FolderEntry(folderName);
-                    Entries.Add(newFolder);
-                    return newFolder;
+                    var folderToCreate = GetFolder(folderName);
+
+                    if (folderToCreate == null)
+                    {
+                        folderToCreate = new FolderEntry(folderName);
+                        Entries.Add(folderToCreate);
+                    }
+
+                    return folderToCreate;
                 }
                 else if (subDirs.Length > 1)
                 {

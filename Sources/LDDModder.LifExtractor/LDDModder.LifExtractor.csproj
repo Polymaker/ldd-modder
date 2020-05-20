@@ -103,6 +103,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\ExtractProgressPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ExtractProgressPanel.Designer.cs">
+      <DependentUpon>ExtractProgressPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Localizations.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Localizations.resx</DependentUpon>
+    </Compile>
     <Compile Include="Models\LifItemInfo.cs" />
     <Compile Include="Utilities\FileDropHelper.cs" />
     <Compile Include="Windows\CreateFolderDialog.cs">
@@ -132,8 +143,19 @@
     <Compile Include="Windows\ExtractItemsDialog.Designer.cs">
       <DependentUpon>ExtractItemsDialog.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Controls\ExtractProgressPanel.resx">
+      <DependentUpon>ExtractProgressPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Localizations.fr.resx" />
+    <EmbeddedResource Include="Localizations.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Localizations.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Windows\CreateFolderDialog.resx">
       <DependentUpon>CreateFolderDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Windows\LifViewerWindow.fr.resx">
+      <DependentUpon>LifViewerWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Windows\LifViewerWindow.resx">
       <DependentUpon>LifViewerWindow.cs</DependentUpon>
@@ -176,8 +198,17 @@
     <Content Include="Resources\Arrow_Left_16x16_Black.png" />
     <Content Include="Resources\Arrow_Right_16x16_Black.png" />
     <Content Include="Resources\Arrow_Up_16x16_Black.png" />
+    <Content Include="Resources\Edit_32x32.png" />
     <Content Include="Resources\Folder_16x16.png" />
     <Content Include="Resources\Folder_32x32.png" />
+    <Content Include="Resources\Folder_Icon.ico" />
+    <Content Include="Resources\Open_16x16.png" />
+    <Content Include="Resources\Open_32x32.png" />
+    <Content Include="Resources\Save_16x16.png" />
+    <Content Include="Resources\Save_32x32.png" />
+    <Content Include="Resources\Search_16x16.png" />
+    <Content Include="Resources\Undo_16x16.png" />
+    <Content Include="Resources\Undo_32x32.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

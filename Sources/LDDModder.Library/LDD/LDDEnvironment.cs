@@ -16,6 +16,8 @@ namespace LDDModder.LDD
         public const string USER_CREATION_FOLDER = "LEGO Creations";
 
         private int LifStatusFlags;
+        //private string _CustomAssetsPath;
+        //private string _CustomDatabasePath;
 
         public string ProgramFilesPath { get; private set; }
         public string ApplicationDataPath { get; private set; }

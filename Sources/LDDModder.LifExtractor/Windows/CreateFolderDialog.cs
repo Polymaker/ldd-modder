@@ -22,6 +22,7 @@ namespace LDDModder.LifExtractor.Windows
         {
             InitializeComponent();
             FolderName = string.Empty;
+            Icon = Properties.Resources.Folder_Icon;
         }
 
         private void ValidateButton_Click(object sender, EventArgs e)
