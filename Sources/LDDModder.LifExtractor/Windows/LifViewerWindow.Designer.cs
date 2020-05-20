@@ -36,13 +36,6 @@
             this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.LifTreeView = new System.Windows.Forms.TreeView();
-            this.SmallIconImageList = new System.Windows.Forms.ImageList(this.components);
-            this.FolderListView = new BrightIdeasSoftware.DataListView();
-            this.FlvNameColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.FlvTypeColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.FlvSizeColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.FlvCreatedColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.FlvModifiedColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.FolderListContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.ListMenu_ExtractItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -50,11 +43,19 @@
             this.ListMenu_AddFileItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ListMenu_RenameItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ListMenu_DeleteItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.SmallIconImageList = new System.Windows.Forms.ImageList(this.components);
+            this.FolderListView = new BrightIdeasSoftware.DataListView();
+            this.FlvNameColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.FlvTypeColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.FlvSizeColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.FlvCreatedColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.FlvModifiedColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.LargeIconImageList = new System.Windows.Forms.ImageList(this.components);
             this.MainMenuToolStrip = new System.Windows.Forms.MenuStrip();
             this.MainMenu_FileMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.FileMenu_OpenItem = new System.Windows.Forms.ToolStripMenuItem();
             this.FileMenu_NewLif = new System.Windows.Forms.ToolStripMenuItem();
+            this.FileMenu_Close = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.FileMenu_ExtractItem = new System.Windows.Forms.ToolStripMenuItem();
             this.MainMenu_ViewMenu = new System.Windows.Forms.ToolStripMenuItem();
@@ -85,8 +86,8 @@
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.FolderListView)).BeginInit();
             this.FolderListContextMenu.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.FolderListView)).BeginInit();
             this.MainMenuToolStrip.SuspendLayout();
             this.ActionsMenuToolStrip.SuspendLayout();
             this.NavigationToolStrip.SuspendLayout();
@@ -148,6 +149,7 @@
             // 
             // LifTreeView
             // 
+            this.LifTreeView.ContextMenuStrip = this.FolderListContextMenu;
             resources.ApplyResources(this.LifTreeView, "LifTreeView");
             this.LifTreeView.FullRowSelect = true;
             this.LifTreeView.HideSelection = false;
@@ -156,7 +158,57 @@
             this.LifTreeView.ItemHeight = 20;
             this.LifTreeView.Name = "LifTreeView";
             this.LifTreeView.ShowLines = false;
+            this.LifTreeView.BeforeLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.LifTreeView_BeforeLabelEdit);
+            this.LifTreeView.AfterLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.LifTreeView_AfterLabelEdit);
             this.LifTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.LifTreeView_AfterSelect);
+            // 
+            // FolderListContextMenu
+            // 
+            this.FolderListContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ListMenu_ExtractItem,
+            this.toolStripSeparator1,
+            this.ListMenu_CreateFolderItem,
+            this.ListMenu_AddFileItem,
+            this.ListMenu_RenameItem,
+            this.ListMenu_DeleteItem});
+            this.FolderListContextMenu.Name = "FolderListContextMenu";
+            resources.ApplyResources(this.FolderListContextMenu, "FolderListContextMenu");
+            this.FolderListContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.FolderListContextMenu_Opening);
+            // 
+            // ListMenu_ExtractItem
+            // 
+            this.ListMenu_ExtractItem.Name = "ListMenu_ExtractItem";
+            resources.ApplyResources(this.ListMenu_ExtractItem, "ListMenu_ExtractItem");
+            this.ListMenu_ExtractItem.Click += new System.EventHandler(this.ListMenu_ExtractItem_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            resources.ApplyResources(this.toolStripSeparator1, "toolStripSeparator1");
+            // 
+            // ListMenu_CreateFolderItem
+            // 
+            this.ListMenu_CreateFolderItem.Name = "ListMenu_CreateFolderItem";
+            resources.ApplyResources(this.ListMenu_CreateFolderItem, "ListMenu_CreateFolderItem");
+            this.ListMenu_CreateFolderItem.Click += new System.EventHandler(this.ListMenu_CreateFolderItem_Click);
+            // 
+            // ListMenu_AddFileItem
+            // 
+            this.ListMenu_AddFileItem.Name = "ListMenu_AddFileItem";
+            resources.ApplyResources(this.ListMenu_AddFileItem, "ListMenu_AddFileItem");
+            this.ListMenu_AddFileItem.Click += new System.EventHandler(this.ListMenu_AddFileItem_Click);
+            // 
+            // ListMenu_RenameItem
+            // 
+            this.ListMenu_RenameItem.Name = "ListMenu_RenameItem";
+            resources.ApplyResources(this.ListMenu_RenameItem, "ListMenu_RenameItem");
+            this.ListMenu_RenameItem.Click += new System.EventHandler(this.ListMenu_RenameItem_Click);
+            // 
+            // ListMenu_DeleteItem
+            // 
+            this.ListMenu_DeleteItem.Name = "ListMenu_DeleteItem";
+            resources.ApplyResources(this.ListMenu_DeleteItem, "ListMenu_DeleteItem");
+            this.ListMenu_DeleteItem.Click += new System.EventHandler(this.ListMenu_DeleteItem_Click);
             // 
             // SmallIconImageList
             // 
@@ -235,54 +287,6 @@
             this.FlvModifiedColumn.IsEditable = false;
             resources.ApplyResources(this.FlvModifiedColumn, "FlvModifiedColumn");
             // 
-            // FolderListContextMenu
-            // 
-            this.FolderListContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ListMenu_ExtractItem,
-            this.toolStripSeparator1,
-            this.ListMenu_CreateFolderItem,
-            this.ListMenu_AddFileItem,
-            this.ListMenu_RenameItem,
-            this.ListMenu_DeleteItem});
-            this.FolderListContextMenu.Name = "FolderListContextMenu";
-            resources.ApplyResources(this.FolderListContextMenu, "FolderListContextMenu");
-            this.FolderListContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.FolderListContextMenu_Opening);
-            // 
-            // ListMenu_ExtractItem
-            // 
-            this.ListMenu_ExtractItem.Name = "ListMenu_ExtractItem";
-            resources.ApplyResources(this.ListMenu_ExtractItem, "ListMenu_ExtractItem");
-            this.ListMenu_ExtractItem.Click += new System.EventHandler(this.ListMenu_ExtractItem_Click);
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            resources.ApplyResources(this.toolStripSeparator1, "toolStripSeparator1");
-            // 
-            // ListMenu_CreateFolderItem
-            // 
-            this.ListMenu_CreateFolderItem.Name = "ListMenu_CreateFolderItem";
-            resources.ApplyResources(this.ListMenu_CreateFolderItem, "ListMenu_CreateFolderItem");
-            this.ListMenu_CreateFolderItem.Click += new System.EventHandler(this.ListMenu_CreateFolderItem_Click);
-            // 
-            // ListMenu_AddFileItem
-            // 
-            this.ListMenu_AddFileItem.Name = "ListMenu_AddFileItem";
-            resources.ApplyResources(this.ListMenu_AddFileItem, "ListMenu_AddFileItem");
-            this.ListMenu_AddFileItem.Click += new System.EventHandler(this.ListMenu_AddFileItem_Click);
-            // 
-            // ListMenu_RenameItem
-            // 
-            this.ListMenu_RenameItem.Name = "ListMenu_RenameItem";
-            resources.ApplyResources(this.ListMenu_RenameItem, "ListMenu_RenameItem");
-            this.ListMenu_RenameItem.Click += new System.EventHandler(this.ListMenu_RenameItem_Click);
-            // 
-            // ListMenu_DeleteItem
-            // 
-            this.ListMenu_DeleteItem.Name = "ListMenu_DeleteItem";
-            resources.ApplyResources(this.ListMenu_DeleteItem, "ListMenu_DeleteItem");
-            this.ListMenu_DeleteItem.Click += new System.EventHandler(this.ListMenu_DeleteItem_Click);
-            // 
             // LargeIconImageList
             // 
             this.LargeIconImageList.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
@@ -302,6 +306,7 @@
             this.MainMenu_FileMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.FileMenu_OpenItem,
             this.FileMenu_NewLif,
+            this.FileMenu_Close,
             this.toolStripSeparator2,
             this.FileMenu_ExtractItem});
             this.MainMenu_FileMenu.Name = "MainMenu_FileMenu";
@@ -318,6 +323,12 @@
             this.FileMenu_NewLif.Name = "FileMenu_NewLif";
             resources.ApplyResources(this.FileMenu_NewLif, "FileMenu_NewLif");
             this.FileMenu_NewLif.Click += new System.EventHandler(this.FileMenu_NewLif_Click);
+            // 
+            // FileMenu_Close
+            // 
+            this.FileMenu_Close.Name = "FileMenu_Close";
+            resources.ApplyResources(this.FileMenu_Close, "FileMenu_Close");
+            this.FileMenu_Close.Click += new System.EventHandler(this.FileMenu_Close_Click);
             // 
             // toolStripSeparator2
             // 
@@ -385,7 +396,7 @@
             // ActionsMenu_Extract
             // 
             resources.ApplyResources(this.ActionsMenu_Extract, "ActionsMenu_Extract");
-            this.ActionsMenu_Extract.Image = global::LDDModder.LifExtractor.Properties.Resources.Folder_32x32;
+            this.ActionsMenu_Extract.Image = global::LDDModder.LifExtractor.Properties.Resources.Extract_32x32;
             this.ActionsMenu_Extract.Name = "ActionsMenu_Extract";
             this.ActionsMenu_Extract.Click += new System.EventHandler(this.ActionsMenu_Extract_Click);
             // 
@@ -499,8 +510,8 @@
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.FolderListView)).EndInit();
             this.FolderListContextMenu.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.FolderListView)).EndInit();
             this.MainMenuToolStrip.ResumeLayout(false);
             this.MainMenuToolStrip.PerformLayout();
             this.ActionsMenuToolStrip.ResumeLayout(false);
@@ -559,5 +570,6 @@
         private System.Windows.Forms.ToolStripSplitButton ActionsMenu_SaveLif;
         private System.Windows.Forms.ToolStripMenuItem SaveMenu_Save;
         private System.Windows.Forms.ToolStripMenuItem SaveMenu_SaveAs;
+        private System.Windows.Forms.ToolStripMenuItem FileMenu_Close;
     }
 }

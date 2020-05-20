@@ -103,6 +103,16 @@ namespace LDDModder.LifExtractor.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Extract_32x32 {
+            get {
+                object obj = ResourceManager.GetObject("Extract_32x32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Folder_16x16 {
             get {
                 object obj = ResourceManager.GetObject("Folder_16x16", resourceCulture);

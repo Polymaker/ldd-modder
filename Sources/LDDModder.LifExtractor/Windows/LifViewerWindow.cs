@@ -141,6 +141,7 @@ namespace LDDModder.LifExtractor.Windows
             
             LifTreeView.Nodes.Clear();
             FolderListView.DataSource = null;
+            FolderListView.ClearObjects();
             ToolBarFolderCombo.ComboBox.DataSource = null;
             CurrentFolderItems.Clear();
 
@@ -161,7 +162,7 @@ namespace LDDModder.LifExtractor.Windows
                 FillTreeView();
                 NavigateToFolder(file.RootFolder);
                 if (IsNewLif)
-                    LifEditingEnabled = true;
+                    EnableLifEditing();
             }
 
             UpdateMenuItems();
@@ -233,6 +234,31 @@ namespace LDDModder.LifExtractor.Windows
             LifTreeView.AfterSelect += LifTreeView_AfterSelect;
         }
 
+        private void LifTreeView_BeforeLabelEdit(object sender, NodeLabelEditEventArgs e)
+        {
+            if (e.Node.Tag is LifFile.FolderEntry selectedFolder)
+            {
+                if (selectedFolder.IsRootDirectory)
+                    e.CancelEdit = true;
+            }
+            else
+                e.CancelEdit = true;
+        }
+
+        private void LifTreeView_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
+        {
+            if (e.Node.Tag is LifFile.FolderEntry selectedFolder)
+            {
+                if (selectedFolder.ValidateRename(e.Label, false))
+                {
+                    selectedFolder.Rename(e.Label);
+                    e.Node.Name = selectedFolder.FullName;
+                }
+                else
+                    e.CancelEdit = true;
+            }
+        }
+
         #endregion
 
         #region ListView Handling
@@ -262,6 +288,8 @@ namespace LDDModder.LifExtractor.Windows
         private void FillFolderListView()
         {
             FolderListView.DataSource = null;
+            FolderListView.ClearObjects();
+
             CurrentFolderItems.Clear();
             Application.DoEvents();
 
@@ -694,8 +722,7 @@ namespace LDDModder.LifExtractor.Windows
             try
             {
                 lifFile.SaveAs(targetPath, false);
-                IsNewLif = false;
-                LifEditingEnabled = false;
+                DisableLifEditing();
                 LoadLifFile(lifFile);
                 return true;
 
@@ -709,9 +736,9 @@ namespace LDDModder.LifExtractor.Windows
 
         #endregion
 
-
         private void UpdateMenuItems()
         {
+            FileMenu_Close.Enabled = CurrentFile != null && !LifEditingEnabled;
             FileMenu_OpenItem.Enabled = 
                 ActionsMenu_Open.Enabled = !LifEditingEnabled;
 
@@ -730,6 +757,12 @@ namespace LDDModder.LifExtractor.Windows
         private void FileOpenMenuItem_Click(object sender, EventArgs e)
         {
             OpenLifFile();
+        }
+
+        private void FileMenu_Close_Click(object sender, EventArgs e)
+        {
+            if (CurrentFile != null)
+                LoadLifFile(null);
         }
 
         private void FileMenu_NewLif_Click(object sender, EventArgs e)
@@ -775,10 +808,7 @@ namespace LDDModder.LifExtractor.Windows
         private void ActionsMenu_EnableEdit_Click(object sender, EventArgs e)
         {
             if (!LifEditingEnabled && CurrentFile != null)
-            {
-                LifEditingEnabled = true;
-                UpdateMenuItems();
-            }
+                EnableLifEditing();
         }
 
         private void SaveMenu_Save_Click(object sender, EventArgs e)
@@ -797,7 +827,7 @@ namespace LDDModder.LifExtractor.Windows
         {
             if (LifEditingEnabled)
             {
-                LifEditingEnabled = false;
+                DisableLifEditing();
 
                 if (CurrentFile != null)
                 {
@@ -863,9 +893,7 @@ namespace LDDModder.LifExtractor.Windows
             else if (FolderListContextMenu.SourceControl == LifTreeView)
             {
                 if (LifTreeView.SelectedNode != null)
-                {
                     LifTreeView.SelectedNode.BeginEdit();
-                }
             }
         }
 
@@ -913,6 +941,26 @@ namespace LDDModder.LifExtractor.Windows
         #endregion
 
         #region LIF Editing
+
+        private void EnableLifEditing()
+        {
+            if (!LifEditingEnabled)
+            {
+                LifEditingEnabled = true;
+                LifTreeView.LabelEdit = true;
+                UpdateMenuItems();
+            }
+        }
+
+        private void DisableLifEditing()
+        {
+            if (LifEditingEnabled)
+            {
+                LifEditingEnabled = false;
+                LifTreeView.LabelEdit = false;
+                UpdateMenuItems();
+            }
+        }
 
         /// <summary>
         /// Adds the item in the listview (if needed) and keeps the default order (Folders A-Z then Files A-Z)

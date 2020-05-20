@@ -114,6 +114,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Localizations.resx</DependentUpon>
     </Compile>
+    <Compile Include="Localizations.fr.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Localizations.fr.resx</DependentUpon>
+    </Compile>
     <Compile Include="Models\LifItemInfo.cs" />
     <Compile Include="Utilities\FileDropHelper.cs" />
     <Compile Include="Windows\CreateFolderDialog.cs">
@@ -146,10 +151,16 @@
     <EmbeddedResource Include="Controls\ExtractProgressPanel.resx">
       <DependentUpon>ExtractProgressPanel.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Localizations.fr.resx" />
+    <EmbeddedResource Include="Localizations.fr.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Localizations.fr.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Localizations.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Localizations.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Windows\CreateFolderDialog.fr.resx">
+      <DependentUpon>CreateFolderDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Windows\CreateFolderDialog.resx">
       <DependentUpon>CreateFolderDialog.cs</DependentUpon>
@@ -199,6 +210,7 @@
     <Content Include="Resources\Arrow_Right_16x16_Black.png" />
     <Content Include="Resources\Arrow_Up_16x16_Black.png" />
     <Content Include="Resources\Edit_32x32.png" />
+    <Content Include="Resources\Extract_32x32.png" />
     <Content Include="Resources\Folder_16x16.png" />
     <Content Include="Resources\Folder_32x32.png" />
     <Content Include="Resources\Folder_Icon.ico" />
