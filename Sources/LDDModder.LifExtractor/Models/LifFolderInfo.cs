@@ -11,6 +11,8 @@ namespace LDDModder.LifExtractor.Models
     {
         public LifFile.FolderEntry Folder => Entry as LifFile.FolderEntry;
 
+        public bool IsRootDirectory => Folder.IsRootDirectory;
+
         public override string Name => Folder.IsRootDirectory ? LifName : base.Name;
 
         public string ParentKey => Folder.Parent?.FullName;

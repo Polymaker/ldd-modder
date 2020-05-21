@@ -1,4 +1,5 @@
-﻿using LDDModder.LDD.Files;
+﻿using BrightIdeasSoftware;
+using LDDModder.LDD.Files;
 using LDDModder.LifExtractor.Models;
 using LDDModder.LifExtractor.Utilities;
 using LDDModder.LifExtractor.Windows;
@@ -55,11 +56,11 @@ namespace LDDModder.LifExtractor.Windows
             ToolBarFolderCombo.ComboBox.SelectedIndexChanged += ComboBox_SelectedIndexChanged;
         }
 
-        
-
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+
+            Icon = Properties.Resources.LIF_File_Icon;
 
             LoadFileTypesIcons();
 
@@ -208,7 +209,7 @@ namespace LDDModder.LifExtractor.Windows
             {
                 Name = folderInfo.Folder.FullName,
                 Text = folderInfo.Name,
-                Tag = folderInfo.Folder
+                Tag = folderInfo
             };
         }
 
@@ -217,8 +218,9 @@ namespace LDDModder.LifExtractor.Windows
             if (IsLoadingTreeView)
                 return;
 
-            if (e.Node.Tag is LifFile.FolderEntry selectedFolder && selectedFolder != CurrentFolder)
-                NavigateToFolder(selectedFolder);
+            if (e.Node.Tag is LifFolderInfo selectedFolder && 
+                selectedFolder.Folder != CurrentFolder)
+                NavigateToFolder(selectedFolder.Folder);
         }
 
         private TreeNode FindFolderNode(LifFile.FolderEntry folder)
@@ -236,7 +238,7 @@ namespace LDDModder.LifExtractor.Windows
 
         private void LifTreeView_BeforeLabelEdit(object sender, NodeLabelEditEventArgs e)
         {
-            if (e.Node.Tag is LifFile.FolderEntry selectedFolder)
+            if (e.Node.Tag is LifFolderInfo selectedFolder)
             {
                 if (selectedFolder.IsRootDirectory)
                     e.CancelEdit = true;
@@ -247,16 +249,111 @@ namespace LDDModder.LifExtractor.Windows
 
         private void LifTreeView_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
         {
-            if (e.Node.Tag is LifFile.FolderEntry selectedFolder)
+            if (e.Node.Tag is LifFolderInfo selectedFolder)
             {
-                if (selectedFolder.ValidateRename(e.Label, false))
+
+                if (!string.IsNullOrEmpty(e.Label) &&
+                    selectedFolder.Folder.ValidateRename(e.Label, false))
                 {
-                    selectedFolder.Rename(e.Label);
+                    selectedFolder.Folder.Rename(e.Label);
                     e.Node.Name = selectedFolder.FullName;
                 }
                 else
                     e.CancelEdit = true;
             }
+        }
+
+        private void LifTreeView_ItemDrag(object sender, ItemDragEventArgs e)
+        {
+            if (!LifEditingEnabled)
+                return;
+
+            if (e.Item is TreeNode node)
+            {
+                var draggedDir = node.Tag as LifFolderInfo;
+                DoDragDrop(node, DragDropEffects.Move);
+            }
+        }
+
+        private bool IsTreeNodeDrag(DragEventArgs e)
+        {
+            if (e.Data is DataObject dataObj)
+                return dataObj.GetDataPresent(typeof(TreeNode));
+            return false;
+        }
+
+        private LifFolderInfo GetDraggedTreeFolder(DragEventArgs e)
+        {
+            if (e.Data is DataObject dataObj)
+            {
+                var draggedNode = (TreeNode)dataObj.GetData(typeof(TreeNode));
+                //draggedNode = LifTreeView.Nodes.Find(draggedNode.Name, true).FirstOrDefault();
+                return draggedNode.Tag as LifFolderInfo;
+            }
+            return null;
+        }
+
+        private void LifTreeView_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data is OLVDataObject || IsTreeNodeDrag(e))
+            {
+                e.Effect = DragDropEffects.Move;
+            }
+        }
+
+        private void LifTreeView_DragOver(object sender, DragEventArgs e)
+        {
+            if (e.Data is OLVDataObject || IsTreeNodeDrag(e))
+            {
+                Point targetPoint = LifTreeView.PointToClient(new Point(e.X, e.Y));
+                var targetNode = LifTreeView.GetNodeAt(targetPoint);
+                //var targetDir = LifTreeView.SelectedNode.Tag as LifFolderInfo;
+
+                //if (targetDir == null)
+                //{
+                //    e.Effect = DragDropEffects.None;
+                //}
+                //else
+                //{
+
+                //}
+                //var draggedFolders = olvObj.ModelObjects.OfType<LifFolderInfo>();
+                
+                LifTreeView.AfterSelect -= LifTreeView_AfterSelect;
+                LifTreeView.SelectedNode = LifTreeView.GetNodeAt(targetPoint);
+                LifTreeView.AfterSelect += LifTreeView_AfterSelect;
+            }
+        }
+
+        private void LifTreeView_DragDrop(object sender, DragEventArgs e)
+        {
+            if (e.Data is OLVDataObject olvObj && LifTreeView.SelectedNode != null)
+            {
+                var draggedItems = olvObj.ModelObjects.OfType<ILifItemInfo>();
+                var entries = draggedItems.Select(x => x.Entry).ToList();
+                var targetDir = LifTreeView.SelectedNode.Tag as LifFolderInfo;
+                MoveLifEntries(entries, targetDir.Folder);
+            }
+            else if (IsTreeNodeDrag(e))
+            {
+                var draggedFolder = GetDraggedTreeFolder(e);
+                var targetDir = LifTreeView.SelectedNode.Tag as LifFolderInfo;
+                MoveLifEntries(new LifFile.LifEntry[] { draggedFolder.Folder }, targetDir.Folder);
+            }
+        }
+
+        private void LifTreeView_DragLeave(object sender, EventArgs e)
+        {
+            if (CurrentFolder != null)
+                SelectFolderNode(CurrentFolder);
+        }
+
+        private IEnumerable<ILifItemInfo> GetSelectedTreeViewItems()
+        {
+            if (LifTreeView.SelectedNode?.Tag is LifFolderInfo folderInfo)
+                yield return folderInfo;
+
+            yield break;
         }
 
         #endregion
@@ -418,49 +515,166 @@ namespace LDDModder.LifExtractor.Windows
 
         private void FolderListView_ItemDrag(object sender, ItemDragEventArgs e)
         {
-            var selectedItems = FolderListView.SelectedObjects
-                .Cast<ILifItemInfo>().Select(x => x.Entry).ToList();
+            var selectedEntries = GetSelectedListViewItems();
 
-            if (selectedItems.Any())
+            if (!LifEditingEnabled && selectedEntries.Any())
+                ExtractDraggedEntries(selectedEntries.Select(x => x.Entry).ToList());
+        }
+
+        private void FolderListView_CanDrop(object sender, BrightIdeasSoftware.OlvDropEventArgs e)
+        {
+            if (!LifEditingEnabled)
             {
-                string tmpDirectory = GetTmpExtractionDirectory();
-
-                var filenames = selectedItems.Select(x => Path.Combine(tmpDirectory, x.Name)).ToArray();
-
-                using (var cancelSource = new CancellationTokenSource())
-                {
-                    var dropHelper = new FileDropHelper(filenames);
-
-                    Task extractionThread = null;
-
-                    dropHelper.GetDataOverride = (frm, auto) =>
-                    {
-                        if (extractionThread == null)
-                        {
-                            extractionThread = Task.Factory.StartNew(() =>
-                            {
-                                try
-                                {
-                                    LifFile.ExtractEntries(selectedItems, tmpDirectory, cancelSource.Token, null);
-                                }
-                                catch { }
-                            });
-                        }
-                        return filenames;
-                    };
-
-                    var result = FolderListView.DoDragDrop(dropHelper, DragDropEffects.Copy);
-
-                    if (extractionThread != null && !extractionThread.IsCompleted)
-                        cancelSource.Cancel();
-                }
-
-                try
-                {
-                    NativeMethods.DeleteFileOrFolder(tmpDirectory);
-                }
-                catch { }
+                e.Effect = DragDropEffects.None;
+                e.Handled = true;
+                return;
             }
+
+            if (e.DataObject is BrightIdeasSoftware.OLVDataObject olvObj && olvObj.ListView == FolderListView)
+            {
+                if (e.DropTargetItem?.RowObject is LifFolderInfo targetDir)
+                {
+                    e.Effect = DragDropEffects.Move;
+                    e.InfoMessage = $"Move into {targetDir.Name}";
+                }
+                else
+                {
+                    e.Effect = DragDropEffects.None;
+                }
+            }
+            else if (e.DataObject is DataObject dataObj && dataObj.ContainsFileDropList())
+            {
+                e.Effect = DragDropEffects.Copy;
+
+                if (e.DropTargetItem?.RowObject is LifFolderInfo targetDir)
+                    e.InfoMessage = $"Add file(s) into {targetDir.Name}";
+                else if (!CurrentFolder.IsRootDirectory)
+                    e.InfoMessage = $"Add file(s) into {CurrentFolder.Name}";
+                else
+                    e.InfoMessage = $"Add file(s)";
+            }
+        }
+
+        private void FolderListView_Dropped(object sender, BrightIdeasSoftware.OlvDropEventArgs e)
+        {
+            if (e.DataObject is BrightIdeasSoftware.OLVDataObject olvObj && olvObj.ListView == FolderListView)
+            {
+                if (e.DropTargetItem?.RowObject is LifFolderInfo targetDir)
+                {
+                    var draggedItems = olvObj.ModelObjects.OfType<ILifItemInfo>();
+                    var entries = draggedItems.Select(x => x.Entry).ToList();
+
+                    MoveLifEntries(entries, targetDir.Folder);
+                    //foreach (var entry in entries)
+                    //    CurrentFolder.Entries.Remove(entry);
+                    //targetDir.Folder.Entries.AddRange(entries);
+
+                    //FillTreeView();
+                    //FillFolderListView();
+                }
+            }
+            else if (e.DataObject is DataObject dataObj && dataObj.ContainsFileDropList())
+            {
+                
+            }
+        }
+
+        private void ExtractDraggedEntries(IEnumerable<LifFile.LifEntry> entries)
+        {
+            string tmpDirectory = GetTmpExtractionDirectory();
+
+            var filenames = entries.Select(x => Path.Combine(tmpDirectory, x.Name)).ToArray();
+
+            using (var cancelSource = new CancellationTokenSource())
+            {
+                var dropHelper = new FileDropHelper(filenames);
+
+                Task extractionThread = null;
+
+                dropHelper.GetDataOverride = (frm, auto) =>
+                {
+                    if (extractionThread == null)
+                    {
+                        extractionThread = Task.Factory.StartNew(() =>
+                        {
+                            try
+                            {
+                                LifFile.ExtractEntries(entries, tmpDirectory, cancelSource.Token, null);
+                            }
+                            catch { }
+                        });
+                    }
+                    return filenames;
+                };
+
+                var result = FolderListView.DoDragDrop(dropHelper, DragDropEffects.Copy);
+
+                if (extractionThread != null && !extractionThread.IsCompleted)
+                    cancelSource.Cancel();
+            }
+
+            try
+            {
+                NativeMethods.DeleteFileOrFolder(tmpDirectory);
+            }
+            catch { }
+        }
+
+        private void FolderListView_CellEditValidating(object sender, BrightIdeasSoftware.CellEditEventArgs e)
+        {
+            if (e.RowObject is ILifItemInfo itemInfo)
+            {
+                string newName = e.NewValue as string;
+                if (!itemInfo.Entry.ValidateRename(newName))
+                {
+                    e.Cancel = true;
+                    FolderListView.CancelCellEdit();
+                }
+                else if (e.RowObject is LifFileInfo fileInfo)
+                {
+                    var oldExt = Path.GetExtension(fileInfo.Name);
+                    var newExt = Path.GetExtension(newName);
+                    if (newExt != oldExt)
+                    {
+                        if (MessageBox.Show(this, "Are you sure you want to change the extension?", "Rename",
+                            MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
+                            MessageBoxDefaultButton.Button2) == DialogResult.No)
+                        {
+                            e.Cancel = true;
+                            FolderListView.CancelCellEdit();
+                        }
+
+                        SetFileTypeIcon(fileInfo);
+                    }
+                }
+            }
+        }
+
+        private void FolderListView_CellEditFinished(object sender, BrightIdeasSoftware.CellEditEventArgs e)
+        {
+            if (e.RowObject is LifFolderInfo folderInfo)
+            {
+                var folderNode = FindFolderNode(folderInfo.Folder);
+
+                folderInfo.Folder.Rename(e.NewValue as string);
+                folderNode.Text = folderInfo.Name;
+                folderNode.Name = folderInfo.Folder.FullName;
+            }
+            else if (e.RowObject is LifFileInfo fileInfo)
+            {
+                fileInfo.File.Rename(e.NewValue as string);
+                fileInfo.FileType = Path.GetExtension(fileInfo.Name).ToUpper();
+                SetFileTypeIcon(fileInfo);
+                fileInfo.Description = FileTypeInfoHelper.GetFileTypeDescription(fileInfo.Name);
+                e.ListViewItem.ImageKey = fileInfo.ItemImageKey;
+            }
+            FolderListView.RefreshItem(e.ListViewItem);
+        }
+
+        private IEnumerable<ILifItemInfo> GetSelectedListViewItems()
+        {
+            return FolderListView.SelectedObjects
+                .Cast<ILifItemInfo>();
         }
 
         #endregion
@@ -745,7 +959,6 @@ namespace LDDModder.LifExtractor.Windows
             FileMenu_ExtractItem.Enabled =
                 ActionsMenu_Extract.Enabled = !LifEditingEnabled && !string.IsNullOrEmpty(CurrentFile?.FilePath);
 
-            ActionsMenu_AddFile.Enabled = LifEditingEnabled && CurrentFile != null;
             ActionsMenu_EnableEdit.Enabled = CurrentFile != null;
             ActionsMenu_EnableEdit.Visible = !LifEditingEnabled;
             ActionsMenu_CancelEdit.Visible = LifEditingEnabled;
@@ -798,10 +1011,10 @@ namespace LDDModder.LifExtractor.Windows
         {
             if (CurrentFile != null)
             {
-                if (FolderListView.SelectedObjects.Count > 0)
-                    ExtractSelectedItems();
-                else
-                    ExtractLif();
+                //if (FolderListView.SelectedObjects.Count > 0)
+                //    ExtractSelectedItems();
+                //else
+                ExtractLif();
             }
         }
 
@@ -843,7 +1056,7 @@ namespace LDDModder.LifExtractor.Windows
 
         #endregion
 
-        #region Folder ListView Context Menu
+        #region File & Folders Context Menu
 
         private void FolderListContextMenu_Opening(object sender, CancelEventArgs e)
         {
@@ -899,13 +1112,32 @@ namespace LDDModder.LifExtractor.Windows
 
         private void ListMenu_DeleteItem_Click(object sender, EventArgs e)
         {
-            DeleteSelectedItems();
+            var selectedItems = GetSelectedItemsForContextMenu();
+            DeleteLifEntries(selectedItems.Select(x => x.Entry));
         }
 
         private void ListMenu_ExtractItem_Click(object sender, EventArgs e)
         {
-            ExtractSelectedItems();
+            var selectedItems = GetSelectedItemsForContextMenu();
+
+            ExtractLifEntries(selectedItems.Select(x => x.Entry));
         }
+
+        private IEnumerable<ILifItemInfo> GetSelectedItemsForContextMenu()
+        {
+            IEnumerable<ILifItemInfo> selectedItems;
+
+            if (FolderListContextMenu.SourceControl == FolderListView)
+                selectedItems = GetSelectedListViewItems();
+            else if (FolderListContextMenu.SourceControl == LifTreeView)
+                selectedItems = GetSelectedTreeViewItems();
+            else
+                selectedItems = Enumerable.Empty<ILifItemInfo>();
+
+            return selectedItems;
+        }
+
+        
 
         #endregion
 
@@ -922,19 +1154,16 @@ namespace LDDModder.LifExtractor.Windows
             }
         }
 
-        private void ExtractSelectedItems()
+        private void ExtractLifEntries(IEnumerable<LifFile.LifEntry> entries)
         {
-            var itemsToExtract = FolderListView.SelectedObjects
-                .Cast<ILifItemInfo>().Select(x => x.Entry).ToList();
+            if (!entries.Any())
+                return;
 
-            if (itemsToExtract.Any())
+            using (var eid = new ExtractItemsDialog())
             {
-                using (var eid = new ExtractItemsDialog())
-                {
-                    //eid.TargetDirectory = Path.GetDirectoryName(CurrentFile.FilePath);
-                    eid.ItemsToExtract.AddRange(itemsToExtract);
-                    eid.ShowDialog();
-                }
+                //eid.TargetDirectory = Path.GetDirectoryName(CurrentFile.FilePath);
+                eid.ItemsToExtract.AddRange(entries);
+                eid.ShowDialog();
             }
         }
 
@@ -948,6 +1177,8 @@ namespace LDDModder.LifExtractor.Windows
             {
                 LifEditingEnabled = true;
                 LifTreeView.LabelEdit = true;
+                FolderListView.IsSimpleDragSource = true;
+                FolderListView.IsSimpleDropSink = true;
                 UpdateMenuItems();
             }
         }
@@ -958,6 +1189,8 @@ namespace LDDModder.LifExtractor.Windows
             {
                 LifEditingEnabled = false;
                 LifTreeView.LabelEdit = false;
+                FolderListView.IsSimpleDragSource = false;
+                FolderListView.IsSimpleDropSink = false;
                 UpdateMenuItems();
             }
         }
@@ -1005,17 +1238,6 @@ namespace LDDModder.LifExtractor.Windows
                     var parentNode = FindFolderNode(parentFolder);
                     parentNode.Nodes.Add(CreateFolderTreeNode(folderInfo));
 
-                    //if (parentFolder == CurrentFolder)
-                    //{
-                    //    var folderNames = CurrentFolderItems
-                    //        .Where(x => x.Entry is LifFile.FolderEntry)
-                    //        .Select(x => x.Name).ToList();
-                    //    folderNames.Add(newFolder.Name);
-                    //    folderNames.Sort();
-                    //    int folderIndex = folderNames.IndexOf(newFolder.Name);
-                    //    CurrentFolderItems.InsertSorted(folderIndex, folderInfo);
-                    //    //FolderListView.AddObject(folderInfo);
-                    //}
                     AddLifItemInfo(folderInfo);
                     CurrentLifFolders.Add(folderInfo);
                 }
@@ -1045,84 +1267,61 @@ namespace LDDModder.LifExtractor.Windows
             }
         }
 
-        private void FolderListView_CellEditValidating(object sender, BrightIdeasSoftware.CellEditEventArgs e)
+        private void DeleteLifEntries(IEnumerable<LifFile.LifEntry> entries)
         {
-            if (e.RowObject is ILifItemInfo itemInfo)
-            {
-                string newName = e.NewValue as string;
-                if (!itemInfo.Entry.ValidateRename(newName))
-                {
-                    e.Cancel = true;
-                    FolderListView.CancelCellEdit();
-                }
-                else if (e.RowObject is LifFileInfo fileInfo)
-                {
-                    var oldExt = Path.GetExtension(fileInfo.Name);
-                    var newExt = Path.GetExtension(newName);
-                    if (newExt != oldExt)
-                    {
-                        if (MessageBox.Show(this, "Are you sure you want to change the extension?", "Rename", 
-                            MessageBoxButtons.YesNo, MessageBoxIcon.Warning, 
-                            MessageBoxDefaultButton.Button2) == DialogResult.No)
-                        {
-                            e.Cancel = true;
-                            FolderListView.CancelCellEdit();
-                        }
+            if (!entries.Any())
+                return;
 
-                        SetFileTypeIcon(fileInfo);
-                    }
-                }
-            }
-        }
-
-        private void FolderListView_CellEditFinished(object sender, BrightIdeasSoftware.CellEditEventArgs e)
-        {
-            if (e.RowObject is LifFolderInfo folderInfo)
-            {
-                var folderNode = FindFolderNode(folderInfo.Folder);
-
-                folderInfo.Folder.Rename(e.NewValue as string);
-                folderNode.Text = folderInfo.Name;
-                folderNode.Name = folderInfo.Folder.FullName;
-            }
-            else if (e.RowObject is LifFileInfo fileInfo)
-            {
-                fileInfo.File.Rename(e.NewValue as string);
-                fileInfo.FileType = Path.GetExtension(fileInfo.Name).ToUpper();
-                SetFileTypeIcon(fileInfo);
-                fileInfo.Description = FileTypeInfoHelper.GetFileTypeDescription(fileInfo.Name);
-                e.ListViewItem.ImageKey = fileInfo.ItemImageKey;
-            }
-            FolderListView.RefreshItem(e.ListViewItem);
-        }
-
-        private void DeleteSelectedItems()
-        {
-            var selectedEntries = FolderListView.SelectedObjects
-                .Cast<ILifItemInfo>().Select(x => x.Entry).ToList();
-
-            if (selectedEntries.Any())
-            {
-                if(MessageBox.Show(this, "Are you sure you want to delete the selected item(s)?", "Confirmation", 
-                    MessageBoxButtons.YesNo, 
-                    MessageBoxIcon.Warning, 
+            if (MessageBox.Show(this, "Are you sure you want to delete the selected item(s)?", "Confirmation",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning,
                     MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+            {
+
+                var parentDir = entries.OrderBy(x => x.GetLevel()).First().Parent;
+
+                foreach (var entry in entries.OrderByDescending(x=>x.GetLevel()))
                 {
-                    foreach (var entry in selectedEntries)
-                        CurrentFolder.Entries.Remove(entry);
-
-                    var deletedFolders = selectedEntries.OfType<LifFile.FolderEntry>();
-
-                    if (deletedFolders.Any())
-                    {
-                        CleanNavigationHistory();
-                        FillTreeView();
-                        SelectFolderNode(CurrentFolder);
-                    }
-
-                    FillFolderListView();
+                    entry.Parent.Entries.Remove(entry);
                 }
+
+                var deletedFolders = entries.OfType<LifFile.FolderEntry>();
+
+                if (deletedFolders.Any())
+                {
+                    CleanNavigationHistory();
+                    FillTreeView();
+                }
+
+                if (parentDir != CurrentFolder)
+                    NavigateToFolder(parentDir);
+                else
+                    FillFolderListView();
             }
+        }
+
+        private void MoveLifEntries(IEnumerable<LifFile.LifEntry> entries, LifFile.FolderEntry targetFolder)
+        {
+            if (!entries.Any())
+                return;
+            //TODO: confirmation message box
+
+            var curFolder = CurrentFolder;
+
+            bool isCurrentDirMoved = entries.OfType<LifFile.FolderEntry>().Any(x => x.GetEntryHierarchy().Contains(CurrentFolder));
+
+            foreach (var entry in entries)
+                entry.Parent.Entries.Remove(entry);
+
+            targetFolder.Entries.AddRange(entries);
+
+            FillTreeView();
+
+            if (isCurrentDirMoved)
+                NavigateToFolder(targetFolder.Parent);
+            else
+                FillFolderListView();
+
         }
 
         #endregion

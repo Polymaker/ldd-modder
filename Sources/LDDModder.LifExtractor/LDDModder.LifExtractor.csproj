@@ -86,6 +86,9 @@
     <OutputPath>bin\x86\PrepRelease\</OutputPath>
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Resources\LIF File Icon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="ObjectListView, Version=2.9.1.1072, Culture=neutral, PublicKeyToken=b1c5bf581481bcd4, processorArchitecture=MSIL">
       <HintPath>..\packages\ObjectListView.Official.2.9.1\lib\net20\ObjectListView.dll</HintPath>
@@ -148,6 +151,9 @@
     <Compile Include="Windows\ExtractItemsDialog.Designer.cs">
       <DependentUpon>ExtractItemsDialog.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Controls\ExtractProgressPanel.fr.resx">
+      <DependentUpon>ExtractProgressPanel.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\ExtractProgressPanel.resx">
       <DependentUpon>ExtractProgressPanel.cs</DependentUpon>
     </EmbeddedResource>
@@ -214,6 +220,8 @@
     <Content Include="Resources\Folder_16x16.png" />
     <Content Include="Resources\Folder_32x32.png" />
     <Content Include="Resources\Folder_Icon.ico" />
+    <Content Include="Resources\LIF File Icon.ico" />
+    <Content Include="Resources\LifFile_32x32.png" />
     <Content Include="Resources\Open_16x16.png" />
     <Content Include="Resources\Open_32x32.png" />
     <Content Include="Resources\Save_16x16.png" />

@@ -91,7 +91,7 @@ namespace LDDModder.LifExtractor
                 };
                 int result = Shell32.SHFileOperation(ref fs);
                 
-                return true;
+                return result == 0;
             }
             catch (Exception)
             {
@@ -111,8 +111,9 @@ namespace LDDModder.LifExtractor
                     Shell32.FileOperationFlags.FOF_NOERRORUI | 
                     Shell32.FileOperationFlags.FOF_SILENT
                 };
-                Shell32.SHFileOperation(ref fs);
-                return true;
+
+                int result = Shell32.SHFileOperation(ref fs);
+                return result == 0;
             }
             catch (Exception)
             {

@@ -71,7 +71,6 @@
             this.SaveMenu_Save = new System.Windows.Forms.ToolStripMenuItem();
             this.SaveMenu_SaveAs = new System.Windows.Forms.ToolStripMenuItem();
             this.ActionsMenu_CancelEdit = new System.Windows.Forms.ToolStripButton();
-            this.ActionsMenu_AddFile = new System.Windows.Forms.ToolStripButton();
             this.NavigationToolStrip = new System.Windows.Forms.ToolStrip();
             this.BackToolbarButton = new System.Windows.Forms.ToolStripButton();
             this.NextToolbarButton = new System.Windows.Forms.ToolStripButton();
@@ -149,6 +148,7 @@
             // 
             // LifTreeView
             // 
+            this.LifTreeView.AllowDrop = true;
             this.LifTreeView.ContextMenuStrip = this.FolderListContextMenu;
             resources.ApplyResources(this.LifTreeView, "LifTreeView");
             this.LifTreeView.FullRowSelect = true;
@@ -160,7 +160,12 @@
             this.LifTreeView.ShowLines = false;
             this.LifTreeView.BeforeLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.LifTreeView_BeforeLabelEdit);
             this.LifTreeView.AfterLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.LifTreeView_AfterLabelEdit);
+            this.LifTreeView.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.LifTreeView_ItemDrag);
             this.LifTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.LifTreeView_AfterSelect);
+            this.LifTreeView.DragDrop += new System.Windows.Forms.DragEventHandler(this.LifTreeView_DragDrop);
+            this.LifTreeView.DragEnter += new System.Windows.Forms.DragEventHandler(this.LifTreeView_DragEnter);
+            this.LifTreeView.DragOver += new System.Windows.Forms.DragEventHandler(this.LifTreeView_DragOver);
+            this.LifTreeView.DragLeave += new System.EventHandler(this.LifTreeView_DragLeave);
             // 
             // FolderListContextMenu
             // 
@@ -249,8 +254,10 @@
             this.FolderListView.UseExplorerTheme = true;
             this.FolderListView.View = System.Windows.Forms.View.Details;
             this.FolderListView.BeforeSorting += new System.EventHandler<BrightIdeasSoftware.BeforeSortingEventArgs>(this.FolderListView_BeforeSorting);
+            this.FolderListView.CanDrop += new System.EventHandler<BrightIdeasSoftware.OlvDropEventArgs>(this.FolderListView_CanDrop);
             this.FolderListView.CellEditFinished += new BrightIdeasSoftware.CellEditEventHandler(this.FolderListView_CellEditFinished);
             this.FolderListView.CellEditValidating += new BrightIdeasSoftware.CellEditEventHandler(this.FolderListView_CellEditValidating);
+            this.FolderListView.Dropped += new System.EventHandler<BrightIdeasSoftware.OlvDropEventArgs>(this.FolderListView_Dropped);
             this.FolderListView.ItemActivate += new System.EventHandler(this.FolderListView_ItemActivate);
             this.FolderListView.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.FolderListView_ItemDrag);
             // 
@@ -381,8 +388,7 @@
             this.toolStripSeparator3,
             this.ActionsMenu_EnableEdit,
             this.ActionsMenu_SaveLif,
-            this.ActionsMenu_CancelEdit,
-            this.ActionsMenu_AddFile});
+            this.ActionsMenu_CancelEdit});
             this.ActionsMenuToolStrip.Name = "ActionsMenuToolStrip";
             this.ActionsMenuToolStrip.Stretch = true;
             // 
@@ -439,11 +445,6 @@
             resources.ApplyResources(this.ActionsMenu_CancelEdit, "ActionsMenu_CancelEdit");
             this.ActionsMenu_CancelEdit.Name = "ActionsMenu_CancelEdit";
             this.ActionsMenu_CancelEdit.Click += new System.EventHandler(this.ActionsMenu_CancelEdit_Click);
-            // 
-            // ActionsMenu_AddFile
-            // 
-            resources.ApplyResources(this.ActionsMenu_AddFile, "ActionsMenu_AddFile");
-            this.ActionsMenu_AddFile.Name = "ActionsMenu_AddFile";
             // 
             // NavigationToolStrip
             // 
@@ -562,7 +563,6 @@
         private System.Windows.Forms.ToolStrip ActionsMenuToolStrip;
         private System.Windows.Forms.ToolStripButton ActionsMenu_Extract;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
-        private System.Windows.Forms.ToolStripButton ActionsMenu_AddFile;
         private System.Windows.Forms.ToolStripButton ActionsMenu_EnableEdit;
         private System.Windows.Forms.ToolStripProgressBar toolStripProgressBar1;
         private System.Windows.Forms.ToolStripButton ActionsMenu_Open;

@@ -113,10 +113,11 @@ namespace LDDModder.LDD.Files
         {
             public int ExtractedFiles { get; }
             public int TotalFiles { get; }
-            public long BytesExtracted { get; set; }
-            public long TotalBytes { get; set; }
+            public long BytesExtracted { get; }
+            public long TotalBytes { get; }
 
             public string CurrentFileName { get; }
+
             public string TargetPath { get; }
 
             public static ExtractionProgress Default => new ExtractionProgress();
@@ -125,42 +126,90 @@ namespace LDDModder.LDD.Files
             {
             }
 
-            internal ExtractionProgress(ProgressCounter progress, string currentFileName, string targetPath)
+            internal ExtractionProgress(int extractedFiles, int totalFiles, long bytesExtracted, long totalBytes, string currentFileName, string targetPath)
             {
-                ExtractedFiles = progress.ExtractedFiles;
-                TotalFiles = progress.TotalFiles;
-                BytesExtracted = progress.BytesExtracted;
-                TotalBytes = progress.TotalBytes;
+                ExtractedFiles = extractedFiles;
+                TotalFiles = totalFiles;
+                BytesExtracted = bytesExtracted;
+                TotalBytes = totalBytes;
                 CurrentFileName = currentFileName;
                 TargetPath = targetPath;
             }
         }
 
-        protected internal struct ProgressCounter
+        public delegate void ExtractionProgressReportDelegate(object sender, ExtractionProgress progress);
+
+        protected internal struct ProgresHandler
         {
+            public LifFile Lif;
+            public ExtractionProgressReportDelegate ReportDelegate;
+            public CancellationToken CancellationToken;
+            public bool IsCancellationRequested => CancellationToken.IsCancellationRequested;
+            public string CurrentEntryName;
+            public string CurrentTargetPath;
             public int ExtractedFiles;
             public int TotalFiles;
             public long BytesExtracted;
             public long TotalBytes;
+
+            public static readonly ProgresHandler None = new ProgresHandler();
+
+            public ProgresHandler(LifFile lif, ExtractionProgressReportDelegate reportDelegate, CancellationToken cancellationToken)
+            {
+                Lif = lif;
+                ReportDelegate = reportDelegate;
+                CancellationToken = cancellationToken;
+                CurrentEntryName = string.Empty;
+                CurrentTargetPath = string.Empty;
+                ExtractedFiles = 0;
+                TotalFiles = 0;
+                BytesExtracted = 0;
+                TotalBytes = 0;
+            }
+
+            public void ReportProgress()
+            {
+                if (ReportDelegate != null)
+                {
+                    ReportDelegate.Invoke(Lif, new ExtractionProgress(
+                        ExtractedFiles,
+                        TotalFiles,
+                        BytesExtracted,
+                        TotalBytes,
+                        CurrentEntryName,
+                        CurrentTargetPath)
+                    );
+                }
+            }
         }
 
-        private static void WriteFileToStream(FileEntry entry, Stream target) => WriteFileToStream(entry, target, CancellationToken.None);
+        private static void WriteFileToStream(FileEntry entry, Stream target) => 
+            WriteFileToStream(entry, target, CancellationToken.None);
 
-        private static void WriteFileToStream(FileEntry entry, Stream target, CancellationToken cancellationToken)
+        private static void WriteFileToStream(FileEntry entry, Stream target, 
+            CancellationToken cancellationToken)
+        {
+            var handler = new ProgresHandler(entry.Lif, null, cancellationToken);
+            WriteFileToStream(entry, target, ref handler);
+        }
+
+        private static void WriteFileToStream(FileEntry entry, Stream target, ref ProgresHandler progresHandler)
         {
             byte[] buffer = new byte[4096];
-            int bytesRead = 0;
+            long totalBytesRead = 0;
             var dataStream = entry.GetStream();
             dataStream.Seek(0, SeekOrigin.Begin);
 
-            while (bytesRead < dataStream.Length)
+            while (totalBytesRead < dataStream.Length)
             {
-                cancellationToken.ThrowIfCancellationRequested();
+                progresHandler.CancellationToken.ThrowIfCancellationRequested();
 
-                int bytesRemaining = (int)(dataStream.Length - bytesRead);
+                int bytesRemaining = (int)(dataStream.Length - totalBytesRead);
                 int bytesToRead = buffer.Length < bytesRemaining ? buffer.Length : bytesRemaining;
 
-                bytesRead += dataStream.Read(buffer, 0, bytesToRead);
+                int bytesRead = dataStream.Read(buffer, 0, bytesToRead);
+                totalBytesRead += bytesRead;
+                progresHandler.BytesExtracted += bytesRead;
                 target.Write(buffer, 0, bytesToRead);
 
                 if (bytesRead == 0)
@@ -169,6 +218,8 @@ namespace LDDModder.LDD.Files
                         throw new EndOfStreamException();
                     break;
                 }
+                else
+                    progresHandler.ReportProgress();
             }
         }
 
@@ -176,7 +227,12 @@ namespace LDDModder.LDD.Files
 
         public void ExtractTo(string directoryName, CancellationToken cancellationToken) => ExtractTo(directoryName, cancellationToken, null);
 
-        public void ExtractTo(string destination, CancellationToken cancellationToken, Action<ExtractionProgress> progressReport)
+        //public void ExtractTo(string destination, CancellationToken cancellationToken, Action<ExtractionProgress> progressReport)
+        //{
+        //    ExtractEntry(RootFolder, destination, cancellationToken, progressReport);
+        //}
+
+        public void ExtractTo(string destination, CancellationToken cancellationToken, ExtractionProgressReportDelegate progressReport)
         {
             ExtractEntry(RootFolder, destination, cancellationToken, progressReport);
         }
@@ -184,7 +240,7 @@ namespace LDDModder.LDD.Files
         public static void ExtractEntry(LifEntry entry,
             string destination,
             CancellationToken cancellationToken,
-            Action<ExtractionProgress> progressReport)
+            ExtractionProgressReportDelegate progressReport)
         {
             ExtractEntries(new LifEntry[] { entry }, destination, cancellationToken, progressReport);
         }
@@ -192,12 +248,13 @@ namespace LDDModder.LDD.Files
         public static void ExtractEntries(
             IEnumerable<LifEntry> entries, 
             string destination, 
-            CancellationToken cancellationToken, 
-            Action<ExtractionProgress> progressReport)
+            CancellationToken cancellationToken,
+            ExtractionProgressReportDelegate progressReport)
         {
             if (!entries.Any())
                 return;
 
+            var ownerLif = entries.First().Lif;
             var topLevel = entries.Max(x => x.GetLevel());
             var entryList = entries.Where(x => x.GetLevel() == topLevel).Distinct().ToList();
 
@@ -207,56 +264,69 @@ namespace LDDModder.LDD.Files
             var allFileEntries = entryList.OfType<FolderEntry>().SelectMany(x => x.GetAllFiles())
                 .Concat(entryList.OfType<FileEntry>());
 
-            int totalFiles = allFileEntries.Count();
-            long totalBytes = allFileEntries.Sum(x => x.FileSize);
-            var counters = new ProgressCounter()
-            {
-                TotalFiles = totalFiles,
-                TotalBytes = totalBytes
-            };
-
-            progressReport?.Invoke(new ExtractionProgress(counters, string.Empty, string.Empty));
+            var progressHandler = new ProgresHandler(ownerLif, progressReport, cancellationToken);
+            progressHandler.TotalFiles = allFileEntries.Count();
+            progressHandler.TotalBytes = allFileEntries.Sum(x => x.FileSize);
+            progressHandler.ReportProgress();
 
             foreach (var fileEntry in entryList.OfType<FileEntry>())
-                ExtractFileEntry(fileEntry, destination, ref counters, cancellationToken, progressReport);
+            {
+                if (progressHandler.IsCancellationRequested)
+                    break;
+
+                ExtractFileEntry(fileEntry, destination, ref progressHandler);
+            }
 
             foreach (var folderEntry in entryList.OfType<FolderEntry>())
-                ExtractFolderEntry(folderEntry, destination, ref counters, cancellationToken, progressReport);
+            {
+                if (progressHandler.IsCancellationRequested)
+                    break;
+
+                ExtractFolderEntry(folderEntry, destination, ref progressHandler);
+            }
         }
 
-        private static void ExtractFileEntry(FileEntry fileEntry, string destination, 
-            ref ProgressCounter currentProgress, 
-            CancellationToken cancellationToken,
-            Action<ExtractionProgress> progress)
+
+        private static void ExtractFileEntry(FileEntry fileEntry, string destination,
+            ref ProgresHandler progresHandler)
         {
             string destinationPath = Path.Combine(destination, fileEntry.Name);
-            progress?.Invoke(new ExtractionProgress(currentProgress, fileEntry.Name, destinationPath));
+            progresHandler.CurrentEntryName = fileEntry.Name;
+            progresHandler.CurrentTargetPath = fileEntry.FullName;
+            progresHandler.ReportProgress();
 
             using (var fs = File.Open(destinationPath, FileMode.Create))
-                WriteFileToStream(fileEntry, fs, cancellationToken);
-            
+                WriteFileToStream(fileEntry, fs, ref progresHandler);
+
             File.SetCreationTime(destinationPath, fileEntry.CreatedDate);
             File.SetLastWriteTime(destinationPath, fileEntry.ModifiedDate);
 
-            currentProgress.ExtractedFiles++;
-            currentProgress.BytesExtracted += fileEntry.FileSize;
-            progress?.Invoke(new ExtractionProgress(currentProgress, fileEntry.Name, destinationPath));
+            progresHandler.ExtractedFiles++;
+            progresHandler.ReportProgress();
         }
 
-        private static void ExtractFolderEntry(FolderEntry folderEntry, string destination,
-            ref ProgressCounter currentProgress,
-            CancellationToken cancellationToken,
-            Action<ExtractionProgress> progress)
+        private static void ExtractFolderEntry(FolderEntry folderEntry, string destination, ref ProgresHandler progresHandler)
         {
             string destinationPath = Path.Combine(destination, folderEntry.Name);
+
             if (!Directory.Exists(destinationPath))
                 Directory.CreateDirectory(destinationPath);
 
             foreach (var file in folderEntry.Files)
-                ExtractFileEntry(file, destinationPath, ref currentProgress, cancellationToken, progress);
+            {
+                if (progresHandler.IsCancellationRequested)
+                    break;
+
+                ExtractFileEntry(file, destinationPath, ref progresHandler);
+            }
 
             foreach (var folder in folderEntry.Folders)
-                ExtractFolderEntry(folder, destinationPath, ref currentProgress, cancellationToken, progress);
+            {
+                if (progresHandler.IsCancellationRequested)
+                    break;
+
+                ExtractFolderEntry(folder, destinationPath, ref progresHandler);
+            }
         }
 
         #endregion
@@ -822,6 +892,12 @@ namespace LDDModder.LDD.Files
                 Entries.Add(item);
             }
 
+            public void AddRange(IEnumerable<LifEntry> items)
+            {
+                foreach (var item in items)
+                    Add(item);
+            }
+
             public void Clear()
             {
                 Entries.ForEach(e => ((ILifEntry)e).SetParent(null));
@@ -890,7 +966,8 @@ namespace LDDModder.LDD.Files
 
             public bool ValidateRename(string newname, bool throwError = false)
             {
-                if (Parent != null && Parent.ContainsEntryName(newname))
+                if (Parent != null && !string.IsNullOrEmpty(newname) && 
+                    Parent.ContainsEntryName(newname))
                 {
                     if (throwError)
                         throw new ArgumentException("A file or folder with the same name already exist.");
@@ -948,7 +1025,7 @@ namespace LDDModder.LDD.Files
             public virtual void ExtractToDirectory(
                 string destination, 
                 CancellationToken cancellationToken, 
-                Action<ExtractionProgress> progressReport)
+                ExtractionProgressReportDelegate progressReport)
             {
                 ExtractEntry(this, destination, cancellationToken, progressReport);
             }
@@ -1051,6 +1128,8 @@ namespace LDDModder.LDD.Files
 
             public bool ContainsEntryName(string entryName)
             {
+                if (string.IsNullOrEmpty(entryName))
+                    return false;
                 return Entries.Any(x => x.Name.Equals(entryName.Trim(), StringComparison.InvariantCultureIgnoreCase));
             }
 
@@ -1177,7 +1256,7 @@ namespace LDDModder.LDD.Files
             /// <param name="destination"></param>
             /// <param name="cancellationToken"></param>
             /// <param name="progressReport"></param>
-            public void ExtractContent(string destination, CancellationToken cancellationToken, Action<ExtractionProgress> progressReport)
+            public void ExtractContent(string destination, CancellationToken cancellationToken, ExtractionProgressReportDelegate progressReport)
             {
                 ExtractEntries(Entries, destination , cancellationToken, progressReport);
             }

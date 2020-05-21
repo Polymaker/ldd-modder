@@ -228,8 +228,11 @@
   <data name="ExtractingLabel.Location" type="System.Drawing.Point, System.Drawing">
     <value>3, 67</value>
   </data>
+  <data name="ExtractingLabel.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 2, 3, 1</value>
+  </data>
   <data name="ExtractingLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>57, 13</value>
+    <value>63, 16</value>
   </data>
   <data name="ExtractingLabel.TabIndex" type="System.Int32, mscorlib">
     <value>7</value>
@@ -253,10 +256,13 @@
     <value>True</value>
   </data>
   <data name="CurrentFileLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 80</value>
+    <value>3, 83</value>
+  </data>
+  <data name="CurrentFileLabel.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 2, 0, 0</value>
   </data>
   <data name="CurrentFileLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>118, 13</value>
+    <value>121, 15</value>
   </data>
   <data name="CurrentFileLabel.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -310,10 +316,13 @@
     <value>Top, Left, Right</value>
   </data>
   <data name="ExtractionProgressBar.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 41</value>
+    <value>8, 41</value>
+  </data>
+  <data name="ExtractionProgressBar.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>8, 3, 8, 3</value>
   </data>
   <data name="ExtractionProgressBar.Size" type="System.Drawing.Size, System.Drawing">
-    <value>372, 23</value>
+    <value>362, 23</value>
   </data>
   <data name="ExtractionProgressBar.TabIndex" type="System.Int32, mscorlib">
     <value>5</value>
@@ -481,7 +490,7 @@
     <value>0</value>
   </data>
   <data name="ProgressTableLayout.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="RemainingTimeValueLabel" Row="1" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;Control Name="ElapsedTimeValueLabel" Row="0" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;Control Name="FileProgressValueLabel" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="ExtractingLabel" Row="3" RowSpan="1" Column="0" ColumnSpan="2" /&gt;&lt;Control Name="CurrentFileLabel" Row="4" RowSpan="1" Column="0" ColumnSpan="4" /&gt;&lt;Control Name="FileProgressLabel" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="ExtractionProgressBar" Row="2" RowSpan="1" Column="0" ColumnSpan="4" /&gt;&lt;Control Name="ElapsedTimeLabel" Row="0" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="RemainingTimeLabel" Row="1" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="ProgressPercentLabel" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="ProgressPercentValueLabel" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,30,Percent,20,Percent,30,Percent,20" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,Absolute,15" /&gt;&lt;/TableLayoutSettings&gt;</value>
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="RemainingTimeValueLabel" Row="1" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;Control Name="ElapsedTimeValueLabel" Row="0" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;Control Name="FileProgressValueLabel" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="ExtractingLabel" Row="3" RowSpan="1" Column="0" ColumnSpan="2" /&gt;&lt;Control Name="CurrentFileLabel" Row="4" RowSpan="1" Column="0" ColumnSpan="4" /&gt;&lt;Control Name="FileProgressLabel" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="ExtractionProgressBar" Row="2" RowSpan="1" Column="0" ColumnSpan="4" /&gt;&lt;Control Name="ElapsedTimeLabel" Row="0" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="RemainingTimeLabel" Row="1" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="ProgressPercentLabel" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="ProgressPercentValueLabel" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,20,Percent,30,Percent,30,Percent,20" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,Absolute,15" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>

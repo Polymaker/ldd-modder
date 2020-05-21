@@ -1,4 +1,5 @@
 ﻿using LDDModder.LDD.Files;
+using LDDModder.Utilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -24,6 +25,8 @@ namespace LDDModder.LifExtractor.Windows
 
         private bool ExtractFolderContent { get; set; }
 
+        private bool CopyingFilesToDest;
+
         public string TargetPath
         {
             get
@@ -48,7 +51,7 @@ namespace LDDModder.LifExtractor.Windows
 
             SetupWindowSize();
 
-            UpdateExtractionProgress(LifFile.ExtractionProgress.Default);//Clear UI
+           
 
             if (ItemsToExtract.Count() == 1 && 
                 ItemsToExtract[0] is LifFile.FolderEntry folderEntry)
@@ -153,13 +156,13 @@ namespace LDDModder.LifExtractor.Windows
 
         private void CancelExtractButton_Click(object sender, EventArgs e)
         {
-            if (!IsExtracting())
-            {
-                DialogResult = DialogResult.Cancel;
-            }
-            else
+            if (IsExtracting())
             {
                 CancelExtraction();
+            }
+            else if (!CopyingFilesToDest)
+            {
+                DialogResult = DialogResult.Cancel;
             }
         }
 
@@ -190,8 +193,7 @@ namespace LDDModder.LifExtractor.Windows
 
         private void StartExtraction()
         {
-            if (!Directory.Exists(TargetPath))
-                Directory.CreateDirectory(TargetPath);
+            CreateDestinationFolder();
 
             string tmpExtractDir = GetTmpExtractionDirectory();
             
@@ -199,6 +201,7 @@ namespace LDDModder.LifExtractor.Windows
             ExtractionStart = DateTime.Now;
             LastestProgress = LifFile.ExtractionProgress.Default;
             ExtractionProgressTimer.Start();
+            extractProgressPanel1.BeginExtraction();
 
             var entriesArray = ItemsToExtract.ToArray();
             if (ExtractFolderContent)
@@ -210,60 +213,110 @@ namespace LDDModder.LifExtractor.Windows
 
             ExtractionTask = Task.Factory.StartNew(() =>
             {
+                bool extractionSucceded = false;
+
                 try
                 {
                     LifFile.ExtractEntries(entriesArray, tmpExtractDir, 
                         CancellationSource.Token, OnExtractionProgress);
-                    ExtractionFinished(tmpExtractDir, true);
+                    extractionSucceded = true;
                 }
-                catch(Exception ex)
+                catch
                 {
-                    ExtractionFinished(tmpExtractDir, false);
+
                 }
+
+                BeginInvoke((Action)(() => ExtractionFinished(tmpExtractDir, extractionSucceded)));
             });
+        }
+
+        private void CreateDestinationFolder()
+        {
+            if (!Directory.Exists(TargetPath))
+            {
+                bool adminRightsRequired = false;
+                try
+                {
+                    Directory.CreateDirectory(TargetPath);
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    adminRightsRequired = true;
+                }
+
+                if (adminRightsRequired)
+                {
+                    string tmpTargetDir = GetTmpExtractionDirectory();
+                    Directory.CreateDirectory(tmpTargetDir);
+                    bool success = FileHelper.MoveFile(tmpTargetDir, TargetPath, false);
+                }
+            }
         }
 
         private void ExtractionFinished(string extractionDir, bool success)
         {
+            extractProgressPanel1.UpdateProgress(LastestProgress);
+            
+            ExtractionProgressTimer.Stop();
+            CancelExtractButton.Enabled = false;
+
+            Application.DoEvents();
+
             if (ExtractionTask != null && ExtractionTask.Status == TaskStatus.Running)
                 ExtractionTask.Wait(2000);
 
-            UpdateExtractionProgress(LastestProgress);
-
-            ExtractionProgressTimer.Stop();
+            extractProgressPanel1.FinishExtraction();
+            //ExtractingLabel.Visible = false;
+            //CurrentFileLabel.Text = "Copying files to destination...";
+            CancelExtractButton.Text = "Close";
 
             try
             {
                 if (success)
                 {
-                    var files = Directory.GetFileSystemEntries(extractionDir);
-                    var result = NativeMethods.CopyFiles(files, TargetPath);
+                    CopyingFilesToDest = true;
+                    var extractedFiles = Directory.GetFileSystemEntries(extractionDir);
+                    var result = FileHelper.MoveFiles(extractedFiles, TargetPath, false);
+                    if (!result)
+                    {
+                        //show error message
+                    }
                 }
             }
             finally
             {
+                CopyingFilesToDest = false;
                 NativeMethods.DeleteFileOrFolder(extractionDir);
             }
+
+            CancelExtractButton.Enabled = true;
         }
 
-        private void CancelExtraction()
+        private bool CancelExtraction()
         {
+            
             if (ExtractionTask != null && ExtractionTask.Status == TaskStatus.Running)
             {
-                //TODO: Ask Confirmation
-                CancellationSource.Cancel();
-                ExtractionTask.Wait(2000);
+                var msgResult = MessageBox.Show(this, "Are you sure you want to cancel?", "", MessageBoxButtons.YesNo);
+
+                if (msgResult == DialogResult.Yes)
+                {
+                    CancellationSource.Cancel();
+                    ExtractionTask.Wait(2000);
+                    return true;
+                }
             }
+
+            return false;
         }
 
         private LifFile.ExtractionProgress LastestProgress;
         private readonly object UpdateLock = new object();
 
-        private void OnExtractionProgress(LifFile.ExtractionProgress progress)
+        private void OnExtractionProgress(object sender, LifFile.ExtractionProgress progress)
         {
             lock (UpdateLock)
                 LastestProgress = progress;
-            //BeginInvoke((Action<LifFile.ExtractionProgress>)UpdateExtractionProgress, progress);
         }
 
         private void ExtractionProgressTimer_Tick(object sender, EventArgs e)
@@ -271,44 +324,25 @@ namespace LDDModder.LifExtractor.Windows
             LifFile.ExtractionProgress currentProgress = null;
             lock (UpdateLock)
                 currentProgress = LastestProgress;
+
             if (currentProgress != null)
-                UpdateExtractionProgress(currentProgress);
+                extractProgressPanel1.UpdateProgress(currentProgress);
         }
 
-        private void UpdateExtractionProgress(LifFile.ExtractionProgress progress)
-        {
-            float percentage = progress.TotalFiles > 0 ? 
-                (progress.ExtractedFiles / (float)progress.TotalFiles) * 100f : 0f;
-
-            ExtractionProgressBar.Value = (int)percentage;
-            FileProgressValueLabel.Text = $"{progress.ExtractedFiles} / {progress.TotalFiles}";
-            ProgressPercentValueLabel.Text = $"{percentage:0}%";
-
-            var timeElapsed = TimeSpan.Zero; // (DateTime.Now - ExtractionStart);
-            if (ExtractionStart != default(DateTime))
-                timeElapsed = (DateTime.Now - ExtractionStart);
-
-            ElapsedTimeValueLabel.Text = timeElapsed.ToString("hh\\:mm\\:ss");
-
-            var remainingTime = TimeSpan.Zero;
-
-            if (progress.BytesExtracted > 0)
-            {
-                var avgTime = timeElapsed.TotalMilliseconds / (double)progress.BytesExtracted;
-                var remainingBytes = (double)(progress.TotalBytes - progress.BytesExtracted);
-                remainingTime = TimeSpan.FromMilliseconds(avgTime * remainingBytes);
-            }
-
-            RemainingTimeValueLabel.Text = remainingTime.ToString("hh\\:mm\\:ss");
-
-            CurrentFileLabel.Text = progress.TargetPath;
-        }
   
         private string GetTmpExtractionDirectory()
         {
-            string tmpFolderName = "LIF" + LDDModder.Utilities.StringUtils.GenerateUID(8);
+            string tmpFolderName = "LIF" + StringUtils.GenerateUID(8);
             return Path.Combine(Path.GetTempPath(), tmpFolderName);
         }
- 
+
+        private void ExtractItemsDialog_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (CopyingFilesToDest || 
+                (IsExtracting() && !CancelExtraction()))
+            {
+                e.Cancel = true;
+            }
+        }
     }
 }

@@ -120,7 +120,7 @@ namespace LDDModder.Utilities
 
                 int result = Native.Shell32.SHFileOperation(ref fs);
 
-                return true;
+                return result == 0;
             }
             catch (Exception)
             {
