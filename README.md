@@ -1,3 +1,3 @@
 # LDD Modding Tool
-![image](Resources/Images/Brick Editor Preview 1.png)
-![image](Resources/Images/Brick Editor Preview 2.png)
+![image](Resources/Images/Brick%20Editor%20Preview%201.png)
+![image](Resources/Images/Brick%20Editor%20Preview%202.png)
