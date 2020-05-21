@@ -151,6 +151,8 @@ namespace LDDModder.Modding.Editing
 
         #endregion
 
+        public Dictionary<string, string> ProjectProperties { get; set; }
+
         [XmlIgnore]
         public bool IsLoading { get; internal set; }
 
@@ -167,6 +169,8 @@ namespace LDDModder.Modding.Editing
             Meshes = new ElementCollection<ModelMesh>(this);
 
             Properties = new PartProperties(this);
+
+            ProjectProperties = new Dictionary<string, string>();
         }
 
         #region Creation From LDD
@@ -339,6 +343,13 @@ namespace LDDModder.Modding.Editing
                 meshesElem.Add(mesh.SerializeToXml());
             }
 
+            if (ProjectProperties.Any())
+            {
+                var elem = doc.Root.AddElement("ProjectProperties");
+                foreach (var kv in ProjectProperties)
+                    elem.Add(new XElement(kv.Key, kv.Value));
+            }
+
             return doc;
         }
 
@@ -386,6 +397,12 @@ namespace LDDModder.Modding.Editing
             {
                 foreach (var meshElem in meshesElem.Elements(ModelMesh.NODE_NAME))
                     Meshes.Add(ModelMesh.FromXml(meshElem));
+            }
+
+            if (rootElem.HasElement("ProjectProperties", out XElement pojectProps))
+            {
+                foreach (var propElem in pojectProps.Elements())
+                    ProjectProperties.Add(propElem.Name.LocalName, propElem.Value);
             }
 
             LinkStudReferences();
@@ -959,6 +976,18 @@ namespace LDDModder.Modding.Editing
         {
             if (IsLoadedFromDisk)
                 return File.Exists(GetFileFullPath(filename));
+            return false;
+        }
+
+        #endregion
+
+        #region Extra propeties
+
+        public bool TryGetProperty<T>(string propertyName, out T value)
+        {
+            value = default;
+            if (ProjectProperties.TryGetValue(propertyName, out string strValue))
+                return StringUtils.TryParse<T>(strValue, out value);
             return false;
         }
 

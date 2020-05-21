@@ -134,6 +134,16 @@ namespace LDDModder.BrickEditor.ProjectHandling
             project.ElementCollectionChanged += Project_ElementCollectionChanged;
             project.ElementPropertyChanged += Project_ElementPropertyChanged;
             project.UpdateModelStatistics();
+
+            if (project.TryGetProperty("ShowModels", out bool showModels))
+                ShowPartModels = showModels;
+
+            if (project.TryGetProperty("ShowCollisions", out showModels))
+                ShowCollisions = showModels;
+
+            if (project.TryGetProperty("ShowConnections", out showModels))
+                ShowConnections = showModels;
+
             LastValidation = -1;
             IsProjectAttached = true;
             InitializeElementExtensions();
@@ -262,8 +272,11 @@ namespace LDDModder.BrickEditor.ProjectHandling
             {
                 _ShowPartModels = visible;
 
-                if (IsProjectOpen)
+                if (IsProjectOpen && IsProjectAttached)
+                {
+                    CurrentProject.ProjectProperties["ShowModels"] = visible.ToString();
                     InvalidateElementsVisibility(CurrentProject.Surfaces);
+                }
 
                 PartModelsVisibilityChanged?.Invoke(this, EventArgs.Empty);
             }
@@ -275,8 +288,9 @@ namespace LDDModder.BrickEditor.ProjectHandling
             {
                 _ShowCollisions = visible;
 
-                if (IsProjectOpen)
+                if (IsProjectOpen && IsProjectAttached)
                 {
+                    CurrentProject.ProjectProperties["ShowCollisions"] = visible.ToString();
                     InvalidateElementsVisibility(CurrentProject.Collisions);
                     InvalidateElementsVisibility(CurrentProject.Bones);
                 }
@@ -291,8 +305,9 @@ namespace LDDModder.BrickEditor.ProjectHandling
             {
                 _ShowConnections = visible;
 
-                if (IsProjectOpen)
+                if (IsProjectOpen && IsProjectAttached)
                 {
+                    CurrentProject.ProjectProperties["ShowConnections"] = visible.ToString();
                     InvalidateElementsVisibility(CurrentProject.Connections);
                     InvalidateElementsVisibility(CurrentProject.Bones);
                 }

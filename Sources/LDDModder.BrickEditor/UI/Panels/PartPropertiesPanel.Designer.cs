@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PartPropertiesPanel));
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.LabelAliases = new System.Windows.Forms.Label();
             this.LabelPlatform = new System.Windows.Forms.Label();
@@ -72,13 +73,7 @@
             // 
             // tableLayoutPanel1
             // 
-            this.tableLayoutPanel1.AutoSize = true;
-            this.tableLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.tableLayoutPanel1.ColumnCount = 4;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 85F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 40F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 70F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 60F));
+            resources.ApplyResources(this.tableLayoutPanel1, "tableLayoutPanel1");
             this.tableLayoutPanel1.Controls.Add(this.LabelAliases, 2, 0);
             this.tableLayoutPanel1.Controls.Add(this.LabelPlatform, 0, 3);
             this.tableLayoutPanel1.Controls.Add(this.DescriptionTextBox, 0, 2);
@@ -89,200 +84,111 @@
             this.tableLayoutPanel1.Controls.Add(this.LabelCategory, 0, 5);
             this.tableLayoutPanel1.Controls.Add(this.PlatformComboBox, 0, 4);
             this.tableLayoutPanel1.Controls.Add(this.AliasesButtonBox, 3, 0);
-            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 3);
-            this.tableLayoutPanel1.MaximumSize = new System.Drawing.Size(400, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 7;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(400, 163);
-            this.tableLayoutPanel1.TabIndex = 0;
             // 
             // LabelAliases
             // 
-            this.LabelAliases.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.LabelAliases.AutoSize = true;
-            this.LabelAliases.Location = new System.Drawing.Point(198, 6);
+            resources.ApplyResources(this.LabelAliases, "LabelAliases");
             this.LabelAliases.Name = "LabelAliases";
-            this.LabelAliases.Size = new System.Drawing.Size(40, 13);
-            this.LabelAliases.TabIndex = 3;
-            this.LabelAliases.Text = "Aliases";
             // 
             // LabelPlatform
             // 
-            this.LabelPlatform.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.LabelPlatform.AutoSize = true;
-            this.LabelPlatform.Location = new System.Drawing.Point(3, 74);
-            this.LabelPlatform.Margin = new System.Windows.Forms.Padding(3);
+            resources.ApplyResources(this.LabelPlatform, "LabelPlatform");
             this.LabelPlatform.Name = "LabelPlatform";
-            this.LabelPlatform.Size = new System.Drawing.Size(45, 13);
-            this.LabelPlatform.TabIndex = 6;
-            this.LabelPlatform.Text = "Platform";
             // 
             // DescriptionTextBox
             // 
-            this.DescriptionTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            resources.ApplyResources(this.DescriptionTextBox, "DescriptionTextBox");
             this.tableLayoutPanel1.SetColumnSpan(this.DescriptionTextBox, 4);
-            this.DescriptionTextBox.Location = new System.Drawing.Point(3, 48);
             this.DescriptionTextBox.Name = "DescriptionTextBox";
-            this.DescriptionTextBox.Size = new System.Drawing.Size(394, 20);
-            this.DescriptionTextBox.TabIndex = 1;
             this.DescriptionTextBox.Validated += new System.EventHandler(this.DescriptionTextBox_Validated);
             // 
             // LabelPartID
             // 
-            this.LabelPartID.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.LabelPartID.AutoSize = true;
-            this.LabelPartID.Location = new System.Drawing.Point(3, 6);
+            resources.ApplyResources(this.LabelPartID, "LabelPartID");
             this.LabelPartID.Name = "LabelPartID";
-            this.LabelPartID.Size = new System.Drawing.Size(40, 13);
-            this.LabelPartID.TabIndex = 2;
-            this.LabelPartID.Text = "Part ID";
             // 
             // CategoryComboBox
             // 
-            this.CategoryComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            resources.ApplyResources(this.CategoryComboBox, "CategoryComboBox");
             this.tableLayoutPanel1.SetColumnSpan(this.CategoryComboBox, 4);
             this.CategoryComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.CategoryComboBox.FormattingEnabled = true;
-            this.CategoryComboBox.Location = new System.Drawing.Point(3, 139);
             this.CategoryComboBox.Name = "CategoryComboBox";
-            this.CategoryComboBox.Size = new System.Drawing.Size(394, 21);
-            this.CategoryComboBox.TabIndex = 5;
             this.CategoryComboBox.SelectedValueChanged += new System.EventHandler(this.CategoryComboBox_SelectedValueChanged);
             // 
             // PartIDTextBox
             // 
             this.PartIDTextBox.AllowDecimals = false;
-            this.PartIDTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.PartIDTextBox.Location = new System.Drawing.Point(88, 3);
+            resources.ApplyResources(this.PartIDTextBox, "PartIDTextBox");
             this.PartIDTextBox.MaximumValue = 9999999D;
             this.PartIDTextBox.Name = "PartIDTextBox";
-            this.PartIDTextBox.Size = new System.Drawing.Size(92, 20);
-            this.PartIDTextBox.TabIndex = 8;
             this.PartIDTextBox.ValueChanged += new System.EventHandler(this.PartIDTextBox_ValueChanged);
             // 
             // LabelDescription
             // 
-            this.LabelDescription.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.LabelDescription.AutoSize = true;
+            resources.ApplyResources(this.LabelDescription, "LabelDescription");
             this.tableLayoutPanel1.SetColumnSpan(this.LabelDescription, 2);
-            this.LabelDescription.Location = new System.Drawing.Point(3, 29);
-            this.LabelDescription.Margin = new System.Windows.Forms.Padding(3);
             this.LabelDescription.Name = "LabelDescription";
-            this.LabelDescription.Size = new System.Drawing.Size(60, 13);
-            this.LabelDescription.TabIndex = 3;
-            this.LabelDescription.Text = "Description";
             // 
             // LabelCategory
             // 
-            this.LabelCategory.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.LabelCategory.AutoSize = true;
-            this.LabelCategory.Location = new System.Drawing.Point(3, 120);
-            this.LabelCategory.Margin = new System.Windows.Forms.Padding(3);
+            resources.ApplyResources(this.LabelCategory, "LabelCategory");
             this.LabelCategory.Name = "LabelCategory";
-            this.LabelCategory.Size = new System.Drawing.Size(49, 13);
-            this.LabelCategory.TabIndex = 7;
-            this.LabelCategory.Text = "Category";
             // 
             // PlatformComboBox
             // 
-            this.PlatformComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            resources.ApplyResources(this.PlatformComboBox, "PlatformComboBox");
             this.tableLayoutPanel1.SetColumnSpan(this.PlatformComboBox, 4);
             this.PlatformComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.PlatformComboBox.FormattingEnabled = true;
-            this.PlatformComboBox.Location = new System.Drawing.Point(3, 93);
             this.PlatformComboBox.Name = "PlatformComboBox";
-            this.PlatformComboBox.Size = new System.Drawing.Size(394, 21);
-            this.PlatformComboBox.TabIndex = 4;
             this.PlatformComboBox.SelectedValueChanged += new System.EventHandler(this.PlatformComboBox_SelectedValueChanged);
             // 
             // AliasesButtonBox
             // 
-            this.AliasesButtonBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            resources.ApplyResources(this.AliasesButtonBox, "AliasesButtonBox");
             this.AliasesButtonBox.AutoSizeButton = true;
             this.AliasesButtonBox.ButtonText = "...";
             this.AliasesButtonBox.ButtonWidth = 26;
-            this.AliasesButtonBox.Enabled = false;
-            this.AliasesButtonBox.Location = new System.Drawing.Point(256, 3);
             this.AliasesButtonBox.Name = "AliasesButtonBox";
             this.AliasesButtonBox.ReadOnly = true;
-            this.AliasesButtonBox.Size = new System.Drawing.Size(141, 20);
-            this.AliasesButtonBox.TabIndex = 9;
             this.AliasesButtonBox.Value = "";
             this.AliasesButtonBox.BrowseButtonClicked += new System.EventHandler(this.AliasesButtonBox_BrowseButtonClicked);
             // 
             // LabelGeomBounding
             // 
-            this.LabelGeomBounding.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.LabelGeomBounding.AutoSize = true;
-            this.LabelGeomBounding.Location = new System.Drawing.Point(3, 73);
+            resources.ApplyResources(this.LabelGeomBounding, "LabelGeomBounding");
             this.LabelGeomBounding.Name = "LabelGeomBounding";
-            this.LabelGeomBounding.Size = new System.Drawing.Size(100, 13);
-            this.LabelGeomBounding.TabIndex = 12;
-            this.LabelGeomBounding.Text = "Geometry Bounding";
             // 
             // LabelBounding
             // 
-            this.LabelBounding.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.LabelBounding.AutoSize = true;
-            this.LabelBounding.Location = new System.Drawing.Point(3, 5);
+            resources.ApplyResources(this.LabelBounding, "LabelBounding");
             this.LabelBounding.Name = "LabelBounding";
-            this.LabelBounding.Size = new System.Drawing.Size(52, 13);
-            this.LabelBounding.TabIndex = 10;
-            this.LabelBounding.Text = "Bounding";
             // 
             // GeomBoundingEditor
             // 
-            this.GeomBoundingEditor.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            resources.ApplyResources(this.GeomBoundingEditor, "GeomBoundingEditor");
             this.tableLayoutPanel2.SetColumnSpan(this.GeomBoundingEditor, 2);
-            this.GeomBoundingEditor.Location = new System.Drawing.Point(3, 94);
             this.GeomBoundingEditor.Name = "GeomBoundingEditor";
-            this.GeomBoundingEditor.Size = new System.Drawing.Size(393, 39);
-            this.GeomBoundingEditor.TabIndex = 13;
             // 
             // CalcBoundingButton
             // 
-            this.CalcBoundingButton.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.CalcBoundingButton.Location = new System.Drawing.Point(323, 0);
-            this.CalcBoundingButton.Margin = new System.Windows.Forms.Padding(0, 0, 3, 0);
+            resources.ApplyResources(this.CalcBoundingButton, "CalcBoundingButton");
             this.CalcBoundingButton.Name = "CalcBoundingButton";
-            this.CalcBoundingButton.Size = new System.Drawing.Size(74, 23);
-            this.CalcBoundingButton.TabIndex = 11;
-            this.CalcBoundingButton.Text = "Calculate";
             this.CalcBoundingButton.UseVisualStyleBackColor = true;
             this.CalcBoundingButton.Click += new System.EventHandler(this.CalcBoundingButton_Click);
             // 
             // BoundingEditor
             // 
-            this.BoundingEditor.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            resources.ApplyResources(this.BoundingEditor, "BoundingEditor");
             this.tableLayoutPanel2.SetColumnSpan(this.BoundingEditor, 2);
-            this.BoundingEditor.Location = new System.Drawing.Point(3, 26);
             this.BoundingEditor.Name = "BoundingEditor";
-            this.BoundingEditor.Size = new System.Drawing.Size(393, 39);
-            this.BoundingEditor.TabIndex = 9;
             // 
             // CalcGeomBoundingButton
             // 
-            this.CalcGeomBoundingButton.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.CalcGeomBoundingButton.Location = new System.Drawing.Point(323, 68);
-            this.CalcGeomBoundingButton.Margin = new System.Windows.Forms.Padding(0, 0, 3, 0);
+            resources.ApplyResources(this.CalcGeomBoundingButton, "CalcGeomBoundingButton");
             this.CalcGeomBoundingButton.Name = "CalcGeomBoundingButton";
-            this.CalcGeomBoundingButton.Size = new System.Drawing.Size(74, 23);
-            this.CalcGeomBoundingButton.TabIndex = 14;
-            this.CalcGeomBoundingButton.Text = "Calculate";
             this.CalcGeomBoundingButton.UseVisualStyleBackColor = true;
             this.CalcGeomBoundingButton.Click += new System.EventHandler(this.CalcGeomBoundingButton_Click);
             // 
@@ -293,43 +199,23 @@
             // collapsiblePanel1.ContentPanel
             // 
             this.collapsiblePanel1.ContentPanel.Controls.Add(this.tableLayoutPanel2);
-            this.collapsiblePanel1.ContentPanel.Location = new System.Drawing.Point(0, 23);
+            resources.ApplyResources(this.collapsiblePanel1.ContentPanel, "collapsiblePanel1.ContentPanel");
             this.collapsiblePanel1.ContentPanel.Name = "ContentPanel";
-            this.collapsiblePanel1.ContentPanel.Padding = new System.Windows.Forms.Padding(0, 3, 0, 3);
-            this.collapsiblePanel1.ContentPanel.TabIndex = 0;
             this.collapsiblePanel1.DisplayStyle = LDDModder.BrickEditor.UI.Controls.CollapsiblePanel.HeaderDisplayStyle.Button;
-            this.collapsiblePanel1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.collapsiblePanel1.Location = new System.Drawing.Point(0, 192);
+            resources.ApplyResources(this.collapsiblePanel1, "collapsiblePanel1");
             this.collapsiblePanel1.Name = "collapsiblePanel1";
             this.collapsiblePanel1.PanelHeight = 142;
-            this.collapsiblePanel1.Size = new System.Drawing.Size(634, 165);
-            this.collapsiblePanel1.TabIndex = 1;
-            this.collapsiblePanel1.Text = "Part Boundings";
             // 
             // tableLayoutPanel2
             // 
-            this.tableLayoutPanel2.AutoSize = true;
-            this.tableLayoutPanel2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.tableLayoutPanel2.ColumnCount = 2;
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            resources.ApplyResources(this.tableLayoutPanel2, "tableLayoutPanel2");
             this.tableLayoutPanel2.Controls.Add(this.LabelBounding, 0, 0);
             this.tableLayoutPanel2.Controls.Add(this.CalcBoundingButton, 1, 0);
             this.tableLayoutPanel2.Controls.Add(this.BoundingEditor, 0, 1);
             this.tableLayoutPanel2.Controls.Add(this.LabelGeomBounding, 0, 2);
             this.tableLayoutPanel2.Controls.Add(this.CalcGeomBoundingButton, 1, 2);
             this.tableLayoutPanel2.Controls.Add(this.GeomBoundingEditor, 0, 3);
-            this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Top;
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 3);
-            this.tableLayoutPanel2.MaximumSize = new System.Drawing.Size(400, 0);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
-            this.tableLayoutPanel2.RowCount = 4;
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(400, 136);
-            this.tableLayoutPanel2.TabIndex = 0;
             // 
             // collapsiblePanel2
             // 
@@ -339,18 +225,12 @@
             // 
             this.collapsiblePanel2.ContentPanel.BackColor = System.Drawing.SystemColors.Control;
             this.collapsiblePanel2.ContentPanel.Controls.Add(this.tableLayoutPanel1);
-            this.collapsiblePanel2.ContentPanel.Location = new System.Drawing.Point(0, 23);
+            resources.ApplyResources(this.collapsiblePanel2.ContentPanel, "collapsiblePanel2.ContentPanel");
             this.collapsiblePanel2.ContentPanel.Name = "ContentPanel";
-            this.collapsiblePanel2.ContentPanel.Padding = new System.Windows.Forms.Padding(0, 3, 0, 3);
-            this.collapsiblePanel2.ContentPanel.TabIndex = 0;
             this.collapsiblePanel2.DisplayStyle = LDDModder.BrickEditor.UI.Controls.CollapsiblePanel.HeaderDisplayStyle.Button;
-            this.collapsiblePanel2.Dock = System.Windows.Forms.DockStyle.Top;
-            this.collapsiblePanel2.Location = new System.Drawing.Point(0, 0);
+            resources.ApplyResources(this.collapsiblePanel2, "collapsiblePanel2");
             this.collapsiblePanel2.Name = "collapsiblePanel2";
             this.collapsiblePanel2.PanelHeight = 169;
-            this.collapsiblePanel2.Size = new System.Drawing.Size(634, 192);
-            this.collapsiblePanel2.TabIndex = 2;
-            this.collapsiblePanel2.Text = "Part Description";
             // 
             // collapsiblePanel3
             // 
@@ -359,26 +239,16 @@
             // collapsiblePanel3.ContentPanel
             // 
             this.collapsiblePanel3.ContentPanel.Controls.Add(this.tableLayoutPanel3);
-            this.collapsiblePanel3.ContentPanel.Location = new System.Drawing.Point(0, 23);
+            resources.ApplyResources(this.collapsiblePanel3.ContentPanel, "collapsiblePanel3.ContentPanel");
             this.collapsiblePanel3.ContentPanel.Name = "ContentPanel";
-            this.collapsiblePanel3.ContentPanel.Padding = new System.Windows.Forms.Padding(0, 3, 0, 3);
-            this.collapsiblePanel3.ContentPanel.TabIndex = 0;
             this.collapsiblePanel3.DisplayStyle = LDDModder.BrickEditor.UI.Controls.CollapsiblePanel.HeaderDisplayStyle.Button;
-            this.collapsiblePanel3.Dock = System.Windows.Forms.DockStyle.Top;
-            this.collapsiblePanel3.Location = new System.Drawing.Point(0, 357);
+            resources.ApplyResources(this.collapsiblePanel3, "collapsiblePanel3");
             this.collapsiblePanel3.Name = "collapsiblePanel3";
             this.collapsiblePanel3.PanelHeight = 91;
-            this.collapsiblePanel3.Size = new System.Drawing.Size(634, 114);
-            this.collapsiblePanel3.TabIndex = 3;
-            this.collapsiblePanel3.Text = "Physical Properties";
             // 
             // tableLayoutPanel3
             // 
-            this.tableLayoutPanel3.AutoSize = true;
-            this.tableLayoutPanel3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.tableLayoutPanel3.ColumnCount = 2;
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 100F));
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            resources.ApplyResources(this.tableLayoutPanel3, "tableLayoutPanel3");
             this.tableLayoutPanel3.Controls.Add(this.LabelInertiaTensor, 0, 0);
             this.tableLayoutPanel3.Controls.Add(this.LabelCenterOfMass, 0, 1);
             this.tableLayoutPanel3.Controls.Add(this.InertiaTensorTextBox, 1, 0);
@@ -386,82 +256,42 @@
             this.tableLayoutPanel3.Controls.Add(this.MassNumberBox, 1, 2);
             this.tableLayoutPanel3.Controls.Add(this.LabelFriction, 0, 3);
             this.tableLayoutPanel3.Controls.Add(this.FrictionCheckBox, 1, 3);
-            this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Top;
-            this.tableLayoutPanel3.Location = new System.Drawing.Point(0, 3);
-            this.tableLayoutPanel3.MaximumSize = new System.Drawing.Size(400, 0);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
-            this.tableLayoutPanel3.RowCount = 4;
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(400, 85);
-            this.tableLayoutPanel3.TabIndex = 0;
             // 
             // LabelInertiaTensor
             // 
-            this.LabelInertiaTensor.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.LabelInertiaTensor.AutoSize = true;
-            this.LabelInertiaTensor.Location = new System.Drawing.Point(3, 6);
+            resources.ApplyResources(this.LabelInertiaTensor, "LabelInertiaTensor");
             this.LabelInertiaTensor.Name = "LabelInertiaTensor";
-            this.LabelInertiaTensor.Size = new System.Drawing.Size(72, 13);
-            this.LabelInertiaTensor.TabIndex = 0;
-            this.LabelInertiaTensor.Text = "Inertia Tensor";
             // 
             // LabelCenterOfMass
             // 
-            this.LabelCenterOfMass.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.LabelCenterOfMass.AutoSize = true;
-            this.LabelCenterOfMass.Location = new System.Drawing.Point(3, 26);
+            resources.ApplyResources(this.LabelCenterOfMass, "LabelCenterOfMass");
             this.LabelCenterOfMass.Name = "LabelCenterOfMass";
-            this.LabelCenterOfMass.Size = new System.Drawing.Size(77, 13);
-            this.LabelCenterOfMass.TabIndex = 1;
-            this.LabelCenterOfMass.Text = "Center of mass";
             // 
             // InertiaTensorTextBox
             // 
-            this.InertiaTensorTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.InertiaTensorTextBox.Location = new System.Drawing.Point(103, 3);
+            resources.ApplyResources(this.InertiaTensorTextBox, "InertiaTensorTextBox");
             this.InertiaTensorTextBox.Name = "InertiaTensorTextBox";
-            this.InertiaTensorTextBox.Size = new System.Drawing.Size(294, 20);
-            this.InertiaTensorTextBox.TabIndex = 2;
             // 
             // LabelMass
             // 
-            this.LabelMass.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.LabelMass.AutoSize = true;
-            this.LabelMass.Location = new System.Drawing.Point(3, 45);
+            resources.ApplyResources(this.LabelMass, "LabelMass");
             this.LabelMass.Name = "LabelMass";
-            this.LabelMass.Size = new System.Drawing.Size(32, 13);
-            this.LabelMass.TabIndex = 3;
-            this.LabelMass.Text = "Mass";
             // 
             // MassNumberBox
             // 
-            this.MassNumberBox.Location = new System.Drawing.Point(103, 42);
+            resources.ApplyResources(this.MassNumberBox, "MassNumberBox");
             this.MassNumberBox.Name = "MassNumberBox";
-            this.MassNumberBox.Size = new System.Drawing.Size(100, 20);
-            this.MassNumberBox.TabIndex = 4;
             // 
             // LabelFriction
             // 
-            this.LabelFriction.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.LabelFriction.AutoSize = true;
-            this.LabelFriction.Location = new System.Drawing.Point(3, 68);
+            resources.ApplyResources(this.LabelFriction, "LabelFriction");
             this.LabelFriction.Name = "LabelFriction";
-            this.LabelFriction.Size = new System.Drawing.Size(68, 13);
-            this.LabelFriction.TabIndex = 5;
-            this.LabelFriction.Text = "Friction Type";
             // 
             // FrictionCheckBox
             // 
-            this.FrictionCheckBox.AutoSize = true;
-            this.FrictionCheckBox.Location = new System.Drawing.Point(103, 68);
+            resources.ApplyResources(this.FrictionCheckBox, "FrictionCheckBox");
             this.FrictionCheckBox.Name = "FrictionCheckBox";
-            this.FrictionCheckBox.Padding = new System.Windows.Forms.Padding(0, 0, 10, 0);
-            this.FrictionCheckBox.Size = new System.Drawing.Size(25, 14);
-            this.FrictionCheckBox.TabIndex = 6;
             this.FrictionCheckBox.UseVisualStyleBackColor = true;
             // 
             // collapsiblePanel4
@@ -469,30 +299,22 @@
             // 
             // collapsiblePanel4.ContentPanel
             // 
-            this.collapsiblePanel4.ContentPanel.Location = new System.Drawing.Point(0, 23);
+            resources.ApplyResources(this.collapsiblePanel4.ContentPanel, "collapsiblePanel4.ContentPanel");
             this.collapsiblePanel4.ContentPanel.Name = "ContentPanel";
-            this.collapsiblePanel4.ContentPanel.TabIndex = 0;
             this.collapsiblePanel4.DisplayStyle = LDDModder.BrickEditor.UI.Controls.CollapsiblePanel.HeaderDisplayStyle.Button;
-            this.collapsiblePanel4.Dock = System.Windows.Forms.DockStyle.Top;
-            this.collapsiblePanel4.Location = new System.Drawing.Point(0, 471);
+            resources.ApplyResources(this.collapsiblePanel4, "collapsiblePanel4");
             this.collapsiblePanel4.Name = "collapsiblePanel4";
             this.collapsiblePanel4.PanelHeight = 34;
-            this.collapsiblePanel4.Size = new System.Drawing.Size(634, 57);
-            this.collapsiblePanel4.TabIndex = 4;
-            this.collapsiblePanel4.Text = "Extra Properties";
             // 
             // PartPropertiesPanel
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.AutoScroll = true;
-            this.ClientSize = new System.Drawing.Size(634, 608);
             this.Controls.Add(this.collapsiblePanel4);
             this.Controls.Add(this.collapsiblePanel3);
             this.Controls.Add(this.collapsiblePanel1);
             this.Controls.Add(this.collapsiblePanel2);
             this.Name = "PartPropertiesPanel";
-            this.Text = "Part Properties";
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.collapsiblePanel1.ContentPanel.ResumeLayout(false);
