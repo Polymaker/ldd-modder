@@ -34,14 +34,15 @@
             this.PartNameLabel = new System.Windows.Forms.Label();
             this.PartIDLabel = new System.Windows.Forms.Label();
             this.Step2GroupBox = new System.Windows.Forms.GroupBox();
-            this.RbCollada = new System.Windows.Forms.RadioButton();
+            this.ChkRoundEdge = new System.Windows.Forms.CheckBox();
             this.ChkAltMeshes = new System.Windows.Forms.CheckBox();
-            this.RbWavefront = new System.Windows.Forms.RadioButton();
             this.ChkBones = new System.Windows.Forms.CheckBox();
             this.ChkCollisions = new System.Windows.Forms.CheckBox();
             this.ChkConnections = new System.Windows.Forms.CheckBox();
             this.RbAdvancedExport = new System.Windows.Forms.RadioButton();
             this.RbSimpleExport = new System.Windows.Forms.RadioButton();
+            this.RbCollada = new System.Windows.Forms.RadioButton();
+            this.RbWavefront = new System.Windows.Forms.RadioButton();
             this.ExportButton = new System.Windows.Forms.Button();
             this.ReturnButton = new System.Windows.Forms.Button();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
@@ -62,7 +63,7 @@
             this.Step1GroupBox.Dock = System.Windows.Forms.DockStyle.Top;
             this.Step1GroupBox.Location = new System.Drawing.Point(3, 3);
             this.Step1GroupBox.Name = "Step1GroupBox";
-            this.Step1GroupBox.Size = new System.Drawing.Size(280, 64);
+            this.Step1GroupBox.Size = new System.Drawing.Size(266, 64);
             this.Step1GroupBox.TabIndex = 0;
             this.Step1GroupBox.TabStop = false;
             this.Step1GroupBox.Text = "1 - Part to export";
@@ -106,6 +107,7 @@
             // Step2GroupBox
             // 
             this.tableLayoutPanel1.SetColumnSpan(this.Step2GroupBox, 2);
+            this.Step2GroupBox.Controls.Add(this.ChkRoundEdge);
             this.Step2GroupBox.Controls.Add(this.ChkAltMeshes);
             this.Step2GroupBox.Controls.Add(this.ChkBones);
             this.Step2GroupBox.Controls.Add(this.ChkCollisions);
@@ -115,52 +117,39 @@
             this.Step2GroupBox.Dock = System.Windows.Forms.DockStyle.Top;
             this.Step2GroupBox.Location = new System.Drawing.Point(3, 73);
             this.Step2GroupBox.Name = "Step2GroupBox";
-            this.Step2GroupBox.Size = new System.Drawing.Size(280, 85);
+            this.Step2GroupBox.Size = new System.Drawing.Size(266, 108);
             this.Step2GroupBox.TabIndex = 1;
             this.Step2GroupBox.TabStop = false;
             this.Step2GroupBox.Text = "2 - Export options";
             // 
-            // RbCollada
+            // ChkRoundEdge
             // 
-            this.RbCollada.AutoSize = true;
-            this.RbCollada.Checked = true;
-            this.RbCollada.Location = new System.Drawing.Point(144, 19);
-            this.RbCollada.Name = "RbCollada";
-            this.RbCollada.Size = new System.Drawing.Size(94, 17);
-            this.RbCollada.TabIndex = 2;
-            this.RbCollada.TabStop = true;
-            this.RbCollada.Text = "Collada (*.dae)";
-            this.RbCollada.UseVisualStyleBackColor = true;
-            this.RbCollada.CheckedChanged += new System.EventHandler(this.RbCollada_CheckedChanged);
+            this.ChkRoundEdge.AutoSize = true;
+            this.ChkRoundEdge.Location = new System.Drawing.Point(12, 84);
+            this.ChkRoundEdge.Name = "ChkRoundEdge";
+            this.ChkRoundEdge.Size = new System.Drawing.Size(159, 17);
+            this.ChkRoundEdge.TabIndex = 6;
+            this.ChkRoundEdge.Text = "RoundEdge data (UV maps)";
+            this.ChkRoundEdge.UseVisualStyleBackColor = true;
             // 
             // ChkAltMeshes
             // 
             this.ChkAltMeshes.AutoSize = true;
             this.ChkAltMeshes.Checked = true;
             this.ChkAltMeshes.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ChkAltMeshes.Location = new System.Drawing.Point(144, 64);
+            this.ChkAltMeshes.Location = new System.Drawing.Point(144, 62);
             this.ChkAltMeshes.Name = "ChkAltMeshes";
             this.ChkAltMeshes.Size = new System.Drawing.Size(117, 17);
             this.ChkAltMeshes.TabIndex = 5;
             this.ChkAltMeshes.Text = "Include alt. meshes";
             this.ChkAltMeshes.UseVisualStyleBackColor = true;
             // 
-            // RbWavefront
-            // 
-            this.RbWavefront.AutoSize = true;
-            this.RbWavefront.Location = new System.Drawing.Point(12, 19);
-            this.RbWavefront.Name = "RbWavefront";
-            this.RbWavefront.Size = new System.Drawing.Size(105, 17);
-            this.RbWavefront.TabIndex = 1;
-            this.RbWavefront.Text = "Wavefront (*.obj)";
-            this.RbWavefront.UseVisualStyleBackColor = true;
-            // 
             // ChkBones
             // 
             this.ChkBones.AutoSize = true;
             this.ChkBones.Checked = true;
             this.ChkBones.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ChkBones.Location = new System.Drawing.Point(12, 64);
+            this.ChkBones.Location = new System.Drawing.Point(12, 62);
             this.ChkBones.Name = "ChkBones";
             this.ChkBones.Size = new System.Drawing.Size(93, 17);
             this.ChkBones.TabIndex = 4;
@@ -170,7 +159,7 @@
             // ChkCollisions
             // 
             this.ChkCollisions.AutoSize = true;
-            this.ChkCollisions.Location = new System.Drawing.Point(144, 41);
+            this.ChkCollisions.Location = new System.Drawing.Point(144, 40);
             this.ChkCollisions.Name = "ChkCollisions";
             this.ChkCollisions.Size = new System.Drawing.Size(106, 17);
             this.ChkCollisions.TabIndex = 3;
@@ -182,7 +171,7 @@
             this.ChkConnections.AutoSize = true;
             this.ChkConnections.Checked = true;
             this.ChkConnections.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ChkConnections.Location = new System.Drawing.Point(12, 41);
+            this.ChkConnections.Location = new System.Drawing.Point(12, 40);
             this.ChkConnections.Name = "ChkConnections";
             this.ChkConnections.Size = new System.Drawing.Size(122, 17);
             this.ChkConnections.TabIndex = 2;
@@ -212,11 +201,34 @@
             this.RbSimpleExport.Text = "Part model only";
             this.RbSimpleExport.UseVisualStyleBackColor = true;
             // 
+            // RbCollada
+            // 
+            this.RbCollada.AutoSize = true;
+            this.RbCollada.Checked = true;
+            this.RbCollada.Location = new System.Drawing.Point(144, 19);
+            this.RbCollada.Name = "RbCollada";
+            this.RbCollada.Size = new System.Drawing.Size(94, 17);
+            this.RbCollada.TabIndex = 2;
+            this.RbCollada.TabStop = true;
+            this.RbCollada.Text = "Collada (*.dae)";
+            this.RbCollada.UseVisualStyleBackColor = true;
+            this.RbCollada.CheckedChanged += new System.EventHandler(this.RbCollada_CheckedChanged);
+            // 
+            // RbWavefront
+            // 
+            this.RbWavefront.AutoSize = true;
+            this.RbWavefront.Location = new System.Drawing.Point(12, 19);
+            this.RbWavefront.Name = "RbWavefront";
+            this.RbWavefront.Size = new System.Drawing.Size(105, 17);
+            this.RbWavefront.TabIndex = 1;
+            this.RbWavefront.Text = "Wavefront (*.obj)";
+            this.RbWavefront.UseVisualStyleBackColor = true;
+            // 
             // ExportButton
             // 
             this.ExportButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.ExportButton.Enabled = false;
-            this.ExportButton.Location = new System.Drawing.Point(2, 215);
+            this.ExportButton.Location = new System.Drawing.Point(2, 238);
             this.ExportButton.Margin = new System.Windows.Forms.Padding(2, 3, 3, 3);
             this.ExportButton.Name = "ExportButton";
             this.ExportButton.Size = new System.Drawing.Size(75, 23);
@@ -229,7 +241,7 @@
             // 
             this.ReturnButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.ReturnButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.ReturnButton.Location = new System.Drawing.Point(209, 215);
+            this.ReturnButton.Location = new System.Drawing.Point(195, 238);
             this.ReturnButton.Margin = new System.Windows.Forms.Padding(3, 3, 2, 3);
             this.ReturnButton.Name = "ReturnButton";
             this.ReturnButton.Size = new System.Drawing.Size(75, 23);
@@ -255,7 +267,7 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(286, 241);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(272, 264);
             this.tableLayoutPanel1.TabIndex = 4;
             // 
             // groupBox1
@@ -264,9 +276,9 @@
             this.groupBox1.Controls.Add(this.RbCollada);
             this.groupBox1.Controls.Add(this.RbWavefront);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.groupBox1.Location = new System.Drawing.Point(3, 164);
+            this.groupBox1.Location = new System.Drawing.Point(3, 187);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(280, 41);
+            this.groupBox1.Size = new System.Drawing.Size(266, 42);
             this.groupBox1.TabIndex = 4;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "3 - Export format";
@@ -276,11 +288,13 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.ReturnButton;
-            this.ClientSize = new System.Drawing.Size(298, 253);
+            this.ClientSize = new System.Drawing.Size(284, 276);
             this.Controls.Add(this.tableLayoutPanel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.MinimumSize = new System.Drawing.Size(300, 315);
             this.Name = "ExportPartModelWindow";
             this.Padding = new System.Windows.Forms.Padding(6);
+            this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Export LDD Model";
             this.Step1GroupBox.ResumeLayout(false);
@@ -314,5 +328,6 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Button ReturnButton;
         private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.CheckBox ChkRoundEdge;
     }
 }

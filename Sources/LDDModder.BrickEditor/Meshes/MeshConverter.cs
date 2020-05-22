@@ -134,6 +134,13 @@ namespace LDDModder.BrickEditor.Meshes
                 }
             }
 
+            //if (exportOptions.IncludeRoundEdgeData)
+            //{
+            //    foreach (var mat in scene.Materials)
+            //    {
+            //    }
+            //}
+
             return scene;
         }
 
@@ -153,20 +160,20 @@ namespace LDDModder.BrickEditor.Meshes
                     string nodeName = $"{surfaceName}_Mesh{meshIndex++}";
 
                     var compModel = partSurface.Mesh.GetCullingGeometry(comp);
-                    var mNode = CreateMeshNode(scene, compModel, nodeName, materialIndex);
+                    var mNode = CreateMeshNode(scene, compModel, nodeName, materialIndex, exportOptions);
                     meshNodes.Add(mNode);
 
 
                     if (comp.ReplacementMesh != null && exportOptions.IncludeAltMeshes)
                     {
-                        mNode = CreateMeshNode(scene, comp.ReplacementMesh, nodeName + "Alt", materialIndex);
+                        mNode = CreateMeshNode(scene, comp.ReplacementMesh, nodeName + "Alt", materialIndex, exportOptions);
                         meshNodes.Add(mNode);
                     }
                 }
             }
             else
             {
-                var mNode = CreateMeshNode(scene, partSurface.Mesh.Geometry, surfaceName, materialIndex);
+                var mNode = CreateMeshNode(scene, partSurface.Mesh.Geometry, surfaceName, materialIndex, exportOptions);
                 meshNodes.Add(mNode);
             }
 
@@ -227,6 +234,8 @@ namespace LDDModder.BrickEditor.Meshes
             return armatureNode;
         }
 
+
+
         public static Mesh LddMeshToAssimp(MeshGeometry geometry)
         {
             var assimpMesh = new Mesh(Assimp.PrimitiveType.Triangle);
@@ -269,10 +278,40 @@ namespace LDDModder.BrickEditor.Meshes
             return LddMeshToAssimp(meshFile.Geometry);
         }
 
-        private static Node CreateMeshNode(Scene scene, MeshGeometry geometry, string name, int materialIndex)
+        public static Mesh LddRoundEdgeMeshToAssimp(MeshGeometry geometry)
+        {
+            var assimpMesh = new Mesh(Assimp.PrimitiveType.Triangle);
+            int indexCounter = 0;
+
+            foreach (var tri in geometry.Triangles)
+            {
+                foreach (var idx in tri.Indices)
+                {
+                    assimpMesh.Vertices.Add(idx.Vertex.Position.ToAssimp());
+                    assimpMesh.Normals.Add(idx.Vertex.Normal.ToAssimp());
+                    for (int i = 0; i < 6; i++)
+                    {
+                        var uvCoord = idx.RoundEdgeData.Coords[i];
+                        if (RoundEdgeData.EmptyCoord != uvCoord)
+                            uvCoord.X = Math.Abs(uvCoord.X) - 100f;
+                        //uvCoord /= 10f;
+                        assimpMesh.TextureCoordinateChannels[i].Add(new Vector3D(uvCoord.X, uvCoord.Y, 0));
+                    }
+                }
+
+                assimpMesh.Faces.Add(new Face(new int[] { indexCounter++, indexCounter++, indexCounter++ }));
+            }
+
+            return assimpMesh;
+        }
+
+        private static Node CreateMeshNode(Scene scene, MeshGeometry geometry, string name, int materialIndex, MeshExportOptions exportOptions)
         {
             var meshNode = new Node() { Name = name };
-            var aMesh = LddMeshToAssimp(geometry);
+
+            var aMesh = exportOptions.IncludeRoundEdgeData ? 
+                LddRoundEdgeMeshToAssimp(geometry) : LddMeshToAssimp(geometry);
+
             aMesh.MaterialIndex = materialIndex;
             meshNode.MeshIndices.Add(scene.MeshCount);
             scene.Meshes.Add(aMesh);

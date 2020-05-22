@@ -13,7 +13,6 @@ namespace LDDModder.BrickEditor.Meshes
         public bool IncludeConnections { get; set; }
         public bool IncludeBones { get; set; }
         public bool IncludeAltMeshes { get; set; }
-
-
+        public bool IncludeRoundEdgeData { get; set; }
     }
 }

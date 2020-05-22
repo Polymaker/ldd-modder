@@ -41,7 +41,7 @@
             this.ImportButton = new System.Windows.Forms.Button();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.ReturnButton = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
+            this.CheckUncheckButton = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ModelsGridView)).BeginInit();
             this.SuspendLayout();
@@ -59,7 +59,7 @@
             this.tableLayoutPanel1.Controls.Add(this.ImportButton, 2, 3);
             this.tableLayoutPanel1.Controls.Add(this.progressBar1, 0, 3);
             this.tableLayoutPanel1.Controls.Add(this.ReturnButton, 3, 3);
-            this.tableLayoutPanel1.Controls.Add(this.button1, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.CheckUncheckButton, 0, 1);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -78,10 +78,10 @@
             this.browseTextBox1.ButtonWidth = 87;
             this.tableLayoutPanel1.SetColumnSpan(this.browseTextBox1, 3);
             this.browseTextBox1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.browseTextBox1.Location = new System.Drawing.Point(84, 3);
+            this.browseTextBox1.Location = new System.Drawing.Point(75, 3);
             this.browseTextBox1.Name = "browseTextBox1";
             this.browseTextBox1.ReadOnly = true;
-            this.browseTextBox1.Size = new System.Drawing.Size(487, 20);
+            this.browseTextBox1.Size = new System.Drawing.Size(496, 20);
             this.browseTextBox1.TabIndex = 2;
             this.browseTextBox1.Value = "";
             this.browseTextBox1.BrowseButtonClicked += new System.EventHandler(this.browseTextBox1_BrowseButtonClicked);
@@ -193,15 +193,16 @@
             this.ReturnButton.Text = "Cancel";
             this.ReturnButton.UseVisualStyleBackColor = true;
             // 
-            // button1
+            // CheckUncheckButton
             // 
-            this.button1.Location = new System.Drawing.Point(3, 29);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 4;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.tableLayoutPanel1.SetColumnSpan(this.CheckUncheckButton, 2);
+            this.CheckUncheckButton.Location = new System.Drawing.Point(3, 29);
+            this.CheckUncheckButton.Name = "CheckUncheckButton";
+            this.CheckUncheckButton.Size = new System.Drawing.Size(115, 23);
+            this.CheckUncheckButton.TabIndex = 4;
+            this.CheckUncheckButton.Text = "Check/Uncheck all";
+            this.CheckUncheckButton.UseVisualStyleBackColor = true;
+            this.CheckUncheckButton.Click += new System.EventHandler(this.CheckUncheckButton_Click);
             // 
             // ImportModelsDialog
             // 
@@ -237,6 +238,6 @@
         private System.Windows.Forms.Label label1;
         private Controls.BrowseTextBox browseTextBox1;
         private System.Windows.Forms.Button ImportButton;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button CheckUncheckButton;
     }
 }

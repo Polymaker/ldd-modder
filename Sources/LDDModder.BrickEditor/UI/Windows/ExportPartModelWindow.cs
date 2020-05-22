@@ -119,11 +119,13 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         private void UpdateExportOptionStates()
         {
-            ChkBones.Enabled =
-               ChkConnections.Enabled = RbAdvancedExport.Checked && RbCollada.Checked;
+            ChkBones.Enabled = 
+                ChkRoundEdge.Enabled =
+                ChkConnections.Enabled = RbAdvancedExport.Checked && RbCollada.Checked;
 
             ChkCollisions.Enabled =
-               ChkAltMeshes.Enabled = RbAdvancedExport.Checked;
+                ChkAltMeshes.Enabled = RbAdvancedExport.Checked;
+
         }
 
         private void GetSelectedFormatInfo(out string formatID, out string fileExt)
@@ -164,10 +166,11 @@ namespace LDDModder.BrickEditor.UI.Windows
                 var exportOptions = new MeshExportOptions()
                 {
                     IndividualComponents = RbAdvancedExport.Checked,
-                    IncludeBones = RbAdvancedExport.Checked && ChkBones.Checked,
-                    IncludeAltMeshes = RbAdvancedExport.Checked && ChkBones.Checked,
-                    IncludeCollisions = RbAdvancedExport.Checked && ChkCollisions.Checked,
-                    IncludeConnections = RbAdvancedExport.Checked && ChkConnections.Checked
+                    IncludeBones = ChkBones.Enabled && ChkBones.Checked,
+                    IncludeAltMeshes = ChkAltMeshes.Enabled && ChkAltMeshes.Checked,
+                    IncludeCollisions = ChkCollisions.Enabled && ChkCollisions.Checked,
+                    IncludeConnections = ChkConnections.Enabled && ChkConnections.Checked,
+                    IncludeRoundEdgeData = ChkRoundEdge.Enabled && ChkRoundEdge.Checked
                 };
 
                 GetSelectedFormatInfo(out string formatID, out string formatExt);

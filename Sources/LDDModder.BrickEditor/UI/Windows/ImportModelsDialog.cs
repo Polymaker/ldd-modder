@@ -66,6 +66,9 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         private void FillModelsGridView()
         {
+            ModelsGridView.DataSource = null;
+            ModelsToImport.Clear();
+
             foreach (var mesh in SceneToImport.Meshes)
             {
                 if (!mesh.Faces.Any(x => x.IndexCount == 3))
@@ -130,6 +133,7 @@ namespace LDDModder.BrickEditor.UI.Windows
         {
             if (HasInitialized && ModelsGridView.Columns[e.ColumnIndex] == SurfaceColumn)
             {
+                RebuildSurfaceList();
                 UpdateSurfaceComboBox();
             }
         }
@@ -232,10 +236,19 @@ namespace LDDModder.BrickEditor.UI.Windows
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void CheckUncheckButton_Click(object sender, EventArgs e)
         {
+            if (ModelsToImport.Count == 0)
+                return;
+
+            int checkedCount = ModelsToImport.Count(x => x.Selected);
+            int uncheckedCount = ModelsToImport.Count(x => !x.Selected);
+
             foreach (var model in ModelsToImport)
-                model.Selected = false;
+                model.Selected = (checkedCount < uncheckedCount);
+
+            foreach(DataGridViewRow row in ModelsGridView.Rows)
+                ModelsGridView.UpdateCellValue(SelectionColumn.Index, row.Index);
         }
     }
 }
