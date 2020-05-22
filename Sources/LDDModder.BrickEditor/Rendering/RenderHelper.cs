@@ -284,6 +284,11 @@ namespace LDDModder.BrickEditor.Rendering
             vertexBuffer.BindAttribute(ColorShader.Position, 0);
         }
 
+        public static void EndDrawColor(IVertexBuffer vertexBuffer)
+        {
+            vertexBuffer.UnbindAttribute(ColorShader.Position);
+        }
+
         public static void BeginDrawWireframe(IVertexBuffer vertexBuffer, Matrix4 transform, float thickness, Vector4 color)
         {
             WireframeShader.Use();

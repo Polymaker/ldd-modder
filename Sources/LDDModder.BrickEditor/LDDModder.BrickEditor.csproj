@@ -157,6 +157,7 @@
     <Compile Include="Models\Navigation\ProjectTreeNodeCollection.cs" />
     <Compile Include="ProjectHandling\Extensions\FemaleStudModelExtension.cs" />
     <Compile Include="ProjectHandling\UndoRedoManager.cs" />
+    <Compile Include="Rendering\Gizmos\ScalingHandle.cs" />
     <Compile Include="Rendering\MeshRenderMode.cs" />
     <Compile Include="Rendering\Models\VertexArrayBuffer.cs" />
     <Compile Include="Rendering\Shaders\SimpleTextureShaderProgram.cs" />

@@ -7,6 +7,7 @@ using LDDModder.Serialization;
 using LDDModder.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -253,8 +254,18 @@ namespace LDDModder.Modding.Editing
                             cullingComp.Name + "_Alt"
                         );
 
-                        (cullingComp as FemaleStudModel).ReplacementMeshes
-                            .Add(new ModelMeshReference(replacementMesh));
+                        if (cullingComp is FemaleStudModel femaleStud)
+                        {
+                            femaleStud.ReplacementMeshes
+                                .Add(new ModelMeshReference(replacementMesh));
+                        }
+                        else// if (cullingComp is BrickTubeModel brickTube)
+                        {
+                            Debug.WriteLine($"{cullingComp.ComponentType} has a replacement mesh!!!");
+                            
+                            //cullingComp.Meshes
+                            //    .Add(new ModelMeshReference(replacementMesh));
+                        }
                     }
 
                     surfaceElement.Components.Add(cullingComp);

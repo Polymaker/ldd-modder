@@ -110,6 +110,12 @@ namespace LDDModder.BrickEditor.Rendering
         {
             OriginalTrans = Transform;
             IsEditingTransform = true;
+            OnBeginEditTransform();
+        }
+
+        protected virtual void OnBeginEditTransform()
+        {
+
         }
 
         public void EndEditTransform(bool canceled)
@@ -125,6 +131,13 @@ namespace LDDModder.BrickEditor.Rendering
                     OnTransformChanged();
                 }
             }
+
+            OnEndEditTransform(canceled);
+        }
+
+        protected virtual void OnEndEditTransform(bool canceled)
+        {
+
         }
 
         public virtual void ApplyTransform(Matrix4 transform)

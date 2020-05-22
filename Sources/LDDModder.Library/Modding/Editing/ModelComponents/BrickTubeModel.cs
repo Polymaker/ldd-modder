@@ -43,6 +43,8 @@ namespace LDDModder.Modding.Editing
                     AdjacentStuds.Add(studRef);
                 }
             }
+            else
+                Debug.WriteLine("Tube culling does not reference any adjacent studs!");
         }
 
         internal override void FillCullingInformation(MeshCulling culling)

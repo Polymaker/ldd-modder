@@ -271,7 +271,8 @@ namespace LDDModder.LifExtractor.Windows
             if (e.Item is TreeNode node)
             {
                 var draggedDir = node.Tag as LifFolderInfo;
-                DoDragDrop(node, DragDropEffects.Move);
+                if (!draggedDir.IsRootDirectory)
+                    DoDragDrop(node, DragDropEffects.Move);
             }
         }
 
@@ -307,7 +308,7 @@ namespace LDDModder.LifExtractor.Windows
             {
                 Point targetPoint = LifTreeView.PointToClient(new Point(e.X, e.Y));
                 var targetNode = LifTreeView.GetNodeAt(targetPoint);
-                //var targetDir = LifTreeView.SelectedNode.Tag as LifFolderInfo;
+                var targetDir = LifTreeView.SelectedNode.Tag as LifFolderInfo;
 
                 //if (targetDir == null)
                 //{
@@ -320,7 +321,7 @@ namespace LDDModder.LifExtractor.Windows
                 //var draggedFolders = olvObj.ModelObjects.OfType<LifFolderInfo>();
                 
                 LifTreeView.AfterSelect -= LifTreeView_AfterSelect;
-                LifTreeView.SelectedNode = LifTreeView.GetNodeAt(targetPoint);
+                LifTreeView.SelectedNode = targetNode;
                 LifTreeView.AfterSelect += LifTreeView_AfterSelect;
             }
         }
@@ -846,7 +847,7 @@ namespace LDDModder.LifExtractor.Windows
 
         #region File Loading / Saving
 
-        private void OpenLifFile()
+        private void SelectLifToOpen()
         {
             using (var ofd = new OpenFileDialog())
             {
@@ -866,12 +867,12 @@ namespace LDDModder.LifExtractor.Windows
                         }
                     }
 
-                    OpenLifFileAsync(ofd.FileName);
+                    OpenLifFile(ofd.FileName);
                 }
             }
         }
 
-        private void OpenLifFileAsync(string filepath)
+        public void OpenLifFile(string filepath)
         {
             BeginOpenFile();
 
@@ -969,7 +970,7 @@ namespace LDDModder.LifExtractor.Windows
 
         private void FileOpenMenuItem_Click(object sender, EventArgs e)
         {
-            OpenLifFile();
+            SelectLifToOpen();
         }
 
         private void FileMenu_Close_Click(object sender, EventArgs e)
@@ -1004,7 +1005,7 @@ namespace LDDModder.LifExtractor.Windows
 
         private void ActionsMenu_Open_Click(object sender, EventArgs e)
         {
-            OpenLifFile();
+            SelectLifToOpen();
         }
 
         private void ActionsMenu_Extract_Click(object sender, EventArgs e)
@@ -1047,7 +1048,7 @@ namespace LDDModder.LifExtractor.Windows
                     if (IsNewLif)
                         LoadLifFile(null);
                     else
-                        OpenLifFileAsync(CurrentFile.FilePath);
+                        OpenLifFile(CurrentFile.FilePath);
                 }
                 //ToggleLifEditing(false);
             }

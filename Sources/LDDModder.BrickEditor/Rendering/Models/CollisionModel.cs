@@ -21,6 +21,8 @@ namespace LDDModder.BrickEditor.Rendering
 
         public Matrix4 ParentTransform { get; set; }
 
+        private Vector3 EditedScale { get; set; }
+
         public CollisionModel(PartCollision collision) : base(collision)
         {
             PartCollision = collision;
@@ -37,6 +39,28 @@ namespace LDDModder.BrickEditor.Rendering
             ScaleTransform = Matrix4.CreateScale(scale);
             Scale = scale;
             BoundingBox = BBox.FromCenterSize(Vector3.Zero, scale);
+        }
+
+        public void TransformSize(Vector3 amount)
+        {
+            EditedScale = Scale + amount;
+            ScaleTransform = Matrix4.CreateScale(EditedScale);
+            BoundingBox = BBox.FromCenterSize(Vector3.Zero, EditedScale);
+        }
+
+        protected override void OnBeginEditTransform()
+        {
+            base.OnBeginEditTransform();
+            EditedScale = Scale;
+        }
+
+        protected override void OnEndEditTransform(bool canceled)
+        {
+            if (!canceled)
+            {
+                PartCollision.SetSize(EditedScale.ToLDD() / 2f);
+                UpdateScaleTransform();
+            }
         }
 
         protected override void ApplyTransformToElement(Matrix4 transform)

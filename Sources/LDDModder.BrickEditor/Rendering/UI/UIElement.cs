@@ -21,6 +21,8 @@ namespace LDDModder.BrickEditor.Rendering.UI
 
         public Vector4 TextColor { get; set; }
 
+        public bool Visible { get; set; } = true;
+
         public virtual void OnPaint()
         {
             if (!string.IsNullOrEmpty(Text))
@@ -31,7 +33,8 @@ namespace LDDModder.BrickEditor.Rendering.UI
 
         public void Draw()
         {
-            OnPaint();
+            if (Visible)
+                OnPaint();
         }
 
         public virtual bool Contains(Vector2 position)

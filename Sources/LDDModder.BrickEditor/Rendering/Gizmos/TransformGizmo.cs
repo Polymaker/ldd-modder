@@ -10,6 +10,7 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
     {
         private RotationHandle[] RotationHandles;
         private TranslationHandle[] TranslationHandles;
+        private ScalingHandle[] ScalingHandles;
 
         private float _GizmoSize;
         private Matrix4 _Transform;
@@ -197,11 +198,13 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
         {
             TranslationHandles = new TranslationHandle[3];
             RotationHandles = new RotationHandle[3];
+            ScalingHandles = new ScalingHandle[3];
             for (int i = 0; i < 3; i++)
             {
                 var axis = new Vector3(i == 0 ? 1 : 0, i == 1 ? 1 : 0, i == 2 ? 1 : 0);
                 TranslationHandles[i] = new TranslationHandle(axis);
                 RotationHandles[i] = new RotationHandle(axis);
+                ScalingHandles[i] = new ScalingHandle(axis);
             }
         }
 
@@ -214,18 +217,17 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
             var indices = new List<int>();
             var vertices = new List<Vector3>();
 
+            //Cone vertices and indices
             for (int i = 0; i < 32; i++)
             {
                 var pt = new Vector3((float)Math.Cos(stepAngle * i), 0f, (float)Math.Sin(stepAngle * i)) * 0.5f;
                 vertices.Add(pt);
                 indices.Add((i + 1) % 32); indices.Add(i); indices.Add(32);
             }
-
             vertices.Add(Vector3.UnitY);//cone top
 
             //for drawing a line
             vertices.Add(Vector3.Zero);
-            //indices.Add(33); indices.Add(32);
 
             VertexBuffer.SetIndices(indices);
             VertexBuffer.SetVertices(vertices);
@@ -251,6 +253,11 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
                 var rotAxis = RotationHandles[i];
                 rotAxis.GizmoSize = scaledGizmoSize;
                 rotAxis.Tolerence = UIScale * 10f; //10 pixel
+
+                var scaleAxis = ScalingHandles[i];
+                scaleAxis.GizmoSize = scaledGizmoSize;
+                scaleAxis.Tolerence = UIScale * 10f; //10 pixel
+                scaleAxis.UpdateBounds();
             }
 
             BoundingSphere = new BSphere(Position, scaledGizmoSize + padding);
@@ -263,6 +270,8 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
                 return TranslationHandles[index];
             else if (DisplayStyle == GizmoStyle.Rotation)
                 return RotationHandles[index];
+            else if (DisplayStyle == GizmoStyle.Scaling)
+                return ScalingHandles[index];
             return null;
         }
 
@@ -311,14 +320,14 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
 
         private void ClearOver()
         {
+            var handles = new GizmoHandle[][] { TranslationHandles, RotationHandles, ScalingHandles };
+
             for (int i = 0; i < 3; i++)
             {
-                var transAxis = TranslationHandles[i];
-                transAxis.IsOver = false;
-
-                var rotAxis = RotationHandles[i];
-                rotAxis.IsOver = false;
+                for (int j = 0; j < 3; j++)
+                    handles[i][j].IsOver = false;
             }
+
             IsHovering = false;
         }
 
@@ -403,7 +412,14 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
                             EditTransform = Matrix4.CreateFromAxisAngle(SelectedHandle.Axis, TransformedAmount);
                         }
                     }
-
+                    else if (DisplayStyle == GizmoStyle.Scaling)
+                    {
+                        TransformedAmount = GetComponent(EditCurrentPos - EditStartPos, SelectedHandle.Axis);
+                        if (input.IsControlDown())
+                            TransformedAmount = SnapValue(TransformedAmount, TranslationSnap);
+                        //var resultScale = (SelectedHandle.Axis * TransformedAmount) + Vector3.One - SelectedHandle.Axis;
+                        //EditTransform = Matrix4.CreateScale(resultScale);
+                    }
                     ApplyTransformToElements();
                 }
             }
@@ -460,6 +476,7 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
                     RenderRotationGizmo();
                     break;
                 case GizmoStyle.Scaling:
+                    RenderScalingGizmo();
                     break;
             }
         }
@@ -529,6 +546,12 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
                 GL.Vertex3(p2.Normalized() * UIScale * GizmoSize);
                 GL.End();
             }
+
+            RenderHandles();
+        }
+
+        private void RenderScalingGizmo()
+        {
 
             RenderHandles();
         }
@@ -728,7 +751,7 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
             _Position = Matrix4.CreateTranslation(transformPosition);
             _Orientation = Matrix4.Identity;
 
-            if (OrientationMode == OrientationMode.Local)
+            if (OrientationMode == OrientationMode.Local || DisplayStyle == GizmoStyle.Scaling)
             {
                 var allRot = ActiveElements.Select(x => x.Transform.ExtractRotation());
                 var avgRot = OpenTKHelper.AverageQuaternion(allRot);
@@ -780,6 +803,18 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
 
         private void ApplyTransformToElements()
         {
+            if (DisplayStyle == GizmoStyle.Scaling)
+            {
+                var collisionModel = EditedElements.FirstOrDefault()?.Element as CollisionModel;
+                if (collisionModel != null)
+                {
+                    var scaleModifier = (SelectedHandle.Axis * TransformedAmount); // + (new Vector3(1f) - SelectedHandle.Axis);
+                    if (collisionModel.CollisionType == LDD.Primitives.Collisions.CollisionType.Sphere)
+                        scaleModifier = new Vector3(TransformedAmount);
+                    collisionModel.TransformSize(scaleModifier);
+                }
+            }
+
             var localTrans = GetActiveTransform();
             foreach (var modelTrans in EditedElements)
                 modelTrans.ApplyTransform(localTrans);

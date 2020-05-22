@@ -1,28 +1,25 @@
-﻿using System;
+﻿using OpenTK;
+using OpenTK.Graphics.OpenGL;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using OpenTK;
-using OpenTK.Graphics.OpenGL;
 
 namespace LDDModder.BrickEditor.Rendering.Gizmos
 {
-    public class TranslationHandle : GizmoHandle
+    public class ScalingHandle : GizmoHandle
     {
         public BBox BoundingBox { get; set; }
 
-        public override GizmoStyle HandleType => GizmoStyle.Translation;
+        public const float CubeSize = 0.1333333333333334f;
 
-        public const float ArrowSize = 0.2666666666666667f;
+        public override GizmoStyle HandleType => GizmoStyle.Scaling;
 
         private Plane SecondaryPlane;
 
-        public TranslationHandle(Vector3 axis) : base(axis)
+        public ScalingHandle(Vector3 axis) : base(axis)
         {
-            //var diag = (new Vector3(1f) - axis).Normalized();
-            //Plane = new Plane(Vector3.Zero, diag, 0f);
-
             if (axis == Vector3.UnitX)
             {
                 Plane = new Plane(Vector3.Zero, Vector3.UnitZ, 0f);
@@ -43,7 +40,7 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
         public override void UpdateBounds()
         {
             var boxSize = new Vector3(Tolerence) * (Vector3.One - Axis);
-            var boxLength = Axis * (GizmoSize * (1f + ArrowSize));
+            var boxLength = Axis * (GizmoSize * (1f + CubeSize));
             boxSize += boxLength;
 
             BoundingBox = BBox.FromCenterSize(boxLength / 2f, boxSize);
@@ -94,37 +91,49 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
         {
             base.RenderHandle(gizmo, color);
 
-            if (gizmo.IsEditing && !IsSelected)
-                return;
+            var editOffset = 0f;
+            var renderScale = new Vector3(GizmoSize);
 
-            var scale = Matrix4.CreateScale(GizmoSize);
-            var arrowSize = GizmoSize * ArrowSize;
-            var arrowScale = Matrix4.CreateScale(arrowSize / 2f, arrowSize, arrowSize / 2f);
-            var arrowTrans = arrowScale * Matrix4.CreateTranslation(0, GizmoSize, 0);
+            if (gizmo.IsEditing && IsSelected)
+            {
+                editOffset = gizmo.TransformedAmount / 2f; 
+                renderScale += new Vector3(0, editOffset, 0);
+            }
+
+            var scaleMatrix = Matrix4.CreateScale(renderScale);
+            var cubeRenderSize = GizmoSize * CubeSize;
+
+            if (gizmo.IsEditing)
+                cubeRenderSize *= IsSelected ? 1.25f : 0.75f;
+
+            var cubeScale = Matrix4.CreateScale(cubeRenderSize);
+            var cubeTrans = cubeScale * Matrix4.CreateTranslation(0, GizmoSize + editOffset, 0);
 
             var baseTransform = Orientation * gizmo.GetActiveTransform();
 
             GL.PushAttrib(AttribMask.LineBit);
             GL.LineWidth(outlined ? 4.5f : 2.5f);
 
-            RenderHelper.BeginDrawColor(gizmo.VertexBuffer, scale * baseTransform, color);
+            RenderHelper.BeginDrawColor(gizmo.VertexBuffer, scaleMatrix * baseTransform, color);
             gizmo.VertexBuffer.DrawArrays(PrimitiveType.Lines, 32, 2);
-            
+
             GL.PopAttrib();
 
-            
+
             if (outlined)
             {
-                RenderHelper.BeginDrawWireframe(gizmo.VertexBuffer, arrowTrans * baseTransform, 2f, color);
-                gizmo.VertexBuffer.DrawElements(PrimitiveType.Triangles);
+                RenderHelper.BeginDrawWireframe(ModelManager.CubeModel.VertexBuffer, cubeTrans * baseTransform, 2f, color);
+                ModelManager.CubeModel.DrawElements();
+                //gizmo.VertexBuffer.DrawElements(PrimitiveType.Triangles);
                 RenderHelper.EndDrawWireframe(gizmo.VertexBuffer);
             }
             else
             {
-                RenderHelper.BeginDrawColor(gizmo.VertexBuffer, arrowTrans * baseTransform, color);
-                gizmo.VertexBuffer.DrawElements(PrimitiveType.Triangles);
+                RenderHelper.BeginDrawColor(ModelManager.CubeModel.VertexBuffer, cubeTrans * baseTransform, color);
+                ModelManager.CubeModel.DrawElements();
+                //gizmo.VertexBuffer.DrawElements(PrimitiveType.Triangles);
             }
-            
+
 
         }
     }

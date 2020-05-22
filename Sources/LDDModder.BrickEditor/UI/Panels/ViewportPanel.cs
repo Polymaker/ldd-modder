@@ -202,6 +202,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         private UIButton SelectGizmoButton;
         private UIButton MoveGizmoButton;
         private UIButton RotateGizmoButton;
+        private UIButton ScaleGizmoButton;
 
         private void InitializeUI()
         {
@@ -240,7 +241,18 @@ namespace LDDModder.BrickEditor.UI.Panels
             UIElements.Add(RotateGizmoButton);
             RotateGizmoButton.Clicked += RotateGizmoButton_Clicked;
 
-            var gizmoButtons = new UIButton[] { SelectGizmoButton, MoveGizmoButton, RotateGizmoButton };
+            ScaleGizmoButton = new UIButton()
+            {
+                Texture = SelectionIcons,
+                NormalSprite =      new SpriteBounds(0.75f, 0, 0.25f, 0.25f),
+                OverSprite =        new SpriteBounds(0.75f, 0.25f, 0.25f, 0.25f),
+                SelectedSprite =    new SpriteBounds(0.75f, 0.5f, 0.25f, 0.25f),
+                Visible = false
+            };
+            ScaleGizmoButton.Clicked += ScaleGizmoButton_Clicked;
+            UIElements.Add(ScaleGizmoButton);
+
+            var gizmoButtons = new UIButton[] { SelectGizmoButton, MoveGizmoButton, RotateGizmoButton, ScaleGizmoButton };
 
             for (int i = 0; i < gizmoButtons.Length; i++)
             {
@@ -259,6 +271,8 @@ namespace LDDModder.BrickEditor.UI.Panels
             //};
             //UIElements.Add(testButton);
         }
+
+        
 
         private void InitializeSelectionGizmo()
         {
@@ -520,7 +534,11 @@ namespace LDDModder.BrickEditor.UI.Panels
                     float degrees = (SelectionGizmo.TransformedAmount / (float)Math.PI) * 180f;
                     amountStr = $"Rotation: {degrees:0.##}°";
                 }
-                else
+                else if (SelectionGizmo.DisplayStyle == GizmoStyle.Scaling)
+                {
+                    amountStr = $"Scaling: {SelectionGizmo.TransformedAmount:0.##}";
+                }
+                else if (SelectionGizmo.DisplayStyle == GizmoStyle.Translation)
                     amountStr = $"Translation: {SelectionGizmo.TransformedAmount:0.##}";
 
                 UIRenderHelper.DrawText(amountStr, UIRenderHelper.NormalFont, Color.Black, new Vector2(10, UIRenderHelper.ViewSize.Y - 20));
@@ -588,7 +606,9 @@ namespace LDDModder.BrickEditor.UI.Panels
             {
                 UIElement overElement = null;
 
-                foreach (var elem in UIElements.OrderByDescending(x => x.ZOrder))
+                foreach (var elem in UIElements
+                    .OrderByDescending(x => x.ZOrder)
+                    .Where(x => x.Visible))
                 {
                     if (overElement == null && elem.Contains(InputManager.LocalMousePos))
                     {
@@ -665,11 +685,20 @@ namespace LDDModder.BrickEditor.UI.Panels
             }
         }
 
+        private void ScaleGizmoButton_Clicked(object sender, EventArgs e)
+        {
+            if (!ScaleGizmoButton.Selected && !SelectionGizmo.IsEditing)
+            {
+                SelectionGizmo.DisplayStyle = GizmoStyle.Scaling;
+            }
+        }
+
         private void UpdateGizmoButtonStates()
         {
             MoveGizmoButton.Selected = SelectionGizmo.DisplayStyle == GizmoStyle.Translation;
             SelectGizmoButton.Selected = SelectionGizmo.DisplayStyle == GizmoStyle.Plain;
             RotateGizmoButton.Selected = SelectionGizmo.DisplayStyle == GizmoStyle.Rotation;
+            ScaleGizmoButton.Selected = SelectionGizmo.DisplayStyle == GizmoStyle.Scaling;
         }
 
         #endregion
@@ -977,7 +1006,22 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void UpdateGizmoFromSelection()
         {
-            var selectedModels = GetSelectedModels(true);
+            var selectedModels = GetSelectedModels(true).ToList();
+
+            if (selectedModels.Count == 1 &&
+                selectedModels.FirstOrDefault() is CollisionModel)
+            {
+                ScaleGizmoButton.Visible = true;
+            }
+            else
+            {
+                if (selectedModels.Count > 0)
+                {
+                    ScaleGizmoButton.Visible = false;
+                    if (SelectionGizmo.DisplayStyle == GizmoStyle.Scaling)
+                        SelectionGizmo.DisplayStyle = GizmoStyle.Plain;
+                }
+            }
 
             if (selectedModels.Any())
             {
