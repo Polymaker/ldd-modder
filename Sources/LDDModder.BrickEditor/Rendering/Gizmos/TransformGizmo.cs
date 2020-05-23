@@ -163,6 +163,8 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
 
         public float RotationSnap { get; set; }
 
+        public float ScalingSnap { get; set; }
+
         public BSphere BoundingSphere { get; private set; }
 
         public Vector4[] HandleColors { get; set; }
@@ -178,7 +180,7 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
 
             RotationSnap = 5f * (float)Math.PI / 180f;
             TranslationSnap = 0.4f;
-
+            ScalingSnap = 0.2f;
             EditTransform = Matrix4.Identity;
 
             _DisplayStyle = GizmoStyle.Translation;
@@ -415,8 +417,9 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
                     else if (DisplayStyle == GizmoStyle.Scaling)
                     {
                         TransformedAmount = GetComponent(EditCurrentPos - EditStartPos, SelectedHandle.Axis);
+                        TransformedAmount *= 2f;
                         if (input.IsControlDown())
-                            TransformedAmount = SnapValue(TransformedAmount, TranslationSnap);
+                            TransformedAmount = SnapValue(TransformedAmount, ScalingSnap);
                         //var resultScale = (SelectedHandle.Axis * TransformedAmount) + Vector3.One - SelectedHandle.Axis;
                         //EditTransform = Matrix4.CreateScale(resultScale);
                     }
@@ -805,13 +808,15 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
         {
             if (DisplayStyle == GizmoStyle.Scaling)
             {
-                var collisionModel = EditedElements.FirstOrDefault()?.Element as CollisionModel;
-                if (collisionModel != null)
+                var axisScaling = (SelectedHandle.Axis * TransformedAmount);
+                var sphereScaling = new Vector3(TransformedAmount);
+
+                foreach (var collision in EditedElements.Select(x => x.Element).OfType<CollisionModel>())
                 {
-                    var scaleModifier = (SelectedHandle.Axis * TransformedAmount); // + (new Vector3(1f) - SelectedHandle.Axis);
-                    if (collisionModel.CollisionType == LDD.Primitives.Collisions.CollisionType.Sphere)
-                        scaleModifier = new Vector3(TransformedAmount);
-                    collisionModel.TransformSize(scaleModifier);
+                    if (collision.CollisionType == LDD.Primitives.Collisions.CollisionType.Sphere)
+                        collision.TransformSize(sphereScaling);
+                    else
+                        collision.TransformSize(axisScaling);
                 }
             }
 

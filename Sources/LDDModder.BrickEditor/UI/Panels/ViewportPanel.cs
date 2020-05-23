@@ -590,6 +590,8 @@ namespace LDDModder.BrickEditor.UI.Panels
                         SelectionGizmo.DisplayStyle = GizmoStyle.Rotation;
                     else if (InputManager.IsKeyPressed(Key.T))
                         SelectionGizmo.DisplayStyle = GizmoStyle.Translation;
+                    //else if (InputManager.IsKeyPressed(Key.S) && ScaleGizmoButton.Visible)
+                    //    SelectionGizmo.DisplayStyle = GizmoStyle.Scaling;
                 }
             }
 
@@ -1008,19 +1010,22 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             var selectedModels = GetSelectedModels(true).ToList();
 
-            if (selectedModels.Count == 1 &&
-                selectedModels.FirstOrDefault() is CollisionModel)
+            if (selectedModels.Any() &&
+                selectedModels.All(x => x is CollisionModel))
             {
                 ScaleGizmoButton.Visible = true;
             }
-            else
+            else if (ScaleGizmoButton.Visible)
             {
-                if (selectedModels.Count > 0)
+                bool hideButton = selectedModels.Count > 0 || SelectionGizmo.DisplayStyle != GizmoStyle.Scaling;
+
+                if (hideButton)
                 {
                     ScaleGizmoButton.Visible = false;
                     if (SelectionGizmo.DisplayStyle == GizmoStyle.Scaling)
                         SelectionGizmo.DisplayStyle = GizmoStyle.Plain;
                 }
+                
             }
 
             if (selectedModels.Any())
