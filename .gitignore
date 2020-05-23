@@ -6,6 +6,7 @@
 *.user
 *.userosscache
 *.sln.docstates
+LDD Bricks/Tests
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
@@ -234,3 +235,6 @@ _Pvt_Extensions
 
 # FAKE - F# Make
 .fake/
+
+# Custom rules
+!**/Resources/*/*.obj

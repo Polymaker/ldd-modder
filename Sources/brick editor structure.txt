@@ -1,0 +1,32 @@
+LDD Part
+
+\- Meshes (Static node) // each sub-node represent a mesh file *.g, *.g1, *.g2, etc
+	\- Main model (Mesh node)
+		\- Meshes
+		\- Studs
+	\- Decoration 1 (Mesh node)
+		\- Meshes
+		\- Studs
+	\- Decoration 2 (Mesh node)
+		\- Meshes
+		\- Studs
+	...
+	
+\- Connections (Static node)
+	\- Connection 1 (Connection node)
+	\- Connection 2 (Connection node)
+	...
+	
+\- Collisions (Static node)
+	\- Collision 1 (Collision node)
+	\- Collision 2 (Collision node)
+	...
+	
+\- Bones (Static/optional node)
+	\- Bone 1 (Bone node)
+		\- Connections
+			\- ...
+		\- Collisions 
+			\- ...
+	...
+	

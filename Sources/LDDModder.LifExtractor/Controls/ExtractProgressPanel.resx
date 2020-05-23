@@ -1,0 +1,510 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="ProgressTableLayout.ColumnCount" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="RemainingTimeValueLabel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Right</value>
+  </data>
+  <data name="RemainingTimeValueLabel.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="RemainingTimeValueLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>320, 19</value>
+  </data>
+  <data name="RemainingTimeValueLabel.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="RemainingTimeValueLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>55, 19</value>
+  </data>
+  <data name="RemainingTimeValueLabel.TabIndex" type="System.Int32, mscorlib">
+    <value>11</value>
+  </data>
+  <data name="RemainingTimeValueLabel.Text" xml:space="preserve">
+    <value>00:15:00</value>
+  </data>
+  <data name="&gt;&gt;RemainingTimeValueLabel.Name" xml:space="preserve">
+    <value>RemainingTimeValueLabel</value>
+  </data>
+  <data name="&gt;&gt;RemainingTimeValueLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;RemainingTimeValueLabel.Parent" xml:space="preserve">
+    <value>ProgressTableLayout</value>
+  </data>
+  <data name="&gt;&gt;RemainingTimeValueLabel.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="ElapsedTimeValueLabel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Right</value>
+  </data>
+  <data name="ElapsedTimeValueLabel.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="ElapsedTimeValueLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>320, 0</value>
+  </data>
+  <data name="ElapsedTimeValueLabel.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="ElapsedTimeValueLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>55, 19</value>
+  </data>
+  <data name="ElapsedTimeValueLabel.TabIndex" type="System.Int32, mscorlib">
+    <value>10</value>
+  </data>
+  <data name="ElapsedTimeValueLabel.Text" xml:space="preserve">
+    <value>00:02:01</value>
+  </data>
+  <data name="&gt;&gt;ElapsedTimeValueLabel.Name" xml:space="preserve">
+    <value>ElapsedTimeValueLabel</value>
+  </data>
+  <data name="&gt;&gt;ElapsedTimeValueLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ElapsedTimeValueLabel.Parent" xml:space="preserve">
+    <value>ProgressTableLayout</value>
+  </data>
+  <data name="&gt;&gt;ElapsedTimeValueLabel.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="FileProgressValueLabel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Right</value>
+  </data>
+  <data name="FileProgressValueLabel.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="FileProgressValueLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>143, 0</value>
+  </data>
+  <data name="FileProgressValueLabel.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="FileProgressValueLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>42, 19</value>
+  </data>
+  <data name="FileProgressValueLabel.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="FileProgressValueLabel.Text" xml:space="preserve">
+    <value>1 / 10</value>
+  </data>
+  <data name="&gt;&gt;FileProgressValueLabel.Name" xml:space="preserve">
+    <value>FileProgressValueLabel</value>
+  </data>
+  <data name="&gt;&gt;FileProgressValueLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;FileProgressValueLabel.Parent" xml:space="preserve">
+    <value>ProgressTableLayout</value>
+  </data>
+  <data name="&gt;&gt;FileProgressValueLabel.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="ExtractingLabel.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="ExtractingLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 67</value>
+  </data>
+  <data name="ExtractingLabel.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 2, 3, 1</value>
+  </data>
+  <data name="ExtractingLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>63, 16</value>
+  </data>
+  <data name="ExtractingLabel.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="ExtractingLabel.Text" xml:space="preserve">
+    <value>Extracting:</value>
+  </data>
+  <data name="&gt;&gt;ExtractingLabel.Name" xml:space="preserve">
+    <value>ExtractingLabel</value>
+  </data>
+  <data name="&gt;&gt;ExtractingLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ExtractingLabel.Parent" xml:space="preserve">
+    <value>ProgressTableLayout</value>
+  </data>
+  <data name="&gt;&gt;ExtractingLabel.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="CurrentFileLabel.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="CurrentFileLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 83</value>
+  </data>
+  <data name="CurrentFileLabel.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 2, 0, 0</value>
+  </data>
+  <data name="CurrentFileLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>121, 15</value>
+  </data>
+  <data name="CurrentFileLabel.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="CurrentFileLabel.Text" xml:space="preserve">
+    <value>Lif\Assemblies\1234.txt</value>
+  </data>
+  <data name="&gt;&gt;CurrentFileLabel.Name" xml:space="preserve">
+    <value>CurrentFileLabel</value>
+  </data>
+  <data name="&gt;&gt;CurrentFileLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;CurrentFileLabel.Parent" xml:space="preserve">
+    <value>ProgressTableLayout</value>
+  </data>
+  <data name="&gt;&gt;CurrentFileLabel.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="FileProgressLabel.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="FileProgressLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 0</value>
+  </data>
+  <data name="FileProgressLabel.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="FileProgressLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>37, 19</value>
+  </data>
+  <data name="FileProgressLabel.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="FileProgressLabel.Text" xml:space="preserve">
+    <value>Files:</value>
+  </data>
+  <data name="&gt;&gt;FileProgressLabel.Name" xml:space="preserve">
+    <value>FileProgressLabel</value>
+  </data>
+  <data name="&gt;&gt;FileProgressLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;FileProgressLabel.Parent" xml:space="preserve">
+    <value>ProgressTableLayout</value>
+  </data>
+  <data name="&gt;&gt;FileProgressLabel.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="ExtractionProgressBar.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Left, Right</value>
+  </data>
+  <data name="ExtractionProgressBar.Location" type="System.Drawing.Point, System.Drawing">
+    <value>8, 41</value>
+  </data>
+  <data name="ExtractionProgressBar.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>8, 3, 8, 3</value>
+  </data>
+  <data name="ExtractionProgressBar.Size" type="System.Drawing.Size, System.Drawing">
+    <value>362, 23</value>
+  </data>
+  <data name="ExtractionProgressBar.TabIndex" type="System.Int32, mscorlib">
+    <value>5</value>
+  </data>
+  <data name="&gt;&gt;ExtractionProgressBar.Name" xml:space="preserve">
+    <value>ExtractionProgressBar</value>
+  </data>
+  <data name="&gt;&gt;ExtractionProgressBar.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ProgressBar, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ExtractionProgressBar.Parent" xml:space="preserve">
+    <value>ProgressTableLayout</value>
+  </data>
+  <data name="&gt;&gt;ExtractionProgressBar.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="ElapsedTimeLabel.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="ElapsedTimeLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>191, 0</value>
+  </data>
+  <data name="ElapsedTimeLabel.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="ElapsedTimeLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>76, 19</value>
+  </data>
+  <data name="ElapsedTimeLabel.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="ElapsedTimeLabel.Text" xml:space="preserve">
+    <value>Elapsed time:</value>
+  </data>
+  <data name="&gt;&gt;ElapsedTimeLabel.Name" xml:space="preserve">
+    <value>ElapsedTimeLabel</value>
+  </data>
+  <data name="&gt;&gt;ElapsedTimeLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ElapsedTimeLabel.Parent" xml:space="preserve">
+    <value>ProgressTableLayout</value>
+  </data>
+  <data name="&gt;&gt;ElapsedTimeLabel.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="RemainingTimeLabel.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="RemainingTimeLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>191, 19</value>
+  </data>
+  <data name="RemainingTimeLabel.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="RemainingTimeLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>94, 19</value>
+  </data>
+  <data name="RemainingTimeLabel.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="RemainingTimeLabel.Text" xml:space="preserve">
+    <value>Remainging time:</value>
+  </data>
+  <data name="&gt;&gt;RemainingTimeLabel.Name" xml:space="preserve">
+    <value>RemainingTimeLabel</value>
+  </data>
+  <data name="&gt;&gt;RemainingTimeLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;RemainingTimeLabel.Parent" xml:space="preserve">
+    <value>ProgressTableLayout</value>
+  </data>
+  <data name="&gt;&gt;RemainingTimeLabel.ZOrder" xml:space="preserve">
+    <value>8</value>
+  </data>
+  <data name="ProgressPercentLabel.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="ProgressPercentLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 19</value>
+  </data>
+  <data name="ProgressPercentLabel.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="ProgressPercentLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>57, 19</value>
+  </data>
+  <data name="ProgressPercentLabel.TabIndex" type="System.Int32, mscorlib">
+    <value>6</value>
+  </data>
+  <data name="ProgressPercentLabel.Text" xml:space="preserve">
+    <value>Progress:</value>
+  </data>
+  <data name="&gt;&gt;ProgressPercentLabel.Name" xml:space="preserve">
+    <value>ProgressPercentLabel</value>
+  </data>
+  <data name="&gt;&gt;ProgressPercentLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ProgressPercentLabel.Parent" xml:space="preserve">
+    <value>ProgressTableLayout</value>
+  </data>
+  <data name="&gt;&gt;ProgressPercentLabel.ZOrder" xml:space="preserve">
+    <value>9</value>
+  </data>
+  <data name="ProgressPercentValueLabel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Right</value>
+  </data>
+  <data name="ProgressPercentValueLabel.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="ProgressPercentValueLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>152, 19</value>
+  </data>
+  <data name="ProgressPercentValueLabel.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="ProgressPercentValueLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>33, 19</value>
+  </data>
+  <data name="ProgressPercentValueLabel.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
+  <data name="ProgressPercentValueLabel.Text" xml:space="preserve">
+    <value>10%</value>
+  </data>
+  <data name="&gt;&gt;ProgressPercentValueLabel.Name" xml:space="preserve">
+    <value>ProgressPercentValueLabel</value>
+  </data>
+  <data name="&gt;&gt;ProgressPercentValueLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ProgressPercentValueLabel.Parent" xml:space="preserve">
+    <value>ProgressTableLayout</value>
+  </data>
+  <data name="&gt;&gt;ProgressPercentValueLabel.ZOrder" xml:space="preserve">
+    <value>10</value>
+  </data>
+  <data name="ProgressTableLayout.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="ProgressTableLayout.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="ProgressTableLayout.RowCount" type="System.Int32, mscorlib">
+    <value>5</value>
+  </data>
+  <data name="ProgressTableLayout.Size" type="System.Drawing.Size, System.Drawing">
+    <value>378, 106</value>
+  </data>
+  <data name="ProgressTableLayout.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;ProgressTableLayout.Name" xml:space="preserve">
+    <value>ProgressTableLayout</value>
+  </data>
+  <data name="&gt;&gt;ProgressTableLayout.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ProgressTableLayout.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;ProgressTableLayout.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="ProgressTableLayout.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="RemainingTimeValueLabel" Row="1" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;Control Name="ElapsedTimeValueLabel" Row="0" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;Control Name="FileProgressValueLabel" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="ExtractingLabel" Row="3" RowSpan="1" Column="0" ColumnSpan="2" /&gt;&lt;Control Name="CurrentFileLabel" Row="4" RowSpan="1" Column="0" ColumnSpan="4" /&gt;&lt;Control Name="FileProgressLabel" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="ExtractionProgressBar" Row="2" RowSpan="1" Column="0" ColumnSpan="4" /&gt;&lt;Control Name="ElapsedTimeLabel" Row="0" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="RemainingTimeLabel" Row="1" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="ProgressPercentLabel" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="ProgressPercentValueLabel" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,20,Percent,30,Percent,30,Percent,20" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,Absolute,15" /&gt;&lt;/TableLayoutSettings&gt;</value>
+  </data>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+    <value>6, 13</value>
+  </data>
+  <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
+    <value>378, 106</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+    <value>ExtractProgressPanel</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+    <value>System.Windows.Forms.UserControl, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+</root>

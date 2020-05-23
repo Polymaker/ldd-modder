@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<LEGOPrimitive versionMajor="1" versionMinor="0">
+  <Annotations>
+    <Annotation aliases="32195" />
+    <Annotation designname="FORM 6M W. BALL CUP" />
+    <Annotation maingroupid="321" />
+    <Annotation maingroupname="HALF BEAMS, SPECIAL" />
+    <Annotation platformid="300" />
+    <Annotation platformname="TECHNIC" />
+    <Annotation version="1" />
+  </Annotations>
+  <Connectivity>
+	<Axel type="2" length="0.4" grabbing="0" startCapped="0" endCapped="0" angle="270" ax="0" ay="0" az="1" tx="0.4" ty="0" tz="0"/>
+	<Axel type="2" length="0.4" grabbing="0" startCapped="0" endCapped="0" angle="90" ax="0" ay="0" az="1" tx="-0.4" ty="0" tz="0"/>
+	<Axel type="2" length="0.4" grabbing="0" startCapped="0" endCapped="0" angle="270" ax="0" ay="0" az="1" tx="0.4" ty="0" tz="-0.8"/>
+	<Axel type="2" length="0.4" grabbing="0" startCapped="0" endCapped="0" angle="90" ax="0" ay="0" az="1" tx="-0.4" ty="0" tz="-0.8"/>
+	<Axel type="2" length="0.4" grabbing="0" startCapped="0" endCapped="0" angle="270" ax="0" ay="0" az="1" tx="0.4" ty="0" tz="-1.6"/>
+	<Axel type="2" length="0.4" grabbing="0" startCapped="0" endCapped="0" angle="90" ax="0" ay="0" az="1" tx="-0.4" ty="0" tz="-1.6"/>
+	<Axel type="2" length="0.4" grabbing="0" startCapped="0" endCapped="0" angle="270" ax="0" ay="0" az="1" tx="0.4" ty="0" tz="-3.2"/>
+	<Axel type="2" length="0.4" grabbing="0" startCapped="0" endCapped="0" angle="90" ax="0" ay="0" az="1" tx="-0.4" ty="0" tz="-3.2"/>
+    <Ball type="2" angle="0" ax="0" ay="0" az="1" tx="0" ty="0" tz="1.2"/>
+  </Connectivity>
+  <Bounding>
+    <AABB minX="-0.8" minY="-0.4" minZ="-3.6" maxX="0.8" maxY="0.4" maxZ="1.6" />
+  </Bounding>
+  <GeometryBounding>
+    <AABB minX="-0.8" minY="-0.4" minZ="-3.6" maxX="0.8" maxY="0.4" maxZ="1.60002" />
+  </GeometryBounding>
+</LEGOPrimitive>

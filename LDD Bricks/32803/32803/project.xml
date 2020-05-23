@@ -1,0 +1,129 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LDDPART>
+  <Properties>
+    <PartID>32803</PartID>
+    <Description>PLATE W/ HALF BOW INV. 2X2X2/3</Description>
+    <PartVersion>1</PartVersion>
+    <PrimitiveVersion Major="1" Minor="0" />
+    <Flexible>false</Flexible>
+    <Decorated>false</Decorated>
+    <Platform ID="200" Name="SYSTEM" />
+    <MainGroup ID="207" Name="BRICKS WITH BOWS AND ARCHES" />
+    <PhysicsAttributes inertiaTensor="0.266667,0,0,0,0.269094,0,0,0,0" centerOfMass="0.4,0.089,0" mass="1" frictionType="0" />
+    <Bounding minX="-0.400000185" minY="-0.320000023" minZ="-0.4" maxX="1.20000029" maxY="0.498000026" maxZ="1.20000041" />
+    <GeometryBounding minX="-0.4" minY="-0.32" minZ="-0.4" maxX="1.2" maxY="0.498" maxZ="1.2" />
+  </Properties>
+  <ModelSurfaces>
+    <Surface SurfaceID="0" SubMaterialIndex="0">
+      <Component ID="a9be2732" Name="Part0" Type="Part">
+        <Meshes>
+		  <MeshRef ID="9f54b3d0" Name="Mesh11" MeshID="48191306" />
+        </Meshes>
+      </Component>
+      <Component ID="9a772514" Name="FemaleStud0" Type="FemaleStud" ConnectionID="5384866b">
+        <Meshes>
+          <MeshRef ID="979567a7" Name="Mesh10" MeshID="03a9a2c9" />
+        </Meshes>
+        <ReplacementMeshes>
+		  <MeshRef ID="e17545a4" Name="Mesh4" MeshID="21080d1c" />
+        </ReplacementMeshes>
+        <Studs>
+          <StudRef ID="9ce4a2aa" FieldIndex="4" Value1="2" Value2="1" />
+		  <StudRef ID="3d1f216c" FieldIndex="10" Value1="2" Value2="1" />
+        </Studs>
+      </Component>
+      <Component ID="68d33921" Name="FemaleStud1" Type="FemaleStud" ConnectionID="095db4d9">
+        <Meshes>
+          <MeshRef ID="0fe15a4f" Name="Mesh5" MeshID="7b2b0505" />
+        </Meshes>
+        <ReplacementMeshes>
+		  <MeshRef ID="38527d9e" Name="Mesh3" MeshID="a126402d" />
+        </ReplacementMeshes>
+        <Studs>
+          <StudRef ID="adefb16c" FieldIndex="4" Value1="2" Value2="1" />
+		  <StudRef ID="13e4b56d" FieldIndex="10" Value1="2" Value2="1" />
+        </Studs>
+      </Component>
+      <Component ID="26191d5c" Name="MaleStud0" Type="MaleStud" ConnectionID="5384866b">
+        <Meshes>
+          <MeshRef ID="f4cf52be" Name="Mesh9" MeshID="f00b5bc9" />
+        </Meshes>
+        <StudRef ID="d3a22585" FieldIndex="4" Value1="2" Value2="0" />
+      </Component>
+      <Component ID="899701cb" Name="MaleStud1" Type="MaleStud" ConnectionID="095db4d9">
+        <Meshes>
+          <MeshRef ID="acbc88e6" Name="Mesh6" MeshID="e819c89a" />
+        </Meshes>
+        <StudRef ID="fe014b5d" FieldIndex="4" Value1="2" Value2="0" />
+      </Component>
+	  <Component ID="6237ab85" Name="MaleStud2" Type="MaleStud" ConnectionID="5384866b">
+        <Meshes>
+          <MeshRef ID="93a5e00b" Name="Mesh7" MeshID="2e05fb16" />
+        </Meshes>
+        <StudRef ID="67c2n5f5" FieldIndex="10" Value1="2" Value2="0" />
+      </Component>
+      <Component ID="9e81a558" Name="MaleStud3" Type="MaleStud" ConnectionID="095db4d9">
+        <Meshes>
+          <MeshRef ID="2b9b7443" Name="Mesh8" MeshID="ce9933c4" />
+        </Meshes>
+        <StudRef ID="a2013bsd" FieldIndex="10" Value1="2" Value2="0" />
+      </Component>
+    </Surface>
+  </ModelSurfaces>
+  <Collisions>
+    <Collision ID="52220f1b" Name="Box0" Type="Box">
+      <!--<Transform angle="180" ax="1" ay="0" az="0" tx="0" ty="-0.1062" tz="0" />-->
+      <Transform X="0" Y="-0.1062" Z="0" Pitch="0" Yaw="180" Roll="180" />
+      <Size X="0.390001" Y="0.096161" Z="0.39" />
+    </Collision>
+    <Collision ID="c0a7d361" Name="Box1" Type="Box">
+      <!--<Transform angle="180" ax="1" ay="0" az="0" tx="0.8" ty="0.224" tz="0" />-->
+      <Transform X="0.8" Y="0.224" Z="0" Pitch="0" Yaw="180" Roll="180" />
+      <Size X="0.390001" Y="0.086" Z="0.39" />
+    </Collision>
+    <Collision ID="6d5ea510" Name="Box2" Type="Box">
+      <!--<Transform angle="180" ax="0.98" ay="0.199" az="0" tx="0.7697" ty="0.05" tz="0" />-->
+      <Transform X="0.7697" Y="0.05" Z="0" Pitch="0" Yaw="180" Roll="-157.0386" />
+      <Size X="0.416624" Y="0.086" Z="0.39" />
+    </Collision>
+    <Collision ID="262dbfd6" Name="Box3" Type="Box">
+      <!--<Transform angle="180" ax="0.9975" ay="0.0714" az="0" tx="0.0156" ty="-0.1646" tz="0" />-->
+      <Transform X="0.0156" Y="-0.1646" Z="0" Pitch="0" Yaw="180" Roll="-171.8159" />
+      <Size X="0.395069" Y="0.086" Z="0.39" />
+    </Collision>
+  </Collisions>
+  <Connections>
+    <Connection ID="5384866b" Name="Custom2DField0" Type="Custom2DField">
+      <!--<Transform angle="0" ax="1" ay="0" az="0" tx="-0.4" ty="0" tz="-0.4" />-->
+      <Transform X="-0.4" Y="0" Z="-0.4" Pitch="0" Yaw="0" Roll="0" />
+      <Properties Type="23" Width="2" Height="4" />
+      <StudsArray>18:1:1,23:4:1,18:1:1,23:4:1, 0:4:1,29:0:1,18:2:1,23:4:1,18:2:123:4:1, 0:4:1,29:0:1,18:1:1,23:4:1,18:1:1</StudsArray>
+    </Connection>
+    <Connection ID="095db4d9" Name="Custom2DField1" Type="Custom2DField">
+      <!--<Transform angle="0" ax="1" ay="0" az="0" tx="0.4" ty="0.32" tz="-0.4" />-->
+      <Transform X="0.4" Y="0.32" Z="-0.4" Pitch="0" Yaw="0" Roll="0" />
+      <Properties Type="23" Width="2" Height="4" />
+      <StudsArray>18:1:1,23:4:1,18:1:1,23:4:1, 0:4:1,23:4:1,18:2:1,23:4:1,18:2:123:4:1, 0:4:1,23:4:1,18:1:1,23:4:1,18:1:1</StudsArray>
+    </Connection>
+  </Connections>
+  <Meshes>
+    <!--Vertex count: 4 Triangle count: 2-->
+    <Mesh ID="a126402d" Name="Mesh3" IsTextured="true" IsFlexible="false" FileName="Meshes\Mesh3.geom" />
+    <!--Vertex count: 4 Triangle count: 2-->
+    <Mesh ID="21080d1c" Name="Mesh4" IsTextured="true" IsFlexible="false" FileName="Meshes\Mesh4.geom" />
+    <!--Vertex count: 122 Triangle count: 142-->
+    <Mesh ID="7b2b0505" Name="Mesh5" IsTextured="false" IsFlexible="false" FileName="Meshes\Mesh5.geom" />
+    <!--Vertex count: 159 Triangle count: 190-->
+    <Mesh ID="e819c89a" Name="Mesh6" IsTextured="false" IsFlexible="false" FileName="Meshes\Mesh6.geom" />
+    <!--Vertex count: 159 Triangle count: 190-->
+    <Mesh ID="2e05fb16" Name="Mesh7" IsTextured="false" IsFlexible="false" FileName="Meshes\Mesh7.geom" />
+    <!--Vertex count: 159 Triangle count: 190-->
+    <Mesh ID="ce9933c4" Name="Mesh8" IsTextured="false" IsFlexible="false" FileName="Meshes\Mesh8.geom" />
+    <!--Vertex count: 159 Triangle count: 190-->
+    <Mesh ID="f00b5bc9" Name="Mesh9" IsTextured="false" IsFlexible="false" FileName="Meshes\Mesh9.geom" />
+    <!--Vertex count: 122 Triangle count: 140-->
+    <Mesh ID="03a9a2c9" Name="Mesh10" IsTextured="false" IsFlexible="false" FileName="Meshes\Mesh10.geom" />
+    <!--Vertex count: 42 Triangle count: 30-->
+    <Mesh ID="48191306" Name="Mesh11" IsTextured="false" IsFlexible="false" FileName="Meshes\Mesh11.geom" />
+  </Meshes>
+</LDDPART>

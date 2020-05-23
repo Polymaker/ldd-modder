@@ -1,0 +1,533 @@
+<Connectors>
+	<Axels>
+		<Connector type="Axel" subtype="2" gender="female" description="Technic hole Ø8mm" connectswith="3,19,5" />
+		
+		<!-- thick pin walls that cannot fit a bar inside -->
+		<Connector type="Axel" subtype="3" gender="male" description="Technic pin" connectswith="2" />
+		
+		<Connector type="Axel" subtype="4" gender="female" description="Cross axle" connectswith="5,7" />
+		<Connector type="Axel" subtype="5" gender="male" description="Cross axle" connectswith="4" />
+		
+		<Connector type="Axel" subtype="6" gender="female" description="Bar Ø3.2mm" connectswith="7" />
+		<Connector type="Axel" subtype="7" gender="male" description="Bar Ø3.2mm" connectswith="4,6" />
+		
+		<!-- a technic hole that accepts cross axles and pins, generally used in plates -->
+		<Connector type="Axel" subtype="8" gender="female" description="Technic hole (plate/brick)" connectswith="3,5,13,19" /> 
+		
+		<!-- an hole that is the same size as a stud or technic pin.
+			only connect with cross axles (type 5). see brick 2498, 2376 -->
+		<Connector type="Axel" subtype="12" gender="female" description="Hole" connectswith="5" /> 
+		
+		<!-- used for axles that fits a standard technic hole that do not snap, like flex rods -->
+		<Connector type="Axel" subtype="13" gender="male" description="Technic axle (no snap)" connectswith="2" />
+		
+		<!-- Thin bar connector, like hat accessories (feather) -->
+		<Connector type="Axel" subtype="14" gender="female" description="Thin bar Ø1.5mm" connectswith="15" />
+		<Connector type="Axel" subtype="15" gender="male" description="Thin bar Ø1.5mm" connectswith="14" />
+		
+		<!-- part that fits in the recess/lip of a technic hole (subtype 2)
+			note: the handling of this connection seems bugged in LDD, 
+			it only connects in the direction forward of the connector instead of using the startCapped/endCapped flags
+			so setting endCapped flag to "1" will not connect with anything (see part 2736) -->
+		<Connector type="Axel" subtype="17" gender="male" description="Axle/Pin rim" connectswith="2" />
+		
+		<!-- thin pin walls that can fit a bar inside, it is always combined with a type 6 Axel connection
+			seems to act like a subtype 3 Axel -->
+		<Connector type="Axel" subtype="19" gender="male" description="Technic Pin" connectswith="2" />
+		
+		<!-- the same as a bar connector (type 7) but physically has a thin hole (like type 14)
+			it is always combined with a type 14 connection.
+			due to a bug in ldd, the type 14 connection collides and prevent a type 6 to connect.
+			-->
+		<Connector type="Axel" subtype="21" gender="male" description="Hollow bar (OD: Ø3.2mm ID: Ø1.5mm)" connectswith="6" />
+	</Axels>
+	<Balls>
+		<Connector type="Ball" subtype="2" gender="female" description="Tow ball cup" connectswith="3" />
+		<Connector type="Ball" subtype="3" gender="male" description="Tow ball" connectswith="2" />
+		<Connector type="Ball" subtype="4" gender="female" description="Technic ball cup" connectswith="5" />
+		<Connector type="Ball" subtype="5" gender="male" description="Technic ball" connectswith="4" />
+		<Connector type="Ball" subtype="6" gender="female" description="Skeleton arm socket" connectswith="7" />
+		<Connector type="Ball" subtype="7" gender="male" description="Skeleton arm ball" connectswith="6" />
+		<Connector type="Ball" subtype="8" gender="female" description="Palm trunk socket" connectswith="9" />
+		<Connector type="Ball" subtype="9" gender="male" description="Palm trunk ball" connectswith="8" />
+		
+		<!-- Only used by part 20582 - WRECKING BALL and ROUND PLATE 2X2 W/EYE (part 2376 and 74698) -->
+		<Connector type="Ball" subtype="10" gender="" description="Hook anchor" connectswith="11" />
+		<!-- Only used by part 30395 - HOOK W. BALL 1X3 -->
+		<Connector type="Ball" subtype="11" gender="" description="Hook" connectswith="10" /> 
+		
+		<!-- Only used by part 98562 - HANDCUFFS W. Ø4.85 HOLE and 53551 - CHAIN LINK 1X3X1/3 -->
+		<!-- Note: you must always use both because physically they are the same connector but the way LDD works you need a female and a male connector -->
+		<Connector type="Ball" subtype="12" gender="female" description="Chain link" connectswith="13" />
+		<Connector type="Ball" subtype="13" gender="male" description="Chain link" connectswith="12" />
+		
+		<!-- Only used by part 92911 - POWER JOINT -->
+		<Connector type="Ball" subtype="14" gender="female" description="Power joint cup" connectswith="15" />
+		<!-- Only used by part 99948 - STEEL BALL and 92910 - POWER JOINT BALLPART -->
+		<Connector type="Ball" subtype="15" gender="male" description="Power joint ball" connectswith="14" />
+		
+		<Connector type="Ball" subtype="16" gender="female" description="Technic projectile holder" connectswith="17" />
+		<Connector type="Ball" subtype="17" gender="male" description="Technic projectile" connectswith="16" />
+		
+		<Connector type="Ball" subtype="18" gender="female" description="3M ball cup" connectswith="19" />
+		<Connector type="Ball" subtype="19" gender="male" description="3M ball" connectswith="18" />
+		
+		<!-- The following connectors are only used for flex bones (flexible parts) -->
+		<Connector type="Ball" subtype="999000" gender="" description="" />
+		<Connector type="Ball" subtype="999001" gender="" description="" />
+		<Connector type="Ball" subtype="999002" gender="" description="" />
+		<Connector type="Ball" subtype="999003" gender="" description="" />
+	</Balls>
+	<Custom2DFields>
+		<Connector type="Custom2DField" subtype="22" gender="female" description="Stud connection" />
+		<Connector type="Custom2DField" subtype="23" gender="male" description="Stud connection" />
+	</Custom2DFields>
+	<Fixed>
+		<Connector type="Fixed" subtype="2" gender="female" description="Tire Ø11mm" connectswith="2" />
+		<Connector type="Fixed" subtype="3" gender="male" description="Wheel hub Ø11mm" connectswith="3" />
+		
+		<Connector type="Fixed" subtype="4" gender="female" description="Minifig legs" connectswith="4" />
+		<Connector type="Fixed" subtype="5" gender="male" description="Minifig legs" connectswith="5" />
+		
+		<Connector type="Fixed" subtype="6" gender="female" description="Glass frame 1X4X6" connectswith="6" />
+		<Connector type="Fixed" subtype="7" gender="male" description="Glass 1X4X6" connectswith="7" />
+		
+		<Connector type="Fixed" subtype="8" gender="female" description="Tire Ø30 X 13" />
+		<Connector type="Fixed" subtype="9" gender="male" description="Wheel hub Ø30 X 13" />
+		
+		<Connector type="Fixed" subtype="10" gender="female" description="Belt wheel tyre Ø24mm" />
+		<Connector type="Fixed" subtype="11" gender="male" description="Belt wheel Ø24mm" />
+		
+		<Connector type="Fixed" subtype="12" gender="female" description="Tire Ø61.6mm" />
+		<Connector type="Fixed" subtype="13" gender="male" description="Wheel hub Ø61.6mm" />
+		
+		<Connector type="Fixed" subtype="14" gender="female" description="Tire Ø43.2mm" />
+		<Connector type="Fixed" subtype="15" gender="male" description="Wheel hub Ø43.2mm" />
+		
+		<Connector type="Fixed" subtype="16" gender="female" description="Tire Ø30 X 20" />
+		<Connector type="Fixed" subtype="17" gender="male" description="Wheel hub Ø30 X 20" />
+		
+		<Connector type="Fixed" subtype="20" gender="female" description="Rail track" />
+		<Connector type="Fixed" subtype="21" gender="male" description="Rail track" />
+		
+		<Connector type="Fixed" subtype="22" gender="female" description="Pane window frame" />
+		<Connector type="Fixed" subtype="23" gender="male" description="Pane window" />
+		
+		<Connector type="Fixed" subtype="24" gender="female" description="Tire Ø8.1 X 9" />
+		<Connector type="Fixed" subtype="25" gender="male" description="Wheel hub Ø8.1 X 9" />
+		
+		<Connector type="Fixed" subtype="26" gender="" description="" />
+		<Connector type="Fixed" subtype="27" gender="" description="" />
+		<Connector type="Fixed" subtype="28" gender="" description="" />
+		<Connector type="Fixed" subtype="29" gender="" description="" />
+		<Connector type="Fixed" subtype="30" gender="" description="" />
+		<Connector type="Fixed" subtype="31" gender="" description="" />
+		<Connector type="Fixed" subtype="32" gender="" description="" />
+		<Connector type="Fixed" subtype="33" gender="" description="" />
+		<Connector type="Fixed" subtype="36" gender="" description="" />
+		<Connector type="Fixed" subtype="37" gender="" description="" />
+		<Connector type="Fixed" subtype="38" gender="" description="" />
+		<Connector type="Fixed" subtype="39" gender="" description="" />
+		<Connector type="Fixed" subtype="40" gender="" description="" />
+		<Connector type="Fixed" subtype="41" gender="" description="" />
+		<Connector type="Fixed" subtype="47" gender="" description="" />
+		<Connector type="Fixed" subtype="48" gender="" description="" />
+		<Connector type="Fixed" subtype="49" gender="" description="" />
+		<Connector type="Fixed" subtype="50" gender="" description="" />
+		<Connector type="Fixed" subtype="51" gender="" description="" />
+		<Connector type="Fixed" subtype="52" gender="" description="" />
+		<Connector type="Fixed" subtype="53" gender="" description="" />
+		<Connector type="Fixed" subtype="54" gender="" description="" />
+		<Connector type="Fixed" subtype="55" gender="" description="" />
+		<Connector type="Fixed" subtype="56" gender="" description="" />
+		<Connector type="Fixed" subtype="57" gender="" description="" />
+		<Connector type="Fixed" subtype="58" gender="" description="" />
+		<Connector type="Fixed" subtype="59" gender="" description="" />
+		<Connector type="Fixed" subtype="60" gender="" description="" />
+		<Connector type="Fixed" subtype="61" gender="" description="" />
+		<Connector type="Fixed" subtype="62" gender="" description="" />
+		<Connector type="Fixed" subtype="63" gender="" description="" />
+		<Connector type="Fixed" subtype="64" gender="" description="" />
+		<Connector type="Fixed" subtype="65" gender="" description="" />
+		<Connector type="Fixed" subtype="66" gender="" description="" />
+		<Connector type="Fixed" subtype="67" gender="" description="" />
+		<Connector type="Fixed" subtype="68" gender="" description="" />
+		<Connector type="Fixed" subtype="69" gender="" description="" />
+		<Connector type="Fixed" subtype="70" gender="" description="" />
+		<Connector type="Fixed" subtype="71" gender="" description="" />
+		<Connector type="Fixed" subtype="72" gender="" description="" />
+		<Connector type="Fixed" subtype="73" gender="" description="" />
+		<Connector type="Fixed" subtype="74" gender="" description="" />
+		<Connector type="Fixed" subtype="75" gender="" description="" />
+		<Connector type="Fixed" subtype="76" gender="" description="" />
+		<Connector type="Fixed" subtype="77" gender="" description="" />
+		<Connector type="Fixed" subtype="78" gender="" description="" />
+		<Connector type="Fixed" subtype="79" gender="" description="" />
+		<Connector type="Fixed" subtype="80" gender="" description="" />
+		<Connector type="Fixed" subtype="81" gender="" description="" />
+		<Connector type="Fixed" subtype="82" gender="" description="" />
+		<Connector type="Fixed" subtype="83" gender="" description="" />
+		<Connector type="Fixed" subtype="86" gender="" description="" />
+		<Connector type="Fixed" subtype="87" gender="" description="" />
+		<Connector type="Fixed" subtype="88" gender="" description="" />
+		<Connector type="Fixed" subtype="89" gender="" description="" />
+		<Connector type="Fixed" subtype="90" gender="" description="" />
+		<Connector type="Fixed" subtype="91" gender="" description="" />
+		<Connector type="Fixed" subtype="92" gender="" description="" />
+		<Connector type="Fixed" subtype="93" gender="" description="" />
+		<Connector type="Fixed" subtype="94" gender="" description="" />
+		<Connector type="Fixed" subtype="95" gender="" description="" />
+		<Connector type="Fixed" subtype="96" gender="" description="" />
+		<Connector type="Fixed" subtype="97" gender="" description="" />
+		<Connector type="Fixed" subtype="98" gender="" description="" />
+		<Connector type="Fixed" subtype="99" gender="" description="" />
+		<Connector type="Fixed" subtype="100" gender="" description="" />
+		<Connector type="Fixed" subtype="101" gender="" description="" />
+		<Connector type="Fixed" subtype="102" gender="" description="" />
+		<Connector type="Fixed" subtype="103" gender="" description="" />
+		<Connector type="Fixed" subtype="104" gender="" description="" />
+		<Connector type="Fixed" subtype="105" gender="" description="" />
+		<Connector type="Fixed" subtype="106" gender="" description="" />
+		<Connector type="Fixed" subtype="107" gender="" description="" />
+		<Connector type="Fixed" subtype="108" gender="" description="" />
+		<Connector type="Fixed" subtype="109" gender="" description="" />
+		<Connector type="Fixed" subtype="110" gender="" description="" />
+		<Connector type="Fixed" subtype="111" gender="" description="" />
+		<Connector type="Fixed" subtype="114" gender="" description="" />
+		<Connector type="Fixed" subtype="115" gender="" description="" />
+		<Connector type="Fixed" subtype="117" gender="" description="" />
+		<Connector type="Fixed" subtype="118" gender="" description="" />
+		<Connector type="Fixed" subtype="119" gender="" description="" />
+		<Connector type="Fixed" subtype="120" gender="" description="" />
+		<Connector type="Fixed" subtype="122" gender="" description="" />
+		<Connector type="Fixed" subtype="123" gender="" description="" />
+		<Connector type="Fixed" subtype="124" gender="" description="" />
+		<Connector type="Fixed" subtype="125" gender="" description="" />
+		<Connector type="Fixed" subtype="126" gender="" description="" />
+		<Connector type="Fixed" subtype="127" gender="" description="" />
+		<Connector type="Fixed" subtype="128" gender="" description="" />
+		<Connector type="Fixed" subtype="129" gender="" description="" />
+		<Connector type="Fixed" subtype="130" gender="" description="" />
+		<Connector type="Fixed" subtype="131" gender="" description="" />
+		<Connector type="Fixed" subtype="132" gender="" description="" />
+		<Connector type="Fixed" subtype="133" gender="" description="" />
+		<Connector type="Fixed" subtype="134" gender="" description="" />
+		<Connector type="Fixed" subtype="135" gender="" description="" />
+		<Connector type="Fixed" subtype="136" gender="" description="" />
+		<Connector type="Fixed" subtype="137" gender="" description="" />
+		<Connector type="Fixed" subtype="138" gender="" description="" />
+		<Connector type="Fixed" subtype="139" gender="" description="" />
+		<Connector type="Fixed" subtype="140" gender="" description="" />
+		<Connector type="Fixed" subtype="141" gender="" description="" />
+		<Connector type="Fixed" subtype="142" gender="" description="" />
+		<Connector type="Fixed" subtype="143" gender="" description="" />
+		<Connector type="Fixed" subtype="144" gender="" description="" />
+		<Connector type="Fixed" subtype="145" gender="" description="" />
+		<Connector type="Fixed" subtype="146" gender="" description="" />
+		<Connector type="Fixed" subtype="147" gender="" description="" />
+		<Connector type="Fixed" subtype="148" gender="" description="" />
+		<Connector type="Fixed" subtype="149" gender="" description="" />
+		<Connector type="Fixed" subtype="150" gender="" description="" />
+		<Connector type="Fixed" subtype="151" gender="" description="" />
+		<Connector type="Fixed" subtype="152" gender="" description="" />
+		<Connector type="Fixed" subtype="153" gender="" description="" />
+		<Connector type="Fixed" subtype="154" gender="" description="" />
+		<Connector type="Fixed" subtype="155" gender="" description="" />
+		<Connector type="Fixed" subtype="156" gender="" description="" />
+		<Connector type="Fixed" subtype="158" gender="" description="" />
+		<Connector type="Fixed" subtype="159" gender="" description="" />
+		
+		<!-- The following connectors are only used for flex bones (flexible parts) -->
+		<Connector type="Fixed" subtype="999000" gender="" description="" />
+		<Connector type="Fixed" subtype="999001" gender="" description="" />
+		<Connector type="Fixed" subtype="999002" gender="" description="" />
+		<Connector type="Fixed" subtype="999003" gender="" description="" />
+	</Fixed>
+	<Gears><!-- The gear connectors do not seem to connect with anything -->
+		<Connector type="Gear" subtype="3" description="Standard gear" />
+		<!-- Only used by part 3650 - CROWN- AND GEAR WHEEL Z24 -->
+		<Connector type="Gear" subtype="9" description="Crown gear" />
+		<Connector type="Gear" subtype="11" description="Conical gear" />
+		<Connector type="Gear" subtype="13" description="Bevel or single sided gear" />
+	</Gears>
+	<Hinges>
+		<Connector type="Hinge" subtype="2" gender="" description="" />
+		<Connector type="Hinge" subtype="3" gender="" description="" />
+		<Connector type="Hinge" subtype="4" gender="" description="" />
+		<Connector type="Hinge" subtype="5" gender="" description="" />
+		<Connector type="Hinge" subtype="6" gender="" description="" />
+		<Connector type="Hinge" subtype="7" gender="" description="" />
+		<Connector type="Hinge" subtype="8" gender="" description="" />
+		<Connector type="Hinge" subtype="9" gender="" description="" />
+		<Connector type="Hinge" subtype="10" gender="" description="" />
+		<Connector type="Hinge" subtype="11" gender="" description="" />
+		<Connector type="Hinge" subtype="12" gender="" description="" />
+		<Connector type="Hinge" subtype="13" gender="" description="" />
+		<Connector type="Hinge" subtype="14" gender="" description="" />
+		<Connector type="Hinge" subtype="15" gender="" description="" />
+		<Connector type="Hinge" subtype="16" gender="" description="" />
+		<Connector type="Hinge" subtype="17" gender="" description="" />
+		<Connector type="Hinge" subtype="18" gender="" description="" />
+		<Connector type="Hinge" subtype="19" gender="" description="" />
+		<Connector type="Hinge" subtype="20" gender="" description="" />
+		<Connector type="Hinge" subtype="21" gender="" description="" />
+		<Connector type="Hinge" subtype="22" gender="" description="" />
+		<Connector type="Hinge" subtype="23" gender="" description="" />
+		<Connector type="Hinge" subtype="26" gender="" description="" />
+		<Connector type="Hinge" subtype="27" gender="" description="" />
+		
+		<Connector type="Hinge" subtype="28" gender="female" description="Technic pin hole (plate)" connectswith="29" />
+		<Connector type="Hinge" subtype="29" gender="male" description="Short technic pin" connectswith="28" />
+		
+		<Connector type="Hinge" subtype="30" gender="" description="" />
+		<Connector type="Hinge" subtype="31" gender="" description="" />
+		<Connector type="Hinge" subtype="34" gender="" description="" />
+		<Connector type="Hinge" subtype="35" gender="" description="" />
+		<Connector type="Hinge" subtype="36" gender="" description="" />
+		<Connector type="Hinge" subtype="37" gender="" description="" />
+		<Connector type="Hinge" subtype="38" gender="" description="" />
+		<Connector type="Hinge" subtype="39" gender="" description="" />
+		<Connector type="Hinge" subtype="40" gender="" description="" />
+		<Connector type="Hinge" subtype="41" gender="" description="" />
+		<Connector type="Hinge" subtype="42" gender="" description="" />
+		<Connector type="Hinge" subtype="43" gender="" description="" />
+		<Connector type="Hinge" subtype="44" gender="" description="" />
+		<Connector type="Hinge" subtype="45" gender="" description="" />
+		<Connector type="Hinge" subtype="46" gender="" description="" />
+		<Connector type="Hinge" subtype="47" gender="" description="" />
+		<Connector type="Hinge" subtype="48" gender="" description="" />
+		<Connector type="Hinge" subtype="49" gender="" description="" />
+		<Connector type="Hinge" subtype="50" gender="" description="" />
+		<Connector type="Hinge" subtype="51" gender="" description="" />
+		<Connector type="Hinge" subtype="52" gender="" description="" />
+		<Connector type="Hinge" subtype="53" gender="" description="" />
+		<Connector type="Hinge" subtype="54" gender="" description="" />
+		<Connector type="Hinge" subtype="55" gender="" description="" />
+		<Connector type="Hinge" subtype="56" gender="" description="" />
+		<Connector type="Hinge" subtype="57" gender="" description="" />
+		<Connector type="Hinge" subtype="58" gender="" description="" />
+		<Connector type="Hinge" subtype="59" gender="" description="" />
+		<Connector type="Hinge" subtype="60" gender="" description="" />
+		<Connector type="Hinge" subtype="61" gender="" description="" />
+		<Connector type="Hinge" subtype="62" gender="" description="" />
+		<Connector type="Hinge" subtype="63" gender="" description="" />
+		<Connector type="Hinge" subtype="64" gender="" description="" />
+		<Connector type="Hinge" subtype="65" gender="" description="" />
+		<Connector type="Hinge" subtype="66" gender="" description="" />
+		<Connector type="Hinge" subtype="67" gender="" description="" />
+		<Connector type="Hinge" subtype="68" gender="" description="" />
+		<Connector type="Hinge" subtype="69" gender="" description="" />
+		<Connector type="Hinge" subtype="70" gender="" description="" />
+		<Connector type="Hinge" subtype="71" gender="" description="" />
+		<Connector type="Hinge" subtype="72" gender="" description="" />
+		<Connector type="Hinge" subtype="73" gender="" description="" />
+		<Connector type="Hinge" subtype="74" gender="" description="" />
+		<Connector type="Hinge" subtype="75" gender="" description="" />
+		<Connector type="Hinge" subtype="76" gender="" description="" />
+		<Connector type="Hinge" subtype="77" gender="" description="" />
+		<Connector type="Hinge" subtype="80" gender="" description="" />
+		<Connector type="Hinge" subtype="81" gender="" description="" />
+		<Connector type="Hinge" subtype="82" gender="" description="" />
+		<Connector type="Hinge" subtype="83" gender="" description="" />
+		<Connector type="Hinge" subtype="84" gender="" description="" />
+		<Connector type="Hinge" subtype="85" gender="" description="" />
+		<Connector type="Hinge" subtype="86" gender="" description="" />
+		<Connector type="Hinge" subtype="87" gender="" description="" />
+		<Connector type="Hinge" subtype="88" gender="" description="" />
+		<Connector type="Hinge" subtype="89" gender="" description="" />
+		<Connector type="Hinge" subtype="90" gender="" description="" />
+		<Connector type="Hinge" subtype="91" gender="" description="" />
+		<Connector type="Hinge" subtype="94" gender="" description="" />
+		<Connector type="Hinge" subtype="95" gender="" description="" />
+		<Connector type="Hinge" subtype="96" gender="" description="" />
+		<Connector type="Hinge" subtype="97" gender="" description="" />
+		<Connector type="Hinge" subtype="98" gender="" description="" />
+		<Connector type="Hinge" subtype="99" gender="" description="" />
+		<Connector type="Hinge" subtype="100" gender="" description="" />
+		<Connector type="Hinge" subtype="101" gender="" description="" />
+		<Connector type="Hinge" subtype="102" gender="" description="" />
+		<Connector type="Hinge" subtype="103" gender="" description="" />
+		<Connector type="Hinge" subtype="104" gender="" description="" />
+		<Connector type="Hinge" subtype="105" gender="" description="" />
+		<Connector type="Hinge" subtype="106" gender="" description="" />
+		<Connector type="Hinge" subtype="107" gender="" description="" />
+		<Connector type="Hinge" subtype="108" gender="" description="" />
+		<Connector type="Hinge" subtype="109" gender="" description="" />
+		<Connector type="Hinge" subtype="110" gender="" description="" />
+		<Connector type="Hinge" subtype="111" gender="" description="" />
+		<Connector type="Hinge" subtype="112" gender="" description="" />
+		<Connector type="Hinge" subtype="113" gender="" description="" />
+		<Connector type="Hinge" subtype="114" gender="" description="" />
+		<Connector type="Hinge" subtype="115" gender="" description="" />
+		<Connector type="Hinge" subtype="116" gender="" description="" />
+		<Connector type="Hinge" subtype="117" gender="" description="" />
+		<Connector type="Hinge" subtype="118" gender="" description="" />
+		<Connector type="Hinge" subtype="119" gender="" description="" />
+		<Connector type="Hinge" subtype="120" gender="" description="" />
+		<Connector type="Hinge" subtype="121" gender="" description="" />
+		<Connector type="Hinge" subtype="122" gender="" description="" />
+		<Connector type="Hinge" subtype="123" gender="" description="" />
+		<Connector type="Hinge" subtype="126" gender="" description="" />
+		<Connector type="Hinge" subtype="127" gender="" description="" />
+		<Connector type="Hinge" subtype="128" gender="" description="" />
+		<Connector type="Hinge" subtype="129" gender="" description="" />
+		<Connector type="Hinge" subtype="130" gender="" description="" />
+		<Connector type="Hinge" subtype="131" gender="" description="" />
+		<Connector type="Hinge" subtype="132" gender="" description="" />
+		<Connector type="Hinge" subtype="133" gender="" description="" />
+		<Connector type="Hinge" subtype="134" gender="" description="" />
+		<Connector type="Hinge" subtype="135" gender="" description="" />
+		<Connector type="Hinge" subtype="136" gender="" description="" />
+		<Connector type="Hinge" subtype="137" gender="" description="" />
+		<Connector type="Hinge" subtype="138" gender="" description="" />
+		<Connector type="Hinge" subtype="139" gender="" description="" />
+		<Connector type="Hinge" subtype="140" gender="" description="" />
+		<Connector type="Hinge" subtype="141" gender="" description="" />
+		<Connector type="Hinge" subtype="142" gender="" description="" />
+		<Connector type="Hinge" subtype="143" gender="" description="" />
+		<Connector type="Hinge" subtype="144" gender="" description="" />
+		<Connector type="Hinge" subtype="145" gender="" description="" />
+		<Connector type="Hinge" subtype="146" gender="" description="" />
+		<Connector type="Hinge" subtype="147" gender="" description="" />
+		<Connector type="Hinge" subtype="148" gender="" description="" />
+		<Connector type="Hinge" subtype="149" gender="" description="" />
+		<Connector type="Hinge" subtype="150" gender="" description="" />
+		<Connector type="Hinge" subtype="151" gender="" description="" />
+		<Connector type="Hinge" subtype="152" gender="" description="" />
+		<Connector type="Hinge" subtype="153" gender="" description="" />
+		<Connector type="Hinge" subtype="154" gender="" description="" />
+		<Connector type="Hinge" subtype="155" gender="" description="" />
+		<Connector type="Hinge" subtype="156" gender="" description="" />
+		<Connector type="Hinge" subtype="157" gender="" description="" />
+		<Connector type="Hinge" subtype="158" gender="" description="" />
+		<Connector type="Hinge" subtype="159" gender="" description="" />
+		<Connector type="Hinge" subtype="160" gender="" description="" />
+		<Connector type="Hinge" subtype="161" gender="" description="" />
+		<Connector type="Hinge" subtype="162" gender="" description="" />
+		<Connector type="Hinge" subtype="163" gender="" description="" />
+		<Connector type="Hinge" subtype="164" gender="" description="" />
+		<Connector type="Hinge" subtype="165" gender="" description="" />
+		<Connector type="Hinge" subtype="166" gender="" description="" />
+		<Connector type="Hinge" subtype="167" gender="" description="" />
+		<Connector type="Hinge" subtype="168" gender="" description="" />
+		<Connector type="Hinge" subtype="169" gender="" description="" />
+		<Connector type="Hinge" subtype="170" gender="" description="" />
+		<Connector type="Hinge" subtype="171" gender="" description="" />
+		<Connector type="Hinge" subtype="172" gender="" description="" />
+		<Connector type="Hinge" subtype="173" gender="" description="" />
+		<Connector type="Hinge" subtype="174" gender="" description="" />
+		<Connector type="Hinge" subtype="175" gender="" description="" />
+		<Connector type="Hinge" subtype="176" gender="" description="" />
+		<Connector type="Hinge" subtype="177" gender="" description="" />
+		<Connector type="Hinge" subtype="178" gender="" description="" />
+		<Connector type="Hinge" subtype="179" gender="" description="" />
+		<Connector type="Hinge" subtype="180" gender="" description="" />
+		<Connector type="Hinge" subtype="181" gender="" description="" />
+		<Connector type="Hinge" subtype="182" gender="" description="" />
+		<Connector type="Hinge" subtype="183" gender="" description="" />
+		<Connector type="Hinge" subtype="184" gender="" description="" />
+		<Connector type="Hinge" subtype="185" gender="" description="" />
+		<Connector type="Hinge" subtype="186" gender="" description="" />
+		<Connector type="Hinge" subtype="187" gender="" description="" />
+		<Connector type="Hinge" subtype="188" gender="" description="" />
+		<Connector type="Hinge" subtype="189" gender="" description="" />
+		<Connector type="Hinge" subtype="190" gender="" description="" />
+		<Connector type="Hinge" subtype="191" gender="" description="" />
+		<Connector type="Hinge" subtype="192" gender="" description="" />
+		<Connector type="Hinge" subtype="193" gender="" description="" />
+		<Connector type="Hinge" subtype="194" gender="" description="" />
+		<Connector type="Hinge" subtype="195" gender="" description="" />
+		<Connector type="Hinge" subtype="196" gender="" description="" />
+		<Connector type="Hinge" subtype="197" gender="" description="" />
+		<Connector type="Hinge" subtype="198" gender="" description="" />
+		<Connector type="Hinge" subtype="199" gender="" description="" />
+		<Connector type="Hinge" subtype="200" gender="" description="" />
+		<Connector type="Hinge" subtype="201" gender="" description="" />
+		<Connector type="Hinge" subtype="202" gender="" description="" />
+		<Connector type="Hinge" subtype="203" gender="" description="" />
+		<Connector type="Hinge" subtype="204" gender="" description="" />
+		<Connector type="Hinge" subtype="205" gender="" description="" />
+		<Connector type="Hinge" subtype="206" gender="" description="" />
+		<Connector type="Hinge" subtype="207" gender="" description="" />
+		<Connector type="Hinge" subtype="208" gender="" description="" />
+		<Connector type="Hinge" subtype="209" gender="" description="" />
+		<Connector type="Hinge" subtype="210" gender="" description="" />
+		<Connector type="Hinge" subtype="211" gender="" description="" />
+		<Connector type="Hinge" subtype="212" gender="" description="" />
+		<Connector type="Hinge" subtype="213" gender="" description="" />
+		<Connector type="Hinge" subtype="214" gender="" description="" />
+		<Connector type="Hinge" subtype="215" gender="" description="" />
+		<Connector type="Hinge" subtype="216" gender="" description="" />
+		<Connector type="Hinge" subtype="217" gender="" description="" />
+		<Connector type="Hinge" subtype="218" gender="" description="" />
+		<Connector type="Hinge" subtype="219" gender="" description="" />
+		<Connector type="Hinge" subtype="220" gender="" description="" />
+		<Connector type="Hinge" subtype="224" gender="" description="" />
+		<Connector type="Hinge" subtype="225" gender="" description="" />
+		<Connector type="Hinge" subtype="226" gender="" description="" />
+		<Connector type="Hinge" subtype="227" gender="" description="" />
+		<Connector type="Hinge" subtype="228" gender="" description="" />
+		<Connector type="Hinge" subtype="229" gender="" description="" />
+		<Connector type="Hinge" subtype="230" gender="" description="" />
+		<Connector type="Hinge" subtype="231" gender="" description="" />
+		<Connector type="Hinge" subtype="232" gender="" description="" />
+		<Connector type="Hinge" subtype="233" gender="" description="" />
+		<Connector type="Hinge" subtype="234" gender="" description="" />
+		<Connector type="Hinge" subtype="235" gender="" description="" />
+		<Connector type="Hinge" subtype="236" gender="" description="" />
+		<Connector type="Hinge" subtype="237" gender="" description="" />
+		<Connector type="Hinge" subtype="238" gender="" description="" />
+		<Connector type="Hinge" subtype="239" gender="" description="" />
+		<Connector type="Hinge" subtype="240" gender="" description="" />
+		<Connector type="Hinge" subtype="241" gender="" description="" />
+		<Connector type="Hinge" subtype="242" gender="" description="" />
+		<Connector type="Hinge" subtype="243" gender="" description="" />
+		<Connector type="Hinge" subtype="260" gender="" description="" />
+		<Connector type="Hinge" subtype="261" gender="" description="" />
+		<Connector type="Hinge" subtype="262" gender="" description="" />
+		<Connector type="Hinge" subtype="263" gender="" description="" />
+		<Connector type="Hinge" subtype="400" gender="" description="" />
+		<Connector type="Hinge" subtype="401" gender="" description="" />
+	</Hinges>
+	<Rails>
+		<Connector type="Rail" subtype="0" gender="" description="" />
+		<Connector type="Rail" subtype="1" gender="" description="" />
+	</Rails>
+	<Sliders>
+		<Connector type="Slider" subtype="2" gender="" description="" />
+		<Connector type="Slider" subtype="3" gender="" description="" />
+		<Connector type="Slider" subtype="4" gender="" description="" />
+		<Connector type="Slider" subtype="5" gender="" description="" />
+		<Connector type="Slider" subtype="6" gender="" description="" />
+		<Connector type="Slider" subtype="7" gender="" description="" />
+		<Connector type="Slider" subtype="8" gender="" description="" />
+		<Connector type="Slider" subtype="9" gender="" description="" />
+		<Connector type="Slider" subtype="10" gender="" description="" />
+		<Connector type="Slider" subtype="11" gender="" description="" />
+		<Connector type="Slider" subtype="12" gender="" description="" />
+		<Connector type="Slider" subtype="13" gender="" description="" />
+		<Connector type="Slider" subtype="14" gender="" description="" />
+		<Connector type="Slider" subtype="15" gender="" description="" />
+		<Connector type="Slider" subtype="16" gender="" description="" />
+		<Connector type="Slider" subtype="17" gender="" description="" />
+		<Connector type="Slider" subtype="18" gender="" description="" />
+		<Connector type="Slider" subtype="19" gender="" description="" />
+		<Connector type="Slider" subtype="20" gender="" description="" />
+		<Connector type="Slider" subtype="21" gender="" description="" />
+		<Connector type="Slider" subtype="22" gender="" description="" />
+		<Connector type="Slider" subtype="23" gender="" description="" />
+		<Connector type="Slider" subtype="24" gender="" description="" />
+		<Connector type="Slider" subtype="25" gender="" description="" />
+		<Connector type="Slider" subtype="26" gender="" description="" />
+		<Connector type="Slider" subtype="27" gender="" description="" />
+		<Connector type="Slider" subtype="28" gender="" description="" />
+		<Connector type="Slider" subtype="29" gender="" description="" />
+		<Connector type="Slider" subtype="30" gender="" description="" />
+		<Connector type="Slider" subtype="31" gender="" description="" />
+		<Connector type="Slider" subtype="32" gender="" description="" />
+		<Connector type="Slider" subtype="34" gender="" description="" />
+		<Connector type="Slider" subtype="35" gender="" description="" />
+		<Connector type="Slider" subtype="36" gender="" description="" />
+		<Connector type="Slider" subtype="37" gender="" description="" />
+	</Sliders>
+</Connectors>

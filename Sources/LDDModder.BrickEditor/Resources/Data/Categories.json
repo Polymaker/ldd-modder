@@ -1,0 +1,354 @@
+[
+  {
+    "ID": 0,
+    "Name": "None"
+  },
+  {
+    "ID": 201,
+    "Name": "BRICKS"
+  },
+  {
+    "ID": 202,
+    "Name": "BRICKS, SPECIAL"
+  },
+  {
+    "ID": 203,
+    "Name": "BRICKS, SPECIAL CIRCLES AND ANGLES"
+  },
+  {
+    "ID": 204,
+    "Name": "BRICKS, SPECIAL Ø4.85 HOLE AND CONNECTING BUSH"
+  },
+  {
+    "ID": 205,
+    "Name": "BRICKS, WITH SLOPE"
+  },
+  {
+    "ID": 206,
+    "Name": "BRICKS WITH SLOPE, SPECIAL"
+  },
+  {
+    "ID": 207,
+    "Name": "BRICKS WITH BOWS AND ARCHES"
+  },
+  {
+    "ID": 208,
+    "Name": "BRICKS WITH SPECIAL BOWS AND ANGLES"
+  },
+  {
+    "ID": 215,
+    "Name": "PLATES"
+  },
+  {
+    "ID": 216,
+    "Name": "PLATES, SPECIAL"
+  },
+  {
+    "ID": 217,
+    "Name": "PLATES, SPECIAL CIRCLES AND ANGLES"
+  },
+  {
+    "ID": 218,
+    "Name": "BUILDING PLATES"
+  },
+  {
+    "ID": 225,
+    "Name": "FRAMES, WINDOWS, WALLS AND DOORS"
+  },
+  {
+    "ID": 226,
+    "Name": "GATES AND ROOFS"
+  },
+  {
+    "ID": 227,
+    "Name": "INTERIOR"
+  },
+  {
+    "ID": 228,
+    "Name": "PLANTS"
+  },
+  {
+    "ID": 235,
+    "Name": "FENCES AND LADDERS"
+  },
+  {
+    "ID": 236,
+    "Name": "SIGNS, FLAGS AND POLES"
+  },
+  {
+    "ID": 240,
+    "Name": "MINI FIGURE"
+  },
+  {
+    "ID": 242,
+    "Name": "FIGURE, HEADS AND MASKS"
+  },
+  {
+    "ID": 243,
+    "Name": "FIGURE, WIGS"
+  },
+  {
+    "ID": 244,
+    "Name": "FIGURE, HEAD CLOTHING"
+  },
+  {
+    "ID": 245,
+    "Name": "FIGURE ACCESSORIES, UPPER AND LOWER PART"
+  },
+  {
+    "ID": 246,
+    "Name": "FIGURE ACCESSORIES IN HAND"
+  },
+  {
+    "ID": 247,
+    "Name": "FIGURE, WEAPONS"
+  },
+  {
+    "ID": 249,
+    "Name": "FOODSTUFF"
+  },
+  {
+    "ID": 250,
+    "Name": "FIGURE, THEME"
+  },
+  {
+    "ID": 251,
+    "Name": "FIGURE, SPECIAL"
+  },
+  {
+    "ID": 252,
+    "Name": "FIGURE, ACCESSORIES FOR THE UPPER AND LOWER PART"
+  },
+  {
+    "ID": 253,
+    "Name": "FIGURE ACCESSORIES, UPPER BODY"
+  },
+  {
+    "ID": 255,
+    "Name": "TEXTILES"
+  },
+  {
+    "ID": 259,
+    "Name": "ANIMALS AND CREATURES"
+  },
+  {
+    "ID": 265,
+    "Name": "TYRES AND RIMS FOR SNAP Ø3,2"
+  },
+  {
+    "ID": 266,
+    "Name": "TYRES AND RIMS FOR/TO SNAP Ø4,85 W. CROSS"
+  },
+  {
+    "ID": 267,
+    "Name": "TYRES AND RIMS, SPECIAL"
+  },
+  {
+    "ID": 268,
+    "Name": "WHEEL BASE"
+  },
+  {
+    "ID": 272,
+    "Name": "TRANSPORTATION MEANS, VEHICLES"
+  },
+  {
+    "ID": 273,
+    "Name": "TRANSPORTATION MEANS, SHIPS"
+  },
+  {
+    "ID": 274,
+    "Name": "TRANSPORTATION MEANS, TRAINS"
+  },
+  {
+    "ID": 275,
+    "Name": "TRANSPORTATION MEANS, AVIATION"
+  },
+  {
+    "ID": 276,
+    "Name": "CRAINS AND SCAFFOLD"
+  },
+  {
+    "ID": 277,
+    "Name": "WINDSCREENS AND COCKPITS"
+  },
+  {
+    "ID": 281,
+    "Name": "DECORATION ELEMENTS"
+  },
+  {
+    "ID": 285,
+    "Name": "CONNECTORS"
+  },
+  {
+    "ID": 286,
+    "Name": "FUNCTIONAL ELEMENTS"
+  },
+  {
+    "ID": 288,
+    "Name": "FUNCTIONAL ELEMENTS, GEAR WHEELS AND RACKS"
+  },
+  {
+    "ID": 290,
+    "Name": "RUBBERS AND STRINGS"
+  },
+  {
+    "ID": 291,
+    "Name": "TUBES"
+  },
+  {
+    "ID": 292,
+    "Name": "ELECTRIC PARTS"
+  },
+  {
+    "ID": 293,
+    "Name": "POWER FUNCTIONS"
+  },
+  {
+    "ID": 296,
+    "Name": "MISCELLANEOUS ELEMENTS"
+  },
+  {
+    "ID": 299,
+    "Name": "LOOSE PARTS"
+  },
+  {
+    "ID": 301,
+    "Name": "BEAMS"
+  },
+  {
+    "ID": 302,
+    "Name": "BEAMS, SPECIAL"
+  },
+  {
+    "ID": 310,
+    "Name": "BEAMS"
+  },
+  {
+    "ID": 311,
+    "Name": "BEAMS, SPECIAL"
+  },
+  {
+    "ID": 312,
+    "Name": "BEAMS W/ SHAPES"
+  },
+  {
+    "ID": 313,
+    "Name": "BEAMS W/ BALL AND BALL CUP"
+  },
+  {
+    "ID": 315,
+    "Name": "HALF BEAMS"
+  },
+  {
+    "ID": 320,
+    "Name": "HALF BEAMS"
+  },
+  {
+    "ID": 321,
+    "Name": "HALF BEAMS, SPECIAL"
+  },
+  {
+    "ID": 340,
+    "Name": "FIGURE PARTS"
+  },
+  {
+    "ID": 341,
+    "Name": "HANDS AND FEETS"
+  },
+  {
+    "ID": 342,
+    "Name": "FIGURE, HEADS AND MASKS"
+  },
+  {
+    "ID": 347,
+    "Name": "FIGURE, WEAPONS"
+  },
+  {
+    "ID": 350,
+    "Name": "FIGURE, HEAD AND CLOTHING"
+  },
+  {
+    "ID": 351,
+    "Name": "FIGURE, ACCESSORIES TOOLS"
+  },
+  {
+    "ID": 352,
+    "Name": "BODY SHELLS"
+  },
+  {
+    "ID": 353,
+    "Name": "FIGURE, ACCESSORIES, SHELLS W/ BALLSNAP"
+  },
+  {
+    "ID": 359,
+    "Name": "ANIMALS AND ACCESSORIES FOR ANIMALS"
+  },
+  {
+    "ID": 366,
+    "Name": "TYRES AND RIMS FOR/TO SNAP Ø4,85 W. CROSS"
+  },
+  {
+    "ID": 367,
+    "Name": "TYRES AND RIMS, SPECIAL"
+  },
+  {
+    "ID": 368,
+    "Name": "TYRES AND RIMS, SPECIAL"
+  },
+  {
+    "ID": 372,
+    "Name": "TRANSPORTATION MEANS, VEHICLES"
+  },
+  {
+    "ID": 375,
+    "Name": "TRANSPORTATION MEANS, AVIATION"
+  },
+  {
+    "ID": 376,
+    "Name": "TRANSPORTATION MEANS, ACCESSORIES"
+  },
+  {
+    "ID": 381,
+    "Name": "DECORATION ELEMENTS"
+  },
+  {
+    "ID": 385,
+    "Name": "CONNECTORS"
+  },
+  {
+    "ID": 386,
+    "Name": "FUNCTIONAL ELEMENTS"
+  },
+  {
+    "ID": 387,
+    "Name": "FUNCTIONAL ELEMENTS, OTHERS"
+  },
+  {
+    "ID": 388,
+    "Name": "FUNCTIONAL ELEMENTS, GEAR WHEELS AND RACKS"
+  },
+  {
+    "ID": 391,
+    "Name": "TUBES"
+  },
+  {
+    "ID": 392,
+    "Name": "ELECTRIC PARTS"
+  },
+  {
+    "ID": 393,
+    "Name": "POWER FUNCTIONS"
+  },
+  {
+    "ID": 396,
+    "Name": "MISCELLANEOUS ELEMENTS"
+  },
+  {
+    "ID": 399,
+    "Name": "LOOSE PARTS"
+  },
+  {
+    "ID": 559,
+    "Name": "ANIMALS AND ACCESSORIES FOR ANIMALS"
+  }
+]

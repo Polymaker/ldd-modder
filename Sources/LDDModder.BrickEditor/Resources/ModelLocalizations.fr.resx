@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Label_Decoration" xml:space="preserve">
+    <value>Décoration</value>
+  </data>
+  <data name="Label_Part" xml:space="preserve">
+    <value>Pièce</value>
+  </data>
+  <data name="Label_Brick" xml:space="preserve">
+    <value>Brique</value>
+  </data>
+  <data name="Label_Surfaces" xml:space="preserve">
+    <value>Surfaces</value>
+  </data>
+  <data name="Label_Surface" xml:space="preserve">
+    <value>Surface</value>
+  </data>
+  <data name="Label_Collisions" xml:space="preserve">
+    <value>Collisions</value>
+  </data>
+  <data name="Label_Connections" xml:space="preserve">
+    <value>Connexions</value>
+  </data>
+  <data name="Label_MainSurface" xml:space="preserve">
+    <value>Surface principale</value>
+  </data>
+  <data name="Label_DecorationSurface" xml:space="preserve">
+    <value>Surface de décoration</value>
+  </data>
+  <data name="Label_Model" xml:space="preserve">
+    <value>Modèle</value>
+  </data>
+  <data name="Label_Stud" xml:space="preserve">
+    <value>Stud</value>
+  </data>
+  <data name="Label_Component" xml:space="preserve">
+    <value>Composant</value>
+  </data>
+  <data name="Label_NewPartProject" xml:space="preserve">
+    <value>Nouvelle pièce</value>
+  </data>
+  <data name="Label_PartProjectName" xml:space="preserve">
+    <value>Pièce %partid%</value>
+  </data>
+  <data name="Label_Models" xml:space="preserve">
+    <value>Modèles</value>
+  </data>
+  <data name="Label_MaleStuds" xml:space="preserve">
+    <value>Studs (male)</value>
+  </data>
+  <data name="Label_BrickTubes" xml:space="preserve">
+    <value>Tubes</value>
+  </data>
+  <data name="Label_FemaleStuds" xml:space="preserve">
+    <value>Studs (femelle)</value>
+  </data>
+  <data name="Label_Studs" xml:space="preserve">
+    <value>Studs</value>
+  </data>
+  <data name="Label_FemaleStud" xml:space="preserve">
+    <value>Stud femelle</value>
+  </data>
+  <data name="Label_Geometry" xml:space="preserve">
+    <value>Géometrie</value>
+  </data>
+  <data name="Label_Mesh" xml:space="preserve">
+    <value>Géometrie</value>
+  </data>
+  <data name="Label_AlternateMeshes" xml:space="preserve">
+    <value>Modèle alternatif</value>
+  </data>
+  <data name="Label_DecorationSurfaceNumber" xml:space="preserve">
+    <value>Surface de décoration {0}</value>
+  </data>
+  <data name="Label_NoActiveProject" xml:space="preserve">
+    <value>Aucun projet actif</value>
+  </data>
+  <data name="ConnectorType_Axel" xml:space="preserve">
+    <value>Cylindrique (barres &amp; technic)</value>
+  </data>
+  <data name="ConnectorType_Hinge" xml:space="preserve">
+    <value>Charnière</value>
+  </data>
+  <data name="ConnectorType_Rail" xml:space="preserve">
+    <value>Rails de train</value>
+  </data>
+  <data name="ConnectorType_Gear" xml:space="preserve">
+    <value>Engrenage</value>
+  </data>
+  <data name="ConnectorType_Fixed" xml:space="preserve">
+    <value>Couplage fixe (pneus, portes, etc.)</value>
+  </data>
+  <data name="ConnectorType_Custom2DField" xml:space="preserve">
+    <value>Studs (briques)</value>
+  </data>
+  <data name="ConnectorType_Slider" xml:space="preserve">
+    <value>Glisière</value>
+  </data>
+  <data name="ConnectorType_Ball" xml:space="preserve">
+    <value>Joint à rotule &amp; divers</value>
+  </data>
+  <data name="CollisionType_Sphere" xml:space="preserve">
+    <value>Sphère</value>
+  </data>
+  <data name="CollisionType_Box" xml:space="preserve">
+    <value>Boîte</value>
+  </data>
+  <data name="Label_CollisionBoxes" xml:space="preserve">
+    <value>Boîtes</value>
+  </data>
+  <data name="Label_CollisionSpheres" xml:space="preserve">
+    <value>Sphères</value>
+  </data>
+  <data name="NodeRangeFormat1" xml:space="preserve">
+    <value>{0} à {1}</value>
+  </data>
+  <data name="NodeRangeFormat2" xml:space="preserve">
+    <value>{0}+</value>
+  </data>
+  <data name="ModelComponentType_Part" xml:space="preserve">
+    <value>Modèle</value>
+  </data>
+  <data name="ModelComponentType_MaleStud" xml:space="preserve">
+    <value>Stud (male)</value>
+  </data>
+  <data name="ModelComponentType_FemaleStud" xml:space="preserve">
+    <value>Stud (femelle)</value>
+  </data>
+  <data name="ModelComponentType_BrickTube" xml:space="preserve">
+    <value>Tube intérieur</value>
+  </data>
+  <data name="Label_FixedConnectors" xml:space="preserve">
+    <value>Conn. fixes</value>
+  </data>
+  <data name="Label_GearConnectors" xml:space="preserve">
+    <value>Engrenages</value>
+  </data>
+  <data name="Label_HingeConnectors" xml:space="preserve">
+    <value>Charnières</value>
+  </data>
+  <data name="Label_RailConnectors" xml:space="preserve">
+    <value>Rails</value>
+  </data>
+  <data name="Label_SliderConnectors" xml:space="preserve">
+    <value>Glisières</value>
+  </data>
+  <data name="Label_BallConnectors" xml:space="preserve">
+    <value>Joints</value>
+  </data>
+  <data name="Label_Custom2DFieldConnectors" xml:space="preserve">
+    <value>Studs</value>
+  </data>
+  <data name="Label_AxelConnectors" xml:space="preserve">
+    <value>Conn. cylindriques</value>
+  </data>
+  <data name="Label_BrickTubeComponents" xml:space="preserve">
+    <value>Tube intérieurs</value>
+  </data>
+  <data name="Label_MaleStudComponents" xml:space="preserve">
+    <value>Studs mâles</value>
+  </data>
+  <data name="Label_FemaleStudComponents" xml:space="preserve">
+    <value>Studs femelles</value>
+  </data>
+  <data name="Label_PartComponents" xml:space="preserve">
+    <value>Modèles de pièce</value>
+  </data>
+  <data name="Label_DefaultMeshes" xml:space="preserve">
+    <value>Modèle normal</value>
+  </data>
+  <data name="Label_Project" xml:space="preserve">
+    <value>Projet</value>
+  </data>
+  <data name="PROJECT_NO_CONNECTIONS" xml:space="preserve">
+    <value>Aucune connexion n'est définie. La pièce ne se connectera à rien.</value>
+  </data>
+  <data name="PROJECT_NO_SURFACES" xml:space="preserve">
+    <value>La pièce doit avoir au moins une surface.</value>
+  </data>
+  <data name="PROJECT_NO_COLLISIONS" xml:space="preserve">
+    <value>Aucune collision n'est définie.</value>
+  </data>
+  <data name="PROJECT_NO_BONES" xml:space="preserve">
+    <value>Il n'y a pas d'armature de définie. La pièce ne peut pas être flexible.</value>
+  </data>
+  <data name="PROJECT_NO_ISSUES" xml:space="preserve">
+    <value>Aucun problème de configuration trouvé.</value>
+  </data>
+  <data name="SURFACE_NO_MODELS" xml:space="preserve">
+    <value>La surface {0} ne contient aucun modèle.</value>
+  </data>
+  <data name="SURFACE_NO_TEXTURED_MODEL" xml:space="preserve">
+    <value>La surface {0} a quelques modèles sans coordonnées de texture.</value>
+  </data>
+  <data name="PART_EMPTY_DESCRIPTION" xml:space="preserve">
+    <value>La description de la pièce est vide.</value>
+  </data>
+  <data name="PART_EMPTY_PART_ID" xml:space="preserve">
+    <value>Vous devez entrer un numéro de pièce.</value>
+  </data>
+  <data name="PART_NO_BOUNDING" xml:space="preserve">
+    <value>Le cadre de délimitation de la pièce n'est pas défini.</value>
+  </data>
+  <data name="PART_NO_GEOMETRYBOUNDING" xml:space="preserve">
+    <value>Le cadre de délimitation de la géométrie n'est pas défini.</value>
+  </data>
+  <data name="MODEL_STUDS_NOT_DEFINED" xml:space="preserve">
+    <value>Le modèle ne fait référence à aucun Stud.</value>
+  </data>
+  <data name="STUD_CONNECTION_NOT_DEFINED" xml:space="preserve">
+    <value>La connexion n'est pas définie ou invalide.</value>
+  </data>
+  <data name="STUD_CONNECTION_FIELD_NOT_DEFINED" xml:space="preserve">
+    <value>Le Stud référencé n'est pas défini.</value>
+  </data>
+  <data name="STUD_CONNECTION_FIELD_INVALID" xml:space="preserve">
+    <value>Le Stud référencé n'est pas valide.</value>
+  </data>
+  <data name="MODEL_STUDS_NOT_DEFINED_ALT" xml:space="preserve">
+    <value>Le modèle ne fait référence à aucun Stud. Par conséquent, le modèle alternatif ne sera jamais affiché.</value>
+  </data>
+</root>

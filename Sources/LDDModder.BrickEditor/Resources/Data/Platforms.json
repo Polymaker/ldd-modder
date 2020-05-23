@@ -1,0 +1,18 @@
+[
+  {
+    "ID": 0,
+    "Name": "None"
+  },
+  {
+    "ID": 200,
+    "Name": "SYSTEM"
+  },
+  {
+    "ID": 300,
+    "Name": "TECHNIC"
+  },
+  {
+    "ID": 500,
+    "Name": "ACTION FIGURES"
+  }
+]

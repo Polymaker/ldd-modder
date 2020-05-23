@@ -1,0 +1,2417 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ObjectTK</name>
+    </assembly>
+    <members>
+        <member name="T:ObjectTK.Buffers.Buffer`1">
+            <summary>
+            Represents a buffer object.
+            </summary>
+            <typeparam name="T">The type of elements in the buffer object.</typeparam>
+        </member>
+        <member name="P:ObjectTK.Buffers.Buffer`1.Initialized">
+            <summary>
+            A value indicating whether the buffer has been initialized and thus has access to allocated memory.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Buffers.Buffer`1.ElementSize">
+            <summary>
+            The size in bytes of one element within the buffer.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Buffers.Buffer`1.ElementCount">
+            <summary>
+            The number of elements for which buffer memory was allocated.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Buffers.Buffer`1.CurrentElementIndex">
+            <summary>
+            The index to the element which will be written to on the next usage of SubData().
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Buffers.Buffer`1.ActiveElementCount">
+            <summary>
+            The number of elements with data explicitly written.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Buffers.Buffer`1.Content">
+            <summary>
+            Retrieves data back from vram.
+            Mainly for debugging purposes.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Buffers.Buffer`1.#ctor(System.Int32)">
+            <summary>
+            Creates a new, uninitialized buffer object using an explicitly given element size in bytes.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Buffers.Buffer`1.#ctor">
+            <summary>
+            Creates a new, uninitialized buffer object using the element size determined by Marshal.SizeOf().
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Buffers.Buffer`1.Init(OpenTK.Graphics.OpenGL.BufferTarget,`0[],OpenTK.Graphics.OpenGL.BufferUsageHint)">
+            <summary>
+            Allocates buffer memory and uploads given data to it.
+            </summary>
+            <param name="bufferTarget">The BufferTarget to use when binding the buffer.</param>
+            <param name="data">The data to be transfered into the buffer.</param>
+            <param name="usageHint">The usage hint of the buffer object.</param>
+        </member>
+        <member name="M:ObjectTK.Buffers.Buffer`1.Init(OpenTK.Graphics.OpenGL.BufferTarget,System.Int32,OpenTK.Graphics.OpenGL.BufferUsageHint)">
+            <summary>
+            Allocates buffer memory without initializing it.
+            </summary>
+            <param name="bufferTarget">The BufferTarget to use when binding the buffer.</param>
+            <param name="elementCount">The number of elements to allocate memory for.</param>
+            <param name="usageHint">The usage hint of the buffer object.</param>
+        </member>
+        <member name="M:ObjectTK.Buffers.Buffer`1.Init(OpenTK.Graphics.OpenGL.BufferTarget,System.Int32,`0[],OpenTK.Graphics.OpenGL.BufferUsageHint)">
+            <summary>
+            Allocates buffer memory and initializes it to the given data.
+            </summary>
+            <param name="bufferTarget">The BufferTarget to use when binding the buffer.</param>
+            <param name="elementCount">The number of elements to allocate memory for.</param>
+            <param name="data">The data to upload into the buffer.</param>
+            <param name="usageHint">The usage hint of the buffer object.</param>
+        </member>
+        <member name="M:ObjectTK.Buffers.Buffer`1.SubData(OpenTK.Graphics.OpenGL.BufferTarget,`0[])">
+            <summary>
+            Overwrites part of the buffer with the given data and automatically indexes forward through the available memory.
+            Skips back to the beginning automatically once the end was reached.
+            </summary>
+            <param name="bufferTarget">The BufferTarget to use when binding the buffer.</param>
+            <param name="data">The data to be transfered into the buffer.</param>
+        </member>
+        <member name="M:ObjectTK.Buffers.Buffer`1.SubData(OpenTK.Graphics.OpenGL.BufferTarget,`0[],System.Int32)">
+            <summary>
+            Overwrites part of the buffer with the given data at the given offset.
+            Writes all data available in data.
+            </summary>
+            <param name="bufferTarget">The BufferTarget to use when binding the buffer.</param>
+            <param name="data">The data to be transfered into the buffer.</param>
+            <param name="offset">The index to the first element of the buffer to be overwritten.</param>
+        </member>
+        <member name="M:ObjectTK.Buffers.Buffer`1.SubData(OpenTK.Graphics.OpenGL.BufferTarget,`0[],System.Int32,System.Int32)">
+            <summary>
+            Overwrites part of the buffer with the given data at the given offset.
+            Writes <paramref name="count" /> elements of data.
+            </summary>
+            <param name="bufferTarget">The BufferTarget to use when binding the buffer.</param>
+            <param name="data">The data to be transfered into the buffer.</param>
+            <param name="offset">The index to the first element of the buffer to be overwritten.</param>
+            <param name="count">The number of elements from data to write.</param>
+        </member>
+        <member name="M:ObjectTK.Buffers.Buffer`1.Clear(OpenTK.Graphics.OpenGL.BufferTarget)">
+            <summary>
+            Clear the buffer to default values.
+            </summary>
+            <param name="bufferTarget">The BufferTarget to use when binding the buffer.</param>
+        </member>
+        <member name="M:ObjectTK.Buffers.Buffer`1.Orphan(OpenTK.Graphics.OpenGL.BufferTarget,OpenTK.Graphics.OpenGL.BufferUsageHint)">
+            <summary>
+            "Orphan" the buffer by calling glBufferData() with the exact same size and usage hint,
+            but with a NULL pointer as the new data. This will let OpenGL allocate a new buffer
+            under the same handle and continue using it without synchronization, even if the old
+            buffer may still be in use by commands remaining in the queue.
+            </summary>
+            <param name="bufferTarget">The BufferTarget to use when binding the buffer.</param>
+            <param name="usageHint">The usage hint of the buffer object.</param>
+        </member>
+        <member name="M:ObjectTK.Buffers.Buffer`1.CopyFrom(ObjectTK.Buffers.Buffer{`0},System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Copies elements from the source buffer to this buffer.
+            Copied on server-side only, no synchronization or transfer of data to host required.
+            </summary>
+            <param name="source">The source buffer to copy data from.</param>
+            <param name="readOffset">Element offset into the source buffer.</param>
+            <param name="writeOffset">Element offset into this buffer</param>
+            <param name="count">The Number of elements to copy.</param>
+        </member>
+        <member name="M:ObjectTK.Buffers.Buffer`1.CopyFrom(ObjectTK.Buffers.Buffer{`0})">
+            <summary>
+            Copies elements from the source buffer to this buffer until the end of either buffer is reached.
+            </summary>
+            <param name="source">The source buffer to copy elements from.</param>
+        </member>
+        <member name="M:ObjectTK.Buffers.Buffer`1.CheckBufferSize(OpenTK.Graphics.OpenGL.BufferTarget,System.Int32)">
+            <summary>
+            Checks if uploaded size matches the expected size.
+            </summary>
+        </member>
+        <member name="T:ObjectTK.Buffers.BufferPod`1">
+            <summary>
+            Represents two buffer objects which are bundled together to simplify ping-ponging.
+            </summary>
+            <typeparam name="T">The type of elements in the buffer objects.</typeparam>
+        </member>
+        <member name="P:ObjectTK.Buffers.BufferPod`1.Ping">
+            <summary>
+            First or front buffer.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Buffers.BufferPod`1.Pong">
+            <summary>
+            Second or back buffer.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Buffers.BufferPod`1.#ctor">
+            <summary>
+            Requests two new, uninitialized <see cref="T:ObjectTK.Buffers.Buffer`1"/> objects.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Buffers.BufferPod`1.Init(OpenTK.Graphics.OpenGL.BufferTarget,System.Int32,OpenTK.Graphics.OpenGL.BufferUsageHint)">
+            <summary>
+            Allocates memory for both buffer objects without initializing it.
+            </summary>
+            <param name="target">The BufferTarget to use when binding the buffers.</param>
+            <param name="elementCount">The number of elements for each buffer to allocate memory for.</param>
+            <param name="usageHint">The usage hint for both buffer objects.</param>
+        </member>
+        <member name="M:ObjectTK.Buffers.BufferPod`1.Init(OpenTK.Graphics.OpenGL.BufferTarget,`0[],OpenTK.Graphics.OpenGL.BufferUsageHint)">
+            <summary>
+            Allocates memory for both buffer objects and initializes the first buffer with the given data.
+            The second buffer is left uninitialized.
+            </summary>
+            <param name="target">The BufferTarget to use when binding the buffers.</param>
+            <param name="data">The data to upload to the first buffer and allocate enough memory for in the second buffer.</param>
+            <param name="usageHint">The usage hint for both buffer objects.</param>
+        </member>
+        <member name="M:ObjectTK.Buffers.BufferPod`1.Resize(OpenTK.Graphics.OpenGL.BufferTarget,System.Int32,OpenTK.Graphics.OpenGL.BufferUsageHint)">
+            <summary>
+            Changes the size of both buffer objects.
+            </summary>
+            <param name="target">The BufferTarget to use when binding the buffers.</param>
+            <param name="elementCount">The new number of elements for each buffer to allocate memory for.</param>
+            <param name="usageHint">The usage hint for both buffer objects.</param>
+        </member>
+        <member name="M:ObjectTK.Buffers.BufferPod`1.Swap">
+            <summary>
+            Swaps the two buffer objects.
+            </summary>
+        </member>
+        <member name="T:ObjectTK.Buffers.Framebuffer">
+            <summary>
+            Represents a framebuffer object.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Buffers.Framebuffer.#ctor">
+            <summary>
+            Creates a new framebuffer object.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Buffers.Framebuffer.Bind(OpenTK.Graphics.OpenGL.FramebufferTarget)">
+            <summary>
+            Binds this framebuffer.
+            </summary>
+            <param name="target">The framebuffer target to bind to.</param>
+        </member>
+        <member name="M:ObjectTK.Buffers.Framebuffer.Unbind(OpenTK.Graphics.OpenGL.FramebufferTarget)">
+            <summary>
+            Unbind this framebuffer, i.e. bind the default framebuffer.
+            </summary>
+            <param name="target">The framebuffer target to bind to.</param>
+        </member>
+        <member name="M:ObjectTK.Buffers.Framebuffer.Attach(OpenTK.Graphics.OpenGL.FramebufferTarget,OpenTK.Graphics.OpenGL.FramebufferAttachment,ObjectTK.Textures.Texture,System.Int32)">
+            <summary>
+            Attaches the given texture level to the an attachment point.
+            </summary>
+            <remarks>
+            If texture is a three-dimensional, cube map array, cube map, one- or two-dimensional array, or two-dimensional multisample array texture
+            the specified texture level is an array of images and the framebuffer attachment is considered to be layered.
+            </remarks>
+            <param name="target">The framebuffer target to bind to.</param>
+            <param name="attachment">The attachment point to attach to.</param>
+            <param name="texture">The texture to attach.</param>
+            <param name="level">The level of the texture to attach.</param>
+        </member>
+        <member name="M:ObjectTK.Buffers.Framebuffer.Attach(OpenTK.Graphics.OpenGL.FramebufferTarget,OpenTK.Graphics.OpenGL.FramebufferAttachment,ObjectTK.Textures.LayeredTexture,System.Int32,System.Int32)">
+            <summary>
+            Attaches a single layer of the given texture level to an attachment point.
+            </summary>
+            <remarks>
+            Note that for cube maps and cube map arrays the <paramref name="layer"/> parameter actually indexes the layer-faces.<br/>
+            Thus for cube maps the layer parameter equals the face to be bound.<br/>
+            For cube map arrays the layer parameter can be calculated as 6 * arrayLayer + face, which is done automatically when using
+            the corresponding overload <see cref="M:ObjectTK.Buffers.Framebuffer.Attach(OpenTK.Graphics.OpenGL.FramebufferTarget,OpenTK.Graphics.OpenGL.FramebufferAttachment,ObjectTK.Textures.TextureCubemapArray,System.Int32,System.Int32,System.Int32)"/>.
+            </remarks>
+            <param name="target">The framebuffer target to bind to.</param>
+            <param name="attachment">The attachment point to attach to.</param>
+            <param name="texture">The texture to attach.</param>
+            <param name="layer">The layer of the texture to attach.</param>
+            <param name="level">The level of the texture to attach.</param>
+        </member>
+        <member name="M:ObjectTK.Buffers.Framebuffer.Attach(OpenTK.Graphics.OpenGL.FramebufferTarget,OpenTK.Graphics.OpenGL.FramebufferAttachment,ObjectTK.Textures.TextureCubemap,System.Int32,System.Int32)">
+            <summary>
+            Attaches a single face of the given cube map texture level to the an attachment point.
+            </summary>
+            <param name="target">The framebuffer target to bind to.</param>
+            <param name="attachment">The attachment point to attach to.</param>
+            <param name="texture">The texture to attach.</param>
+            <param name="face">The cube map face of the texture to attach.</param>
+            <param name="level">The level of the texture to attach.</param>
+        </member>
+        <member name="M:ObjectTK.Buffers.Framebuffer.Attach(OpenTK.Graphics.OpenGL.FramebufferTarget,OpenTK.Graphics.OpenGL.FramebufferAttachment,ObjectTK.Textures.TextureCubemapArray,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Attaches a single face of the given cube map array texture level to an attachment point.
+            </summary>
+            <param name="target">The framebuffer target to bind to.</param>
+            <param name="attachment">The attachment point to attach to.</param>
+            <param name="texture">The texture to attach.</param>
+            <param name="arrayLayer">The layer of the texture to attach.</param>
+            <param name="face">The cube map face of the texture to attach.</param>
+            <param name="level">The level of the texture to attach.</param>
+        </member>
+        <member name="M:ObjectTK.Buffers.Framebuffer.Attach(OpenTK.Graphics.OpenGL.FramebufferTarget,OpenTK.Graphics.OpenGL.FramebufferAttachment,ObjectTK.Buffers.Renderbuffer)">
+            <summary>
+            Attaches the render buffer to the given attachment point.
+            </summary>
+            <param name="target">The framebuffer target to bind to.</param>
+            <param name="attachment">The attachment point to attach to.</param>
+            <param name="renderbuffer">Render buffer to attach.</param>
+        </member>
+        <member name="M:ObjectTK.Buffers.Framebuffer.DetachTexture(OpenTK.Graphics.OpenGL.FramebufferTarget,OpenTK.Graphics.OpenGL.FramebufferAttachment)">
+            <summary>
+            Detaches the currently attached texture from the given attachment point.
+            </summary>
+            <param name="attachment">The attachment point to detach from.</param>
+            <param name="target">The framebuffer target to bind to.</param>
+        </member>
+        <member name="M:ObjectTK.Buffers.Framebuffer.DetachRenderbuffer(OpenTK.Graphics.OpenGL.FramebufferTarget,OpenTK.Graphics.OpenGL.FramebufferAttachment)">
+            <summary>
+            Detaches the currently attached render buffer from the given attachment point.
+            </summary>
+            <param name="target">The framebuffer target to bind to.</param>
+            <param name="attachment">The attachment point to detach from.</param>
+        </member>
+        <member name="M:ObjectTK.Buffers.Framebuffer.CheckState(OpenTK.Graphics.OpenGL.FramebufferTarget)">
+            <summary>
+            Check if the current framebuffer status is "frambuffer complete", throws on error.
+            </summary>
+            <param name="target">The framebuffer target to bind to.</param>
+        </member>
+        <member name="M:ObjectTK.Buffers.Framebuffer.AssertActive(OpenTK.Graphics.OpenGL.FramebufferTarget)">
+            <summary>
+            Throws an <see cref="T:ObjectTK.Exceptions.ObjectNotBoundException"/> if this framebuffer is not the currently active one.
+            </summary>
+            <param name="target">The framebuffer target to bind to.</param>
+        </member>
+        <member name="T:ObjectTK.Buffers.VertexArray">
+            <summary>
+            Represents a vertex array object.<br/>
+            TODO: add support for instanced vertex attributes with glVertexAttribDivisor (or maybe glVertexBindingDivisor)
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Buffers.VertexArray.#ctor">
+            <summary>
+            Initializes a new vertex array object.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Buffers.VertexArray.Bind">
+            <summary>
+            Bind the vertex array.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Buffers.VertexArray.DrawArrays(OpenTK.Graphics.OpenGL.PrimitiveType,System.Int32,System.Int32)">
+            <summary>
+            Render primitives from array data.
+            </summary>
+            <param name="mode">Specifies what kind of primitives to render.</param>
+            <param name="first">Specifies the starting index in the enabled arrays.</param>
+            <param name="count">Specifies the number of indices to be rendered.</param>
+        </member>
+        <member name="M:ObjectTK.Buffers.VertexArray.DrawElements(OpenTK.Graphics.OpenGL.PrimitiveType,System.Int32,OpenTK.Graphics.OpenGL.DrawElementsType,System.Int32)">
+            <summary>
+            Render primitives from array data using the element buffer.
+            </summary>
+            <param name="mode">Specifies what kind of primitives to render.</param>
+            <param name="count">Specifies the number of elements to be rendered.</param>
+            <param name="type">Specifies the type of the values in indices.</param>
+            <param name="offset">Specifies the offset (in bytes) into the index buffer object.</param>
+        </member>
+        <member name="M:ObjectTK.Buffers.VertexArray.DrawElementsBaseVertex(OpenTK.Graphics.OpenGL.PrimitiveType,System.Int32,System.Int32,OpenTK.Graphics.OpenGL.DrawElementsType,System.Int32)">
+            <summary>
+            Render primitives from array data with a per-element offset.
+            </summary>
+            <param name="mode">Specifies what kind of primitives to render.</param>
+            <param name="baseVertex">Specifies a constant that should be added to each element of indices​ when chosing elements from the enabled vertex arrays.</param>
+            <param name="count">Specifies the number of elements to be rendered.</param>
+            <param name="type">Specifies the type of the values in indices.</param>
+            <param name="offset">Specifies the offset (in bytes) into the index buffer object.</param>
+        </member>
+        <member name="M:ObjectTK.Buffers.VertexArray.BindElementBuffer``1(ObjectTK.Buffers.Buffer{``0})">
+            <summary>
+            Binds the given buffer to the element array buffer target.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Buffers.VertexArray.UnbindElementBuffer">
+            <summary>
+            Unbinds any buffer bound to the element array buffer target.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Buffers.VertexArray.BindAttribute``1(ObjectTK.Shaders.Variables.VertexAttrib,ObjectTK.Buffers.Buffer{``0})">
+            <summary>
+            Binds the buffer to the given vertex attribute. Uses the buffers element size as the stride parameter with an offset of zero.
+            The other parameters, namely components, type and normalized are chosen according to the corresponding <see cref="T:ObjectTK.Shaders.Variables.VertexAttribAttribute"/> attribute.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Buffers.VertexArray.BindAttribute``1(ObjectTK.Shaders.Variables.VertexAttrib,ObjectTK.Buffers.Buffer{``0},System.Int32)">
+            <summary>
+            Binds the buffer to the given vertex attribute. Uses the buffers element size as the stride parameter and the given offset.
+            The other parameters, namely components, type and normalized are chosen according to the corresponding <see cref="T:ObjectTK.Shaders.Variables.VertexAttribAttribute"/> attribute.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Buffers.VertexArray.BindAttribute``1(ObjectTK.Shaders.Variables.VertexAttrib,ObjectTK.Buffers.Buffer{``0},System.Int32,System.Int32)">
+            <summary>
+            Binds the buffer to the given vertex attribute. Uses the given stride and offset parameters.
+            The other parameters, namely components, type and normalized are chosen according to the corresponding <see cref="T:ObjectTK.Shaders.Variables.VertexAttribAttribute"/> attribute.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Buffers.VertexArray.BindAttribute``1(ObjectTK.Shaders.Variables.VertexAttrib,ObjectTK.Buffers.Buffer{``0},System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            Binds the buffer to the given vertex attribute.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Buffers.VertexArray.BindAttribute``1(ObjectTK.Shaders.Variables.VertexAttrib,ObjectTK.Buffers.Buffer{``0},System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Binds the buffer to the given vertex attribute.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Buffers.VertexArray.BindAttribute``1(ObjectTK.Shaders.Variables.VertexAttrib,ObjectTK.Buffers.Buffer{``0},System.Int32,System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            Binds the buffer to the given vertex attribute.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Buffers.VertexArray.BindAttribute``1(ObjectTK.Shaders.Variables.VertexAttrib,ObjectTK.Buffers.Buffer{``0},System.Int32,OpenTK.Graphics.OpenGL.VertexAttribPointerType,System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            Binds the buffer to the given vertex attribute.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Buffers.VertexArray.BindAttribute``1(System.Int32,ObjectTK.Buffers.Buffer{``0},System.Int32,OpenTK.Graphics.OpenGL.VertexAttribPointerType,System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            Binds the buffer to the given vertex attribute.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Buffers.VertexArray.UnbindAttribute(ObjectTK.Shaders.Variables.VertexAttrib)">
+            <summary>
+            Disable the given vertex attribute.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Buffers.VertexArray.UnbindAttribute(System.Int32)">
+            <summary>
+            Disable the given vertex attribute.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Buffers.VertexArray.AssertActive">
+            <summary>
+            Throws an <see cref="T:ObjectTK.Exceptions.ObjectNotBoundException"/> if this vertex array is not the currently active one.
+            </summary>
+        </member>
+        <member name="T:ObjectTK.Buffers.Renderbuffer">
+            <summary>
+            Represents a renderbuffer object.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Buffers.Renderbuffer.#ctor">
+            <summary>
+            Creates a new renderbuffer object.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Buffers.Renderbuffer.Init(OpenTK.Graphics.OpenGL.RenderbufferStorage,System.Int32,System.Int32)">
+            <summary>
+            Initializes the renderbuffer with the given parameters.
+            </summary>
+            <param name="storage">Specifies the internal format.</param>
+            <param name="width">The width of the renderbuffer.</param>
+            <param name="height">The height of the renderbuffer.</param>
+        </member>
+        <member name="T:ObjectTK.Buffers.TransformFeedback">
+            <summary>
+            Represents a transform feedback object.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Buffers.TransformFeedback.#ctor">
+            <summary>
+            Creates a new transform feedback buffer.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Buffers.TransformFeedback.Bind">
+            <summary>
+            Binds the transform feedback buffer.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Buffers.TransformFeedback.UnBind">
+            <summary>
+            Unbinds the transform feedback buffer.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Buffers.TransformFeedback.Begin(OpenTK.Graphics.OpenGL.TransformFeedbackPrimitiveType)">
+            <summary>
+            Start transform feedback operation. 
+            </summary>
+            <param name="primitiveMode">Specify the output type of the primitives that will be recorded into the buffer objects that are bound for transform feedback.</param>
+        </member>
+        <member name="M:ObjectTK.Buffers.TransformFeedback.End">
+            <summary>
+            End transform feedback operation.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Buffers.TransformFeedback.Pause">
+            <summary>
+            Pause transform feedback operations.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Buffers.TransformFeedback.Resume">
+            <summary>
+            Resume transform feedback operations.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Buffers.TransformFeedback.BindOutput``1(ObjectTK.Shaders.Variables.TransformOut,ObjectTK.Buffers.Buffer{``0})">
+            <summary>
+            Binds a buffer to the binding index utilized by the given transform feeedback varying.
+            </summary>
+            <param name="transformOut">Specifies a transform feedback varying.</param>
+            <param name="buffer">Specifies a buffer object to bind.</param>
+        </member>
+        <member name="M:ObjectTK.Buffers.TransformFeedback.BindOutput``1(ObjectTK.Shaders.Variables.TransformOut,ObjectTK.Buffers.Buffer{``0},System.Int32,System.Int32)">
+            <summary>
+            Binds part of a buffer to the binding index utilized by the given transform feeedback varying.
+            </summary>
+            <remarks>
+            If multiple parts of the same buffer are bound as transform feedback output targets they must not overlap.
+            </remarks>
+            <param name="transformOut">Specifies a transform feedback varying.</param>
+            <param name="buffer">Specifies a buffer object to bind.</param>
+            <param name="offset">Specifies the starting offset in bytes into the buffer object.</param>
+            <param name="size">Specifies the amount of data in bytes that can be written to the buffer.</param>
+        </member>
+        <member name="M:ObjectTK.Buffers.TransformFeedback.AssertActive">
+            <summary>
+            Throws an <see cref="T:ObjectTK.Exceptions.ObjectNotBoundException"/> if this vertex array is not the currently active one.
+            </summary>
+        </member>
+        <member name="T:ObjectTK.Exceptions.ObjectTKException">
+            <summary>
+            The exception that is thrown when an ObjectTK related error occurs.
+            </summary>
+        </member>
+        <member name="T:ObjectTK.Exceptions.ObjectNotBoundException">
+            <summary>
+            The exception that is thrown when an object is used which must be bound before usage.
+            </summary>
+        </member>
+        <member name="T:ObjectTK.Exceptions.ProgramException">
+            <summary>
+            The exception that is thrown when a program related error occurs.
+            </summary>
+        </member>
+        <member name="T:ObjectTK.Exceptions.ProgramLinkException">
+            <summary>
+            The exception that is thrown when a program link error occurs.
+            </summary>
+        </member>
+        <member name="T:ObjectTK.Exceptions.QueryException">
+            <summary>
+            The exception that is thrown when a query related error occurs.
+            </summary>
+        </member>
+        <member name="T:ObjectTK.Exceptions.ShaderCompileException">
+            <summary>
+            The exception that is thrown when a shader compile error occurs.
+            </summary>
+        </member>
+        <member name="T:ObjectTK.Exceptions.UniformTypeNotSupportedException">
+            <summary>
+            The exception that is thrown when the generic type parameter used for an instance of <see cref="T:ObjectTK.Shaders.Variables.Uniform`1"/> is not supported.
+            </summary>
+        </member>
+        <member name="F:ObjectTK.Exceptions.UniformTypeNotSupportedException.UniformType">
+            <summary>
+            The unsupported type parameter to <see cref="T:ObjectTK.Shaders.Variables.Uniform`1"/> which caused the initialization to fail.
+            </summary>
+        </member>
+        <member name="T:ObjectTK.Extensions">
+            <summary>
+            Contains extension methods.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Extensions.ToVector4(System.Drawing.Color)">
+            <summary>
+            Transforms this <see cref="T:System.Drawing.Color"/> object to a <see cref="T:OpenTK.Vector4"/>.<br/>
+            The resulting vector contains values in the range of (0,1).
+            </summary>
+            <param name="color">The Color object to transform.</param>
+            <returns>A Vector4 object containing the color information.</returns>
+        </member>
+        <member name="M:ObjectTK.Extensions.ToRgba32(System.Drawing.Color)">
+            <summary>
+            Transforms this <see cref="T:System.Drawing.Color"/> object to an unsigned integer.<br/>
+            The components are formatted compatible to OpenGL.
+            </summary>
+            <param name="color">The Color object to transform.</param>
+            <returns>An unsigned integer containing the color information.</returns>
+        </member>
+        <member name="M:ObjectTK.Extensions.Rgba32ToColor(System.UInt32)">
+            <summary>
+            Transforms this unsigned integer to a <see cref="T:System.Drawing.Color"/> object.<br/>
+            Requires the information formatted like the output of <see cref="M:ObjectTK.Extensions.ToRgba32(System.Drawing.Color)"/>.
+            </summary>
+            <param name="color">The unsigned integer to transform.</param>
+            <returns>A Color object containing the same information.</returns>
+        </member>
+        <member name="M:ObjectTK.Extensions.GetCustomAttributes``1(System.Reflection.MemberInfo,System.Boolean)">
+            <summary>
+            Retrieves custom attributes in a typed enumerable.
+            </summary>
+            <typeparam name="T">The type of attribute to search for. Only attributes that are assignable to this type are returned.</typeparam>
+            <param name="type">The member on which to look for custom attributes.</param>
+            <param name="inherit">Specifies whether to search this member's inheritance chain to find the attributes.</param>
+            <returns>An IEnumerable of custom attributes applied to this member.</returns>
+        </member>
+        <member name="T:ObjectTK.GLObject">
+            <summary>
+            Represents an OpenGL handle.<br/>
+            Must be disposed explicitly, otherwise there will be a memory leak which will be logged as a warning.
+            </summary>
+        </member>
+        <member name="F:ObjectTK.GLObject.Handle">
+            <summary>
+            The OpenGL handle.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.GLObject.#ctor(System.Int32)">
+            <summary>
+            Initializes a new instance of the GLResource class.
+            </summary>
+        </member>
+        <member name="T:ObjectTK.GLResource">
+            <summary>
+            Represents an OpenGL resource.<br/>
+            Must be disposed explicitly, otherwise a warning will be logged indicating a memory leak.<br/>
+            Can be derived to inherit the dispose pattern.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.GLResource.IsDisposed">
+            <summary>
+            Gets a values specifying if this resource has already been disposed.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.GLResource.#ctor">
+            <summary>
+            Initializes a new instance of the GLObject class.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.GLResource.Finalize">
+            <summary>
+            Called by the garbage collector and an indicator for a resource leak because the manual dispose prevents this destructor from being called.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.GLResource.Dispose">
+            <summary>
+            Releases all OpenGL handles related to this resource.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.GLResource.Dispose(System.Boolean)">
+            <summary>
+            Releases all OpenGL handles related to this resource.
+            </summary>
+            <param name="manual">True if the call is performed explicitly and within the OpenGL thread, false if it is caused by the garbage collector and therefore from another thread and the result of a resource leak.</param>
+        </member>
+        <member name="M:ObjectTK.GLResource.DisposeAll(System.Object)">
+            <summary>
+            Automatically calls <see cref="M:ObjectTK.GLResource.Dispose"/> on all <see cref="T:ObjectTK.GLResource"/> objects found on the given object.
+            </summary>
+            <param name="obj"></param>
+        </member>
+        <member name="T:ObjectTK.MathF">
+            <summary>
+            Provides mathematical constants and functions with float precision.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.MathF.Sin(System.Single)">
+            <summary>
+            Returns the sine of the specified angle.
+            </summary>
+            <param name="angle">An angle, measured in radians.</param>
+            <returns>The sine of angle. If angle is equal to NaN, NegativeInfinity, or PositiveInfinity, this method returns NaN.</returns>
+        </member>
+        <member name="M:ObjectTK.MathF.Cos(System.Single)">
+            <summary>
+            Returns the cosine of the specified angle.
+            </summary>
+            <param name="angle">An angle, measured in radians.</param>
+            <returns>The cosine of angle. If angle is equal to NaN, NegativeInfinity, or PositiveInfinity, this method returns NaN.</returns>
+        </member>
+        <member name="M:ObjectTK.MathF.GetNormalMatrix(OpenTK.Matrix4)">
+            <summary>
+            Return the normal matrix, that is the upper 3x3 part of the inverted and transposed matrix.
+            </summary>
+            <param name="matrix">Specifies the transformation matrix.</param>
+            <returns>The normal matrix.</returns>
+        </member>
+        <member name="T:ObjectTK.Queries.QueryIndexer">
+            <summary>
+            Base class for <see cref="T:ObjectTK.Queries.QueryMapping`1"/>.<br/>
+            Provides methods to prevent query collisions on standard and indexable <see cref="T:OpenTK.Graphics.OpenGL.QueryTarget"/>s.
+            </summary>
+        </member>
+        <member name="F:ObjectTK.Queries.QueryIndexer.TargetIndices">
+            <summary>
+            Stores indices currently in use for each QueryTarget.
+            </summary>
+        </member>
+        <member name="F:ObjectTK.Queries.QueryIndexer.IndexableTargets">
+            <summary>
+            Defines which <see cref="T:OpenTK.Graphics.OpenGL.QueryTarget"/> is indexable.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Queries.QueryIndexer.AcquireIndex(OpenTK.Graphics.OpenGL.QueryTarget)">
+            <summary>
+            Acquires an unused index for the given <see cref="T:OpenTK.Graphics.OpenGL.QueryTarget"/>.
+            </summary>
+            <param name="target">The QueryTarget to acquire an index for.</param>
+            <returns>Unused index.</returns>
+        </member>
+        <member name="M:ObjectTK.Queries.QueryIndexer.ReleaseIndex(OpenTK.Graphics.OpenGL.QueryTarget,System.Int32)">
+            <summary>
+            Releases a previously acquired index for the given <see cref="T:OpenTK.Graphics.OpenGL.QueryTarget"/>.
+            </summary>
+            <param name="target">The QueryTarget to release the index from.</param>
+            <param name="index">The index to release.</param>
+        </member>
+        <member name="T:ObjectTK.Queries.QueryMapping`1">
+            <summary>
+            Provides named queries of hardware counters.
+            </summary>
+            <typeparam name="T">An enum type containing the query names.</typeparam>
+        </member>
+        <member name="T:ObjectTK.Queries.QueryMapping`1.QueryMap">
+            <summary>
+            Represents an OpenGL query.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Queries.QueryMapping`1.Item(`0)">
+            <summary>
+            Gets the average value measured for the given query name.
+            </summary>
+            <param name="key"></param>
+        </member>
+        <member name="F:ObjectTK.Queries.QueryMapping`1.ElapsedTimeFactor">
+            <summary>
+            Elapsed time is measured in nanoseconds and divided by this factor for better readability.<br/>
+            A factor of 1,000 therefore results in microseconds, a factor of 1,000,000 results in milliseconds.
+            </summary>
+        </member>
+        <member name="F:ObjectTK.Queries.QueryMapping`1.AveragingFactor">
+            <summary>
+            Weighting factor used for averaging.<br/>
+            A value close to 1 enables very fast averaging, giving noisy results.<br/>
+            A value close to 0 gives a better mean, reacting much slower to fluctuations in the results.<br/>
+            The default value is 0.05f.<br/>
+            Let the current and the previous query result be A and B, respectively, then the average is calculated with this formula:<br/>
+            average = A * AveragingFactor + B * (1-AveragingFactor);<br/>
+            </summary>
+        </member>
+        <member name="F:ObjectTK.Queries.QueryMapping`1._queries">
+            <summary>
+            Holds all QueryMap objects.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Queries.QueryMapping`1.#ctor">
+            <summary>
+            Initializes a new instance of this QueryMapping and generates required query objects.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Queries.QueryMapping`1.Begin(`0,OpenTK.Graphics.OpenGL.QueryTarget)">
+            <summary>
+            Begins the given query name.
+            </summary>
+            <param name="mapping">The query name to begin.</param>
+            <param name="target">The query target to capture.</param>
+        </member>
+        <member name="M:ObjectTK.Queries.QueryMapping`1.End(`0)">
+            <summary>
+            End the given query name.
+            </summary>
+            <param name="mapping">The query name to end.</param>
+        </member>
+        <member name="M:ObjectTK.Queries.QueryMapping`1.Update">
+            <summary>
+            Updates all query results.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Queries.QueryMapping`1.GetValues">
+            <summary>
+            Retrieves query results.
+            </summary>
+            <returns>The query results.</returns>
+        </member>
+        <member name="M:ObjectTK.Queries.QueryMapping`1.GetAverages">
+            <summary>
+            Retrieves averaged query results.
+            </summary>
+            <returns>The averaged query results.</returns>
+        </member>
+        <member name="T:ObjectTK.Shaders.ComputeProgram">
+            <summary>
+            Represents a program object which contains compute shaders.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Shaders.ComputeProgram.WorkGroupSize">
+            <summary>
+            The work group size of the compute shader.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Shaders.ComputeProgram.WorkGroupTotalSize">
+            <summary>
+            The total number of work groups of this compute shader.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Shaders.ComputeProgram.MaximumWorkGroupSize">
+            <summary>
+            The maximum work group size of compute shaders.<br/>
+            The values are hardware dependent and queried from OpenGL.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Shaders.ComputeProgram.#ctor">
+            <summary>
+            Initializes a new instance of this compute shader.<br/>
+            Retrieves shader source filenames from ShaderSourceAttributes tagged to this type.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Shaders.ComputeProgram.SplitWorkGroups(System.Int64)">
+            <summary>
+            Splits a given number of work groups up to the three dimensions.
+            The number of work groups in any dimensions is kept less or equal to the supported maximum.
+            The resulting total number of work groups may be larger than the given number.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Shaders.ComputeProgram.Dispatch(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Dispatches the currently active compute shader.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Shaders.ComputeProgram.Dispatch(ObjectTK.Vector3i)">
+            <summary>
+            Dispatches the currently active compute shader.
+            </summary>
+            <param name="workGroups">The number of work groups to be launched for each dimension.</param>
+        </member>
+        <member name="M:ObjectTK.Shaders.ComputeProgram.Dispatch(System.Int32)">
+            <summary>
+            Dispatches the currently active compute shader.
+            May split the number of work groups up to more dimensions.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Shaders.ComputeProgram.DispatchInvocations(System.Int32)">
+            <summary>
+            Dispatches the currently active compute shader.
+            Uses the shaders work group size to launch as many work groups as necessary to reach the given number of invocations.
+            May also split the number of work groups up to more dimensions.
+            </summary>
+        </member>
+        <member name="T:ObjectTK.Shaders.Effect">
+            <summary>
+            Represents an effect file which may contain several sections, each containing the source of a shader.<br/>
+            Similar implementation to GLSW: http://prideout.net/blog/?p=11
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Shaders.Effect.Path">
+            <summary>
+            Specifies the Path to the effects source file.
+            </summary>
+        </member>
+        <member name="F:ObjectTK.Shaders.Effect._sections">
+            <summary>
+            Holds all sections contained within this effect.
+            </summary>
+        </member>
+        <member name="T:ObjectTK.Shaders.Effect.Section">
+            <summary>
+            Represents a section within an effect file.
+            </summary>
+        </member>
+        <member name="F:ObjectTK.Shaders.Effect.Section.Effect">
+            <summary>
+            Holds a reference to the effect which contains this section.
+            </summary>
+        </member>
+        <member name="F:ObjectTK.Shaders.Effect.Section.ShaderKey">
+            <summary>
+            The shader key to this section.
+            </summary>
+        </member>
+        <member name="F:ObjectTK.Shaders.Effect.Section.Source">
+            <summary>
+            The source within this section.
+            </summary>
+        </member>
+        <member name="F:ObjectTK.Shaders.Effect.Section.FirstLineNumber">
+            <summary>
+            Specifies the first line number of this section within the effect file.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Shaders.Effect.GetMatchingSection(System.String)">
+            <summary>
+            Retrieves the best matching section to the given shader key.
+            </summary>
+            <param name="shaderKey">The shader key to find the best match for.</param>
+            <returns>A section containing shader source.</returns>
+        </member>
+        <member name="M:ObjectTK.Shaders.Effect.GetSection(System.String,System.String)">
+            <summary>
+            Retrieves the best matching section from the effect file.
+            </summary>
+            <param name="effectPath">Specifies the path to the effect file.</param>
+            <param name="shaderKey">The shader key to find the best match for.</param>
+            <returns>A section containing shader source.</returns>
+        </member>
+        <member name="M:ObjectTK.Shaders.Effect.LoadEffect(System.String)">
+            <summary>
+            Loads the the given effect file and parses its sections.
+            </summary>
+            <param name="path">Specifies the path to the effect file.</param>
+            <returns>A new Effect object containing the parsed content from the file.</returns>
+        </member>
+        <member name="T:ObjectTK.Shaders.Program">
+            <summary>
+            Represents a program object.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Shaders.Program.Name">
+            <summary>
+            The name of this shader program.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Shaders.Program.#ctor">
+            <summary>
+            Initializes a new program object.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Shaders.Program.Use">
+            <summary>
+            Activate the program.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Shaders.Program.ClearProgram">
+            <summary>
+            Unbinds the currently active program if any.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Shaders.Program.Attach(ObjectTK.Shaders.Shader)">
+            <summary>
+            Attach shader object.
+            </summary>
+            <param name="shader">Specifies the shader object to attach.</param>
+        </member>
+        <member name="M:ObjectTK.Shaders.Program.Detach(ObjectTK.Shaders.Shader)">
+            <summary>
+            Detach shader object.
+            </summary>
+            <param name="shader">Specifies the shader object to detach.</param>
+        </member>
+        <member name="M:ObjectTK.Shaders.Program.Link">
+            <summary>
+            Link the program.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Shaders.Program.CheckLinkStatus">
+            <summary>
+            Assert that no link error occured.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Shaders.Program.AssertActive">
+            <summary>
+            Throws an <see cref="T:ObjectTK.Exceptions.ObjectNotBoundException"/> if this program is not the currently active one.
+            </summary>
+        </member>
+        <member name="T:ObjectTK.Shaders.ProgramFactory">
+            <summary>
+            Contains methods to automatically initialize program objects.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Shaders.ProgramFactory.BasePath">
+            <summary>
+            The base path used when looking for shader files.<br/>
+            Default is: Data/Shaders/
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Shaders.ProgramFactory.Extension">
+            <summary>
+            Specifies the default extension appended to effect names.<br/>
+            Default is: glsl
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Shaders.ProgramFactory.Create``1">
+            <summary>
+            Initializes a program object using the shader sources tagged to the type with <see cref="T:ObjectTK.Shaders.Sources.ShaderSourceAttribute"/>.
+            </summary>
+            <typeparam name="T">Specifies the program type to create.</typeparam>
+            <returns>A compiled and linked program.</returns>
+        </member>
+        <member name="M:ObjectTK.Shaders.ProgramFactory.GetShaderSource(System.Collections.Generic.List{ObjectTK.Shaders.Sources.SourceFile},ObjectTK.Shaders.Sources.ShaderSourceAttribute,System.Collections.Generic.List{ObjectTK.Shaders.Effect.Section})">
+            <summary>
+            Load shader source file(s).<br/>
+            Supports multiple source files via "#include xx" directives and corrects the line numbering by using the glsl standard #line directive.
+            </summary>
+            <param name="files"></param>
+            <param name="sourceAttribute"></param>
+            <param name="included">Holds the effectKeys of all shaders already loaded to prevent multiple inclusions.</param>
+            <returns>The fully assembled shader source.</returns>
+        </member>
+        <member name="T:ObjectTK.Shaders.Shader">
+            <summary>
+            Represents a shader object.
+            </summary>
+        </member>
+        <member name="F:ObjectTK.Shaders.Shader.Type">
+            <summary>
+            Specifies the type of this shader.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Shaders.Shader.SourceFiles">
+            <summary>
+            Specifies a list of source filenames which are used to improve readability of the the information log in case of an error.
+            </summary>
+        </member>
+        <member name="F:ObjectTK.Shaders.Shader.Regenechse">
+            <summary>
+            Used to match and replace the source filenames into the information log.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Shaders.Shader.#ctor(OpenTK.Graphics.OpenGL.ShaderType)">
+            <summary>
+            Initializes a new shader object of the given type.
+            </summary>
+            <param name="type"></param>
+        </member>
+        <member name="M:ObjectTK.Shaders.Shader.CompileSource(System.String)">
+            <summary>
+            Loads the given source file and compiles the shader.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Shaders.Shader.CheckCompileStatus">
+            <summary>
+            Assert that no compile error occured.
+            </summary>
+        </member>
+        <member name="T:ObjectTK.Shaders.Sources.ComputeShaderSourceAttribute">
+            <summary>
+            Specifies the source of a compute shader.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Shaders.Sources.ComputeShaderSourceAttribute.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the ComputeShaderSourceAttribute.
+            </summary>
+            <param name="effectKey">Specifies the effect key for this shader.</param>
+        </member>
+        <member name="T:ObjectTK.Shaders.Sources.FragmentShaderSourceAttribute">
+            <summary>
+            Specifies the source of a fragment shader.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Shaders.Sources.FragmentShaderSourceAttribute.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the FragmentShaderSourceAttribute.
+            </summary>
+            <param name="effectKey">Specifies the effect key for this shader.</param>
+        </member>
+        <member name="T:ObjectTK.Shaders.Sources.GeometryShaderSourceAttribute">
+            <summary>
+            Specifies the source of a geometry shader.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Shaders.Sources.GeometryShaderSourceAttribute.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the GeometryShaderSourceAttribute.
+            </summary>
+            <param name="effectKey">Specifies the effect key for this shader.</param>
+        </member>
+        <member name="T:ObjectTK.Shaders.Sources.ShaderSourceAttribute">
+            <summary>
+            Specifies a source file which contains a single shader of predefined type.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Shaders.Sources.ShaderSourceAttribute.Type">
+            <summary>
+            Specifies the type of shader.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Shaders.Sources.ShaderSourceAttribute.EffectKey">
+            <summary>
+            Specifies the effect key for this shader.<br/>
+            Example: Path/to/file/CoolShader.Fragment.Diffuse
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Shaders.Sources.ShaderSourceAttribute.#ctor(OpenTK.Graphics.OpenGL.ShaderType,System.String)">
+            <summary>
+            Initializes a new instance of the ShaderSourceAttribute.
+            </summary>
+            <param name="type">Specifies the type of the shader.</param>
+            <param name="effectKey">Specifies the effect key for this shader.</param>
+        </member>
+        <member name="M:ObjectTK.Shaders.Sources.ShaderSourceAttribute.GetShaderSources(System.Type)">
+            <summary>
+            Retrieves all shader sources from attributes tagged to the given program type.
+            </summary>
+            <param name="programType">Specifies the type of the program of which the shader sources are to be found.</param>
+            <returns>A mapping of ShaderType and source path.</returns>
+        </member>
+        <member name="T:ObjectTK.Shaders.Sources.TessControlShaderSourceAttribute">
+            <summary>
+            Specifies the source of a vertex shader.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Shaders.Sources.TessControlShaderSourceAttribute.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the TessControlShaderSourceAttribute.
+            </summary>
+            <param name="effectKey">Specifies the effect key for this shader.</param>
+        </member>
+        <member name="T:ObjectTK.Shaders.Sources.TessEvaluationShaderSourceAttribute">
+            <summary>
+            Specifies the source of a vertex shader.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Shaders.Sources.TessEvaluationShaderSourceAttribute.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the TessEvaluationShaderSourceAttribute.
+            </summary>
+            <param name="effectKey">Specifies the effect key for this shader.</param>
+        </member>
+        <member name="T:ObjectTK.Shaders.Sources.VertexShaderSourceAttribute">
+            <summary>
+            Specifies the source of a vertex shader.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Shaders.Sources.VertexShaderSourceAttribute.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the VertexShaderSourceAttribute.
+            </summary>
+            <param name="effectKey">Specifies the effect key for this shader.</param>
+        </member>
+        <member name="T:ObjectTK.Shaders.TransformProgram">
+            <summary>
+            Represents a program object which utilizes transform feedback.
+            </summary>
+        </member>
+        <member name="F:ObjectTK.Shaders.TransformProgram.NextBuffer">
+            <summary>
+            Represents "gl_NextBuffer" when specifying feedback varyings and using advanced interleaving.
+            </summary>
+        </member>
+        <member name="F:ObjectTK.Shaders.TransformProgram.SkipComponents1">
+            <summary>
+            Represents "gl_SkipComponents1" when specifying feedback varyings and using advanced interleaving.
+            </summary>
+        </member>
+        <member name="F:ObjectTK.Shaders.TransformProgram.SkipComponents2">
+            <summary>
+            Represents "gl_SkipComponents2" when specifying feedback varyings and using advanced interleaving.
+            </summary>
+        </member>
+        <member name="F:ObjectTK.Shaders.TransformProgram.SkipComponents3">
+            <summary>
+            Represents "gl_SkipComponents3" when specifying feedback varyings and using advanced interleaving.
+            </summary>
+        </member>
+        <member name="F:ObjectTK.Shaders.TransformProgram.SkipComponents4">
+            <summary>
+            Represents "gl_SkipComponents4" when specifying feedback varyings and using advanced interleaving.
+            </summary>
+        </member>
+        <member name="F:ObjectTK.Shaders.TransformProgram.SpecialOuts">
+            <summary>
+            Holds a list of all special keywords which can only be used with advanced interleaving.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Shaders.TransformProgram.FeedbackVaryings(OpenTK.Graphics.OpenGL.TransformFeedbackMode,ObjectTK.Shaders.Variables.TransformOut[])">
+            <summary>
+            Specify values to record in transform feedback buffers.
+            </summary>
+            <remarks>
+            Transform feedback varyings must be specified before linking the program. Either specify them in the constructor of the program
+            or call <see cref="M:ObjectTK.Shaders.Program.Link"/> again after a call to this method.<br/>
+            To specify the keywords introduced with advanced interleaving "gl_NextBuffer" and "gl_SkipComponents#"
+            use the TransformOut dummy-instances <see cref="F:ObjectTK.Shaders.TransformProgram.NextBuffer"/> and <see cref="F:ObjectTK.Shaders.TransformProgram.SkipComponents1"/>, etc.
+            </remarks>
+            <param name="bufferMode">Identifies the mode used to capture the varying variables when transform feedback is active. bufferMode must be InterleavedAttribs or SeparateAttribs.</param>
+            <param name="feedbackVaryings">An array of TransformOut objects specifying the varying variables to use for transform feedback.</param>
+        </member>
+        <member name="T:ObjectTK.Shaders.Variables.ArrayUniform`1">
+            <summary>
+            Represents a struct array uniform. <br/>
+            Each member of each item are mapped to individual uniforms using the nomenclature: &quot;&lt;uniform name&gt;[index].&lt;member name&gt;&quot;
+            </summary>
+            <typeparam name="T">The struct type.</typeparam>
+        </member>
+        <member name="F:ObjectTK.Shaders.Variables.ArrayUniform`1._value">
+            <summary>
+            The current value of the uniform.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Shaders.Variables.ArrayUniform`1.Value">
+            <summary>
+            Gets or sets the current value of the shader uniform.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Shaders.Variables.ArrayUniform`1.Set(`0[])">
+            <summary>
+            Sets the given value to the program uniform.<br/>
+            Must be called on an active program, i.e. after <see cref="T:ObjectTK.Shaders.Program"/>.<see cref="M:ObjectTK.Shaders.Program.Use"/>.
+            </summary>
+            <param name="value">The value to set.</param>
+        </member>
+        <member name="T:ObjectTK.Shaders.Variables.BufferBinding">
+            <summary>
+            Represents a shader buffer binding point identified by its resource index.
+            </summary>
+        </member>
+        <member name="F:ObjectTK.Shaders.Variables.BufferBinding.BindingTarget">
+            <summary>
+            The target to use when binding to this point.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Shaders.Variables.BufferBinding.Index">
+            <summary>
+            The resource index of this binding point.
+            </summary>
+        </member>
+        <member name="F:ObjectTK.Shaders.Variables.BufferBinding.Binding">
+            <summary>
+            Current binding point
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Shaders.Variables.BufferBinding.ChangeBinding(System.Int32)">
+            <summary>
+            Assigns a binding point.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Shaders.Variables.BufferBinding.BindBuffer``1(ObjectTK.Buffers.Buffer{``0})">
+            <summary>
+            Binds a buffer to this binding point.
+            </summary>
+            <typeparam name="T">The type of the container elements.</typeparam>
+            <param name="buffer">The buffer to bind.</param>
+        </member>
+        <member name="M:ObjectTK.Shaders.Variables.BufferBinding.BindBuffer``1(ObjectTK.Buffers.Buffer{``0},System.Int32,System.Int32)">
+            <summary>
+            Binds a buffer to this binding point.
+            </summary>
+            <typeparam name="T">The type of the container elements.</typeparam>
+            <param name="buffer">The buffer to bind.</param>
+            <param name="offset">The starting offset in basic machine units into the buffer object buffer. </param>
+            <param name="size">The amount of data in machine units that can be read from the buffer object while used as an indexed target. </param>
+        </member>
+        <member name="M:ObjectTK.Shaders.Variables.BufferBinding.Unbind">
+            <summary>
+            Unbinds any buffer from this binding point.
+            </summary>
+        </member>
+        <member name="T:ObjectTK.Shaders.Variables.FragData">
+            <summary>
+            Represents a fragment shader output.<br/>
+            TODO: implement methods to bind output to a specific attachment
+            see glBindFragDataLocation, glDrawBuffers and http://stackoverflow.com/questions/1733838/fragment-shaders-output-variables
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Shaders.Variables.FragData.Location">
+            <summary>
+            The location of the output.
+            </summary>
+        </member>
+        <member name="T:ObjectTK.Shaders.Variables.ImageUniform">
+            <summary>
+            Represents an image uniform.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Shaders.Variables.ImageUniform.Bind(System.Int32,ObjectTK.Textures.TextureBuffer,OpenTK.Graphics.OpenGL.TextureAccess)">
+            <summary>
+            Binds the given buffer texture to an image unit.
+            </summary>
+            <param name="imageUnit">The image unit to use.</param>
+            <param name="textureBuffer">The buffer texture to bind.</param>
+            <param name="access">Specifies the type of access allowed on the image.</param>
+        </member>
+        <member name="M:ObjectTK.Shaders.Variables.ImageUniform.Bind(System.Int32,ObjectTK.Textures.TextureCubemapArray,System.Int32,System.Int32,System.Int32,OpenTK.Graphics.OpenGL.TextureAccess)">
+            <summary>
+            Binds a single face of the given texture level to an image unit.<br/>
+            Calculates the index of the layer-face as 6 * arrayLayer + face.
+            </summary>
+            <param name="imageUnit">The image unit to use.</param>
+            <param name="texture">The texture to bind.</param>
+            <param name="level">The mipmap level to bind.</param>
+            <param name="arrayLayer">The layer of the texture to bind.</param>
+            <param name="face">The cube map face to bind.</param>
+            <param name="access">Specifies the type of access allowed on the image.</param>
+        </member>
+        <member name="M:ObjectTK.Shaders.Variables.ImageUniform.Bind(System.Int32,ObjectTK.Textures.TextureCubemap,System.Int32,System.Int32,OpenTK.Graphics.OpenGL.TextureAccess)">
+            <summary>
+            Binds a single face of the given texture level to an image unit.
+            </summary>
+            <param name="imageUnit">The image unit to use.</param>
+            <param name="texture">The texture to bind.</param>
+            <param name="level">The mipmap level to bind.</param>
+            <param name="face">The cube map face to bind.</param>
+            <param name="access">Specifies the type of access allowed on the image.</param>
+        </member>
+        <member name="M:ObjectTK.Shaders.Variables.ImageUniform.Bind(System.Int32,ObjectTK.Textures.LayeredTexture,System.Int32,System.Int32,OpenTK.Graphics.OpenGL.TextureAccess)">
+            <summary>
+            Binds a single layer of the given texture level to an image unit.<br/>
+            Note that for cube maps and cube map arrays the <paramref name="layer"/> parameter actually indexes the layer-faces.<br/>
+            Thus for cube maps the layer parameter equals the face to be bound.<br/>
+            For cube map arrays the layer parameter can be calculated as 6 * arrayLayer + face, which is done automatically when using
+            the corresponding overload <see cref="M:ObjectTK.Shaders.Variables.ImageUniform.Bind(System.Int32,ObjectTK.Textures.TextureCubemapArray,System.Int32,System.Int32,System.Int32,OpenTK.Graphics.OpenGL.TextureAccess)"/>.
+            </summary>
+            <param name="imageUnit">The image unit to use.</param>
+            <param name="texture">The texture to bind.</param>
+            <param name="level">The mipmap level to bind.</param>
+            <param name="layer">The layer of the texture to bind.</param>
+            <param name="access">Specifies the type of access allowed on the image.</param>
+        </member>
+        <member name="M:ObjectTK.Shaders.Variables.ImageUniform.Bind(System.Int32,ObjectTK.Textures.Texture,OpenTK.Graphics.OpenGL.TextureAccess)">
+            <summary>
+            Binds an entire level of the given texture to an image unit.<br/>
+            The mipmap level defaults to zero.
+            </summary>
+            <param name="imageUnit">The image unit to use.</param>
+            <param name="texture">The texture to bind.</param>
+            <param name="access">Specifies the type of access allowed on the image.</param>
+        </member>
+        <member name="M:ObjectTK.Shaders.Variables.ImageUniform.Bind(System.Int32,ObjectTK.Textures.Texture,System.Int32,OpenTK.Graphics.OpenGL.TextureAccess)">
+            <summary>
+            Binds an entire level of the given texture to an image unit.
+            </summary>
+            <param name="imageUnit">The image unit to use.</param>
+            <param name="texture">The texture to bind.</param>
+            <param name="level">The mipmap level to bind.</param>
+            <param name="access">Specifies the type of access allowed on the image.</param>
+        </member>
+        <member name="M:ObjectTK.Shaders.Variables.ImageUniform.Bind(System.Int32,ObjectTK.Textures.Texture,System.Int32,System.Boolean,System.Int32,OpenTK.Graphics.OpenGL.TextureAccess)">
+            <summary>
+            Binds a single level of a texture to an image unit.
+            </summary>
+            <param name="imageUnit">The image unit to use.</param>
+            <param name="texture">The texture to bind.</param>
+            <param name="level">The mipmap level to bind.</param>
+            <param name="layered">Specifies whether a layered texture binding is to be established.</param>
+            <param name="layer">If <paramref name="layered"/> is false, specifies the layer of the texture to be bound, ignored otherwise.</param>
+            <param name="access">Specifies the type of access allowed on the image.</param>
+        </member>
+        <member name="M:ObjectTK.Shaders.Variables.ImageUniform.Bind(System.Int32,System.Int32,System.Int32,System.Boolean,System.Int32,OpenTK.Graphics.OpenGL.TextureAccess,OpenTK.Graphics.OpenGL.SizedInternalFormat)">
+            <summary>
+            Binds a single level of a texture to an image unit.
+            </summary>
+            <param name="imageUnit">The image unit to use.</param>
+            <param name="textureHandle">The handle of the texture.</param>
+            <param name="level">The mipmap level to bind.</param>
+            <param name="layered">Specifies whether a layered texture binding is to be established.</param>
+            <param name="layer">If <paramref name="layered"/> is false, specifies the layer of the texture to be bound, ignored otherwise.</param>
+            <param name="access">Specifies the type of access allowed on the image.</param>
+            <param name="format">Specifies the format that the elements of the texture will be treated as.</param>
+        </member>
+        <member name="T:ObjectTK.Shaders.Variables.ShaderStorage">
+            <summary>
+            Represents a shader storage buffer object (SSBO) binding.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Shaders.Variables.ShaderStorage.ChangeBinding(System.Int32)">
+            <summary>
+            Assigns a binding point to this shader storage block.
+            </summary>
+            <param name="binding"></param>
+        </member>
+        <member name="T:ObjectTK.Shaders.Variables.ProgramVariable">
+            <summary>
+            Represents a shader variable identified by its name and the corresponding program handle.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Shaders.Variables.ProgramVariable.Program">
+            <summary>
+            The handle of the program to which this variable relates.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Shaders.Variables.ProgramVariable.ProgramHandle">
+            <summary>
+            The handle of the program to which this variable relates.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Shaders.Variables.ProgramVariable.Name">
+            <summary>
+            The name of this shader variable.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Shaders.Variables.ProgramVariable.Active">
+            <summary>
+            Specifies whether this variable is active.<br/>
+            Unused variables are generally removed by OpenGL and cause them to be inactive.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Shaders.Variables.ProgramVariable.Initialize(ObjectTK.Shaders.Program,System.Reflection.PropertyInfo)">
+            <summary>
+            Initializes this instance using the given Program and PropertyInfo.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Shaders.Variables.ProgramVariable.OnLink">
+            <summary>
+            When overridden in a derived class, handles initialization which must occur after the program object is linked.
+            </summary>
+        </member>
+        <member name="T:ObjectTK.Shaders.Variables.StructUniform`1">
+            <summary>
+            Represents a struct uniform.<br/>
+            The struct members are mapped to individual uniforms using the nomenclature: &quot;&lt;uniform name&gt;.&lt;member name&gt;&quot;
+            </summary>
+            <typeparam name="T">The struct type.</typeparam>
+        </member>
+        <member name="P:ObjectTK.Shaders.Variables.StructUniform`1.StructMembers">
+            <summary>
+            The individual uniforms used for each member of the struct.
+            </summary>
+        </member>
+        <member name="F:ObjectTK.Shaders.Variables.StructUniform`1._value">
+            <summary>
+            The current value of the uniform.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Shaders.Variables.StructUniform`1.Value">
+            <summary>
+            Gets or sets the current value of the shader uniform.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Shaders.Variables.StructUniform`1.Set(`0)">
+            <summary>
+            Sets the given value to the program uniform.<br/>
+            Must be called on an active program, i.e. after <see cref="T:ObjectTK.Shaders.Program"/>.<see cref="M:ObjectTK.Shaders.Program.Use"/>.
+            </summary>
+            <param name="value">The value to set.</param>
+        </member>
+        <member name="T:ObjectTK.Shaders.Variables.TextureUniform`1">
+            <summary>
+            Represents a typed texture uniform. Allows only textures of the given type to be bound.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Shaders.Variables.TextureUniform`1.Set(OpenTK.Graphics.OpenGL.TextureUnit)">
+            <summary>
+            Sets this uniform to sample from the given texture unit.<br/>
+            Calls to <see cref="M:ObjectTK.Shaders.Variables.TextureUniform`1.Set(OpenTK.Graphics.OpenGL.TextureUnit)"/> are equivalent to <see cref="M:ObjectTK.Shaders.Variables.Uniform`1.Set(`0)"/>
+            with the corresponding integer, it just adds readability.
+            </summary>
+            <param name="unit">The texture unit to sample from.</param>
+        </member>
+        <member name="M:ObjectTK.Shaders.Variables.TextureUniform`1.BindTexture(OpenTK.Graphics.OpenGL.TextureUnit,`0)">
+            <summary>
+            Binds a texture to the given texture unit and sets the corresponding uniform to the respective number to access it.
+            </summary>
+            <param name="unit">The texture unit to bind to.</param>
+            <param name="texture">The texture to bind.</param>
+        </member>
+        <member name="T:ObjectTK.Shaders.Variables.TextureUniform">
+            <summary>
+            Represents a texture uniform. Allows any texture type to be bound.
+            </summary>
+        </member>
+        <member name="T:ObjectTK.Shaders.Variables.TransformOut">
+            <summary>
+            Represents a transform feedback output varying.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Shaders.Variables.TransformOut.Index">
+            <summary>
+            Specifies the transform feedback buffer binding index of this output.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Shaders.Variables.TransformOut.#ctor(System.String)">
+            <summary>
+            Initializes a dummy instance of TransformOut used for the keywords introduced with advanced interleaving.
+            </summary>
+        </member>
+        <member name="T:ObjectTK.Shaders.Variables.Uniform`1">
+            <summary>
+            Represents a uniform.
+            </summary>
+            <typeparam name="T">The type of the uniform.</typeparam>
+        </member>
+        <member name="P:ObjectTK.Shaders.Variables.Uniform`1.Location">
+            <summary>
+            The location of the uniform within the shader program.
+            </summary>
+        </member>
+        <member name="F:ObjectTK.Shaders.Variables.Uniform`1._setter">
+            <summary>
+            Action used to set the uniform.<br/>
+            Inputs are the uniforms location and the value to set.
+            </summary>
+        </member>
+        <member name="F:ObjectTK.Shaders.Variables.Uniform`1._value">
+            <summary>
+            The current value of the uniform.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Shaders.Variables.Uniform`1.Value">
+            <summary>
+            Gets or sets the current value of the shader uniform.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Shaders.Variables.Uniform`1.Set(`0)">
+            <summary>
+            Sets the given value to the program uniform.<br/>
+            Must be called on an active program, i.e. after <see cref="T:ObjectTK.Shaders.Program"/>.<see cref="M:ObjectTK.Shaders.Program.Use"/>.
+            </summary>
+            <param name="value">The value to set.</param>
+        </member>
+        <member name="T:ObjectTK.Shaders.Variables.UniformBuffer">
+            <summary>
+            Represents a uniform buffer object (UBO) binding.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Shaders.Variables.UniformBuffer.ChangeBinding(System.Int32)">
+            <summary>
+            Assigns a binding point to this uniform block.
+            </summary>
+            <param name="binding">The binding point to assign.</param>
+        </member>
+        <member name="M:ObjectTK.Shaders.Variables.UniformBuffer.GetBlockSize">
+            <summary>
+            Retrieves the total size of the uniform block.
+            </summary>
+            <returns>The total size of the uniform block.</returns>
+        </member>
+        <member name="M:ObjectTK.Shaders.Variables.UniformBuffer.GetBlockOffsets(System.Int32[]@)">
+            <summary>
+            Retrieves the offsets of the uniforms within the block to the start of the block.
+            </summary>
+            <param name="offsets">The offsets of the uniforms within the block.</param>
+        </member>
+        <member name="P:ObjectTK.Shaders.Variables.UniformStructMember.Name">
+            <summary>
+            The struct's member name
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Shaders.Variables.UniformStructMember.Location">
+            <summary>
+            The location of the uniform within the shader program.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Shaders.Variables.UniformStructMember.Active">
+            <summary>
+            Specifies whether this variable is active.<br/>
+            Unused variables are generally removed by OpenGL and cause them to be inactive.
+            </summary>
+        </member>
+        <member name="T:ObjectTK.Shaders.Variables.VertexAttrib">
+            <summary>
+            Represents a vertex attribute.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Shaders.Variables.VertexAttrib.Index">
+            <summary>
+            The vertex attributes location within the shader.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Shaders.Variables.VertexAttrib.Components">
+            <summary>
+            The number components to read.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Shaders.Variables.VertexAttrib.Type">
+            <summary>
+            The type of each component.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Shaders.Variables.VertexAttrib.Normalized">
+            <summary>
+            Specifies whether the components should be normalized.
+            </summary>
+        </member>
+        <member name="T:ObjectTK.Shaders.Variables.VertexAttribAttribute">
+            <summary>
+            Defines default values when binding buffers to the attributed <see cref="T:ObjectTK.Shaders.Variables.VertexAttrib"/>.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Shaders.Variables.VertexAttribAttribute.Components">
+            <summary>
+            The number components to read.<br/>
+            Defaults to 4.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Shaders.Variables.VertexAttribAttribute.Type">
+            <summary>
+            The type of each component.<br/>
+            Defaults to Float.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Shaders.Variables.VertexAttribAttribute.Normalized">
+            <summary>
+            Specifies whether the components should be normalized.<br/>
+            Defaults to false.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Shaders.Variables.VertexAttribAttribute.Index">
+            <summary>
+            Specifies the generic vertex attribute index this named attribute variable binds to.<br/>
+            If set explicitly this named attribute variable is bound to that generic vertex attribute index before the program is linked.<br/>
+            Defaults to -1, which causes the index to be retrieved after the program is linked.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Shaders.Variables.VertexAttribAttribute.#ctor">
+            <summary>
+            Initializes a new instance of the VertexAttribAttribute with default values.<br/>
+            The default is 4 components of type float without normalization.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Shaders.Variables.VertexAttribAttribute.#ctor(System.Int32,OpenTK.Graphics.OpenGL.VertexAttribPointerType)">
+            <summary>
+            Initializes a new instance of the VertexAttribAttribute.<br/>
+            Normalization defaults to false.
+            </summary>
+            <param name="components">The number of components to read.</param>
+            <param name="type">The type of each component.</param>
+        </member>
+        <member name="M:ObjectTK.Shaders.Variables.VertexAttribAttribute.#ctor(System.Int32,OpenTK.Graphics.OpenGL.VertexAttribPointerType,System.Boolean)">
+            <summary>
+            Initializes a new instance of the VertexAttribAttribute.
+            </summary>
+            <param name="components">The number of components to read.</param>
+            <param name="type">The type of each component.</param>
+            <param name="normalized">Specifies whether each component should be normalized.</param>
+        </member>
+        <member name="M:ObjectTK.Shaders.Variables.VertexAttribAttribute.#ctor(System.Int32,OpenTK.Graphics.OpenGL.VertexAttribPointerType,System.Boolean,System.Int32)">
+            <summary>
+            Initializes a new instance of the VertexAttribAttribute.
+            </summary>
+            <param name="components">The number of components to read.</param>
+            <param name="type">The type of each component.</param>
+            <param name="normalized">Specifies whether each component should be normalized.</param>
+            <param name="index"></param>
+        </member>
+        <member name="T:ObjectTK.Textures.TextureBuffer">
+            <summary>
+            Represents a buffer texture.<br/>
+            The image in this texture (only one image. No mipmapping) is 1-dimensional.
+            The storage for this data comes from a Buffer Object.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Textures.TextureBuffer.#ctor(OpenTK.Graphics.OpenGL.SizedInternalFormat)">
+            <summary>
+            Creates a buffer texture and uses the given internal format to access a bound buffer, if not specified otherwise.
+            </summary>
+            <param name="internalFormat"></param>
+        </member>
+        <member name="M:ObjectTK.Textures.TextureBuffer.BindBufferToTexture``1(ObjectTK.Buffers.Buffer{``0})">
+            <summary>
+            Binds the given buffer to this texture.<br/>
+            Applies the internal format specified in the constructor.
+            </summary>
+            <param name="buffer">The buffer to bind.</param>
+        </member>
+        <member name="M:ObjectTK.Textures.TextureBuffer.BindBufferToTexture``1(ObjectTK.Buffers.Buffer{``0},OpenTK.Graphics.OpenGL.SizedInternalFormat)">
+            <summary>
+            Binds the given buffer to this texture using the given internal format.
+            </summary>
+            <param name="buffer">The buffer to bind.</param>
+            <param name="internalFormat">The internal format used when accessing the buffer.</param>
+            <typeparam name="T">The type of elements in the buffer object.</typeparam>
+        </member>
+        <member name="T:ObjectTK.Textures.LayeredTexture">
+            <summary>
+            Represents a layered texture.<br/>
+            Layered textures are all array, cube map and 3D textures.
+            </summary>
+        </member>
+        <member name="T:ObjectTK.Textures.Sampler">
+            <summary>
+            Represents a sampler object.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Textures.Sampler.#ctor">
+            <summary>
+            Initializes a new sampler object.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Textures.Sampler.Bind(OpenTK.Graphics.OpenGL.TextureUnit)">
+            <summary>
+            Binds the sampler to the given texture unit.
+            </summary>
+            <param name="textureUnit">The texture unit to bind to.</param>
+        </member>
+        <member name="M:ObjectTK.Textures.Sampler.Bind(System.Int32)">
+            <summary>
+            Binds the sampler to the given texture unit.
+            </summary>
+            <param name="unit">The texture unit to bind to.</param>
+        </member>
+        <member name="M:ObjectTK.Textures.Sampler.SetWrapMode(OpenTK.Graphics.OpenGL.TextureWrapMode)">
+            <summary>
+            Sets the given wrap mode on all dimensions R, S and T.
+            </summary>
+            <param name="wrapMode">The wrap mode to apply.</param>
+        </member>
+        <member name="M:ObjectTK.Textures.Sampler.SetParameter(OpenTK.Graphics.OpenGL.SamplerParameterName,System.Int32)">
+            <summary>
+            Sets sampler parameters.
+            </summary>
+            <param name="parameterName">The parameter name to set.</param>
+            <param name="value">The value to set.</param>
+        </member>
+        <member name="T:ObjectTK.Textures.Texture">
+            <summary>
+            Represents a texture object.
+            </summary>
+            <remarks>
+            <code>
+            Type              Supports: Mipmaps Layered
+            -------------------------------------------
+            Texture1D                   yes
+            Texture2D                   yes
+            Texture3D                   yes     yes
+            Texture1DArray              yes     yes
+            Texture2DArray              yes     yes
+            TextureCubemap              yes     yes
+            TextureCubemapArray         yes     yes
+            Texture2DMultisample
+            Texture2DMultisampleArray           yes
+            TextureRectangle
+            TextureBuffer
+            </code>
+            </remarks>
+        </member>
+        <member name="P:ObjectTK.Textures.Texture.TextureTarget">
+            <summary>
+            Specifies the texture target.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Textures.Texture.SupportsLayers">
+            <summary>
+            Specifies whether this texture supports multiple layers.<br/>
+            True for all texture types derived from LayeredTexture, that is all array, cube map and 3D textures.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Textures.Texture.SupportsMipmaps">
+            <summary>
+            Specifies whether this texture supports mipmap levels.<br/>
+            False for buffer, rectangle and multisample textures, otherwise true.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Textures.Texture.Levels">
+            <summary>
+            The number of mipmap levels.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Textures.Texture.InternalFormat">
+            <summary>
+            The internal format of the texture.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Textures.Texture.#ctor(OpenTK.Graphics.OpenGL.SizedInternalFormat,System.Int32)">
+            <summary>
+            Initializes a new texture object. Creates a new texture handle.
+            </summary>
+            <param name="internalFormat">The internal format of the texture.</param>
+            <param name="levels">The number of mipmap levels.</param>
+        </member>
+        <member name="M:ObjectTK.Textures.Texture.#ctor(System.Int32,OpenTK.Graphics.OpenGL.SizedInternalFormat,System.Int32)">
+            <summary>
+            Initializes a new texture object. Uses the texture handle given.<br/>
+            Internal constructor used by <see cref="T:ObjectTK.Textures.TextureFactory"/> to wrap a texture instance around an already existing texture.
+            </summary>
+            <param name="textureHandle">The texture handle.</param>
+            <param name="internalFormat">The internal format of the texture.</param>
+            <param name="levels">The number of mipmap levels.</param>
+        </member>
+        <member name="M:ObjectTK.Textures.Texture.Bind">
+            <summary>
+            Binds the texture to the current texture unit at its default texture target.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Textures.Texture.Bind(OpenTK.Graphics.OpenGL.TextureUnit)">
+            <summary>
+            Binds the texture to the given texture unit at its default texture target.
+            </summary>
+            <param name="unit">The texture unit to bind to.</param>
+        </member>
+        <member name="M:ObjectTK.Textures.Texture.GetLevels(System.Int32,System.Int32[])">
+            <summary>
+            Calculates the maximum number of mipmap levels allowed for the given size in each dimension.<br/>
+            If <paramref name="levels"/> is greater than zero and less or equal to the calculated maximum it is returned without change.<br/>
+            If <paramref name="levels"/> is zero the calculated maximum is returned instead.
+            </summary>
+            <remarks>
+            At the maximum mipmap level the image would consist of exactly one texel, i.e. 1x1 in 2D or 1x1x1 in 3D.
+            </remarks>
+            <param name="levels">Specifies the number of desired mipmap levels.</param>
+            <param name="dimensions">Specifies the size of the textures base image in each dimension.</param>
+            <returns>A valid number of mipmap levels.</returns>
+        </member>
+        <member name="M:ObjectTK.Textures.Texture.GenerateMipMaps">
+            <summary>
+            Automatically generates all mipmaps.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Textures.Texture.SetParameter(OpenTK.Graphics.OpenGL.TextureParameterName,System.Int32)">
+            <summary>
+            Sets texture parameters.
+            </summary>
+            <param name="parameterName"></param>
+            <param name="value"></param>
+        </member>
+        <member name="M:ObjectTK.Textures.Texture.SetWrapMode(OpenTK.Graphics.OpenGL.TextureWrapMode)">
+            <summary>
+            Sets the given wrap mode on all dimensions R, S and T.
+            </summary>
+            <param name="wrapMode">The wrap mode to apply.</param>
+        </member>
+        <member name="M:ObjectTK.Textures.Texture.SetFilter(OpenTK.Graphics.OpenGL.TextureMinFilter,OpenTK.Graphics.OpenGL.TextureMagFilter)">
+            <summary>
+            Sets the given texture minification and magnification filters.
+            </summary>
+            <param name="minFilter"></param>
+            <param name="magFilter"></param>
+        </member>
+        <member name="M:ObjectTK.Textures.Texture.SetDefaultTexParameters">
+            <summary>
+            Sets default texture parameters to ensure texture completeness.<br/>
+            Enables mipmapping if the texture supports it, otherwise filtering is set to linear interpolation.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Textures.Texture.SupportsLevel(System.Int32)">
+            <summary>
+            Checks if the given mipmap level is supported by this texture.<br/>
+            A supported level is either zero for all textures which do not support mipmapping,
+            or smaller than the number of existing levels.
+            </summary>
+            <param name="level">The mipmap level of the texture.</param>
+            <returns>True if the level is supported, otherwise false.</returns>
+        </member>
+        <member name="M:ObjectTK.Textures.Texture.AssertLevel(System.Int32)">
+            <summary>
+            Throws an exception if the given mipmap level is not supported by this texture.<br/>
+            The mipmap level must be zero for all texture types which do not support mipmaps.
+            </summary>
+            <param name="level">Specifies a mipmap level of the texture.</param>
+        </member>
+        <member name="M:ObjectTK.Textures.Texture.CheckError">
+            <summary>
+            Calls GL.<see cref="M:OpenTK.Graphics.OpenGL.GL.GetError"/> to check if there are any errors.
+            </summary>
+        </member>
+        <member name="T:ObjectTK.Textures.Texture1D">
+            <summary>
+            Represents a 1D texture.<br/>
+            Images in this texture all are 1-dimensional. They have width, but no height or depth.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Textures.Texture1D.Width">
+            <summary>
+            The width of the texture.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Textures.Texture1D.#ctor(OpenTK.Graphics.OpenGL.SizedInternalFormat,System.Int32,System.Int32)">
+            <summary>
+            Allocates immutable texture storage with the given parameters.
+            </summary>
+            <param name="internalFormat">The internal format to allocate.</param>
+            <param name="width">The width of the texture.</param>
+            <param name="levels">The number of mipmap levels.</param>
+        </member>
+        <member name="T:ObjectTK.Textures.Texture1DArray">
+            <summary>
+            Represents a 1D texture array.<br/>
+            Images in this texture all are 1-dimensional. However, it contains multiple sets of 1-dimensional images,
+            all within one texture. The array length is part of the texture's size.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Textures.Texture1DArray.Width">
+            <summary>
+            The width of the texture.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Textures.Texture1DArray.Layers">
+            <summary>
+            The number of layers.<br/>
+            note: OpenGL seems to call the second coordinate on a 1D texture array the "height",
+            which would make the whole thing almost exactly equal to a 2D texture with the exception that
+            a 1D texture array can be bound to a framebuffer via glFramebufferTextureLayer().
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Textures.Texture1DArray.#ctor(OpenTK.Graphics.OpenGL.SizedInternalFormat,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Allocates immutable texture storage with the given parameters.
+            </summary>
+            <param name="internalFormat">The internal format to allocate.</param>
+            <param name="width">The width of the texture.</param>
+            <param name="layers">The number of layers to allocate.</param>
+            <param name="levels">The number of mipmap levels.</param>
+        </member>
+        <member name="T:ObjectTK.Textures.Texture2D">
+            <summary>
+            Represents a 2D texture.<br/>
+            Images in this texture all are 2-dimensional. They have width and height, but no depth.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Textures.Texture2D.Width">
+            <summary>
+            The width of the texture.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Textures.Texture2D.Height">
+            <summary>
+            The height of the texture.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Textures.Texture2D.#ctor(OpenTK.Graphics.OpenGL.SizedInternalFormat,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Allocates immutable texture storage with the given parameters.<br/>
+            A value of zero for the number of mipmap levels will default to the maximum number of levels possible for the given bitmaps width and height.
+            </summary>
+            <param name="internalFormat">The internal format to allocate.</param>
+            <param name="width">The width of the texture.</param>
+            <param name="height">The height of the texture.</param>
+            <param name="levels">The number of mipmap levels.</param>
+        </member>
+        <member name="M:ObjectTK.Textures.Texture2D.#ctor(System.Int32,OpenTK.Graphics.OpenGL.SizedInternalFormat,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Internal constructor used by <see cref="T:ObjectTK.Textures.TextureFactory"/> to wrap a Texture2D instance around an already existing texture.
+            </summary>
+        </member>
+        <member name="T:ObjectTK.Textures.Texture2DArray">
+            <summary>
+            Represents a 2D texture array.<br/>
+            Images in this texture all are 2-dimensional. However, it contains multiple sets of 2-dimensional images,
+            all within one texture. The array length is part of the texture's size.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Textures.Texture2DArray.Width">
+            <summary>
+            The width of the texture.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Textures.Texture2DArray.Height">
+            <summary>
+            The height of the texture.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Textures.Texture2DArray.Layers">
+            <summary>
+            The number of layers.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Textures.Texture2DArray.#ctor(OpenTK.Graphics.OpenGL.SizedInternalFormat,System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Allocates immutable texture storage with the given parameters.<br/>
+            A value of zero for the number of mipmap levels will default to the maximum number of levels possible for the given bitmaps width and height.
+            </summary>
+            <param name="internalFormat">The internal format to allocate.</param>
+            <param name="width">The width of the texture.</param>
+            <param name="height">The height of the texture.</param>
+            <param name="layers">The number of layers to allocate.</param>
+            <param name="levels">The number of mipmap levels.</param>
+        </member>
+        <member name="T:ObjectTK.Textures.Texture2DMultisample">
+            <summary>
+            Represents a 2D multisample texture.<br/>
+            The image in this texture (only one image. No mipmapping) is 2-dimensional.
+            Each pixel in this image contains multiple samples instead of just one value.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Textures.Texture2DMultisample.Width">
+            <summary>
+            The width of the texture.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Textures.Texture2DMultisample.Height">
+            <summary>
+            The height of the texture.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Textures.Texture2DMultisample.Samples">
+            <summary>
+            The number of samples per texel.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Textures.Texture2DMultisample.FixedSampleLocations">
+            <summary>
+            Specifies whether the texels will use identical sample locations.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Textures.Texture2DMultisample.#ctor(OpenTK.Graphics.OpenGL.SizedInternalFormat,System.Int32,System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            Allocates immutable texture storage with the given parameters.
+            </summary>
+            <param name="internalFormat">The internal format to allocate.</param>
+            <param name="width">The width of the texture.</param>
+            <param name="height">The height of the texture.</param>
+            <param name="samples">The number of samples per texel.</param>
+            <param name="fixedSampleLocations">Specifies whether the texels will use identical sample locations.</param>
+        </member>
+        <member name="T:ObjectTK.Textures.Texture2DMultisampleArray">
+            <summary>
+            Represents a 2D multisample array texture.<br/>
+            Combines 2D array and 2D multisample types. No mipmapping.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Textures.Texture2DMultisampleArray.Width">
+            <summary>
+            The width of the texture.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Textures.Texture2DMultisampleArray.Height">
+            <summary>
+            The height of the texture.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Textures.Texture2DMultisampleArray.Layers">
+            <summary>
+            The number of layers.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Textures.Texture2DMultisampleArray.Samples">
+            <summary>
+            The number of samples per texel.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Textures.Texture2DMultisampleArray.FixedSampleLocations">
+            <summary>
+            Specifies whether the texels will use identical sample locations.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Textures.Texture2DMultisampleArray.#ctor(OpenTK.Graphics.OpenGL.SizedInternalFormat,System.Int32,System.Int32,System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            Allocates immutable texture storage with the given parameters.
+            </summary>
+            <param name="internalFormat">The internal format to allocate.</param>
+            <param name="width">The width of the texture.</param>
+            <param name="height">The height of the texture.</param>
+            <param name="layers">The number of layers to allocate.</param>
+            <param name="samples">The number of samples per texel.</param>
+            <param name="fixedSampleLocations">Specifies whether the texels will use identical sample locations.</param>
+        </member>
+        <member name="T:ObjectTK.Textures.Texture3D">
+            <summary>
+            Represents a 3D texture.<br/>
+            Images in this texture all are 3-dimensional. They have width, height, and depth.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Textures.Texture3D.Width">
+            <summary>
+            The width of the texture.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Textures.Texture3D.Height">
+            <summary>
+            The height of the texture.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Textures.Texture3D.Depth">
+            <summary>
+            The depth of the texture.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Textures.Texture3D.#ctor(OpenTK.Graphics.OpenGL.SizedInternalFormat,System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Allocates immutable texture storage with the given parameters.
+            </summary>
+            <param name="internalFormat">The internal format to allocate.</param>
+            <param name="width">The width of the texture.</param>
+            <param name="height">The height of the texture.</param>
+            <param name="depth">The depth of the texture.</param>
+            <param name="levels">The number of mipmap levels.</param>
+        </member>
+        <member name="T:ObjectTK.Textures.TextureCubemap">
+            <summary>
+            Represents a cubemap texture.<br/>
+            There are exactly 6 distinct sets of 2D images, all of the same size. They act as 6 faces of a cube.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Textures.TextureCubemap.Size">
+            <summary>
+            The size of the texture.<br/>
+            This represents both width and height of the texture, because cube maps have to be square.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Textures.TextureCubemap.#ctor(OpenTK.Graphics.OpenGL.SizedInternalFormat,System.Int32,System.Int32)">
+            <summary>
+            Allocates immutable texture storage with the given parameters.
+            </summary>
+            <param name="internalFormat">The internal format to allocate.</param>
+            <param name="size">The width and height of the cube map faces.</param>
+            <param name="levels">The number of mipmap levels.</param>
+        </member>
+        <member name="T:ObjectTK.Textures.TextureCubemapArray">
+            <summary>
+            Represents a cubemap texture array.<br/>
+            Images in this texture are all cube maps. It contains multiple sets of cube maps, all within one texture.
+            The array length * 6 (number of cube faces) is part of the texture size.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Textures.TextureCubemapArray.Size">
+            <summary>
+            The size of the texture.<br/>
+            This represents both width and height of the texture, because cube maps have to be square.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Textures.TextureCubemapArray.Layers">
+            <summary>
+            The number of layers.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Textures.TextureCubemapArray.#ctor(OpenTK.Graphics.OpenGL.SizedInternalFormat,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Allocates immutable texture storage with the given parameters.
+            </summary>
+            <param name="internalFormat">The internal format to allocate.</param>
+            <param name="size">The width and height of the cube map faces.</param>
+            <param name="layers">The number of layers to allocate.</param>
+            <param name="levels">The number of mipmap levels.</param>
+        </member>
+        <member name="T:ObjectTK.Textures.BitmapTexture">
+            <summary>
+            Contains extension methods for texture types.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Textures.BitmapTexture.CreateCompatible(System.Drawing.Bitmap,ObjectTK.Textures.Texture2D@,System.Int32)">
+            <summary>
+            Creates a new Texture2D instance compatible to the given bitmap.
+            </summary>
+            <param name="bitmap">Specifies the bitmap to which the new texture will be compatible.</param>
+            <param name="texture">Outputs the newly created texture.</param>
+            <param name="levels">Specifies the number of mipmap levels.</param>
+        </member>
+        <member name="M:ObjectTK.Textures.BitmapTexture.CreateCompatible(System.Drawing.Bitmap,ObjectTK.Textures.Texture2DArray@,System.Int32,System.Int32)">
+            <summary>
+            Creates a new Texture2DArray instance compatible to the given bitmap.
+            </summary>
+            <param name="bitmap">Specifies the bitmap to which the new texture will be compatible.</param>
+            <param name="texture">Outputs the newly created texture.</param>
+            <param name="layers">Specifies the number of array layers the texture will contain.</param>
+            <param name="levels">Specifies the number of mipmap levels.</param>
+        </member>
+        <member name="M:ObjectTK.Textures.BitmapTexture.CreateCompatible(System.Drawing.Bitmap,ObjectTK.Textures.TextureCubemap@,System.Int32)">
+            <summary>
+            Creates a new TextureCubemap instance with faces compatible to the given bitmap.
+            </summary>
+            <param name="bitmap">Specifies the bitmap to which the new texture will be compatible.</param>
+            <param name="texture">Outputs the newly created texture.</param>
+            <param name="levels">Specifies the number of mipmap levels.</param>
+        </member>
+        <member name="M:ObjectTK.Textures.BitmapTexture.CreateCompatible(System.Drawing.Bitmap,ObjectTK.Textures.TextureCubemapArray@,System.Int32,System.Int32)">
+            <summary>
+            Creates a new TextureCubemapArray instance with faces compatible to the given bitmap.
+            </summary>
+            <param name="bitmap">Specifies the bitmap to which the new texture will be compatible.</param>
+            <param name="layers">Specifies the number of array layers the texture will contain.</param>
+            <param name="texture">Outputs the newly created texture.</param>
+            <param name="levels">Specifies the number of mipmap levels.</param>
+        </member>
+        <member name="M:ObjectTK.Textures.BitmapTexture.CreateCompatible(System.Drawing.Bitmap,ObjectTK.Textures.TextureRectangle@)">
+            <summary>
+            Creates a new TextureRectangle instance compatible to the given bitmap.
+            </summary>
+            <param name="bitmap">Specifies the bitmap to which the new texture will be compatible.</param>
+            <param name="texture">Outputs the newly created texture.</param>
+        </member>
+        <member name="M:ObjectTK.Textures.BitmapTexture.LoadBitmap(ObjectTK.Textures.Texture2D,System.Drawing.Bitmap,System.Int32)">
+            <summary>
+            Uploads the contents of a bitmap to the given texture level.<br/>
+            Will result in an OpenGL error if the given bitmap is incompatible with the textures storage.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Textures.BitmapTexture.LoadBitmap(ObjectTK.Textures.LayeredTexture,System.Drawing.Bitmap,System.Int32,System.Int32)">
+            <summary>
+            Uploads the contents of a bitmap to the given texture layer and level.<br/>
+            Will result in an OpenGL error if the given bitmap is incompatible with the textures storage.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Textures.BitmapTexture.LoadBitmap(ObjectTK.Textures.TextureCubemap,System.Drawing.Bitmap[],System.Int32)">
+            <summary>
+            Uploads the contents of the bitmaps to all faces of the given cube map level.<br/>
+            Will result in an OpenGL error if any of the given bitmaps is incompatible with the textures storage.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Textures.BitmapTexture.LoadBitmap(ObjectTK.Textures.TextureCubemap,System.Drawing.Bitmap,System.Int32,System.Int32)">
+            <summary>
+            Uploads the contents of a bitmap to a single face of the given cube map level.<br/>
+            Will result in an OpenGL error if the given bitmap is incompatible with the textures storage.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Textures.BitmapTexture.GetContent``1(ObjectTK.Textures.Texture2D,OpenTK.Graphics.OpenGL.PixelFormat,OpenTK.Graphics.OpenGL.PixelType,System.Int32)">
+            <summary>
+            Retrieves the texture data.
+            </summary>
+        </member>
+        <member name="T:ObjectTK.Textures.TextureFactory">
+            <summary>
+            Provides methods for creating texture objects in ways not covered by constructors.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Textures.TextureFactory.AquireTexture2D(System.Int32,System.Int32)">
+            <summary>
+            Creates a new Texture2D instance using the given texture handle.<br/>
+            The width, height and internal format are queried from OpenGL and passed to the instance.
+            The number of mipmap levels can not be queried and must be specified, otherwise it is set to one.
+            TODO: somehow find out the number of mipmap levels because otherwise <see cref="M:ObjectTK.Textures.Texture.AssertLevel(System.Int32)"/> does not work correctly.
+            </summary>
+            <param name="textureHandle">An active handle to a 2D texture.</param>
+            <param name="levels">The number of mipmap levels.</param>
+            <returns>A new Texture2D instance.</returns>
+        </member>
+        <member name="M:ObjectTK.Textures.TextureFactory.CalculateMaxMipmapLevels(System.Int32[])">
+            <summary>
+            Calculates the maximum number of mipmap levels allowed, based on the size of all dimensions given.
+            </summary>
+            <param name="dimensions">Specifies the size in all dimensions.</param>
+            <returns>The maximum number of mipmap levels allowed. The last level would consist of 1 texel.</returns>
+        </member>
+        <member name="T:ObjectTK.Textures.TextureRectangle">
+            <summary>
+            Represents a rectangle texture.<br/>
+            The image in this texture (only one image. No mipmapping) is 2-dimensional.
+            Texture coordinates used for these textures are not normalized.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Textures.TextureRectangle.Width">
+            <summary>
+            The width of the texture.
+            </summary>
+        </member>
+        <member name="P:ObjectTK.Textures.TextureRectangle.Height">
+            <summary>
+            The height of the texture.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Textures.TextureRectangle.#ctor(OpenTK.Graphics.OpenGL.SizedInternalFormat,System.Int32,System.Int32)">
+            <summary>
+            Allocates immutable texture storage with the given parameters.
+            </summary>
+            <param name="internalFormat">The internal format to allocate.</param>
+            <param name="width">The width of the texture.</param>
+            <param name="height">The height of the texture.</param>
+        </member>
+        <member name="T:ObjectTK.Vector3i">
+            <summary>Represents a 3D vector using three 32-bit integer values.</summary>
+            <remarks>
+            The Vector3i structure is suitable for interoperation with unmanaged code requiring three consecutive integers.
+            </remarks>
+        </member>
+        <member name="F:ObjectTK.Vector3i.X">
+            <summary>
+            The X component of the Vector3i.
+            </summary>
+        </member>
+        <member name="F:ObjectTK.Vector3i.Y">
+            <summary>
+            The Y component of the Vector3i.
+            </summary>
+        </member>
+        <member name="F:ObjectTK.Vector3i.Z">
+            <summary>
+            The Z component of the Vector3i.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Vector3i.#ctor(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Constructs a new Vector3i.
+            </summary>
+            <param name="x">The x coordinate of the net Vector3i.</param>
+            <param name="y">The y coordinate of the net Vector3i.</param>
+            <param name="z">The z coordinate of the net Vector3i.</param>
+        </member>
+        <member name="F:ObjectTK.Vector3i.UnitX">
+            <summary>
+            Defines a unit-length Vector3i that points towards the X-axis.
+            </summary>
+        </member>
+        <member name="F:ObjectTK.Vector3i.UnitY">
+            <summary>
+            Defines a unit-length Vector3i that points towards the Y-axis.
+            </summary>
+        </member>
+        <member name="F:ObjectTK.Vector3i.UnitZ">
+            <summary>
+            Defines a unit-length Vector3i that points towards the Z-axis.
+            </summary>
+        </member>
+        <member name="F:ObjectTK.Vector3i.Zero">
+            <summary>
+            Defines a zero-length Vector3i.
+            </summary>
+        </member>
+        <member name="F:ObjectTK.Vector3i.One">
+            <summary>
+            Defines an instance with all components set to 1.
+            </summary>
+        </member>
+        <member name="F:ObjectTK.Vector3i.SizeInBytes">
+            <summary>
+            Defines the size of the Vector3i struct in bytes.
+            </summary>
+        </member>
+        <member name="M:ObjectTK.Vector3i.Add(ObjectTK.Vector3i,ObjectTK.Vector3i)">
+            <summary>
+            Adds two vectors.
+            </summary>
+            <param name="a">Left operand.</param>
+            <param name="b">Right operand.</param>
+            <returns>Result of operation.</returns>
+        </member>
+        <member name="M:ObjectTK.Vector3i.Add(ObjectTK.Vector3i@,ObjectTK.Vector3i@,ObjectTK.Vector3i@)">
+            <summary>
+            Adds two vectors.
+            </summary>
+            <param name="a">Left operand.</param>
+            <param name="b">Right operand.</param>
+            <param name="result">Result of operation.</param>
+        </member>
+        <member name="M:ObjectTK.Vector3i.Subtract(ObjectTK.Vector3i,ObjectTK.Vector3i)">
+            <summary>
+            Subtract one Vector from another
+            </summary>
+            <param name="a">First operand</param>
+            <param name="b">Second operand</param>
+            <returns>Result of subtraction</returns>
+        </member>
+        <member name="M:ObjectTK.Vector3i.Subtract(ObjectTK.Vector3i@,ObjectTK.Vector3i@,ObjectTK.Vector3i@)">
+            <summary>
+            Subtract one Vector from another
+            </summary>
+            <param name="a">First operand</param>
+            <param name="b">Second operand</param>
+            <param name="result">Result of subtraction</param>
+        </member>
+        <member name="M:ObjectTK.Vector3i.Abs(ObjectTK.Vector3i)">
+            <summary>
+            Applies component-wise absolute evaluation
+            </summary>
+            <param name="value">Absolute operation applies to this vector's components</param>
+            <returns>A vector whose components have absolute value of given vector</returns>
+        </member>
+        <member name="M:ObjectTK.Vector3i.Abs(ObjectTK.Vector3i@,ObjectTK.Vector3i@)">
+            <summary>
+            Applies component-wise absolute evaluation
+            </summary>
+            <param name="value">Absolute operation applies to this vector's components</param>
+            <param name="result">A vector whose components have absolute value of given vector <paramref name="value"/></param>
+        </member>
+        <member name="M:ObjectTK.Vector3i.Abs(ObjectTK.Vector3i@)">
+            <summary>
+            Applies component-wise absolute evaluation
+            </summary>
+            <param name="value">Absolute operation applies to this vector's components</param>
+        </member>
+        <member name="M:ObjectTK.Vector3i.ComponentMin(ObjectTK.Vector3i,ObjectTK.Vector3i)">
+            <summary>
+            Calculate the component-wise minimum of two vectors
+            </summary>
+            <param name="a">First operand</param>
+            <param name="b">Second operand</param>
+            <returns>The component-wise minimum</returns>
+        </member>
+        <member name="M:ObjectTK.Vector3i.ComponentMin(ObjectTK.Vector3i@,ObjectTK.Vector3i@,ObjectTK.Vector3i@)">
+            <summary>
+            Calculate the component-wise minimum of two vectors
+            </summary>
+            <param name="a">First operand</param>
+            <param name="b">Second operand</param>
+            <param name="result">The component-wise minimum</param>
+        </member>
+        <member name="M:ObjectTK.Vector3i.ComponentMax(ObjectTK.Vector3i,ObjectTK.Vector3i)">
+            <summary>
+            Calculate the component-wise maximum of two vectors
+            </summary>
+            <param name="a">First operand</param>
+            <param name="b">Second operand</param>
+            <returns>The component-wise maximum</returns>
+        </member>
+        <member name="M:ObjectTK.Vector3i.ComponentMax(ObjectTK.Vector3i@,ObjectTK.Vector3i@,ObjectTK.Vector3i@)">
+            <summary>
+            Calculate the component-wise maximum of two vectors
+            </summary>
+            <param name="a">First operand</param>
+            <param name="b">Second operand</param>
+            <param name="result">The component-wise maximum</param>
+        </member>
+        <member name="M:ObjectTK.Vector3i.Clamp(ObjectTK.Vector3i,ObjectTK.Vector3i,ObjectTK.Vector3i)">
+            <summary>
+            Clamp a vector to the given minimum and maximum vectors
+            </summary>
+            <param name="vec">Input vector</param>
+            <param name="min">Minimum vector</param>
+            <param name="max">Maximum vector</param>
+            <returns>The clamped vector</returns>
+        </member>
+        <member name="M:ObjectTK.Vector3i.Clamp(ObjectTK.Vector3i@,ObjectTK.Vector3i@,ObjectTK.Vector3i@,ObjectTK.Vector3i@)">
+            <summary>
+            Clamp a vector to the given minimum and maximum vectors
+            </summary>
+            <param name="vec">Input vector</param>
+            <param name="min">Minimum vector</param>
+            <param name="max">Maximum vector</param>
+            <param name="result">The clamped vector</param>
+        </member>
+        <member name="M:ObjectTK.Vector3i.op_Addition(ObjectTK.Vector3i,ObjectTK.Vector3i)">
+            <summary>
+            Adds the specified instances.
+            </summary>
+            <param name="left">Left operand.</param>
+            <param name="right">Right operand.</param>
+            <returns>Result of addition.</returns>
+        </member>
+        <member name="M:ObjectTK.Vector3i.op_Subtraction(ObjectTK.Vector3i,ObjectTK.Vector3i)">
+            <summary>
+            Subtracts the specified instances.
+            </summary>
+            <param name="left">Left operand.</param>
+            <param name="right">Right operand.</param>
+            <returns>Result of subtraction.</returns>
+        </member>
+        <member name="M:ObjectTK.Vector3i.op_UnaryNegation(ObjectTK.Vector3i)">
+            <summary>
+            Negates the specified instance.
+            </summary>
+            <param name="vec">Operand.</param>
+            <returns>Result of negation.</returns>
+        </member>
+        <member name="M:ObjectTK.Vector3i.op_Equality(ObjectTK.Vector3i,ObjectTK.Vector3i)">
+            <summary>
+            Compares the specified instances for equality.
+            </summary>
+            <param name="left">Left operand.</param>
+            <param name="right">Right operand.</param>
+            <returns>True if both instances are equal; false otherwise.</returns>
+        </member>
+        <member name="M:ObjectTK.Vector3i.op_Inequality(ObjectTK.Vector3i,ObjectTK.Vector3i)">
+            <summary>
+            Compares the specified instances for inequality.
+            </summary>
+            <param name="left">Left operand.</param>
+            <param name="right">Right operand.</param>
+            <returns>True if both instances are not equal; false otherwise.</returns>
+        </member>
+        <member name="M:ObjectTK.Vector3i.ToString">
+            <summary>
+            Returns a System.String that represents the current Vector3i.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ObjectTK.Vector3i.GetHashCode">
+            <summary>
+            Returns the hashcode for this instance.
+            </summary>
+            <returns>A System.Int32 containing the unique hashcode for this instance.</returns>
+        </member>
+        <member name="M:ObjectTK.Vector3i.Equals(System.Object)">
+            <summary>
+            Indicates whether this instance and a specified object are equal.
+            </summary>
+            <param name="obj">The object to compare to.</param>
+            <returns>True if the instances are equal; false otherwise.</returns>
+        </member>
+        <member name="M:ObjectTK.Vector3i.Equals(ObjectTK.Vector3i)">
+            <summary>Indicates whether the current vector is equal to another vector.</summary>
+            <param name="other">A vector to compare with this vector.</param>
+            <returns>true if the current vector is equal to the vector parameter; otherwise, false.</returns>
+        </member>
+    </members>
+</doc>

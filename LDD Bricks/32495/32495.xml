@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<LEGOPrimitive versionMajor="1" versionMinor="0">
+  <Annotations>
+    <Annotation aliases="32495"/>
+    <Annotation designname="LT WHEEL BEARING"/>
+    <Annotation maingroupid="372"/>
+    <Annotation maingroupname="TRANSPORTATION MEANS, VEHICLES"/>
+    <Annotation platformid="300"/>
+    <Annotation platformname="TECHNIC"/>
+    <Annotation version="2"/>
+  </Annotations>
+  <Collision>
+  </Collision>
+  <Connectivity>
+	<Hinge type="184" oriented="1" angle="120" ax="0.57735" ay="0.57735" az="0.57735" tx="0" ty="0" tz="0.01"/>
+	<Ball type="3" angle="180" ax="0" ay="0" az="1" tx="1.6" ty="0" tz="0"/>
+    <Ball type="3" angle="180" ax="0" ay="0" az="1" tx="-1.6" ty="0" tz="0"/>
+	<Ball type="3" angle="0" ax="0" ay="0" az="1" tx="0" ty="0.8" tz="0"/>
+    <Ball type="3" angle="180" ax="0" ay="0" az="1" tx="0" ty="-0.8" tz="0"/>
+  </Connectivity>
+  <PhysicsAttributes inertiaTensor="0.693333,0,0,0,0.616663,0,0,0,0.883329" centerOfMass="0,0,-0.4" mass="1" frictionType="0"/>
+  <Bounding>
+    <AABB minX="-1.92" minY=" -1.12" minZ="-0.32" maxX="1.92" maxY="1.12" maxZ="1.04"/>
+  </Bounding>
+  <GeometryBounding>
+	<AABB minX="-1.92" minY=" -1.12" minZ="-0.32" maxX="1.92" maxY="1.12" maxZ="1.04"/>
+  </GeometryBounding>
+</LEGOPrimitive>

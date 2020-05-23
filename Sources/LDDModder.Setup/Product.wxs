@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <?include $(sys.CURRENTDIR)\Variables.wxi?>
+  
+	<Product Id="*" Name="$(var.ProductName)" Language="1033" Version="1.0.0.0" 
+           Manufacturer="Polymaker" UpgradeCode="0b4b59f2-f635-4904-b051-7873899bf21b">
+		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+
+		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <MediaTemplate EmbedCab="yes"/>
+
+
+    <Feature Id="ProductFeature" Title="LDD Brick Studio" Level="1">
+      <ComponentGroupRef Id="BrickEditor.Binaries" />
+      <ComponentGroupRef Id="BrickEditor.References" />
+      <ComponentGroupRef Id="BrickEditor.Resources.FR"/>
+      <!--<Feature Id="" Title="" Level="1">
+        <ComponentGroupRef Id="BrickEditor.Resources.FR"/>
+      </Feature>-->
+    </Feature>
+    
+    <Property Id="PLATFORM" Value="$(var.Platform)" />
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
+    <UIRef Id="WixUI_InstallDir" />
+	</Product>
+
+	<Fragment>
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="$(var.PlatformProgramFilesFolder)">
+				<Directory Id="INSTALLFOLDER" Name="LDDModder" />
+			</Directory>
+		</Directory>
+	</Fragment>
+
+	<!--<Fragment>
+		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+			--><!-- TODO: Remove the comments around this Component element and the ComponentRef below in order to add resources to this installer. --><!--
+			--><!-- <Component Id="ProductComponent"> --><!--
+				--><!-- TODO: Insert files, registry keys, and other resources here. --><!--
+			--><!-- </Component> --><!--
+		</ComponentGroup>
+	</Fragment>-->
+</Wix>

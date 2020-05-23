@@ -1,0 +1,555 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\SharpFont.4.0.1\build\SharpFont.props" Condition="Exists('..\packages\SharpFont.4.0.1\build\SharpFont.props')" />
+  <Import Project="..\packages\SharpFont.Dependencies.2.6\build\SharpFont.Dependencies.props" Condition="Exists('..\packages\SharpFont.Dependencies.2.6\build\SharpFont.Dependencies.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{5379F456-A474-4108-ACD8-3B179CF4D041}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>LDDModder.BrickEditor</RootNamespace>
+    <AssemblyName>Brick Studio</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>false</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>LDDModder.BrickEditor.Program</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'PrepRelease|AnyCPU'">
+    <OutputPath>bin\PrepRelease\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'PrepRelease|x64'">
+    <OutputPath>bin\x64\PrepRelease\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'PrepRelease|x86'">
+    <OutputPath>bin\x86\PrepRelease\</OutputPath>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AssimpNet, Version=4.1.0.0, Culture=neutral, PublicKeyToken=0d51b391f59f42a6, processorArchitecture=MSIL">
+      <HintPath>..\packages\AssimpNet.4.1.0\lib\net40\AssimpNet.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=1.2.0.246, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpZipLib.1.2.0\lib\net45\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="ObjectListView, Version=2.9.1.1072, Culture=neutral, PublicKeyToken=b1c5bf581481bcd4, processorArchitecture=MSIL">
+      <HintPath>..\packages\ObjectListView.Official.2.9.1\lib\net20\ObjectListView.dll</HintPath>
+    </Reference>
+    <Reference Include="ObjectTK">
+      <HintPath>..\References\ObjectTK.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenTK, Version=3.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <HintPath>..\packages\OpenTK.3.1.0\lib\net20\OpenTK.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenTK.GLControl, Version=3.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <HintPath>..\packages\OpenTK.GLControl.3.1.0\lib\net20\OpenTK.GLControl.dll</HintPath>
+    </Reference>
+    <Reference Include="QuickFont, Version=4.5.7053.25687, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\QuickFont.Desktop.4.5.7053.25687\lib\net45\QuickFont.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpFont, Version=4.0.1.200, Culture=neutral, PublicKeyToken=48add4c483071cdf, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpFont.4.0.1\lib\net45\SharpFont.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WeifenLuo.WinFormsUI.Docking, Version=3.0.4.0, Culture=neutral, PublicKeyToken=5cded1a1a0a7b481, processorArchitecture=MSIL">
+      <HintPath>..\packages\DockPanelSuite.3.0.4\lib\net40\WeifenLuo.WinFormsUI.Docking.dll</HintPath>
+    </Reference>
+    <Reference Include="WeifenLuo.WinFormsUI.Docking.ThemeVS2015, Version=3.0.4.0, Culture=neutral, PublicKeyToken=5cded1a1a0a7b481, processorArchitecture=MSIL">
+      <HintPath>..\packages\DockPanelSuite.ThemeVS2015.3.0.4\lib\net40\WeifenLuo.WinFormsUI.Docking.ThemeVS2015.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\BrickInfo.cs" />
+    <Compile Include="Models\BrickListCache.cs" />
+    <Compile Include="Models\BrickListInfo.cs" />
+    <Compile Include="Models\Navigation\ElementCollectionNode.cs" />
+    <Compile Include="Models\Navigation\ProjectTreeNode.cs" />
+    <Compile Include="ProjectHandling\ChangeAction.cs" />
+    <Compile Include="Models\Navigation\ElementGroupNode.cs" />
+    <Compile Include="Models\Navigation\ProjectElementNode.cs" />
+    <Compile Include="Models\Navigation\ProjectCollectionNode.cs" />
+    <Compile Include="ProjectHandling\Extensions\BoneElementExtension.cs" />
+    <Compile Include="ProjectHandling\Extensions\ModelElementExtension.cs" />
+    <Compile Include="ProjectHandling\IProjectManager.cs" />
+    <Compile Include="ProjectHandling\ProjectManager.cs" />
+    <Compile Include="Models\Navigation\ProjectTreeNodeCollection.cs" />
+    <Compile Include="ProjectHandling\Extensions\FemaleStudModelExtension.cs" />
+    <Compile Include="ProjectHandling\UndoRedoManager.cs" />
+    <Compile Include="Rendering\Gizmos\ScalingHandle.cs" />
+    <Compile Include="Rendering\MeshRenderMode.cs" />
+    <Compile Include="Rendering\Models\VertexArrayBuffer.cs" />
+    <Compile Include="Rendering\Shaders\SimpleTextureShaderProgram.cs" />
+    <Compile Include="Rendering\Shaders\StudGridCell.cs" />
+    <Compile Include="Rendering\Shaders\StudConnectionShaderProgram.cs" />
+    <Compile Include="Rendering\TextureManager.cs" />
+    <Compile Include="Resources\Messages.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Messages.resx</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Controls\CollapsiblePanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\Controls\CollapsiblePanel.Designer.cs">
+      <DependentUpon>CollapsiblePanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Editors\ConnectorEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Editors\ConnectorEditor.Designer.cs">
+      <DependentUpon>ConnectorEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Editors\PartAliasesEditControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Editors\PartAliasesEditControl.Designer.cs">
+      <DependentUpon>PartAliasesEditControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Controls\ToolStripCheckBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\Editors\StudGridControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\Editors\StudGridControl.Designer.cs">
+      <DependentUpon>StudGridControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Editors\TransformEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Editors\TransformEditor.Designer.cs">
+      <DependentUpon>TransformEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Controls\TreeRendererEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\Editors\StudConnectionEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Editors\StudConnectionEditor.Designer.cs">
+      <DependentUpon>StudConnectionEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Panels\ElementDetailPanel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Panels\ElementDetailPanel.Designer.cs">
+      <DependentUpon>ElementDetailPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Windows\ErrorMessageBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Windows\ErrorMessageBox.Designer.cs">
+      <DependentUpon>ErrorMessageBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Windows\SelectOutputLocationWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Windows\SelectOutputLocationWindow.Designer.cs">
+      <DependentUpon>SelectOutputLocationWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Utilities\LocalizableString.cs" />
+    <Compile Include="Utilities\LocalizableStringList.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Meshes\MeshConverter.cs" />
+    <Compile Include="Meshes\MeshExportOptions.cs" />
+    <Compile Include="Native\User32.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rendering\Gizmos\GizmoHandle.cs" />
+    <Compile Include="Rendering\Gizmos\GizmoStyle.cs" />
+    <Compile Include="Rendering\Gizmos\OrientationMode.cs" />
+    <Compile Include="Rendering\Gizmos\PivotPointMode.cs" />
+    <Compile Include="Rendering\Gizmos\RotationHandle.cs" />
+    <Compile Include="Rendering\Gizmos\TransformGizmo.cs" />
+    <Compile Include="Rendering\Gizmos\TranslationHandle.cs" />
+    <Compile Include="Rendering\LoopController.cs" />
+    <Compile Include="Rendering\Maths\BBox.cs" />
+    <Compile Include="Rendering\Maths\BSphere.cs" />
+    <Compile Include="Rendering\Cameras\Camera.cs" />
+    <Compile Include="Rendering\Cameras\CameraManipulator.cs" />
+    <Compile Include="Rendering\Cameras\CameraMovement.cs" />
+    <Compile Include="Rendering\ModelManager.cs" />
+    <Compile Include="Rendering\Models\CollisionModel.cs" />
+    <Compile Include="Rendering\Models\ConnectionModel.cs" />
+    <Compile Include="Rendering\Models\ITransformableElement.cs" />
+    <Compile Include="Rendering\Models\IVertexBuffer.cs" />
+    <Compile Include="Rendering\Models\ModelBase.cs" />
+    <Compile Include="Rendering\Models\PartElementModel.cs" />
+    <Compile Include="Rendering\Models\PartialModel.cs" />
+    <Compile Include="Rendering\Models\SurfaceModelMesh.cs" />
+    <Compile Include="Rendering\Models\GLSurfaceModel.cs" />
+    <Compile Include="Rendering\Models\IndexedVertexBuffer.cs" />
+    <Compile Include="Rendering\Models\GLModel.cs" />
+    <Compile Include="Rendering\InputManager.cs" />
+    <Compile Include="Rendering\Maths\Plane.cs" />
+    <Compile Include="Rendering\Maths\Ray.cs" />
+    <Compile Include="Rendering\RenderHelper.cs" />
+    <Compile Include="Rendering\RenderOptions.cs" />
+    <Compile Include="Rendering\Shaders\ColorShaderProgram.cs" />
+    <Compile Include="Rendering\Shaders\IShaderMVP.cs" />
+    <Compile Include="Rendering\Shaders\ModelShaderProgram.cs" />
+    <Compile Include="Rendering\Shaders\GridShaderProgram.cs" />
+    <Compile Include="Rendering\Shaders\LightInfo.cs" />
+    <Compile Include="Rendering\Shaders\MaterialInfo.cs" />
+    <Compile Include="Rendering\Shaders\UIShaderProgram.cs" />
+    <Compile Include="Rendering\Shaders\WireframeShader2Program.cs" />
+    <Compile Include="Rendering\Shaders\WireframeShaderProgram.cs" />
+    <Compile Include="Rendering\TextRenderingExtensions.cs" />
+    <Compile Include="Rendering\Models\Vertices.cs" />
+    <Compile Include="Rendering\UI\BoxSpriteBounds.cs" />
+    <Compile Include="Rendering\UI\SpriteBounds.cs" />
+    <Compile Include="Rendering\UI\UIButton.cs" />
+    <Compile Include="Rendering\UI\UIElement.cs" />
+    <Compile Include="Rendering\UIRenderHelper.cs" />
+    <Compile Include="Resources\ModelLocalizations.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ModelLocalizations.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\ResourceHelper.cs" />
+    <Compile Include="Settings\AppSettings.cs" />
+    <Compile Include="Settings\DisplaySettings.cs" />
+    <Compile Include="Settings\RecentFileInfo.cs" />
+    <Compile Include="Settings\SettingsManager.cs" />
+    <Compile Include="UI\Editors\BoundingBoxEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Editors\BoundingBoxEditor.Designer.cs">
+      <DependentUpon>BoundingBoxEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Controls\BrowseTextBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Controls\BrowseTextBox.Designer.cs">
+      <DependentUpon>BrowseTextBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Controls\NumberTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\Controls\NumberTextBox.Designer.cs">
+      <DependentUpon>NumberTextBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Panels\LocalisationEditorPanel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Panels\LocalisationEditorPanel.Designer.cs">
+      <DependentUpon>LocalisationEditorPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Panels\NavigationPanel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Panels\NavigationPanel.Designer.cs">
+      <DependentUpon>NavigationPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Panels\ProjectDocumentPanel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Panels\PartPropertiesPanel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Panels\PartPropertiesPanel.Designer.cs">
+      <DependentUpon>PartPropertiesPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Panels\ValidationPanel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Panels\ValidationPanel.Designer.cs">
+      <DependentUpon>ValidationPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Rendering\Cameras\CameraAlignment.cs" />
+    <Compile Include="UI\Panels\ViewportPanel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Panels\ViewportPanel.Designer.cs">
+      <DependentUpon>ViewportPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Windows\BrickEditorWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Windows\BrickEditorWindow.Designer.cs">
+      <DependentUpon>BrickEditorWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Windows\BrickEditorWindow.Toolbar.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Windows\ExportPartModelWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Windows\ExportPartModelWindow.Designer.cs">
+      <DependentUpon>ExportPartModelWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Windows\ImportModelsDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Windows\ImportModelsDialog.Designer.cs">
+      <DependentUpon>ImportModelsDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Windows\AppSettingsWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Windows\AppSettingsWindow.Designer.cs">
+      <DependentUpon>AppSettingsWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Windows\SelectBrickDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Windows\SelectBrickDialog.Designer.cs">
+      <DependentUpon>SelectBrickDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Utilities\AssimpHelper.cs" />
+    <Compile Include="Utilities\Converter.cs" />
+    <Compile Include="Utilities\NumberHelper.cs" />
+    <Compile Include="Utilities\OpenTKHelper.cs" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="Resources\Messages.fr.resx" />
+    <EmbeddedResource Include="Resources\Messages.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Messages.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\ModelLocalizations.fr.resx" />
+    <EmbeddedResource Include="Resources\ModelLocalizations.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ModelLocalizations.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Editors\ConnectorEditor.resx">
+      <DependentUpon>ConnectorEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Editors\BoundingBoxEditor.resx">
+      <DependentUpon>BoundingBoxEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Controls\BrowseTextBox.resx">
+      <DependentUpon>BrowseTextBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Editors\PartAliasesEditControl.fr.resx">
+      <DependentUpon>PartAliasesEditControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Editors\PartAliasesEditControl.resx">
+      <DependentUpon>PartAliasesEditControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Editors\TransformEditor.resx">
+      <DependentUpon>TransformEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Editors\StudConnectionEditor.resx">
+      <DependentUpon>StudConnectionEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Panels\ElementDetailPanel.resx">
+      <DependentUpon>ElementDetailPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Panels\LocalisationEditorPanel.resx">
+      <DependentUpon>LocalisationEditorPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Panels\NavigationPanel.fr.resx">
+      <DependentUpon>NavigationPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Panels\NavigationPanel.resx">
+      <DependentUpon>NavigationPanel.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Panels\PartPropertiesPanel.resx">
+      <DependentUpon>PartPropertiesPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Panels\ValidationPanel.fr.resx">
+      <DependentUpon>ValidationPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Panels\ValidationPanel.resx">
+      <DependentUpon>ValidationPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Panels\ViewportPanel.resx">
+      <DependentUpon>ViewportPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Windows\AppSettingsWindow.fr.resx">
+      <DependentUpon>AppSettingsWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Windows\BrickEditorWindow.fr.resx">
+      <DependentUpon>BrickEditorWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Windows\BrickEditorWindow.resx">
+      <DependentUpon>BrickEditorWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Windows\ErrorMessageBox.resx">
+      <DependentUpon>ErrorMessageBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Windows\ExportPartModelWindow.resx">
+      <DependentUpon>ExportPartModelWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Windows\ImportModelsDialog.resx">
+      <DependentUpon>ImportModelsDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Windows\AppSettingsWindow.resx">
+      <DependentUpon>AppSettingsWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Windows\SelectBrickDialog.resx">
+      <DependentUpon>SelectBrickDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Windows\SelectOutputLocationWindow.resx">
+      <DependentUpon>SelectOutputLocationWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="OpenTK.dll.config" />
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Resources\Shaders\GridShader.glsl" />
+    <EmbeddedResource Include="Resources\Shaders\ModelShader.glsl" />
+    <EmbeddedResource Include="Resources\Shaders\WireframeShader.glsl" />
+    <EmbeddedResource Include="Resources\Models\Cube.obj" />
+    <EmbeddedResource Include="Resources\Models\Sphere.obj" />
+    <EmbeddedResource Include="Resources\Shaders\ColorShader.glsl" />
+    <EmbeddedResource Include="Resources\Shaders\WireframeShader2.glsl" />
+    <EmbeddedResource Include="Resources\Data\Categories.json" />
+    <EmbeddedResource Include="Resources\Data\Platforms.json" />
+    <EmbeddedResource Include="Resources\Shaders\UIShader.glsl" />
+    <EmbeddedResource Include="Resources\Models\CrossAxleMale.obj" />
+    <EmbeddedResource Include="Resources\Models\Cylinder.obj" />
+    <EmbeddedResource Include="Resources\Models\CrossAxleFemale.obj" />
+    <EmbeddedResource Include="Resources\Shaders\StudConnectionShader.glsl" />
+    <EmbeddedResource Include="Resources\Shaders\SimpleTextureShader.glsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LDDModder.Library\LDDModder.Library.csproj">
+      <Project>{9c186783-9516-4837-8bc6-a5ec1158e17f}</Project>
+      <Name>LDDModder.Library</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Textures\DefaultTexture.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Textures\SelectionIcons.png" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Resources\Data\Primitive connectors.xml" />
+    <Content Include="Resources\Images\DecorationSurfaceIcon.png" />
+    <Content Include="Resources\Images\Hidden2Icon.png" />
+    <Content Include="Resources\Images\HiddenIcon.png" />
+    <Content Include="Resources\Images\MainSurfaceIcon.png" />
+    <Content Include="Resources\Images\MaleStudIcon.png" />
+    <Content Include="Resources\Images\MeshIcon.png" />
+    <Content Include="Resources\Images\NotVisibleIcon.png" />
+    <Content Include="Resources\Images\StatusError.png" />
+    <Content Include="Resources\Images\StatusInfo.png" />
+    <Content Include="Resources\Images\StatusWarning.png" />
+    <Content Include="Resources\Images\VisibleIcon.png" />
+    <EmbeddedResource Include="Resources\Textures\StudConnectionGrid.png" />
+    <EmbeddedResource Include="Resources\Textures\StudGridTex.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\AssimpNet.4.1.0\build\AssimpNet.targets" Condition="Exists('..\packages\AssimpNet.4.1.0\build\AssimpNet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>Ce projet fait référence à des packages NuGet qui sont manquants sur cet ordinateur. Utilisez l'option de restauration des packages NuGet pour les télécharger. Pour plus d'informations, consultez http://go.microsoft.com/fwlink/?LinkID=322105. Le fichier manquant est : {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\AssimpNet.4.1.0\build\AssimpNet.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\AssimpNet.4.1.0\build\AssimpNet.targets'))" />
+    <Error Condition="!Exists('..\packages\SharpFont.Dependencies.2.6\build\SharpFont.Dependencies.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SharpFont.Dependencies.2.6\build\SharpFont.Dependencies.props'))" />
+    <Error Condition="!Exists('..\packages\SharpFont.4.0.1\build\SharpFont.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SharpFont.4.0.1\build\SharpFont.props'))" />
+  </Target>
+  <PropertyGroup>
+    <PostBuildEvent>if "$(ConfigurationName)" == "PrepRelease" (
+del *.pdb
+del *.xml
+
+)</PostBuildEvent>
+  </PropertyGroup>
+</Project>
