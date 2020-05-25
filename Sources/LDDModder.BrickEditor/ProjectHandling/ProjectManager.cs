@@ -93,6 +93,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
             UndoRedoManager.UndoHistoryChanged += UndoRedoManager_UndoHistoryChanged;
 
             _ShowPartModels = true;
+            _PartRenderMode = MeshRenderMode.SolidWireframe;
         }
 
         #region Project Loading/Closing
@@ -241,6 +242,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
         private bool _ShowPartModels;
         private bool _ShowCollisions;
         private bool _ShowConnections;
+        private MeshRenderMode _PartRenderMode;
 
         public bool ShowPartModels
         {
@@ -260,11 +262,19 @@ namespace LDDModder.BrickEditor.ProjectHandling
             set => SetConnectionsVisibility(value);
         }
 
+        public MeshRenderMode PartRenderMode
+        {
+            get => _PartRenderMode;
+            set => SetPartRenderMode(value);
+        }
+
         public event EventHandler PartModelsVisibilityChanged;
 
         public event EventHandler CollisionsVisibilityChanged;
 
         public event EventHandler ConnectionsVisibilityChanged;
+
+        public event EventHandler PartRenderModeChanged;
 
         private void SetPartModelsVisibility(bool visible)
         {
@@ -313,6 +323,17 @@ namespace LDDModder.BrickEditor.ProjectHandling
                 }
 
                 ConnectionsVisibilityChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        private void SetPartRenderMode(MeshRenderMode renderMode)
+        {
+            if (renderMode != _PartRenderMode)
+            {
+                _PartRenderMode = renderMode;
+                if (IsProjectOpen && IsProjectAttached)
+                    CurrentProject.ProjectProperties["PartRenderMode"] = renderMode.ToString();
+                PartRenderModeChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 

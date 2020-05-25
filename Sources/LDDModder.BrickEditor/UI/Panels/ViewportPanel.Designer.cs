@@ -55,6 +55,9 @@
             this.medianBoundingBoxToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.activeElementToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cursorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ModelRenderMode1Button = new System.Windows.Forms.ToolStripButton();
+            this.ModelRenderMode2Button = new System.Windows.Forms.ToolStripButton();
+            this.ModelRenderMode3Button = new System.Windows.Forms.ToolStripButton();
             this.visualStudioToolStripExtender1 = new WeifenLuo.WinFormsUI.Docking.VisualStudioToolStripExtender(this.components);
             this.SelectionInfoPanel = new System.Windows.Forms.Panel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
@@ -84,7 +87,10 @@
             this.CameraMenuDropDown,
             this.DisplayMenuDropDown,
             this.GizmoOrientationMenu,
-            this.GizmoPivotModeMenu});
+            this.GizmoPivotModeMenu,
+            this.ModelRenderMode1Button,
+            this.ModelRenderMode2Button,
+            this.ModelRenderMode3Button});
             resources.ApplyResources(this.toolStrip1, "toolStrip1");
             this.toolStrip1.Name = "toolStrip1";
             // 
@@ -235,6 +241,7 @@
             this.activeElementToolStripMenuItem,
             this.cursorToolStripMenuItem});
             resources.ApplyResources(this.GizmoPivotModeMenu, "GizmoPivotModeMenu");
+            this.GizmoPivotModeMenu.Margin = new System.Windows.Forms.Padding(0, 1, 20, 2);
             this.GizmoPivotModeMenu.Name = "GizmoPivotModeMenu";
             this.GizmoPivotModeMenu.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.GizmoPivotModeMenu_DropDownItemClicked);
             // 
@@ -264,6 +271,32 @@
             // 
             this.cursorToolStripMenuItem.Name = "cursorToolStripMenuItem";
             resources.ApplyResources(this.cursorToolStripMenuItem, "cursorToolStripMenuItem");
+            // 
+            // ModelRenderMode1Button
+            // 
+            this.ModelRenderMode1Button.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.ModelRenderMode1Button.Image = global::LDDModder.BrickEditor.Properties.Resources.WireframeIcon;
+            resources.ApplyResources(this.ModelRenderMode1Button, "ModelRenderMode1Button");
+            this.ModelRenderMode1Button.Name = "ModelRenderMode1Button";
+            this.ModelRenderMode1Button.Click += new System.EventHandler(this.ModelRenderModeButton_Click);
+            // 
+            // ModelRenderMode2Button
+            // 
+            this.ModelRenderMode2Button.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.ModelRenderMode2Button.Image = global::LDDModder.BrickEditor.Properties.Resources.MainSurfaceIcon;
+            resources.ApplyResources(this.ModelRenderMode2Button, "ModelRenderMode2Button");
+            this.ModelRenderMode2Button.Name = "ModelRenderMode2Button";
+            this.ModelRenderMode2Button.Click += new System.EventHandler(this.ModelRenderModeButton_Click);
+            // 
+            // ModelRenderMode3Button
+            // 
+            this.ModelRenderMode3Button.Checked = true;
+            this.ModelRenderMode3Button.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.ModelRenderMode3Button.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.ModelRenderMode3Button.Image = global::LDDModder.BrickEditor.Properties.Resources.SolidWireframeIcon;
+            resources.ApplyResources(this.ModelRenderMode3Button, "ModelRenderMode3Button");
+            this.ModelRenderMode3Button.Name = "ModelRenderMode3Button";
+            this.ModelRenderMode3Button.Click += new System.EventHandler(this.ModelRenderModeButton_Click);
             // 
             // visualStudioToolStripExtender1
             // 
@@ -460,5 +493,8 @@
         private System.Windows.Forms.Label label8;
         private Controls.NumberTextBox RotYNumBox;
         private Controls.NumberTextBox RotZNumBox;
+        private System.Windows.Forms.ToolStripButton ModelRenderMode1Button;
+        private System.Windows.Forms.ToolStripButton ModelRenderMode2Button;
+        private System.Windows.Forms.ToolStripButton ModelRenderMode3Button;
     }
 }

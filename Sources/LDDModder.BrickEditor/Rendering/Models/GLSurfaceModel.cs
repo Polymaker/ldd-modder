@@ -125,7 +125,7 @@ namespace LDDModder.BrickEditor.Rendering
             return model;
         }
 
-        public void Render(RenderOptions renderOptions, bool alphaPass = false)
+        public void Render(Camera camera, MeshRenderMode renderMode)
         {
             var visibleMeshes = MeshModels.Where(x => x.Visible)
                 .OrderByDescending(x=>x.IsSelected).ToList();
@@ -133,28 +133,25 @@ namespace LDDModder.BrickEditor.Rendering
             if (!visibleMeshes.Any())
                 return;
 
-            var currentMaterial = Material;
-            if (renderOptions.DrawTransparent)
-            {
-                var diffColor = currentMaterial.Diffuse;
-                diffColor.W = 0.5f;
-                currentMaterial.Diffuse = diffColor;
-            }
-
             RenderHelper.ModelShader.Use();
-            RenderHelper.ModelShader.UseTexture.Set(renderOptions.DrawTextured && Surface.SurfaceID > 0);
+            RenderHelper.ModelShader.UseTexture.Set(renderMode != MeshRenderMode.Wireframe && Surface.SurfaceID > 0);
 
-            bool useOutlineStencil = !alphaPass && visibleMeshes.Any(x => x.IsSelected);
+            bool useOutlineStencil = visibleMeshes.Any(x => x.IsSelected);
             if (useOutlineStencil)
                 RenderHelper.EnableStencilTest();
 
             foreach (var model in visibleMeshes)
             {
-
-                RenderPartialMesh(renderOptions, model, currentMaterial, useOutlineStencil);
-
-                if (useOutlineStencil && model.IsSelected)
-                    DrawModelOutline(model);
+                bool drawMeshOutilne = useOutlineStencil && model.IsSelected/* && renderMode != MeshRenderMode.Wireframe*/;
+                RenderHelper.RenderWithStencil(drawMeshOutilne,
+                    () =>
+                    {
+                        RenderPartialMesh(renderMode, model, Material, useOutlineStencil);
+                    },
+                    () =>
+                    {
+                        DrawModelOutline(model, 4f);
+                    });
             }
 
             if (useOutlineStencil)
@@ -177,61 +174,49 @@ namespace LDDModder.BrickEditor.Rendering
 
         }
 
-        public void RenderWireframe(Vector4 color, float size = 1f)
+
+        private void RenderPartialMesh(MeshRenderMode renderMode, SurfaceModelMesh model, MaterialInfo material, bool useStencil)
         {
-            var visibleMeshes = MeshModels.Where(x => x.Visible)
-                .OrderByDescending(x => x.IsSelected).ToList();
-
-            if (!visibleMeshes.Any())
-                return;
-
-            foreach (var model in visibleMeshes)
+            if (renderMode == MeshRenderMode.Wireframe)
             {
-                RenderHelper.BeginDrawWireframe2(VertexBuffer, model.Transform, size, color);
-                DrawPartialMesh(model);
-                //RenderHelper.EndDrawWireframe(VertexBuffer);
-            }
-        }
-
-        private void RenderPartialMesh(RenderOptions renderOptions, SurfaceModelMesh model, MaterialInfo material, bool useStencil)
-        {
-            if (renderOptions.DrawShaded || renderOptions.DrawTextured)
-            {
-                RenderHelper.BeginDrawModel(VertexBuffer, model.Transform, material);
-                RenderHelper.ModelShader.IsSelected.Set(model.IsSelected);
-
-                if (model.IsSelected && useStencil)
-                    RenderHelper.EnableStencilMask();
-
-                DrawPartialMesh(model);
-
-                RenderHelper.EndDrawModel(VertexBuffer);
-
-                if (model.IsSelected && useStencil)
-                    RenderHelper.DisableStencilMask();
+                GL.ColorMask(false, false, false, false);
+                GL.DepthMask(false);
             }
 
-            if (renderOptions.DrawWireframe)
+            RenderHelper.BeginDrawModel(VertexBuffer, model.Transform, material);
+            RenderHelper.ModelShader.IsSelected.Set(model.IsSelected);
+
+            DrawModelElements(model);
+
+            RenderHelper.EndDrawModel(VertexBuffer);
+
+            if (useStencil)
+                RenderHelper.DisableStencilMask();
+
+            if (renderMode == MeshRenderMode.Wireframe)
             {
-                RenderHelper.BeginDrawWireframe(VertexBuffer, model.Transform, 1f, 
-                    model.IsSelected ? RenderHelper.WireframeColorAlt : RenderHelper.WireframeColor);
-                DrawPartialMesh(model);
+                GL.ColorMask(true, true, true, true);
+                GL.DepthMask(true);
+            }
+
+            if (renderMode == MeshRenderMode.Wireframe || renderMode == MeshRenderMode.SolidWireframe)
+            {
+                var wireColor = model.IsSelected && renderMode == MeshRenderMode.SolidWireframe ? RenderHelper.WireframeColorAlt : RenderHelper.WireframeColor;
+
+                RenderHelper.BeginDrawWireframe(VertexBuffer, model.Transform, 1f, wireColor);
+                DrawModelElements(model);
                 RenderHelper.EndDrawWireframe(VertexBuffer);
             }
         }
 
-        private void DrawModelOutline(SurfaceModelMesh model)
+        private void DrawModelOutline(SurfaceModelMesh model, float thickness = 4f)
         {
-            RenderHelper.BeginDrawWireframe(VertexBuffer, model.Transform, 4f, RenderHelper.SelectionOutlineColor);
-            RenderHelper.ApplyStencilMask();
-
-            DrawPartialMesh(model);
-
+            RenderHelper.BeginDrawWireframe(VertexBuffer, model.Transform, thickness, RenderHelper.SelectionOutlineColor);
+            DrawModelElements(model);
             RenderHelper.EndDrawWireframe(VertexBuffer);
-            RenderHelper.DisableStencilMask();
         }
 
-        private void DrawPartialMesh(SurfaceModelMesh mesh)
+        private void DrawModelElements(SurfaceModelMesh mesh)
         {
             VertexBuffer.DrawElementsBaseVertex(PrimitiveType.Triangles, mesh.StartVertex, mesh.IndexCount, mesh.StartIndex * 4);
         }

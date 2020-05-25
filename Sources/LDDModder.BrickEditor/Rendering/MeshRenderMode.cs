@@ -9,7 +9,7 @@ namespace LDDModder.BrickEditor.Rendering
     public enum MeshRenderMode
     {
         Wireframe,
-        Shaded,
-        ShadedWireframe
+        Solid,
+        SolidWireframe
     }
 }

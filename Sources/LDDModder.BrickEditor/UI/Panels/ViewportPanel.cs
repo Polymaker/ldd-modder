@@ -49,14 +49,6 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private LoopController LoopController;
 
-        public bool ShowCollisions { get; set; }
-
-        public bool ShowConnections { get; set; }
-
-        public bool ShowMeshes { get; set; }
-
-        public RenderOptions ModelRenderingOptions { get; private set; }
-
         public ViewportPanel()
         {
             InitializeComponent();
@@ -132,7 +124,10 @@ namespace LDDModder.BrickEditor.UI.Panels
             ProjectManager.PartModelsVisibilityChanged += ProjectManager_ModelsVisibilityChanged;
             ProjectManager.CollisionsVisibilityChanged += ProjectManager_ModelsVisibilityChanged;
             ProjectManager.ConnectionsVisibilityChanged += ProjectManager_ModelsVisibilityChanged;
+            ProjectManager.PartRenderModeChanged += ProjectManager_PartRenderModeChanged;
         }
+
+        
 
         #region Initialization
 
@@ -144,15 +139,6 @@ namespace LDDModder.BrickEditor.UI.Panels
             CameraManipulator = new CameraManipulator(new Camera());
             CameraManipulator.Initialize(new Vector3(5), Vector3.Zero);
             //CameraManipulator.RotationButton = MouseButton.Right;
-
-            ShowMeshes = true;
-            ModelRenderingOptions = new RenderOptions()
-            {
-                DrawShaded = true,
-                DrawTextured = true,
-                DrawTransparent = false,
-                DrawWireframe = true
-            };
 
             InitializeTextures();
             InitializeUI();
@@ -380,13 +366,13 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             DrawGrid();
 
-            if (ProjectManager.ShowCollisions)
-                DrawCollisions();
-
             if (ProjectManager.ShowPartModels)
                 DrawPartModels();
 
-            if (ProjectManager.ShowConnections)
+            if (ProjectManager.ShowCollisions && CollisionModels.Any())
+                DrawCollisions();
+
+            if (ProjectManager.ShowConnections && ConnectionModels.Any())
                 DrawConnections();
 
             DrawGrid();
@@ -405,24 +391,21 @@ namespace LDDModder.BrickEditor.UI.Panels
         private void DrawConnections()
         {
             GL.Disable(EnableCap.Texture2D);
-            if (ConnectionModels.Any())
-            {
-                var orderedModels = ConnectionModels.OrderByDescending(x => Camera.DistanceFromCamera(x.Transform));
-                //RenderHelper.UnbindModelTexture();
-                foreach (var connModel in orderedModels.Where(x => x.Visible))
-                    connModel.RenderModel(Camera);
-            }
+
+            foreach (var connModel in ConnectionModels.Where(x => x.Visible))
+                connModel.RenderModel(Camera);
+            //var orderedModels = ConnectionModels.OrderByDescending(x => Camera.DistanceFromCamera(x.Transform));
+
+            //foreach (var connModel in orderedModels.Where(x => x.Visible))
+            //    connModel.RenderModel(Camera);
         }
 
         private void DrawCollisions()
         {
             GL.Disable(EnableCap.Texture2D);
-            if (ProjectManager.ShowCollisions && CollisionModels.Any())
-            {
-                //RenderHelper.UnbindModelTexture();
-                foreach (var colModel in CollisionModels.Where(x => x.Visible))
-                    colModel.RenderModel(Camera);
-            }
+
+            foreach (var colModel in CollisionModels.Where(x => x.Visible))
+                colModel.RenderModel(Camera);
         }
 
         private void DrawPartModels()
@@ -431,50 +414,8 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             RenderHelper.BindModelTexture(CheckboardTexture, TextureUnit.Texture4);
 
-            if (ModelRenderingOptions.DrawTransparent)
-            {
-                GL.Enable(EnableCap.CullFace);
-                GL.CullFace(CullFaceMode.Front);
-                GL.Disable(EnableCap.DepthTest);
-
-                var wireColor = new Vector4(0f, 0f, 0f, 1f);
-                foreach (var surfaceModel in SurfaceModels)
-                    surfaceModel.RenderWireframe(wireColor, 0.5f);
-
-                bool wireframeEnabled = ModelRenderingOptions.DrawWireframe;
-                ModelRenderingOptions.DrawWireframe = false;
-
-                
-                GL.Disable(EnableCap.CullFace);
-
-                foreach (var surfaceModel in SurfaceModels)
-                    surfaceModel.Render(ModelRenderingOptions, true);
-
-
-                GL.Enable(EnableCap.CullFace);
-                GL.CullFace(CullFaceMode.Back);
-
-                foreach (var surfaceModel in SurfaceModels)
-                    surfaceModel.RenderWireframe(wireColor, 0.5f);
-
-                GL.Disable(EnableCap.CullFace);
-                GL.Enable(EnableCap.DepthTest);
-
-                ModelRenderingOptions.DrawWireframe = wireframeEnabled;
-                
-                //var wireframeOptions = new RenderOptions
-                //{
-                //    DrawWireframe = true
-                //};
-
-                //foreach (var surfaceModel in SurfaceModels)
-                //    surfaceModel.Render(wireframeOptions, true);
-            }
-            else
-            {
-                foreach (var surfaceModel in SurfaceModels)
-                    surfaceModel.Render(ModelRenderingOptions);
-            }
+            foreach (var surfaceModel in SurfaceModels)
+                surfaceModel.Render(Camera, ProjectManager.PartRenderMode);
 
             RenderHelper.UnbindModelTexture();
             CheckboardTexture.Bind(TextureUnit.Texture0);
@@ -1397,6 +1338,16 @@ namespace LDDModder.BrickEditor.UI.Panels
             }
         }
 
+        private void ProjectManager_PartRenderModeChanged(object sender, EventArgs e)
+        {
+            using (FlagManager.UseFlag("PartRenderModeChanged"))
+            {
+                ModelRenderMode1Button.Checked = ProjectManager.PartRenderMode == MeshRenderMode.Wireframe;
+                ModelRenderMode2Button.Checked = ProjectManager.PartRenderMode == MeshRenderMode.Solid;
+                ModelRenderMode3Button.Checked = ProjectManager.PartRenderMode == MeshRenderMode.SolidWireframe;
+            }
+        }
+
         private void DisplayMenu_Collisions_CheckedChanged(object sender, EventArgs e)
         {
             if (!FlagManager.IsSet("ModelsVisibilityChanged"))
@@ -1419,6 +1370,19 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             if (e.CloseReason == ToolStripDropDownCloseReason.ItemClicked)
                 e.Cancel = true;
+        }
+
+        private void ModelRenderModeButton_Click(object sender, EventArgs e)
+        {
+            if (FlagManager.IsSet("ModelsVisibilityChanged"))
+                return;
+
+            if (sender == ModelRenderMode1Button)
+                ProjectManager.PartRenderMode = MeshRenderMode.Wireframe;
+            else if (sender == ModelRenderMode2Button)
+                ProjectManager.PartRenderMode = MeshRenderMode.Solid;
+            else if (sender == ModelRenderMode3Button)
+                ProjectManager.PartRenderMode = MeshRenderMode.SolidWireframe;
         }
 
         #region Tranform Gizmo Settings
@@ -1491,5 +1455,6 @@ namespace LDDModder.BrickEditor.UI.Panels
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
+        
     }
 }

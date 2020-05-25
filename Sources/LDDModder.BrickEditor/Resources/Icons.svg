@@ -180,16 +180,16 @@
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:zoom="4.4337506"
-     inkscape:cx="-11.325212"
-     inkscape:cy="8.8898648"
+     inkscape:cx="-1.2787922"
+     inkscape:cy="0.61858057"
      inkscape:document-units="mm"
-     inkscape:current-layer="g891"
+     inkscape:current-layer="layer4"
      showgrid="true"
      units="px"
      inkscape:pagecheckerboard="false"
      inkscape:window-width="1369"
      inkscape:window-height="729"
-     inkscape:window-x="2154"
+     inkscape:window-x="290"
      inkscape:window-y="234"
      inkscape:window-maximized="0"
      inkscape:snap-grids="true">
@@ -206,7 +206,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -238,7 +238,7 @@
      inkscape:groupmode="layer"
      id="g4638"
      inkscape:label="Hidden Icon 2"
-     style="display:inline">
+     style="display:none">
     <path
        sodipodi:nodetypes="scscssssss"
        inkscape:connector-curvature="0"
@@ -387,7 +387,7 @@
      inkscape:groupmode="layer"
      id="layer9"
      inkscape:label="Main Surface"
-     style="display:none">
+     style="display:inline">
     <g
        inkscape:groupmode="layer"
        id="layer7"
@@ -428,8 +428,29 @@
          inkscape:connector-curvature="0"
          id="path4877"
          d="M 4.2333333,8.4666802 0.56715915,6.3500101 0.56700208,2.1166801 4.2333331,1.0054167e-5 7.8995072,2.1166801 v 4.23333 z"
-         style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#333333;stroke-width:0.26458332;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+         style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#333333;stroke-width:0.26499999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
     </g>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer4"
+     inkscape:label="WireFrame"
+     style="display:inline">
+    <path
+       style="display:inline;fill:none;stroke:#333333;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 0.52916666,6.35 7.9374999,2.1166666"
+       id="path889"
+       inkscape:connector-curvature="0" />
+    <path
+       style="display:inline;fill:none;stroke:#333333;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 0.52916666,2.1166666 7.9374999,6.35"
+       id="path891"
+       inkscape:connector-curvature="0" />
+    <path
+       style="display:inline;fill:none;stroke:#333333;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 4.2333335,8.4666667 V 0"
+       id="path894"
+       inkscape:connector-curvature="0" />
   </g>
   <g
      inkscape:groupmode="layer"

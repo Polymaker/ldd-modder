@@ -530,10 +530,12 @@
     <Content Include="Resources\Images\MaleStudIcon.png" />
     <Content Include="Resources\Images\MeshIcon.png" />
     <Content Include="Resources\Images\NotVisibleIcon.png" />
+    <Content Include="Resources\Images\SolidWireframeIcon.png" />
     <Content Include="Resources\Images\StatusError.png" />
     <Content Include="Resources\Images\StatusInfo.png" />
     <Content Include="Resources\Images\StatusWarning.png" />
     <Content Include="Resources\Images\VisibleIcon.png" />
+    <Content Include="Resources\Images\WireframeIcon.png" />
     <EmbeddedResource Include="Resources\Textures\StudConnectionGrid.png" />
     <EmbeddedResource Include="Resources\Textures\StudGridTex.png" />
   </ItemGroup>

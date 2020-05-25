@@ -989,6 +989,8 @@ namespace LDDModder.BrickEditor.UI.Panels
                     {
                         modelExt.IsHidden = !modelExt.IsHidden;
                         ProjectTreeView.RefreshObject(elementNode);
+                        if (elementNode.Parent is ElementGroupNode)
+                            ProjectTreeView.RefreshObject(elementNode.Parent);
                     }
                 }
                 else if (e.Model is ElementCollectionNode elementColNode)
@@ -1011,6 +1013,12 @@ namespace LDDModder.BrickEditor.UI.Panels
                         ProjectManager.ShowConnections = !ProjectManager.ShowConnections;
 
                     ProjectTreeView.RefreshObject(collectionNode); 
+                }
+                else if (e.Model is ElementGroupNode groupNode && groupNode.SupportsVisibility())
+                {
+
+                    //groupNode.ToggleVisibility();
+                    //ProjectTreeView.RefreshObject(groupNode);
                 }
             }
         }
