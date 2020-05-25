@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.CancelDialogButton = new System.Windows.Forms.Button();
             this.OpenButton = new System.Windows.Forms.Button();
@@ -106,8 +106,8 @@
             this.BrickGridView.AllowUserToAddRows = false;
             this.BrickGridView.AllowUserToDeleteRows = false;
             this.BrickGridView.AllowUserToResizeRows = false;
-            dataGridViewCellStyle7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(235)))), ((int)(((byte)(235)))), ((int)(((byte)(235)))));
-            this.BrickGridView.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(235)))), ((int)(((byte)(235)))), ((int)(((byte)(235)))));
+            this.BrickGridView.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             this.BrickGridView.BackgroundColor = System.Drawing.SystemColors.Window;
             this.BrickGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.BrickGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
@@ -211,6 +211,7 @@
             this.MinimumSize = new System.Drawing.Size(500, 400);
             this.Name = "SelectBrickDialog";
             this.Padding = new System.Windows.Forms.Padding(3);
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Select LDD Brick";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SelectBrickDialog_FormClosing);
             this.tableLayoutPanel1.ResumeLayout(false);

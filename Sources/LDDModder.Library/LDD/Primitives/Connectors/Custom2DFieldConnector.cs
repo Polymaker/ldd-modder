@@ -158,9 +158,9 @@ namespace LDDModder.LDD.Primitives.Connectors
             int width = nodeArray.GetLength(0);
             int height = nodeArray.GetLength(1);
 
-            for (int y = 0; y < width; y++)
+            for (int x = 0; x < width; x++)
             {
-                for (int x = 0; x < height; x++)
+                for (int y = 0; y < height; y++)
                 {
                     nodeArray[x, y].PropertyValueChanged -= FieldNode_PropertyValueChanged;
                 }

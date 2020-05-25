@@ -65,6 +65,7 @@
             this.ViewModeCollisions = new LDDModder.BrickEditor.Localization.LocalizableString();
             this.ViewModeConnections = new LDDModder.BrickEditor.Localization.LocalizableString();
             this.ViewModeSurfaces = new LDDModder.BrickEditor.Localization.LocalizableString();
+            this.ContextMenu_Duplicate = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.ProjectTreeView)).BeginInit();
             this.ElementsContextMenu.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -133,6 +134,7 @@
             this.ContextMenu_AddCollision,
             this.ContextMenu_AddConnection,
             this.toolStripSeparator1,
+            this.ContextMenu_Duplicate,
             this.ContextMenu_Rename,
             this.ContextMenu_Delete});
             this.ElementsContextMenu.Name = "contextMenuStrip1";
@@ -334,6 +336,12 @@
             // 
             resources.ApplyResources(this.ViewModeSurfaces, "ViewModeSurfaces");
             // 
+            // ContextMenu_Duplicate
+            // 
+            this.ContextMenu_Duplicate.Name = "ContextMenu_Duplicate";
+            resources.ApplyResources(this.ContextMenu_Duplicate, "ContextMenu_Duplicate");
+            this.ContextMenu_Duplicate.Click += new System.EventHandler(this.ContextMenu_Duplicate_Click);
+            // 
             // NavigationPanel
             // 
             resources.ApplyResources(this, "$this");
@@ -385,5 +393,6 @@
         private System.Windows.Forms.ImageList NavigationImageList;
         private BrightIdeasSoftware.OLVColumn olvColumnVisible;
         private System.Windows.Forms.ToolStripMenuItem ContextMenu_Rename;
+        private System.Windows.Forms.ToolStripMenuItem ContextMenu_Duplicate;
     }
 }

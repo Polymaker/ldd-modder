@@ -192,6 +192,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                     var expandedNodeIDs = ProjectTreeView.ExpandedObjects
                         .OfType<ProjectTreeNode>().Select(x => x.NodeID).ToList();
                     expandedNodeIDs.RemoveAll(x => string.IsNullOrEmpty(x));
+                    ProjectTreeView.ExpandedObjects = Enumerable.Empty<ProjectTreeNode>();
 
                     if (recreate)
                     {
@@ -212,12 +213,14 @@ namespace LDDModder.BrickEditor.UI.Panels
                     {
                         foreach (ProjectTreeNode node in ProjectTreeView.Roots)
                         {
+                            ProjectTreeView.RemoveObjects(node.GetChildHierarchy().ToList());
                             node.InvalidateChildrens();
                             ProjectTreeView.UpdateObject(node);
                         }
                     }
 
 
+                    //ProjectTreeView.TreeModel.
                     ExpandNodes(ProjectTreeView.Roots, expandedNodeIDs);
 
                     if (selectedNodeIDs.Any())
@@ -515,10 +518,26 @@ namespace LDDModder.BrickEditor.UI.Panels
                 canRenameNode = false;
 
             ContextMenu_Rename.Visible = canRenameNode;
-
+            
 
             var anyPojectElem = GetSelectedElements().Any();
             ContextMenu_Delete.Enabled = anyPojectElem;
+            ContextMenu_Duplicate.Enabled = anyPojectElem;
+        }
+
+        private void ContextMenu_Duplicate_Click(object sender, EventArgs e)
+        {
+            if (ProjectTreeView.SelectedObject is ProjectElementNode projectElementNode)
+            {
+                switch (projectElementNode.Element)
+                {
+                    case PartCollision collision:
+                        var newCol = collision.Clone();
+                        CurrentProject.Collisions.Add(newCol);
+                        ProjectManager.SelectElement(newCol);
+                        break;
+                }
+            }
         }
 
         private void ContextMenu_Rename_Click(object sender, EventArgs e)

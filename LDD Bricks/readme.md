@@ -2,13 +2,12 @@
 # WIP
 Part ID  |  Name  |   Additional Info 
 -------: | :----- | :-------------------------------
- 29096 | WALL, CONE 5X10X6 | Decorable, missing collisions
+ 29096 | WALL, CONE 5X10X6 | Supports decals, missing stud connections
  32195 | FORM 6M W. BALL CUP | missing collisions
  32495 | LT WHEEL BEARING | TODO create LPP, missing collisions
  32496 | LT HUB ELEMENT | missing collisions
  35480 | 1 x 2 Rounded with 2 Open Studs | missing collisions
- 47996 | LATTICE 3X28M Ø3.2 | Tryig to make it flexible
- 
+ 47996 | LATTICE 3X28M Ø3.2 | Trying to make it flexible
  
 # Custom Bricks
 Part ID  |  Name  |   Additional Info 

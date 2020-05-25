@@ -102,5 +102,14 @@ namespace LDDModder.Modding.Editing
             elem.Add(Transform.SerializeToXml(nameof(Transform)));
             return elem;
         }
+
+        public PartCollision Clone()
+        {
+            if (this is PartBoxCollision boxCollision)
+                return new PartBoxCollision(boxCollision.Size) { Transform = Transform.Clone() };
+            if (this is PartSphereCollision sphereCollision)
+                return new PartSphereCollision(sphereCollision.Radius) { Transform = Transform.Clone() };
+            return null;
+        }
     }
 }

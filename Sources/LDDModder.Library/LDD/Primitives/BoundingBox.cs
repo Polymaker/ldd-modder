@@ -192,27 +192,27 @@ namespace LDDModder.LDD.Primitives
         public XElement SerializeToXml(string elementName)
         {
             var elem = new XElement(elementName);
-            elem.AddNumberAttribute("MinX", Min.X);
-            elem.AddNumberAttribute("MinY", Min.Y);
-            elem.AddNumberAttribute("MinZ", Min.Z);
+            elem.AddNumberAttribute("minX", Min.X);
+            elem.AddNumberAttribute("minY", Min.Y);
+            elem.AddNumberAttribute("minZ", Min.Z);
 
-            elem.AddNumberAttribute("MaxX", Max.X);
-            elem.AddNumberAttribute("MaxY", Max.Y);
-            elem.AddNumberAttribute("MaxZ", Max.Z);
+            elem.AddNumberAttribute("maxX", Max.X);
+            elem.AddNumberAttribute("maxY", Max.Y);
+            elem.AddNumberAttribute("maxZ", Max.Z);
             return elem;
         }
 
         public void LoadFromXml(XElement element)
         {
-            element.TryReadAttribute("MinX", out double minX);
-            element.TryReadAttribute("MinY", out double minY);
-            element.TryReadAttribute("MinZ", out double minZ);
+            element.TryReadAttribute("minX", out double minX);
+            element.TryReadAttribute("minY", out double minY);
+            element.TryReadAttribute("minZ", out double minZ);
 
             Min = new Vector3d(minX, minY, minZ);
 
-            element.TryReadAttribute("MaxX", out double maxX);
-            element.TryReadAttribute("MaxY", out double maxY);
-            element.TryReadAttribute("MaxZ", out double maxZ);
+            element.TryReadAttribute("maxX", out double maxX);
+            element.TryReadAttribute("maxY", out double maxY);
+            element.TryReadAttribute("maxZ", out double maxZ);
 
             Max = new Vector3d(maxX, maxY, maxZ);
         }

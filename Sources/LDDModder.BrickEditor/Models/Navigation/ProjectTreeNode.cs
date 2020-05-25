@@ -55,6 +55,10 @@ namespace LDDModder.BrickEditor.Models.Navigation
         public virtual void InvalidateChildrens()
         {
             nodesDirty = true;
+            foreach (var childNode in Nodes)
+            {
+                childNode.nodesDirty = true;
+            }
         }
 
         public bool HasChildrens()
@@ -116,7 +120,8 @@ namespace LDDModder.BrickEditor.Models.Navigation
                 {
                     groupNode = new ProjectTreeNode(groupTitle)
                     {
-                        nodesDirty = false
+                        nodesDirty = false,
+                        NodeID = $"{NodeID}_{groupTitle}"
                     };
                     Nodes.Add(groupNode);
                 }
@@ -139,7 +144,7 @@ namespace LDDModder.BrickEditor.Models.Navigation
                             rangeText = string.Format(ModelLocalizations.NodeRangeFormat1, currIdx + 1, currIdx + takeCount);
 
                         var rangeNode = new ElementGroupNode(rangeText);
-
+                        rangeNode.NodeID = $"{NodeID}_{groupTitle}_{currIdx + 1}";
                         if (groupOnSameLevel)
                             rangeNode.Text = groupTitle + " " + rangeNode.Text;
 

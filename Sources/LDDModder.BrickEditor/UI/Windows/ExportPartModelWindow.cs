@@ -184,7 +184,8 @@ namespace LDDModder.BrickEditor.UI.Windows
                         try
                         {
                             var assimpScene = MeshConverter.LddPartToAssimp(partInfo, exportOptions);
-                            AssimpContext.ExportFile(assimpScene, sfd.FileName, formatID);
+                            AssimpContext.ExportFile(assimpScene, sfd.FileName, formatID, 
+                                Assimp.PostProcessSteps.FlipUVs);
                             MessageBox.Show("Part exported");
                         }
                         catch (Exception ex)

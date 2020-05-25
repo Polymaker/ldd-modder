@@ -44,13 +44,13 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             //}
 
-            if (studGridControl1.Tag != null)
+            if (studConnectionEditor1.Tag != null)
             {
-                if (studGridControl1.IsEditingNode)
-                    studGridControl1.CancelEditNode();
-                studGridControl1.StudConnector = null;
-                studGridControl1.Visible = false;
-                studGridControl1.Tag = null;
+                if (studConnectionEditor1.GridEditor.IsEditingNode)
+                    studConnectionEditor1.GridEditor.CancelEditNode();
+                studConnectionEditor1.StudConnector = null;
+                studConnectionEditor1.Visible = false;
+                studConnectionEditor1.Tag = null;
             }
 
             if (transformEditor1.Tag != null)
@@ -70,9 +70,9 @@ namespace LDDModder.BrickEditor.UI.Panels
             {
                 if (partConnection.ConnectorType == ConnectorType.Custom2DField)
                 {
-                    studGridControl1.StudConnector = partConnection.GetConnector<Custom2DFieldConnector>();
-                    studGridControl1.Visible = true;
-                    studGridControl1.Tag = partConnection;
+                    studConnectionEditor1.StudConnector = partConnection.GetConnector<Custom2DFieldConnector>();
+                    studConnectionEditor1.Visible = true;
+                    studConnectionEditor1.Tag = partConnection;
                 }
             }
         }

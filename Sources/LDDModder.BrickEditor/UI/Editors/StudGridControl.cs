@@ -36,6 +36,10 @@ namespace LDDModder.BrickEditor.UI.Editors
             }
         }
 
+        public event EventHandler ConnectorChanged;
+
+        public event EventHandler ConnectorSizeChanged;
+
         public Size MaxGridSize
         {
             get => _MaxGridSize;
@@ -96,6 +100,8 @@ namespace LDDModder.BrickEditor.UI.Editors
 
             UpdateControlSize();
             Invalidate();
+
+            ConnectorChanged?.Invoke(this, EventArgs.Empty);
         }
 
         private void StudConnector_NodeValueChanged(object sender, PropertyChangedEventArgs e)
@@ -106,6 +112,9 @@ namespace LDDModder.BrickEditor.UI.Editors
         private void StudConnector_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             UpdateControlSize();
+            if (e.PropertyName == nameof(Custom2DFieldConnector.Width) ||
+                e.PropertyName == nameof(Custom2DFieldConnector.Height))
+                ConnectorSizeChanged.Invoke(this, EventArgs.Empty);
         }
 
         #region Size Calculation
@@ -452,7 +461,6 @@ namespace LDDModder.BrickEditor.UI.Editors
         }
         
         #endregion
-
 
         protected override void OnLostFocus(EventArgs e)
         {
@@ -935,6 +943,17 @@ namespace LDDModder.BrickEditor.UI.Editors
                 UpdateScrollBarsValues();
                 Invalidate();
             }
+        }
+
+        protected override void OnMouseWheel(MouseEventArgs e)
+        {
+            if (VScrollBar.Visible)
+            {
+                int newVal = Math.Max(0, Math.Min(VScrollBar.Maximum, VScrollBar.Value + Math.Sign(e.Delta)));
+                VScrollBar.Value = newVal;
+                VScrollBar_Scroll(VScrollBar, new ScrollEventArgs(ScrollEventType.SmallIncrement, newVal));
+            }
+            base.OnMouseWheel(e);
         }
 
         #endregion

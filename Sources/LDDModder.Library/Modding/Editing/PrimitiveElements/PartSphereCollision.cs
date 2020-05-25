@@ -21,7 +21,7 @@ namespace LDDModder.Modding.Editing
             _Radius = 1d;
         }
 
-        public PartSphereCollision(float radius)
+        public PartSphereCollision(double radius)
         {
             _Radius = radius;
         }

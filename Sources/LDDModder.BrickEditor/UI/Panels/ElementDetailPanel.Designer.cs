@@ -32,8 +32,8 @@
             this.SelectedElementLabel = new System.Windows.Forms.ToolStripLabel();
             this.SelectedElementComboBox = new System.Windows.Forms.ToolStripComboBox();
             this.SyncSelectionCheckBox = new LDDModder.BrickEditor.UI.Controls.ToolStripCheckBox();
-            this.studGridControl1 = new LDDModder.BrickEditor.UI.Editors.StudGridControl();
             this.transformEditor1 = new LDDModder.BrickEditor.UI.Controls.TransformEditor();
+            this.studConnectionEditor1 = new LDDModder.BrickEditor.UI.Editors.StudConnectionEditor();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -69,19 +69,6 @@
             this.SyncSelectionCheckBox.Size = new System.Drawing.Size(165, 22);
             this.SyncSelectionCheckBox.Text = "Synchronise with viewport";
             // 
-            // studGridControl1
-            // 
-            this.studGridControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.studGridControl1.Location = new System.Drawing.Point(0, 102);
-            this.studGridControl1.MaxGridSize = new System.Drawing.Size(8, 5);
-            this.studGridControl1.Name = "studGridControl1";
-            this.studGridControl1.Size = new System.Drawing.Size(618, 224);
-            this.studGridControl1.TabIndex = 1;
-            this.studGridControl1.Text = "studGridControl1";
-            this.studGridControl1.Visible = false;
-            // 
             // transformEditor1
             // 
             this.transformEditor1.AutoSize = true;
@@ -92,13 +79,23 @@
             this.transformEditor1.TabIndex = 2;
             this.transformEditor1.Visible = false;
             // 
+            // studConnectionEditor1
+            // 
+            this.studConnectionEditor1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.studConnectionEditor1.Location = new System.Drawing.Point(0, 102);
+            this.studConnectionEditor1.Name = "studConnectionEditor1";
+            this.studConnectionEditor1.Size = new System.Drawing.Size(610, 213);
+            this.studConnectionEditor1.TabIndex = 3;
+            // 
             // ElementDetailPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(618, 325);
+            this.Controls.Add(this.studConnectionEditor1);
             this.Controls.Add(this.transformEditor1);
-            this.Controls.Add(this.studGridControl1);
             this.Controls.Add(this.toolStrip1);
             this.Name = "ElementDetailPanel";
             this.Text = "ElementDetailPanel";
@@ -115,7 +112,7 @@
         private System.Windows.Forms.ToolStripLabel SelectedElementLabel;
         private System.Windows.Forms.ToolStripComboBox SelectedElementComboBox;
         private Controls.ToolStripCheckBox SyncSelectionCheckBox;
-        private Editors.StudGridControl studGridControl1;
         private Controls.TransformEditor transformEditor1;
+        private Editors.StudConnectionEditor studConnectionEditor1;
     }
 }
