@@ -584,7 +584,7 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
 
                     gizmoHandle.RenderHandle(this, outlineColor, true);
 
-                    RenderHelper.RemoveStencilMask();
+                    RenderHelper.DisableStencilMask();
                     RenderHelper.ClearStencil();
                 }
             }
@@ -724,6 +724,7 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
             }
 
             Vector3 transformPosition = Vector3.Zero;
+
             switch (PivotPointMode)
             {
                 case PivotPointMode.BoundingBox:
@@ -750,6 +751,9 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
                     //TODO
                     break;
             }
+
+            if (DisplayStyle == GizmoStyle.Scaling)
+                transformPosition = ActiveElements.Last().Origin;
 
             _Position = Matrix4.CreateTranslation(transformPosition);
             _Orientation = Matrix4.Identity;

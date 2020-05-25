@@ -20,6 +20,10 @@ namespace LDDModder.BrickEditor.Rendering
 
         public static PartialModel CrossAxleFemaleModel { get; private set; }
 
+        public static PartialModel TechnicPinFemaleModel { get; private set; }
+
+        public static PartialModel BarFemaleModel { get; private set; }
+
         public static PartialModel CylinderModel { get; private set; }
 
         public static void InitializeResources()
@@ -40,6 +44,12 @@ namespace LDDModder.BrickEditor.Rendering
 
             loadedMesh = ResourceHelper.GetResourceModel("Models.CrossAxleFemale.obj", "obj").Meshes[0];
             CrossAxleFemaleModel = AppendPartialMesh(loadedMesh);
+
+            loadedMesh = ResourceHelper.GetResourceModel("Models.TechnicPinFemale.obj", "obj").Meshes[0];
+            TechnicPinFemaleModel = AppendPartialMesh(loadedMesh);
+
+            loadedMesh = ResourceHelper.GetResourceModel("Models.BarFemale.obj", "obj").Meshes[0];
+            BarFemaleModel = AppendPartialMesh(loadedMesh);
         }
 
         private static PartialModel AppendPartialMesh(Assimp.Mesh mesh)

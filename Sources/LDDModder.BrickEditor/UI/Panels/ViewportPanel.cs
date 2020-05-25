@@ -378,7 +378,6 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             RenderHelper.InitializeMatrices(Camera);
 
-            //DrawGrid();
             DrawGrid();
 
             if (ProjectManager.ShowCollisions)
@@ -437,6 +436,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                 GL.Enable(EnableCap.CullFace);
                 GL.CullFace(CullFaceMode.Front);
                 GL.Disable(EnableCap.DepthTest);
+
                 var wireColor = new Vector4(0f, 0f, 0f, 1f);
                 foreach (var surfaceModel in SurfaceModels)
                     surfaceModel.RenderWireframe(wireColor, 0.5f);

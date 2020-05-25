@@ -76,7 +76,21 @@ namespace LDDModder.BrickEditor.Rendering
 
             ConnectionMaterial = new MaterialInfo
             {
-                Diffuse = new Vector4(0.05f, 0.05f, 1f, 1f),
+                Diffuse = new Vector4(0.95f, 0.95f, 0.05f, 1f),
+                Specular = new Vector3(1f),
+                Shininess = 2f
+            };
+
+            MaleConnectorMaterial = new MaterialInfo
+            {
+                Diffuse = new Vector4(0.05f, 0.05f, 0.95f, 1f),
+                Specular = new Vector3(1f),
+                Shininess = 2f
+            };
+
+            FemaleConnectorMaterial = new MaterialInfo
+            {
+                Diffuse = new Vector4(0.05f, 0.95f, 0.05f, 1f),
                 Specular = new Vector3(1f),
                 Shininess = 2f
             };
@@ -485,27 +499,24 @@ namespace LDDModder.BrickEditor.Rendering
                 DrawGizmoAxes(transform, size, 2f);
             else
             {
-                EnableStencilTest();
-                EnableStencilMask();
-
-                DrawGizmoAxes(transform, size, 2f);
-
-                ApplyStencilMask();
-
-                DrawGizmoAxes(transform, size, new Vector4(1f, 1f, 1f, 1f), 3f);
-
-                RemoveStencilMask();
-                DisableStencilTest();
+                RenderWithStencil(() =>
+                {
+                    DrawGizmoAxes(transform, size, 2f);
+                },
+                () =>
+                {
+                    DrawGizmoAxes(transform, size, new Vector4(1f, 1f, 1f, 1f), 3f);
+                });
             }
         }
-
-        
 
         #region Default Materials and Colors (TODO: maybe put this elsewhere)
 
 
         public static MaterialInfo CollisionMaterial { get; set; }
         public static MaterialInfo ConnectionMaterial { get; set; }
+        public static MaterialInfo MaleConnectorMaterial { get; set; }
+        public static MaterialInfo FemaleConnectorMaterial { get; set; }
 
         public static Vector4 WireframeColor { get; set; }
         public static Vector4 WireframeColorAlt { get; set; }
@@ -522,6 +533,51 @@ namespace LDDModder.BrickEditor.Rendering
 
 
         #region Stencil Buffer
+
+        public static void RenderWithStencil(Action renderPass1, Action renderPass2)
+        {
+            bool wasEnabled = GL.IsEnabled(EnableCap.StencilTest);
+            if (!wasEnabled)
+                EnableStencilTest();
+
+            EnableStencilMask();
+
+            renderPass1();
+
+            ApplyStencilMask();
+
+            renderPass2();
+
+            DisableStencilMask();
+
+            if (!wasEnabled)
+                DisableStencilTest();
+        }
+
+        public static void RenderWithStencil(bool useStencil, Action renderPass1, Action renderPass2)
+        {
+            bool wasEnabled = GL.IsEnabled(EnableCap.StencilTest);
+            
+            if (useStencil)
+            {
+                if (!wasEnabled)
+                    EnableStencilTest();
+            }
+
+            renderPass1();
+
+            if (useStencil)
+            {
+                ApplyStencilMask();
+
+                renderPass2();
+
+                DisableStencilMask();
+
+                if (!wasEnabled)
+                    DisableStencilTest();
+            }
+        }
 
         public static void EnableStencilTest()
         {
@@ -549,7 +605,7 @@ namespace LDDModder.BrickEditor.Rendering
             GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Replace);
         }
 
-        public static void RemoveStencilMask()
+        public static void DisableStencilMask()
         {
             GL.StencilFunc(StencilFunction.Always, 1, 0xFFFF);
             GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Keep);

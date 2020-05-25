@@ -148,15 +148,14 @@ namespace LDDModder.BrickEditor.Rendering
             if (useOutlineStencil)
                 RenderHelper.EnableStencilTest();
 
-
             foreach (var model in visibleMeshes)
             {
+
                 RenderPartialMesh(renderOptions, model, currentMaterial, useOutlineStencil);
 
                 if (useOutlineStencil && model.IsSelected)
                     DrawModelOutline(model);
             }
-
 
             if (useOutlineStencil)
                 RenderHelper.DisableStencilTest();
@@ -209,7 +208,7 @@ namespace LDDModder.BrickEditor.Rendering
                 RenderHelper.EndDrawModel(VertexBuffer);
 
                 if (model.IsSelected && useStencil)
-                    RenderHelper.RemoveStencilMask();
+                    RenderHelper.DisableStencilMask();
             }
 
             if (renderOptions.DrawWireframe)
@@ -229,7 +228,7 @@ namespace LDDModder.BrickEditor.Rendering
             DrawPartialMesh(model);
 
             RenderHelper.EndDrawWireframe(VertexBuffer);
-            RenderHelper.RemoveStencilMask();
+            RenderHelper.DisableStencilMask();
         }
 
         private void DrawPartialMesh(SurfaceModelMesh mesh)

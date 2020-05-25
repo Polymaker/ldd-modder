@@ -176,6 +176,7 @@
     <Compile Include="LDD\Primitives\Connectors\AxelConnector.cs" />
     <Compile Include="LDD\Primitives\Connectors\BallConnector.cs" />
     <Compile Include="LDD\Primitives\Connectors\Connector.cs" />
+    <Compile Include="LDD\Primitives\Connectors\ConnectorInfo.cs" />
     <Compile Include="LDD\Primitives\Connectors\ConnectorType.cs" />
     <Compile Include="LDD\Primitives\Connectors\Custom2DFieldConnector.cs" />
     <Compile Include="LDD\Primitives\Connectors\Custom2DFieldNode.cs" />

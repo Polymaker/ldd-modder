@@ -502,6 +502,8 @@
     <EmbeddedResource Include="Resources\Models\CrossAxleFemale.obj" />
     <EmbeddedResource Include="Resources\Shaders\StudConnectionShader.glsl" />
     <EmbeddedResource Include="Resources\Shaders\SimpleTextureShader.glsl" />
+    <EmbeddedResource Include="Resources\Models\TechnicPinFemale.obj" />
+    <EmbeddedResource Include="Resources\Models\BarFemale.obj" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
