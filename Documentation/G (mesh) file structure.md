@@ -103,6 +103,7 @@ Size | Data type | Description
  4 bytes | Int32 | Total size of the **Vertex Mapping** array
  X bytes | Struct[] | Array of **Vertex Mapping**
  (4 \* **Vertex Count**) bytes | Int32[] | Array of offsets (one per vertex)
+ 
  **Notes:** The offsets are relative to the start of the **Vertex Mapping** array.
  Each offsets point to the beginning of a **Vertex Mapping** structure.
 **Vertex Mapping**
@@ -110,6 +111,7 @@ Size | Data type | Description
 :------- | :---: | :--- 
  4 bytes | Int32 | Number of bones
  X bytes | Struct[] | Array of **Bone Weight**
+ 
 **Bone Weight**
 Size | Data type | Description 
 :------- | :---: | :--- 
