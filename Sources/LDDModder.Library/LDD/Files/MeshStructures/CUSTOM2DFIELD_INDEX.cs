@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace LDDModder.LDD.Files.MeshStructures
 {
-    public struct STUD_2DFIELD_IDX
+    public struct CUSTOM2DFIELD_INDEX
     {
         public int ArrayIndex;
         public int Value2;
         public int Value3;
         public int Value4;
 
-        public STUD_2DFIELD_IDX(int arrayIndex, int value2, int value3, int value4)
+        public CUSTOM2DFIELD_INDEX(int arrayIndex, int value2, int value3, int value4)
         {
             ArrayIndex = arrayIndex;
             Value2 = value2;
@@ -21,7 +21,7 @@ namespace LDDModder.LDD.Files.MeshStructures
             Value4 = value4;
         }
 
-        public STUD_2DFIELD_IDX(int[] values)
+        public CUSTOM2DFIELD_INDEX(int[] values)
         {
             ArrayIndex = values[0];
             Value2 = values[1];

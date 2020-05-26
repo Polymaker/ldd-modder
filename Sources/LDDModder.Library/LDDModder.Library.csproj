@@ -132,8 +132,8 @@
     <Compile Include="LDD\Files\GFileWriter.cs" />
     <Compile Include="LDD\Files\LifFile.cs" />
     <Compile Include="LDD\Files\LocalizationFile.cs" />
-    <Compile Include="LDD\Files\MeshStructures\STUD_2DFIELD_IDX.cs" />
-    <Compile Include="LDD\Files\MeshStructures\STUD_2DFIELD_REF.cs" />
+    <Compile Include="LDD\Files\MeshStructures\CUSTOM2DFIELD_INDEX.cs" />
+    <Compile Include="LDD\Files\MeshStructures\CUSTOM2DFIELD_REFERENCE.cs" />
     <Compile Include="LDD\Files\MeshStructures\MESH_BONE_MAPPING.cs" />
     <Compile Include="LDD\Files\MeshStructures\MESH_BONE_WEIGHT.cs" />
     <Compile Include="LDD\Files\MeshStructures\MESH_CULLING.cs" />

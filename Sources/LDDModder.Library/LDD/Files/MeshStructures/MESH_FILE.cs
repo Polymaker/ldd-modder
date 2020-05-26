@@ -13,7 +13,7 @@ namespace LDDModder.LDD.Files.MeshStructures
         public MESH_DATA Geometry;
         public Vector3[] AverageNormals;
         public ROUNDEDGE_SHADER_DATA[] RoundEdgeShaderData;
-        public MESH_CULLING[] Culling;
+        public MESH_CULLING[] Cullings;
 
         public bool IsTextured => Header.MeshType == 0x3B || Header.MeshType == 0x3F;
 

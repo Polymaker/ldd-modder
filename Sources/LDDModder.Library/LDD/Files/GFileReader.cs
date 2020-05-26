@@ -94,7 +94,7 @@ namespace LDDModder.LDD.Files
                     //we skip the first item because it looks like an header and the maximum referenced value seems always one less the specified length
                     var dataHeader = new Vector3(br.ReadSingles(3));
                     if (dataHeader.X != 83 || dataHeader.Y != 0 || dataHeader.Z != 0)
-                        Trace.WriteLine($"Unexpected header: {dataHeader}");
+                        Trace.WriteLine($"Unexpected  average normal header: {dataHeader}");
 
                     meshFile.AverageNormals = new Vector3[averageNormalsCount - 1];
                     for (int i = 0; i < averageNormalsCount - 1; i++)
@@ -104,25 +104,23 @@ namespace LDDModder.LDD.Files
                         meshFile.Geometry.Indices[i].AverageNormalIndex = br.ReadInt32();
                 }
 
+                long boneMappingPosition = 0;
+
                 // Flex data
                 if (fileHeader.MeshType == (int)MeshType.Flexible || fileHeader.MeshType == (int)MeshType.FlexibleTextured)
                 {
                     int dataSize = br.ReadInt32();
-                    long startPos = stream.Position;
-                    stream.Seek(dataSize, SeekOrigin.Current);
+                    boneMappingPosition = stream.Position;
+
+                    stream.Seek(dataSize, SeekOrigin.Current); //skip over the data
+
                     var dataOffsets = new List<int>();
                     for (int i = 0; i < fileHeader.VertexCount; i++)
                         dataOffsets.Add(br.ReadInt32());
                     long dataEndPosition = stream.Position;
 
                     for (int i = 0; i < fileHeader.VertexCount; i++)
-                    {
-                        stream.Position = startPos + dataOffsets[i];
-                        int boneCount = br.ReadInt32();
-                        meshFile.Geometry.Bones[i] = new MESH_BONE_MAPPING(boneCount);
-                        for (int j = 0; j < boneCount; j++)
-                            meshFile.Geometry.Bones[i].BoneWeights[j] = new MESH_BONE_WEIGHT(br.ReadInt32(), br.ReadSingle());
-                    }
+                        meshFile.Geometry.Bones[i] = ReadBoneMapping(br, boneMappingPosition, dataOffsets[i]);
 
                     stream.Position = dataEndPosition;
                 }
@@ -130,20 +128,30 @@ namespace LDDModder.LDD.Files
                 int cullingInfoCount = br.ReadInt32();
                 int cullingInfoSize = br.ReadInt32();
 
-                meshFile.Culling = new MESH_CULLING[cullingInfoCount];
+                meshFile.Cullings = new MESH_CULLING[cullingInfoCount];
 
                 for (int i = 0; i < cullingInfoCount; i++)
-                    meshFile.Culling[i] = ReadCullingInfo(br, meshFile);
+                    meshFile.Cullings[i] = ReadCullingInfo(br, meshFile, boneMappingPosition);
             }
 
             return meshFile;
         }
 
-        private static MESH_CULLING ReadCullingInfo(BinaryReaderEx br, MESH_FILE meshFile)
+        private static MESH_BONE_MAPPING ReadBoneMapping(BinaryReaderEx br, long dataPosition, int offset)
+        {
+            br.BaseStream.Position = dataPosition + offset;
+            int boneCount = br.ReadInt32();
+            var mapping = new MESH_BONE_MAPPING(boneCount);
+            for (int j = 0; j < boneCount; j++)
+                mapping.BoneWeights[j] = new MESH_BONE_WEIGHT(br.ReadInt32(), br.ReadSingle());
+
+            return mapping;
+        }
+
+        private static MESH_CULLING ReadCullingInfo(BinaryReaderEx br, MESH_FILE meshFile, long boneMappingPosition)
         {
             long startPosition = br.BaseStream.Position;
-            int blockSize = br.ReadInt32();
-            bool isTextured = meshFile.Header.MeshType == (int)MeshType.StandardTextured || meshFile.Header.MeshType == (int)MeshType.FlexibleTextured;
+            int cullingDataSize = br.ReadInt32();
 
             var culling = new MESH_CULLING()
             {
@@ -154,103 +162,120 @@ namespace LDDModder.LDD.Files
                 IndexCount = br.ReadInt32()
             };
 
-            int vertexDataOffset = br.ReadInt32();
-            int extraDataBlock = br.ReadInt32();
+            int alternateMeshOffset = br.ReadInt32();
+            int connectorReferenceFlag = br.ReadInt32();
 
-            if (extraDataBlock >= 1)
-            {
-                int studBlockSize = br.ReadInt32();
-                int studCount = br.ReadInt32();
-                culling.Studs = new STUD_2DFIELD_REF[studCount];
-
-                for (int i = 0; i < studCount; i++)
-                {
-                    int infoSize = br.ReadInt32();
-                    if (infoSize != 0x1C)
-                    {
-                        Trace.WriteLine("Unexpected stud info size!");
-                        br.BaseStream.Skip(infoSize - 4);
-                        continue;
-                    }
-                    var connectorRef = new STUD_2DFIELD_REF(br.ReadInt32(), br.ReadInt32());
-                    for (int j = 0; j < connectorRef.Indices.Length; j++)
-                        connectorRef.Indices[j] = new STUD_2DFIELD_IDX(br.ReadInts(4));
-                    culling.Studs[i] = connectorRef;
-                }
-            }
+            if (connectorReferenceFlag >= 1)
+                culling.Studs = ReadCustom2DFieldReferences(br);
             else
-                culling.Studs = new STUD_2DFIELD_REF[0];
+                culling.Studs = new CUSTOM2DFIELD_REFERENCE[0];
 
-            if (extraDataBlock >= 2)
-            {
-                int block2Size = br.ReadInt32();
-                int dataCount = br.ReadInt32();
-
-                culling.AdjacentStuds = new STUD_2DFIELD_REF[dataCount];
-
-                for (int i = 0; i < dataCount; i++)
-                {
-                    int dataSize = br.ReadInt32();
-                    if (dataSize != 0x4C)
-                    {
-                        Trace.WriteLine("Unexpected adjacent stud info size!");
-                        br.BaseStream.Skip(dataSize - 4);
-                        continue;
-                    }
-
-                    var connectorRef = new STUD_2DFIELD_REF(br.ReadInt32(), br.ReadInt32());
-                    for (int j = 0; j < connectorRef.Indices.Length; j++)
-                        connectorRef.Indices[j] = new STUD_2DFIELD_IDX(br.ReadInts(4));
-
-                    culling.AdjacentStuds[i] = connectorRef;
-                }
-            }
+            if (connectorReferenceFlag >= 2)
+                culling.AdjacentStuds = ReadCustom2DFieldReferences(br);
             else
-                culling.AdjacentStuds = new STUD_2DFIELD_REF[0];
+                culling.AdjacentStuds = new CUSTOM2DFIELD_REFERENCE[0];
 
-            if (vertexDataOffset != 0)
+            if (connectorReferenceFlag > 2)
+                Trace.WriteLine($"Unexpected connector reference flag: {connectorReferenceFlag}");
+
+            if (alternateMeshOffset != 0)
             {
-                if (startPosition + vertexDataOffset != br.BaseStream.Position)
+                if (startPosition + alternateMeshOffset != br.BaseStream.Position)
                 {
                     Trace.WriteLine("Incorrect data size read");
-                    br.BaseStream.Position = startPosition + vertexDataOffset;
+                    br.BaseStream.Position = startPosition + alternateMeshOffset;
                 }
-
-                int vertexCount = br.ReadInt32();
-                int indexCount = br.ReadInt32();
-                var geom = MESH_DATA.Create(vertexCount, indexCount, isTextured, false);
-
-
-                for (int i = 0; i < vertexCount; i++)
-                    geom.Positions[i] = new Vector3(br.ReadSingles(3));
-
-                for (int i = 0; i < vertexCount; i++)
-                    geom.Normals[i] = new Vector3(br.ReadSingles(3));
-
-                if (isTextured)
-                {
-                    for (int i = 0; i < vertexCount; i++)
-                        geom.UVs[i] = new Vector2(br.ReadSingles(2));
-                }
-
-                for (int i = 0; i < indexCount; i++)
-                    geom.Indices[i] = new MESH_INDEX() { VertexIndex = br.ReadInt32() };
-
-                for (int i = 0; i < indexCount; i++)
-                    geom.Indices[i].AverageNormalIndex = br.ReadInt32();
-
-                for (int i = 0; i < indexCount; i++)
-                    geom.Indices[i].REShaderOffset = br.ReadInt32();
-
-                culling.ReplacementGeometry = geom;
+                long meshDataSize = cullingDataSize - alternateMeshOffset;
+                culling.AlternateMesh = ReadAlternateMesh(br, meshFile, boneMappingPosition, meshDataSize);
             }
 
-            long readSize = br.BaseStream.Position - startPosition;
-            if (readSize != blockSize)
-            {
-
-            }
             return culling;
+        }
+
+        private static CUSTOM2DFIELD_REFERENCE[] ReadCustom2DFieldReferences(BinaryReaderEx br)
+        {
+            long finalPosition = br.BaseStream.Position;
+            finalPosition += br.ReadInt32(); // Block Size
+            
+            int connectionRefCount = br.ReadInt32();
+            var references = new CUSTOM2DFIELD_REFERENCE[connectionRefCount];
+
+            for (int i = 0; i < connectionRefCount; i++)
+            {
+                br.ReadInt32(); // Block Size
+
+                var connectorRef = new CUSTOM2DFIELD_REFERENCE(
+                    br.ReadInt32(), //Custom2DField Index
+                    br.ReadInt32() //Number of referenced studs
+                );
+
+                for (int j = 0; j < connectorRef.Indices.Length; j++)
+                    connectorRef.Indices[j] = new CUSTOM2DFIELD_INDEX(br.ReadInts(4));
+
+                references[i] = connectorRef;
+            }
+
+            if (br.BaseStream.Position != finalPosition)
+            {
+                Trace.WriteLine("Incorrect data size read");
+            }
+            return references;
+        }
+
+        private static MESH_DATA ReadAlternateMesh(BinaryReaderEx br, MESH_FILE mesh, long boneMappingPosition, long meshDataSize)
+        {
+            long startPosition = br.Position;
+
+            int vertexCount = br.ReadInt32();
+            int indexCount = br.ReadInt32();
+
+            var geom = MESH_DATA.Create(vertexCount, indexCount, mesh.IsTextured, mesh.IsFlexible);
+
+
+            for (int i = 0; i < vertexCount; i++)
+                geom.Positions[i] = new Vector3(br.ReadSingles(3));
+
+            for (int i = 0; i < vertexCount; i++)
+                geom.Normals[i] = new Vector3(br.ReadSingles(3));
+
+            if (mesh.IsTextured)
+            {
+                for (int i = 0; i < vertexCount; i++)
+                    geom.UVs[i] = new Vector2(br.ReadSingles(2));
+            }
+
+            for (int i = 0; i < indexCount; i++)
+                geom.Indices[i] = new MESH_INDEX() { VertexIndex = br.ReadInt32() };
+
+            for (int i = 0; i < indexCount; i++)
+                geom.Indices[i].AverageNormalIndex = br.ReadInt32();
+
+            for (int i = 0; i < indexCount; i++)
+                geom.Indices[i].REShaderOffset = br.ReadInt32();
+
+            if (mesh.IsFlexible)
+            {
+                Trace.WriteLine("WARNING Flexible alternate mesh encountered!");
+                if (br.Position < startPosition + meshDataSize)
+                {
+                    var dataOffsets = new List<int>();
+                    for (int i = 0; i < vertexCount; i++)
+                        dataOffsets.Add(br.ReadInt32());
+
+                    long dataEndPosition = br.Position;
+                    for (int i = 0; i < vertexCount; i++)
+                        geom.Bones[i] = ReadBoneMapping(br, boneMappingPosition, dataOffsets[i]);
+
+                    br.Position = dataEndPosition;
+                }
+                else
+                {
+                    Trace.WriteLine("Flexible alternate mesh does not seem to be supported!");
+                    geom.Bones = new MESH_BONE_MAPPING[0];
+                }
+            }
+
+            return geom;
         }
 
         #endregion
@@ -276,9 +301,9 @@ namespace LDDModder.LDD.Files
 
                 mesh.SetGeometry(mainMesh);
 
-                for (int i = 0; i < meshFile.Culling.Length; i++)
+                for (int i = 0; i < meshFile.Cullings.Length; i++)
                 {
-                    var data = meshFile.Culling[i];
+                    var data = meshFile.Cullings[i];
                     var culling = new MeshCulling((MeshCullingType)data.Type)
                     {
                         FromIndex = data.FromIndex,
@@ -299,10 +324,10 @@ namespace LDDModder.LDD.Files
                             culling.AdjacentStuds.Add(new Custom2DFieldReference(data.AdjacentStuds[j]));
                     }
 
-                    if (data.ReplacementGeometry.HasValue)
+                    if (data.AlternateMesh.HasValue)
                     {
-                        var geom = MeshGeometry.Create(data.ReplacementGeometry.Value);
-                        SetShaderData(meshFile, data.ReplacementGeometry.Value, geom);
+                        var geom = MeshGeometry.Create(data.AlternateMesh.Value);
+                        SetShaderData(meshFile, data.AlternateMesh.Value, geom);
                         culling.ReplacementMesh = geom;
                     }
 

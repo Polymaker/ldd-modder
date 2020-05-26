@@ -15,18 +15,6 @@ namespace LDDModder.LDD.Files.MeshStructures
         public MESH_INDEX[] Indices;
         public MESH_BONE_MAPPING[] Bones;
 
-        public static MESH_DATA Create(MESH_HEADER header)
-        {
-            return new MESH_DATA()
-            {
-                Positions = new Vector3[header.VertexCount],
-                Normals = new Vector3[header.VertexCount],
-                UVs = (header.MeshType == 0x3B || header.MeshType == 0x3F) ? new Vector2[header.VertexCount] : new Vector2[0],
-                Indices = new MESH_INDEX[header.IndexCount],
-                Bones = (header.MeshType == 0x3E || header.MeshType == 0x3F) ? new MESH_BONE_MAPPING[header.VertexCount] : new MESH_BONE_MAPPING[0],
-            };
-        }
-
         public static MESH_DATA Create(int vertexCount, int indexCount, bool textured, bool flexible)
         {
             return new MESH_DATA()
@@ -39,9 +27,24 @@ namespace LDDModder.LDD.Files.MeshStructures
             };
         }
 
+        public static MESH_DATA Create(MESH_HEADER header)
+        {
+            return Create(
+                header.VertexCount,
+                header.IndexCount,
+                header.MeshType == 0x3B || header.MeshType == 0x3F,
+                header.MeshType == 0x3E || header.MeshType == 0x3F
+            );
+        }
+
         public static MESH_DATA Create(Meshes.MeshGeometry meshGeometry)
         {
-            return Create(meshGeometry.Vertices.Count, meshGeometry.Indices.Count, meshGeometry.IsTextured, meshGeometry.IsFlexible);
+            return Create(
+                meshGeometry.Vertices.Count, 
+                meshGeometry.Indices.Count, 
+                meshGeometry.IsTextured, 
+                meshGeometry.IsFlexible
+            );
         }
     }
 }

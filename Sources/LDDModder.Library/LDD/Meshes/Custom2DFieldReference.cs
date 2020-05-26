@@ -34,7 +34,7 @@ namespace LDDModder.LDD.Meshes
             };
         }
 
-        public Custom2DFieldReference(LDD.Files.MeshStructures.STUD_2DFIELD_REF _2DFieldRef)
+        public Custom2DFieldReference(LDD.Files.MeshStructures.CUSTOM2DFIELD_REFERENCE _2DFieldRef)
         {
             ConnectorIndex = _2DFieldRef.ConnectorIndex;
             FieldIndices = new List<Custom2DFieldIndex>();
@@ -42,9 +42,9 @@ namespace LDDModder.LDD.Meshes
                 FieldIndices.Add(new Custom2DFieldIndex(_2DFieldRef.Indices[i]));
         }
 
-        public LDD.Files.MeshStructures.STUD_2DFIELD_REF Serialize()
+        public LDD.Files.MeshStructures.CUSTOM2DFIELD_REFERENCE Serialize()
         {
-            return new Files.MeshStructures.STUD_2DFIELD_REF(ConnectorIndex, FieldIndices.Select(x=>x.Serialize()).ToArray());
+            return new Files.MeshStructures.CUSTOM2DFIELD_REFERENCE(ConnectorIndex, FieldIndices.Select(x=>x.Serialize()).ToArray());
         }
     }
 }
