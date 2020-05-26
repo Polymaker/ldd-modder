@@ -47,6 +47,11 @@ namespace LDDModder.LDD.Primitives.Connectors
             set => SetPropertyValue(ref _EndCapped, value);
         }
 
+        public AxelConnector()
+        {
+            SubType = 5;
+        }
+
         protected override void SerializeBeforeTransform(XElement element)
         {
             element.WriteAttribute("length", Length);

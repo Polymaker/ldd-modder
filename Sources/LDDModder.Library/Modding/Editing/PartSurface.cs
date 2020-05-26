@@ -127,6 +127,8 @@ namespace LDDModder.Modding.Editing
 
             if (SurfaceID == 0)
                 builder.RemoveTextureCoords();
+            else
+                builder.ForceTextureCoords();
 
             notLoadedModels.ForEach(x => x.UnloadModel());
 

@@ -32,6 +32,8 @@ namespace LDDModder.Modding.Editing
 
         public ModelMesh ModelMesh => GetModelMesh();
 
+        public bool IsModelLoaded => ModelMesh?.IsModelLoaded ?? false;
+
         public bool IsTextured => GetModelMesh()?.IsTextured ?? false;
 
         public bool IsFlexible => GetModelMesh()?.IsFlexible ?? false;

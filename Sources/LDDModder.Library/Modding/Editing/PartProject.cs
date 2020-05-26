@@ -586,10 +586,13 @@ namespace LDDModder.Modding.Editing
         private ModelMesh AddMeshGeometry(MeshGeometry geometry, string id, string name = null)
         {
             var modelMesh = new ModelMesh(geometry);
-            modelMesh.InternalSetNameAndID(id, name);
+            
+            modelMesh.IsInitializing = true;
 
             if (string.IsNullOrEmpty(id))
                 GenerateElementID(modelMesh);
+            else
+                modelMesh.InternalSetID(id);
 
             if (string.IsNullOrEmpty(name))
                 GenerateElementName(modelMesh);
@@ -597,7 +600,7 @@ namespace LDDModder.Modding.Editing
                 RenameElement(modelMesh, name);
 
             Meshes.Add(modelMesh);
-
+            modelMesh.IsInitializing = false;
             return modelMesh;
         }
 
@@ -927,6 +930,57 @@ namespace LDDModder.Modding.Editing
             var allMeshes = Surfaces.SelectMany(x => x.Components.SelectMany(c => c.Meshes));
             TotalTriangles = allMeshes.Sum(x => x.TriangleCount);
             TotalVertices = allMeshes.Sum(x => x.VertexCount == 0 ? x.ModelMesh?.VertexCount ?? 0 : x.VertexCount);
+        }
+
+        public void SplitMeshSurfaces(ModelMeshReference meshRef)
+        {
+            bool wasLoaded = meshRef.IsModelLoaded;
+            var meshGeom = meshRef.GetGeometry(true);
+
+            var splittedMeshes = GeometryBuilder.SplitSurfaces(meshGeom);
+
+            int ctr = 0;
+            var parentCollection = meshRef.GetParentCollection();
+
+            foreach (var createdMesh in splittedMeshes)
+            {
+                var modelMesh = AddMeshGeometry(createdMesh, $"{meshRef.Name}_{ctr++}");
+                parentCollection.Add(new ModelMeshReference(modelMesh));
+            }
+
+            parentCollection.Remove(meshRef);
+            RemoveUnreferencedMeshes();
+
+            if (!wasLoaded && meshRef.ModelMesh.CanUnloadModel)
+                meshRef.ModelMesh.UnloadModel();
+        }
+
+        public void CombineMeshes(IEnumerable<ModelMeshReference> meshRefs)
+        {
+            var meshParent = meshRefs.FirstOrDefault()?.Parent;
+            
+            if (!meshRefs.All(x => x.Parent == meshParent)) return;
+
+            var parentCollection = meshRefs.FirstOrDefault().GetParentCollection();
+
+            var builder = new GeometryBuilder();
+
+            foreach (var meshRef in meshRefs.ToArray())
+            {
+                bool wasLoaded = meshRef.IsModelLoaded;
+                var meshGeom = meshRef.GetGeometry(true);
+                builder.CombineGeometry(meshGeom);
+                if (!wasLoaded && meshRef.ModelMesh.CanUnloadModel)
+                    meshRef.ModelMesh.UnloadModel();
+
+                parentCollection.Remove(meshRef);
+            }
+
+            var finalGeom = builder.GetGeometry();
+            var newModel = AddMeshGeometry(finalGeom);
+
+            parentCollection.Add(new ModelMeshReference(newModel));
+            RemoveUnreferencedMeshes();
         }
 
         #endregion

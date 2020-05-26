@@ -75,6 +75,8 @@
             this.label8 = new System.Windows.Forms.Label();
             this.RotYNumBox = new LDDModder.BrickEditor.UI.Controls.NumberTextBox();
             this.RotZNumBox = new LDDModder.BrickEditor.UI.Controls.NumberTextBox();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.test2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1.SuspendLayout();
             this.SelectionInfoPanel.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -181,7 +183,9 @@
             this.DisplayMenuDropDown.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.DisplayMenu_Collisions,
             this.DisplayMenu_Connections,
-            this.DisplayMenu_Meshes});
+            this.DisplayMenu_Meshes,
+            this.toolStripMenuItem1,
+            this.test2ToolStripMenuItem});
             resources.ApplyResources(this.DisplayMenuDropDown, "DisplayMenuDropDown");
             this.DisplayMenuDropDown.Name = "DisplayMenuDropDown";
             // 
@@ -432,6 +436,18 @@
             this.RotZNumBox.Name = "RotZNumBox";
             this.RotZNumBox.ValueChanged += new System.EventHandler(this.RotationNumBoxes_ValueChanged);
             // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            resources.ApplyResources(this.toolStripMenuItem1, "toolStripMenuItem1");
+            this.toolStripMenuItem1.Click += new System.EventHandler(this.toolStripMenuItem1_Click);
+            // 
+            // test2ToolStripMenuItem
+            // 
+            this.test2ToolStripMenuItem.Name = "test2ToolStripMenuItem";
+            resources.ApplyResources(this.test2ToolStripMenuItem, "test2ToolStripMenuItem");
+            this.test2ToolStripMenuItem.Click += new System.EventHandler(this.test2ToolStripMenuItem_Click);
+            // 
             // ViewportPanel
             // 
             resources.ApplyResources(this, "$this");
@@ -496,5 +512,7 @@
         private System.Windows.Forms.ToolStripButton ModelRenderMode1Button;
         private System.Windows.Forms.ToolStripButton ModelRenderMode2Button;
         private System.Windows.Forms.ToolStripButton ModelRenderMode3Button;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem test2ToolStripMenuItem;
     }
 }

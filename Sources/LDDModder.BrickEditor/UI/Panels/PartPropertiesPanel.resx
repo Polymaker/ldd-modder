@@ -163,7 +163,7 @@
     <value>Right</value>
   </data>
   <data name="CalcBoundingButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>323, 0</value>
+    <value>223, 0</value>
   </data>
   <data name="CalcBoundingButton.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>0, 0, 3, 0</value>
@@ -196,7 +196,7 @@
     <value>3, 26</value>
   </data>
   <data name="BoundingEditor.Size" type="System.Drawing.Size, System.Drawing">
-    <value>393, 39</value>
+    <value>294, 78</value>
   </data>
   <data name="BoundingEditor.TabIndex" type="System.Int32, mscorlib">
     <value>9</value>
@@ -205,7 +205,7 @@
     <value>BoundingEditor</value>
   </data>
   <data name="&gt;&gt;BoundingEditor.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.BoundingBoxEditor, Brick Studio, Version=1.0.0.22739, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.BoundingBoxEditor, Brick Studio, Version=1.0.0.13942, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;BoundingEditor.Parent" xml:space="preserve">
     <value>tableLayoutPanel2</value>
@@ -220,7 +220,7 @@
     <value>True</value>
   </data>
   <data name="LabelGeomBounding.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 73</value>
+    <value>3, 112</value>
   </data>
   <data name="LabelGeomBounding.Size" type="System.Drawing.Size, System.Drawing">
     <value>100, 13</value>
@@ -247,7 +247,7 @@
     <value>Right</value>
   </data>
   <data name="CalcGeomBoundingButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>323, 68</value>
+    <value>223, 107</value>
   </data>
   <data name="CalcGeomBoundingButton.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>0, 0, 3, 0</value>
@@ -277,10 +277,10 @@
     <value>Top, Left, Right</value>
   </data>
   <data name="GeomBoundingEditor.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 94</value>
+    <value>3, 133</value>
   </data>
   <data name="GeomBoundingEditor.Size" type="System.Drawing.Size, System.Drawing">
-    <value>393, 39</value>
+    <value>294, 78</value>
   </data>
   <data name="GeomBoundingEditor.TabIndex" type="System.Int32, mscorlib">
     <value>13</value>
@@ -289,7 +289,7 @@
     <value>GeomBoundingEditor</value>
   </data>
   <data name="&gt;&gt;GeomBoundingEditor.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.BoundingBoxEditor, Brick Studio, Version=1.0.0.22739, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.BoundingBoxEditor, Brick Studio, Version=1.0.0.13942, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;GeomBoundingEditor.Parent" xml:space="preserve">
     <value>tableLayoutPanel2</value>
@@ -310,7 +310,7 @@
     <value>4</value>
   </data>
   <data name="tableLayoutPanel2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>400, 136</value>
+    <value>300, 214</value>
   </data>
   <data name="tableLayoutPanel2.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -343,7 +343,7 @@
     <value>collapsiblePanel1.ContentPanel</value>
   </data>
   <data name="&gt;&gt;collapsiblePanel1.ContentPanel.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.CollapsiblePanel+CollapsiblePanelContainer, Brick Studio, Version=1.0.0.22739, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.CollapsiblePanel+CollapsiblePanelContainer, Brick Studio, Version=1.0.0.13942, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;collapsiblePanel1.ContentPanel.Parent" xml:space="preserve">
     <value>collapsiblePanel1</value>
@@ -351,14 +351,11 @@
   <data name="&gt;&gt;collapsiblePanel1.ContentPanel.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="collapsiblePanel1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Top</value>
-  </data>
   <data name="collapsiblePanel1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 192</value>
+    <value>309, 3</value>
   </data>
   <data name="collapsiblePanel1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>634, 165</value>
+    <value>300, 243</value>
   </data>
   <data name="collapsiblePanel1.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -370,10 +367,10 @@
     <value>collapsiblePanel1</value>
   </data>
   <data name="&gt;&gt;collapsiblePanel1.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.CollapsiblePanel, Brick Studio, Version=1.0.0.22739, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.CollapsiblePanel, Brick Studio, Version=1.0.0.13942, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;collapsiblePanel1.Parent" xml:space="preserve">
-    <value>$this</value>
+    <value>flowLayoutPanel1</value>
   </data>
   <data name="&gt;&gt;collapsiblePanel1.ZOrder" xml:space="preserve">
     <value>2</value>
@@ -394,7 +391,7 @@
     <value>True</value>
   </data>
   <data name="LabelAliases.Location" type="System.Drawing.Point, System.Drawing">
-    <value>198, 6</value>
+    <value>154, 6</value>
   </data>
   <data name="LabelAliases.Size" type="System.Drawing.Size, System.Drawing">
     <value>40, 13</value>
@@ -457,7 +454,7 @@
     <value>3, 48</value>
   </data>
   <data name="DescriptionTextBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>394, 20</value>
+    <value>294, 20</value>
   </data>
   <data name="DescriptionTextBox.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -511,7 +508,7 @@
     <value>3, 139</value>
   </data>
   <data name="CategoryComboBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>394, 21</value>
+    <value>294, 21</value>
   </data>
   <data name="CategoryComboBox.TabIndex" type="System.Int32, mscorlib">
     <value>5</value>
@@ -532,10 +529,10 @@
     <value>Top, Left, Right</value>
   </data>
   <data name="PartIDTextBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>88, 3</value>
+    <value>83, 3</value>
   </data>
   <data name="PartIDTextBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>92, 20</value>
+    <value>58, 20</value>
   </data>
   <data name="PartIDTextBox.TabIndex" type="System.Int32, mscorlib">
     <value>8</value>
@@ -544,7 +541,7 @@
     <value>PartIDTextBox</value>
   </data>
   <data name="&gt;&gt;PartIDTextBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.0.22739, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.0.13942, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;PartIDTextBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -625,7 +622,7 @@
     <value>3, 93</value>
   </data>
   <data name="PlatformComboBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>394, 21</value>
+    <value>294, 21</value>
   </data>
   <data name="PlatformComboBox.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
@@ -649,10 +646,10 @@
     <value>False</value>
   </data>
   <data name="AliasesButtonBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>256, 3</value>
+    <value>207, 3</value>
   </data>
   <data name="AliasesButtonBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>141, 20</value>
+    <value>90, 20</value>
   </data>
   <data name="AliasesButtonBox.TabIndex" type="System.Int32, mscorlib">
     <value>9</value>
@@ -661,7 +658,7 @@
     <value>AliasesButtonBox</value>
   </data>
   <data name="&gt;&gt;AliasesButtonBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.BrowseTextBox, Brick Studio, Version=1.0.0.22739, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.BrowseTextBox, Brick Studio, Version=1.0.0.13942, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;AliasesButtonBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -682,7 +679,7 @@
     <value>7</value>
   </data>
   <data name="tableLayoutPanel1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>400, 163</value>
+    <value>300, 163</value>
   </data>
   <data name="tableLayoutPanel1.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -700,7 +697,7 @@
     <value>0</value>
   </data>
   <data name="tableLayoutPanel1.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="LabelAliases" Row="0" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="LabelPlatform" Row="3" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="DescriptionTextBox" Row="2" RowSpan="1" Column="0" ColumnSpan="4" /&gt;&lt;Control Name="LabelPartID" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="CategoryComboBox" Row="6" RowSpan="1" Column="0" ColumnSpan="4" /&gt;&lt;Control Name="PartIDTextBox" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="LabelDescription" Row="1" RowSpan="1" Column="0" ColumnSpan="2" /&gt;&lt;Control Name="LabelCategory" Row="5" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="PlatformComboBox" Row="4" RowSpan="1" Column="0" ColumnSpan="4" /&gt;&lt;Control Name="AliasesButtonBox" Row="0" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,85,Percent,40,Absolute,70,Percent,60" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,Percent,100,AutoSize,0" /&gt;&lt;/TableLayoutSettings&gt;</value>
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="LabelAliases" Row="0" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="LabelPlatform" Row="3" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="DescriptionTextBox" Row="2" RowSpan="1" Column="0" ColumnSpan="4" /&gt;&lt;Control Name="LabelPartID" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="CategoryComboBox" Row="6" RowSpan="1" Column="0" ColumnSpan="4" /&gt;&lt;Control Name="PartIDTextBox" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="LabelDescription" Row="1" RowSpan="1" Column="0" ColumnSpan="2" /&gt;&lt;Control Name="LabelCategory" Row="5" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="PlatformComboBox" Row="4" RowSpan="1" Column="0" ColumnSpan="4" /&gt;&lt;Control Name="AliasesButtonBox" Row="0" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,80,Percent,40,Absolute,60,Percent,60" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,Percent,100,AutoSize,0" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <data name="collapsiblePanel2.ContentPanel.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 23</value>
@@ -715,7 +712,7 @@
     <value>collapsiblePanel2.ContentPanel</value>
   </data>
   <data name="&gt;&gt;collapsiblePanel2.ContentPanel.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.CollapsiblePanel+CollapsiblePanelContainer, Brick Studio, Version=1.0.0.22739, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.CollapsiblePanel+CollapsiblePanelContainer, Brick Studio, Version=1.0.0.13942, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;collapsiblePanel2.ContentPanel.Parent" xml:space="preserve">
     <value>collapsiblePanel2</value>
@@ -723,14 +720,11 @@
   <data name="&gt;&gt;collapsiblePanel2.ContentPanel.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="collapsiblePanel2.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Top</value>
-  </data>
   <data name="collapsiblePanel2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
+    <value>3, 3</value>
   </data>
   <data name="collapsiblePanel2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>634, 192</value>
+    <value>300, 192</value>
   </data>
   <data name="collapsiblePanel2.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -742,13 +736,13 @@
     <value>collapsiblePanel2</value>
   </data>
   <data name="&gt;&gt;collapsiblePanel2.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.CollapsiblePanel, Brick Studio, Version=1.0.0.22739, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.CollapsiblePanel, Brick Studio, Version=1.0.0.13942, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;collapsiblePanel2.Parent" xml:space="preserve">
-    <value>$this</value>
+    <value>flowLayoutPanel1</value>
   </data>
   <data name="&gt;&gt;collapsiblePanel2.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>0</value>
   </data>
   <data name="tableLayoutPanel3.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -826,7 +820,7 @@
     <value>103, 3</value>
   </data>
   <data name="InertiaTensorTextBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>294, 20</value>
+    <value>194, 20</value>
   </data>
   <data name="InertiaTensorTextBox.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -886,7 +880,7 @@
     <value>MassNumberBox</value>
   </data>
   <data name="&gt;&gt;MassNumberBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.0.22739, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.0.13942, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;MassNumberBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel3</value>
@@ -964,7 +958,7 @@
     <value>4</value>
   </data>
   <data name="tableLayoutPanel3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>400, 85</value>
+    <value>300, 85</value>
   </data>
   <data name="tableLayoutPanel3.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -997,7 +991,7 @@
     <value>collapsiblePanel3.ContentPanel</value>
   </data>
   <data name="&gt;&gt;collapsiblePanel3.ContentPanel.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.CollapsiblePanel+CollapsiblePanelContainer, Brick Studio, Version=1.0.0.22739, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.CollapsiblePanel+CollapsiblePanelContainer, Brick Studio, Version=1.0.0.13942, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;collapsiblePanel3.ContentPanel.Parent" xml:space="preserve">
     <value>collapsiblePanel3</value>
@@ -1005,14 +999,11 @@
   <data name="&gt;&gt;collapsiblePanel3.ContentPanel.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="collapsiblePanel3.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Top</value>
-  </data>
   <data name="collapsiblePanel3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 357</value>
+    <value>3, 201</value>
   </data>
   <data name="collapsiblePanel3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>634, 114</value>
+    <value>300, 114</value>
   </data>
   <data name="collapsiblePanel3.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
@@ -1024,10 +1015,10 @@
     <value>collapsiblePanel3</value>
   </data>
   <data name="&gt;&gt;collapsiblePanel3.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.CollapsiblePanel, Brick Studio, Version=1.0.0.22739, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.CollapsiblePanel, Brick Studio, Version=1.0.0.13942, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;collapsiblePanel3.Parent" xml:space="preserve">
-    <value>$this</value>
+    <value>flowLayoutPanel1</value>
   </data>
   <data name="&gt;&gt;collapsiblePanel3.ZOrder" xml:space="preserve">
     <value>1</value>
@@ -1042,7 +1033,7 @@
     <value>collapsiblePanel4.ContentPanel</value>
   </data>
   <data name="&gt;&gt;collapsiblePanel4.ContentPanel.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.CollapsiblePanel+CollapsiblePanelContainer, Brick Studio, Version=1.0.0.22739, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.CollapsiblePanel+CollapsiblePanelContainer, Brick Studio, Version=1.0.0.13942, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;collapsiblePanel4.ContentPanel.Parent" xml:space="preserve">
     <value>collapsiblePanel4</value>
@@ -1050,14 +1041,11 @@
   <data name="&gt;&gt;collapsiblePanel4.ContentPanel.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="collapsiblePanel4.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Top</value>
-  </data>
   <data name="collapsiblePanel4.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 471</value>
+    <value>309, 252</value>
   </data>
   <data name="collapsiblePanel4.Size" type="System.Drawing.Size, System.Drawing">
-    <value>634, 49</value>
+    <value>300, 49</value>
   </data>
   <data name="collapsiblePanel4.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
@@ -1069,12 +1057,42 @@
     <value>collapsiblePanel4</value>
   </data>
   <data name="&gt;&gt;collapsiblePanel4.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.CollapsiblePanel, Brick Studio, Version=1.0.0.22739, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.CollapsiblePanel, Brick Studio, Version=1.0.0.13942, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;collapsiblePanel4.Parent" xml:space="preserve">
-    <value>$this</value>
+    <value>flowLayoutPanel1</value>
   </data>
   <data name="&gt;&gt;collapsiblePanel4.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="flowLayoutPanel1.AutoScroll" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="flowLayoutPanel1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="flowLayoutPanel1.FlowDirection" type="System.Windows.Forms.FlowDirection, System.Windows.Forms">
+    <value>TopDown</value>
+  </data>
+  <data name="flowLayoutPanel1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="flowLayoutPanel1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>705, 351</value>
+  </data>
+  <data name="flowLayoutPanel1.TabIndex" type="System.Int32, mscorlib">
+    <value>5</value>
+  </data>
+  <data name="&gt;&gt;flowLayoutPanel1.Name" xml:space="preserve">
+    <value>flowLayoutPanel1</value>
+  </data>
+  <data name="&gt;&gt;flowLayoutPanel1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.FlowLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;flowLayoutPanel1.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;flowLayoutPanel1.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
@@ -1087,7 +1105,7 @@
     <value>True</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>634, 608</value>
+    <value>705, 351</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>Part Properties</value>
@@ -1096,6 +1114,6 @@
     <value>PartPropertiesPanel</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Panels.ProjectDocumentPanel, Brick Studio, Version=1.0.0.22739, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Panels.ProjectDocumentPanel, Brick Studio, Version=1.0.0.13942, Culture=neutral, PublicKeyToken=null</value>
   </data>
 </root>

@@ -178,22 +178,34 @@ namespace LDDModder.PaletteMaker.Generation
             else
                 testedIDs.Add(partIDToFind);
 
+            var foundLddPart = db.LddParts.FirstOrDefault(x => x.DesignID == partIDToFind);
+            if (foundLddPart != null)
+                return foundLddPart;
+
             var matches = db.PartMappings.Where(x => x.RebrickableID == partIDToFind && x.IsActive).ToList();
 
-            if (matches.Any())
+            //if (matches.Count == 0)
+            //{
+            //    var mapping = new Models.PartMapping()
+            //    {
+            //        RebrickableID = partIDToFind,
+            //        LegoID = partIDToFind,
+            //        IsActive = true,
+            //        MatchLevel = 0
+            //    };
+            //    return lddPart;
+            //}
+            if (matches.Count == 1)
             {
-                if (matches.Count == 1)
-                {
-                    string legoID = matches[0].LegoID;
-                    var lddPart = db.LddParts.FirstOrDefault(x => x.DesignID == legoID);
-                    
-                    return lddPart;
-                }
-                else
-                {
-                    Debug.WriteLine("Multiple matches for part!");
+                string legoID = matches[0].LegoID;
+                var lddPart = db.LddParts.FirstOrDefault(x => x.DesignID == legoID);
 
-                }
+                return lddPart;
+            }
+            else
+            {
+                Debug.WriteLine("Multiple matches for part!");
+
             }
 
             var rbPart = (partToFind.PartID == partIDToFind) ? 

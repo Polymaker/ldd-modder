@@ -220,6 +220,8 @@ namespace LDDModder.PaletteMaker.DB
 
         public void ImportSets()
         {
+            NotifyBeginStep("Importing sets");
+
             using (var trans = Connection.BeginTransaction())
             using (var cmd = Connection.CreateCommand())
             {
@@ -232,7 +234,7 @@ namespace LDDModder.PaletteMaker.DB
                 var sets = RebrickableAPI.GetSets(minYear:2018).ToList();
                 NotifyTaskStart("Importing sets...", sets.Count);
 
-                DbHelper.InitializeInsertCommand<RbSet>(cmd, x => new { x.SetID, x.Name, x.ThemeID, x.Year });
+                DbHelper.InitializeInsertCommand<RbSet>(cmd, x => new { x.SetID, x.Name, x.ThemeID, x.Year, x.InventoryDate });
 
                 int totalToProcess = sets.Count;
                 int totalProcessed = 0;
@@ -242,7 +244,7 @@ namespace LDDModder.PaletteMaker.DB
                     if (IsCancellationRequested)
                         break;
 
-                    DbHelper.InsertWithParameters(cmd, rbSet.SetNum, rbSet.Name, rbSet.ThemeId, rbSet.Year);
+                    DbHelper.InsertWithParameters(cmd, rbSet.SetNum, rbSet.Name, rbSet.ThemeId, rbSet.Year , DateTime.Now);
 
                     ReportProgress(++totalProcessed, totalToProcess);
                 }

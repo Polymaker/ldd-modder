@@ -87,6 +87,7 @@ namespace LDDModder.LDD.Primitives.Connectors
         {
             _Width = 2;
             _Height = 2;
+            SubType = 23;
             Initialize2DArray();
         }
 

@@ -25,6 +25,14 @@ namespace LDDModder.LDD.Meshes
             _Triangles = new List<Triangle>();
             _Vertices = new List<Vertex>();
         }
+
+        public void Reset()
+        {
+            VertexDict.Clear();
+            _Triangles.Clear();
+            _Vertices.Clear();
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -64,12 +72,12 @@ namespace LDDModder.LDD.Meshes
             return newTriangle;
         }
 
-        public void AddTriangle(Triangle triangle, bool checkDuplicate = false)
+        public void AddTriangle(Triangle triangle)
         {
             var newTriangle = new Triangle(
-                AddVertex(triangle.V1, checkDuplicate),
-                AddVertex(triangle.V2, checkDuplicate),
-                AddVertex(triangle.V3, checkDuplicate));
+                AddVertex(triangle.V1.Clone(), true),
+                AddVertex(triangle.V2.Clone(), true),
+                AddVertex(triangle.V3.Clone(), true));
 
             for (int i = 0; i < 3; i++)
             {
@@ -124,6 +132,15 @@ namespace LDDModder.LDD.Meshes
                 vert.TexCoord = Simple3D.Vector2.Empty;
         }
 
+        public void ForceTextureCoords()
+        {
+            foreach (var vert in Vertices)
+            {
+                if (vert.TexCoord.IsEmpty)
+                    vert.TexCoord = new Simple3D.Vector2(0f);
+            }
+        }
+
         public MeshGeometry GetGeometry()
         {
             var geom = new MeshGeometry();
@@ -131,6 +148,72 @@ namespace LDDModder.LDD.Meshes
             geom.SetVertices(_Vertices);
             geom.SetTriangles(_Triangles);
             return geom;
+        }
+
+        public static List<MeshGeometry> SplitSurfaces(MeshGeometry mesh)
+        {
+            var currentMesh = new GeometryBuilder();
+            var remainingTriangles = mesh.Triangles.ToList();
+            var resultingMeshes = new List<MeshGeometry>();
+
+            var edgeTriangleDic = new Dictionary<Edge, List<Triangle>>();
+            //var allEdges = remainingTriangles.SelectMany(x => x.Edges).Distinct();
+
+            foreach (var tri in remainingTriangles)
+            {
+                foreach (var edge in tri.Edges)
+                {
+                    if (!edgeTriangleDic.ContainsKey(edge))
+                        edgeTriangleDic.Add(edge, new List<Triangle>());
+                    edgeTriangleDic[edge].Add(tri);
+                }
+            }
+
+            Triangle TakeTriangle(int index)
+            {
+                var result = remainingTriangles[index];
+                remainingTriangles.RemoveAt(index);
+                return result;
+            }
+
+            IEnumerable<Triangle> GetNeighboringTriangles(Triangle triangle)
+            {
+                var neighbors = triangle.Edges.SelectMany(e =>
+                    edgeTriangleDic[e]).Intersect(remainingTriangles).ToList();
+
+
+                foreach (var tri in neighbors)
+                    remainingTriangles.Remove(tri);
+
+                foreach (var tri in neighbors.ToArray())
+                    neighbors.AddRange(GetNeighboringTriangles(tri));
+
+                return neighbors;
+                //for (int i = 0; i < remainingTriangles.Count; i++)
+                //{
+                //    if (triangle.ShareEdge(remainingTriangles[i], false))
+                //    {
+                //        yield return TakeTriangle(i);
+                //        i--;
+                //    }
+                //}
+            }
+
+            while (remainingTriangles.Count > 0)
+            {
+
+                var curTri = TakeTriangle(0);
+                currentMesh.AddTriangle(curTri);
+                var neighbors = GetNeighboringTriangles(curTri);
+                foreach (var tri in neighbors)
+                    currentMesh.AddTriangle(tri);
+
+                resultingMeshes.Add(currentMesh.GetGeometry());
+
+                currentMesh.Reset();
+            }
+
+            return resultingMeshes;
         }
     }
 }

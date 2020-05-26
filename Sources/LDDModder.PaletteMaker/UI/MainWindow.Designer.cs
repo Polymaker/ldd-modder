@@ -40,6 +40,7 @@
             this.PartMatchColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.MatchStatusColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.EditMatchColumn = new System.Windows.Forms.DataGridViewButtonColumn();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.SetPartsGridView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -88,6 +89,7 @@
             this.SetPartsGridView.Size = new System.Drawing.Size(841, 275);
             this.SetPartsGridView.TabIndex = 2;
             this.SetPartsGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.SetPartsGridView_CellFormatting);
+            this.SetPartsGridView.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.SetPartsGridView_DataError);
             // 
             // PartIDColumn
             // 
@@ -160,11 +162,19 @@
             this.EditMatchColumn.Name = "EditMatchColumn";
             this.EditMatchColumn.Width = 40;
             // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(174, 12);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(148, 20);
+            this.textBox1.TabIndex = 3;
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(865, 328);
+            this.Controls.Add(this.textBox1);
             this.Controls.Add(this.SetPartsGridView);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
@@ -172,6 +182,7 @@
             this.Text = "MainWindow";
             ((System.ComponentModel.ISupportInitialize)(this.SetPartsGridView)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -189,5 +200,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn PartMatchColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn MatchStatusColumn;
         private System.Windows.Forms.DataGridViewButtonColumn EditMatchColumn;
+        private System.Windows.Forms.TextBox textBox1;
     }
 }

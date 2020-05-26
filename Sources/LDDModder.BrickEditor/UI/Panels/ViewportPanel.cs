@@ -198,10 +198,10 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             SelectGizmoButton = new UIButton()
             {
-                Texture= SelectionIcons,
-                NormalSprite = new SpriteBounds(0,0,0.25f,0.25f),
-                OverSprite = new SpriteBounds(0, 0.25f, 0.25f, 0.25f),
-                SelectedSprite = new SpriteBounds(0, 0.5f, 0.25f, 0.25f),
+                Texture = SelectionIcons,
+                NormalSprite =      new SpriteBounds(0,0,0.25f,0.25f),
+                OverSprite =        new SpriteBounds(0, 0.25f, 0.25f, 0.25f),
+                SelectedSprite =    new SpriteBounds(0, 0.5f, 0.25f, 0.25f),
                 Selected = true
             };
             SelectGizmoButton.Clicked += SelectGizmoButton_Clicked;
@@ -244,21 +244,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             {
                 gizmoButtons[i].Bounds = new Vector4(buttonSpacing, 64 + (buttonSize + buttonSpacing) * i, buttonSize, buttonSize);
             }
-
-            //var testButton = new UIButton()
-            //{
-            //    Bounds = new Vector4(8, 160, 32, 32),
-            //    Texture = SelectionIcons,
-            //    NormalSprite = new SpriteBounds(0.75f, 0, 0.25f, 0.25f),
-            //    OverSprite = new SpriteBounds(0.75f, 0.25f, 0.25f, 0.25f),
-            //    SelectedSprite = new SpriteBounds(0.75f, 0.5f, 0.25f, 0.25f),
-            //    Text = "Test",
-            //    TextColor = new Vector4(1f)
-            //};
-            //UIElements.Add(testButton);
         }
-
-        
 
         private void InitializeSelectionGizmo()
         {
@@ -1455,6 +1441,27 @@ namespace LDDModder.BrickEditor.UI.Panels
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
-        
+        private void toolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            if (ProjectManager.IsProjectOpen)
+            {
+                ProjectManager.StartBatchChanges();
+                var selectedMeshes = ProjectManager.GetSelectionHierarchy().OfType<ModelMeshReference>().ToList();
+                foreach (var meshRef in selectedMeshes)
+                    ProjectManager.CurrentProject.SplitMeshSurfaces(meshRef);
+                ProjectManager.EndBatchChanges();
+            }
+        }
+
+        private void test2ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (ProjectManager.IsProjectOpen)
+            {
+                ProjectManager.StartBatchChanges();
+                var selectedMeshes = ProjectManager.GetSelectionHierarchy().OfType<ModelMeshReference>().ToList();
+                ProjectManager.CurrentProject.CombineMeshes(selectedMeshes);
+                ProjectManager.EndBatchChanges();
+            }
+        }
     }
 }

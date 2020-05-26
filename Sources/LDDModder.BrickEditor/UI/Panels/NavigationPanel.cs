@@ -347,7 +347,6 @@ namespace LDDModder.BrickEditor.UI.Panels
             InitializeComponentContextMenu();
             InitializeCollisionContextMenu();
             InitializeConnectionContextMenu();
-
         }
 
         private void InitializeComponentContextMenu()

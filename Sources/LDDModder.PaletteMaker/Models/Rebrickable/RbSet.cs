@@ -10,14 +10,16 @@ namespace LDDModder.PaletteMaker.Models.Rebrickable
         [Key]
         public string SetID { get; set; }
 
-        public int? ThemeID { get; set; }
+        public string Name { get; set; }
 
         public int? Year { get; set; }
 
+        public int? ThemeID { get; set; }
+
+        public System.DateTime? InventoryDate { get; set; }
+
         [ForeignKey("ThemeID")]
         public virtual RbTheme Theme { get; set; }
-
-        public string Name { get; set; }
 
         public virtual ICollection<RbSetPart> Parts { get; set; }
 

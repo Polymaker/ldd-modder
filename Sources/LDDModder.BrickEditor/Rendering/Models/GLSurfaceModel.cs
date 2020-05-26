@@ -21,8 +21,6 @@ namespace LDDModder.BrickEditor.Rendering
 
         public List<SurfaceModelMesh> MeshModels { get; private set; }
 
-        public bool IsTransparent => Material.Diffuse.W < 1f;
-
         public MaterialInfo Material { get; set; }
 
         private VertVNT[] Vertices;

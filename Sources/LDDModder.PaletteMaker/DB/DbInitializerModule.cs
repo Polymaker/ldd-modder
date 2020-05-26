@@ -29,9 +29,10 @@ namespace LDDModder.PaletteMaker.DB
             CancellationToken = cancellationToken;
         }
 
-        protected void NotifyIndefiniteProgress(string status)
+        protected void NotifyIndefiniteProgress(string statusText)
         {
             ProgressHandler?.OnReportIndefiniteProgress();
+            ProgressHandler?.OnReportProgressStatus(statusText);
         }
 
         protected void NotifyIndefiniteProgress()

@@ -403,6 +403,11 @@ namespace LDDModder.BrickEditor.ProjectHandling
             SelectionChanged?.Invoke(this, EventArgs.Empty);
         }
 
+        public IEnumerable<PartElement> GetSelectionHierarchy()
+        {
+            return SelectedElements.SelectMany(x => x.GetChildsHierarchy(true)).Distinct();
+        }
+
         public bool IsSelected(PartElement element)
         {
             return SelectedElements.Contains(element);
