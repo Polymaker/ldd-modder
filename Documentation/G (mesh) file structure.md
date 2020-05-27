@@ -124,7 +124,7 @@ LDD has a built-in function to cull (hide) portions of the model that are not vi
 More precisely, LDD hides portions of the model related to connections that are “filled”.
 For example, when connecting a brick on top of another one, the studs that are under the connected brick are hidden.
 
-Here is a simple representation of an entry:
+Here is a an outline of how the data is structured:
 * Culling Type
 * Reference to a portion of the 3D data
 * Reference to a Custom2DField connector
@@ -137,6 +137,13 @@ There are four type of culling data:
 * Type 4 "Brick Tube": Used to hide tubes under bricks
 
 **Note:** At least one entry of type 2 **IS** required in order to be loaded in LDD.
+
+Type 2 is often used for female stud connection (hence the name) 
+but is mainly used whenever an alternative mesh should be displayed when the stud's are connected.
+
+Alternates meshes seems to be only used by type 2.
+Some parts have alternate meshes but does not reference any Custom3DField connection, 
+making them impossible to be displayed in LDD.
 
 ### Structures
 **Culling Block Header**
@@ -151,12 +158,12 @@ Size | Data type | Description
 :------- | :---: | :--- 
  4 bytes | Int32 | Structure Size (Including all content)
  4 bytes | Int32 | Culling Type
- 4 bytes | Int32 | From Vertex
+ 4 bytes | Int32 | Starting Vertex
  4 bytes | Int32 | Vertex Count
- 4 bytes | Int32 | From Index
+ 4 bytes | Int32 | Starting Index
  4 bytes | Int32 | Index Count
  4 bytes | Int32 | Additional mesh offset (**#1**)
- | | | The offset is relative to from the beginning of structure
+ | | | The offset is relative to the beginning of structure
  4 bytes | Int32 | Stud reference flag (**#2**)
  X bytes | Struct | If **#2** >= 1 then **Custom2DField References Header** structure
  X bytes | Struct | If **#2** >= 2 then **Custom2DField References Header** structure
@@ -169,7 +176,7 @@ Size | Data type | Description
  4 bytes | Int32 | Number of references
  X bytes | Struct | Array of **Custom2DField Reference**
 
-**Custom2DField Reference**
+**Custom2DField Connection Reference**
 Size | Data type | Description 
 :------- | :---: | :--- 
  4 bytes | Int32 | Structure size (including array)
@@ -177,7 +184,7 @@ Size | Data type | Description
  4 bytes | Int32 | Number of referenced studs
  X bytes | Struct | Array of **Custom2DField Node Reference**
 
-**Custom2DField Node Reference**
+**Custom2DField Field Reference**
 Size | Data type | Description 
 :------- | :---: | :--- 
  4 bytes | Int32 | 1D array index of the stud from the Custom2DField data
@@ -190,7 +197,6 @@ Size | Data type | Description
 :------- | :---: | :--- 
  4 bytes | Int32 | Vertex Count
  4 bytes | Int32 | Index Count
- 4 bytes | Int32 | Mesh Type
  X bytes | Vector3[] | Positions
  X bytes | Vector3[] | Normals
  X bytes | Vector2[] | UVs (only when mesh is textured)
