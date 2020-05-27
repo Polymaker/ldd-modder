@@ -25,6 +25,11 @@ namespace LDDModder.BrickEditor
             return new OpenTK.Vector3(vector.X, vector.Y, vector.Z);
         }
 
+        public static OpenTK.Vector3d ToGL(this LDDModder.Simple3D.Vector3d vector)
+        {
+            return new OpenTK.Vector3d(vector.X, vector.Y, vector.Z);
+        }
+
         public static OpenTK.Vector3 ToGL(this Assimp.Vector3D vector)
         {
             return new OpenTK.Vector3(vector.X, vector.Y, vector.Z);

@@ -13,7 +13,7 @@ using System.Diagnostics;
 
 namespace LDDModder.BrickEditor.Rendering
 {
-    public class GLSurfaceModel : IDisposable
+    public class SurfaceMeshBuffer : IDisposable
     {
         public PartSurface Surface { get; set; }
 
@@ -26,13 +26,13 @@ namespace LDDModder.BrickEditor.Rendering
         private VertVNT[] Vertices;
         private int[] Indices;
 
-        public GLSurfaceModel()
+        public SurfaceMeshBuffer()
         {
             VertexBuffer = new IndexedVertexBuffer<VertVNT>();
             MeshModels = new List<SurfaceModelMesh>();
         }
 
-        public GLSurfaceModel(PartSurface surface)
+        public SurfaceMeshBuffer(PartSurface surface)
         {
             Surface = surface;
             VertexBuffer = new IndexedVertexBuffer<VertVNT>();
@@ -140,21 +140,30 @@ namespace LDDModder.BrickEditor.Rendering
 
             foreach (var model in visibleMeshes)
             {
-                bool drawMeshOutilne = useOutlineStencil && model.IsSelected/* && renderMode != MeshRenderMode.Wireframe*/;
-                RenderHelper.RenderWithStencil(drawMeshOutilne,
+                if (model.IsSelected && !useOutlineStencil)
+                {
+
+                }
+
+                RenderHelper.RenderWithStencil(model.IsSelected,
                     () =>
                     {
-                        RenderPartialMesh(renderMode, model, Material, useOutlineStencil);
+                        RenderPartialMesh(renderMode, model, Material);
                     },
                     () =>
                     {
-                        DrawModelOutline(model, 4f);
-                    });
+                        DrawWireframeModel(model, RenderHelper.SelectionOutlineColor, 4f);
+                    }
+                );
+
+                if (useOutlineStencil)
+                    RenderHelper.ClearStencil();
             }
 
             if (useOutlineStencil)
                 RenderHelper.DisableStencilTest();
 
+            //Draw selected models bounding boxes
             foreach (var model in visibleMeshes)
             {
                 if (model.IsSelected)
@@ -167,31 +176,23 @@ namespace LDDModder.BrickEditor.Rendering
             }
         }
 
-        public void RenderPartialModel(SurfaceModelMesh surfaceModel)
+        private void RenderPartialMesh(MeshRenderMode renderMode, SurfaceModelMesh model, MaterialInfo material)
         {
-
-        }
-
-
-        private void RenderPartialMesh(MeshRenderMode renderMode, SurfaceModelMesh model, MaterialInfo material, bool useStencil)
-        {
-            if (renderMode == MeshRenderMode.Wireframe)
+            if (renderMode == MeshRenderMode.Wireframe && model.IsSelected)
             {
+                //in wireframe mode, disable depth and color mask
+                //but still write in stencil mask, this is needed for drawing the selection outline correctly
                 GL.ColorMask(false, false, false, false);
                 GL.DepthMask(false);
             }
 
-            RenderHelper.BeginDrawModel(VertexBuffer, model.Transform, material);
-            RenderHelper.ModelShader.IsSelected.Set(model.IsSelected);
+            if (renderMode != MeshRenderMode.Wireframe || model.IsSelected)
+                DrawSolidModel(model, material);
 
-            DrawModelElements(model);
-
-            RenderHelper.EndDrawModel(VertexBuffer);
-
-            if (useStencil)
+            if (model.IsSelected)
                 RenderHelper.DisableStencilMask();
 
-            if (renderMode == MeshRenderMode.Wireframe)
+            if (renderMode == MeshRenderMode.Wireframe && model.IsSelected)
             {
                 GL.ColorMask(true, true, true, true);
                 GL.DepthMask(true);
@@ -200,24 +201,33 @@ namespace LDDModder.BrickEditor.Rendering
             if (renderMode == MeshRenderMode.Wireframe || renderMode == MeshRenderMode.SolidWireframe)
             {
                 var wireColor = model.IsSelected && renderMode == MeshRenderMode.SolidWireframe ? RenderHelper.WireframeColorAlt : RenderHelper.WireframeColor;
-
-                RenderHelper.BeginDrawWireframe(VertexBuffer, model.Transform, 1f, wireColor);
-                DrawModelElements(model);
-                RenderHelper.EndDrawWireframe(VertexBuffer);
+                DrawWireframeModel(model, wireColor, 1f);
             }
         }
 
-        private void DrawModelOutline(SurfaceModelMesh model, float thickness = 4f)
+        private void DrawModelElements(SurfaceModelMesh model)
         {
-            RenderHelper.BeginDrawWireframe(VertexBuffer, model.Transform, thickness, RenderHelper.SelectionOutlineColor);
+            VertexBuffer.DrawElementsBaseVertex(PrimitiveType.Triangles, 
+                model.StartVertex, 
+                model.IndexCount, 
+                model.StartIndex * 4);
+        }
+        
+        private void DrawWireframeModel(SurfaceModelMesh model, Vector4 color, float thickness)
+        {
+            RenderHelper.BeginDrawWireframe(VertexBuffer, model.Transform, thickness, color);
             DrawModelElements(model);
             RenderHelper.EndDrawWireframe(VertexBuffer);
         }
 
-        private void DrawModelElements(SurfaceModelMesh mesh)
+        private void DrawSolidModel(SurfaceModelMesh model, MaterialInfo material)
         {
-            VertexBuffer.DrawElementsBaseVertex(PrimitiveType.Triangles, mesh.StartVertex, mesh.IndexCount, mesh.StartIndex * 4);
+            RenderHelper.BeginDrawModel(VertexBuffer, model.Transform, material);
+            RenderHelper.ModelShader.IsSelected.Set(model.IsSelected);
+            DrawModelElements(model);
+            RenderHelper.EndDrawModel(VertexBuffer);
         }
+
 
         public bool RayIntersects(Ray ray, SurfaceModelMesh model, out float distance)
         {
@@ -247,6 +257,10 @@ namespace LDDModder.BrickEditor.Rendering
         {
             if (VertexBuffer != null)
                 VertexBuffer.Dispose();
+            Vertices = new VertVNT[0];
+            Indices = new int[0];
+            MeshModels.Clear();
+            Surface = null;
         }
     }
 }

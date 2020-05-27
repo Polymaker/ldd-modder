@@ -9,21 +9,30 @@ namespace LDDModder.BrickEditor.Settings
 {
     public class AppSettings
     {
-        [JsonProperty]
+        [JsonProperty/*("ldd.paths.programfiles")*/]
         public string LddProgramFilesPath { get; set; }
-        [JsonProperty]
+        [JsonProperty/*("ldd.paths.programfiles")*/]
         public string LddApplicationDataPath { get; set; }
-        [JsonProperty]
+        [JsonProperty/*("workspace_folder")*/]
         public string ProjectWorkspace { get; set; }
-        
+
+        [JsonProperty/*("build_configs")*/]
+        public List<BuildConfiguration> BuildConfigurations { get; set; }
 
         [JsonProperty]
         public RecentFileInfo LastOpenProject { get; set; }
-        [JsonProperty]
-        public List<RecentFileInfo> RecentProjectFiles { get; set; } = new List<RecentFileInfo>();
+
+        [JsonProperty/*("recent_files")*/]
+        public List<RecentFileInfo> RecentProjectFiles { get; set; }
 
         //[JsonProperty("Display")]
         //public DisplaySettings DisplaySettings { get; set; }
+
+        public AppSettings()
+        {
+            BuildConfigurations = new List<BuildConfiguration>();
+            RecentProjectFiles = new List<RecentFileInfo>();
+        }
 
         public static AppSettings CreateDefault()
         {

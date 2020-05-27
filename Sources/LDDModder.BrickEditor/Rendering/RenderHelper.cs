@@ -562,6 +562,8 @@ namespace LDDModder.BrickEditor.Rendering
             {
                 if (!wasEnabled)
                     EnableStencilTest();
+
+                EnableStencilMask();
             }
 
             renderPass1();
@@ -584,7 +586,9 @@ namespace LDDModder.BrickEditor.Rendering
             GL.Enable(EnableCap.StencilTest);
             GL.ClearStencil(0);
             GL.Clear(ClearBufferMask.StencilBufferBit);
-            GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Replace);
+            //GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Replace);
+            GL.StencilFunc(StencilFunction.Always, 1, 0xFFFF);
+            GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Keep);
         }
 
         public static void DisableStencilTest()

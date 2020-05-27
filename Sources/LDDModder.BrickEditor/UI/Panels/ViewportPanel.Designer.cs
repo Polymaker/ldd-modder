@@ -46,6 +46,8 @@
             this.DisplayMenu_Collisions = new System.Windows.Forms.ToolStripMenuItem();
             this.DisplayMenu_Connections = new System.Windows.Forms.ToolStripMenuItem();
             this.DisplayMenu_Meshes = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.test2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.GizmoOrientationMenu = new System.Windows.Forms.ToolStripDropDownButton();
             this.globalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.localToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -75,8 +77,6 @@
             this.label8 = new System.Windows.Forms.Label();
             this.RotYNumBox = new LDDModder.BrickEditor.UI.Controls.NumberTextBox();
             this.RotZNumBox = new LDDModder.BrickEditor.UI.Controls.NumberTextBox();
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.test2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1.SuspendLayout();
             this.SelectionInfoPanel.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -181,9 +181,9 @@
             // 
             this.DisplayMenuDropDown.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.DisplayMenuDropDown.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.DisplayMenu_Meshes,
             this.DisplayMenu_Collisions,
             this.DisplayMenu_Connections,
-            this.DisplayMenu_Meshes,
             this.toolStripMenuItem1,
             this.test2ToolStripMenuItem});
             resources.ApplyResources(this.DisplayMenuDropDown, "DisplayMenuDropDown");
@@ -211,6 +211,18 @@
             this.DisplayMenu_Meshes.Name = "DisplayMenu_Meshes";
             resources.ApplyResources(this.DisplayMenu_Meshes, "DisplayMenu_Meshes");
             this.DisplayMenu_Meshes.CheckedChanged += new System.EventHandler(this.DisplayMenu_Meshes_CheckedChanged);
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            resources.ApplyResources(this.toolStripMenuItem1, "toolStripMenuItem1");
+            this.toolStripMenuItem1.Click += new System.EventHandler(this.toolStripMenuItem1_Click);
+            // 
+            // test2ToolStripMenuItem
+            // 
+            this.test2ToolStripMenuItem.Name = "test2ToolStripMenuItem";
+            resources.ApplyResources(this.test2ToolStripMenuItem, "test2ToolStripMenuItem");
+            this.test2ToolStripMenuItem.Click += new System.EventHandler(this.test2ToolStripMenuItem_Click);
             // 
             // GizmoOrientationMenu
             // 
@@ -435,18 +447,6 @@
             this.RotZNumBox.MinimumValue = -360D;
             this.RotZNumBox.Name = "RotZNumBox";
             this.RotZNumBox.ValueChanged += new System.EventHandler(this.RotationNumBoxes_ValueChanged);
-            // 
-            // toolStripMenuItem1
-            // 
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            resources.ApplyResources(this.toolStripMenuItem1, "toolStripMenuItem1");
-            this.toolStripMenuItem1.Click += new System.EventHandler(this.toolStripMenuItem1_Click);
-            // 
-            // test2ToolStripMenuItem
-            // 
-            this.test2ToolStripMenuItem.Name = "test2ToolStripMenuItem";
-            resources.ApplyResources(this.test2ToolStripMenuItem, "test2ToolStripMenuItem");
-            this.test2ToolStripMenuItem.Click += new System.EventHandler(this.test2ToolStripMenuItem_Click);
             // 
             // ViewportPanel
             // 

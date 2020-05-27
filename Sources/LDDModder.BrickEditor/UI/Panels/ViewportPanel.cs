@@ -35,7 +35,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private GridShaderProgram GridShader;
 
-        private List<GLSurfaceModel> SurfaceModels;
+        private List<SurfaceMeshBuffer> SurfaceModels;
         private List<CollisionModel> CollisionModels;
         private List<ConnectionModel> ConnectionModels;
 
@@ -52,7 +52,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         public ViewportPanel()
         {
             InitializeComponent();
-            SurfaceModels = new List<GLSurfaceModel>();
+            SurfaceModels = new List<SurfaceMeshBuffer>();
             CollisionModels = new List<CollisionModel>();
             ConnectionModels = new List<ConnectionModel>();
             UIElements = new List<UIElement>();
@@ -67,7 +67,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             AllowEndUserDocking = false;
             CloseButton = false;
             CloseButtonVisible = false;
-            SurfaceModels = new List<GLSurfaceModel>();
+            SurfaceModels = new List<SurfaceMeshBuffer>();
             CollisionModels = new List<CollisionModel>();
             ConnectionModels = new List<ConnectionModel>();
             UIElements = new List<UIElement>();
@@ -118,7 +118,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             mainForm.Activated += MainForm_Activated;
             mainForm.Deactivate += MainForm_Deactivate;
 
-            UpdateTitle();
+            UpdateDocumentTitle();
 
             ProjectManager.ProjectModified += ProjectManager_ProjectModified;
             ProjectManager.PartModelsVisibilityChanged += ProjectManager_ModelsVisibilityChanged;
@@ -654,11 +654,16 @@ namespace LDDModder.BrickEditor.UI.Panels
             DisposeGLResources();
         }
 
-        private void UpdateTitle()
+        private void UpdateDocumentTitle()
         {
-            Text = ProjectManager.GetProjectDisplayName();
-            if (ProjectManager.IsModified)
-                Text += "*";
+            if (InvokeRequired)
+                BeginInvoke(new MethodInvoker(UpdateDocumentTitle));
+            else
+            {
+                Text = ProjectManager.GetProjectDisplayName();
+                if (ProjectManager.IsModified)
+                    Text += "*";
+            }
         }
 
         #endregion
@@ -683,7 +688,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         protected override void OnProjectChanged()
         {
             base.OnProjectChanged();
-            UpdateTitle();
+            UpdateDocumentTitle();
         }
 
         protected override void OnProjectLoaded(PartProject project)
@@ -698,15 +703,13 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void ProjectManager_ProjectModified(object sender, EventArgs e)
         {
-            if (InvokeRequired)
-                BeginInvoke(new MethodInvoker(UpdateTitle));
-            else
-                UpdateTitle();
+
+            UpdateDocumentTitle();
         }
 
         private void AddPartSurfaceModel(PartSurface surface)
         {
-            var surfModel = new GLSurfaceModel(surface);
+            var surfModel = new SurfaceMeshBuffer(surface);
 
             surfModel.Material = new MaterialInfo
             {
@@ -758,6 +761,18 @@ namespace LDDModder.BrickEditor.UI.Panels
             else if (e.ElementType == typeof(PartConnection))
             {
                 ConnectionsChanged = true;
+            }
+        }
+
+        protected override void OnElementPropertyChanged(ElementValueChangedEventArgs e)
+        {
+            base.OnElementPropertyChanged(e);
+
+            if (e.Element is PartProperties && (
+                e.PropertyName == nameof(PartProperties.ID) ||
+                e.PropertyName == nameof(PartProperties.Description)))
+            {
+                UpdateDocumentTitle();
             }
         }
 

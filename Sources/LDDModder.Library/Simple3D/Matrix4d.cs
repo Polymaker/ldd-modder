@@ -611,6 +611,15 @@ namespace LDDModder.Simple3D
             return identity;
         }
 
+        public static Matrix4d FromScale(Vector3d scale)
+        {
+            var result = Identity;
+            result.A1 = scale.X;
+            result.B2 = scale.Y;
+            result.C3 = scale.Z;
+            return result;
+        }
+
         public static Matrix4d LookAt(Vector3d eye, Vector3d target, Vector3d up)
         {
             Vector3d z = (eye - target).Normalized();

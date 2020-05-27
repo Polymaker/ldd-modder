@@ -169,6 +169,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Messages.resx</DependentUpon>
     </Compile>
+    <Compile Include="Settings\BuildConfiguration.cs" />
     <Compile Include="UI\Controls\CollapsiblePanel.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -229,6 +230,12 @@
     <Compile Include="UI\Windows\SelectOutputLocationWindow.Designer.cs">
       <DependentUpon>SelectOutputLocationWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\Windows\WaitPopup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Windows\WaitPopup.Designer.cs">
+      <DependentUpon>WaitPopup.cs</DependentUpon>
+    </Compile>
     <Compile Include="Utilities\LocalizableString.cs" />
     <Compile Include="Utilities\LocalizableStringList.cs">
       <SubType>Component</SubType>
@@ -260,9 +267,8 @@
     <Compile Include="Rendering\Models\PartElementModel.cs" />
     <Compile Include="Rendering\Models\PartialModel.cs" />
     <Compile Include="Rendering\Models\SurfaceModelMesh.cs" />
-    <Compile Include="Rendering\Models\GLSurfaceModel.cs" />
+    <Compile Include="Rendering\Models\SurfaceMeshBuffer.cs" />
     <Compile Include="Rendering\Models\IndexedVertexBuffer.cs" />
-    <Compile Include="Rendering\Models\GLModel.cs" />
     <Compile Include="Rendering\InputManager.cs" />
     <Compile Include="Rendering\Maths\Plane.cs" />
     <Compile Include="Rendering\Maths\Ray.cs" />
@@ -461,6 +467,9 @@
     <EmbeddedResource Include="UI\Windows\ErrorMessageBox.resx">
       <DependentUpon>ErrorMessageBox.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\Windows\ExportPartModelWindow.fr.resx">
+      <DependentUpon>ExportPartModelWindow.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\Windows\ExportPartModelWindow.resx">
       <DependentUpon>ExportPartModelWindow.cs</DependentUpon>
     </EmbeddedResource>
@@ -475,6 +484,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Windows\SelectOutputLocationWindow.resx">
       <DependentUpon>SelectOutputLocationWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Windows\WaitPopup.resx">
+      <DependentUpon>WaitPopup.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="OpenTK.dll.config" />
     <None Include="packages.config" />

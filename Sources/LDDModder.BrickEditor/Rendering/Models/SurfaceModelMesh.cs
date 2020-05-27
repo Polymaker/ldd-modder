@@ -20,11 +20,11 @@ namespace LDDModder.BrickEditor.Rendering
 
         public ModelMeshReference MeshReference { get; private set; }
 
-        public GLSurfaceModel SurfaceModel { get; private set; }
+        public SurfaceMeshBuffer SurfaceModel { get; private set; }
 
         public bool IsReplacementModel { get; set; }
 
-        public SurfaceModelMesh(GLSurfaceModel baseModel, ModelMeshReference meshRef, int startIndex, int indexCount, int startVertex) : base(meshRef)
+        public SurfaceModelMesh(SurfaceMeshBuffer baseModel, ModelMeshReference meshRef, int startIndex, int indexCount, int startVertex) : base(meshRef)
         {
             MeshReference = meshRef;
             SurfaceModel = baseModel;
@@ -43,7 +43,7 @@ namespace LDDModder.BrickEditor.Rendering
 
         public override void RenderModel(Camera camera)
         {
-            SurfaceModel.RenderPartialModel(this);
+            
         }
     }
 }

@@ -12,9 +12,9 @@ namespace LDDModder.LDD.Primitives.Collisions
 {
     public class CollisionBox : Collision
     {
-        private Vector3 _Size;
+        private Vector3d _Size;
 
-        public Vector3 Size
+        public Vector3d Size
         {
             get => _Size;
             set => SetPropertyValue(ref _Size, value);
@@ -24,10 +24,15 @@ namespace LDDModder.LDD.Primitives.Collisions
         {
         }
 
-        public CollisionBox(Vector3 size, Transform transform)
+        public CollisionBox(Vector3d size, Transform transform)
         {
             Size = size;
             Transform = transform;
+        }
+
+        public override Vector3d GetSize()
+        {
+            return Size;
         }
 
         public override XElement SerializeToXml()
@@ -41,10 +46,10 @@ namespace LDDModder.LDD.Primitives.Collisions
         public override void LoadFromXml(XElement element)
         {
             Transform = Transform.FromElementAttributes(element);
-            Size = new Vector3(
-                    element.ReadAttribute<float>("sX"),
-                    element.ReadAttribute<float>("sY"),
-                    element.ReadAttribute<float>("sZ"));
+            Size = new Vector3d(
+                    element.ReadAttribute<double>("sX"),
+                    element.ReadAttribute<double>("sY"),
+                    element.ReadAttribute<double>("sZ"));
         }
     }
 }

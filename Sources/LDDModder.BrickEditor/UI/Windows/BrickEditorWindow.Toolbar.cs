@@ -41,8 +41,7 @@ namespace LDDModder.BrickEditor.UI.Windows
         {
             using (var frm = new ExportPartModelWindow())
             {
-                if (ProjectCreatedFromBrick && CurrentProject != null)
-                    frm.PartIDToExport = CurrentProject.PartID;
+                frm.CurrentProject = CurrentProject;
                 frm.ShowDialog();
             }
         }
@@ -66,8 +65,6 @@ namespace LDDModder.BrickEditor.UI.Windows
                     var selectedBrick = dlg.SelectedBrick;
                     var project = PartProject.CreateFromLddPart(selectedBrick.PartId);
                     LoadNewPartProject(project);
-                    if (CurrentProject == project)
-                        ProjectCreatedFromBrick = true;
                 }
             }
         }

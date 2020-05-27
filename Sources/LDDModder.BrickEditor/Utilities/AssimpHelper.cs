@@ -88,6 +88,20 @@ namespace Assimp
             return parentTrans * invTrans;
         }
 
+        public static Mesh Clone(this Mesh mesh)
+        {
+            var newMesh = new Mesh(mesh.PrimitiveType);
+            newMesh.Vertices.AddRange(mesh.Vertices);
+            newMesh.SetIndices(mesh.GetIndices(), mesh.Faces[0].IndexCount);
+            if (newMesh.HasNormals)
+                newMesh.Normals.AddRange(mesh.Normals);
 
+            for (int i = 0; i < mesh.TextureCoordinateChannelCount; i++)
+                newMesh.TextureCoordinateChannels[i].AddRange(mesh.TextureCoordinateChannels[i]);
+
+            foreach (var bone in mesh.Bones)
+                newMesh.Bones.Add(new Bone(bone.Name, bone.OffsetMatrix, bone.VertexWeights.ToArray()));
+            return newMesh;
+        }
     }
 }

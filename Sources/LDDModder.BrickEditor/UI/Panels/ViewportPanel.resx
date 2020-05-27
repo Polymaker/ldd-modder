@@ -236,6 +236,12 @@
   <data name="CameraMenuDropDown.Text" xml:space="preserve">
     <value>Camera</value>
   </data>
+  <data name="DisplayMenu_Meshes.Size" type="System.Drawing.Size, System.Drawing">
+    <value>180, 22</value>
+  </data>
+  <data name="DisplayMenu_Meshes.Text" xml:space="preserve">
+    <value>Meshes</value>
+  </data>
   <data name="DisplayMenu_Collisions.Size" type="System.Drawing.Size, System.Drawing">
     <value>180, 22</value>
   </data>
@@ -248,17 +254,11 @@
   <data name="DisplayMenu_Connections.Text" xml:space="preserve">
     <value>Connections</value>
   </data>
-  <data name="DisplayMenu_Meshes.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
-  </data>
-  <data name="DisplayMenu_Meshes.Text" xml:space="preserve">
-    <value>Meshes</value>
-  </data>
   <data name="toolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
     <value>180, 22</value>
   </data>
   <data name="toolStripMenuItem1.Text" xml:space="preserve">
-    <value>Split Meshes</value>
+    <value>Separate Meshes</value>
   </data>
   <data name="test2ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>180, 22</value>
@@ -291,13 +291,13 @@
     <value>Display</value>
   </data>
   <data name="globalToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>108, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="globalToolStripMenuItem.Text" xml:space="preserve">
     <value>Global</value>
   </data>
   <data name="localToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>108, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="localToolStripMenuItem.Text" xml:space="preserve">
     <value>Local</value>
@@ -472,7 +472,7 @@
     <value>PosZNumBox</value>
   </data>
   <data name="&gt;&gt;PosZNumBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.0.16411, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.0.14048, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;PosZNumBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -601,7 +601,7 @@
     <value>PosXNumBox</value>
   </data>
   <data name="&gt;&gt;PosXNumBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.0.16411, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.0.14048, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;PosXNumBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -631,7 +631,7 @@
     <value>PosYNumBox</value>
   </data>
   <data name="&gt;&gt;PosYNumBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.0.16411, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.0.14048, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;PosYNumBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -760,7 +760,7 @@
     <value>RotXNumBox</value>
   </data>
   <data name="&gt;&gt;RotXNumBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.0.16411, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.0.14048, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;RotXNumBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -856,7 +856,7 @@
     <value>RotYNumBox</value>
   </data>
   <data name="&gt;&gt;RotYNumBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.0.16411, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.0.14048, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;RotYNumBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -886,7 +886,7 @@
     <value>RotZNumBox</value>
   </data>
   <data name="&gt;&gt;RotZNumBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.0.16411, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.0.14048, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;RotZNumBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -1047,6 +1047,18 @@
   <data name="&gt;&gt;DisplayMenu_Meshes.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;toolStripMenuItem1.Name" xml:space="preserve">
+    <value>toolStripMenuItem1</value>
+  </data>
+  <data name="&gt;&gt;toolStripMenuItem1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;test2ToolStripMenuItem.Name" xml:space="preserve">
+    <value>test2ToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;test2ToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;GizmoOrientationMenu.Name" xml:space="preserve">
     <value>GizmoOrientationMenu</value>
   </data>
@@ -1125,22 +1137,10 @@
   <data name="&gt;&gt;visualStudioToolStripExtender1.Type" xml:space="preserve">
     <value>WeifenLuo.WinFormsUI.Docking.VisualStudioToolStripExtender, WeifenLuo.WinFormsUI.Docking, Version=3.0.4.0, Culture=neutral, PublicKeyToken=5cded1a1a0a7b481</value>
   </data>
-  <data name="&gt;&gt;toolStripMenuItem1.Name" xml:space="preserve">
-    <value>toolStripMenuItem1</value>
-  </data>
-  <data name="&gt;&gt;toolStripMenuItem1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;test2ToolStripMenuItem.Name" xml:space="preserve">
-    <value>test2ToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;test2ToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>ViewportPanel</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Panels.ProjectDocumentPanel, Brick Studio, Version=1.0.0.16411, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Panels.ProjectDocumentPanel, Brick Studio, Version=1.0.0.14048, Culture=neutral, PublicKeyToken=null</value>
   </data>
 </root>

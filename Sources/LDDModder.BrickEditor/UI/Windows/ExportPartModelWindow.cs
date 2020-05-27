@@ -1,4 +1,5 @@
 ﻿using LDDModder.BrickEditor.Meshes;
+using LDDModder.BrickEditor.Models;
 using LDDModder.LDD;
 using LDDModder.LDD.Parts;
 using LDDModder.LDD.Primitives;
@@ -18,12 +19,14 @@ namespace LDDModder.BrickEditor.UI.Windows
     {
         private Assimp.AssimpContext AssimpContext;
 
-        public int PartIDToExport { get; set; }
+        public Modding.Editing.PartProject CurrentProject { get; set; }
+
+        private Models.BrickInfo PartToExport;
 
         public ExportPartModelWindow()
         {
             InitializeComponent();
-            PartNameLabel.Visible = false;
+            PartNameLabel.Text = string.Empty;
         }
 
         protected override void OnLoad(EventArgs e)
@@ -34,77 +37,112 @@ namespace LDDModder.BrickEditor.UI.Windows
 
             AssimpContext = new Assimp.AssimpContext();
 
-            if (PartIDToExport > 0)
+            bool isProjectOpen = (CurrentProject != null);
+
+            CurrentProjectRb.Enabled = isProjectOpen;
+            (isProjectOpen ? CurrentProjectRb : SelectPartRb).Checked = true;
+            PartBrowseTextBox.Enabled = SelectPartRb.Checked;
+
+            if (SelectPartRb.Checked)
+                ValidateSelectedPartID();
+        }
+
+        private void PartBrowseTextBox_ValueChanged(object sender, EventArgs e)
+        {
+            if (PartToExport != null)
             {
-                TxtPartID.Text = PartIDToExport.ToString();
-                ValidatePartID();
+                if (PartToExport.PartId.ToString() != PartBrowseTextBox.Value.Trim())
+                    PartToExport = null;
+                else
+                    return;
             }
+
+            ValidateSelectedPartID();
         }
 
-        private void TxtPartID_Validated(object sender, EventArgs e)
+        private void PartBrowseTextBox_BrowseButtonClicked(object sender, EventArgs e)
         {
-            ValidatePartID();
+            SelectPartToExport();
         }
 
-        private void ValidatePartID()
+        private void UpdateCanExport()
         {
-            if (string.IsNullOrEmpty(TxtPartID.Text))
+            bool canExport;
+            if (CurrentProjectRb.Checked)
+                canExport = CurrentProject != null;
+            else
+                canExport = PartToExport != null;
+
+            ExportButton.Enabled = canExport;
+        }
+
+        private void UpdateSelectedPartDescription()
+        {
+            PartNameLabel.ForeColor = ForeColor;
+
+            if (CurrentProjectRb.Checked)
+                PartNameLabel.Text = CurrentProject.PartDescription;
+            else if (PartToExport != null)
+                PartNameLabel.Text = PartToExport.Description;
+            else if(!string.IsNullOrEmpty(PartBrowseTextBox.Value))
             {
-                PartNameLabel.Visible = false;
-                ExportButton.Enabled = false;
+                PartNameLabel.ForeColor = Color.Red;
+                PartNameLabel.Text = "Part not found!";
+            }
+            else
+                PartNameLabel.Text = string.Empty;
+        }
+
+        private void ValidateSelectedPartID()
+        {
+            if (!int.TryParse(PartBrowseTextBox.Value, out int partID) &&
+                !string.IsNullOrEmpty(PartBrowseTextBox.Value))
+            {
+                PartNameLabel.Text = "Invalid part ID";
+                PartNameLabel.ForeColor = Color.Red;
             }
             else
             {
-                if (!int.TryParse(TxtPartID.Text, out int partID))
-                {
-                    PartNameLabel.Text = "Invalid part ID";
-                    PartNameLabel.ForeColor = Color.Red;
-                    PartNameLabel.Visible = true;
-                    ExportButton.Enabled = false;
-                }
+                if (!string.IsNullOrEmpty(PartBrowseTextBox.Value))
+                    PartToExport = FindPartInfo(partID);
                 else
-                {
-                    var partInfo = FindPart(partID);
-                    if (partInfo != null)
-                    {
-                        PartNameLabel.Text = partInfo.Name;
-                        PartNameLabel.ForeColor = SystemColors.ControlText;
-                        PartNameLabel.Visible = true;
-                        ExportButton.Enabled = true;
-                    }
-                    else
-                    {
-                        PartNameLabel.Text = "Part not found";
-                        PartNameLabel.ForeColor = Color.Red;
-                        PartNameLabel.Visible = true;
-                        ExportButton.Enabled = false;
-                    }
-                }
+                    PartToExport = null;
+                UpdateSelectedPartDescription();
             }
+
+            UpdateCanExport();
         }
 
-        private Primitive FindPart(int partID)
-        {
-            try
-            {
-                return PartWrapper.GetPrimitiveInfo(LDDEnvironment.Current, partID);
-            }
-            catch { }
-            return null;
-        }
-
-        private void SearchPartButton_Click(object sender, EventArgs e)
+        private void SelectPartToExport()
         {
             using (var dlg = new SelectBrickDialog())
             {
                 if (dlg.ShowDialog() == DialogResult.OK)
                 {
-                    TxtPartID.Text = dlg.SelectedBrick.PartId.ToString();
+                    PartToExport = dlg.SelectedBrick;
+                    PartBrowseTextBox.Value = dlg.SelectedBrick.PartId.ToString();
                     PartNameLabel.Text = dlg.SelectedBrick.Description;
-                    PartNameLabel.Visible = true;
-                    ExportButton.Enabled = true;
+
+                    UpdateCanExport();
                 }
             }
+        }
+
+        private Models.BrickInfo FindPartInfo(int partID)
+        {
+            try
+            {
+                var brickInfo = BrickListCache.GetBrick(partID);
+                if (brickInfo != null)
+                    return brickInfo;
+
+                var part = PartWrapper.LoadPart(LDDEnvironment.Current, partID, false);
+                if (part != null)
+                    return new BrickInfo(part);
+            }
+            catch { }
+
+            return null;
         }
 
         private void RbAdvancedExport_CheckedChanged(object sender, EventArgs e)
@@ -147,56 +185,125 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         private void ExportButton_Click(object sender, EventArgs e)
         {
-            int.TryParse(TxtPartID.Text, out int partID);
+            //int.TryParse(PartBrowseTextBox.Text, out int partID);
 
-            PartWrapper partInfo = null;
+            //PartWrapper partInfo = null;
 
-            try
-            {
-                partInfo = PartWrapper.LoadPart(LDDEnvironment.Current, partID, true);
-            }
-            catch (Exception ex) 
-            {
-                MessageBox.Show($"An error occured while loading LDD part:\r\n{ex.ToString()}", "Error");
-                return;
-            }
+            //try
+            //{
+            //    partInfo = PartWrapper.LoadPart(LDDEnvironment.Current, partID, true);
+            //}
+            //catch (Exception ex) 
+            //{
+            //    MessageBox.Show($"An error occured while loading LDD part:\r\n{ex.ToString()}", "Error");
+            //    return;
+            //}
 
-            if (partInfo != null)
+            //if (partInfo != null)
+            //{
+            //    var exportOptions = new MeshExportOptions()
+            //    {
+            //        IndividualComponents = RbAdvancedExport.Checked,
+            //        IncludeBones = ChkBones.Enabled && ChkBones.Checked,
+            //        IncludeAltMeshes = ChkAltMeshes.Enabled && ChkAltMeshes.Checked,
+            //        IncludeCollisions = ChkCollisions.Enabled && ChkCollisions.Checked,
+            //        IncludeConnections = ChkConnections.Enabled && ChkConnections.Checked,
+            //        IncludeRoundEdgeData = ChkRoundEdge.Enabled && ChkRoundEdge.Checked
+            //    };
+
+            //    GetSelectedFormatInfo(out string formatID, out string formatExt);
+
+            //    using (var sfd = new SaveFileDialog())
+            //    {
+            //        sfd.FileName = $"{partInfo.PartID}.{formatExt}";
+
+            //        if (sfd.ShowDialog() == DialogResult.OK)
+            //        {
+            //            try
+            //            {
+            //                var assimpScene = MeshConverter.LddPartToAssimp(partInfo, exportOptions);
+            //                AssimpContext.ExportFile(assimpScene, sfd.FileName, formatID, 
+            //                    Assimp.PostProcessSteps.FlipUVs);
+            //                MessageBox.Show("Part exported");
+            //            }
+            //            catch (Exception ex)
+            //            {
+            //                MessageBox.Show($"An error occured while exporting model:\r\n{ex.ToString()}", "Error");
+            //            }
+            //        }
+            //    }
+            //}
+            ExportPartModel();
+        }
+
+        private void ExportPartModel()
+        {
+            var exportOptions = new MeshExportOptions()
             {
-                var exportOptions = new MeshExportOptions()
+                IndividualComponents = RbAdvancedExport.Checked,
+                IncludeBones = ChkBones.Enabled && ChkBones.Checked,
+                IncludeAltMeshes = ChkAltMeshes.Enabled && ChkAltMeshes.Checked,
+                IncludeCollisions = ChkCollisions.Enabled && ChkCollisions.Checked,
+                IncludeConnections = ChkConnections.Enabled && ChkConnections.Checked,
+                IncludeRoundEdgeData = ChkRoundEdge.Enabled && ChkRoundEdge.Checked
+            };
+
+            GetSelectedFormatInfo(out string formatID, out string formatExt);
+            exportOptions.FileFormatID = formatID;
+
+            int currentPartID;
+            if (CurrentProjectRb.Checked)
+                currentPartID = CurrentProject.PartID;
+            else
+                currentPartID = PartToExport.PartId;
+
+            using (var sfd = new SaveFileDialog())
+            {
+                sfd.FileName = $"{currentPartID}.{formatExt}";
+
+                if (sfd.ShowDialog() == DialogResult.OK)
                 {
-                    IndividualComponents = RbAdvancedExport.Checked,
-                    IncludeBones = ChkBones.Enabled && ChkBones.Checked,
-                    IncludeAltMeshes = ChkAltMeshes.Enabled && ChkAltMeshes.Checked,
-                    IncludeCollisions = ChkCollisions.Enabled && ChkCollisions.Checked,
-                    IncludeConnections = ChkConnections.Enabled && ChkConnections.Checked,
-                    IncludeRoundEdgeData = ChkRoundEdge.Enabled && ChkRoundEdge.Checked
-                };
-
-                GetSelectedFormatInfo(out string formatID, out string formatExt);
-
-                using (var sfd = new SaveFileDialog())
-                {
-                    sfd.FileName = $"{partInfo.PartID}.{formatExt}";
-
-                    if (sfd.ShowDialog() == DialogResult.OK)
+                    try
                     {
-                        try
-                        {
-                            var assimpScene = MeshConverter.LddPartToAssimp(partInfo, exportOptions);
-                            AssimpContext.ExportFile(assimpScene, sfd.FileName, formatID, 
-                                Assimp.PostProcessSteps.FlipUVs);
-                            MessageBox.Show("Part exported");
-                        }
-                        catch (Exception ex)
-                        {
-                            MessageBox.Show($"An error occured while exporting model:\r\n{ex.ToString()}", "Error");
-                        }
+                        if (CurrentProjectRb.Checked)
+                            ExportCurrentProject(exportOptions, sfd.FileName);
+                        else
+                            ExportSelectedPart(exportOptions, sfd.FileName);
+
+                        MessageBox.Show("Model exported");
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"An error occured while exporting model:\r\n{ex.ToString()}", "Error");
                     }
                 }
             }
         }
 
-        
+        private void ExportCurrentProject(MeshExportOptions exportOptions, string filepath)
+        {
+            var assimpScene = MeshConverter.PartProjectToAssimp(CurrentProject, exportOptions);
+            AssimpContext.ExportFile(assimpScene, filepath,
+                exportOptions.FileFormatID,
+                Assimp.PostProcessSteps.FlipUVs);
+            assimpScene.Clear();
+        }
+
+        private void ExportSelectedPart(MeshExportOptions exportOptions, string filepath)
+        {
+            var partInfo = PartWrapper.LoadPart(LDDEnvironment.Current, PartToExport.PartId, true);
+            var assimpScene = MeshConverter.LddPartToAssimp(partInfo, exportOptions);
+            AssimpContext.ExportFile(assimpScene, filepath, 
+                exportOptions.FileFormatID,
+                Assimp.PostProcessSteps.FlipUVs);
+            assimpScene.Clear();
+        }
+
+        private void PartToExportRb_CheckedChanged(object sender, EventArgs e)
+        {
+            PartBrowseTextBox.Enabled = SelectPartRb.Checked;
+            UpdateSelectedPartDescription();
+            UpdateCanExport();
+        }
     }
 }

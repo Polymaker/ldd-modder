@@ -35,7 +35,7 @@ namespace LDDModder.BrickEditor.Rendering
 
         private void UpdateScaleTransform()
         {
-            Vector3 scale = PartCollision.GetSize().ToGL() * 2f;
+            var scale = (Vector3)PartCollision.GetSize().ToGL() * 2f;
             ScaleTransform = Matrix4.CreateScale(scale);
             Scale = scale;
             BoundingBox = BBox.FromCenterSize(Vector3.Zero, scale);

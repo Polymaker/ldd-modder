@@ -64,6 +64,7 @@
             this.localizableStringList1 = new LDDModder.BrickEditor.Localization.LocalizableStringList(this.components);
             this.StartLddText = new LDDModder.BrickEditor.Localization.LocalizableString();
             this.RestartLddText = new LDDModder.BrickEditor.Localization.LocalizableString();
+            this.WindowTitle = new LDDModder.BrickEditor.Localization.LocalizableString();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -264,7 +265,8 @@
             // 
             this.localizableStringList1.Items.AddRange(new LDDModder.BrickEditor.Localization.LocalizableString[] {
             this.StartLddText,
-            this.RestartLddText});
+            this.RestartLddText,
+            this.WindowTitle});
             // 
             // StartLddText
             // 
@@ -273,6 +275,10 @@
             // RestartLddText
             // 
             resources.ApplyResources(this.RestartLddText, "RestartLddText");
+            // 
+            // WindowTitle
+            // 
+            resources.ApplyResources(this.WindowTitle, "WindowTitle");
             // 
             // BrickEditorWindow
             // 
@@ -283,6 +289,7 @@
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "BrickEditorWindow";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.BrickEditorWindow_FormClosing);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.BrickEditorWindow_FormClosed);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -325,5 +332,6 @@
         private Localization.LocalizableString StartLddText;
         private Localization.LocalizableString RestartLddText;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
+        private Localization.LocalizableString WindowTitle;
     }
 }

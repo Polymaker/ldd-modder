@@ -7,7 +7,7 @@ namespace LDDModder.LDD.Primitives
 {
     public class PhysicsAttributes : IXmlObject
     {
-        public Matrix3 InertiaTensor { get; set; }
+        public Matrix3d InertiaTensor { get; set; }
 
         public Vector3d CenterOfMass { get; set; }
 
@@ -17,14 +17,14 @@ namespace LDDModder.LDD.Primitives
 
         public void LoadFromXml(XElement element)
         {
-            var inertiaMatrix = new Matrix3();
+            var inertiaMatrix = new Matrix3d();
 
             var inertiaTensor = element.Attribute("inertiaTensor")?.Value ?? string.Empty;
             var matValues = inertiaTensor.Split(',');
             if (matValues.Length == 9)
             {
                 for (int i = 0; i < 9; i++)
-                    inertiaMatrix[i] = float.Parse(matValues[i].Trim(), CultureInfo.InvariantCulture);
+                    inertiaMatrix[i] = double.Parse(matValues[i].Trim(), CultureInfo.InvariantCulture);
             }
             InertiaTensor = inertiaMatrix;
 

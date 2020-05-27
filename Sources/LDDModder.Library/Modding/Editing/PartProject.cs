@@ -496,7 +496,7 @@ namespace LDDModder.Modding.Editing
                     }
                 }
             }
-
+            
             ProjectPath = filename;
         }
 
@@ -915,7 +915,7 @@ namespace LDDModder.Modding.Editing
             var allMeshes = GetAllElements<ModelMesh>().ToList();
             var allRefs = GetAllElements<ModelMeshReference>().ToList();
 
-            foreach(var mesh in allMeshes)
+            foreach (var mesh in allMeshes)
             {
                 if (!allRefs.Any(x => x.MeshID == mesh.ID || x.ModelMesh == mesh))
                 {
