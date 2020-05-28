@@ -192,6 +192,17 @@ namespace LDDModder.LDD.Parts
                 surface.Mesh.Save(Path.Combine(targetPath, surface.GetFileName()));
         }
 
+        public void SavePrimitive(string targetDirectory)
+        {
+            Primitive.Save(Path.Combine(targetDirectory, $"{PartID}.xml"));
+        }
+
+        public void SaveMeshes(string targetDirectory)
+        {
+            foreach (var surface in Surfaces)
+                surface.Mesh.Save(Path.Combine(targetDirectory, surface.GetFileName()));
+        }
+
         #endregion
     }
 }

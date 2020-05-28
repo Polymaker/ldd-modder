@@ -28,6 +28,8 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         public PartProject CurrentProject => ProjectManager.CurrentProject;
 
+        protected FlagManager FlagManager { get; }
+
         //private string TemporaryFolder;
 
         public BrickEditorWindow()
@@ -36,6 +38,7 @@ namespace LDDModder.BrickEditor.UI.Windows
             visualStudioToolStripExtender1.SetStyle(menuStrip1, 
                 VisualStudioToolStripExtender.VsVersion.Vs2015,
                 DockPanelControl.Theme);
+            FlagManager = new FlagManager();
         }
 
         protected override void OnLoad(EventArgs e)
@@ -47,7 +50,7 @@ namespace LDDModder.BrickEditor.UI.Windows
             ProjectManager.UndoHistoryChanged += ProjectManager_UndoHistoryChanged;
             ProjectManager.ValidationFinished += ProjectManager_ValidationFinished;
             ProjectManager.GenerationFinished += ProjectManager_GenerationFinished;
-
+            
             InitialCheckUp();
 
             ResourceHelper.LoadPlatformsAndCategories();
@@ -434,7 +437,5 @@ namespace LDDModder.BrickEditor.UI.Windows
         {
             ProjectManager.SaveWorkingProject();
         }
-
-        
     }
 }

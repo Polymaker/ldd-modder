@@ -15,6 +15,7 @@ namespace LDDModder.LDD
         public const string APP_DIR = "LEGO Company\\LEGO Digital Designer";
         public const string USER_CREATION_FOLDER = "LEGO Creations";
 
+        private static LDDEnvironment _InstalledEnvironment;
         private int LifStatusFlags;
         //private string _CustomAssetsPath;
         //private string _CustomDatabasePath;
@@ -27,11 +28,27 @@ namespace LDDModder.LDD
 
         public bool DatabaseExtracted => IsLifExtracted(LddLif.DB);
 
-        public static LDDEnvironment Current { get; private set; }
+        public static LDDEnvironment InstalledEnvironment
+        {
+            get
+            {
+                if (!HasInitialized)
+                    Initialize();
+                return _InstalledEnvironment;
+            }
+        }
 
-        public static bool IsInstalled => !string.IsNullOrEmpty(Current?.ProgramFilesPath);
+        public static LDDEnvironment CustomEnvironment { get; set; }
+
+        public static LDDEnvironment Current => CustomEnvironment ?? InstalledEnvironment;
+
+        public bool IsValidInstall { get; private set; }
+
+        public static bool IsInstalled => InstalledEnvironment?.IsValidInstall ?? false;
 
         public static bool HasInitialized { get; private set; }
+
+        private static object InitializationLock = new object();
 
         protected LDDEnvironment()
         {
@@ -44,22 +61,39 @@ namespace LDDModder.LDD
             CheckLifStatus();
         }
 
-        public static void Initialize()
+        public static LDDEnvironment Create(string programFilesPath, string applicationDataPath)
         {
-            var lddEnv = GetInstalledEnvironment();
-
-            if (lddEnv != null)
+            var lddEnv = new LDDEnvironment()
             {
-                lddEnv.CheckLifStatus();
-                Current = lddEnv;
-            }
-            
-            HasInitialized = true;
+                ProgramFilesPath = programFilesPath,
+                ApplicationDataPath = applicationDataPath,
+            };
+            lddEnv.Validate();
+            return lddEnv;
         }
 
-        public static LDDEnvironment GetInstalledEnvironment()
+        public static void Initialize()
+        {
+            lock (InitializationLock)
+            {
+                if (HasInitialized)
+                    return;
+
+                _InstalledEnvironment = FindInstalledEnvironment();
+                HasInitialized = true;
+            }
+        }
+
+        public void Validate()
+        {
+            IsValidInstall = File.Exists(Path.Combine(ProgramFilesPath, EXE_NAME));
+            CheckLifStatus();
+        }
+
+        public static LDDEnvironment FindInstalledEnvironment()
         {
             string installDir = FindInstallFolder();
+
             if (!string.IsNullOrEmpty(installDir))
             {
                 var lddEnv = new LDDEnvironment()
@@ -68,29 +102,24 @@ namespace LDDModder.LDD
                     ApplicationDataPath = FindAppDataFolder(),
                     UserCreationPath = FindUserFolder()
                 };
-
+                lddEnv.Validate();
                 return lddEnv;
             }
 
             return null;
         }
 
-        public static void SetEnvironment(LDDEnvironment environment)
+        public static void SetOverride(LDDEnvironment environment)
         {
-            Current = environment;
+            CustomEnvironment = environment;
         }
 
-        public static void SetEnvironmentPaths(string programFilesPath, string applicationDataPath)
+        public void SetEnvironmentPaths(string programFilesPath, string applicationDataPath)
         {
-            if (Current == null)
-                Current = new LDDEnvironment();
-
-            string exePath = Path.Combine(programFilesPath, EXE_NAME);
-            if (!File.Exists(exePath))
-                programFilesPath = string.Empty;
-
-            Current.ProgramFilesPath = programFilesPath;
-            Current.ApplicationDataPath = applicationDataPath;
+            ProgramFilesPath = programFilesPath;
+            ApplicationDataPath = applicationDataPath;
+            IsValidInstall = File.Exists(Path.Combine(programFilesPath, EXE_NAME));
+            LifStatusFlags = 0;
         }
 
         public static string FindInstallFolder()
@@ -130,8 +159,6 @@ namespace LDDModder.LDD
         public void CheckLifStatus()
         {
             LifStatusFlags = 0;
-            //DatabaseExtracted = false;
-
 
             foreach (LddLif lif in Enum.GetValues(typeof(LddLif)))
             {

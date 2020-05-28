@@ -60,6 +60,8 @@
             this.StartLddMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             this.Tools_SettingsMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.SelectedBuildLabel = new System.Windows.Forms.ToolStripLabel();
+            this.BuildConfigComboBox = new System.Windows.Forms.ToolStripComboBox();
             this.AutoSaveTimer = new System.Windows.Forms.Timer(this.components);
             this.localizableStringList1 = new LDDModder.BrickEditor.Localization.LocalizableStringList(this.components);
             this.StartLddText = new LDDModder.BrickEditor.Localization.LocalizableString();
@@ -86,7 +88,9 @@
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.editToolStripMenuItem,
-            this.ToolsMenuItem});
+            this.ToolsMenuItem,
+            this.SelectedBuildLabel,
+            this.BuildConfigComboBox});
             resources.ApplyResources(this.menuStrip1, "menuStrip1");
             this.menuStrip1.Name = "menuStrip1";
             // 
@@ -256,6 +260,18 @@
             resources.ApplyResources(this.Tools_SettingsMenu, "Tools_SettingsMenu");
             this.Tools_SettingsMenu.Click += new System.EventHandler(this.Settings_EnvironmentMenu_Click);
             // 
+            // SelectedBuildLabel
+            // 
+            this.SelectedBuildLabel.Margin = new System.Windows.Forms.Padding(40, 1, 0, 2);
+            this.SelectedBuildLabel.Name = "SelectedBuildLabel";
+            resources.ApplyResources(this.SelectedBuildLabel, "SelectedBuildLabel");
+            // 
+            // BuildConfigComboBox
+            // 
+            this.BuildConfigComboBox.Name = "BuildConfigComboBox";
+            resources.ApplyResources(this.BuildConfigComboBox, "BuildConfigComboBox");
+            this.BuildConfigComboBox.SelectedIndexChanged += new System.EventHandler(this.BuildConfigComboBox_SelectedIndexChanged);
+            // 
             // AutoSaveTimer
             // 
             this.AutoSaveTimer.Interval = 15000;
@@ -327,11 +343,13 @@
         private System.Windows.Forms.ToolStripMenuItem EditMenu_Undo;
         private System.Windows.Forms.ToolStripMenuItem EditMenu_Redo;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
+        private System.Windows.Forms.ToolStripLabel SelectedBuildLabel;
         private System.Windows.Forms.Timer AutoSaveTimer;
         private Localization.LocalizableStringList localizableStringList1;
         private Localization.LocalizableString StartLddText;
         private Localization.LocalizableString RestartLddText;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
         private Localization.LocalizableString WindowTitle;
+        private System.Windows.Forms.ToolStripComboBox BuildConfigComboBox;
     }
 }

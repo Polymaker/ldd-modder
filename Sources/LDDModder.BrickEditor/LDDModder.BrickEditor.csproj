@@ -153,6 +153,7 @@
     <Compile Include="ProjectHandling\Extensions\BoneElementExtension.cs" />
     <Compile Include="ProjectHandling\Extensions\ModelElementExtension.cs" />
     <Compile Include="ProjectHandling\IProjectManager.cs" />
+    <Compile Include="ProjectHandling\ProjectBuildEventArgs.cs" />
     <Compile Include="ProjectHandling\ProjectManager.cs" />
     <Compile Include="Models\Navigation\ProjectTreeNodeCollection.cs" />
     <Compile Include="ProjectHandling\Extensions\FemaleStudModelExtension.cs" />
@@ -170,6 +171,7 @@
       <DependentUpon>Messages.resx</DependentUpon>
     </Compile>
     <Compile Include="Settings\BuildConfiguration.cs" />
+    <Compile Include="Settings\ProjectBuildSettings.cs" />
     <Compile Include="UI\Controls\CollapsiblePanel.cs">
       <SubType>Component</SubType>
     </Compile>

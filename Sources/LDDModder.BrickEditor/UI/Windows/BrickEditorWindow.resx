@@ -123,13 +123,13 @@
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="DockPanelControl.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 24</value>
+    <value>0, 27</value>
   </data>
   <data name="DockPanelControl.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>6, 6, 6, 6</value>
   </data>
   <data name="DockPanelControl.Size" type="System.Drawing.Size, System.Drawing">
-    <value>984, 737</value>
+    <value>984, 734</value>
   </data>
   <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="DockPanelControl.TabIndex" type="System.Int32, mscorlib">
@@ -232,7 +232,7 @@
     <value>Close Project</value>
   </data>
   <data name="fileToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>37, 20</value>
+    <value>37, 23</value>
   </data>
   <data name="fileToolStripMenuItem.Text" xml:space="preserve">
     <value>File</value>
@@ -286,7 +286,7 @@
     <value>Generate LDD Files</value>
   </data>
   <data name="editToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>39, 20</value>
+    <value>39, 23</value>
   </data>
   <data name="editToolStripMenuItem.Text" xml:space="preserve">
     <value>Edit</value>
@@ -316,16 +316,25 @@
     <value>Settings</value>
   </data>
   <data name="ToolsMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>46, 20</value>
+    <value>46, 23</value>
   </data>
   <data name="ToolsMenuItem.Text" xml:space="preserve">
     <value>Tools</value>
+  </data>
+  <data name="SelectedBuildLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>82, 20</value>
+  </data>
+  <data name="SelectedBuildLabel.Text" xml:space="preserve">
+    <value>Output files in:</value>
+  </data>
+  <data name="BuildConfigComboBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>121, 23</value>
   </data>
   <data name="menuStrip1.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 0</value>
   </data>
   <data name="menuStrip1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>984, 24</value>
+    <value>984, 27</value>
   </data>
   <data name="menuStrip1.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -371,9 +380,6 @@
   </data>
   <data name="$this.Font" type="System.Drawing.Font, System.Drawing">
     <value>Segoe UI, 8.25pt</value>
-  </data>
-  <data name="$this.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>LDD Brick Studio</value>
@@ -546,6 +552,18 @@
   <data name="&gt;&gt;Tools_SettingsMenu.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;SelectedBuildLabel.Name" xml:space="preserve">
+    <value>SelectedBuildLabel</value>
+  </data>
+  <data name="&gt;&gt;SelectedBuildLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;BuildConfigComboBox.Name" xml:space="preserve">
+    <value>BuildConfigComboBox</value>
+  </data>
+  <data name="&gt;&gt;BuildConfigComboBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;AutoSaveTimer.Name" xml:space="preserve">
     <value>AutoSaveTimer</value>
   </data>
@@ -556,25 +574,25 @@
     <value>localizableStringList1</value>
   </data>
   <data name="&gt;&gt;localizableStringList1.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableStringList, Brick Studio, Version=1.0.0.28164, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableStringList, Brick Studio, Version=1.0.0.18286, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;StartLddText.Name" xml:space="preserve">
     <value>StartLddText</value>
   </data>
   <data name="&gt;&gt;StartLddText.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.0.28164, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.0.18286, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;RestartLddText.Name" xml:space="preserve">
     <value>RestartLddText</value>
   </data>
   <data name="&gt;&gt;RestartLddText.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.0.28164, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.0.18286, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;WindowTitle.Name" xml:space="preserve">
     <value>WindowTitle</value>
   </data>
   <data name="&gt;&gt;WindowTitle.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.0.28164, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.0.18286, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>BrickEditorWindow</value>

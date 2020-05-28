@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,13 +10,35 @@ namespace LDDModder.BrickEditor.Settings
 {
     public class BuildConfiguration
     {
-        //[JsonProperty("name")]
+        [JsonProperty("name", NullValueHandling = NullValueHandling.Ignore)]
         public string Name { get; set; }
-        //[JsonProperty("output")]
+
+        [JsonProperty("outputPath", NullValueHandling = NullValueHandling.Ignore)]
         public string OutputPath { get; set; }
-        //[JsonProperty("output")]
-        public bool CreateZip { get; set; }
-        //[JsonProperty("useLOD0")]
-        public bool MeshInLOD0 { get; set; }
+        
+        [JsonProperty("useLOD0Subdirectory")]
+        public bool MeshBesideXml { get; set; }
+
+        [JsonProperty("confirmOverwrite")]
+        public bool ConfirmOverwrite { get; set; }
+
+        //[JsonProperty("compress", DefaultValueHandling = DefaultValueHandling.Ignore), DefaultValue(false)]
+        //public bool CreateZip { get; set; }
+
+        [JsonIgnore]
+        public bool IsDefault { get; set; }
+
+        [JsonIgnore]
+        public int InternalFlag { get; set; }
+
+        public bool ShouldSerializeName()
+        {
+            return InternalFlag == 0;
+        }
+
+        //public bool ShouldSerializeName()
+        //{
+        //    return InternalFlag == 0;
+        //}
     }
 }

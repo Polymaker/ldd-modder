@@ -1,5 +1,6 @@
 ﻿using LDDModder.LDD;
 using LDDModder.Modding.Editing;
+using LDDModder.Utilities;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -18,6 +19,8 @@ namespace LDDModder.BrickEditor.Settings
 
         public static AppSettings Current { get; private set; }
 
+        public static LDDEnvironment LddInstall { get; private set; }
+
         public static int MaximumRecentFiles { get; set; } = 10;
 
         static SettingsManager()
@@ -31,6 +34,9 @@ namespace LDDModder.BrickEditor.Settings
             if (!Directory.Exists(AppDataFolder))
                 Directory.CreateDirectory(AppDataFolder);
 
+            if (LddInstall == null)
+                LddInstall = LDDEnvironment.InstalledEnvironment;
+
             LoadSettings();
         }
 
@@ -38,40 +44,66 @@ namespace LDDModder.BrickEditor.Settings
         {
             string settingsPath = Path.Combine(AppDataFolder, AppSettingsFileName);
 
-            if (!LDDEnvironment.HasInitialized)
-                LDDEnvironment.Initialize();
-
             if (File.Exists(settingsPath))
             {
                 try
                 {
                     Current = JsonConvert.DeserializeObject<AppSettings>(File.ReadAllText(settingsPath));
-
-                    LDDEnvironment.SetEnvironmentPaths(Current.LddProgramFilesPath, Current.LddApplicationDataPath);
                 }
                 catch
                 {
 
                 }
             }
+
+
+            if (Current == null)
+                Current = AppSettings.CreateDefault();
+            
+            Current.InitializeDefaultValues();
+
+            ValidateLddPaths();
+
+            SaveSettings();
+        }
+
+        private static void ValidateLddPaths()
+        {
+            bool sameAsInstalled = false;
+
+            if (LDDEnvironment.IsInstalled)
+            {
+                sameAsInstalled = StringUtils.EqualsIC(
+                        Current.LddApplicationDataPath,
+                        LDDEnvironment.InstalledEnvironment.ApplicationDataPath
+                    ) &&
+                    StringUtils.EqualsIC(
+                        Current.LddProgramFilesPath,
+                        LDDEnvironment.InstalledEnvironment.ProgramFilesPath
+                    );
+            }
+
+            if (sameAsInstalled)
+                LDDEnvironment.SetOverride(null);
             else
             {
-                
-                Current = AppSettings.CreateDefault();
-                SaveSettings();
+                var custom = LDDEnvironment.Create(Current.LddProgramFilesPath, Current.LddApplicationDataPath);
+                LDDEnvironment.SetOverride(custom);
             }
         }
 
         public static void SaveSettings()
         {
             string settingsPath = Path.Combine(AppDataFolder, AppSettingsFileName);
+
+
             using (var fs = File.Open(settingsPath, FileMode.Create))
             using (var sw = new StreamWriter(fs))
                 sw.Write(JsonConvert.SerializeObject(Current, Formatting.Indented));
 
-            LDDEnvironment.SetEnvironmentPaths(
-                Current.LddProgramFilesPath, 
-                Current.LddApplicationDataPath);
+            //LDDEnvironment.SetEnvironmentPaths(
+            //    Current.LddProgramFilesPath, 
+            //    Current.LddApplicationDataPath);
         }
 
         public static void AddRecentProject(PartProject project, bool isSavedFile = false)
@@ -99,6 +131,23 @@ namespace LDDModder.BrickEditor.Settings
                 SaveSettings();
             }
         }
+
+        #region Project Configuration
+
+        public static IEnumerable<BuildConfiguration> GetBuildConfigurations()
+        {
+            if (LddInstall.IsValidInstall)
+                yield return Current.BuildSettings.LDD;
+
+            yield return Current.BuildSettings.Manual;
+
+            foreach (var cfg in Current.BuildSettings.UserDefined)
+                yield return cfg;
+        }
+
+
+        #endregion
+
 
         public static bool IsWorkspaceDefined => !string.IsNullOrEmpty(Current.ProjectWorkspace);
     }

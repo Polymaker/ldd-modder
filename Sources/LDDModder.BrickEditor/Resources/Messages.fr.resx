@@ -155,4 +155,10 @@ Voir le panneau de validation pour plus d'informations.</value>
   <data name="Caption_LddPartGeneration" xml:space="preserve">
     <value>Génération des fichiers de brique LDD</value>
   </data>
+  <data name="BuildConfig_LDD" xml:space="preserve">
+    <value>LDD database</value>
+  </data>
+  <data name="BuildConfig_Browse" xml:space="preserve">
+    <value>Choisir un dossier</value>
+  </data>
 </root>

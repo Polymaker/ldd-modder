@@ -118,6 +118,13 @@ namespace LDDModder.BrickEditor.UI.Panels
             UpdateStatusButtons();
         }
 
+        public void ShowBuildMessages(IEnumerable<ValidationMessage> messages)
+        {
+            ValidationMessageList.ClearObjects();
+            ValidationMessageList.AddObjects(messages.ToList());
+            UpdateStatusButtons();
+        }
+
         private void UpdateStatusButtons()
         {
             int errorCount = 0;

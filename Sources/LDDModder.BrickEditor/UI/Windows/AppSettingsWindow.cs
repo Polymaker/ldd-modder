@@ -18,6 +18,14 @@ namespace LDDModder.BrickEditor.UI.Windows
     {
         private bool LoadingSettings;
 
+        public enum SettingTab
+        {
+            LddPaths,
+            ProjectSettings
+        }
+
+        public SettingTab StartupTab { get; set; }
+
         public AppSettingsWindow()
         {
             InitializeComponent();
@@ -82,8 +90,6 @@ namespace LDDModder.BrickEditor.UI.Windows
             UpdateLifsStatus(tmpEnv);
         }
 
-
-
         private void CloseButton_Click(object sender, EventArgs e)
         {
             DialogResult = DialogResult.OK;
@@ -133,7 +139,7 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         private void FindEnvironmentButton_Click(object sender, EventArgs e)
         {
-            var defaultEnv = LDD.LDDEnvironment.GetInstalledEnvironment();
+            var defaultEnv = LDD.LDDEnvironment.FindInstalledEnvironment();
 
             if (defaultEnv != null)
             {

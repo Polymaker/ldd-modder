@@ -177,4 +177,7 @@
   <data name="Tools_SettingsMenu.Text" xml:space="preserve">
     <value>Paramètres</value>
   </data>
+  <data name="SelectedBuildLabel.Text" xml:space="preserve">
+    <value>Générer les fichiers dans:</value>
+  </data>
 </root>

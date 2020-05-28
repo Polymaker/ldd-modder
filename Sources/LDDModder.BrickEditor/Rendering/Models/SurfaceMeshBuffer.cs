@@ -126,7 +126,7 @@ namespace LDDModder.BrickEditor.Rendering
         public void Render(Camera camera, MeshRenderMode renderMode)
         {
             var visibleMeshes = MeshModels.Where(x => x.Visible)
-                .OrderByDescending(x=>x.IsSelected).ToList();
+                .OrderByDescending(x => x.IsSelected).ToList();
 
             if (!visibleMeshes.Any())
                 return;

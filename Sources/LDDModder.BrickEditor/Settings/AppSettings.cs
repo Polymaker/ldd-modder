@@ -9,20 +9,21 @@ namespace LDDModder.BrickEditor.Settings
 {
     public class AppSettings
     {
-        [JsonProperty/*("ldd.paths.programfiles")*/]
+        [JsonProperty("ldd.programFilesPath")]
         public string LddProgramFilesPath { get; set; }
-        [JsonProperty/*("ldd.paths.programfiles")*/]
+        [JsonProperty("ldd.appDataPath")]
         public string LddApplicationDataPath { get; set; }
-        [JsonProperty/*("workspace_folder")*/]
+
+        [JsonProperty("workspace.folder")]
         public string ProjectWorkspace { get; set; }
 
-        [JsonProperty/*("build_configs")*/]
-        public List<BuildConfiguration> BuildConfigurations { get; set; }
+        [JsonProperty("build.configurations")]
+        public ProjectBuildSettings BuildSettings { get; set; }
 
-        [JsonProperty]
+        [JsonProperty("currentProjectPath")]
         public RecentFileInfo LastOpenProject { get; set; }
 
-        [JsonProperty/*("recent_files")*/]
+        [JsonProperty("file.history")]
         public List<RecentFileInfo> RecentProjectFiles { get; set; }
 
         //[JsonProperty("Display")]
@@ -30,18 +31,35 @@ namespace LDDModder.BrickEditor.Settings
 
         public AppSettings()
         {
-            BuildConfigurations = new List<BuildConfiguration>();
             RecentProjectFiles = new List<RecentFileInfo>();
+            BuildSettings = new ProjectBuildSettings();
+        }
+
+        public static AppSettings CreateDefault(LDD.LDDEnvironment lddEnvironment)
+        {
+            var settings = new AppSettings()
+            {
+                LddApplicationDataPath = lddEnvironment.ApplicationDataPath,
+                LddProgramFilesPath = lddEnvironment.ProgramFilesPath
+            };
+            return settings;
         }
 
         public static AppSettings CreateDefault()
         {
-            var currEnv = LDD.LDDEnvironment.GetInstalledEnvironment();
-            return new AppSettings()
+            return CreateDefault(LDD.LDDEnvironment.InstalledEnvironment);
+        }
+
+        public void InitializeDefaultValues()
+        {
+            if (string.IsNullOrEmpty(LddApplicationDataPath) ||
+                string.IsNullOrEmpty(LddProgramFilesPath))
             {
-                LddApplicationDataPath = currEnv?.ApplicationDataPath,
-                LddProgramFilesPath = currEnv?.ProgramFilesPath
-            };
+                var currEnv = LDD.LDDEnvironment.InstalledEnvironment;
+                LddApplicationDataPath = currEnv?.ApplicationDataPath;
+                LddProgramFilesPath = currEnv?.ProgramFilesPath;
+            }
+            BuildSettings.InitializeDefaults();
         }
     }
 }

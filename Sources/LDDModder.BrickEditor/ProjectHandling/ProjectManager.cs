@@ -1,6 +1,9 @@
 ﻿using LDDModder.BrickEditor.Models.Navigation;
 using LDDModder.BrickEditor.Rendering;
 using LDDModder.BrickEditor.Resources;
+using LDDModder.BrickEditor.Settings;
+using LDDModder.LDD;
+using LDDModder.LDD.Parts;
 using LDDModder.Modding.Editing;
 using System;
 using System.Collections.Generic;
@@ -8,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace LDDModder.BrickEditor.ProjectHandling
 {
@@ -44,7 +48,6 @@ namespace LDDModder.BrickEditor.ProjectHandling
         public IList<PartElement> SelectedElements => _SelectedElements.AsReadOnly();
 
         public ProjectTreeNodeCollection NavigationTreeNodes { get; private set; }
-
 
         #region Events
 
@@ -543,40 +546,80 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
         public event EventHandler GenerationStarted;
 
-        public event EventHandler GenerationFinished;
+        public event EventHandler<ProjectBuildEventArgs> GenerationFinished;
 
         //TODO: implement destination folder parameter to allow saving somewhere without overwritting LDD files
-        public void GenerateLddFiles(string targetDirectory = null)
+        public PartWrapper GenerateLddFiles()
         {
-            if (IsProjectOpen)
+            if (!IsProjectOpen)
+                return null;
+
+            IsGeneratingFiles = true;
+            GenerationSuccessful = false;
+            GenerationStarted?.Invoke(this, EventArgs.Empty);
+            PartWrapper generatedPart = null;
+            var messages = new List<ValidationMessage>();
+
+            try
             {
-                IsGeneratingFiles = true;
-                GenerationSuccessful = false;
-                GenerationStarted?.Invoke(this, EventArgs.Empty);
-
-                try
-                {
-                    var lddPart = CurrentProject.GenerateLddPart();
-                    lddPart.ComputeEdgeOutlines();
-
-                    if (string.IsNullOrEmpty(targetDirectory))
-                        lddPart.SaveToLdd(LDD.LDDEnvironment.Current);
-                    else
-                        lddPart.SaveToDirectory(targetDirectory);
-
-                    GenerationSuccessful = true;
-                }
-                catch (Exception ex)
-                {
-                    _ValidationMessages.Add(new ValidationMessage("PROJECT", "UNHANDLED_EXCEPTION", ValidationLevel.Error)
-                    {
-                        Message = ex.ToString()
-                    });
-                }
-
-                IsGeneratingFiles = false;
-                GenerationFinished?.Invoke(this, EventArgs.Empty);
+                generatedPart = CurrentProject.GenerateLddPart();
+                generatedPart.ComputeEdgeOutlines();
+                GenerationSuccessful = true;
             }
+            catch (Exception ex)
+            {
+                messages.Add(new ValidationMessage("PROJECT", "UNHANDLED_EXCEPTION", ValidationLevel.Error)
+                {
+                    Message = ex.ToString()
+                });
+            }
+
+            IsGeneratingFiles = false;
+
+            GenerationFinished?.Invoke(this, 
+                new ProjectBuildEventArgs(
+                    generatedPart, 
+                GenerationSuccessful,
+                messages
+                )
+            );
+
+            return generatedPart;
+        }
+
+        public string ExpandVariablePath(string path)
+        {
+            string result = path;
+
+            if (result.Contains("$(LddAppData)"))
+            {
+                if (string.IsNullOrEmpty(LDDEnvironment.Current.ApplicationDataPath) || 
+                    !Directory.Exists(LDDEnvironment.Current.ApplicationDataPath))
+                    throw new ArgumentException("Could not find LDD AppData directory");
+                result = result.Replace("$(LddAppData)", LDDEnvironment.Current.ApplicationDataPath);
+            }
+
+            if (result.Contains("$(ProjectDir)"))
+            {
+                if (!IsProjectOpen || !CurrentProject.IsLoadedFromDisk)
+                    throw new ArgumentException("Project is not saved to disk.");
+                result = result.Replace("$(ProjectDir)", Path.GetDirectoryName(CurrentProject.ProjectPath));
+            }
+
+            if (result.Contains("$(WorkspaceDir)"))
+            {
+                if (!SettingsManager.IsWorkspaceDefined)
+                    throw new ArgumentException("Workspace not defined!");
+                result = result.Replace("$(WorkspaceDir)", SettingsManager.Current.ProjectWorkspace);
+            }
+            if (result.Contains("$(PartID)"))
+            {
+                if (CurrentProject.PartID == 0)
+                    throw new ArgumentException("Part ID is not defined");
+                result = result.Replace("$(PartID)", CurrentProject.PartID.ToString());
+            }
+
+            return result;
         }
 
         #endregion
