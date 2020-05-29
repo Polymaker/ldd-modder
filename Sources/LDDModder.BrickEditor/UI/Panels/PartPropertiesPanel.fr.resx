@@ -117,57 +117,55 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="LddInstallNotFound" xml:space="preserve">
-    <value>LDD ne semble pas être installé.
-Certaines fonctionnalités ne fonctionneront pas correctement.</value>
+  <data name="$this.Text" xml:space="preserve">
+    <value>Propriétés de la pièce</value>
   </data>
-  <data name="Error_OpeningFile" xml:space="preserve">
-    <value>Une erreur s'est produite lors de l'ouverture d'un fichier.</value>
+  <data name="CalcBoundingButton.Text" xml:space="preserve">
+    <value>Calculer</value>
   </data>
-  <data name="Caption_OpeningFile" xml:space="preserve">
-    <value>Ouverture de fichier</value>
+  <data name="CalcGeomBoundingButton.Text" xml:space="preserve">
+    <value>Calculer</value>
   </data>
-  <data name="Error_OpeningProject" xml:space="preserve">
-    <value>ne erreur s'est produite lors de l'ouverture du projet.</value>
+  <data name="collapsiblePanel1.Text" xml:space="preserve">
+    <value>Délimitations</value>
   </data>
-  <data name="Error_CreatingProject" xml:space="preserve">
-    <value>Une erreur s'est produite lors de la création du projet.</value>
+  <data name="collapsiblePanel2.Text" xml:space="preserve">
+    <value>Description</value>
   </data>
-  <data name="Caption_OpeningProject" xml:space="preserve">
-    <value>Ouverture d'un projet</value>
+  <data name="collapsiblePanel3.Text" xml:space="preserve">
+    <value>Propriétés physiques</value>
   </data>
-  <data name="Message_SaveChanges" xml:space="preserve">
-    <value>Voulez-vous enregistrer les modifications faites?</value>
+  <data name="LabelAliases.Text" xml:space="preserve">
+    <value>Alias</value>
   </data>
-  <data name="Message_SaveNewProject" xml:space="preserve">
-    <value>Voulez-vous enregistrer le projet?</value>
+  <data name="LabelBounding.Text" xml:space="preserve">
+    <value>Délimitation</value>
   </data>
-  <data name="Caption_SaveBeforeClose" xml:space="preserve">
-    <value>Enregistrement du projet</value>
+  <data name="LabelGeomBounding.Text" xml:space="preserve">
+    <value>Délim. géométrie</value>
   </data>
-  <data name="Message_RecoverProject" xml:space="preserve">
-    <value>TODO</value>
+  <data name="LabelMass.Text" xml:space="preserve">
+    <value>Masse</value>
   </data>
-  <data name="Message_FileGenerationError" xml:space="preserve">
-    <value>Impossible de générer les fichiers de brique LDD.
-Voir le panneau de validation pour plus d'informations.</value>
+  <data name="LabelInertiaTensor.Text" xml:space="preserve">
+    <value>Tenseur d'inertie</value>
   </data>
-  <data name="Caption_LddPartGeneration" xml:space="preserve">
-    <value>Génération des fichiers de brique LDD</value>
+  <data name="LabelPartID.Text" xml:space="preserve">
+    <value>ID</value>
   </data>
-  <data name="BuildConfig_LDD" xml:space="preserve">
-    <value>LDD database</value>
+  <data name="LabelPlatform.Text" xml:space="preserve">
+    <value>Platforme</value>
   </data>
-  <data name="BuildConfig_Browse" xml:space="preserve">
-    <value>Choisir un dossier</value>
+  <data name="LabelFriction.Text" xml:space="preserve">
+    <value>Type de friction</value>
   </data>
-  <data name="BuildConfig_Manage" xml:space="preserve">
-    <value>Gérer les configurations...</value>
+  <data name="LabelDescription.Text" xml:space="preserve">
+    <value>Description</value>
   </data>
-  <data name="LddConfigInvalid" xml:space="preserve">
-    <value>L'environnement LDD configuré n'est pas valide mais LDD semble être correctement installé.</value>
+  <data name="LabelCenterOfMass.Text" xml:space="preserve">
+    <value>Centre de masse</value>
   </data>
-  <data name="Caption_StartupValidations" xml:space="preserve">
-    <value>Validations de démarrage</value>
+  <data name="LabelCategory.Text" xml:space="preserve">
+    <value>Catégorie</value>
   </data>
 </root>

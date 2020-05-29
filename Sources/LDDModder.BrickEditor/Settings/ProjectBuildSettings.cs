@@ -30,27 +30,27 @@ namespace LDDModder.BrickEditor.Settings
             {
                 LDD = new BuildConfiguration()
                 {
-                    ConfirmOverwrite = true,
-                    InternalFlag = 1,
-                    OutputPath = "$(LddAppData)\\db\\",
-                    Name = Messages.BuildConfig_LDD
+                    ConfirmOverwrite = true
                 };
             }
-            else
-                LDD.InternalFlag = 1;
+
+            LDD.OutputPath = "$(LddAppData)\\db\\";
+            LDD.Name = Messages.BuildConfig_LDD;
+            LDD.InternalFlag = 1;
+            LDD.LOD0Subdirectory = true;
 
             if (Manual == null)
             {
                 Manual = new BuildConfiguration()
                 {
                     ConfirmOverwrite = true,
-                    InternalFlag = 2,
-                    OutputPath = string.Empty,
-                    Name = Messages.BuildConfig_Browse
+                    LOD0Subdirectory = true
                 };
             }
-            else
-                Manual.InternalFlag = 2;
+
+            Manual.OutputPath = string.Empty;
+            Manual.Name = Messages.BuildConfig_Browse;
+            Manual.InternalFlag = 2;
         }
 
         

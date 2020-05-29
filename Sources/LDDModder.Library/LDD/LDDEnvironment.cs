@@ -48,7 +48,7 @@ namespace LDDModder.LDD
 
         public static bool HasInitialized { get; private set; }
 
-        private static object InitializationLock = new object();
+        private static readonly object InitializationLock = new object();
 
         protected LDDEnvironment()
         {

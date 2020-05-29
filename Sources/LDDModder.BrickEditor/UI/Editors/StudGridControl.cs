@@ -949,10 +949,16 @@ namespace LDDModder.BrickEditor.UI.Editors
         {
             if (VScrollBar.Visible)
             {
-                int newVal = Math.Max(0, Math.Min(VScrollBar.Maximum, VScrollBar.Value + Math.Sign(e.Delta)));
-                VScrollBar.Value = newVal;
-                VScrollBar_Scroll(VScrollBar, new ScrollEventArgs(ScrollEventType.SmallIncrement, newVal));
+                int scrollMax = VScrollBar.Maximum - VScrollBar.LargeChange + 1;
+                int newScrollOffset = Math.Max(0, Math.Min(scrollMax, VScrollBar.Value - Math.Sign(e.Delta)));
+                if (ScrollOffset.Y != newScrollOffset)
+                {
+                    ScrollOffset.Y = newScrollOffset;
+                    UpdateScrollBarsValues();
+                    Invalidate();
+                }
             }
+
             base.OnMouseWheel(e);
         }
 

@@ -306,7 +306,7 @@
             this.collapsiblePanel4.DisplayStyle = LDDModder.BrickEditor.UI.Controls.CollapsiblePanel.HeaderDisplayStyle.Button;
             resources.ApplyResources(this.collapsiblePanel4, "collapsiblePanel4");
             this.collapsiblePanel4.Name = "collapsiblePanel4";
-            this.collapsiblePanel4.PanelHeight = 26;
+            this.collapsiblePanel4.PanelHeight = 18;
             // 
             // flowLayoutPanel1
             // 
@@ -323,6 +323,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.flowLayoutPanel1);
             this.Name = "PartPropertiesPanel";
+            this.SizeChanged += new System.EventHandler(this.PartPropertiesPanel_SizeChanged);
             this.collapsiblePanel1.ContentPanel.ResumeLayout(false);
             this.collapsiblePanel1.ContentPanel.PerformLayout();
             this.collapsiblePanel1.ResumeLayout(false);

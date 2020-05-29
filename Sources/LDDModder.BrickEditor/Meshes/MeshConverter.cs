@@ -328,24 +328,6 @@ namespace LDDModder.BrickEditor.Meshes
             return meshNode;
         }
 
-        //private static Mesh CreateBoxMesh(LDDModder.Simple3D.Vector3 size)
-        //{
-        //    var assimpMesh = new Mesh(Assimp.PrimitiveType.Polygon);
-        //    var bbox = Rendering.BBox.FromCenterSize(OpenTK.Vector3.Zero, size.ToGL());
-        //    var vertices = bbox.GetCorners();
-        //    var bboxIndices = new List<int>();
-        //    assimpMesh.Vertices.AddRange(vertices.Select(v => v.ToAssimp()));
-
-        //    assimpMesh.Faces.Add(new Face(new int[] { 0, 2, 3, 1 }));
-        //    assimpMesh.Faces.Add(new Face(new int[] { 0, 6, 4, 2 }));
-        //    assimpMesh.Faces.Add(new Face(new int[] { 0, 1, 7, 6 }));
-        //    assimpMesh.Faces.Add(new Face(new int[] { 1, 3, 5, 7 }));
-        //    assimpMesh.Faces.Add(new Face(new int[] { 2, 4, 5, 3 }));
-        //    assimpMesh.Faces.Add(new Face(new int[] { 4, 6, 7, 5 }));
-
-        //    return assimpMesh;
-        //}
-
         #endregion
 
         #region Part Project -> Assimp
@@ -354,35 +336,13 @@ namespace LDDModder.BrickEditor.Meshes
         {
             var partWrapper = project.GenerateLddPart();
             return LddPartToAssimp(partWrapper, exportOptions);
-            //if (exportOptions == null)
-            //    exportOptions = new MeshExportOptions();
-
-            //var scene = new Scene() { RootNode = new Node("Root") };
-            //scene.Materials.Add(new Material() { Name = "BaseMaterial" });
-
-            //var meshNodes = new List<Node>();
-
-            //foreach (var surface in project.Surfaces)
-            //{
-            //    string nodeName = "MainSurface";
-            //    if (surface.SurfaceID > 0)
-            //        nodeName = $"Decoration{surface.SurfaceID}";
-
-            //    var meshGeom = surface.GenerateMeshFile();
-
-            //    var surfaceMesh = new PartSurfaceMesh(project.PartID, surface.SurfaceID, meshGeom);
-            //    var createdNodes = CreateSurfaceMeshNodes(surfaceMesh, scene, nodeName, exportOptions);
-            //    meshNodes.AddRange(createdNodes);
-            //}
-
-            //return scene;
         }
 
         #endregion
 
         private static string GetBoneName(LDD.Primitives.FlexBone flexBone)
         {
-            return $"Bone_{flexBone.ID.ToString().PadLeft(4, '0')}";
+            return GetBoneName(flexBone.ID);
         }
 
         private static string GetBoneName(int boneID)

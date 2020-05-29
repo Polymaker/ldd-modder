@@ -336,4 +336,16 @@
   <data name="MODEL_STUDS_NOT_DEFINED_ALT" xml:space="preserve">
     <value>Le modèle ne fait référence à aucun Stud. Par conséquent, le modèle alternatif ne sera jamais affiché.</value>
   </data>
+  <data name="Label_Bones" xml:space="preserve">
+    <value>Armature</value>
+  </data>
+  <data name="Label_Connection" xml:space="preserve">
+    <value>Connexion</value>
+  </data>
+  <data name="Label_Collision" xml:space="preserve">
+    <value>Collision</value>
+  </data>
+  <data name="Label_Bone" xml:space="preserve">
+    <value>Jointure</value>
+  </data>
 </root>

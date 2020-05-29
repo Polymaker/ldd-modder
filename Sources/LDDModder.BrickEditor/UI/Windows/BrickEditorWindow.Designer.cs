@@ -64,9 +64,9 @@
             this.BuildConfigComboBox = new System.Windows.Forms.ToolStripComboBox();
             this.AutoSaveTimer = new System.Windows.Forms.Timer(this.components);
             this.localizableStringList1 = new LDDModder.BrickEditor.Localization.LocalizableStringList(this.components);
-            this.StartLddText = new LDDModder.BrickEditor.Localization.LocalizableString();
-            this.RestartLddText = new LDDModder.BrickEditor.Localization.LocalizableString();
-            this.WindowTitle = new LDDModder.BrickEditor.Localization.LocalizableString();
+            this.StartLddText = ((LDDModder.BrickEditor.Localization.LocalizableString)(new LDDModder.BrickEditor.Localization.LocalizableString()));
+            this.RestartLddText = ((LDDModder.BrickEditor.Localization.LocalizableString)(new LDDModder.BrickEditor.Localization.LocalizableString()));
+            this.WindowTitle = ((LDDModder.BrickEditor.Localization.LocalizableString)(new LDDModder.BrickEditor.Localization.LocalizableString()));
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -268,6 +268,7 @@
             // 
             // BuildConfigComboBox
             // 
+            this.BuildConfigComboBox.DropDownWidth = 150;
             this.BuildConfigComboBox.Name = "BuildConfigComboBox";
             resources.ApplyResources(this.BuildConfigComboBox, "BuildConfigComboBox");
             this.BuildConfigComboBox.SelectedIndexChanged += new System.EventHandler(this.BuildConfigComboBox_SelectedIndexChanged);

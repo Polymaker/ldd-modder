@@ -271,6 +271,7 @@ namespace LDDModder.Modding.Editing
             }
         }
 
+
         public IElementCollection GetParentCollection()
         {
             if (Parent != null)

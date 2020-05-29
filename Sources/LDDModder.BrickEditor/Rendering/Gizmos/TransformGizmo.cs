@@ -760,9 +760,17 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
 
             if (OrientationMode == OrientationMode.Local || DisplayStyle == GizmoStyle.Scaling)
             {
-                var allRot = ActiveElements.Select(x => x.Transform.ExtractRotation());
-                var avgRot = OpenTKHelper.AverageQuaternion(allRot);
-                _Orientation = Matrix4.CreateFromQuaternion(avgRot);
+                if (PivotPointMode == PivotPointMode.ActiveElement)
+                {
+                    var rot = ActiveElements.Last().Transform.ExtractRotation();
+                    _Orientation = Matrix4.CreateFromQuaternion(rot);
+                }
+                else
+                {
+                    var allRot = ActiveElements.Select(x => x.Transform.ExtractRotation());
+                    var avgRot = OpenTKHelper.AverageQuaternion(allRot);
+                    _Orientation = Matrix4.CreateFromQuaternion(avgRot);
+                }
             }
 
             _Transform = _Orientation * _Position;

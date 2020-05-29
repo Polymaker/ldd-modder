@@ -153,4 +153,7 @@
   <data name="ViewModeBones.Text" xml:space="preserve">
     <value>Armature</value>
   </data>
+  <data name="ContextMenu_Duplicate.Text" xml:space="preserve">
+    <value>Dupliquer</value>
+  </data>
 </root>

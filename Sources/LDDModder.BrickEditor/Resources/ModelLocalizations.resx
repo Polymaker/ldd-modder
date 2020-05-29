@@ -316,4 +316,16 @@
   <data name="MODEL_STUDS_NOT_DEFINED_ALT" xml:space="preserve">
     <value>The model does not reference any stud. Therefore the alternate model will never be displayed.</value>
   </data>
+  <data name="Label_Bones" xml:space="preserve">
+    <value>Bones</value>
+  </data>
+  <data name="Label_Connection" xml:space="preserve">
+    <value>Connection</value>
+  </data>
+  <data name="Label_Collision" xml:space="preserve">
+    <value>Collision</value>
+  </data>
+  <data name="Label_Bone" xml:space="preserve">
+    <value>Bone</value>
+  </data>
 </root>

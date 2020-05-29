@@ -79,6 +79,15 @@ namespace LDDModder.BrickEditor.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Manage configurations....
+        /// </summary>
+        internal static string BuildConfig_Manage {
+            get {
+                return ResourceManager.GetString("BuildConfig_Manage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à LDD part files generation.
         /// </summary>
         internal static string Caption_LddPartGeneration {
@@ -115,6 +124,15 @@ namespace LDDModder.BrickEditor.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Startup validations.
+        /// </summary>
+        internal static string Caption_StartupValidations {
+            get {
+                return ResourceManager.GetString("Caption_StartupValidations", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à An error occurred while creating the project..
         /// </summary>
         internal static string Error_CreatingProject {
@@ -138,6 +156,15 @@ namespace LDDModder.BrickEditor.Resources {
         internal static string Error_OpeningProject {
             get {
                 return ResourceManager.GetString("Error_OpeningProject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à The configured LDD environment is not valid but LDD appears to be correctly installed..
+        /// </summary>
+        internal static string LddConfigInvalid {
+            get {
+                return ResourceManager.GetString("LddConfigInvalid", resourceCulture);
             }
         }
         

@@ -129,4 +129,16 @@
   <data name="$this.Text" xml:space="preserve">
     <value>Validations</value>
   </data>
+  <data name="ColumnMessageCode.Text" xml:space="preserve">
+    <value>Code</value>
+  </data>
+  <data name="ColumnMessageDescription.Text" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="ColumnMessageSource.Text" xml:space="preserve">
+    <value>Source</value>
+  </data>
+  <data name="ValidatePartButton.Text" xml:space="preserve">
+    <value>Valider</value>
+  </data>
 </root>

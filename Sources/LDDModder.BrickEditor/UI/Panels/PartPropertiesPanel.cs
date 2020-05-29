@@ -232,5 +232,13 @@ namespace LDDModder.BrickEditor.UI.Panels
                 BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic, null,
             control, new object[] { true });
         }
+
+        private void PartPropertiesPanel_SizeChanged(object sender, EventArgs e)
+        {
+            if (Width > Height && flowLayoutPanel1.FlowDirection == FlowDirection.TopDown)
+                flowLayoutPanel1.FlowDirection = FlowDirection.LeftToRight;
+            else if (Width < Height && flowLayoutPanel1.FlowDirection == FlowDirection.LeftToRight)
+                flowLayoutPanel1.FlowDirection = FlowDirection.TopDown;
+        }
     }
 }

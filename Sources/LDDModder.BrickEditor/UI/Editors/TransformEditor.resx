@@ -208,7 +208,7 @@
     <value>PosX_TextBox</value>
   </data>
   <data name="&gt;&gt;PosX_TextBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.0.24375, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.0.19653, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;PosX_TextBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -325,7 +325,7 @@
     <value>PosY_TextBox</value>
   </data>
   <data name="&gt;&gt;PosY_TextBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.0.24375, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.0.19653, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;PosY_TextBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -352,7 +352,7 @@
     <value>PosZ_TextBox</value>
   </data>
   <data name="&gt;&gt;PosZ_TextBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.0.24375, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.0.19653, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;PosZ_TextBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -379,7 +379,7 @@
     <value>RotX_TextBox</value>
   </data>
   <data name="&gt;&gt;RotX_TextBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.0.24375, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.0.19653, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;RotX_TextBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -406,7 +406,7 @@
     <value>RotY_TextBox</value>
   </data>
   <data name="&gt;&gt;RotY_TextBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.0.24375, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.0.19653, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;RotY_TextBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -433,7 +433,7 @@
     <value>RotZ_TextBox</value>
   </data>
   <data name="&gt;&gt;RotZ_TextBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.0.24375, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.0.19653, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;RotZ_TextBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>

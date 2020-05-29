@@ -626,10 +626,10 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
         #region Navigation Tree
 
-        public ProjectElementNode GetElementTreeNode(PartElement element)
-        {
-            throw new NotImplementedException();
-        }
+        //public ProjectElementNode GetElementTreeNode(PartElement element)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
         public void RebuildNavigationTree()
         {
@@ -643,7 +643,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
             {
                 NavigationTreeNodes.Add(new ProjectCollectionNode(
                     CurrentProject.Bones,
-                    "Bones"));
+                    ModelLocalizations.Label_Bones));
             }
             else
             {

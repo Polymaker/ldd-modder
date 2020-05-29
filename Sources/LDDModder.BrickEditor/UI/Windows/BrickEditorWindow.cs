@@ -50,7 +50,7 @@ namespace LDDModder.BrickEditor.UI.Windows
             ProjectManager.UndoHistoryChanged += ProjectManager_UndoHistoryChanged;
             ProjectManager.ValidationFinished += ProjectManager_ValidationFinished;
             ProjectManager.GenerationFinished += ProjectManager_GenerationFinished;
-            
+            ProjectManager.ElementPropertyChanged += ProjectManager_ElementPropertyChanged;
             InitialCheckUp();
 
             ResourceHelper.LoadPlatformsAndCategories();
@@ -76,9 +76,12 @@ namespace LDDModder.BrickEditor.UI.Windows
         {
             SettingsManager.Initialize();
 
-            if (!LDDEnvironment.IsInstalled)
+            if (!LDDEnvironment.Current.IsValidInstall)
             {
-                MessageBox.Show(Messages.LddInstallNotFound, "", MessageBoxButtons.OK);
+                if (!LDDEnvironment.IsInstalled)
+                    MessageBox.Show(Messages.LddInstallNotFound, Messages.Caption_StartupValidations, MessageBoxButtons.OK);
+                else
+                    MessageBox.Show(Messages.LddConfigInvalid, Messages.Caption_StartupValidations, MessageBoxButtons.OK);
             }
             else
             {
@@ -91,6 +94,12 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         private void UpdateWindowTitle()
         {
+            if (InvokeRequired)
+            {
+                BeginInvoke(new MethodInvoker(UpdateWindowTitle));
+                return;
+            }
+
             if (CurrentProject != null)
             {
                 string projectDesc = ProjectManager.GetProjectDisplayName();
@@ -142,6 +151,16 @@ namespace LDDModder.BrickEditor.UI.Windows
             UpdateMenuItemStates();
 
             UpdateWindowTitle();
+        }
+
+        private void ProjectManager_ElementPropertyChanged(object sender, ElementValueChangedEventArgs e)
+        {
+            if (e.Element is PartProperties && 
+                (e.PropertyName == nameof(PartProperties.ID) || e.PropertyName == nameof(PartProperties.Description))
+                )
+            {
+                UpdateWindowTitle();
+            }
         }
 
         private void ProjectManager_UndoHistoryChanged(object sender, EventArgs e)

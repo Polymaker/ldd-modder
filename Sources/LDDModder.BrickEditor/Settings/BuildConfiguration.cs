@@ -17,7 +17,7 @@ namespace LDDModder.BrickEditor.Settings
         public string OutputPath { get; set; }
         
         [JsonProperty("useLOD0Subdirectory")]
-        public bool MeshBesideXml { get; set; }
+        public bool LOD0Subdirectory { get; set; }
 
         [JsonProperty("confirmOverwrite")]
         public bool ConfirmOverwrite { get; set; }
@@ -36,9 +36,14 @@ namespace LDDModder.BrickEditor.Settings
             return InternalFlag == 0;
         }
 
-        //public bool ShouldSerializeName()
-        //{
-        //    return InternalFlag == 0;
-        //}
+        public bool ShouldSerializeOutputPath()
+        {
+            return InternalFlag == 0;
+        }
+
+        public bool ShouldSerializeLOD0Subdirectory()
+        {
+            return InternalFlag != 1;
+        }
     }
 }

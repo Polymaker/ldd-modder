@@ -432,6 +432,9 @@
     <EmbeddedResource Include="UI\Editors\StudConnectionEditor.resx">
       <DependentUpon>StudConnectionEditor.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\Panels\ElementDetailPanel.fr.resx">
+      <DependentUpon>ElementDetailPanel.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\Panels\ElementDetailPanel.resx">
       <DependentUpon>ElementDetailPanel.cs</DependentUpon>
     </EmbeddedResource>
@@ -444,6 +447,9 @@
     <EmbeddedResource Include="UI\Panels\NavigationPanel.resx">
       <DependentUpon>NavigationPanel.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Panels\PartPropertiesPanel.fr.resx">
+      <DependentUpon>PartPropertiesPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Panels\PartPropertiesPanel.resx">
       <DependentUpon>PartPropertiesPanel.cs</DependentUpon>

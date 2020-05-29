@@ -929,9 +929,8 @@ namespace LDDModder.BrickEditor.UI.Panels
             else
                 selectedModels = GetAllElementModels().Where(x => x.IsSelected);
 
-            return selectedModels/*
-                .Where(x => !onlyVisible || (onlyVisible && x.Visible))
-                .OrderBy(x => ProjectManager.GetSelectionIndex(x.Element))*/;
+            return selectedModels
+                .OrderBy(x => ProjectManager.GetSelectionIndex(x.Element));
         }
 
         #endregion

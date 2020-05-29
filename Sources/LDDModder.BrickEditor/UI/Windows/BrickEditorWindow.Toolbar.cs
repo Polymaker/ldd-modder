@@ -298,7 +298,7 @@ namespace LDDModder.BrickEditor.UI.Windows
 
                 BuildConfigList.Add(new BuildConfiguration()
                 {
-                    Name = "Manage...",
+                    Name = Messages.BuildConfig_Manage,
                     InternalFlag = 3
                 });
 
@@ -432,7 +432,7 @@ namespace LDDModder.BrickEditor.UI.Windows
             Directory.CreateDirectory(targetPath);
             part.SavePrimitive(targetPath);
 
-            if (buildConfig.MeshBesideXml)
+            if (!buildConfig.LOD0Subdirectory)
                 part.SaveMeshes(targetPath);
             else
             {

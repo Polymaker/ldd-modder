@@ -28,91 +28,87 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.SelectedElementLabel = new System.Windows.Forms.ToolStripLabel();
-            this.SelectedElementComboBox = new System.Windows.Forms.ToolStripComboBox();
-            this.SyncSelectionCheckBox = new LDDModder.BrickEditor.UI.Controls.ToolStripCheckBox();
-            this.transformEditor1 = new LDDModder.BrickEditor.UI.Controls.TransformEditor();
-            this.studConnectionEditor1 = new LDDModder.BrickEditor.UI.Editors.StudConnectionEditor();
-            this.toolStrip1.SuspendLayout();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ElementDetailPanel));
+            this.NameTextBox = new System.Windows.Forms.TextBox();
+            this.CommentTextBox = new System.Windows.Forms.TextBox();
+            this.SelectionTypeLabel = new System.Windows.Forms.Label();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.SelectionLabel = new System.Windows.Forms.Label();
+            this.SelectionTransformEdit = new LDDModder.BrickEditor.UI.Controls.TransformEditor();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // toolStrip1
+            // NameTextBox
             // 
-            this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.SelectedElementLabel,
-            this.SelectedElementComboBox,
-            this.SyncSelectionCheckBox});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
-            this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(618, 25);
-            this.toolStrip1.TabIndex = 0;
-            this.toolStrip1.Text = "toolStrip1";
+            resources.ApplyResources(this.NameTextBox, "NameTextBox");
+            this.NameTextBox.Name = "NameTextBox";
+            this.NameTextBox.Validating += new System.ComponentModel.CancelEventHandler(this.NameTextBox_Validating);
             // 
-            // SelectedElementLabel
+            // CommentTextBox
             // 
-            this.SelectedElementLabel.Name = "SelectedElementLabel";
-            this.SelectedElementLabel.Size = new System.Drawing.Size(100, 22);
-            this.SelectedElementLabel.Text = "Selected element:";
+            resources.ApplyResources(this.CommentTextBox, "CommentTextBox");
+            this.CommentTextBox.Name = "CommentTextBox";
             // 
-            // SelectedElementComboBox
+            // SelectionTypeLabel
             // 
-            this.SelectedElementComboBox.Name = "SelectedElementComboBox";
-            this.SelectedElementComboBox.Size = new System.Drawing.Size(150, 25);
-            this.SelectedElementComboBox.SelectedIndexChanged += new System.EventHandler(this.SelectedElementComboBox_SelectedIndexChanged);
+            resources.ApplyResources(this.SelectionTypeLabel, "SelectionTypeLabel");
+            this.SelectionTypeLabel.Name = "SelectionTypeLabel";
             // 
-            // SyncSelectionCheckBox
+            // tableLayoutPanel1
             // 
-            this.SyncSelectionCheckBox.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.SyncSelectionCheckBox.Name = "SyncSelectionCheckBox";
-            this.SyncSelectionCheckBox.Size = new System.Drawing.Size(165, 22);
-            this.SyncSelectionCheckBox.Text = "Synchronise with viewport";
+            resources.ApplyResources(this.tableLayoutPanel1, "tableLayoutPanel1");
+            this.tableLayoutPanel1.Controls.Add(this.SelectionLabel, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.SelectionTransformEdit, 0, 3);
+            this.tableLayoutPanel1.Controls.Add(this.CommentTextBox, 1, 2);
+            this.tableLayoutPanel1.Controls.Add(this.SelectionTypeLabel, 1, 0);
+            this.tableLayoutPanel1.Controls.Add(this.NameTextBox, 1, 1);
+            this.tableLayoutPanel1.Controls.Add(this.label2, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.label3, 0, 2);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             // 
-            // transformEditor1
+            // SelectionLabel
             // 
-            this.transformEditor1.AutoSize = true;
-            this.transformEditor1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.transformEditor1.Location = new System.Drawing.Point(0, 28);
-            this.transformEditor1.Name = "transformEditor1";
-            this.transformEditor1.Size = new System.Drawing.Size(293, 68);
-            this.transformEditor1.TabIndex = 2;
-            this.transformEditor1.Visible = false;
+            resources.ApplyResources(this.SelectionLabel, "SelectionLabel");
+            this.SelectionLabel.Name = "SelectionLabel";
             // 
-            // studConnectionEditor1
+            // SelectionTransformEdit
             // 
-            this.studConnectionEditor1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.studConnectionEditor1.Location = new System.Drawing.Point(0, 102);
-            this.studConnectionEditor1.Name = "studConnectionEditor1";
-            this.studConnectionEditor1.Size = new System.Drawing.Size(610, 213);
-            this.studConnectionEditor1.TabIndex = 3;
+            resources.ApplyResources(this.SelectionTransformEdit, "SelectionTransformEdit");
+            this.tableLayoutPanel1.SetColumnSpan(this.SelectionTransformEdit, 2);
+            this.SelectionTransformEdit.Name = "SelectionTransformEdit";
+            // 
+            // label2
+            // 
+            resources.ApplyResources(this.label2, "label2");
+            this.label2.Name = "label2";
+            // 
+            // label3
+            // 
+            resources.ApplyResources(this.label3, "label3");
+            this.label3.Name = "label3";
             // 
             // ElementDetailPanel
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(618, 325);
-            this.Controls.Add(this.studConnectionEditor1);
-            this.Controls.Add(this.transformEditor1);
-            this.Controls.Add(this.toolStrip1);
+            this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "ElementDetailPanel";
-            this.Text = "ElementDetailPanel";
-            this.toolStrip1.ResumeLayout(false);
-            this.toolStrip1.PerformLayout();
+            this.tableLayoutPanel1.ResumeLayout(false);
+            this.tableLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
-
-        private System.Windows.Forms.ToolStrip toolStrip1;
-        private System.Windows.Forms.ToolStripLabel SelectedElementLabel;
-        private System.Windows.Forms.ToolStripComboBox SelectedElementComboBox;
-        private Controls.ToolStripCheckBox SyncSelectionCheckBox;
-        private Controls.TransformEditor transformEditor1;
-        private Editors.StudConnectionEditor studConnectionEditor1;
+        private Controls.TransformEditor SelectionTransformEdit;
+        private System.Windows.Forms.TextBox NameTextBox;
+        private System.Windows.Forms.TextBox CommentTextBox;
+        private System.Windows.Forms.Label SelectionTypeLabel;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.Label SelectionLabel;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label3;
     }
 }

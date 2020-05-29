@@ -149,6 +149,17 @@ namespace LDDModder.BrickEditor.UI.Panels
                 return new ArrayList();
             };
 
+            ProjectTreeView.CellToolTipGetter += (col, model) =>
+            {
+                if (model is ProjectElementNode node)
+                {
+                    if (!string.IsNullOrEmpty(node.Element.Comments))
+                        return node.Element.Comments;
+                    //return node.Element.Name;
+                }
+                return string.Empty;
+            };
+
             ProjectTreeView.DropSink = new NavigationDropHandler();
             ProjectTreeView.DragSource = new NavigationDragHandler();
 

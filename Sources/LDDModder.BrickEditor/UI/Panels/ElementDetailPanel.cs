@@ -1,4 +1,5 @@
 ﻿using LDDModder.BrickEditor.ProjectHandling;
+using LDDModder.BrickEditor.Resources;
 using LDDModder.LDD.Primitives.Connectors;
 using LDDModder.Modding.Editing;
 using System;
@@ -23,7 +24,12 @@ namespace LDDModder.BrickEditor.UI.Panels
         public ElementDetailPanel(ProjectManager projectManager) : base(projectManager)
         {
             InitializeComponent();
-            SelectedElementComboBox.ComboBox.DrawItem += SelectedElementComboBox_DrawItem;
+        }
+
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+            FillSelectionDetails(null);
         }
 
         protected override void OnElementSelectionChanged()
@@ -32,82 +38,85 @@ namespace LDDModder.BrickEditor.UI.Panels
  
             ExecuteOnThread(() =>
             {
-                FillSelectionDetails();
+                FillSelectionDetails(ProjectManager.SelectedElement);
             });
         }
 
-        private void FillSelectionDetails()
+        private void FillSelectionDetails(PartElement selection)
         {
-            //if (SyncSelectionCheckBox.Checked)
-            //{
+            CommentTextBox.DataBindings.Clear();
 
+            ToggleControlsEnabled(selection != null,
+                NameTextBox, CommentTextBox);
+            SelectionTransformEdit.Enabled = false;
 
-            //}
+            NameTextBox.Text = selection?.Name ?? string.Empty;
+            CommentTextBox.Text = selection?.Comments ?? string.Empty;
 
-            if (studConnectionEditor1.Tag != null)
+            if (selection != null)
             {
-                if (studConnectionEditor1.GridEditor.IsEditingNode)
-                    studConnectionEditor1.GridEditor.CancelEditNode();
-                studConnectionEditor1.StudConnector = null;
-                studConnectionEditor1.Visible = false;
-                studConnectionEditor1.Tag = null;
+                SelectionTypeLabel.Text = GetElementTypeName(selection);
+                CommentTextBox.DataBindings.Add(new Binding("Text", selection, "Comments"));
             }
+            else
+                SelectionTypeLabel.Text = string.Empty;
 
-            if (transformEditor1.Tag != null)
+            if (SelectionTransformEdit.Tag != null)
             {
-                transformEditor1.BindPhysicalElement(null);
-                transformEditor1.Visible = false;
+                SelectionTransformEdit.BindPhysicalElement(null);
             }
             
-            if (ProjectManager.SelectedElement is IPhysicalElement physicalElement)
+            if (selection is IPhysicalElement physicalElement)
             {
-                transformEditor1.BindPhysicalElement(physicalElement);
-                transformEditor1.Tag = physicalElement;
-                transformEditor1.Visible = true;
+                SelectionTransformEdit.BindPhysicalElement(physicalElement);
+                SelectionTransformEdit.Tag = physicalElement;
+                SelectionTransformEdit.Enabled = true;
             }
 
-            if (ProjectManager.SelectedElement is PartConnection partConnection)
+        }
+
+        private string GetElementTypeName(PartElement element)
+        {
+            if (element is PartSurface)
+                return ModelLocalizations.Label_Surface;
+
+            switch (element)
             {
-                if (partConnection.ConnectorType == ConnectorType.Custom2DField)
-                {
-                    studConnectionEditor1.StudConnector = partConnection.GetConnector<Custom2DFieldConnector>();
-                    studConnectionEditor1.Visible = true;
-                    studConnectionEditor1.Tag = partConnection;
-                }
+                case PartSurface _:
+                    return ModelLocalizations.Label_Surface;
+                case PartBone _:
+                    return ModelLocalizations.Label_Bone;
+                case MaleStudModel _:
+                    return ModelLocalizations.ModelComponentType_MaleStud;
+                case FemaleStudModel _:
+                    return ModelLocalizations.ModelComponentType_FemaleStud;
+                case BrickTubeModel _:
+                    return ModelLocalizations.ModelComponentType_BrickTube;
+                case PartModel _:
+                    return ModelLocalizations.ModelComponentType_Part;
+
+                case ModelMeshReference _:
+                    return ModelLocalizations.Label_Mesh;
+                case PartConnection conn:
+                    return $"{ModelLocalizations.Label_Connection} <{conn.ConnectorType.ToString()}>";
+                    //return ModelLocalizations.ResourceManager.GetString($"ConnectorType_{conn.ConnectorType}");
+                case PartCollision coll:
+                    string collType = ModelLocalizations.ResourceManager.GetString($"CollisionType_{coll.CollisionType}");
+                    return $"{ModelLocalizations.Label_Collision} ({collType})";
             }
+
+            return element.GetType().Name;
         }
 
         protected override void OnProjectElementsChanged()
         {
             base.OnProjectElementsChanged();
-            UpdateSelectedElementComboBox();
         }
 
-        private void SelectedElementComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void NameTextBox_Validating(object sender, CancelEventArgs e)
         {
-            if (FlagManager.IsSet("UpdateSelectedElementComboBox"))
-                return;
-
-            if (SyncSelectionCheckBox.Checked)
-            {
-                
-            }
-        }
-
-        private void UpdateSelectedElementComboBox()
-        {
-            using (FlagManager.UseFlag("UpdateSelectedElementComboBox"))
-            {
-                var combo = SelectedElementComboBox.ComboBox;
-
-                var elementList = new List<LDDModder.Modding.Editing.PartElement>();
-                //elementList.AddRange(CurrentProject.su)
-            }
-        }
-
-        private void SelectedElementComboBox_DrawItem(object sender, DrawItemEventArgs e)
-        {
-
+            //ProjectManager.CurrentProject.RenameElement()
+            //ProjectManager.SelectedElement.
         }
     }
 }

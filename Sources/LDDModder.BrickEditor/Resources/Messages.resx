@@ -141,4 +141,13 @@ Check validation panel for more details.</value>
   <data name="BuildConfig_Browse" xml:space="preserve">
     <value>Select directory</value>
   </data>
+  <data name="BuildConfig_Manage" xml:space="preserve">
+    <value>Manage configurations...</value>
+  </data>
+  <data name="LddConfigInvalid" xml:space="preserve">
+    <value>The configured LDD environment is not valid but LDD appears to be correctly installed.</value>
+  </data>
+  <data name="Caption_StartupValidations" xml:space="preserve">
+    <value>Startup validations</value>
+  </data>
 </root>
