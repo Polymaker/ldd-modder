@@ -703,7 +703,6 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void ProjectManager_ProjectModified(object sender, EventArgs e)
         {
-
             UpdateDocumentTitle();
         }
 
@@ -1428,7 +1427,7 @@ namespace LDDModder.BrickEditor.UI.Panels
        
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
-            if (!SelectionInfoPanel.ContainsFocus)
+            if (ContainsFocus)
             {
                 if (keyData == Keys.NumPad0)
                 {

@@ -132,7 +132,7 @@ namespace LDDModder.BrickEditor.UI.Windows
             NavigationPanel.Show(DockPanelControl, DockState.DockLeft);
 
             DockPanelControl.DockWindows[DockState.DockBottom].BringToFront();
-            DockPanelControl.DockBottomPortion = 200;
+            DockPanelControl.DockBottomPortion = 230;
 
             PropertiesPanel.Show(DockPanelControl, DockState.DockBottom);
             DetailPanel.Show(PropertiesPanel.Pane, null);
@@ -185,6 +185,7 @@ namespace LDDModder.BrickEditor.UI.Windows
 
             PartProject loadedProject = null;
 
+            bool exceptionThrown = false;
             try
             {
                 using (var fs = File.OpenRead(projectFilePath))
@@ -195,6 +196,7 @@ namespace LDDModder.BrickEditor.UI.Windows
                 ErrorMessageBox.Show(this, 
                     Messages.Error_OpeningProject, 
                     Messages.Caption_OpeningProject, ex.ToString());
+                exceptionThrown = true;
             }
 
             if (loadedProject != null)
@@ -205,6 +207,12 @@ namespace LDDModder.BrickEditor.UI.Windows
                 SettingsManager.AddRecentProject(loadedProject);
                 LoadPartProject(loadedProject);
                 RebuildRecentFilesMenu();
+            }
+            else if (!exceptionThrown)
+            {
+                ErrorMessageBox.Show(this,
+                    Messages.Error_OpeningProject,
+                    Messages.Caption_OpeningProject, "Invalid or corrupted project file. Missing \"project.xml\" file.");
             }
         }
 

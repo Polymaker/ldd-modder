@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -117,49 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ContextMenu_AddCollision.Text" xml:space="preserve">
-    <value>Ajouter une collision</value>
-  </data>
-  <data name="ContextMenu_AddConnection.Text" xml:space="preserve">
-    <value>Ajouter une connexion</value>
-  </data>
-  <data name="ContextMenu_AddElement.Text" xml:space="preserve">
-    <value>Ajouter un modèle</value>
-  </data>
-  <data name="ContextMenu_AddSurface.Text" xml:space="preserve">
-    <value>Ajouter une surface</value>
-  </data>
-  <data name="ContextMenu_Delete.Text" xml:space="preserve">
-    <value>Supprimer</value>
-  </data>
-  <data name="ContextMenu_Rename.Text" xml:space="preserve">
-    <value>Renommer</value>
-  </data>
-  <data name="olvColumnElement.Text" xml:space="preserve">
-    <value>Éléments</value>
-  </data>
-  <data name="ViewModeAll.Text" xml:space="preserve">
-    <value>Hiérarchie du projet</value>
-  </data>
-  <data name="ViewModeCollisions.Text" xml:space="preserve">
-    <value>Collisions</value>
-  </data>
-  <data name="ViewModeConnections.Text" xml:space="preserve">
-    <value>Connexions</value>
-  </data>
-  <data name="ViewModeSurfaces.Text" xml:space="preserve">
-    <value>Surfaces</value>
-  </data>
-  <data name="ViewModeBones.Text" xml:space="preserve">
-    <value>Armature</value>
-  </data>
-  <data name="ContextMenu_Duplicate.Text" xml:space="preserve">
-    <value>Dupliquer</value>
-  </data>
-  <data name="ViewModeLabel.Text" xml:space="preserve">
-    <value>Affichage:</value>
-  </data>
-  <data name="$this.Text" xml:space="preserve">
-    <value>Navigation</value>
-  </data>
 </root>

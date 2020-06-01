@@ -120,19 +120,34 @@
   <data name="$this.Text" xml:space="preserve">
     <value>Sélection</value>
   </data>
-  <data name="label2.Text" xml:space="preserve">
-    <value>Nom</value>
-  </data>
-  <data name="label3.Text" xml:space="preserve">
-    <value>Notes</value>
-  </data>
-  <data name="SelectionLabel.Text" xml:space="preserve">
-    <value>Sélection</value>
-  </data>
-  <data name="SelectionTypeLabel.Text" xml:space="preserve">
-    <value>&lt;Type de la sélection&gt;</value>
-  </data>
   <data name="$this.ToolTipText" xml:space="preserve">
     <value>Propriétés de la sélection</value>
+  </data>
+  <data name="NameLabel.Text" xml:space="preserve">
+    <value>Nom</value>
+  </data>
+  <data name="CommentsLabel.Text" xml:space="preserve">
+    <value>Notes</value>
+  </data>
+  <data name="CollisionSizeLabel.Text" xml:space="preserve">
+    <value>Taille</value>
+  </data>
+  <data name="CollisionRadiusLabel.Text" xml:space="preserve">
+    <value>Rayon</value>
+  </data>
+  <data name="ConnectionInfoTab.Text" xml:space="preserve">
+    <value>Paramètres de la connexion</value>
+  </data>
+  <data name="NoSelectionMsg.Text" xml:space="preserve">
+    <value>Aucun élément sélectionné</value>
+  </data>
+  <data name="MultiSelectionMsg.Text" xml:space="preserve">
+    <value>Plusieurs éléments sélectionnés</value>
+  </data>
+  <data name="StudRefTab.Text" xml:space="preserve">
+    <value>Référencement de Studs</value>
+  </data>
+  <data name="MainInfoTab.Text" xml:space="preserve">
+    <value>Propriétés de l'élément</value>
   </data>
 </root>

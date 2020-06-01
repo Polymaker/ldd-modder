@@ -81,7 +81,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             base.OnLoad(e);
             InitializeViewComboBox();
 
-            label1.Text = $"<{ModelLocalizations.Label_NoActiveProject}> ";
+            //ViewModeLabel.Text = $"<{ModelLocalizations.Label_NoActiveProject}> ";
         }
 
         private void InitializeViewComboBox()
@@ -601,9 +601,9 @@ namespace LDDModder.BrickEditor.UI.Panels
                 }
             }
 
-            string projectTitle = ProjectManager.GetProjectDisplayName();
+            //string projectTitle = ProjectManager.GetProjectDisplayName();
 
-            label1.Text = ProjectManager.IsProjectOpen ? projectTitle : $"<{projectTitle}> ";
+            //ViewModeLabel.Text = ProjectManager.IsProjectOpen ? projectTitle : $"<{projectTitle}> ";
             
         }
 

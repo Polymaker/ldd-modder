@@ -227,7 +227,8 @@ namespace LDDModder.Modding.Editing
                     meshSurf.SurfaceID,
                     lddPart.Primitive.GetSurfaceMaterialIndex(meshSurf.SurfaceID)
                 );
-                surfaceElement.ID = StringUtils.GenerateUUID($"Part{partID}_Surface{surfaceElement.SurfaceID}", 8);
+                surfaceElement.ID = StringUtils.GenerateUUID($"Surface{surfaceID}", 8);
+                //surfaceElement.ID = StringUtils.GenerateUUID($"Part{partID}_Surface{surfaceElement.SurfaceID}", 8);
                 project.Surfaces.Add(surfaceElement);
 
                 var surfaceMesh = project.AddMeshGeometry(
@@ -276,7 +277,6 @@ namespace LDDModder.Modding.Editing
             project.GenerateElementIDs(true);
             project.GenerateElementsNames();
             project.LinkStudReferences();
-
             project.IsLoading = false;
             return project;
         }
@@ -366,18 +366,21 @@ namespace LDDModder.Modding.Editing
 
         private void LoadFromXml(XDocument doc)
         {
+            IsLoading = true;
+
             Surfaces.Clear();
             Connections.Clear();
             Collisions.Clear();
             Bones.Clear();
             Aliases.Clear();
-
+            
             var rootElem = doc.Root;
 
             if (rootElem.HasElement("Properties", out XElement propsElem))
                 Properties.LoadFromXml(propsElem);
 
             var surfacesElem = doc.Root.Element("ModelSurfaces");
+
             if (surfacesElem != null)
             {
                 foreach (var surfElem in surfacesElem.Elements(PartSurface.NODE_NAME))
@@ -417,6 +420,8 @@ namespace LDDModder.Modding.Editing
             }
 
             LinkStudReferences();
+
+            IsLoading = false;
         }
 
         #endregion
@@ -829,8 +834,6 @@ namespace LDDModder.Modding.Editing
             return elementName;
         }
 
-
-
         #endregion
 
         #region Methods
@@ -843,6 +846,18 @@ namespace LDDModder.Modding.Editing
 
             foreach (var model in GetAllElements<PartCullingModel>())
                 model.ConnectionIndex = connectionIDs.IndexOf(model.ConnectionID);
+        }
+
+        private void RenumberSurfaces()
+        {
+            int surfaceID = 0;
+
+            foreach (var surf in Surfaces)
+            {
+                surf.SurfaceID = surfaceID;
+                surf.InternalSetName($"Surface{surfaceID}");
+                surfaceID++;
+            }
         }
 
         private void LinkStudReferences()
@@ -905,6 +920,39 @@ namespace LDDModder.Modding.Editing
                         vertices.AddRange(meshGeom.Vertices);
                 }
                 return BoundingBox.FromVertices(vertices);
+            }
+            finally
+            {
+                unloadedMeshes.ForEach(x => x.UnloadModel());
+            }
+        }
+
+        public Simple3D.Vector3d CalculateCenterOfMass()
+        {
+            var meshRefs = Surfaces.SelectMany(x => x.GetAllMeshReferences()).ToList();
+            var unloadedMeshes = meshRefs.Select(x => x.ModelMesh).Where(x => !x.IsModelLoaded).Distinct().ToList();
+
+            double totalVolume = 0;
+            Simple3D.Vector3d center = Simple3D.Vector3d.Zero;
+
+            try
+            {
+                var vertices = new List<Vertex>();
+                foreach (var meshRef in meshRefs)
+                {
+                    var meshGeom = meshRef.GetGeometry(true);
+                    if (meshGeom != null)
+                    {
+                        foreach (var tri in meshGeom.Triangles)
+                        {
+                            var currentVolume = (tri.V1.Position.X * tri.V2.Position.Y * tri.V3.Position.Z - tri.V1.Position.X * tri.V3.Position.Y * tri.V2.Position.Z - tri.V2.Position.X * tri.V1.Position.Y * tri.V3.Position.Z + tri.V2.Position.X * tri.V3.Position.Y * tri.V1.Position.Z + tri.V3.Position.X * tri.V1.Position.Y * tri.V2.Position.Z - tri.V3.Position.X * tri.V2.Position.Y * tri.V1.Position.Z) / 6d;
+                            totalVolume += currentVolume;
+                            center += ((Simple3D.Vector3d)(tri.V1.Position + tri.V2.Position + tri.V3.Position) / 4d) * currentVolume;
+                        }
+                    }
+                }
+                center /= totalVolume;
+                return center;
             }
             finally
             {
@@ -1003,14 +1051,22 @@ namespace LDDModder.Modding.Editing
                 }
             }
 
-            if (!IsLoading && ccea.Collection.ElementType == typeof(PartConnection) && 
-                GetAllElements<PartCullingModel>().Any())
+            if (!IsLoading)
             {
-                UpdateConnectionIndexes();
-            }
+                if (ccea.Collection.ElementType == typeof(PartConnection) &&
+                    GetAllElements<PartCullingModel>().Any())
+                {
+                    UpdateConnectionIndexes();
+                }
 
-            if (ccea.GetElementHierarchy().OfType<ModelMeshReference>().Any())
-                UpdateModelStatistics();
+                if (ccea.Collection.ElementType == typeof(PartSurface))
+                {
+                    RenumberSurfaces();
+                }
+
+                if (ccea.GetElementHierarchy().OfType<ModelMeshReference>().Any())
+                    UpdateModelStatistics();
+            }
 
             if (!IsLoading)
                 ElementCollectionChanged?.Invoke(this, ccea);

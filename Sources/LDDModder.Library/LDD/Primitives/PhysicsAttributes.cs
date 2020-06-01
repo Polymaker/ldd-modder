@@ -13,14 +13,22 @@ namespace LDDModder.LDD.Primitives
 
         public double Mass { get; set; }
 
+        /// <summary>
+        /// Always 0 or 1, so it may be a boolean
+        /// </summary>
         public int FrictionType { get; set; }
 
-        public bool IsEmpty => InertiaTensor == Matrix3d.Zero && CenterOfMass == Vector3d.Zero;
+        public bool IsEmpty => 
+            InertiaTensor == Matrix3d.Zero && 
+            CenterOfMass == Vector3d.Zero &&
+            Mass == 0 && FrictionType == 0;
 
         public PhysicsAttributes()
         {
             InertiaTensor = Matrix3d.Zero;
             CenterOfMass = Vector3d.Zero;
+            Mass = 0;
+            FrictionType = 0;
         }
 
         public void LoadFromXml(XElement element)
@@ -54,11 +62,7 @@ namespace LDDModder.LDD.Primitives
         {
             var elem = new XElement(elementName);
 
-            elem.Add(new XAttribute("inertiaTensor", 
-                string.Format(CultureInfo.InvariantCulture, "{0},{1},{2},{3},{4},{5},{6},{7},{8}", 
-                InertiaTensor.A1, InertiaTensor.A2, InertiaTensor.A3,
-                InertiaTensor.B1, InertiaTensor.B2, InertiaTensor.B3,
-                InertiaTensor.C1, InertiaTensor.C2, InertiaTensor.C3)));
+            elem.Add(new XAttribute("inertiaTensor", GetInertiaTensorString()));
 
             elem.Add(new XAttribute("centerOfMass",
                 string.Format(CultureInfo.InvariantCulture, "{0},{1},{2}",
@@ -68,6 +72,14 @@ namespace LDDModder.LDD.Primitives
             elem.AddNumberAttribute("frictionType", FrictionType);
 
             return elem;
+        }
+
+        public string GetInertiaTensorString()
+        {
+            return string.Format(CultureInfo.InvariantCulture, "{0},{1},{2},{3},{4},{5},{6},{7},{8}",
+                InertiaTensor.A1, InertiaTensor.A2, InertiaTensor.A3,
+                InertiaTensor.B1, InertiaTensor.B2, InertiaTensor.B3,
+                InertiaTensor.C1, InertiaTensor.C2, InertiaTensor.C3);
         }
 
         public XElement SerializeToXml()

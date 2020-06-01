@@ -53,19 +53,19 @@
             this.AddConnectionMenu_Rail = new System.Windows.Forms.ToolStripMenuItem();
             this.AddConnectionMenu_Slider = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.ContextMenu_Duplicate = new System.Windows.Forms.ToolStripMenuItem();
             this.ContextMenu_Rename = new System.Windows.Forms.ToolStripMenuItem();
             this.ContextMenu_Delete = new System.Windows.Forms.ToolStripMenuItem();
             this.NavigationImageList = new System.Windows.Forms.ImageList(this.components);
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.label1 = new System.Windows.Forms.Label();
+            this.ViewModeLabel = new System.Windows.Forms.Label();
             this.ViewModeComboBox = new System.Windows.Forms.ComboBox();
             this.LocalizedStrings = new LDDModder.BrickEditor.Localization.LocalizableStringList(this.components);
-            this.ViewModeAll = new LDDModder.BrickEditor.Localization.LocalizableString();
-            this.ViewModeBones = new LDDModder.BrickEditor.Localization.LocalizableString();
-            this.ViewModeCollisions = new LDDModder.BrickEditor.Localization.LocalizableString();
-            this.ViewModeConnections = new LDDModder.BrickEditor.Localization.LocalizableString();
-            this.ViewModeSurfaces = new LDDModder.BrickEditor.Localization.LocalizableString();
-            this.ContextMenu_Duplicate = new System.Windows.Forms.ToolStripMenuItem();
+            this.ViewModeAll = ((LDDModder.BrickEditor.Localization.LocalizableString)(new LDDModder.BrickEditor.Localization.LocalizableString()));
+            this.ViewModeBones = ((LDDModder.BrickEditor.Localization.LocalizableString)(new LDDModder.BrickEditor.Localization.LocalizableString()));
+            this.ViewModeCollisions = ((LDDModder.BrickEditor.Localization.LocalizableString)(new LDDModder.BrickEditor.Localization.LocalizableString()));
+            this.ViewModeConnections = ((LDDModder.BrickEditor.Localization.LocalizableString)(new LDDModder.BrickEditor.Localization.LocalizableString()));
+            this.ViewModeSurfaces = ((LDDModder.BrickEditor.Localization.LocalizableString)(new LDDModder.BrickEditor.Localization.LocalizableString()));
             ((System.ComponentModel.ISupportInitialize)(this.ProjectTreeView)).BeginInit();
             this.ElementsContextMenu.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -268,6 +268,12 @@
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             resources.ApplyResources(this.toolStripSeparator1, "toolStripSeparator1");
             // 
+            // ContextMenu_Duplicate
+            // 
+            this.ContextMenu_Duplicate.Name = "ContextMenu_Duplicate";
+            resources.ApplyResources(this.ContextMenu_Duplicate, "ContextMenu_Duplicate");
+            this.ContextMenu_Duplicate.Click += new System.EventHandler(this.ContextMenu_Duplicate_Click);
+            // 
             // ContextMenu_Rename
             // 
             this.ContextMenu_Rename.Name = "ContextMenu_Rename";
@@ -289,15 +295,15 @@
             // tableLayoutPanel1
             // 
             resources.ApplyResources(this.tableLayoutPanel1, "tableLayoutPanel1");
-            this.tableLayoutPanel1.Controls.Add(this.label1, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.ViewModeLabel, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.ProjectTreeView, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.ViewModeComboBox, 0, 1);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             // 
-            // label1
+            // ViewModeLabel
             // 
-            resources.ApplyResources(this.label1, "label1");
-            this.label1.Name = "label1";
+            resources.ApplyResources(this.ViewModeLabel, "ViewModeLabel");
+            this.ViewModeLabel.Name = "ViewModeLabel";
             // 
             // ViewModeComboBox
             // 
@@ -336,12 +342,6 @@
             // 
             resources.ApplyResources(this.ViewModeSurfaces, "ViewModeSurfaces");
             // 
-            // ContextMenu_Duplicate
-            // 
-            this.ContextMenu_Duplicate.Name = "ContextMenu_Duplicate";
-            resources.ApplyResources(this.ContextMenu_Duplicate, "ContextMenu_Duplicate");
-            this.ContextMenu_Duplicate.Click += new System.EventHandler(this.ContextMenu_Duplicate_Click);
-            // 
             // NavigationPanel
             // 
             resources.ApplyResources(this, "$this");
@@ -365,7 +365,7 @@
         private System.Windows.Forms.ToolStripMenuItem AddElementMenu_Part;
         private System.Windows.Forms.ToolStripMenuItem AddElementMenu_MaleStud;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label ViewModeLabel;
         private System.Windows.Forms.ComboBox ViewModeComboBox;
         private Localization.LocalizableStringList LocalizedStrings;
         private Localization.LocalizableString ViewModeSurfaces;

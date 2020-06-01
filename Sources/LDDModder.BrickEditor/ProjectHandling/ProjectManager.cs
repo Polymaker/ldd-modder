@@ -139,17 +139,11 @@ namespace LDDModder.BrickEditor.ProjectHandling
             project.ElementPropertyChanged += Project_ElementPropertyChanged;
             project.UpdateModelStatistics();
 
-            if (project.TryGetProperty("ShowModels", out bool showModels))
-                ShowPartModels = showModels;
-
-            if (project.TryGetProperty("ShowCollisions", out showModels))
-                ShowCollisions = showModels;
-
-            if (project.TryGetProperty("ShowConnections", out showModels))
-                ShowConnections = showModels;
+            //LoadUserProperties();
 
             LastValidation = -1;
             IsProjectAttached = true;
+
             InitializeElementExtensions();
         }
 
@@ -172,6 +166,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
         {
             if (IsProjectOpen)
             {
+                //SaveUserProperties();
                 CurrentProject.Save(targetPath);
                 CurrentProject.ProjectPath = targetPath;
                 LastSavedChange = UndoRedoManager.CurrentChangeID;
@@ -183,10 +178,78 @@ namespace LDDModder.BrickEditor.ProjectHandling
         {
             if (IsProjectOpen)
             {
+                //SaveUserProperties();
                 var projectXml = CurrentProject.GenerateProjectXml();
                 projectXml.Save(Path.Combine(CurrentProject.ProjectWorkingDir, PartProject.ProjectFileName));
             }
         }
+
+        #region Project User Properties
+
+
+        private void LoadUserProperties()
+        {
+            if (CurrentProject.TryGetProperty("ShowModels", out bool showModels))
+                ShowPartModels = showModels;
+
+            if (CurrentProject.TryGetProperty("ShowCollisions", out showModels))
+                ShowCollisions = showModels;
+
+            if (CurrentProject.TryGetProperty("ShowConnections", out showModels))
+                ShowConnections = showModels;
+
+            if (CurrentProject.TryGetProperty("PartRenderMode", out MeshRenderMode renderMode))
+                PartRenderMode = renderMode;
+
+            foreach (var elem in CurrentProject.GetAllElements())
+            {
+                var elemExt = elem.GetExtension<ModelElementExtension>();
+                if (elemExt == null)
+                    continue;
+
+                string elemCfg = string.Empty;
+                string elemKey = GetElemKey(elem);
+
+                if (!string.IsNullOrEmpty(elemKey) && 
+                    CurrentProject.ProjectProperties.ContainsKey(elemKey))
+                {
+                    elemCfg = CurrentProject.ProjectProperties[elemKey];
+                }
+
+                if (elemCfg.EqualsIC("Hidden"))
+                    elemExt.IsHidden = true;
+            }
+        }
+
+        private void SaveUserProperties()
+        {
+            CurrentProject.ProjectProperties.Clear();
+            CurrentProject.ProjectProperties["ShowModels"] = ShowPartModels.ToString();
+            CurrentProject.ProjectProperties["ShowCollisions"] = ShowCollisions.ToString();
+            CurrentProject.ProjectProperties["ShowConnections"] = ShowConnections.ToString();
+            CurrentProject.ProjectProperties["PartRenderMode"] = PartRenderMode.ToString();
+
+            foreach (var elem in CurrentProject.GetAllElements())
+            {
+                var elemExt = elem.GetExtension<ModelElementExtension>();
+
+                if (elemExt != null && elemExt.IsHidden)
+                {
+                    string elemKey = GetElemKey(elem);
+                    CurrentProject.ProjectProperties[elemKey] = "Hidden";
+                }
+            }
+        }
+
+        private string GetElemKey(PartElement element)
+        {
+            if (element is PartSurface)
+                return element.Name;
+            else
+                return $"Elem_{element.ID}";
+        }
+
+        #endregion
 
         #region Project Events
 
@@ -287,7 +350,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
                 if (IsProjectOpen && IsProjectAttached)
                 {
-                    CurrentProject.ProjectProperties["ShowModels"] = visible.ToString();
+                    //CurrentProject.ProjectProperties["ShowModels"] = visible.ToString();
                     InvalidateElementsVisibility(CurrentProject.Surfaces);
                 }
 
@@ -303,7 +366,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
                 if (IsProjectOpen && IsProjectAttached)
                 {
-                    CurrentProject.ProjectProperties["ShowCollisions"] = visible.ToString();
+                    //CurrentProject.ProjectProperties["ShowCollisions"] = visible.ToString();
                     InvalidateElementsVisibility(CurrentProject.Collisions);
                     InvalidateElementsVisibility(CurrentProject.Bones);
                 }
@@ -320,7 +383,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
                 if (IsProjectOpen && IsProjectAttached)
                 {
-                    CurrentProject.ProjectProperties["ShowConnections"] = visible.ToString();
+                    //CurrentProject.ProjectProperties["ShowConnections"] = visible.ToString();
                     InvalidateElementsVisibility(CurrentProject.Connections);
                     InvalidateElementsVisibility(CurrentProject.Bones);
                 }
@@ -335,7 +398,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
             {
                 _PartRenderMode = renderMode;
                 if (IsProjectOpen && IsProjectAttached)
-                    CurrentProject.ProjectProperties["PartRenderMode"] = renderMode.ToString();
+                    //CurrentProject.ProjectProperties["PartRenderMode"] = renderMode.ToString();
                 PartRenderModeChanged?.Invoke(this, EventArgs.Empty);
             }
         }

@@ -10,11 +10,19 @@ namespace LDDModder.BrickEditor.Settings
 {
     public class DisplaySettings
     {
+        //[JsonProperty("viewport")]
+        //public ViewportDisplaySettings DefaultVisibility { get; set; }
+
         [JsonProperty]
         public Color WireframeColor { get; set; }
 
-        [JsonProperty]
+        [JsonProperty("collision.color")]
         public Color CollisionColor { get; set; }
+
+        [JsonProperty("connection.color")]
+        public Color ConnectionColor { get; set; }
+        [JsonProperty("connection.colorAlt")]
+        public Color ConnectionColorAlt { get; set; }
 
         [JsonProperty]
         public Color DefaultPartColor { get; set; }

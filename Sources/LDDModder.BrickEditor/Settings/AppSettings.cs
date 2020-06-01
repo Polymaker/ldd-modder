@@ -20,6 +20,9 @@ namespace LDDModder.BrickEditor.Settings
         [JsonProperty("build.configurations")]
         public ProjectBuildSettings BuildSettings { get; set; }
 
+        //[JsonProperty("viewport.default")]
+        //public ViewportDisplaySettings ViewportSettings { get; set; }
+
         [JsonProperty("currentProjectPath")]
         public RecentFileInfo LastOpenProject { get; set; }
 
@@ -33,6 +36,11 @@ namespace LDDModder.BrickEditor.Settings
         {
             RecentProjectFiles = new List<RecentFileInfo>();
             BuildSettings = new ProjectBuildSettings();
+            //ViewportSettings = new ViewportDisplaySettings()
+            //{
+            //    PartRenderMode = Rendering.MeshRenderMode.SolidWireframe,
+            //    ShowPartModels = true
+            //};
         }
 
         public static AppSettings CreateDefault(LDD.LDDEnvironment lddEnvironment)

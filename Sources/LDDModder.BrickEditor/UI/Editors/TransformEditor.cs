@@ -14,6 +14,7 @@ using LDDModder.Simple3D;
 
 namespace LDDModder.BrickEditor.UI.Controls
 {
+    [DefaultEvent("ValueChanged")]
     public partial class TransformEditor : UserControl, INotifyPropertyChanged
     {
         private ItemTransform _Value;

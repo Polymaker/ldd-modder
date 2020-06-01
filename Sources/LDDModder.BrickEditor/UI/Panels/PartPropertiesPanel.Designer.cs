@@ -55,6 +55,7 @@
             this.LabelCenterOfMass = new System.Windows.Forms.Label();
             this.InertiaTensorTextBox = new System.Windows.Forms.TextBox();
             this.LabelMass = new System.Windows.Forms.Label();
+            this.CenterOfMassEditor = new LDDModder.BrickEditor.UI.Editors.VectorEditor();
             this.MassNumberBox = new LDDModder.BrickEditor.UI.Controls.NumberTextBox();
             this.LabelFriction = new System.Windows.Forms.Label();
             this.FrictionCheckBox = new System.Windows.Forms.CheckBox();
@@ -246,7 +247,7 @@
             this.collapsiblePanel3.DisplayStyle = LDDModder.BrickEditor.UI.Controls.CollapsiblePanel.HeaderDisplayStyle.Button;
             resources.ApplyResources(this.collapsiblePanel3, "collapsiblePanel3");
             this.collapsiblePanel3.Name = "collapsiblePanel3";
-            this.collapsiblePanel3.PanelHeight = 91;
+            this.collapsiblePanel3.PanelHeight = 104;
             // 
             // tableLayoutPanel3
             // 
@@ -255,6 +256,7 @@
             this.tableLayoutPanel3.Controls.Add(this.LabelCenterOfMass, 0, 1);
             this.tableLayoutPanel3.Controls.Add(this.InertiaTensorTextBox, 1, 0);
             this.tableLayoutPanel3.Controls.Add(this.LabelMass, 0, 2);
+            this.tableLayoutPanel3.Controls.Add(this.CenterOfMassEditor, 1, 1);
             this.tableLayoutPanel3.Controls.Add(this.MassNumberBox, 1, 2);
             this.tableLayoutPanel3.Controls.Add(this.LabelFriction, 0, 3);
             this.tableLayoutPanel3.Controls.Add(this.FrictionCheckBox, 1, 3);
@@ -279,6 +281,11 @@
             // 
             resources.ApplyResources(this.LabelMass, "LabelMass");
             this.LabelMass.Name = "LabelMass";
+            // 
+            // CenterOfMassEditor
+            // 
+            resources.ApplyResources(this.CenterOfMassEditor, "CenterOfMassEditor");
+            this.CenterOfMassEditor.Name = "CenterOfMassEditor";
             // 
             // MassNumberBox
             // 
@@ -306,7 +313,7 @@
             this.collapsiblePanel4.DisplayStyle = LDDModder.BrickEditor.UI.Controls.CollapsiblePanel.HeaderDisplayStyle.Button;
             resources.ApplyResources(this.collapsiblePanel4, "collapsiblePanel4");
             this.collapsiblePanel4.Name = "collapsiblePanel4";
-            this.collapsiblePanel4.PanelHeight = 18;
+            this.collapsiblePanel4.PanelHeight = 6;
             // 
             // flowLayoutPanel1
             // 
@@ -381,5 +388,6 @@
         private System.Windows.Forms.Label LabelAliases;
         private Controls.BrowseTextBox AliasesButtonBox;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+        private Editors.VectorEditor CenterOfMassEditor;
     }
 }

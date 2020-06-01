@@ -172,6 +172,7 @@
     </Compile>
     <Compile Include="Settings\BuildConfiguration.cs" />
     <Compile Include="Settings\ProjectBuildSettings.cs" />
+    <Compile Include="Settings\ViewportDisplaySettings.cs" />
     <Compile Include="UI\Controls\CollapsiblePanel.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -213,6 +214,12 @@
     </Compile>
     <Compile Include="UI\Editors\StudConnectionEditor.Designer.cs">
       <DependentUpon>StudConnectionEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Editors\VectorEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Editors\VectorEditor.Designer.cs">
+      <DependentUpon>VectorEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\Panels\ElementDetailPanel.cs">
       <SubType>Form</SubType>
@@ -431,6 +438,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Editors\StudConnectionEditor.resx">
       <DependentUpon>StudConnectionEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Editors\VectorEditor.resx">
+      <DependentUpon>VectorEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Panels\ElementDetailPanel.fr.resx">
       <DependentUpon>ElementDetailPanel.cs</DependentUpon>
