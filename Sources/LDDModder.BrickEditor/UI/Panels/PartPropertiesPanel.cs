@@ -95,7 +95,8 @@ namespace LDDModder.BrickEditor.UI.Panels
             DescriptionTextBox.DataBindings.Clear();
             BoundingEditor.DataBindings.Clear();
             GeomBoundingEditor.DataBindings.Clear();
-
+            MassNumberBox.DataBindings.Clear();
+            
             InternalSet = true;
 
             if (CurrentProject != null)
@@ -120,6 +121,11 @@ namespace LDDModder.BrickEditor.UI.Panels
                 GeomBoundingEditor.DataBindings.Add(new Binding("Value",
                     CurrentProject.Properties, nameof(CurrentProject.Properties.GeometryBounding),
                     false, DataSourceUpdateMode.OnPropertyChanged));
+
+
+                MassNumberBox.DataBindings.Add(new Binding("Value",
+                    CurrentProject.Properties.PhysicsAttributes, nameof(PartProperties.PhysicsAttributes.Mass),
+                    true, DataSourceUpdateMode.OnValidation));
             }
             else
             {

@@ -121,6 +121,7 @@ namespace LDDModder.Modding.Editing
             PartVersion = 1;
             Bounding = new BoundingBox();
             GeometryBounding = new BoundingBox();
+            PhysicsAttributes = new PhysicsAttributes();
         }
 
         public override XElement SerializeToXml()
@@ -151,7 +152,7 @@ namespace LDDModder.Modding.Editing
             if (MainGroup != null)
                 propsElem.AddElement(nameof(MainGroup), new XAttribute("ID", MainGroup.ID), new XAttribute("Name", MainGroup.Name));
 
-            if (PhysicsAttributes != null)
+            if (PhysicsAttributes != null && !PhysicsAttributes.IsEmpty)
                 propsElem.Add(PhysicsAttributes.SerializeToXml());
 
             if (Bounding != null)
@@ -194,6 +195,8 @@ namespace LDDModder.Modding.Editing
                 PhysicsAttributes = new PhysicsAttributes();
                 PhysicsAttributes.LoadFromXml(pA);
             }
+            else
+                PhysicsAttributes = new PhysicsAttributes();
 
             if (element.HasElement(nameof(GeometryBounding), out XElement gb))
                 GeometryBounding = XmlHelper.DefaultDeserialize<BoundingBox>(gb);

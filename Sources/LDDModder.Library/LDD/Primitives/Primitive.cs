@@ -99,7 +99,7 @@ namespace LDDModder.LDD.Primitives
             if (Connectors.Any())
                 rootElem.Add(new XElement("Connectivity", Connectors.Select(x => x.SerializeToXml())));
 
-            if (PhysicsAttributes != null)
+            if (PhysicsAttributes != null && !PhysicsAttributes.IsEmpty)
                 rootElem.Add(PhysicsAttributes.SerializeToXml());
 
             if (Bounding != null)
@@ -295,6 +295,9 @@ namespace LDDModder.LDD.Primitives
                         break;
                 }
             }
+
+            if (PhysicsAttributes == null)
+                PhysicsAttributes = new PhysicsAttributes();
 
             if (ID == 0 && Aliases.Any())
                 ID = Aliases.First();

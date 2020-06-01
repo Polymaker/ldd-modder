@@ -9,6 +9,7 @@ namespace LDDModder.Simple3D
     public struct Matrix3d
     {
         public static readonly Matrix3d Identity = new Matrix3d(1d, 0d, 0d, 0d, 1d, 0d, 0d, 0d, 1d);
+        public static readonly Matrix3d Zero = new Matrix3d(0d, 0d, 0d, 0d, 0d, 0d, 0d, 0d, 0d);
 
         public double A1;
         public double A2;

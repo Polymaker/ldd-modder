@@ -15,6 +15,14 @@ namespace LDDModder.LDD.Primitives
 
         public int FrictionType { get; set; }
 
+        public bool IsEmpty => InertiaTensor == Matrix3d.Zero && CenterOfMass == Vector3d.Zero;
+
+        public PhysicsAttributes()
+        {
+            InertiaTensor = Matrix3d.Zero;
+            CenterOfMass = Vector3d.Zero;
+        }
+
         public void LoadFromXml(XElement element)
         {
             var inertiaMatrix = new Matrix3d();
