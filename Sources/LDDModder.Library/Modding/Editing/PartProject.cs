@@ -844,8 +844,8 @@ namespace LDDModder.Modding.Editing
             foreach (var conn in Connections)
                 connectionIDs.Add(conn.ID);
 
-            foreach (var model in GetAllElements<PartCullingModel>())
-                model.ConnectionIndex = connectionIDs.IndexOf(model.ConnectionID);
+            foreach (var studRef in GetAllElements<StudReference>())
+                studRef.ConnectionIndex = connectionIDs.IndexOf(studRef.ConnectionID);
         }
 
         private void RenumberSurfaces()
@@ -866,24 +866,34 @@ namespace LDDModder.Modding.Editing
             {
                 foreach (var comp in surf.Components.OfType<PartCullingModel>())
                 {
-                    PartConnection linkedConnection = null;
-
-                    if (comp.ConnectionIndex != -1 &&
-                        comp.ConnectionIndex < Connections.Count &&
-                        Connections[comp.ConnectionIndex].ConnectorType == ConnectorType.Custom2DField)
+                    foreach (var studRef in comp.GetStudReferences())
                     {
-                        linkedConnection = Connections[comp.ConnectionIndex];
+                        PartConnection linkedConnection = null;
+
+                        if (studRef.ConnectionIndex != -1 &&
+                            studRef.ConnectionIndex < Connections.Count)
+                        {
+                            if (Connections[studRef.ConnectionIndex].ConnectorType == ConnectorType.Custom2DField)
+                                linkedConnection = Connections[studRef.ConnectionIndex];
+                            else
+                                Debug.WriteLine("Component references non Custom2DField connection!");
+                        }
+
+                        if (linkedConnection == null && !string.IsNullOrEmpty(studRef.ConnectionID))
+                        {
+                            linkedConnection = Connections
+                                .FirstOrDefault(x => x.ID == studRef.ConnectionID);
+                        }
+
+                        if (studRef.ConnectionIndex >= 0 && linkedConnection == null)
+                        {
+                            Debug.WriteLine("Could not find connection!");
+                        }
+
+                        studRef.ConnectionID = linkedConnection?.ID;
+                        
+                        studRef.ConnectionIndex = linkedConnection != null ? Connections.IndexOf(linkedConnection) : -1;
                     }
-
-                    if (linkedConnection == null && !string.IsNullOrEmpty(comp.ConnectionID))
-                    {
-                        linkedConnection = Connections
-                            .FirstOrDefault(x => x.ID == comp.ConnectionID);
-                    }
-
-                    comp.ConnectionID = linkedConnection?.ID;
-                    comp.ConnectionIndex = linkedConnection != null ? Connections.IndexOf(linkedConnection) : -1;
-
                 }
             }
         }

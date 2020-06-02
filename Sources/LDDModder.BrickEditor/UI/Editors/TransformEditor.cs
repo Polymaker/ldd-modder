@@ -32,6 +32,20 @@ namespace LDDModder.BrickEditor.UI.Controls
         public event EventHandler ValueChanged;
         public event PropertyChangedEventHandler PropertyChanged;
 
+        //[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        [DefaultValue(80)]
+        public int LabelsWidth
+        {
+            get
+            {
+                return (int)tableLayoutPanel1.ColumnStyles[0].Width - 3;
+            }
+            set
+            {
+                tableLayoutPanel1.ColumnStyles[0].Width = value + 3;
+            }
+        }
+
         public TransformEditor()
         {
             InitializeComponent();

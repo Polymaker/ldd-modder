@@ -51,17 +51,19 @@
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(210, 26);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(216, 20);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // ValueZ
             // 
             this.ValueZ.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.ValueZ.Location = new System.Drawing.Point(141, 3);
+            this.ValueZ.Location = new System.Drawing.Point(146, 0);
+            this.ValueZ.Margin = new System.Windows.Forms.Padding(2, 0, 0, 0);
             this.ValueZ.Name = "ValueZ";
-            this.ValueZ.Size = new System.Drawing.Size(66, 20);
+            this.ValueZ.Size = new System.Drawing.Size(70, 20);
             this.ValueZ.TabIndex = 2;
+            this.ValueZ.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.ValueZ.UseMinMax = false;
             this.ValueZ.ValueChanged += new System.EventHandler(this.ValueBoxes_ValueChanged);
             // 
@@ -69,10 +71,12 @@
             // 
             this.ValueY.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.ValueY.Location = new System.Drawing.Point(72, 3);
+            this.ValueY.Location = new System.Drawing.Point(73, 0);
+            this.ValueY.Margin = new System.Windows.Forms.Padding(1, 0, 1, 0);
             this.ValueY.Name = "ValueY";
-            this.ValueY.Size = new System.Drawing.Size(63, 20);
+            this.ValueY.Size = new System.Drawing.Size(70, 20);
             this.ValueY.TabIndex = 1;
+            this.ValueY.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.ValueY.UseMinMax = false;
             this.ValueY.ValueChanged += new System.EventHandler(this.ValueBoxes_ValueChanged);
             // 
@@ -80,10 +84,12 @@
             // 
             this.ValueX.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.ValueX.Location = new System.Drawing.Point(3, 3);
+            this.ValueX.Location = new System.Drawing.Point(0, 0);
+            this.ValueX.Margin = new System.Windows.Forms.Padding(0, 0, 2, 0);
             this.ValueX.Name = "ValueX";
-            this.ValueX.Size = new System.Drawing.Size(63, 20);
+            this.ValueX.Size = new System.Drawing.Size(70, 20);
             this.ValueX.TabIndex = 0;
+            this.ValueX.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.ValueX.UseMinMax = false;
             this.ValueX.ValueChanged += new System.EventHandler(this.ValueBoxes_ValueChanged);
             // 
@@ -93,7 +99,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "VectorEditor";
-            this.Size = new System.Drawing.Size(210, 42);
+            this.Size = new System.Drawing.Size(216, 42);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);

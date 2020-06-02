@@ -1,5 +1,6 @@
 ﻿using LDDModder.LDD.Files;
 using LDDModder.LDD.Meshes;
+using LDDModder.LDD.Parts;
 using LDDModder.LDD.Primitives;
 using LDDModder.LDD.Primitives.Connectors;
 using LDDModder.Simple3D;
@@ -30,7 +31,17 @@ namespace LDDModder.Prototyping
             base.OnLoad(e);
 
 
-            var trans1 = (Matrix4d)Matrix4.FromTranslation(new Vector3(3,3,0));
+            
+            //TestPrimitives();
+            //TestGFiles();
+            //SolveShaderData();
+            //TestCustomBrick();
+            //TestLddFiles();
+        }
+
+        private void TestTransforms()
+        {
+            var trans1 = (Matrix4d)Matrix4.FromTranslation(new Vector3(3, 3, 0));
             var trans2 = (Matrix4d)Matrix4.FromTranslation(new Vector3(-1, 0, 0));
             var trans3 = trans2 * trans1;
 
@@ -51,11 +62,6 @@ namespace LDDModder.Prototyping
             testTrans = trans1 * trans3.Inverted();
             if (testTrans.Equals(trans2))
                 Debug.WriteLine("YAY! 4");
-            //TestPrimitives();
-            //TestGFiles();
-            //SolveShaderData();
-            //TestCustomBrick();
-            //TestLddFiles();
         }
 
         private void TestPrimitives()
@@ -169,7 +175,7 @@ namespace LDDModder.Prototyping
             foreach (var meshFilename in Directory.EnumerateFiles(meshDirectory, "*.g*"))
             {
                 Console.WriteLine("Reading file " + Path.GetFileName(meshFilename));
-
+                
                 MeshFile mesh = null;
                 try
                 {
@@ -208,116 +214,192 @@ namespace LDDModder.Prototyping
             }
             
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            LDD.LDDEnvironment.Initialize();
+            if (!LDD.LDDEnvironment.IsInstalled)
+                return;
+
+            var meshFolder = LDD.LDDEnvironment.InstalledEnvironment.GetLddSubdirectory(LDD.LddDirectory.ApplicationData, "db\\Primitives\\LOD0");
+
+            var meshFiles = Directory.GetFiles(meshFolder, "*.g*");
+            progressBar1.Maximum = meshFiles.Length;
+            Task.Factory.StartNew(() =>
+            {
+                foreach (string meshFilePath in meshFiles)
+                {
+                    //progressBar1.Value += 1;
+                    //Console.WriteLine($"Reading {Path.GetFileNameWithoutExtension(meshFilePath)}..");
+                    string currentFile = Path.GetFileName(meshFilePath);
+                    var messages = new List<string>();
+
+                    try
+                    {
+                        var mesh = LDD.Files.MeshFile.Read(meshFilePath);
+                        bool isDecorationFile = PartSurfaceMesh.ParseSurfaceID(meshFilePath) > 0;
+
+                        if (isDecorationFile != mesh.IsTextured)
+                        {
+                            messages.Add("\tInvalid decoration state! #1");
+                        }
+
+                        foreach (var culling in mesh.Cullings)
+                        {
+                            if (culling.ReplacementMesh != null && culling.Type != MeshCullingType.FemaleStud)
+                            {
+                                messages.Add($"\tAlt mesh used for culling type {culling.Type} #2");
+                            }
+
+                            //if (culling.Studs.Select(x => x.ConnectorIndex).Distinct().Count() > 1)
+                            //    messages.Add($"\tMore than one Custom2DField reference! (NormalStuds) #3.1");
+
+                            if (culling.AdjacentStuds.Select(x => x.ConnectorIndex).Distinct().Count() > 1)
+                                messages.Add($"\tMore than one Custom2DField reference! (AdjacentStuds) #3.2");
+
+                            if (culling.Studs.Sum(x => x.FieldIndices.Count) > 1 && culling.Type == MeshCullingType.MaleStud)
+                            {
+                                messages.Add("\tMore than one field referenced for MaleStud #4.1");
+                            }
+
+                            if (culling.AdjacentStuds.Count > 1 && culling.Type == MeshCullingType.BrickTube)
+                            {
+                                messages.Add("\tMore than one field referenced for BrickTube #4.2");
+                            }
+
+                            if (culling.AdjacentStuds.Sum(x => x.FieldIndices.Count) > 0 && culling.Type != MeshCullingType.BrickTube)
+                            {
+                                messages.Add("\tAdjacent studs used for non BrickTube! #5");
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        messages.Add($"Error reading file:\r\n{ex}");
+                    }
+                    if (messages.Count > 0)
+                    {
+                        Console.WriteLine($"Issues with file: {currentFile}");
+                        Console.WriteLine(string.Join("\r\n", messages));
+                        //messages.ForEach(x => Console.WriteLine(x));
+                        Console.WriteLine(string.Empty);
+                    }
+
+                }
+            });
+            
+        }
+
         /*
-        private void FixBrick4286()
-        {
-            string meshDirectory = Environment.ExpandEnvironmentVariables(@"%appdata%\LEGO Company\LEGO Digital Designer\db\Primitives\LOD0\");
-            float edgeWidthRatio = 15.5f / 0.8f;
+private void FixBrick4286()
+{
+   string meshDirectory = Environment.ExpandEnvironmentVariables(@"%appdata%\LEGO Company\LEGO Digital Designer\db\Primitives\LOD0\");
+   float edgeWidthRatio = 15.5f / 0.8f;
 
-            using (var fs = File.OpenRead("4286.g.orig"))
-            {
-                var brickMesh = GFileReader.ReadMesh(fs);
+   using (var fs = File.OpenRead("4286.g.orig"))
+   {
+       var brickMesh = GFileReader.ReadMesh(fs);
 
-                var mesh = brickMesh.OriginalData.Value;
-                for (int t = 0; t < 3; t++)
-                {
-                    int sidx = mesh.GetShaderDataIndexFromOffset(mesh.Geometry.Indices[(9 * 3) + t].REShaderOffset);
-                    for (int x = 0; x < 2; x++)
-                    {
-                        var tmp = mesh.RoundEdgeShaderData[sidx].Coords[x * 2];
-                        mesh.RoundEdgeShaderData[sidx].Coords[x * 2] = mesh.RoundEdgeShaderData[sidx].Coords[(x * 2) + 1];
-                        mesh.RoundEdgeShaderData[sidx].Coords[(x * 2) + 1] = tmp;
-                    }
+       var mesh = brickMesh.OriginalData.Value;
+       for (int t = 0; t < 3; t++)
+       {
+           int sidx = mesh.GetShaderDataIndexFromOffset(mesh.Geometry.Indices[(9 * 3) + t].REShaderOffset);
+           for (int x = 0; x < 2; x++)
+           {
+               var tmp = mesh.RoundEdgeShaderData[sidx].Coords[x * 2];
+               mesh.RoundEdgeShaderData[sidx].Coords[x * 2] = mesh.RoundEdgeShaderData[sidx].Coords[(x * 2) + 1];
+               mesh.RoundEdgeShaderData[sidx].Coords[(x * 2) + 1] = tmp;
+           }
 
-                    mesh.RoundEdgeShaderData[sidx].Coords[1].X = mesh.RoundEdgeShaderData[sidx].Coords[1].X * -1f;
-                    mesh.RoundEdgeShaderData[sidx].Coords[3].X = mesh.RoundEdgeShaderData[sidx].Coords[3].X * -1f;
-                    //mesh.RoundEdgeShaderData[sidx].Coords[1] = new Vector2(1000, 1000);
-                    //mesh.RoundEdgeShaderData[sidx].Coords[3] = new Vector2(1000, 1000);
-                    //mesh.RoundEdgeShaderData[sidx].Coords[4] = new Vector2(1000, 1000);
-                    //mesh.RoundEdgeShaderData[sidx].Coords[5] = new Vector2(1000, 1000);
-                    //mesh.RoundEdgeShaderData[sidx].Coords[5].X = mesh.RoundEdgeShaderData[sidx].Coords[5].X * -1f;
-                    //if (t == 0)
-                    //{
-                    //    mesh.RoundEdgeShaderData[sidx].Coords[1].X = mesh.RoundEdgeShaderData[sidx].Coords[1].X + (15.5F * 2f);
-                    //}
+           mesh.RoundEdgeShaderData[sidx].Coords[1].X = mesh.RoundEdgeShaderData[sidx].Coords[1].X * -1f;
+           mesh.RoundEdgeShaderData[sidx].Coords[3].X = mesh.RoundEdgeShaderData[sidx].Coords[3].X * -1f;
+           //mesh.RoundEdgeShaderData[sidx].Coords[1] = new Vector2(1000, 1000);
+           //mesh.RoundEdgeShaderData[sidx].Coords[3] = new Vector2(1000, 1000);
+           //mesh.RoundEdgeShaderData[sidx].Coords[4] = new Vector2(1000, 1000);
+           //mesh.RoundEdgeShaderData[sidx].Coords[5] = new Vector2(1000, 1000);
+           //mesh.RoundEdgeShaderData[sidx].Coords[5].X = mesh.RoundEdgeShaderData[sidx].Coords[5].X * -1f;
+           //if (t == 0)
+           //{
+           //    mesh.RoundEdgeShaderData[sidx].Coords[1].X = mesh.RoundEdgeShaderData[sidx].Coords[1].X + (15.5F * 2f);
+           //}
 
-                }
+       }
 
-                using (var fs2 = File.Open(Path.Combine(meshDirectory, "4286.g"), FileMode.Create))
-                    GFileWriter.WriteMeshFile(fs2, mesh);
-            }
-        }
+       using (var fs2 = File.Open(Path.Combine(meshDirectory, "4286.g"), FileMode.Create))
+           GFileWriter.WriteMeshFile(fs2, mesh);
+   }
+}
 
-        private void SolveShaderData()
-        {
-            string meshDirectory = Environment.ExpandEnvironmentVariables(@"%appdata%\LEGO Company\LEGO Digital Designer\db\Primitives\LOD0\");
-            float edgeWidthRatio = 15.5f / 0.8f;
+private void SolveShaderData()
+{
+   string meshDirectory = Environment.ExpandEnvironmentVariables(@"%appdata%\LEGO Company\LEGO Digital Designer\db\Primitives\LOD0\");
+   float edgeWidthRatio = 15.5f / 0.8f;
 
-            FixBrick4286();
+   FixBrick4286();
 
-            using (var fs = File.OpenRead(Path.Combine(meshDirectory, "4286.g")))
-            //using (var fs = File.OpenRead("4286.g.orig"))
-            {
-                var brickMesh = GFileReader.ReadMesh(fs);
+   using (var fs = File.OpenRead(Path.Combine(meshDirectory, "4286.g")))
+   //using (var fs = File.OpenRead("4286.g.orig"))
+   {
+       var brickMesh = GFileReader.ReadMesh(fs);
 
-                int triCtr = 0;
-                foreach (var tri in brickMesh.Geometry.Triangles)
-                {
-                    if (triCtr != 9)
-                    {
-                        triCtr++;
-                        continue;
-                    }
+       int triCtr = 0;
+       foreach (var tri in brickMesh.Geometry.Triangles)
+       {
+           if (triCtr != 9)
+           {
+               triCtr++;
+               continue;
+           }
 
-                    Console.WriteLine($"Triangle {triCtr++}:");
-                    foreach (var idx in tri.Indices)
-                    {
-                        var values = new List<Vector2>();
-                        idx.RoundEdgeData.Coords.Take(6).ToArray();
+           Console.WriteLine($"Triangle {triCtr++}:");
+           foreach (var idx in tri.Indices)
+           {
+               var values = new List<Vector2>();
+               idx.RoundEdgeData.Coords.Take(6).ToArray();
 
-                        for (int i = 0; i < 3; i++)
-                        {
-                            var dist1 = Vector3.GetPlanarDistance(tri.Edges[i].P1.Position, tri.Edges[i].P2.Position, 
-                                idx.Vertex.Position, tri.Normal);
+               for (int i = 0; i < 3; i++)
+               {
+                   var dist1 = Vector3.GetPlanarDistance(tri.Edges[i].P1.Position, tri.Edges[i].P2.Position, 
+                       idx.Vertex.Position, tri.Normal);
 
-                            var dist2 = Vector3.GetPlanarDistance(tri.Edges[i].P2.Position, tri.Edges[i].P1.Position,
-                                idx.Vertex.Position, tri.Normal);
+                   var dist2 = Vector3.GetPlanarDistance(tri.Edges[i].P2.Position, tri.Edges[i].P1.Position,
+                       idx.Vertex.Position, tri.Normal);
 
-                            values.Add(Vector2.Empty);
-                            values.Add(dist2);
-                        }
+                   values.Add(Vector2.Empty);
+                   values.Add(dist2);
+               }
 
-                        var adjustedShaderData = idx.RoundEdgeData.Coords.Take(6).ToArray();
+               var adjustedShaderData = idx.RoundEdgeData.Coords.Take(6).ToArray();
 
-                        for (int n = 0; n < adjustedShaderData.Length; n++)
-                        {
-                            adjustedShaderData[n].X = (float)Math.Round(adjustedShaderData[n].X, 4);
-                            adjustedShaderData[n].Y = (float)Math.Round(adjustedShaderData[n].Y, 4);
+               for (int n = 0; n < adjustedShaderData.Length; n++)
+               {
+                   adjustedShaderData[n].X = (float)Math.Round(adjustedShaderData[n].X, 4);
+                   adjustedShaderData[n].Y = (float)Math.Round(adjustedShaderData[n].Y, 4);
 
-                            if (Math.Abs(adjustedShaderData[n].X) >= 100 && Math.Abs(adjustedShaderData[n].X) < 1000)
-                            {
-                                var sign = Math.Sign(adjustedShaderData[n].X);
-                                adjustedShaderData[n].X -= sign * 100f;
-                                adjustedShaderData[n].X = (float)Math.Round(adjustedShaderData[n].X / edgeWidthRatio, 4);
-                                adjustedShaderData[n].Y = (float)Math.Round(adjustedShaderData[n].Y / edgeWidthRatio, 4);
-                                adjustedShaderData[n].X += sign * 100f;
-                            }
-                            else
-                            {
-                                //adjustedShaderData[n].X = -1;
-                                //adjustedShaderData[n].Y = -1;
-                            }
-                        }
+                   if (Math.Abs(adjustedShaderData[n].X) >= 100 && Math.Abs(adjustedShaderData[n].X) < 1000)
+                   {
+                       var sign = Math.Sign(adjustedShaderData[n].X);
+                       adjustedShaderData[n].X -= sign * 100f;
+                       adjustedShaderData[n].X = (float)Math.Round(adjustedShaderData[n].X / edgeWidthRatio, 4);
+                       adjustedShaderData[n].Y = (float)Math.Round(adjustedShaderData[n].Y / edgeWidthRatio, 4);
+                       adjustedShaderData[n].X += sign * 100f;
+                   }
+                   else
+                   {
+                       //adjustedShaderData[n].X = -1;
+                       //adjustedShaderData[n].Y = -1;
+                   }
+               }
 
-                        Console.WriteLine($"  Pos: {idx.Vertex.Position.Rounded()}");
-                        Console.WriteLine("  RE: " + string.Join(", ", adjustedShaderData.Take(6)));
+               Console.WriteLine($"  Pos: {idx.Vertex.Position.Rounded()}");
+               Console.WriteLine("  RE: " + string.Join(", ", adjustedShaderData.Take(6)));
 
-                    }
+           }
 
-                }
-            }
-        }
-        */
+       }
+   }
+}
+*/
         //private void TestLddFiles()
         //{
         //    string lddDirectory = Environment.ExpandEnvironmentVariables(@"%appdata%\LEGO Company\LEGO Digital Designer\");
@@ -330,7 +412,7 @@ namespace LDDModder.Prototyping
         //    //using (var fs = File.Open("test.lif", FileMode.Create))
         //    //    lifFile.Save(fs);
         //    lifFile.Dispose();
-            
+
         //}
 
         //public void TestCustomBrick()
@@ -347,7 +429,7 @@ namespace LDDModder.Prototyping
 
         //    //var mesh = new LDD.Meshes.Mesh
         //    //{
-                
+
         //    //    Vertices = new Vertex[24],
         //    //    Indices = new IndexReference[12 * 3],
         //    //    Type = MeshType.Standard
@@ -371,7 +453,7 @@ namespace LDDModder.Prototyping
         //    for (int i = 0; i < 6; i++)
         //    {
         //        var curDir = normals[i];
-                
+
         //        float faceDist;
         //        float hDist;
         //        float vDist;

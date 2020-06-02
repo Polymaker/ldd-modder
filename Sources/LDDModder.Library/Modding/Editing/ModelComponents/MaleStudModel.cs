@@ -22,16 +22,19 @@ namespace LDDModder.Modding.Editing
         {
             base.LoadCullingInformation(culling);
 
-            if (culling.Studs.Count >= 1)
-                Stud = new StudReference(culling.Studs[0]);
-            else
+            var referencedStuds = ConvertFromRefs(culling.Studs).ToList();
+            Stud = referencedStuds.FirstOrDefault();
+
+            if (referencedStuds.Count > 1)
+                Debug.WriteLine("Stud culling references more than one stud!");
+            else if(referencedStuds.Count == 0)
                 Debug.WriteLine("Stud culling does not reference a stud!");
         }
 
         internal override void FillCullingInformation(MeshCulling culling)
         {
             if (Stud != null)
-                culling.Studs.Add(GetFieldReference(Stud));
+                culling.Studs.Add(ConvertToRef(Stud));
         }
 
         public override XElement SerializeToXml()
@@ -49,6 +52,9 @@ namespace LDDModder.Modding.Editing
             base.LoadFromXml(element);
             if (element.HasElement(StudReference.NODE_NAME, out XElement studElem))
                 Stud = StudReference.FromXml(studElem);
+
+            if (!string.IsNullOrEmpty(LegacyConnectionID) && Stud != null)
+                Stud.ConnectionID = LegacyConnectionID;
         }
 
         public override List<ValidationMessage> ValidateElement()

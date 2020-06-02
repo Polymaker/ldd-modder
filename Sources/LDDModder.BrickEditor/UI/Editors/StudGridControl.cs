@@ -14,7 +14,7 @@ namespace LDDModder.BrickEditor.UI.Editors
     public partial class StudGridControl : Control
     {
         private Custom2DFieldConnector _StudConnector;
-       
+        private bool _ReadOnly;
         private Size _MaxGridSize;
         private System.Threading.Timer SelectionScrollTimer;
 
@@ -36,10 +36,6 @@ namespace LDDModder.BrickEditor.UI.Editors
             }
         }
 
-        public event EventHandler ConnectorChanged;
-
-        public event EventHandler ConnectorSizeChanged;
-
         public Size MaxGridSize
         {
             get => _MaxGridSize;
@@ -56,8 +52,27 @@ namespace LDDModder.BrickEditor.UI.Editors
             }
         }
 
+        [DefaultValue(false)]
+        public bool ReadOnly
+        {
+            get => _ReadOnly;
+            set
+            {
+                if (_ReadOnly != value)
+                {
+                    _ReadOnly = value;
+                    if (value && IsEditingNode)
+                        CancelEditNode();
+                }
+            }
+        }
+
         [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public Custom2DFieldNode SelectedNode => GetNodeFromCell(FocusedCell);
+
+        public event EventHandler ConnectorChanged;
+
+        public event EventHandler ConnectorSizeChanged;
 
         public StudGridControl()
         {
@@ -443,7 +458,7 @@ namespace LDDModder.BrickEditor.UI.Editors
         {
             if (e.Button == MouseButtons.Left)
             {
-                if (SelectedNode != null)
+                if (SelectedNode != null && !ReadOnly)
                     BeginEditNode();
             }
 
@@ -518,7 +533,7 @@ namespace LDDModder.BrickEditor.UI.Editors
                     SelectionEnd = null;
                     Invalidate();
 
-                    if (wasEditing)
+                    if (wasEditing && !ReadOnly)
                         BeginEditNode();
 
                     return true;
@@ -560,7 +575,7 @@ namespace LDDModder.BrickEditor.UI.Editors
 
             if (e.KeyCode >= Keys.D0 && e.KeyCode <= Keys.D9)
             {
-                if (!IsEditingNode && SelectedNode != null)
+                if (!IsEditingNode && SelectedNode != null && !ReadOnly)
                 {
                     if (BeginEditNode())
                     {
@@ -571,7 +586,7 @@ namespace LDDModder.BrickEditor.UI.Editors
             }
             else if (e.KeyCode == Keys.Enter || e.KeyCode == Keys.Space)
             {
-                if (!IsEditingNode && SelectedNode != null)
+                if (!IsEditingNode && SelectedNode != null && !ReadOnly)
                     BeginEditNode();
             }
 

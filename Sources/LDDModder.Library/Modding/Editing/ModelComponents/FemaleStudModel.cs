@@ -22,13 +22,13 @@ namespace LDDModder.Modding.Editing
         internal override void LoadCullingInformation(MeshCulling culling)
         {
             base.LoadCullingInformation(culling);
-            foreach (var studInfo in culling.Studs)
-                Studs.Add(new StudReference(studInfo));
+
+            Studs.AddRange(ConvertFromRefs(culling.Studs));
         }
 
         internal override void FillCullingInformation(MeshCulling culling)
         {
-            culling.Studs.AddRange(Studs.Select(x => GetFieldReference(x)));
+            culling.Studs.AddRange(Studs.Select(x => ConvertToRef(x)));
 
             if (ReplacementMeshes.Any())
             {
@@ -80,7 +80,12 @@ namespace LDDModder.Modding.Editing
             if (element.HasElement(nameof(Studs), out XElement studsElem))
             {
                 foreach (var studElem in studsElem.Elements(StudReference.NODE_NAME))
-                    Studs.Add(StudReference.FromXml(studElem));
+                {
+                    var studRef = StudReference.FromXml(studElem);
+                    if (!string.IsNullOrEmpty(LegacyConnectionID))
+                        studRef.ConnectionID = LegacyConnectionID;
+                    Studs.Add(studRef);
+                }
             }
         }
 

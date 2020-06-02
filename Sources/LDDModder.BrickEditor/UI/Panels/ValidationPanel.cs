@@ -19,12 +19,15 @@ namespace LDDModder.BrickEditor.UI.Panels
         internal ValidationPanel()
         {
             InitializeComponent();
+            CloseButtonVisible = false;
+            CloseButton = false;
         }
 
         public ValidationPanel(ProjectManager projectManager) : base(projectManager)
         {
             InitializeComponent();
-
+            CloseButtonVisible = false;
+            CloseButton = false;
             InitializeImageList();
             InitializeListView();
 

@@ -1,4 +1,5 @@
 
+
 # G File Structure
 ## File structure
 * File header
@@ -174,15 +175,15 @@ Size | Data type | Description
 :------- | :---: | :--- 
  4 bytes | Int32 | Structure size (including array)
  4 bytes | Int32 | Number of references
- X bytes | Struct | Array of **Custom2DField Reference**
+ X bytes | Struct[] | Array of **Custom2DField Reference**
 
-**Custom2DField Connection Reference**
+**Custom2DField Reference**
 Size | Data type | Description 
 :------- | :---: | :--- 
  4 bytes | Int32 | Structure size (including array)
  4 bytes | Int32 | Index of the referenced Custom2DField connection
- 4 bytes | Int32 | Number of referenced studs
- X bytes | Struct | Array of **Custom2DField Node Reference**
+ 4 bytes | Int32 | Number of referenced fields 
+ X bytes | Struct[] | Array of **Custom2DField Field Reference** struct
 
 **Custom2DField Field Reference**
 Size | Data type | Description 

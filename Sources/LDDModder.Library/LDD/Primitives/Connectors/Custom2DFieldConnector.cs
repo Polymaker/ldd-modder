@@ -76,10 +76,8 @@ namespace LDDModder.LDD.Primitives.Connectors
         {
             get
             {
-                int x = index % ArrayWidth;
-                //int y = (int)Math.Floor(index / (double)ArrayWidth);
-                int y = (index - x) / ArrayWidth;
-                return NodeArray[x, y];
+                var pos = IndexToPosition(index);
+                return NodeArray[pos.Item1, pos.Item2];
             }
         }
 
@@ -94,6 +92,14 @@ namespace LDDModder.LDD.Primitives.Connectors
         public int PositionToIndex(int x, int y)
         {
             return (y * ArrayWidth) + x;
+        }
+
+        public Tuple<int,int> IndexToPosition(int index)
+        {
+            int x = index % ArrayWidth;
+            //int y = (int)Math.Floor(index / (double)ArrayWidth);
+            int y = (index - x) / ArrayWidth;
+            return new Tuple<int, int>(x, y);
         }
 
         public Custom2DFieldNode GetNode(int x, int y)

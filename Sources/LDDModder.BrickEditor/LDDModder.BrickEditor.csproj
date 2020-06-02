@@ -227,6 +227,9 @@
     <Compile Include="UI\Panels\ElementDetailPanel.Designer.cs">
       <DependentUpon>ElementDetailPanel.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\VS2015DockPaneStrip.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="UI\Windows\ErrorMessageBox.cs">
       <SubType>Form</SubType>
     </Compile>

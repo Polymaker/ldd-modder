@@ -21,11 +21,17 @@ namespace LDDModder.BrickEditor.UI.Panels
         public ElementDetailPanel()
         {
             InitializeComponent();
+            StudRefGridView.AutoGenerateColumns = false;
+            CloseButtonVisible = false;
+            CloseButton = false;
         }
 
         public ElementDetailPanel(ProjectManager projectManager) : base(projectManager)
         {
             InitializeComponent();
+            StudRefGridView.AutoGenerateColumns = false;
+            CloseButtonVisible = false;
+            CloseButton = false;
         }
 
         protected override void OnLoad(EventArgs e)
@@ -33,7 +39,6 @@ namespace LDDModder.BrickEditor.UI.Panels
             base.OnLoad(e);
             SetControlDoubleBuffered(PropertiesTableLayout);
             FillSelectionDetails(null);
-            //this.TabText = Text;
         }
 
         protected override void OnElementSelectionChanged()
@@ -56,14 +61,9 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             using (FlagManager.UseFlag("FillSelectionDetails"))
             {
-                SetStudRefVisibility(selection is PartCullingModel);
-                SetConnectionInfoVisibility(selection is PartConnection);
-
                 FillElementProperties(selection);
-                if (selection is PartConnection connection)
-                    FillConnectionDetails(connection);
-                if (selection is PartCullingModel cullingModel)
-                    FillStudRefDetails(cullingModel);
+                FillConnectionDetails(selection as PartConnection);
+                FillStudRefDetails(selection as PartCullingModel);
 
                 SelectedElement = selection;
                 if (SelectedElement != null)
@@ -80,13 +80,9 @@ namespace LDDModder.BrickEditor.UI.Panels
                         if (e.PropertyName == nameof(PartElement.Name))
                             NameTextBox.Text = e.Element.Name;
                         if (e.PropertyName == nameof(PartSphereCollision.Radius))
-                        {
                             CollisionRadiusBox.Value = (e.Element as PartSphereCollision).Radius;
-                        }
-                        else if (e.PropertyName == nameof(PartBoxCollision.Size))
-                        {
-                            CollisionSizeEditor.Value = (e.Element as PartBoxCollision).Size * 2d;
-                        }
+                        else if (e.PropertyName == nameof(PartBoxCollision.Size) && e.Element is PartBoxCollision boxColl)
+                            CollisionSizeEditor.Value = boxColl.Size * 2d;
                     }
                 });
             
@@ -159,14 +155,11 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void FillElementProperties(PartElement element)
         {
-            CommentsTextBox.DataBindings.Clear();
-
             ToggleControlsEnabled(element != null,
-                NameTextBox, CommentsTextBox,
-                NameLabel, CommentsLabel);
+                NameTextBox,
+                NameLabel);
 
             NameTextBox.Text = element?.Name ?? string.Empty;
-            CommentsTextBox.Text = element?.Comments ?? string.Empty;
 
             SubMaterialIndexLabel.Visible = element is PartSurface;
             SubMaterialIndexBox.Visible = element is PartSurface;
@@ -291,11 +284,21 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void FillStudRefDetails(PartCullingModel model)
         {
+            SetStudRefVisibility(model != null);
+
+            ConnectionRefCombo.DataSource = null;
+            StudRefGridView.DataSource = null;
+
+            if (model == null)
+                return;
+
             var connectorList = model.Project.GetAllElements<PartConnection>()
                 .Where(x => x.ConnectorType == ConnectorType.Custom2DField).ToList();
 
-            var comboItemList = new List<ConnectorComboItem>();
-            comboItemList.Add(new ConnectorComboItem("NULL", string.Empty, NoConnectorRefLabel.Text));
+            var comboItemList = new List<ConnectorComboItem>
+            {
+                new ConnectorComboItem("NULL", string.Empty, NoConnectorRefLabel.Text)
+            };
             comboItemList.AddRange(connectorList.Select(x =>
                 new ConnectorComboItem(
                     x.ID, x.Name,
@@ -304,16 +307,29 @@ namespace LDDModder.BrickEditor.UI.Panels
                 )
             );
 
+            //StudRefGridView.DataSource = c
+
             ConnectionRefCombo.DataSource = comboItemList;
             ConnectionRefCombo.DisplayMember = "DisplayText";
             ConnectionRefCombo.ValueMember = "ID";
-            if (!string.IsNullOrEmpty(model.ConnectionID))
-                ConnectionRefCombo.SelectedValue = model.ConnectionID;
+
+            //if (!string.IsNullOrEmpty(model.ConnectionID))
+            //    ConnectionRefCombo.SelectedValue = model.ConnectionID;
         }
 
         private void ConnectionRefCombo_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (FlagManager.IsSet("FillSelectionDetails") ||
+                FlagManager.IsSet("UpdatePropertyValue"))
+                return;
 
+            if (SelectedElement is PartCullingModel cullingModel)
+            {
+                if (cullingModel.GetStudReferences().Any())
+                {
+                    //TODO: show warning
+                }
+            }
         }
 
         #endregion
@@ -335,6 +351,11 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void FillConnectionDetails(PartConnection connection)
         {
+            SetConnectionInfoVisibility(connection != null);
+
+            if (connection == null)
+                return;
+
             ConnectionTypeValueLabel.Text = connection.ConnectorType.ToString();
             ConnectionSubTypeCombo.Text = connection.SubType.ToString();
 

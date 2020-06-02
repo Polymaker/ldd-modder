@@ -28,29 +28,29 @@ namespace LDDModder.Modding.Editing
         internal override void LoadCullingInformation(MeshCulling culling)
         {
             base.LoadCullingInformation(culling);
-            if (culling.Studs.Count == 1)
-            {
-                TubeStud = new StudReference(culling.Studs[0]);
-            }
-            else
-                Debug.WriteLine("Tube culling does not reference a stud!");
 
-            if (culling.AdjacentStuds.Any())
-            {
-                foreach (var fIdx in culling.AdjacentStuds[0].FieldIndices)
-                {
-                    var studRef = new StudReference(fIdx.Index, fIdx.Value2, fIdx.Value4);
-                    AdjacentStuds.Add(studRef);
-                }
-            }
-            else
+            var referencedStuds = ConvertFromRefs(culling.Studs).ToList();
+            TubeStud = referencedStuds.FirstOrDefault();
+
+            if (!referencedStuds.Any())
+                Debug.WriteLine("Tube culling does not reference a stud!");
+            else if (referencedStuds.Count > 1)
+                Debug.WriteLine("Tube culling references more than one stud!");
+
+            var adjacentRefs = ConvertFromRefs(culling.AdjacentStuds).ToList();
+            AdjacentStuds.AddRange(adjacentRefs);
+
+            if (!adjacentRefs.Any())
                 Debug.WriteLine("Tube culling does not reference any adjacent studs!");
         }
 
         internal override void FillCullingInformation(MeshCulling culling)
         {
-            culling.Studs.Add(GetFieldReference(TubeStud));
-            culling.AdjacentStuds.Add(GetFieldReference(AdjacentStuds));
+            if (TubeStud != null)
+                culling.Studs.Add(ConvertToRef(TubeStud));
+
+            foreach (var connGroup in AdjacentStuds.GroupBy(x => x.ConnectionID))
+                culling.AdjacentStuds.Add(ConvertToRef(connGroup));
         }
 
         #region Xml Serialization
@@ -78,12 +78,21 @@ namespace LDDModder.Modding.Editing
             base.LoadFromXml(element);
 
             if (element.HasElement(StudReference.NODE_NAME, out XElement tubeStudElem))
+            {
                 TubeStud = StudReference.FromXml(tubeStudElem);
+                if (!string.IsNullOrEmpty(LegacyConnectionID))
+                    TubeStud.ConnectionID = LegacyConnectionID;
+            }
 
             if (element.HasElement(nameof(AdjacentStuds), out XElement adjStudsElem))
             {
                 foreach (var adjStudElem in adjStudsElem.Elements(StudReference.NODE_NAME))
-                    AdjacentStuds.Add(StudReference.FromXml(adjStudElem));
+                {
+                    var studRef = StudReference.FromXml(adjStudElem);
+                    if (!string.IsNullOrEmpty(LegacyConnectionID))
+                        studRef.ConnectionID = LegacyConnectionID;
+                    AdjacentStuds.Add(studRef);
+                }
             }
         }
 
@@ -110,7 +119,7 @@ namespace LDDModder.Modding.Editing
 
                         if (adjField != null)
                         {
-                            var studRef = new StudReference(adjField.Index, 1, 0);
+                            var studRef = new StudReference(TubeStud.ConnectionID, adjField.Index, 1, 0);
                             AdjacentStuds.Add(studRef);
                         }
                     }

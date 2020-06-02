@@ -31,13 +31,11 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ElementDetailPanel));
             this.NameTextBox = new System.Windows.Forms.TextBox();
-            this.CommentsTextBox = new System.Windows.Forms.TextBox();
             this.PropertiesTableLayout = new System.Windows.Forms.TableLayoutPanel();
             this.CollisionSizeLabel = new System.Windows.Forms.Label();
             this.CollisionRadiusLabel = new System.Windows.Forms.Label();
             this.SelectionTransformEdit = new LDDModder.BrickEditor.UI.Controls.TransformEditor();
             this.NameLabel = new System.Windows.Forms.Label();
-            this.CommentsLabel = new System.Windows.Forms.Label();
             this.SubMaterialIndexLabel = new System.Windows.Forms.Label();
             this.SubMaterialIndexBox = new LDDModder.BrickEditor.UI.Controls.NumberTextBox();
             this.CollisionSizeEditor = new LDDModder.BrickEditor.UI.Editors.VectorEditor();
@@ -49,6 +47,12 @@
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.ConnectionRefLabel = new System.Windows.Forms.Label();
             this.ConnectionRefCombo = new System.Windows.Forms.ComboBox();
+            this.StudRefGridView = new System.Windows.Forms.DataGridView();
+            this.FieldIndexColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.FieldPositionColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.StudRefValue1Colunm = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.StudRefValue2Colunm = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.label1 = new System.Windows.Forms.Label();
             this.ConnectionInfoTab = new System.Windows.Forms.TabPage();
             this.ConnectionTableLayout = new System.Windows.Forms.TableLayoutPanel();
             this.ConnectionSubTypeLabel = new System.Windows.Forms.Label();
@@ -66,6 +70,7 @@
             this.MainInfoTab.SuspendLayout();
             this.StudRefTab.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.StudRefGridView)).BeginInit();
             this.ConnectionInfoTab.SuspendLayout();
             this.ConnectionTableLayout.SuspendLayout();
             this.SuspendLayout();
@@ -77,25 +82,18 @@
             this.NameTextBox.Validating += new System.ComponentModel.CancelEventHandler(this.NameTextBox_Validating);
             this.NameTextBox.Validated += new System.EventHandler(this.NameTextBox_Validated);
             // 
-            // CommentsTextBox
-            // 
-            resources.ApplyResources(this.CommentsTextBox, "CommentsTextBox");
-            this.CommentsTextBox.Name = "CommentsTextBox";
-            // 
             // PropertiesTableLayout
             // 
             resources.ApplyResources(this.PropertiesTableLayout, "PropertiesTableLayout");
-            this.PropertiesTableLayout.Controls.Add(this.CollisionSizeLabel, 0, 5);
-            this.PropertiesTableLayout.Controls.Add(this.CollisionRadiusLabel, 0, 4);
-            this.PropertiesTableLayout.Controls.Add(this.SelectionTransformEdit, 0, 6);
-            this.PropertiesTableLayout.Controls.Add(this.CommentsTextBox, 1, 2);
+            this.PropertiesTableLayout.Controls.Add(this.CollisionSizeLabel, 0, 4);
+            this.PropertiesTableLayout.Controls.Add(this.CollisionRadiusLabel, 0, 3);
+            this.PropertiesTableLayout.Controls.Add(this.SelectionTransformEdit, 0, 5);
             this.PropertiesTableLayout.Controls.Add(this.NameTextBox, 1, 1);
             this.PropertiesTableLayout.Controls.Add(this.NameLabel, 0, 1);
-            this.PropertiesTableLayout.Controls.Add(this.CommentsLabel, 0, 2);
-            this.PropertiesTableLayout.Controls.Add(this.SubMaterialIndexLabel, 0, 3);
-            this.PropertiesTableLayout.Controls.Add(this.SubMaterialIndexBox, 1, 3);
-            this.PropertiesTableLayout.Controls.Add(this.CollisionSizeEditor, 1, 5);
-            this.PropertiesTableLayout.Controls.Add(this.CollisionRadiusBox, 1, 4);
+            this.PropertiesTableLayout.Controls.Add(this.SubMaterialIndexLabel, 0, 2);
+            this.PropertiesTableLayout.Controls.Add(this.SubMaterialIndexBox, 1, 2);
+            this.PropertiesTableLayout.Controls.Add(this.CollisionSizeEditor, 1, 4);
+            this.PropertiesTableLayout.Controls.Add(this.CollisionRadiusBox, 1, 3);
             this.PropertiesTableLayout.Controls.Add(this.SelectionInfoLabel, 1, 0);
             this.PropertiesTableLayout.Name = "PropertiesTableLayout";
             // 
@@ -119,11 +117,6 @@
             // 
             resources.ApplyResources(this.NameLabel, "NameLabel");
             this.NameLabel.Name = "NameLabel";
-            // 
-            // CommentsLabel
-            // 
-            resources.ApplyResources(this.CommentsLabel, "CommentsLabel");
-            this.CommentsLabel.Name = "CommentsLabel";
             // 
             // SubMaterialIndexLabel
             // 
@@ -180,6 +173,8 @@
             resources.ApplyResources(this.tableLayoutPanel1, "tableLayoutPanel1");
             this.tableLayoutPanel1.Controls.Add(this.ConnectionRefLabel, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.ConnectionRefCombo, 1, 0);
+            this.tableLayoutPanel1.Controls.Add(this.StudRefGridView, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this.label1, 0, 1);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             // 
             // ConnectionRefLabel
@@ -189,11 +184,48 @@
             // 
             // ConnectionRefCombo
             // 
+            resources.ApplyResources(this.ConnectionRefCombo, "ConnectionRefCombo");
             this.ConnectionRefCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ConnectionRefCombo.FormattingEnabled = true;
-            resources.ApplyResources(this.ConnectionRefCombo, "ConnectionRefCombo");
             this.ConnectionRefCombo.Name = "ConnectionRefCombo";
             this.ConnectionRefCombo.SelectedIndexChanged += new System.EventHandler(this.ConnectionRefCombo_SelectedIndexChanged);
+            // 
+            // StudRefGridView
+            // 
+            this.StudRefGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.StudRefGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.FieldIndexColumn,
+            this.FieldPositionColumn,
+            this.StudRefValue1Colunm,
+            this.StudRefValue2Colunm});
+            this.tableLayoutPanel1.SetColumnSpan(this.StudRefGridView, 2);
+            resources.ApplyResources(this.StudRefGridView, "StudRefGridView");
+            this.StudRefGridView.Name = "StudRefGridView";
+            // 
+            // FieldIndexColumn
+            // 
+            resources.ApplyResources(this.FieldIndexColumn, "FieldIndexColumn");
+            this.FieldIndexColumn.Name = "FieldIndexColumn";
+            // 
+            // FieldPositionColumn
+            // 
+            resources.ApplyResources(this.FieldPositionColumn, "FieldPositionColumn");
+            this.FieldPositionColumn.Name = "FieldPositionColumn";
+            // 
+            // StudRefValue1Colunm
+            // 
+            resources.ApplyResources(this.StudRefValue1Colunm, "StudRefValue1Colunm");
+            this.StudRefValue1Colunm.Name = "StudRefValue1Colunm";
+            // 
+            // StudRefValue2Colunm
+            // 
+            resources.ApplyResources(this.StudRefValue2Colunm, "StudRefValue2Colunm");
+            this.StudRefValue2Colunm.Name = "StudRefValue2Colunm";
+            // 
+            // label1
+            // 
+            resources.ApplyResources(this.label1, "label1");
+            this.label1.Name = "label1";
             // 
             // ConnectionInfoTab
             // 
@@ -275,6 +307,7 @@
             this.StudRefTab.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.StudRefGridView)).EndInit();
             this.ConnectionInfoTab.ResumeLayout(false);
             this.ConnectionTableLayout.ResumeLayout(false);
             this.ConnectionTableLayout.PerformLayout();
@@ -285,10 +318,8 @@
         #endregion
         private Controls.TransformEditor SelectionTransformEdit;
         private System.Windows.Forms.TextBox NameTextBox;
-        private System.Windows.Forms.TextBox CommentsTextBox;
         private System.Windows.Forms.TableLayoutPanel PropertiesTableLayout;
         private System.Windows.Forms.Label NameLabel;
-        private System.Windows.Forms.Label CommentsLabel;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage MainInfoTab;
         private System.Windows.Forms.TabPage StudRefTab;
@@ -314,5 +345,11 @@
         private Localization.LocalizableString TopStudsLabel;
         private Localization.LocalizableString BottomStudsLabel;
         private Localization.LocalizableString NoConnectorRefLabel;
+        private System.Windows.Forms.DataGridView StudRefGridView;
+        private System.Windows.Forms.DataGridViewTextBoxColumn FieldIndexColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn FieldPositionColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn StudRefValue1Colunm;
+        private System.Windows.Forms.DataGridViewTextBoxColumn StudRefValue2Colunm;
+        private System.Windows.Forms.Label label1;
     }
 }

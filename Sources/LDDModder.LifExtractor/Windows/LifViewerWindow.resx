@@ -187,40 +187,40 @@
     <value>684, 19</value>
   </metadata>
   <data name="ListMenu_ExtractItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>153, 22</value>
   </data>
   <data name="ListMenu_ExtractItem.Text" xml:space="preserve">
     <value>Extract…</value>
   </data>
   <data name="toolStripSeparator1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>177, 6</value>
+    <value>150, 6</value>
   </data>
   <data name="ListMenu_CreateFolderItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>153, 22</value>
   </data>
   <data name="ListMenu_CreateFolderItem.Text" xml:space="preserve">
     <value>Create Folder…</value>
   </data>
   <data name="ListMenu_AddFileItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>153, 22</value>
   </data>
   <data name="ListMenu_AddFileItem.Text" xml:space="preserve">
     <value>Add File…</value>
   </data>
   <data name="ListMenu_RenameItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>153, 22</value>
   </data>
   <data name="ListMenu_RenameItem.Text" xml:space="preserve">
     <value>Rename</value>
   </data>
   <data name="ListMenu_DeleteItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>153, 22</value>
   </data>
   <data name="ListMenu_DeleteItem.Text" xml:space="preserve">
     <value>Delete</value>
   </data>
   <data name="FolderListContextMenu.Size" type="System.Drawing.Size, System.Drawing">
-    <value>181, 142</value>
+    <value>154, 120</value>
   </data>
   <data name="&gt;&gt;FolderListContextMenu.Name" xml:space="preserve">
     <value>FolderListContextMenu</value>
@@ -439,7 +439,7 @@
     <value>Ctrl+O</value>
   </data>
   <data name="FileMenu_OpenItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>159, 22</value>
   </data>
   <data name="FileMenu_OpenItem.Text" xml:space="preserve">
     <value>Open</value>
@@ -448,25 +448,25 @@
     <value>Ctrl+N</value>
   </data>
   <data name="FileMenu_NewLif.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>159, 22</value>
   </data>
   <data name="FileMenu_NewLif.Text" xml:space="preserve">
     <value>New LIF</value>
   </data>
   <data name="FileMenu_Close.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>159, 22</value>
   </data>
   <data name="FileMenu_Close.Text" xml:space="preserve">
     <value>Close</value>
   </data>
   <data name="toolStripSeparator2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>177, 6</value>
+    <value>156, 6</value>
   </data>
   <data name="FileMenu_ExtractItem.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
   <data name="FileMenu_ExtractItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>159, 22</value>
   </data>
   <data name="FileMenu_ExtractItem.Text" xml:space="preserve">
     <value>Extract to...</value>

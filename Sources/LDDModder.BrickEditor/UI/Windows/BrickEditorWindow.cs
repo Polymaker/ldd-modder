@@ -38,6 +38,7 @@ namespace LDDModder.BrickEditor.UI.Windows
             visualStudioToolStripExtender1.SetStyle(menuStrip1, 
                 VisualStudioToolStripExtender.VsVersion.Vs2015,
                 DockPanelControl.Theme);
+            this.vS2015LightTheme1.Extender.DockPaneStripFactory = new VS2015DockPaneStripFactory();
             FlagManager = new FlagManager();
         }
 
@@ -426,11 +427,12 @@ namespace LDDModder.BrickEditor.UI.Windows
                 BeginInvoke(new MethodInvoker(TryCloseProjectAndExit));
                 return;
             }
-            else
-                Debug.WriteLine($"FormClosing at {DateTime.Now:HH:mm:ss.ff}");
+
+            Debug.WriteLine($"FormClosing started at {DateTime.Now:HH:mm:ss.ff}");
 
             foreach (var form in DockPanelControl.Documents.OfType<DockContent>().ToList())
             {
+                Debug.WriteLine($"Closing Form '{form.Text}' at {DateTime.Now:HH:mm:ss.ff}");
                 form.Close();
                 if (!form.IsDisposed)
                 {
@@ -438,6 +440,8 @@ namespace LDDModder.BrickEditor.UI.Windows
                     break;
                 }
             }
+
+            Debug.WriteLine($"FormClosing finished at {DateTime.Now:HH:mm:ss.ff}");
         }
 
         private void TryCloseProjectAndExit()

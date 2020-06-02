@@ -71,7 +71,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             CollisionModels = new List<CollisionModel>();
             ConnectionModels = new List<ConnectionModel>();
             UIElements = new List<UIElement>();
-
+            ShowIcon = false;
             CreateGLControl();
             SelectionInfoPanel.BringToFront();
             SelectionInfoPanel.Visible = false;

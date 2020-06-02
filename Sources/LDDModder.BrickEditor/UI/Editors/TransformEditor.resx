@@ -134,6 +134,9 @@
   <data name="PositionLabel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
+  <data name="PositionLabel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="PositionLabel.Location" type="System.Drawing.Point, System.Drawing">
     <value>3, 19</value>
@@ -165,6 +168,9 @@
   <data name="RotationLabel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
+  <data name="RotationLabel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
   <data name="RotationLabel.Location" type="System.Drawing.Point, System.Drawing">
     <value>3, 45</value>
   </data>
@@ -195,8 +201,11 @@
   <data name="PosX_TextBox.Location" type="System.Drawing.Point, System.Drawing">
     <value>83, 16</value>
   </data>
+  <data name="PosX_TextBox.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>0, 3, 2, 3</value>
+  </data>
   <data name="PosX_TextBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>64, 20</value>
+    <value>70, 20</value>
   </data>
   <data name="PosX_TextBox.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -208,7 +217,7 @@
     <value>PosX_TextBox</value>
   </data>
   <data name="&gt;&gt;PosX_TextBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.0.22149, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.2.23538, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;PosX_TextBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -222,8 +231,14 @@
   <data name="label3.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
+  <data name="label3.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
   <data name="label3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>108, 0</value>
+    <value>111, 0</value>
+  </data>
+  <data name="label3.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>1, 0, 3, 0</value>
   </data>
   <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
     <value>14, 13</value>
@@ -252,8 +267,11 @@
   <data name="label4.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
+  <data name="label4.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
   <data name="label4.Location" type="System.Drawing.Point, System.Drawing">
-    <value>178, 0</value>
+    <value>184, 0</value>
   </data>
   <data name="label4.Size" type="System.Drawing.Size, System.Drawing">
     <value>14, 13</value>
@@ -282,8 +300,14 @@
   <data name="label5.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
+  <data name="label5.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
   <data name="label5.Location" type="System.Drawing.Point, System.Drawing">
-    <value>248, 0</value>
+    <value>257, 0</value>
+  </data>
+  <data name="label5.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 0, 1, 0</value>
   </data>
   <data name="label5.Size" type="System.Drawing.Size, System.Drawing">
     <value>14, 13</value>
@@ -310,10 +334,13 @@
     <value>Left, Right</value>
   </data>
   <data name="PosY_TextBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>153, 16</value>
+    <value>156, 16</value>
+  </data>
+  <data name="PosY_TextBox.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>1, 3, 1, 3</value>
   </data>
   <data name="PosY_TextBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>64, 20</value>
+    <value>70, 20</value>
   </data>
   <data name="PosY_TextBox.TabIndex" type="System.Int32, mscorlib">
     <value>6</value>
@@ -325,7 +352,7 @@
     <value>PosY_TextBox</value>
   </data>
   <data name="&gt;&gt;PosY_TextBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.0.22149, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.2.23538, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;PosY_TextBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -337,10 +364,13 @@
     <value>Left, Right</value>
   </data>
   <data name="PosZ_TextBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>223, 16</value>
+    <value>229, 16</value>
+  </data>
+  <data name="PosZ_TextBox.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 3, 0, 3</value>
   </data>
   <data name="PosZ_TextBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>64, 20</value>
+    <value>70, 20</value>
   </data>
   <data name="PosZ_TextBox.TabIndex" type="System.Int32, mscorlib">
     <value>7</value>
@@ -352,7 +382,7 @@
     <value>PosZ_TextBox</value>
   </data>
   <data name="&gt;&gt;PosZ_TextBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.0.22149, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.2.23538, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;PosZ_TextBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -366,8 +396,11 @@
   <data name="RotX_TextBox.Location" type="System.Drawing.Point, System.Drawing">
     <value>83, 42</value>
   </data>
+  <data name="RotX_TextBox.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>0, 3, 2, 3</value>
+  </data>
   <data name="RotX_TextBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>64, 20</value>
+    <value>70, 20</value>
   </data>
   <data name="RotX_TextBox.TabIndex" type="System.Int32, mscorlib">
     <value>8</value>
@@ -379,7 +412,7 @@
     <value>RotX_TextBox</value>
   </data>
   <data name="&gt;&gt;RotX_TextBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.0.22149, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.2.23538, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;RotX_TextBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -391,10 +424,13 @@
     <value>Left, Right</value>
   </data>
   <data name="RotY_TextBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>153, 42</value>
+    <value>156, 42</value>
+  </data>
+  <data name="RotY_TextBox.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>1, 3, 1, 3</value>
   </data>
   <data name="RotY_TextBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>64, 20</value>
+    <value>70, 20</value>
   </data>
   <data name="RotY_TextBox.TabIndex" type="System.Int32, mscorlib">
     <value>9</value>
@@ -406,7 +442,7 @@
     <value>RotY_TextBox</value>
   </data>
   <data name="&gt;&gt;RotY_TextBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.0.22149, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.2.23538, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;RotY_TextBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -418,10 +454,13 @@
     <value>Left, Right</value>
   </data>
   <data name="RotZ_TextBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>223, 42</value>
+    <value>229, 42</value>
+  </data>
+  <data name="RotZ_TextBox.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 3, 0, 3</value>
   </data>
   <data name="RotZ_TextBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>64, 20</value>
+    <value>70, 20</value>
   </data>
   <data name="RotZ_TextBox.TabIndex" type="System.Int32, mscorlib">
     <value>10</value>
@@ -433,7 +472,7 @@
     <value>RotZ_TextBox</value>
   </data>
   <data name="&gt;&gt;RotZ_TextBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.0.22149, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.2.23538, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;RotZ_TextBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -448,7 +487,7 @@
     <value>3</value>
   </data>
   <data name="tableLayoutPanel1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>290, 65</value>
+    <value>299, 65</value>
   </data>
   <data name="tableLayoutPanel1.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -466,7 +505,7 @@
     <value>0</value>
   </data>
   <data name="tableLayoutPanel1.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="PositionLabel" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="RotationLabel" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="PosX_TextBox" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="label3" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="label4" Row="0" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="label5" Row="0" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;Control Name="PosY_TextBox" Row="1" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="PosZ_TextBox" Row="1" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;Control Name="RotX_TextBox" Row="2" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="RotY_TextBox" Row="2" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="RotZ_TextBox" Row="2" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,80,Absolute,70,Absolute,70,Absolute,70" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0,AutoSize,0" /&gt;&lt;/TableLayoutSettings&gt;</value>
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="PositionLabel" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="RotationLabel" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="PosX_TextBox" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="label3" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="label4" Row="0" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="label5" Row="0" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;Control Name="PosY_TextBox" Row="1" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="PosZ_TextBox" Row="1" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;Control Name="RotX_TextBox" Row="2" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="RotY_TextBox" Row="2" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="RotZ_TextBox" Row="2" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,83,Absolute,72,Absolute,72,Absolute,72" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0,AutoSize,0" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
