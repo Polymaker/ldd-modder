@@ -29,13 +29,15 @@ namespace LDDModder.Modding.Editing
         {
             base.LoadCullingInformation(culling);
 
-            var referencedStuds = ConvertFromRefs(culling.Studs).ToList();
-            TubeStud = referencedStuds.FirstOrDefault();
+            TubeStud = ReferencedStuds.FirstOrDefault();
 
-            if (!referencedStuds.Any())
-                Debug.WriteLine("Tube culling does not reference a stud!");
-            else if (referencedStuds.Count > 1)
-                Debug.WriteLine("Tube culling references more than one stud!");
+            //var referencedStuds = ConvertFromRefs(culling.Studs).ToList();
+            //TubeStud = referencedStuds.FirstOrDefault();
+
+            //if (!referencedStuds.Any())
+            //    Debug.WriteLine("Tube culling does not reference a stud!");
+            //else if (referencedStuds.Count > 1)
+            //    Debug.WriteLine("Tube culling references more than one stud!");
 
             var adjacentRefs = ConvertFromRefs(culling.AdjacentStuds).ToList();
             AdjacentStuds.AddRange(adjacentRefs);
@@ -46,8 +48,9 @@ namespace LDDModder.Modding.Editing
 
         internal override void FillCullingInformation(MeshCulling culling)
         {
-            if (TubeStud != null)
-                culling.Studs.Add(ConvertToRef(TubeStud));
+            base.FillCullingInformation(culling);
+            //if (TubeStud != null)
+            //    culling.Studs.Add(ConvertToRef(TubeStud));
 
             foreach (var connGroup in AdjacentStuds.GroupBy(x => x.ConnectionID))
                 culling.AdjacentStuds.Add(ConvertToRef(connGroup));
@@ -59,8 +62,9 @@ namespace LDDModder.Modding.Editing
         {
             var elem = base.SerializeToXml();
 
-            if (TubeStud != null)
-                elem.Add(TubeStud.SerializeToXml2());
+            
+            //if (TubeStud != null)
+            //    elem.Add(TubeStud.SerializeToXml2());
 
             if (AdjacentStuds.Any())
             {
@@ -77,13 +81,21 @@ namespace LDDModder.Modding.Editing
         {
             base.LoadFromXml(element);
 
+            //LEGACY
             if (element.HasElement(StudReference.NODE_NAME, out XElement tubeStudElem))
             {
-                TubeStud = StudReference.FromXml(tubeStudElem);
+                var studRef = StudReference.FromXml(tubeStudElem);
                 if (!string.IsNullOrEmpty(LegacyConnectionID))
-                    TubeStud.ConnectionID = LegacyConnectionID;
+                    studRef.ConnectionID = LegacyConnectionID;
+                ReferencedStuds.Add(studRef);
+                //TubeStud = StudReference.FromXml(tubeStudElem);
+                //if (!string.IsNullOrEmpty(LegacyConnectionID))
+                //    TubeStud.ConnectionID = LegacyConnectionID;
             }
 
+            TubeStud = ReferencedStuds.FirstOrDefault();
+
+            AdjacentStuds.Clear();
             if (element.HasElement(nameof(AdjacentStuds), out XElement adjStudsElem))
             {
                 foreach (var adjStudElem in adjStudsElem.Elements(StudReference.NODE_NAME))
@@ -139,11 +151,17 @@ namespace LDDModder.Modding.Editing
                 });
             }
 
-            if (!AdjacentStuds.Any() || TubeStud == null)
+            if (!ReferencedStuds.Any())
                 AddMessage("MODEL_STUDS_NOT_DEFINED", ValidationLevel.Warning);
 
-            if (TubeStud != null)
-                messages.AddRange(TubeStud.ValidateElement());
+            if (!AdjacentStuds.Any())
+                AddMessage("MODEL_ALT_STUDS_NOT_DEFINED", ValidationLevel.Warning);//TODO: implement message
+
+
+            if (ReferencedStuds.Any())
+                messages.AddRange(ReferencedStuds.SelectMany(x => x.ValidateElement()));
+            //if (TubeStud != null)
+            //    messages.AddRange(TubeStud.ValidateElement());
 
             if (AdjacentStuds.Any())
                 messages.AddRange(AdjacentStuds.SelectMany(x => x.ValidateElement()));

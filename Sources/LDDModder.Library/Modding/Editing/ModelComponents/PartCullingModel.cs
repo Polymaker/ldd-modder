@@ -14,21 +14,30 @@ namespace LDDModder.Modding.Editing
 
         public string LegacyConnectionID { get; private set; }
 
+        public ElementCollection<StudReference> ReferencedStuds { get; private set; }
+
         //[System.Obsolete]
         //internal int ConnectionIndex { get; set; } = -1;
 
         public PartCullingModel()
         {
+            ReferencedStuds = new ElementCollection<StudReference>(this);
         }
 
         internal override void LoadCullingInformation(MeshCulling culling)
         {
+            ReferencedStuds.Clear();
+            ReferencedStuds.AddRange(ConvertFromRefs(culling.Studs));
             //var connectorRef = culling.Studs.FirstOrDefault() ?? culling.AdjacentStuds.FirstOrDefault();
             //ConnectionIndex = connectorRef != null ? connectorRef.ConnectorIndex : -1;
         }
 
-        
 
+        internal override void FillCullingInformation(MeshCulling culling)
+        {
+            base.FillCullingInformation(culling);
+            culling.Studs.AddRange(ReferencedStuds.Select(x => ConvertToRef(x)));
+        }
         //[System.Obsolete]
         //public PartConnection GetLinkedConnection()
         //{
@@ -53,6 +62,11 @@ namespace LDDModder.Modding.Editing
             var elem = base.SerializeToXml();
             //if (!string.IsNullOrEmpty(ConnectionID))
             //    elem.Add(new XAttribute(nameof(ConnectionID), ConnectionID));
+
+
+            var studsElem = elem.AddElement(nameof(ReferencedStuds));
+            foreach (var stud in ReferencedStuds)
+                studsElem.Add(stud.SerializeToXml2());
             return elem;
         }
 
@@ -60,6 +74,21 @@ namespace LDDModder.Modding.Editing
         {
             base.LoadFromXml(element);
             LegacyConnectionID = element.ReadAttribute("ConnectionID", string.Empty);
+
+            ReferencedStuds.Clear();
+
+            if (element.HasElement(nameof(ReferencedStuds), out XElement studsElem))
+            {
+                foreach (var studElem in studsElem.Elements(StudReference.NODE_NAME))
+                {
+                    var studRef = StudReference.FromXml(studElem);
+                    if (!string.IsNullOrEmpty(LegacyConnectionID))
+                        studRef.ConnectionID = LegacyConnectionID;
+                    ReferencedStuds.Add(studRef);
+                }
+            }
+
+
         }
 
         protected Custom2DFieldReference ConvertToRef(StudReference studReference)
@@ -106,6 +135,8 @@ namespace LDDModder.Modding.Editing
                     MessageArguments = args
                 });
             }
+
+            
 
             //if (GetStudReferences().Any() && GetCustom2DField() == null)
             //    AddMessage("STUD_CONNECTION_NOT_DEFINED", ValidationLevel.Error);
