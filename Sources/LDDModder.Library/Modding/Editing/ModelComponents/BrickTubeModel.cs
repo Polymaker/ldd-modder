@@ -154,14 +154,13 @@ namespace LDDModder.Modding.Editing
             if (!ReferencedStuds.Any())
                 AddMessage("MODEL_STUDS_NOT_DEFINED", ValidationLevel.Warning);
 
-            if (!AdjacentStuds.Any())
-                AddMessage("MODEL_ALT_STUDS_NOT_DEFINED", ValidationLevel.Warning);//TODO: implement message
-
+            if (ReferencedStuds.Count > 1)
+                AddMessage("MODEL_MORE_THAN_ONE_STUD", ValidationLevel.Warning);
+            //else if (!AdjacentStuds.Any())
+            //    AddMessage("MODEL_ADJ_STUDS_NOT_DEFINED", ValidationLevel.Warning);//TODO: implement message
 
             if (ReferencedStuds.Any())
                 messages.AddRange(ReferencedStuds.SelectMany(x => x.ValidateElement()));
-            //if (TubeStud != null)
-            //    messages.AddRange(TubeStud.ValidateElement());
 
             if (AdjacentStuds.Any())
                 messages.AddRange(AdjacentStuds.SelectMany(x => x.ValidateElement()));

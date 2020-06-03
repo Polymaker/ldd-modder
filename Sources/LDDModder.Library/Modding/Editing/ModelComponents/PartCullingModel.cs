@@ -136,8 +136,6 @@ namespace LDDModder.Modding.Editing
                 });
             }
 
-            
-
             //if (GetStudReferences().Any() && GetCustom2DField() == null)
             //    AddMessage("STUD_CONNECTION_NOT_DEFINED", ValidationLevel.Error);
 

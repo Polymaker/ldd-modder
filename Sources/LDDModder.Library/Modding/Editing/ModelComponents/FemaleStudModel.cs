@@ -11,11 +11,8 @@ namespace LDDModder.Modding.Editing
 
         public ElementCollection<ModelMeshReference> ReplacementMeshes { get; set; }
 
-        public ElementCollection<StudReference> Studs { get; private set; }
-
         public FemaleStudModel()
         {
-            Studs = new ElementCollection<StudReference>(this);
             ReplacementMeshes = new ElementCollection<ModelMeshReference>(this);
         }
 
@@ -29,7 +26,6 @@ namespace LDDModder.Modding.Editing
         internal override void FillCullingInformation(MeshCulling culling)
         {
             base.FillCullingInformation(culling);
-            //culling.Studs.AddRange(Studs.Select(x => ConvertToRef(x)));
 
             if (ReplacementMeshes.Any())
             {
@@ -52,14 +48,11 @@ namespace LDDModder.Modding.Editing
         public override XElement SerializeToXml()
         {
             var elem = base.SerializeToXml();
+
             //elem.Add(new XComment("This geometry is used when all the studs (defined bellow) are connected"));
             var geomElem = elem.AddElement(nameof(ReplacementMeshes));
             foreach (var geom in ReplacementMeshes)
                 geomElem.Add(geom.SerializeToXml());
-
-            //var studsElem = elem.AddElement(nameof(Studs));
-            //foreach (var stud in Studs)
-            //    studsElem.Add(stud.SerializeToXml2());
 
             return elem;
         }

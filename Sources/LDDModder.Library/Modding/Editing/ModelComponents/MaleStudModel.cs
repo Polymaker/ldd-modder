@@ -87,6 +87,7 @@ namespace LDDModder.Modding.Editing
 
             if (ReferencedStuds.Any())
                 messages.AddRange(ReferencedStuds.SelectMany(x => x.ValidateElement()));
+
             //if (Stud == null)
             //    AddMessage("MODEL_STUDS_NOT_DEFINED", ValidationLevel.Warning);
             //else
