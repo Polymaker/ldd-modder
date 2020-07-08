@@ -18,8 +18,8 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         public void UpdateMenuItemStates()
         {
-            File_CreateFromBrickMenu.Enabled = LDDEnvironment.IsInstalled;
-            ExportBrickMenuItem.Enabled = LDDEnvironment.IsInstalled;
+            File_CreateFromBrickMenu.Enabled = LDDEnvironment.Current?.IsValidInstall ?? false;
+            ExportBrickMenuItem.Enabled = LDDEnvironment.Current?.IsValidInstall ?? false;
 
             File_SaveMenu.Enabled = ProjectManager.IsProjectOpen;
             File_SaveAsMenu.Enabled = ProjectManager.IsProjectOpen;
