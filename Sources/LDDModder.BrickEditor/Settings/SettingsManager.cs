@@ -19,8 +19,6 @@ namespace LDDModder.BrickEditor.Settings
 
         public static AppSettings Current { get; private set; }
 
-        public static LDDEnvironment LddInstall { get; private set; }
-
         public static int MaximumRecentFiles { get; set; } = 10;
 
         static SettingsManager()
@@ -34,8 +32,8 @@ namespace LDDModder.BrickEditor.Settings
             if (!Directory.Exists(AppDataFolder))
                 Directory.CreateDirectory(AppDataFolder);
 
-            if (LddInstall == null)
-                LddInstall = LDDEnvironment.InstalledEnvironment;
+            if (!LDDEnvironment.HasInitialized)
+                LDDEnvironment.Initialize();
 
             LoadSettings();
         }
@@ -150,7 +148,9 @@ namespace LDDModder.BrickEditor.Settings
 
         public static IEnumerable<BuildConfiguration> GetBuildConfigurations()
         {
-            if (LddInstall.IsValidInstall && Current.BuildSettings?.LDD != null)
+            if (LDDEnvironment.Current != null &&
+                LDDEnvironment.Current.IsValidInstall && 
+                Current.BuildSettings?.LDD != null)
                 yield return Current.BuildSettings.LDD;
 
             if (Current.BuildSettings?.Manual != null)
