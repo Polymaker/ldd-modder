@@ -150,10 +150,11 @@ namespace LDDModder.BrickEditor.Settings
 
         public static IEnumerable<BuildConfiguration> GetBuildConfigurations()
         {
-            if (LddInstall.IsValidInstall)
+            if (LddInstall.IsValidInstall && Current.BuildSettings?.LDD != null)
                 yield return Current.BuildSettings.LDD;
 
-            yield return Current.BuildSettings.Manual;
+            if (Current.BuildSettings?.Manual != null)
+                yield return Current.BuildSettings.Manual;
 
             foreach (var cfg in Current.BuildSettings.UserDefined)
                 yield return cfg;

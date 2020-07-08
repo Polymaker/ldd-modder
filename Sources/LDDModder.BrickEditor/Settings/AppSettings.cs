@@ -67,6 +67,9 @@ namespace LDDModder.BrickEditor.Settings
                 LddApplicationDataPath = installedEnv?.ApplicationDataPath ?? string.Empty;
                 LddProgramFilesPath = installedEnv?.ProgramFilesPath ?? string.Empty;
             }
+
+            if (BuildSettings == null)
+                BuildSettings = new ProjectBuildSettings();
             BuildSettings.InitializeDefaults();
         }
     }

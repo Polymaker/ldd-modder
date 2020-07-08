@@ -36,7 +36,7 @@ void main()
 -- Fragment
 #version 150
 out vec4 FragColor;
-in vec3 WireCoord;
+noperspective in vec3 WireCoord;
 
 uniform vec4 Color;
 uniform float Size;

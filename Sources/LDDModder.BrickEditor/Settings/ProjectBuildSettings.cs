@@ -51,6 +51,9 @@ namespace LDDModder.BrickEditor.Settings
             Manual.OutputPath = string.Empty;
             Manual.Name = Messages.BuildConfig_Browse;
             Manual.InternalFlag = 2;
+
+            if (UserDefined == null)
+                UserDefined = new List<BuildConfiguration>();
         }
 
         

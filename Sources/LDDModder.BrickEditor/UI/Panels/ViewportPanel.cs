@@ -20,6 +20,7 @@ using LDDModder.BrickEditor.Resources;
 using LDDModder.BrickEditor.Rendering.Gizmos;
 using LDDModder.BrickEditor.Rendering.UI;
 using LDDModder.BrickEditor.ProjectHandling;
+using LDDModder.BrickEditor.UI.Windows;
 
 namespace LDDModder.BrickEditor.UI.Panels
 {
@@ -106,7 +107,20 @@ namespace LDDModder.BrickEditor.UI.Panels
                 VisualStudioToolStripExtender.VsVersion.Vs2015,
                 DockPanel.Theme);
 
-            InitializeBase();
+            bool initSuccess = true;
+
+            try 
+            {
+                InitializeBase();
+            }
+            catch (Exception ex)
+            {
+                initSuccess = false;
+                ErrorMessageBox.Show(this, "An error occured while initializing GL view.", "Error", ex.ToString());
+            }
+
+            if (!initSuccess)
+                return;
 
             UpdateGLViewport();
 
