@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LDDModder.Utilities;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -86,7 +87,11 @@ namespace LDDModder.LDD
 
         public void Validate()
         {
-            IsValidInstall = File.Exists(Path.Combine(ProgramFilesPath, EXE_NAME));
+            IsValidInstall = false;
+
+            if (FileHelper.IsValidPath(ProgramFilesPath))
+                IsValidInstall = File.Exists(Path.Combine(ProgramFilesPath, EXE_NAME));
+
             CheckLifStatus();
         }
 
@@ -167,23 +172,23 @@ namespace LDDModder.LDD
 
                 string lifFolder = GetLifFolderPath(lif);
 
-                if (Directory.Exists(lifFolder))
-                {
-                    LifStatusFlags |= 2 << ((int)lif * 3); //extracted folder exist
-                    bool contentPresent = false;
+                if (string.IsNullOrEmpty(lifFolder) || !Directory.Exists(lifFolder))
+                    continue;
 
-                    if (lif == LddLif.DB)
-                    {
-                        contentPresent = File.Exists(Path.Combine(lifFolder, "info.xml"));
-                    }
-                    else if (lif == LddLif.Assets)
-                    {
-                        contentPresent = Directory.EnumerateFiles(lifFolder, "*", SearchOption.AllDirectories).Any();
-                    }
-                    
-                    if(contentPresent)
-                        LifStatusFlags |= 4 << ((int)lif * 3); //the folder has content
+                LifStatusFlags |= 2 << ((int)lif * 3); //extracted folder exist
+                bool contentPresent = false;
+
+                if (lif == LddLif.DB)
+                {
+                    contentPresent = File.Exists(Path.Combine(lifFolder, "info.xml"));
                 }
+                else if (lif == LddLif.Assets)
+                {
+                    contentPresent = Directory.EnumerateFiles(lifFolder, "*", SearchOption.AllDirectories).Any();
+                }
+
+                if (contentPresent)
+                    LifStatusFlags |= 4 << ((int)lif * 3); //the folder has content
             }
         }
 
@@ -207,8 +212,12 @@ namespace LDDModder.LDD
             switch (lif)
             {
                 case LddLif.Assets:
+                    if (string.IsNullOrEmpty(ProgramFilesPath))
+                        return string.Empty;
                     return Path.Combine(ProgramFilesPath, ASSETS_LIF);
                 case LddLif.DB:
+                    if (string.IsNullOrEmpty(ApplicationDataPath))
+                        return string.Empty;
                     return Path.Combine(ApplicationDataPath, DB_LIF);
                 default:
                     return null;
@@ -220,8 +229,12 @@ namespace LDDModder.LDD
             switch (lif)
             {
                 case LddLif.Assets:
+                    if (string.IsNullOrEmpty(ProgramFilesPath))
+                        return string.Empty;
                     return Path.Combine(ProgramFilesPath, "Assets");
                 case LddLif.DB:
+                    if (string.IsNullOrEmpty(ApplicationDataPath))
+                        return string.Empty;
                     return Path.Combine(ApplicationDataPath, "db");
                 default:
                     return null;
@@ -231,7 +244,7 @@ namespace LDDModder.LDD
         public bool DirectoryExists(LddDirectory directory)
         {
             string path = GetLddDirectoryPath(directory);
-            return Utilities.FileHelper.IsValidDirectory(path) && Directory.Exists(path);
+            return FileHelper.IsValidDirectory(path) && Directory.Exists(path);
         }
 
         public string GetLddDirectoryPath(LddDirectory directory)
@@ -251,12 +264,19 @@ namespace LDDModder.LDD
    
         public string GetLddSubdirectory(LddDirectory directory, string subfolder)
         {
+            string lddDir = GetLddDirectoryPath(directory);
+            if (string.IsNullOrEmpty(lddDir))
+                return string.Empty;
+
             return Path.Combine(GetLddDirectoryPath(directory), subfolder);
         }
 
         public DirectoryInfo GetLddSubdirectoryInfo(LddDirectory directory, string subfolder)
         {
-            return new DirectoryInfo(GetLddSubdirectory(directory, subfolder));
+            string lddSubDir = GetLddSubdirectory(directory, subfolder);
+            if (string.IsNullOrEmpty(lddSubDir))
+                return null;
+            return new DirectoryInfo(lddSubDir);
         }
 
         public string GetAppDataSubDir(string subfolder)

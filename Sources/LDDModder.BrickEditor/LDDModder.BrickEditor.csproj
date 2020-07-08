@@ -93,6 +93,9 @@
     <OutputPath>bin\x86\PrepRelease\</OutputPath>
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Resources\BrickStudioIcon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="AssimpNet, Version=4.1.0.0, Culture=neutral, PublicKeyToken=0d51b391f59f42a6, processorArchitecture=MSIL">
       <HintPath>..\packages\AssimpNet.4.1.0\lib\net40\AssimpNet.dll</HintPath>
@@ -555,6 +558,7 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <Content Include="Resources\BrickStudioIcon.ico" />
     <Content Include="Resources\Data\Primitive connectors.xml" />
     <Content Include="Resources\Images\DecorationSurfaceIcon.png" />
     <Content Include="Resources\Images\Hidden2Icon.png" />

@@ -253,7 +253,7 @@
     <value>PrgmFilePathTextBox</value>
   </data>
   <data name="&gt;&gt;PrgmFilePathTextBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.BrowseTextBox, Brick Studio, Version=1.0.0.24265, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.BrowseTextBox, Brick Studio, Version=1.0.2.19078, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;PrgmFilePathTextBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -277,7 +277,7 @@
     <value>AppDataPathTextBox</value>
   </data>
   <data name="&gt;&gt;AppDataPathTextBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.BrowseTextBox, Brick Studio, Version=1.0.0.24265, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.BrowseTextBox, Brick Studio, Version=1.0.2.19078, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;AppDataPathTextBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -301,7 +301,7 @@
     <value>UserCreationPathTextBox</value>
   </data>
   <data name="&gt;&gt;UserCreationPathTextBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.BrowseTextBox, Brick Studio, Version=1.0.0.24265, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.BrowseTextBox, Brick Studio, Version=1.0.2.19078, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;UserCreationPathTextBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -844,31 +844,31 @@
     <value>LifNotExtractedMessage</value>
   </data>
   <data name="&gt;&gt;LifNotExtractedMessage.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.0.24265, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.2.19078, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;LifExtractedMessage.Name" xml:space="preserve">
     <value>LifExtractedMessage</value>
   </data>
   <data name="&gt;&gt;LifExtractedMessage.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.0.24265, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.2.19078, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;localizableStringList1.Name" xml:space="preserve">
     <value>localizableStringList1</value>
   </data>
   <data name="&gt;&gt;localizableStringList1.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableStringList, Brick Studio, Version=1.0.0.24265, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableStringList, Brick Studio, Version=1.0.2.19078, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;LifNotFoundMessage.Name" xml:space="preserve">
     <value>LifNotFoundMessage</value>
   </data>
   <data name="&gt;&gt;LifNotFoundMessage.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.0.24265, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.2.19078, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;LddExeNotFound.Name" xml:space="preserve">
     <value>LddExeNotFound</value>
   </data>
   <data name="&gt;&gt;LddExeNotFound.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.0.24265, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.2.19078, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>AppSettingsWindow</value>

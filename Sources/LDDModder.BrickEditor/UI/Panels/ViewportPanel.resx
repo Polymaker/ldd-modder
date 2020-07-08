@@ -125,7 +125,7 @@
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="CameraMenu_ResetCamera.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>165, 22</value>
   </data>
   <data name="CameraMenu_ResetCamera.Text" xml:space="preserve">
     <value>Reset</value>
@@ -195,19 +195,19 @@
     <value>Left</value>
   </data>
   <data name="CameraMenu_AlignTo.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>165, 22</value>
   </data>
   <data name="CameraMenu_AlignTo.Text" xml:space="preserve">
     <value>Align to</value>
   </data>
   <data name="CameraMenu_LookAt.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>165, 22</value>
   </data>
   <data name="CameraMenu_LookAt.Text" xml:space="preserve">
     <value>Look at selection</value>
   </data>
   <data name="CameraMenu_Orthographic.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>165, 22</value>
   </data>
   <data name="CameraMenu_Orthographic.Text" xml:space="preserve">
     <value>Orthographic</value>
@@ -254,18 +254,6 @@
   <data name="DisplayMenu_Connections.Text" xml:space="preserve">
     <value>Connections</value>
   </data>
-  <data name="toolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
-  </data>
-  <data name="toolStripMenuItem1.Text" xml:space="preserve">
-    <value>Separate Meshes</value>
-  </data>
-  <data name="test2ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
-  </data>
-  <data name="test2ToolStripMenuItem.Text" xml:space="preserve">
-    <value>Merge Meshes</value>
-  </data>
   <data name="DisplayMenuDropDown.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
@@ -290,14 +278,63 @@
   <data name="DisplayMenuDropDown.Text" xml:space="preserve">
     <value>Display</value>
   </data>
-  <data name="globalToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="toolStripMenuItem2.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="toolStripMenuItem2.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Segoe UI Semibold, 9pt, style=Bold</value>
+  </data>
+  <data name="toolStripMenuItem2.Size" type="System.Drawing.Size, System.Drawing">
     <value>180, 22</value>
+  </data>
+  <data name="toolStripMenuItem2.Text" xml:space="preserve">
+    <value>Unfinished features!</value>
+  </data>
+  <data name="MeshesMenu_Separate.Size" type="System.Drawing.Size, System.Drawing">
+    <value>180, 22</value>
+  </data>
+  <data name="MeshesMenu_Separate.Text" xml:space="preserve">
+    <value>Separate Meshes</value>
+  </data>
+  <data name="MeshesMenu_Merge.Size" type="System.Drawing.Size, System.Drawing">
+    <value>180, 22</value>
+  </data>
+  <data name="MeshesMenu_Merge.Text" xml:space="preserve">
+    <value>Merge Meshes</value>
+  </data>
+  <data name="MeshesDropDownMenu.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAIDSURBVDhPpZLrS5NhGMb3j4SWh0oRQVExD4gonkDpg4hG
+        YKxG6WBogkMZKgPNCEVJFBGdGETEvgwyO9DJE5syZw3PIlPEE9pgBCLZ5XvdMB8Ew8gXbl54nuf63dd9
+        0OGSnwCahxbPRNPAPMw9Xpg6ZmF46kZZ0xSKzJPIrhpDWsVnpBhGkKx3nAX8Pv7z1zg8OoY/cITdn4fw
+        bf/C0kYAN3Ma/w3gWfZL5kzTKBxjWyK2DftwI9tyMYCZKXbNHaD91bLYJrDXsYbrWfUKwJrPE9M2M1Oc
+        VzOOpHI7Jr376Hi9ogHqFIANO0/MmmmbmSmm9a8ze+I4MrNWAdjtoJgWcx+PSzg166yZZ8xM8XvXDix9
+        c4jIqFYAjoriBV9AhEPv1mH/sonogha0afbZMMZz+yreTGyhpusHwtNNCsA5U1zS4BLxzJIfg299qO32
+        Ir7UJtZfftyATqeT+8o2D8JSjQrAJblrncYL7ZJ2+bfaFnC/1S1NjL3diRat7qrO7wLRP3HjWsojBeCo
+        mDEo5mNjuweFGvjWg2EBhCbpkW78htSHHwRyNdmgAFzPEee2iFkzayy2OLXzT4gr6UdUnlXrullsxxQ+
+        kx0g8BTA3aZlButjSTyjODq/WcQcW/B/Je4OQhLvKQDnzN1mp0nnkvAhR8VuMzNrpm1mpjgkoVwB/v8D
+        TgDQASA1MVpwzwAAAABJRU5ErkJggg==
+</value>
+  </data>
+  <data name="MeshesDropDownMenu.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
+    <value>Magenta</value>
+  </data>
+  <data name="MeshesDropDownMenu.Size" type="System.Drawing.Size, System.Drawing">
+    <value>60, 24</value>
+  </data>
+  <data name="MeshesDropDownMenu.Text" xml:space="preserve">
+    <value>Meshes</value>
+  </data>
+  <data name="globalToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>108, 22</value>
   </data>
   <data name="globalToolStripMenuItem.Text" xml:space="preserve">
     <value>Global</value>
   </data>
   <data name="localToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>108, 22</value>
   </data>
   <data name="localToolStripMenuItem.Text" xml:space="preserve">
     <value>Local</value>
@@ -422,7 +459,6 @@
   <data name="toolStrip1.Size" type="System.Drawing.Size, System.Drawing">
     <value>549, 27</value>
   </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="toolStrip1.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
   </data>
@@ -472,7 +508,7 @@
     <value>PosZNumBox</value>
   </data>
   <data name="&gt;&gt;PosZNumBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.0.14048, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.2.17460, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;PosZNumBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -601,7 +637,7 @@
     <value>PosXNumBox</value>
   </data>
   <data name="&gt;&gt;PosXNumBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.0.14048, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.2.17460, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;PosXNumBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -631,7 +667,7 @@
     <value>PosYNumBox</value>
   </data>
   <data name="&gt;&gt;PosYNumBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.0.14048, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.2.17460, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;PosYNumBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -760,7 +796,7 @@
     <value>RotXNumBox</value>
   </data>
   <data name="&gt;&gt;RotXNumBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.0.14048, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.2.17460, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;RotXNumBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -856,7 +892,7 @@
     <value>RotYNumBox</value>
   </data>
   <data name="&gt;&gt;RotYNumBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.0.14048, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.2.17460, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;RotYNumBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -886,7 +922,7 @@
     <value>RotZNumBox</value>
   </data>
   <data name="&gt;&gt;RotZNumBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.0.14048, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.2.17460, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;RotZNumBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -1029,6 +1065,12 @@
   <data name="&gt;&gt;DisplayMenuDropDown.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripDropDownButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;DisplayMenu_Meshes.Name" xml:space="preserve">
+    <value>DisplayMenu_Meshes</value>
+  </data>
+  <data name="&gt;&gt;DisplayMenu_Meshes.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;DisplayMenu_Collisions.Name" xml:space="preserve">
     <value>DisplayMenu_Collisions</value>
   </data>
@@ -1041,22 +1083,28 @@
   <data name="&gt;&gt;DisplayMenu_Connections.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;DisplayMenu_Meshes.Name" xml:space="preserve">
-    <value>DisplayMenu_Meshes</value>
+  <data name="&gt;&gt;MeshesDropDownMenu.Name" xml:space="preserve">
+    <value>MeshesDropDownMenu</value>
   </data>
-  <data name="&gt;&gt;DisplayMenu_Meshes.Type" xml:space="preserve">
+  <data name="&gt;&gt;MeshesDropDownMenu.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripDropDownButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripMenuItem2.Name" xml:space="preserve">
+    <value>toolStripMenuItem2</value>
+  </data>
+  <data name="&gt;&gt;toolStripMenuItem2.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;toolStripMenuItem1.Name" xml:space="preserve">
-    <value>toolStripMenuItem1</value>
+  <data name="&gt;&gt;MeshesMenu_Separate.Name" xml:space="preserve">
+    <value>MeshesMenu_Separate</value>
   </data>
-  <data name="&gt;&gt;toolStripMenuItem1.Type" xml:space="preserve">
+  <data name="&gt;&gt;MeshesMenu_Separate.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;test2ToolStripMenuItem.Name" xml:space="preserve">
-    <value>test2ToolStripMenuItem</value>
+  <data name="&gt;&gt;MeshesMenu_Merge.Name" xml:space="preserve">
+    <value>MeshesMenu_Merge</value>
   </data>
-  <data name="&gt;&gt;test2ToolStripMenuItem.Type" xml:space="preserve">
+  <data name="&gt;&gt;MeshesMenu_Merge.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;GizmoOrientationMenu.Name" xml:space="preserve">
@@ -1141,6 +1189,6 @@
     <value>ViewportPanel</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Panels.ProjectDocumentPanel, Brick Studio, Version=1.0.0.14048, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Panels.ProjectDocumentPanel, Brick Studio, Version=1.0.2.17460, Culture=neutral, PublicKeyToken=null</value>
   </data>
 </root>

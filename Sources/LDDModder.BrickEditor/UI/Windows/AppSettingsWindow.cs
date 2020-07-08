@@ -29,6 +29,7 @@ namespace LDDModder.BrickEditor.UI.Windows
         public AppSettingsWindow()
         {
             InitializeComponent();
+            Icon = Properties.Resources.BrickStudioIcon;
         }
 
         protected override void OnLoad(EventArgs e)

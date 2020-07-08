@@ -43,11 +43,13 @@
             this.CameraMenu_LookAt = new System.Windows.Forms.ToolStripMenuItem();
             this.CameraMenu_Orthographic = new System.Windows.Forms.ToolStripMenuItem();
             this.DisplayMenuDropDown = new System.Windows.Forms.ToolStripDropDownButton();
+            this.DisplayMenu_Meshes = new System.Windows.Forms.ToolStripMenuItem();
             this.DisplayMenu_Collisions = new System.Windows.Forms.ToolStripMenuItem();
             this.DisplayMenu_Connections = new System.Windows.Forms.ToolStripMenuItem();
-            this.DisplayMenu_Meshes = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.test2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.MeshesDropDownMenu = new System.Windows.Forms.ToolStripDropDownButton();
+            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
+            this.MeshesMenu_Separate = new System.Windows.Forms.ToolStripMenuItem();
+            this.MeshesMenu_Merge = new System.Windows.Forms.ToolStripMenuItem();
             this.GizmoOrientationMenu = new System.Windows.Forms.ToolStripDropDownButton();
             this.globalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.localToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -88,6 +90,7 @@
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.CameraMenuDropDown,
             this.DisplayMenuDropDown,
+            this.MeshesDropDownMenu,
             this.GizmoOrientationMenu,
             this.GizmoPivotModeMenu,
             this.ModelRenderMode1Button,
@@ -183,11 +186,18 @@
             this.DisplayMenuDropDown.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.DisplayMenu_Meshes,
             this.DisplayMenu_Collisions,
-            this.DisplayMenu_Connections,
-            this.toolStripMenuItem1,
-            this.test2ToolStripMenuItem});
+            this.DisplayMenu_Connections});
             resources.ApplyResources(this.DisplayMenuDropDown, "DisplayMenuDropDown");
             this.DisplayMenuDropDown.Name = "DisplayMenuDropDown";
+            // 
+            // DisplayMenu_Meshes
+            // 
+            this.DisplayMenu_Meshes.Checked = true;
+            this.DisplayMenu_Meshes.CheckOnClick = true;
+            this.DisplayMenu_Meshes.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.DisplayMenu_Meshes.Name = "DisplayMenu_Meshes";
+            resources.ApplyResources(this.DisplayMenu_Meshes, "DisplayMenu_Meshes");
+            this.DisplayMenu_Meshes.CheckedChanged += new System.EventHandler(this.DisplayMenu_Meshes_CheckedChanged);
             // 
             // DisplayMenu_Collisions
             // 
@@ -203,26 +213,32 @@
             resources.ApplyResources(this.DisplayMenu_Connections, "DisplayMenu_Connections");
             this.DisplayMenu_Connections.CheckedChanged += new System.EventHandler(this.DisplayMenu_Connections_CheckedChanged);
             // 
-            // DisplayMenu_Meshes
+            // MeshesDropDownMenu
             // 
-            this.DisplayMenu_Meshes.Checked = true;
-            this.DisplayMenu_Meshes.CheckOnClick = true;
-            this.DisplayMenu_Meshes.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.DisplayMenu_Meshes.Name = "DisplayMenu_Meshes";
-            resources.ApplyResources(this.DisplayMenu_Meshes, "DisplayMenu_Meshes");
-            this.DisplayMenu_Meshes.CheckedChanged += new System.EventHandler(this.DisplayMenu_Meshes_CheckedChanged);
+            this.MeshesDropDownMenu.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.MeshesDropDownMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItem2,
+            this.MeshesMenu_Separate,
+            this.MeshesMenu_Merge});
+            resources.ApplyResources(this.MeshesDropDownMenu, "MeshesDropDownMenu");
+            this.MeshesDropDownMenu.Name = "MeshesDropDownMenu";
             // 
-            // toolStripMenuItem1
+            // toolStripMenuItem2
             // 
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            resources.ApplyResources(this.toolStripMenuItem1, "toolStripMenuItem1");
-            this.toolStripMenuItem1.Click += new System.EventHandler(this.toolStripMenuItem1_Click);
+            resources.ApplyResources(this.toolStripMenuItem2, "toolStripMenuItem2");
+            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
             // 
-            // test2ToolStripMenuItem
+            // MeshesMenu_Separate
             // 
-            this.test2ToolStripMenuItem.Name = "test2ToolStripMenuItem";
-            resources.ApplyResources(this.test2ToolStripMenuItem, "test2ToolStripMenuItem");
-            this.test2ToolStripMenuItem.Click += new System.EventHandler(this.test2ToolStripMenuItem_Click);
+            this.MeshesMenu_Separate.Name = "MeshesMenu_Separate";
+            resources.ApplyResources(this.MeshesMenu_Separate, "MeshesMenu_Separate");
+            this.MeshesMenu_Separate.Click += new System.EventHandler(this.toolStripMenuItem1_Click);
+            // 
+            // MeshesMenu_Merge
+            // 
+            this.MeshesMenu_Merge.Name = "MeshesMenu_Merge";
+            resources.ApplyResources(this.MeshesMenu_Merge, "MeshesMenu_Merge");
+            this.MeshesMenu_Merge.Click += new System.EventHandler(this.test2ToolStripMenuItem_Click);
             // 
             // GizmoOrientationMenu
             // 
@@ -512,7 +528,9 @@
         private System.Windows.Forms.ToolStripButton ModelRenderMode1Button;
         private System.Windows.Forms.ToolStripButton ModelRenderMode2Button;
         private System.Windows.Forms.ToolStripButton ModelRenderMode3Button;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
-        private System.Windows.Forms.ToolStripMenuItem test2ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem MeshesMenu_Separate;
+        private System.Windows.Forms.ToolStripMenuItem MeshesMenu_Merge;
+        private System.Windows.Forms.ToolStripDropDownButton MeshesDropDownMenu;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem2;
     }
 }

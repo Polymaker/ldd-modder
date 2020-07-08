@@ -47,8 +47,8 @@ namespace LDDModder.BrickEditor.Settings
         {
             var settings = new AppSettings()
             {
-                LddApplicationDataPath = lddEnvironment.ApplicationDataPath,
-                LddProgramFilesPath = lddEnvironment.ProgramFilesPath
+                LddApplicationDataPath = lddEnvironment?.ApplicationDataPath ?? string.Empty,
+                LddProgramFilesPath = lddEnvironment?.ProgramFilesPath ?? string.Empty
             };
             return settings;
         }
@@ -63,9 +63,9 @@ namespace LDDModder.BrickEditor.Settings
             if (string.IsNullOrEmpty(LddApplicationDataPath) ||
                 string.IsNullOrEmpty(LddProgramFilesPath))
             {
-                var currEnv = LDD.LDDEnvironment.InstalledEnvironment;
-                LddApplicationDataPath = currEnv?.ApplicationDataPath;
-                LddProgramFilesPath = currEnv?.ProgramFilesPath;
+                var installedEnv = LDD.LDDEnvironment.InstalledEnvironment;
+                LddApplicationDataPath = installedEnv?.ApplicationDataPath ?? string.Empty;
+                LddProgramFilesPath = installedEnv?.ProgramFilesPath ?? string.Empty;
             }
             BuildSettings.InitializeDefaults();
         }

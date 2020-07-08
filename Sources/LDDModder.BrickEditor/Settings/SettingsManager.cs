@@ -87,8 +87,22 @@ namespace LDDModder.BrickEditor.Settings
                 LDDEnvironment.SetOverride(null);
             else
             {
-                var custom = LDDEnvironment.Create(Current.LddProgramFilesPath, Current.LddApplicationDataPath);
-                LDDEnvironment.SetOverride(custom);
+                if (LDDEnvironment.IsInstalled)
+                {
+                    if (string.IsNullOrEmpty(Current.LddProgramFilesPath))
+                        Current.LddProgramFilesPath = LDDEnvironment.InstalledEnvironment.ProgramFilesPath;
+                    if (string.IsNullOrEmpty(Current.LddApplicationDataPath))
+                        Current.LddApplicationDataPath = LDDEnvironment.InstalledEnvironment.ApplicationDataPath;
+                }
+                
+                if (!string.IsNullOrEmpty(Current.LddProgramFilesPath) || 
+                    !string.IsNullOrEmpty(Current.LddApplicationDataPath))
+                {
+                    var custom = LDDEnvironment.Create(Current.LddProgramFilesPath, Current.LddApplicationDataPath);
+                    LDDEnvironment.SetOverride(custom);
+                }
+                else
+                    LDDEnvironment.SetOverride(null);
             }
         }
 

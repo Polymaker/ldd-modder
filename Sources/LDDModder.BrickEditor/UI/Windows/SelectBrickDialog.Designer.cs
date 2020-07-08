@@ -211,6 +211,8 @@
             this.MinimumSize = new System.Drawing.Size(500, 400);
             this.Name = "SelectBrickDialog";
             this.Padding = new System.Windows.Forms.Padding(3);
+            this.ShowIcon = false;
+            this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Select LDD Brick";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SelectBrickDialog_FormClosing);

@@ -40,6 +40,8 @@ namespace LDDModder.BrickEditor.UI.Windows
                 DockPanelControl.Theme);
             this.vS2015LightTheme1.Extender.DockPaneStripFactory = new VS2015DockPaneStripFactory();
             FlagManager = new FlagManager();
+
+            Icon = Properties.Resources.BrickStudioIcon;
         }
 
         protected override void OnLoad(EventArgs e)
