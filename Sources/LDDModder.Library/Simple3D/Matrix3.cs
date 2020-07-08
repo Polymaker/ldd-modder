@@ -10,6 +10,8 @@ namespace LDDModder.Simple3D
     {
         public static readonly Matrix3 Identity = new Matrix3(1f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 1f);
 
+        public static readonly Matrix3 Zero = new Matrix3();
+
         public float A1;
         public float A2;
         public float A3;
@@ -469,7 +471,12 @@ namespace LDDModder.Simple3D
 
         public float[] ToArray()
         {
-            return new float[] { A1, A2, A3, B1, B2, B3, C1, C2, C3 };
+            return new float[] 
+            { 
+                A1, A2, A3, 
+                B1, B2, B3, 
+                C1, C2, C3 
+            };
         }
 
         public override string ToString()

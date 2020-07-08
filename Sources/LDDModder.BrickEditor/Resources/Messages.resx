@@ -136,7 +136,7 @@ Check validation panel for more details.</value>
     <value>LDD part files generation</value>
   </data>
   <data name="BuildConfig_LDD" xml:space="preserve">
-    <value>LDD database</value>
+    <value>LDD folder</value>
   </data>
   <data name="BuildConfig_Browse" xml:space="preserve">
     <value>Select directory</value>

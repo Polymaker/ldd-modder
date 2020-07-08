@@ -131,6 +131,7 @@ Global
 		{4C0BA321-D806-42EF-BCDA-597039A6C6D5}.PrepRelease|x64.ActiveCfg = Release|x64
 		{4C0BA321-D806-42EF-BCDA-597039A6C6D5}.PrepRelease|x64.Build.0 = Release|x64
 		{4C0BA321-D806-42EF-BCDA-597039A6C6D5}.PrepRelease|x86.ActiveCfg = Release|x86
+		{4C0BA321-D806-42EF-BCDA-597039A6C6D5}.PrepRelease|x86.Build.0 = Release|x86
 		{4C0BA321-D806-42EF-BCDA-597039A6C6D5}.Release|Any CPU.ActiveCfg = Release|x86
 		{4C0BA321-D806-42EF-BCDA-597039A6C6D5}.Release|x64.ActiveCfg = Release|x86
 		{4C0BA321-D806-42EF-BCDA-597039A6C6D5}.Release|x86.ActiveCfg = Release|x86
@@ -146,7 +147,7 @@ Global
 		{5492B62D-8941-4F76-AA02-2DB5C787AC57} = {406BD71D-724C-4575-A7DD-982B1EC329AB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {458206FC-7A4F-48CD-87ED-E84434A5C4CA}
 		RESX_SaveFilesImmediatelyUponChange = False
+		SolutionGuid = {458206FC-7A4F-48CD-87ED-E84434A5C4CA}
 	EndGlobalSection
 EndGlobal

@@ -58,7 +58,7 @@ namespace LDDModder.BrickEditor.UI.Editors
             height = tableLayoutPanel1.Height;
             if (width > 0)
             {
-                width = (int)Math.Round(width / 3f) * 3;
+                width = (int)Math.Floor(width / 3f) * 3;
             }
             base.SetBoundsCore(x, y, width, height, specified);
         }

@@ -219,8 +219,11 @@ namespace LDDModder.BrickEditor.UI.Controls
 
         private void ValueTextBox_Validated(object sender, EventArgs e)
         {
-            _Value = ValueTextBox.Text;
-            ValueChanged?.Invoke(this, EventArgs.Empty);
+            if (_Value != ValueTextBox.Text)
+            {
+                _Value = ValueTextBox.Text;
+                ValueChanged?.Invoke(this, EventArgs.Empty);
+            }
         }
 
         private void ValueTextBox_Validating(object sender, CancelEventArgs e)

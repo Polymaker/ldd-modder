@@ -2,18 +2,22 @@
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   <?include $(sys.CURRENTDIR)\Variables.wxi?>
   
-	<Product Id="*" Name="$(var.ProductName)" Language="1033" Version="1.0.2.0" 
+	<Product Id="*" Name="$(var.ProductName)" Language="1033" Version="1.0.3.0" 
            Manufacturer="Polymaker" UpgradeCode="0b4b59f2-f635-4904-b051-7873899bf21b">
 		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
 
 		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
     <MediaTemplate EmbedCab="yes"/>
 
+    <Icon Id="InstallIcon.ico" SourceFile="$(var.LDDModder.BrickEditor.ProjectDir)Resources\BrickStudioIcon.ico"/>
+    <Property Id="ARPPRODUCTICON" Value="InstallIcon.ico" />
 
     <Feature Id="ProductFeature" Title="LDD Brick Studio" Level="1">
       <ComponentGroupRef Id="BrickEditor.Binaries" />
       <ComponentGroupRef Id="BrickEditor.References" />
       <ComponentGroupRef Id="BrickEditor.Resources.FR"/>
+      <ComponentRef Id="ApplicationShortcut" />
+      <ComponentRef Id="DesktopShortcut" />
       <!--<Feature Id="" Title="" Level="1">
         <ComponentGroupRef Id="BrickEditor.Resources.FR"/>
       </Feature>-->
@@ -21,15 +25,23 @@
     
     <Property Id="PLATFORM" Value="$(var.Platform)" />
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
+    <WixVariable Id="WixUILicenseRtf" Value="$(var.SolutionDir)LICENSE.rtf" />
     <UIRef Id="WixUI_InstallDir" />
 	</Product>
 
 	<Fragment>
 		<Directory Id="TARGETDIR" Name="SourceDir">
 			<Directory Id="$(var.PlatformProgramFilesFolder)">
-				<Directory Id="INSTALLFOLDER" Name="LDDModder" />
+				<Directory Id="INSTALLFOLDER" Name="LDD Modder" />
 			</Directory>
+      
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ApplicationProgramsFolder" Name="LDD Modder"/>
+      </Directory>
+      
+      <Directory Id="DesktopFolder" Name="Desktop" />
 		</Directory>
+    
 	</Fragment>
 
 	<!--<Fragment>

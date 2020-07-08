@@ -70,7 +70,7 @@ namespace LDDModder.BrickEditor.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à LDD database.
+        ///   Recherche une chaîne localisée semblable à LDD folder.
         /// </summary>
         internal static string BuildConfig_LDD {
             get {

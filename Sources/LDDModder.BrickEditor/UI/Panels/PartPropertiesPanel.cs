@@ -135,7 +135,11 @@ namespace LDDModder.BrickEditor.UI.Panels
                     partProps.PhysicsAttributes, nameof(PartProperties.PhysicsAttributes.CenterOfMass),
                     true, DataSourceUpdateMode.OnPropertyChanged));
 
-                InertiaTensorTextBox.Text = partProps.PhysicsAttributes.GetInertiaTensorString();
+                var matrixValues = partProps.PhysicsAttributes.InertiaTensor.ToArray();
+                string matrixStr = string.Join("; ", matrixValues);
+                InertiaTensorTextBox.Text = matrixStr;
+                //string matrixValues = partProps.PhysicsAttributes.GetInertiaTensorString();
+                //InertiaTensorTextBox.Text = matrixValues.Replace(",", ", ");
             }
             else
             {

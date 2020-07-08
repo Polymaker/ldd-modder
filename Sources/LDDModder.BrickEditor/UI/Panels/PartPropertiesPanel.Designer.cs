@@ -59,7 +59,6 @@
             this.MassNumberBox = new LDDModder.BrickEditor.UI.Controls.NumberTextBox();
             this.LabelFriction = new System.Windows.Forms.Label();
             this.FrictionCheckBox = new System.Windows.Forms.CheckBox();
-            this.collapsiblePanel4 = new LDDModder.BrickEditor.UI.Controls.CollapsiblePanel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.collapsiblePanel1.ContentPanel.SuspendLayout();
             this.collapsiblePanel1.SuspendLayout();
@@ -70,7 +69,6 @@
             this.collapsiblePanel3.ContentPanel.SuspendLayout();
             this.collapsiblePanel3.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
-            this.collapsiblePanel4.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -303,25 +301,12 @@
             this.FrictionCheckBox.Name = "FrictionCheckBox";
             this.FrictionCheckBox.UseVisualStyleBackColor = true;
             // 
-            // collapsiblePanel4
-            // 
-            // 
-            // collapsiblePanel4.ContentPanel
-            // 
-            resources.ApplyResources(this.collapsiblePanel4.ContentPanel, "collapsiblePanel4.ContentPanel");
-            this.collapsiblePanel4.ContentPanel.Name = "ContentPanel";
-            this.collapsiblePanel4.DisplayStyle = LDDModder.BrickEditor.UI.Controls.CollapsiblePanel.HeaderDisplayStyle.Button;
-            resources.ApplyResources(this.collapsiblePanel4, "collapsiblePanel4");
-            this.collapsiblePanel4.Name = "collapsiblePanel4";
-            this.collapsiblePanel4.PanelHeight = 6;
-            // 
             // flowLayoutPanel1
             // 
             resources.ApplyResources(this.flowLayoutPanel1, "flowLayoutPanel1");
             this.flowLayoutPanel1.Controls.Add(this.collapsiblePanel2);
             this.flowLayoutPanel1.Controls.Add(this.collapsiblePanel3);
             this.flowLayoutPanel1.Controls.Add(this.collapsiblePanel1);
-            this.flowLayoutPanel1.Controls.Add(this.collapsiblePanel4);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             // 
             // PartPropertiesPanel
@@ -349,7 +334,6 @@
             this.collapsiblePanel3.PerformLayout();
             this.tableLayoutPanel3.ResumeLayout(false);
             this.tableLayoutPanel3.PerformLayout();
-            this.collapsiblePanel4.ResumeLayout(false);
             this.flowLayoutPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -376,7 +360,6 @@
         private Controls.CollapsiblePanel collapsiblePanel1;
         private Controls.CollapsiblePanel collapsiblePanel2;
         private Controls.CollapsiblePanel collapsiblePanel3;
-        private Controls.CollapsiblePanel collapsiblePanel4;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
         private System.Windows.Forms.Label LabelInertiaTensor;
         private System.Windows.Forms.Label LabelCenterOfMass;
