@@ -60,6 +60,15 @@ namespace LDDModder.LDD.Parts
             ShaderDataGenerator.ComputeEdgeOutlines(AllMeshes.SelectMany(x => x.Triangles));
         }
 
+        public void ClearEdgeOutlines()
+        {
+            foreach (var tri in AllMeshes.SelectMany(x => x.Triangles))
+            {
+                if (tri.Indices[0].RoundEdgeData != null)
+                    tri.Indices[0].RoundEdgeData.Reset();
+            }
+        }
+
         #endregion
 
         public BoundingBox CalculateBoundingBox()

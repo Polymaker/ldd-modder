@@ -64,9 +64,10 @@
             this.BuildConfigComboBox = new System.Windows.Forms.ToolStripComboBox();
             this.AutoSaveTimer = new System.Windows.Forms.Timer(this.components);
             this.localizableStringList1 = new LDDModder.BrickEditor.Localization.LocalizableStringList(this.components);
-            this.StartLddText = ((LDDModder.BrickEditor.Localization.LocalizableString)(new LDDModder.BrickEditor.Localization.LocalizableString()));
-            this.RestartLddText = ((LDDModder.BrickEditor.Localization.LocalizableString)(new LDDModder.BrickEditor.Localization.LocalizableString()));
-            this.WindowTitle = ((LDDModder.BrickEditor.Localization.LocalizableString)(new LDDModder.BrickEditor.Localization.LocalizableString()));
+            this.StartLddText = new LDDModder.BrickEditor.Localization.LocalizableString();
+            this.RestartLddText = new LDDModder.BrickEditor.Localization.LocalizableString();
+            this.WindowTitle = new LDDModder.BrickEditor.Localization.LocalizableString();
+            this.Edit_GenerateOutlines = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -176,7 +177,8 @@
             this.Edit_ImportMeshMenu,
             this.toolStripSeparator4,
             this.Edit_ValidatePartMenu,
-            this.Edit_GenerateFilesMenu});
+            this.Edit_GenerateFilesMenu,
+            this.Edit_GenerateOutlines});
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
             resources.ApplyResources(this.editToolStripMenuItem, "editToolStripMenuItem");
             // 
@@ -297,6 +299,15 @@
             // 
             resources.ApplyResources(this.WindowTitle, "WindowTitle");
             // 
+            // Edit_GenerateOutlines
+            // 
+            this.Edit_GenerateOutlines.Checked = true;
+            this.Edit_GenerateOutlines.CheckOnClick = true;
+            this.Edit_GenerateOutlines.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.Edit_GenerateOutlines.Name = "Edit_GenerateOutlines";
+            resources.ApplyResources(this.Edit_GenerateOutlines, "Edit_GenerateOutlines");
+            this.Edit_GenerateOutlines.CheckStateChanged += new System.EventHandler(this.Edit_GenerateOutlines_CheckStateChanged);
+            // 
             // BrickEditorWindow
             // 
             resources.ApplyResources(this, "$this");
@@ -352,5 +363,6 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
         private Localization.LocalizableString WindowTitle;
         private System.Windows.Forms.ToolStripComboBox BuildConfigComboBox;
+        private System.Windows.Forms.ToolStripMenuItem Edit_GenerateOutlines;
     }
 }

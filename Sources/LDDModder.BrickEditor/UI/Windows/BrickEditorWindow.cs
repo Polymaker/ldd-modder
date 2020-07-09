@@ -470,5 +470,7 @@ namespace LDDModder.BrickEditor.UI.Windows
         {
             ProjectManager.SaveWorkingProject();
         }
+
+        
     }
 }

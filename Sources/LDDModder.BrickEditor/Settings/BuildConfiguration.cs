@@ -22,6 +22,8 @@ namespace LDDModder.BrickEditor.Settings
         [JsonProperty("confirmOverwrite")]
         public bool ConfirmOverwrite { get; set; }
 
+        
+
         //[JsonProperty("compress", DefaultValueHandling = DefaultValueHandling.Ignore), DefaultValue(false)]
         //public bool CreateZip { get; set; }
 

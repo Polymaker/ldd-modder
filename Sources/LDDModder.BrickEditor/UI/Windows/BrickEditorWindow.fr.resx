@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -179,5 +179,11 @@
   </data>
   <data name="SelectedBuildLabel.Text" xml:space="preserve">
     <value>Générer les fichiers dans:</value>
+  </data>
+  <data name="Edit_GenerateOutlines.Text" xml:space="preserve">
+    <value>Générer les contours</value>
+  </data>
+  <data name="WindowTitle.Text" xml:space="preserve">
+    <value>LDD Brick Studio</value>
   </data>
 </root>

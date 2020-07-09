@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,9 +20,13 @@ namespace LDDModder.BrickEditor.Settings
         [JsonProperty("userDefined")]
         public List<BuildConfiguration> UserDefined { get; set; }
 
+        [JsonProperty("generateOutlines", DefaultValueHandling = DefaultValueHandling.Ignore), DefaultValue(true)]
+        public bool GenerateOutlines { get; set; }
+
         public ProjectBuildSettings()
         {
             UserDefined = new List<BuildConfiguration>();
+            GenerateOutlines = true;
         }
 
         public void InitializeDefaults()

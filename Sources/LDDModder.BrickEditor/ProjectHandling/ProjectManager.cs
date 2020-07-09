@@ -611,8 +611,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
         public event EventHandler<ProjectBuildEventArgs> GenerationFinished;
 
-        //TODO: implement destination folder parameter to allow saving somewhere without overwritting LDD files
-        public PartWrapper GenerateLddFiles()
+        public PartWrapper GenerateLddFiles(bool generateOutlines = true)
         {
             if (!IsProjectOpen)
                 return null;
@@ -626,7 +625,11 @@ namespace LDDModder.BrickEditor.ProjectHandling
             try
             {
                 generatedPart = CurrentProject.GenerateLddPart();
-                generatedPart.ComputeEdgeOutlines();
+                if (generateOutlines)
+                    generatedPart.ComputeEdgeOutlines();
+                else
+                    generatedPart.ClearEdgeOutlines();
+
                 GenerationSuccessful = true;
             }
             catch (Exception ex)

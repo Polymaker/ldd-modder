@@ -44,6 +44,15 @@
     
 	</Fragment>
 
+  <Fragment>
+    <DirectoryRef Id="FontsFolder">
+      <Component Id="InstallFonts" Guid="C958EB86-569B-4ABE-8663-4A6915EE6D07">
+        <File Id="segoeui.TTF" Source="..\..\Resources\Fonts\segoeui.ttf" TrueType="yes" />
+        <File Id="segoeuib.TTF" Source="..\..\Resources\Fonts\segoeuib.ttf" TrueType="yes" />
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+
 	<!--<Fragment>
 		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
 			--><!-- TODO: Remove the comments around this Component element and the ComponentRef below in order to add resources to this installer. --><!--
