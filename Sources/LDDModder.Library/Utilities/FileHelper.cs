@@ -20,6 +20,9 @@ namespace LDDModder.Utilities
 
         public static bool IsValidPath(string path)
         {
+            if (string.IsNullOrEmpty(path))
+                return false;
+
             string directory = Path.GetDirectoryName(path);
             string fileName = Path.GetFileName(path);
 

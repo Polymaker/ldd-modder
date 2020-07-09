@@ -13,7 +13,7 @@ using System.Diagnostics;
 
 namespace LDDModder.BrickEditor.Rendering
 {
-    public class GLSurfaceModel : IDisposable
+    public class SurfaceMeshBuffer : IDisposable
     {
         public PartSurface Surface { get; set; }
 
@@ -21,20 +21,18 @@ namespace LDDModder.BrickEditor.Rendering
 
         public List<SurfaceModelMesh> MeshModels { get; private set; }
 
-        public bool IsTransparent => Material.Diffuse.W < 1f;
-
         public MaterialInfo Material { get; set; }
 
         private VertVNT[] Vertices;
         private int[] Indices;
 
-        public GLSurfaceModel()
+        public SurfaceMeshBuffer()
         {
             VertexBuffer = new IndexedVertexBuffer<VertVNT>();
             MeshModels = new List<SurfaceModelMesh>();
         }
 
-        public GLSurfaceModel(PartSurface surface)
+        public SurfaceMeshBuffer(PartSurface surface)
         {
             Surface = surface;
             VertexBuffer = new IndexedVertexBuffer<VertVNT>();
@@ -125,42 +123,47 @@ namespace LDDModder.BrickEditor.Rendering
             return model;
         }
 
-        public void Render(RenderOptions renderOptions, bool alphaPass = false)
+        public void Render(Camera camera, MeshRenderMode renderMode)
         {
             var visibleMeshes = MeshModels.Where(x => x.Visible)
-                .OrderByDescending(x=>x.IsSelected).ToList();
+                .OrderByDescending(x => x.IsSelected).ToList();
 
             if (!visibleMeshes.Any())
                 return;
 
-            var currentMaterial = Material;
-            if (renderOptions.DrawTransparent)
-            {
-                var diffColor = currentMaterial.Diffuse;
-                diffColor.W = 0.5f;
-                currentMaterial.Diffuse = diffColor;
-            }
-
             RenderHelper.ModelShader.Use();
-            RenderHelper.ModelShader.UseTexture.Set(renderOptions.DrawTextured && Surface.SurfaceID > 0);
+            RenderHelper.ModelShader.UseTexture.Set(renderMode != MeshRenderMode.Wireframe && Surface.SurfaceID > 0);
 
-            bool useOutlineStencil = !alphaPass && visibleMeshes.Any(x => x.IsSelected);
+            bool useOutlineStencil = visibleMeshes.Any(x => x.IsSelected);
             if (useOutlineStencil)
                 RenderHelper.EnableStencilTest();
 
-
             foreach (var model in visibleMeshes)
             {
-                RenderPartialMesh(renderOptions, model, currentMaterial, useOutlineStencil);
+                if (model.IsSelected && !useOutlineStencil)
+                {
 
-                if (useOutlineStencil && model.IsSelected)
-                    DrawModelOutline(model);
+                }
+
+                RenderHelper.RenderWithStencil(model.IsSelected,
+                    () =>
+                    {
+                        RenderPartialMesh(renderMode, model, Material);
+                    },
+                    () =>
+                    {
+                        DrawWireframeModel(model, RenderHelper.SelectionOutlineColor, 4f);
+                    }
+                );
+
+                if (useOutlineStencil)
+                    RenderHelper.ClearStencil();
             }
-
 
             if (useOutlineStencil)
                 RenderHelper.DisableStencilTest();
 
+            //Draw selected models bounding boxes
             foreach (var model in visibleMeshes)
             {
                 if (model.IsSelected)
@@ -173,69 +176,58 @@ namespace LDDModder.BrickEditor.Rendering
             }
         }
 
-        public void RenderPartialModel(SurfaceModelMesh surfaceModel)
+        private void RenderPartialMesh(MeshRenderMode renderMode, SurfaceModelMesh model, MaterialInfo material)
         {
-
-        }
-
-        public void RenderWireframe(Vector4 color, float size = 1f)
-        {
-            var visibleMeshes = MeshModels.Where(x => x.Visible)
-                .OrderByDescending(x => x.IsSelected).ToList();
-
-            if (!visibleMeshes.Any())
-                return;
-
-            foreach (var model in visibleMeshes)
+            if (renderMode == MeshRenderMode.Wireframe && model.IsSelected)
             {
-                RenderHelper.BeginDrawWireframe2(VertexBuffer, model.Transform, size, color);
-                DrawPartialMesh(model);
-                //RenderHelper.EndDrawWireframe(VertexBuffer);
+                //in wireframe mode, disable depth and color mask
+                //but still write in stencil mask, this is needed for drawing the selection outline correctly
+                GL.ColorMask(false, false, false, false);
+                GL.DepthMask(false);
+            }
+
+            if (renderMode != MeshRenderMode.Wireframe || model.IsSelected)
+                DrawSolidModel(model, material);
+
+            if (model.IsSelected)
+                RenderHelper.DisableStencilMask();
+
+            if (renderMode == MeshRenderMode.Wireframe && model.IsSelected)
+            {
+                GL.ColorMask(true, true, true, true);
+                GL.DepthMask(true);
+            }
+
+            if (renderMode == MeshRenderMode.Wireframe || renderMode == MeshRenderMode.SolidWireframe)
+            {
+                var wireColor = model.IsSelected && renderMode == MeshRenderMode.SolidWireframe ? RenderHelper.WireframeColorAlt : RenderHelper.WireframeColor;
+                DrawWireframeModel(model, wireColor, 1f);
             }
         }
 
-        private void RenderPartialMesh(RenderOptions renderOptions, SurfaceModelMesh model, MaterialInfo material, bool useStencil)
+        private void DrawModelElements(SurfaceModelMesh model)
         {
-            if (renderOptions.DrawShaded || renderOptions.DrawTextured)
-            {
-                RenderHelper.BeginDrawModel(VertexBuffer, model.Transform, material);
-                RenderHelper.ModelShader.IsSelected.Set(model.IsSelected);
-
-                if (model.IsSelected && useStencil)
-                    RenderHelper.EnableStencilMask();
-
-                DrawPartialMesh(model);
-
-                RenderHelper.EndDrawModel(VertexBuffer);
-
-                if (model.IsSelected && useStencil)
-                    RenderHelper.RemoveStencilMask();
-            }
-
-            if (renderOptions.DrawWireframe)
-            {
-                RenderHelper.BeginDrawWireframe(VertexBuffer, model.Transform, 1f, 
-                    model.IsSelected ? RenderHelper.WireframeColorAlt : RenderHelper.WireframeColor);
-                DrawPartialMesh(model);
-                RenderHelper.EndDrawWireframe(VertexBuffer);
-            }
+            VertexBuffer.DrawElementsBaseVertex(PrimitiveType.Triangles, 
+                model.StartVertex, 
+                model.IndexCount, 
+                model.StartIndex * 4);
         }
-
-        private void DrawModelOutline(SurfaceModelMesh model)
+        
+        private void DrawWireframeModel(SurfaceModelMesh model, Vector4 color, float thickness)
         {
-            RenderHelper.BeginDrawWireframe(VertexBuffer, model.Transform, 4f, RenderHelper.SelectionOutlineColor);
-            RenderHelper.ApplyStencilMask();
-
-            DrawPartialMesh(model);
-
+            RenderHelper.BeginDrawWireframe(VertexBuffer, model.Transform, thickness, color);
+            DrawModelElements(model);
             RenderHelper.EndDrawWireframe(VertexBuffer);
-            RenderHelper.RemoveStencilMask();
         }
 
-        private void DrawPartialMesh(SurfaceModelMesh mesh)
+        private void DrawSolidModel(SurfaceModelMesh model, MaterialInfo material)
         {
-            VertexBuffer.DrawElementsBaseVertex(PrimitiveType.Triangles, mesh.StartVertex, mesh.IndexCount, mesh.StartIndex * 4);
+            RenderHelper.BeginDrawModel(VertexBuffer, model.Transform, material);
+            RenderHelper.ModelShader.IsSelected.Set(model.IsSelected);
+            DrawModelElements(model);
+            RenderHelper.EndDrawModel(VertexBuffer);
         }
+
 
         public bool RayIntersects(Ray ray, SurfaceModelMesh model, out float distance)
         {
@@ -265,6 +257,10 @@ namespace LDDModder.BrickEditor.Rendering
         {
             if (VertexBuffer != null)
                 VertexBuffer.Dispose();
+            Vertices = new VertVNT[0];
+            Indices = new int[0];
+            MeshModels.Clear();
+            Surface = null;
         }
     }
 }

@@ -16,6 +16,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -100,12 +101,32 @@ namespace LDDModder.PaletteMaker.UI
         {
             Task.Factory.StartNew(() =>
             {
-                SetInfo = RebrickableAPI.GetSet("75252-1");
-                var setParts = RebrickableAPI.GetSetParts(SetInfo.SetNum).ToList();
-                BeginInvoke((Action)(() => LoadSetParts(setParts)));
-                //PalatteGenerator.CreatePaletteFromSet(DBFilePath, setInfo);
+                try
+                {
+                    SetInfo = RebrickableAPI.GetSet(textBox1.Text);
+                    if (SetInfo != null)
+                    {
+                        var setParts = RebrickableAPI.GetSetParts(SetInfo.SetNum).ToList();
+                        BeginInvoke((Action)(() => LoadSetParts(setParts)));
+                        //PalatteGenerator.CreatePaletteFromSet(DBFilePath, setInfo);
+                    }
 
+                }
+                catch { }
             });
+        }
+
+        private void FindSet(string searchTxt)
+        {
+            using (var db = GetDbContext())
+            {
+                RbSet foundSet = null;
+                if (Regex.IsMatch(searchTxt.Trim(), "^\\d+-\\d{1,2}$"))
+                    foundSet = db.RbSets.FirstOrDefault(x => x.SetID == searchTxt.Trim());
+
+                
+            }
+            
         }
 
         private PaletteDbContext GetDbContext()
@@ -189,6 +210,12 @@ namespace LDDModder.PaletteMaker.UI
                 }
             }
 
+        }
+
+        private void SetPartsGridView_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        {
+            Debug.WriteLine(SetPartsGridView.Rows[e.RowIndex].DataBoundItem.ToString());
+            e.Cancel = true;
         }
     }
 }

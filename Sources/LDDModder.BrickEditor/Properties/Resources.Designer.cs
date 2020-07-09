@@ -61,6 +61,16 @@ namespace LDDModder.BrickEditor.Properties {
         }
         
         /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Icon semblable à (Icône).
+        /// </summary>
+        internal static System.Drawing.Icon BrickStudioIcon {
+            get {
+                object obj = ResourceManager.GetObject("BrickStudioIcon", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap DecorationSurfaceIcon {
@@ -133,6 +143,16 @@ namespace LDDModder.BrickEditor.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap SolidWireframeIcon {
+            get {
+                object obj = ResourceManager.GetObject("SolidWireframeIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap StatusError {
             get {
                 object obj = ResourceManager.GetObject("StatusError", resourceCulture);
@@ -166,6 +186,16 @@ namespace LDDModder.BrickEditor.Properties {
         internal static System.Drawing.Bitmap VisibleIcon {
             get {
                 object obj = ResourceManager.GetObject("VisibleIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap WireframeIcon {
+            get {
+                object obj = ResourceManager.GetObject("WireframeIcon", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

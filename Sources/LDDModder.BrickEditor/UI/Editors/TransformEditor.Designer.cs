@@ -32,10 +32,10 @@
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.PositionLabel = new System.Windows.Forms.Label();
             this.RotationLabel = new System.Windows.Forms.Label();
-            this.PosX_TextBox = new LDDModder.BrickEditor.UI.Controls.NumberTextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
+            this.PosX_TextBox = new LDDModder.BrickEditor.UI.Controls.NumberTextBox();
             this.PosY_TextBox = new LDDModder.BrickEditor.UI.Controls.NumberTextBox();
             this.PosZ_TextBox = new LDDModder.BrickEditor.UI.Controls.NumberTextBox();
             this.RotX_TextBox = new LDDModder.BrickEditor.UI.Controls.NumberTextBox();
@@ -70,14 +70,6 @@
             resources.ApplyResources(this.RotationLabel, "RotationLabel");
             this.RotationLabel.Name = "RotationLabel";
             // 
-            // PosX_TextBox
-            // 
-            resources.ApplyResources(this.PosX_TextBox, "PosX_TextBox");
-            this.PosX_TextBox.MaximumValue = 5000D;
-            this.PosX_TextBox.MinimumValue = -5000D;
-            this.PosX_TextBox.Name = "PosX_TextBox";
-            this.PosX_TextBox.ValueChanged += new System.EventHandler(this.PositionValues_ValueChanged);
-            // 
             // label3
             // 
             resources.ApplyResources(this.label3, "label3");
@@ -92,6 +84,14 @@
             // 
             resources.ApplyResources(this.label5, "label5");
             this.label5.Name = "label5";
+            // 
+            // PosX_TextBox
+            // 
+            resources.ApplyResources(this.PosX_TextBox, "PosX_TextBox");
+            this.PosX_TextBox.MaximumValue = 5000D;
+            this.PosX_TextBox.MinimumValue = -5000D;
+            this.PosX_TextBox.Name = "PosX_TextBox";
+            this.PosX_TextBox.ValueChanged += new System.EventHandler(this.PositionValues_ValueChanged);
             // 
             // PosY_TextBox
             // 

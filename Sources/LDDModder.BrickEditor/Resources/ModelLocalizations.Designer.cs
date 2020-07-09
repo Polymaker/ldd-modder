@@ -178,6 +178,24 @@ namespace LDDModder.BrickEditor.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Bone.
+        /// </summary>
+        internal static string Label_Bone {
+            get {
+                return ResourceManager.GetString("Label_Bone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bones.
+        /// </summary>
+        internal static string Label_Bones {
+            get {
+                return ResourceManager.GetString("Label_Bones", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Brick.
         /// </summary>
         internal static string Label_Brick {
@@ -201,6 +219,15 @@ namespace LDDModder.BrickEditor.Resources {
         internal static string Label_BrickTubes {
             get {
                 return ResourceManager.GetString("Label_BrickTubes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Collision.
+        /// </summary>
+        internal static string Label_Collision {
+            get {
+                return ResourceManager.GetString("Label_Collision", resourceCulture);
             }
         }
         
@@ -237,6 +264,15 @@ namespace LDDModder.BrickEditor.Resources {
         internal static string Label_Component {
             get {
                 return ResourceManager.GetString("Label_Component", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Connection.
+        /// </summary>
+        internal static string Label_Connection {
+            get {
+                return ResourceManager.GetString("Label_Connection", resourceCulture);
             }
         }
         

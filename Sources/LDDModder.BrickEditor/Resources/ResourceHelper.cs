@@ -69,5 +69,12 @@ namespace LDDModder.BrickEditor.Resources
 
             return AssimpContext.ImportFileFromStream(stream, format);
         }
+
+        public static string GetComponentResourceString(this System.ComponentModel.Component form, string resourceName)
+        {
+            var compResource = new System.ComponentModel.ComponentResourceManager(form.GetType());
+            
+            return compResource.GetString(resourceName);
+        }
     }
 }

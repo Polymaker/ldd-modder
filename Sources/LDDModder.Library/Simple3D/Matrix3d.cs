@@ -10,6 +10,8 @@ namespace LDDModder.Simple3D
     {
         public static readonly Matrix3d Identity = new Matrix3d(1d, 0d, 0d, 0d, 1d, 0d, 0d, 0d, 1d);
 
+        public static readonly Matrix3d Zero = new Matrix3d(0d, 0d, 0d, 0d, 0d, 0d, 0d, 0d, 0d);
+
         public double A1;
         public double A2;
         public double A3;
@@ -504,5 +506,20 @@ namespace LDDModder.Simple3D
         //}
 
         #endregion
+
+        public double[] ToArray()
+        {
+            return new double[]
+            {
+                A1, A2, A3,
+                B1, B2, B3,
+                C1, C2, C3
+            };
+        }
+
+        public override string ToString()
+        {
+            return $"{RowA}\n{RowB}\n{RowC}";
+        }
     }
 }

@@ -29,6 +29,16 @@ namespace LDDModder.PaletteMaker.DB
             {
                 conn.Open();
 
+                int totalSteps = 0;
+
+                foreach (InitializationStep step in Enum.GetValues(typeof(InitializationStep)))
+                {
+                    if (step != InitializationStep.All && steps.HasFlag(step))
+                        totalSteps++;
+                }
+
+                progressHandler?.OnInitImportTask(totalSteps);
+
                 if (steps.HasFlag(InitializationStep.LddPartsAndElements))
                 {
                     var lddImporter = new LddDataImporter(conn, LDDEnvironment.Current, cancellationToken);

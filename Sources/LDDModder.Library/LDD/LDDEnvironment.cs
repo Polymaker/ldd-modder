@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LDDModder.Utilities;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -15,6 +16,7 @@ namespace LDDModder.LDD
         public const string APP_DIR = "LEGO Company\\LEGO Digital Designer";
         public const string USER_CREATION_FOLDER = "LEGO Creations";
 
+        private static LDDEnvironment _InstalledEnvironment;
         private int LifStatusFlags;
         //private string _CustomAssetsPath;
         //private string _CustomDatabasePath;
@@ -27,11 +29,27 @@ namespace LDDModder.LDD
 
         public bool DatabaseExtracted => IsLifExtracted(LddLif.DB);
 
-        public static LDDEnvironment Current { get; private set; }
+        public static LDDEnvironment InstalledEnvironment
+        {
+            get
+            {
+                if (!HasInitialized)
+                    Initialize();
+                return _InstalledEnvironment;
+            }
+        }
 
-        public static bool IsInstalled => !string.IsNullOrEmpty(Current?.ProgramFilesPath);
+        public static LDDEnvironment CustomEnvironment { get; set; }
+
+        public static LDDEnvironment Current => CustomEnvironment ?? InstalledEnvironment;
+
+        public bool IsValidInstall { get; private set; }
+
+        public static bool IsInstalled => InstalledEnvironment?.IsValidInstall ?? false;
 
         public static bool HasInitialized { get; private set; }
+
+        private static readonly object InitializationLock = new object();
 
         protected LDDEnvironment()
         {
@@ -44,22 +62,43 @@ namespace LDDModder.LDD
             CheckLifStatus();
         }
 
-        public static void Initialize()
+        public static LDDEnvironment Create(string programFilesPath, string applicationDataPath)
         {
-            var lddEnv = GetInstalledEnvironment();
-
-            if (lddEnv != null)
+            var lddEnv = new LDDEnvironment()
             {
-                lddEnv.CheckLifStatus();
-                Current = lddEnv;
-            }
-            
-            HasInitialized = true;
+                ProgramFilesPath = programFilesPath,
+                ApplicationDataPath = applicationDataPath,
+            };
+            lddEnv.Validate();
+            return lddEnv;
         }
 
-        public static LDDEnvironment GetInstalledEnvironment()
+        public static void Initialize()
+        {
+            lock (InitializationLock)
+            {
+                if (HasInitialized)
+                    return;
+
+                _InstalledEnvironment = FindInstalledEnvironment();
+                HasInitialized = true;
+            }
+        }
+
+        public void Validate()
+        {
+            IsValidInstall = false;
+
+            if (FileHelper.IsValidPath(ProgramFilesPath))
+                IsValidInstall = File.Exists(Path.Combine(ProgramFilesPath, EXE_NAME));
+
+            CheckLifStatus();
+        }
+
+        public static LDDEnvironment FindInstalledEnvironment()
         {
             string installDir = FindInstallFolder();
+
             if (!string.IsNullOrEmpty(installDir))
             {
                 var lddEnv = new LDDEnvironment()
@@ -68,29 +107,24 @@ namespace LDDModder.LDD
                     ApplicationDataPath = FindAppDataFolder(),
                     UserCreationPath = FindUserFolder()
                 };
-
+                lddEnv.Validate();
                 return lddEnv;
             }
 
             return null;
         }
 
-        public static void SetEnvironment(LDDEnvironment environment)
+        public static void SetOverride(LDDEnvironment environment)
         {
-            Current = environment;
+            CustomEnvironment = environment;
         }
 
-        public static void SetEnvironmentPaths(string programFilesPath, string applicationDataPath)
+        public void SetEnvironmentPaths(string programFilesPath, string applicationDataPath)
         {
-            if (Current == null)
-                Current = new LDDEnvironment();
-
-            string exePath = Path.Combine(programFilesPath, EXE_NAME);
-            if (!File.Exists(exePath))
-                programFilesPath = string.Empty;
-
-            Current.ProgramFilesPath = programFilesPath;
-            Current.ApplicationDataPath = applicationDataPath;
+            ProgramFilesPath = programFilesPath;
+            ApplicationDataPath = applicationDataPath;
+            IsValidInstall = File.Exists(Path.Combine(programFilesPath, EXE_NAME));
+            LifStatusFlags = 0;
         }
 
         public static string FindInstallFolder()
@@ -130,8 +164,6 @@ namespace LDDModder.LDD
         public void CheckLifStatus()
         {
             LifStatusFlags = 0;
-            //DatabaseExtracted = false;
-
 
             foreach (LddLif lif in Enum.GetValues(typeof(LddLif)))
             {
@@ -140,23 +172,23 @@ namespace LDDModder.LDD
 
                 string lifFolder = GetLifFolderPath(lif);
 
-                if (Directory.Exists(lifFolder))
-                {
-                    LifStatusFlags |= 2 << ((int)lif * 3); //extracted folder exist
-                    bool contentPresent = false;
+                if (string.IsNullOrEmpty(lifFolder) || !Directory.Exists(lifFolder))
+                    continue;
 
-                    if (lif == LddLif.DB)
-                    {
-                        contentPresent = File.Exists(Path.Combine(lifFolder, "info.xml"));
-                    }
-                    else if (lif == LddLif.Assets)
-                    {
-                        contentPresent = Directory.EnumerateFiles(lifFolder, "*", SearchOption.AllDirectories).Any();
-                    }
-                    
-                    if(contentPresent)
-                        LifStatusFlags |= 4 << ((int)lif * 3); //the folder has content
+                LifStatusFlags |= 2 << ((int)lif * 3); //extracted folder exist
+                bool contentPresent = false;
+
+                if (lif == LddLif.DB)
+                {
+                    contentPresent = File.Exists(Path.Combine(lifFolder, "info.xml"));
                 }
+                else if (lif == LddLif.Assets)
+                {
+                    contentPresent = Directory.EnumerateFiles(lifFolder, "*", SearchOption.AllDirectories).Any();
+                }
+
+                if (contentPresent)
+                    LifStatusFlags |= 4 << ((int)lif * 3); //the folder has content
             }
         }
 
@@ -180,8 +212,12 @@ namespace LDDModder.LDD
             switch (lif)
             {
                 case LddLif.Assets:
+                    if (string.IsNullOrEmpty(ProgramFilesPath))
+                        return string.Empty;
                     return Path.Combine(ProgramFilesPath, ASSETS_LIF);
                 case LddLif.DB:
+                    if (string.IsNullOrEmpty(ApplicationDataPath))
+                        return string.Empty;
                     return Path.Combine(ApplicationDataPath, DB_LIF);
                 default:
                     return null;
@@ -193,8 +229,12 @@ namespace LDDModder.LDD
             switch (lif)
             {
                 case LddLif.Assets:
+                    if (string.IsNullOrEmpty(ProgramFilesPath))
+                        return string.Empty;
                     return Path.Combine(ProgramFilesPath, "Assets");
                 case LddLif.DB:
+                    if (string.IsNullOrEmpty(ApplicationDataPath))
+                        return string.Empty;
                     return Path.Combine(ApplicationDataPath, "db");
                 default:
                     return null;
@@ -204,7 +244,7 @@ namespace LDDModder.LDD
         public bool DirectoryExists(LddDirectory directory)
         {
             string path = GetLddDirectoryPath(directory);
-            return Utilities.FileHelper.IsValidDirectory(path) && Directory.Exists(path);
+            return FileHelper.IsValidDirectory(path) && Directory.Exists(path);
         }
 
         public string GetLddDirectoryPath(LddDirectory directory)
@@ -224,12 +264,19 @@ namespace LDDModder.LDD
    
         public string GetLddSubdirectory(LddDirectory directory, string subfolder)
         {
+            string lddDir = GetLddDirectoryPath(directory);
+            if (string.IsNullOrEmpty(lddDir))
+                return string.Empty;
+
             return Path.Combine(GetLddDirectoryPath(directory), subfolder);
         }
 
         public DirectoryInfo GetLddSubdirectoryInfo(LddDirectory directory, string subfolder)
         {
-            return new DirectoryInfo(GetLddSubdirectory(directory, subfolder));
+            string lddSubDir = GetLddSubdirectory(directory, subfolder);
+            if (string.IsNullOrEmpty(lddSubDir))
+                return null;
+            return new DirectoryInfo(lddSubDir);
         }
 
         public string GetAppDataSubDir(string subfolder)

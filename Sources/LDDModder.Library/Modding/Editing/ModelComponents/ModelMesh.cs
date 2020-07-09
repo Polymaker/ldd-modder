@@ -20,6 +20,10 @@ namespace LDDModder.Modding.Editing
 
         private string _FileName;
         private int FileFlag = 0;
+
+        /// <summary>
+        /// Filename used to "soft" delete the file.
+        /// </summary>
         private string TempFileName;
 
         #region Geometry Attributes
@@ -227,6 +231,9 @@ namespace LDDModder.Modding.Editing
             return FileFlag == 1;
         }
     
+        /// <summary>
+        /// Soft delete
+        /// </summary>
         internal void TempDeleteFile()
         {
             if (Project != null && CheckFileExist())

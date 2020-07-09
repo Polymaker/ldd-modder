@@ -19,6 +19,7 @@ namespace LDDModder.BrickEditor.UI.Controls
 
         private bool _AllowDecimals;
         private double _Value;
+        private bool _UseMinMax;
         private double _MinimumValue;
         private double _MaximumValue;
         private bool updatingText;
@@ -39,13 +40,27 @@ namespace LDDModder.BrickEditor.UI.Controls
             {
                 if (value != _Value)
                 {
-                    if (value < MinimumValue || value > MaximumValue)
+                    if (UseMinMax && (value < MinimumValue || value > MaximumValue))
                         throw new ArgumentOutOfRangeException("Value");
 
                     _Value = value;
                     if (IsHandleCreated)
                         UpdateTextboxValue();
                     OnValueChanged(EventArgs.Empty);
+                }
+            }
+        }
+
+        [DefaultValue(true)]
+        public bool UseMinMax
+        {
+            get => _UseMinMax;
+            set
+            {
+                if (_UseMinMax != value)
+                {
+                    _UseMinMax = value;
+                    Value = ConstraintValue(_Value);
                 }
             }
         }
@@ -145,7 +160,7 @@ namespace LDDModder.BrickEditor.UI.Controls
             //Width = 100;
             InitializeComponent();
             _MaximumValue = 100;
-            
+            _UseMinMax = true;
             _AllowDecimals = true;
             _AutoSize = base.AutoSize;
             _MaxDisplayedDecimalPlaces = 5;
@@ -186,10 +201,13 @@ namespace LDDModder.BrickEditor.UI.Controls
 
         private double ConstraintValue(double value)
         {
-            if (value < MinimumValue)
-                value = MinimumValue;
-            if (value > MaximumValue)
-                value = MaximumValue;
+            if (UseMinMax)
+            {
+                if (value < MinimumValue)
+                    value = MinimumValue;
+                if (value > MaximumValue)
+                    value = MaximumValue;
+            }
             return value;
         }
 

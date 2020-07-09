@@ -64,6 +64,8 @@ namespace LDDModder.Modding.Editing
         [XmlIgnore]
         public int HierarchyLevel => Parent == null ? 0 : Parent.HierarchyLevel + 1;
 
+        internal bool IsInitializing { get; set; }
+
         public event EventHandler<ElementValueChangedEventArgs> PropertyChanged;
 
         public event PropertyValueChangedEventHandler ExtendedPropertyChanged;
@@ -176,7 +178,7 @@ namespace LDDModder.Modding.Editing
 
         internal void InternalSetName(string name, bool raiseValueChange = false)
         {
-            if (raiseValueChange)
+            if (raiseValueChange && !IsInitializing)
                 SetPropertyValue(ref _Name, name, nameof(Name));
             else
                 _Name = name;
@@ -268,6 +270,7 @@ namespace LDDModder.Modding.Editing
                     yield return subChild;
             }
         }
+
 
         public IElementCollection GetParentCollection()
         {

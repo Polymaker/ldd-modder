@@ -1,4 +1,5 @@
 ﻿using LDDModder.BrickEditor.ProjectHandling;
+using LDDModder.BrickEditor.Resources;
 using LDDModder.LDD.Primitives.Connectors;
 using LDDModder.Modding.Editing;
 using System;
@@ -15,15 +16,29 @@ namespace LDDModder.BrickEditor.UI.Panels
 {
     public partial class ElementDetailPanel : ProjectDocumentPanel
     {
+        private PartElement SelectedElement;
+
         public ElementDetailPanel()
         {
             InitializeComponent();
+            StudRefGridView.AutoGenerateColumns = false;
+            CloseButtonVisible = false;
+            CloseButton = false;
         }
 
         public ElementDetailPanel(ProjectManager projectManager) : base(projectManager)
         {
             InitializeComponent();
-            SelectedElementComboBox.ComboBox.DrawItem += SelectedElementComboBox_DrawItem;
+            StudRefGridView.AutoGenerateColumns = false;
+            CloseButtonVisible = false;
+            CloseButton = false;
+        }
+
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+            SetControlDoubleBuffered(PropertiesTableLayout);
+            FillSelectionDetails(null);
         }
 
         protected override void OnElementSelectionChanged()
@@ -32,82 +47,334 @@ namespace LDDModder.BrickEditor.UI.Panels
  
             ExecuteOnThread(() =>
             {
-                FillSelectionDetails();
+                FillSelectionDetails(ProjectManager.SelectedElement);
             });
         }
 
-        private void FillSelectionDetails()
+        private void FillSelectionDetails(PartElement selection)
         {
-            //if (SyncSelectionCheckBox.Checked)
-            //{
-
-
-            //}
-
-            if (studGridControl1.Tag != null)
+            if (SelectedElement != null)
             {
-                if (studGridControl1.IsEditingNode)
-                    studGridControl1.CancelEditNode();
-                studGridControl1.StudConnector = null;
-                studGridControl1.Visible = false;
-                studGridControl1.Tag = null;
+                SelectedElement.PropertyChanged -= SelectedElement_PropertyChanged;
+                SelectedElement = null;
             }
 
-            if (transformEditor1.Tag != null)
+            using (FlagManager.UseFlag("FillSelectionDetails"))
             {
-                transformEditor1.BindPhysicalElement(null);
-                transformEditor1.Visible = false;
-            }
-            
-            if (ProjectManager.SelectedElement is IPhysicalElement physicalElement)
-            {
-                transformEditor1.BindPhysicalElement(physicalElement);
-                transformEditor1.Tag = physicalElement;
-                transformEditor1.Visible = true;
-            }
+                FillElementProperties(selection);
+                FillConnectionDetails(selection as PartConnection);
+                FillStudRefDetails(selection as PartCullingModel);
 
-            if (ProjectManager.SelectedElement is PartConnection partConnection)
-            {
-                if (partConnection.ConnectorType == ConnectorType.Custom2DField)
+                SelectedElement = selection;
+                if (SelectedElement != null)
+                    SelectedElement.PropertyChanged += SelectedElement_PropertyChanged;
+            }
+        }
+
+        private void SelectedElement_PropertyChanged(object sender, ElementValueChangedEventArgs e)
+        {
+            ExecuteOnThread(() =>
                 {
-                    studGridControl1.StudConnector = partConnection.GetConnector<Custom2DFieldConnector>();
-                    studGridControl1.Visible = true;
-                    studGridControl1.Tag = partConnection;
+                    using (FlagManager.UseFlag("UpdatePropertyValue"))
+                    {
+                        if (e.PropertyName == nameof(PartElement.Name))
+                            NameTextBox.Text = e.Element.Name;
+                        if (e.PropertyName == nameof(PartSphereCollision.Radius))
+                            CollisionRadiusBox.Value = (e.Element as PartSphereCollision).Radius;
+                        else if (e.PropertyName == nameof(PartBoxCollision.Size) && e.Element is PartBoxCollision boxColl)
+                            CollisionSizeEditor.Value = boxColl.Size * 2d;
+                    }
+                });
+            
+            
+        }
+
+        private string GetElementTypeName(PartElement element)
+        {
+            switch (element)
+            {
+                case PartSurface _:
+                    return ModelLocalizations.Label_Surface;
+                case PartBone _:
+                    return ModelLocalizations.Label_Bone;
+                case MaleStudModel _:
+                    return ModelLocalizations.ModelComponentType_MaleStud;
+                case FemaleStudModel _:
+                    return ModelLocalizations.ModelComponentType_FemaleStud;
+                case BrickTubeModel _:
+                    return ModelLocalizations.ModelComponentType_BrickTube;
+                case PartModel _:
+                    return ModelLocalizations.ModelComponentType_Part;
+
+                case ModelMeshReference _:
+                    return ModelLocalizations.Label_Mesh;
+                case PartConnection _:
+                    return ModelLocalizations.Label_Connection;
+                case PartCollision _:
+                    return ModelLocalizations.Label_Collision;
+            }
+
+            return element.GetType().Name;
+        }
+
+        private string GetElementTypeName2(PartElement element)
+        {
+            if (element is PartSurface)
+                return ModelLocalizations.Label_Surface;
+
+            switch (element)
+            {
+                case PartSurface _:
+                    return ModelLocalizations.Label_Surface;
+                case PartBone _:
+                    return ModelLocalizations.Label_Bone;
+                case MaleStudModel _:
+                    return ModelLocalizations.ModelComponentType_MaleStud;
+                case FemaleStudModel _:
+                    return ModelLocalizations.ModelComponentType_FemaleStud;
+                case BrickTubeModel _:
+                    return ModelLocalizations.ModelComponentType_BrickTube;
+                case PartModel _:
+                    return ModelLocalizations.ModelComponentType_Part;
+
+                case ModelMeshReference _:
+                    return ModelLocalizations.Label_Mesh;
+                case PartConnection conn:
+                    return $"{ModelLocalizations.Label_Connection} <{conn.ConnectorType.ToString()}>";
+                //return ModelLocalizations.ResourceManager.GetString($"ConnectorType_{conn.ConnectorType}");
+                case PartCollision coll:
+                    string collType = ModelLocalizations.ResourceManager.GetString($"CollisionType_{coll.CollisionType}");
+                    return $"{ModelLocalizations.Label_Collision} ({collType})";
+            }
+
+            return element.GetType().Name;
+        }
+        
+
+        #region Main Properties Handling
+
+        private void FillElementProperties(PartElement element)
+        {
+            ToggleControlsEnabled(element != null,
+                NameTextBox,
+                NameLabel);
+
+            NameTextBox.Text = element?.Name ?? string.Empty;
+
+            SubMaterialIndexLabel.Visible = element is PartSurface;
+            SubMaterialIndexBox.Visible = element is PartSurface;
+
+            CollisionRadiusLabel.Visible = element is PartSphereCollision;
+            CollisionRadiusBox.Visible = element is PartSphereCollision;
+
+            CollisionSizeLabel.Visible = element is PartBoxCollision;
+            CollisionSizeEditor.Visible = element is PartBoxCollision;
+
+            if (SelectionTransformEdit.Tag != null)
+                SelectionTransformEdit.BindPhysicalElement(null);
+
+            if (element != null)
+            {
+                SelectionInfoLabel.Text = GetElementTypeName(element);
+
+                switch (element)
+                {
+                    case PartSurface surface:
+                        SubMaterialIndexBox.Value = surface.SubMaterialIndex;
+                        break;
+
+                    case PartBoxCollision boxCollision:
+                        CollisionSizeEditor.Value = boxCollision.Size * 2d;
+                        break;
+
+                    case PartSphereCollision sphereCollision:
+                        CollisionRadiusBox.Value = sphereCollision.Radius;
+                        break;
+                }
+            }
+            else
+            {
+                if (ProjectManager.SelectedElements.Count > 1)
+                    SelectionInfoLabel.Text = MultiSelectionMsg.Text;
+                else
+                    SelectionInfoLabel.Text = NoSelectionMsg.Text;
+            }
+
+            if (element is IPhysicalElement physicalElement)
+            {
+                SelectionTransformEdit.BindPhysicalElement(physicalElement);
+                SelectionTransformEdit.Tag = physicalElement;
+                SelectionTransformEdit.Enabled = true;
+            }
+            else
+                SelectionTransformEdit.Enabled = false;
+        }
+
+
+        private void CollisionRadiusBox_ValueChanged(object sender, EventArgs e)
+        {
+            if (FlagManager.IsSet("FillSelectionDetails") || 
+                FlagManager.IsSet("UpdatePropertyValue"))
+                return;
+
+            if (SelectedElement is PartSphereCollision sphereCollision)
+            {
+                sphereCollision.Radius = CollisionRadiusBox.Value;
+            }
+        }
+
+        private void CollisionSizeEditor_ValueChanged(object sender, EventArgs e)
+        {
+            if (FlagManager.IsSet("FillSelectionDetails") ||
+                FlagManager.IsSet("UpdatePropertyValue"))
+                return;
+
+            if (SelectedElement is PartBoxCollision boxCollision)
+            {
+                boxCollision.Size = CollisionSizeEditor.Value / 2d;
+            }
+        }
+
+        private void NameTextBox_Validating(object sender, CancelEventArgs e)
+        {
+            if (string.IsNullOrEmpty(NameTextBox.Text))
+            {
+                e.Cancel = true;
+            }
+        }
+
+
+        private void NameTextBox_Validated(object sender, EventArgs e)
+        {
+            var newName = CurrentProject.RenameElement(ProjectManager.SelectedElement, NameTextBox.Text);
+            NameTextBox.Text = newName;
+        }
+
+
+        #endregion
+
+        #region Stud References Handling
+
+        private void SetStudRefVisibility(bool visible)
+        {
+            bool isVisible = tabControl1.TabPages.Contains(StudRefTab);
+
+            if (isVisible != visible)
+            {
+                if (visible)
+                    tabControl1.TabPages.Add(StudRefTab);
+                else
+                    tabControl1.TabPages.Remove(StudRefTab);
+            }
+        }
+
+        private class ConnectorComboItem
+        {
+            public string ID { get; set; }
+            public string Name { get; set; }
+            public string DisplayText { get; set; }
+
+            public ConnectorComboItem(string iD, string name, string displayText)
+            {
+                ID = iD;
+                Name = name;
+                DisplayText = displayText;
+            }
+        }
+
+        private void FillStudRefDetails(PartCullingModel model)
+        {
+            SetStudRefVisibility(model != null);
+
+            ConnectionRefCombo.DataSource = null;
+            StudRefGridView.DataSource = null;
+
+            if (model == null)
+                return;
+
+            var connectorList = model.Project.GetAllElements<PartConnection>()
+                .Where(x => x.ConnectorType == ConnectorType.Custom2DField).ToList();
+
+            var comboItemList = new List<ConnectorComboItem>
+            {
+                new ConnectorComboItem("NULL", string.Empty, NoConnectorRefLabel.Text)
+            };
+            comboItemList.AddRange(connectorList.Select(x =>
+                new ConnectorComboItem(
+                    x.ID, x.Name,
+                    $"{x.Name} ({(x.SubType == 22 ? BottomStudsLabel.Text : TopStudsLabel.Text)})"
+                    )
+                )
+            );
+
+            //StudRefGridView.DataSource = c
+
+            ConnectionRefCombo.DataSource = comboItemList;
+            ConnectionRefCombo.DisplayMember = "DisplayText";
+            ConnectionRefCombo.ValueMember = "ID";
+
+            //if (!string.IsNullOrEmpty(model.ConnectionID))
+            //    ConnectionRefCombo.SelectedValue = model.ConnectionID;
+        }
+
+        private void ConnectionRefCombo_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (FlagManager.IsSet("FillSelectionDetails") ||
+                FlagManager.IsSet("UpdatePropertyValue"))
+                return;
+
+            if (SelectedElement is PartCullingModel cullingModel)
+            {
+                if (cullingModel.GetStudReferences().Any())
+                {
+                    //TODO: show warning
                 }
             }
         }
 
-        protected override void OnProjectElementsChanged()
+        #endregion
+
+        #region Connection Details Handling
+
+        private void SetConnectionInfoVisibility(bool visible)
         {
-            base.OnProjectElementsChanged();
-            UpdateSelectedElementComboBox();
+            bool isVisible = tabControl1.TabPages.Contains(ConnectionInfoTab);
+
+            if (isVisible != visible)
+            {
+                if (visible)
+                    tabControl1.TabPages.Add(ConnectionInfoTab);
+                else
+                    tabControl1.TabPages.Remove(ConnectionInfoTab);
+            }
         }
 
-        private void SelectedElementComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void FillConnectionDetails(PartConnection connection)
         {
-            if (FlagManager.IsSet("UpdateSelectedElementComboBox"))
+            SetConnectionInfoVisibility(connection != null);
+
+            if (connection == null)
                 return;
 
-            if (SyncSelectionCheckBox.Checked)
-            {
-                
-            }
+            ConnectionTypeValueLabel.Text = connection.ConnectorType.ToString();
+            ConnectionSubTypeCombo.Text = connection.SubType.ToString();
+
         }
 
-        private void UpdateSelectedElementComboBox()
+
+        #endregion
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
-            using (FlagManager.UseFlag("UpdateSelectedElementComboBox"))
+            if (keyData == Keys.Escape)
             {
-                var combo = SelectedElementComboBox.ComboBox;
-
-                var elementList = new List<LDDModder.Modding.Editing.PartElement>();
-                //elementList.AddRange(CurrentProject.su)
+                if (NameTextBox.ContainsFocus && NameTextBox.Modified)
+                {
+                    NameTextBox.Text = ProjectManager.SelectedElement?.Name ?? string.Empty;
+                    return true;
+                }
             }
-        }
-
-        private void SelectedElementComboBox_DrawItem(object sender, DrawItemEventArgs e)
-        {
-
+            return base.ProcessCmdKey(ref msg, keyData);
         }
     }
 }

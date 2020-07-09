@@ -99,7 +99,7 @@ namespace LDDModder.LDD.Primitives
             if (Connectors.Any())
                 rootElem.Add(new XElement("Connectivity", Connectors.Select(x => x.SerializeToXml())));
 
-            if (PhysicsAttributes != null)
+            if (PhysicsAttributes != null && !PhysicsAttributes.IsEmpty)
                 rootElem.Add(PhysicsAttributes.SerializeToXml());
 
             if (Bounding != null)
@@ -188,54 +188,8 @@ namespace LDDModder.LDD.Primitives
 
                         foreach (var annotationElem in element.Elements("Annotation"))
                         {
-                            var annotationAttr = annotationElem.FirstAttribute;
-                            string annotationName = annotationAttr.Name.LocalName;
-                            string value = annotationAttr.Value;
-                            bool handled = true;
-
-                            switch (annotationName)
-                            {
-                                case "aliases":
-                                    var aliases = value.Split(';');
-                                    for (int i = 0; i < aliases.Length; i++)
-                                    {
-                                        if (int.TryParse(aliases[i], out int aliasID))
-                                            Aliases.Add(aliasID);
-                                    }
-                                    break;
-                                case "designname":
-                                    Name = value;
-                                    break;
-                                case "version":
-                                    PartVersion = int.Parse(value);
-                                    break;
-                                case "maingroupid":
-                                    if (MainGroup == null)
-                                        MainGroup = new MainGroup();
-                                    MainGroup.ID = int.Parse(value);
-                                    break;
-                                case "maingroupname":
-                                    if (MainGroup == null)
-                                        MainGroup = new MainGroup();
-                                    MainGroup.Name = value;
-                                    break;
-                                case "platformid":
-                                    if (Platform == null)
-                                        Platform = new Platform();
-                                    Platform.ID = int.Parse(value);
-                                    break;
-                                case "platformname":
-                                    if (Platform == null)
-                                        Platform = new Platform();
-                                    Platform.Name = value;
-                                    break;
-                                default:
-                                    handled = false;
-                                    break;
-                            }
-
-                            if(!handled)
-                                ExtraAnnotations.Add(annotationName, value);
+                            try { LoadAnnotation(annotationElem); }
+                            catch { }
                         }
                         break;
 
@@ -296,9 +250,64 @@ namespace LDDModder.LDD.Primitives
                 }
             }
 
+            if (PhysicsAttributes == null)
+                PhysicsAttributes = new PhysicsAttributes();
+
             if (ID == 0 && Aliases.Any())
                 ID = Aliases.First();
         }
+
+        #region XML Element Loading
+
+        private void LoadAnnotation(XElement annotationElem)
+        {
+            var annotationAttr = annotationElem.FirstAttribute;
+            string annotationName = annotationAttr.Name.LocalName;
+            string value = annotationAttr.Value;
+
+            switch (annotationName)
+            {
+                case "aliases":
+                    var aliases = value.Split(';');
+                    for (int i = 0; i < aliases.Length; i++)
+                    {
+                        if (int.TryParse(aliases[i], out int aliasID))
+                            Aliases.Add(aliasID);
+                    }
+                    break;
+                case "designname":
+                    Name = value;
+                    break;
+                case "version":
+                    PartVersion = int.Parse(value);
+                    break;
+                case "maingroupid":
+                    if (MainGroup == null)
+                        MainGroup = new MainGroup();
+                    MainGroup.ID = int.Parse(value);
+                    break;
+                case "maingroupname":
+                    if (MainGroup == null)
+                        MainGroup = new MainGroup();
+                    MainGroup.Name = value;
+                    break;
+                case "platformid":
+                    if (Platform == null)
+                        Platform = new Platform();
+                    Platform.ID = int.Parse(value);
+                    break;
+                case "platformname":
+                    if (Platform == null)
+                        Platform = new Platform();
+                    Platform.Name = value;
+                    break;
+                default:
+                    ExtraAnnotations.Add(annotationName, value);
+                    break;
+            }
+        }
+
+        #endregion
 
         public void Save(string filename)
         {

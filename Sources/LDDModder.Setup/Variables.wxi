@@ -9,4 +9,6 @@
   <?define Win64 = "no" ?>
   <?define PlatformProgramFilesFolder = "ProgramFilesFolder" ?>
   <?endif ?>
+
+  <?define SourceDir="..\"?>
 </Include>

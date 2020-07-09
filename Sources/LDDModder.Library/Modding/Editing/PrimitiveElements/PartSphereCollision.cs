@@ -21,19 +21,19 @@ namespace LDDModder.Modding.Editing
             _Radius = 1d;
         }
 
-        public PartSphereCollision(float radius)
+        public PartSphereCollision(double radius)
         {
             _Radius = radius;
         }
 
-        public override void SetSize(Vector3 size)
+        public override void SetSize(Vector3d size)
         {
             Radius = size.X;
         }
 
-        public override Vector3 GetSize()
+        public override Vector3d GetSize()
         {
-            return new Vector3((float)Radius);
+            return new Vector3d(Radius);
         }
 
         public override Collision GenerateLDD()
@@ -52,7 +52,7 @@ namespace LDDModder.Modding.Editing
         {
             base.LoadFromXml(element);
             if (element.HasElement("Size", out XElement sizeElem))
-                Radius = sizeElem.ReadAttribute("Radius", 1f);
+                Radius = sizeElem.ReadAttribute("Radius", 1d);
         }
     }
 }

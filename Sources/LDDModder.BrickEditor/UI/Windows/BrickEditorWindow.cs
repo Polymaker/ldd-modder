@@ -28,7 +28,7 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         public PartProject CurrentProject => ProjectManager.CurrentProject;
 
-        private bool ProjectCreatedFromBrick;
+        protected FlagManager FlagManager { get; }
 
         //private string TemporaryFolder;
 
@@ -38,6 +38,10 @@ namespace LDDModder.BrickEditor.UI.Windows
             visualStudioToolStripExtender1.SetStyle(menuStrip1, 
                 VisualStudioToolStripExtender.VsVersion.Vs2015,
                 DockPanelControl.Theme);
+            this.vS2015LightTheme1.Extender.DockPaneStripFactory = new VS2015DockPaneStripFactory();
+            FlagManager = new FlagManager();
+
+            Icon = Properties.Resources.BrickStudioIcon;
         }
 
         protected override void OnLoad(EventArgs e)
@@ -49,7 +53,7 @@ namespace LDDModder.BrickEditor.UI.Windows
             ProjectManager.UndoHistoryChanged += ProjectManager_UndoHistoryChanged;
             ProjectManager.ValidationFinished += ProjectManager_ValidationFinished;
             ProjectManager.GenerationFinished += ProjectManager_GenerationFinished;
-
+            ProjectManager.ElementPropertyChanged += ProjectManager_ElementPropertyChanged;
             InitialCheckUp();
 
             ResourceHelper.LoadPlatformsAndCategories();
@@ -57,6 +61,7 @@ namespace LDDModder.BrickEditor.UI.Windows
             InitializePanels();
             RebuildRecentFilesMenu();
             UpdateMenuItemStates();
+            UpdateWindowTitle();
         }
 
         protected override void OnShown(EventArgs e)
@@ -74,9 +79,12 @@ namespace LDDModder.BrickEditor.UI.Windows
         {
             SettingsManager.Initialize();
 
-            if (!LDDEnvironment.IsInstalled)
+            if (!LDDEnvironment.Current.IsValidInstall)
             {
-                MessageBox.Show(Messages.LddInstallNotFound, "", MessageBoxButtons.OK);
+                if (!LDDEnvironment.IsInstalled)
+                    MessageBox.Show(Messages.LddInstallNotFound, Messages.Caption_StartupValidations, MessageBoxButtons.OK);
+                else
+                    MessageBox.Show(Messages.LddConfigInvalid, Messages.Caption_StartupValidations, MessageBoxButtons.OK);
             }
             else
             {
@@ -85,6 +93,24 @@ namespace LDDModder.BrickEditor.UI.Windows
                     Models.BrickListCache.Initialize();
                 });
             }
+        }
+
+        private void UpdateWindowTitle()
+        {
+            if (InvokeRequired)
+            {
+                BeginInvoke(new MethodInvoker(UpdateWindowTitle));
+                return;
+            }
+
+            if (CurrentProject != null)
+            {
+                string projectDesc = ProjectManager.GetProjectDisplayName();
+                
+                Text = $"{projectDesc}";
+            }
+            else
+                Text = WindowTitle.Text;
         }
 
         #region UI Layout
@@ -109,7 +135,7 @@ namespace LDDModder.BrickEditor.UI.Windows
             NavigationPanel.Show(DockPanelControl, DockState.DockLeft);
 
             DockPanelControl.DockWindows[DockState.DockBottom].BringToFront();
-            DockPanelControl.DockBottomPortion = 200;
+            DockPanelControl.DockBottomPortion = 230;
 
             PropertiesPanel.Show(DockPanelControl, DockState.DockBottom);
             DetailPanel.Show(PropertiesPanel.Pane, null);
@@ -126,7 +152,18 @@ namespace LDDModder.BrickEditor.UI.Windows
         private void ProjectManager_ProjectChanged(object sender, EventArgs e)
         {
             UpdateMenuItemStates();
-            ProjectCreatedFromBrick = false;
+
+            UpdateWindowTitle();
+        }
+
+        private void ProjectManager_ElementPropertyChanged(object sender, ElementValueChangedEventArgs e)
+        {
+            if (e.Element is PartProperties && 
+                (e.PropertyName == nameof(PartProperties.ID) || e.PropertyName == nameof(PartProperties.Description))
+                )
+            {
+                UpdateWindowTitle();
+            }
         }
 
         private void ProjectManager_UndoHistoryChanged(object sender, EventArgs e)
@@ -151,6 +188,7 @@ namespace LDDModder.BrickEditor.UI.Windows
 
             PartProject loadedProject = null;
 
+            bool exceptionThrown = false;
             try
             {
                 using (var fs = File.OpenRead(projectFilePath))
@@ -161,6 +199,7 @@ namespace LDDModder.BrickEditor.UI.Windows
                 ErrorMessageBox.Show(this, 
                     Messages.Error_OpeningProject, 
                     Messages.Caption_OpeningProject, ex.ToString());
+                exceptionThrown = true;
             }
 
             if (loadedProject != null)
@@ -171,6 +210,12 @@ namespace LDDModder.BrickEditor.UI.Windows
                 SettingsManager.AddRecentProject(loadedProject);
                 LoadPartProject(loadedProject);
                 RebuildRecentFilesMenu();
+            }
+            else if (!exceptionThrown)
+            {
+                ErrorMessageBox.Show(this,
+                    Messages.Error_OpeningProject,
+                    Messages.Caption_OpeningProject, "Invalid or corrupted project file. Missing \"project.xml\" file.");
             }
         }
 
@@ -229,6 +274,8 @@ namespace LDDModder.BrickEditor.UI.Windows
         {
             if (ProjectManager.IsProjectOpen)
             {
+                AutoSaveTimer.Stop();
+
                 if (ProjectManager.IsModified || ProjectManager.IsNewProject)
                 {
                     var messageText = ProjectManager.IsNewProject ? 
@@ -240,10 +287,14 @@ namespace LDDModder.BrickEditor.UI.Windows
                     if (result == DialogResult.Yes)
                         SaveProject(CurrentProject);
                     else if (result == DialogResult.Cancel)
+                    {
+                        AutoSaveTimer.Start();
                         return false;
+                    }
                 }
 
                 string workingDirPath = CurrentProject?.ProjectWorkingDir;
+
                 if (!string.IsNullOrEmpty(workingDirPath) && Directory.Exists(workingDirPath))
                 {
                     Task.Factory.StartNew(() => FileHelper.DeleteFileOrFolder(workingDirPath, true, true));
@@ -253,7 +304,7 @@ namespace LDDModder.BrickEditor.UI.Windows
                 SettingsManager.SaveSettings();
 
                 ProjectManager.CloseCurrentProject();
-                AutoSaveTimer.Stop();
+                
             }
 
             return true;
@@ -379,8 +430,11 @@ namespace LDDModder.BrickEditor.UI.Windows
                 return;
             }
 
+            Debug.WriteLine($"FormClosing started at {DateTime.Now:HH:mm:ss.ff}");
+
             foreach (var form in DockPanelControl.Documents.OfType<DockContent>().ToList())
             {
+                Debug.WriteLine($"Closing Form '{form.Text}' at {DateTime.Now:HH:mm:ss.ff}");
                 form.Close();
                 if (!form.IsDisposed)
                 {
@@ -388,20 +442,28 @@ namespace LDDModder.BrickEditor.UI.Windows
                     break;
                 }
             }
+
+            Debug.WriteLine($"FormClosing finished at {DateTime.Now:HH:mm:ss.ff}");
         }
 
         private void TryCloseProjectAndExit()
         {
+            Debug.WriteLine($"TryCloseProjectAndExit at {DateTime.Now:HH:mm:ss.ff}");
             if (CloseCurrentProject())
             {
                 //Application.DoEvents();
                 Task.Factory.StartNew(() =>
                 {
                     Thread.Sleep(100);
+                    Debug.WriteLine($"Invoke Close at {DateTime.Now:HH:mm:ss.ff}");
                     BeginInvoke(new MethodInvoker(Close));
                 });
-                //Close();
             }
+        }
+
+        private void BrickEditorWindow_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Debug.WriteLine($"FormClosed at {DateTime.Now:HH:mm:ss.ff}");
         }
 
         private void AutoSaveTimer_Tick(object sender, EventArgs e)

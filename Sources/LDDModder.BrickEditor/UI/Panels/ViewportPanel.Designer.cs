@@ -43,9 +43,13 @@
             this.CameraMenu_LookAt = new System.Windows.Forms.ToolStripMenuItem();
             this.CameraMenu_Orthographic = new System.Windows.Forms.ToolStripMenuItem();
             this.DisplayMenuDropDown = new System.Windows.Forms.ToolStripDropDownButton();
+            this.DisplayMenu_Meshes = new System.Windows.Forms.ToolStripMenuItem();
             this.DisplayMenu_Collisions = new System.Windows.Forms.ToolStripMenuItem();
             this.DisplayMenu_Connections = new System.Windows.Forms.ToolStripMenuItem();
-            this.DisplayMenu_Meshes = new System.Windows.Forms.ToolStripMenuItem();
+            this.MeshesDropDownMenu = new System.Windows.Forms.ToolStripDropDownButton();
+            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
+            this.MeshesMenu_Separate = new System.Windows.Forms.ToolStripMenuItem();
+            this.MeshesMenu_Merge = new System.Windows.Forms.ToolStripMenuItem();
             this.GizmoOrientationMenu = new System.Windows.Forms.ToolStripDropDownButton();
             this.globalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.localToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -55,6 +59,9 @@
             this.medianBoundingBoxToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.activeElementToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cursorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ModelRenderMode1Button = new System.Windows.Forms.ToolStripButton();
+            this.ModelRenderMode2Button = new System.Windows.Forms.ToolStripButton();
+            this.ModelRenderMode3Button = new System.Windows.Forms.ToolStripButton();
             this.visualStudioToolStripExtender1 = new WeifenLuo.WinFormsUI.Docking.VisualStudioToolStripExtender(this.components);
             this.SelectionInfoPanel = new System.Windows.Forms.Panel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
@@ -83,8 +90,12 @@
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.CameraMenuDropDown,
             this.DisplayMenuDropDown,
+            this.MeshesDropDownMenu,
             this.GizmoOrientationMenu,
-            this.GizmoPivotModeMenu});
+            this.GizmoPivotModeMenu,
+            this.ModelRenderMode1Button,
+            this.ModelRenderMode2Button,
+            this.ModelRenderMode3Button});
             resources.ApplyResources(this.toolStrip1, "toolStrip1");
             this.toolStrip1.Name = "toolStrip1";
             // 
@@ -173,11 +184,20 @@
             // 
             this.DisplayMenuDropDown.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.DisplayMenuDropDown.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.DisplayMenu_Meshes,
             this.DisplayMenu_Collisions,
-            this.DisplayMenu_Connections,
-            this.DisplayMenu_Meshes});
+            this.DisplayMenu_Connections});
             resources.ApplyResources(this.DisplayMenuDropDown, "DisplayMenuDropDown");
             this.DisplayMenuDropDown.Name = "DisplayMenuDropDown";
+            // 
+            // DisplayMenu_Meshes
+            // 
+            this.DisplayMenu_Meshes.Checked = true;
+            this.DisplayMenu_Meshes.CheckOnClick = true;
+            this.DisplayMenu_Meshes.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.DisplayMenu_Meshes.Name = "DisplayMenu_Meshes";
+            resources.ApplyResources(this.DisplayMenu_Meshes, "DisplayMenu_Meshes");
+            this.DisplayMenu_Meshes.CheckedChanged += new System.EventHandler(this.DisplayMenu_Meshes_CheckedChanged);
             // 
             // DisplayMenu_Collisions
             // 
@@ -193,14 +213,32 @@
             resources.ApplyResources(this.DisplayMenu_Connections, "DisplayMenu_Connections");
             this.DisplayMenu_Connections.CheckedChanged += new System.EventHandler(this.DisplayMenu_Connections_CheckedChanged);
             // 
-            // DisplayMenu_Meshes
+            // MeshesDropDownMenu
             // 
-            this.DisplayMenu_Meshes.Checked = true;
-            this.DisplayMenu_Meshes.CheckOnClick = true;
-            this.DisplayMenu_Meshes.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.DisplayMenu_Meshes.Name = "DisplayMenu_Meshes";
-            resources.ApplyResources(this.DisplayMenu_Meshes, "DisplayMenu_Meshes");
-            this.DisplayMenu_Meshes.CheckedChanged += new System.EventHandler(this.DisplayMenu_Meshes_CheckedChanged);
+            this.MeshesDropDownMenu.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.MeshesDropDownMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItem2,
+            this.MeshesMenu_Separate,
+            this.MeshesMenu_Merge});
+            resources.ApplyResources(this.MeshesDropDownMenu, "MeshesDropDownMenu");
+            this.MeshesDropDownMenu.Name = "MeshesDropDownMenu";
+            // 
+            // toolStripMenuItem2
+            // 
+            resources.ApplyResources(this.toolStripMenuItem2, "toolStripMenuItem2");
+            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
+            // 
+            // MeshesMenu_Separate
+            // 
+            this.MeshesMenu_Separate.Name = "MeshesMenu_Separate";
+            resources.ApplyResources(this.MeshesMenu_Separate, "MeshesMenu_Separate");
+            this.MeshesMenu_Separate.Click += new System.EventHandler(this.toolStripMenuItem1_Click);
+            // 
+            // MeshesMenu_Merge
+            // 
+            this.MeshesMenu_Merge.Name = "MeshesMenu_Merge";
+            resources.ApplyResources(this.MeshesMenu_Merge, "MeshesMenu_Merge");
+            this.MeshesMenu_Merge.Click += new System.EventHandler(this.test2ToolStripMenuItem_Click);
             // 
             // GizmoOrientationMenu
             // 
@@ -235,6 +273,7 @@
             this.activeElementToolStripMenuItem,
             this.cursorToolStripMenuItem});
             resources.ApplyResources(this.GizmoPivotModeMenu, "GizmoPivotModeMenu");
+            this.GizmoPivotModeMenu.Margin = new System.Windows.Forms.Padding(0, 1, 20, 2);
             this.GizmoPivotModeMenu.Name = "GizmoPivotModeMenu";
             this.GizmoPivotModeMenu.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.GizmoPivotModeMenu_DropDownItemClicked);
             // 
@@ -264,6 +303,32 @@
             // 
             this.cursorToolStripMenuItem.Name = "cursorToolStripMenuItem";
             resources.ApplyResources(this.cursorToolStripMenuItem, "cursorToolStripMenuItem");
+            // 
+            // ModelRenderMode1Button
+            // 
+            this.ModelRenderMode1Button.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.ModelRenderMode1Button.Image = global::LDDModder.BrickEditor.Properties.Resources.WireframeIcon;
+            resources.ApplyResources(this.ModelRenderMode1Button, "ModelRenderMode1Button");
+            this.ModelRenderMode1Button.Name = "ModelRenderMode1Button";
+            this.ModelRenderMode1Button.Click += new System.EventHandler(this.ModelRenderModeButton_Click);
+            // 
+            // ModelRenderMode2Button
+            // 
+            this.ModelRenderMode2Button.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.ModelRenderMode2Button.Image = global::LDDModder.BrickEditor.Properties.Resources.MainSurfaceIcon;
+            resources.ApplyResources(this.ModelRenderMode2Button, "ModelRenderMode2Button");
+            this.ModelRenderMode2Button.Name = "ModelRenderMode2Button";
+            this.ModelRenderMode2Button.Click += new System.EventHandler(this.ModelRenderModeButton_Click);
+            // 
+            // ModelRenderMode3Button
+            // 
+            this.ModelRenderMode3Button.Checked = true;
+            this.ModelRenderMode3Button.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.ModelRenderMode3Button.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.ModelRenderMode3Button.Image = global::LDDModder.BrickEditor.Properties.Resources.SolidWireframeIcon;
+            resources.ApplyResources(this.ModelRenderMode3Button, "ModelRenderMode3Button");
+            this.ModelRenderMode3Button.Name = "ModelRenderMode3Button";
+            this.ModelRenderMode3Button.Click += new System.EventHandler(this.ModelRenderModeButton_Click);
             // 
             // visualStudioToolStripExtender1
             // 
@@ -460,5 +525,12 @@
         private System.Windows.Forms.Label label8;
         private Controls.NumberTextBox RotYNumBox;
         private Controls.NumberTextBox RotZNumBox;
+        private System.Windows.Forms.ToolStripButton ModelRenderMode1Button;
+        private System.Windows.Forms.ToolStripButton ModelRenderMode2Button;
+        private System.Windows.Forms.ToolStripButton ModelRenderMode3Button;
+        private System.Windows.Forms.ToolStripMenuItem MeshesMenu_Separate;
+        private System.Windows.Forms.ToolStripMenuItem MeshesMenu_Merge;
+        private System.Windows.Forms.ToolStripDropDownButton MeshesDropDownMenu;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem2;
     }
 }

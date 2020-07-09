@@ -29,7 +29,7 @@ namespace LDDModder.LDD.Meshes
             Value4 = values[3];
         }
 
-        public Custom2DFieldIndex(LDD.Files.MeshStructures.STUD_2DFIELD_IDX studRef)
+        public Custom2DFieldIndex(LDD.Files.MeshStructures.CUSTOM2DFIELD_INDEX studRef)
         {
             Index = studRef.ArrayIndex;
             Value2 = studRef.Value2;
@@ -37,9 +37,9 @@ namespace LDDModder.LDD.Meshes
             Value4 = studRef.Value4;
         }
 
-        public LDD.Files.MeshStructures.STUD_2DFIELD_IDX Serialize()
+        public LDD.Files.MeshStructures.CUSTOM2DFIELD_INDEX Serialize()
         {
-            return new Files.MeshStructures.STUD_2DFIELD_IDX(Index, Value2, Dummy, Value4);
+            return new Files.MeshStructures.CUSTOM2DFIELD_INDEX(Index, Value2, Dummy, Value4);
         }
 
         public override string ToString()

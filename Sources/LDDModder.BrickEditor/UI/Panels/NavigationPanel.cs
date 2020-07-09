@@ -81,7 +81,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             base.OnLoad(e);
             InitializeViewComboBox();
 
-            label1.Text = $"<{ModelLocalizations.Label_NoActiveProject}> ";
+            //ViewModeLabel.Text = $"<{ModelLocalizations.Label_NoActiveProject}> ";
         }
 
         private void InitializeViewComboBox()
@@ -149,6 +149,17 @@ namespace LDDModder.BrickEditor.UI.Panels
                 return new ArrayList();
             };
 
+            ProjectTreeView.CellToolTipGetter += (col, model) =>
+            {
+                if (model is ProjectElementNode node)
+                {
+                    if (!string.IsNullOrEmpty(node.Element.Comments))
+                        return node.Element.Comments;
+                    //return node.Element.Name;
+                }
+                return string.Empty;
+            };
+
             ProjectTreeView.DropSink = new NavigationDropHandler();
             ProjectTreeView.DragSource = new NavigationDragHandler();
 
@@ -192,6 +203,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                     var expandedNodeIDs = ProjectTreeView.ExpandedObjects
                         .OfType<ProjectTreeNode>().Select(x => x.NodeID).ToList();
                     expandedNodeIDs.RemoveAll(x => string.IsNullOrEmpty(x));
+                    ProjectTreeView.ExpandedObjects = Enumerable.Empty<ProjectTreeNode>();
 
                     if (recreate)
                     {
@@ -212,12 +224,14 @@ namespace LDDModder.BrickEditor.UI.Panels
                     {
                         foreach (ProjectTreeNode node in ProjectTreeView.Roots)
                         {
+                            ProjectTreeView.RemoveObjects(node.GetChildHierarchy().ToList());
                             node.InvalidateChildrens();
                             ProjectTreeView.UpdateObject(node);
                         }
                     }
 
 
+                    //ProjectTreeView.TreeModel.
                     ExpandNodes(ProjectTreeView.Roots, expandedNodeIDs);
 
                     if (selectedNodeIDs.Any())
@@ -344,7 +358,6 @@ namespace LDDModder.BrickEditor.UI.Panels
             InitializeComponentContextMenu();
             InitializeCollisionContextMenu();
             InitializeConnectionContextMenu();
-
         }
 
         private void InitializeComponentContextMenu()
@@ -515,10 +528,26 @@ namespace LDDModder.BrickEditor.UI.Panels
                 canRenameNode = false;
 
             ContextMenu_Rename.Visible = canRenameNode;
-
+            
 
             var anyPojectElem = GetSelectedElements().Any();
             ContextMenu_Delete.Enabled = anyPojectElem;
+            ContextMenu_Duplicate.Enabled = anyPojectElem;
+        }
+
+        private void ContextMenu_Duplicate_Click(object sender, EventArgs e)
+        {
+            if (ProjectTreeView.SelectedObject is ProjectElementNode projectElementNode)
+            {
+                switch (projectElementNode.Element)
+                {
+                    case PartCollision collision:
+                        var newCol = collision.Clone();
+                        CurrentProject.Collisions.Add(newCol);
+                        ProjectManager.SelectElement(newCol);
+                        break;
+                }
+            }
         }
 
         private void ContextMenu_Rename_Click(object sender, EventArgs e)
@@ -572,9 +601,9 @@ namespace LDDModder.BrickEditor.UI.Panels
                 }
             }
 
-            string projectTitle = ProjectManager.GetProjectDisplayName();
+            //string projectTitle = ProjectManager.GetProjectDisplayName();
 
-            label1.Text = ProjectManager.IsProjectOpen ? projectTitle : $"<{projectTitle}> ";
+            //ViewModeLabel.Text = ProjectManager.IsProjectOpen ? projectTitle : $"<{projectTitle}> ";
             
         }
 
@@ -970,6 +999,8 @@ namespace LDDModder.BrickEditor.UI.Panels
                     {
                         modelExt.IsHidden = !modelExt.IsHidden;
                         ProjectTreeView.RefreshObject(elementNode);
+                        if (elementNode.Parent is ElementGroupNode)
+                            ProjectTreeView.RefreshObject(elementNode.Parent);
                     }
                 }
                 else if (e.Model is ElementCollectionNode elementColNode)
@@ -992,6 +1023,12 @@ namespace LDDModder.BrickEditor.UI.Panels
                         ProjectManager.ShowConnections = !ProjectManager.ShowConnections;
 
                     ProjectTreeView.RefreshObject(collectionNode); 
+                }
+                else if (e.Model is ElementGroupNode groupNode && groupNode.SupportsVisibility())
+                {
+
+                    //groupNode.ToggleVisibility();
+                    //ProjectTreeView.RefreshObject(groupNode);
                 }
             }
         }

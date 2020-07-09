@@ -170,8 +170,6 @@ namespace LDDModder.Modding.Editing
             return null;
         }
 
-        
-
         public void RemoveAt(int index)
         {
             var removedItem = RemoveItemAt(index, true);
@@ -259,7 +257,9 @@ namespace LDDModder.Modding.Editing
             int curIndex = index;
             foreach(var item in items)
                 addedItems.Add(InsertItem(curIndex++, item));
-            RaiseCollectionChanged(CollectionChangeAction.Add, addedItems);
+
+            if (addedItems.Any())
+                RaiseCollectionChanged(CollectionChangeAction.Add, addedItems);
         }
 
         public void Add(T item)
@@ -271,7 +271,6 @@ namespace LDDModder.Modding.Editing
         public void AddRange(IEnumerable<T> items)
         {
             var addedItems = new List<CollectionChangeItemInfo>();
-
             try
             {
                 foreach (var item in items)
@@ -279,7 +278,8 @@ namespace LDDModder.Modding.Editing
             }
             finally
             {
-                RaiseCollectionChanged(CollectionChangeAction.Add, addedItems);
+                if (addedItems.Any())
+                    RaiseCollectionChanged(CollectionChangeAction.Add, addedItems);
             }
         }
 
@@ -305,13 +305,13 @@ namespace LDDModder.Modding.Editing
 
             for (int i = 0; i < Count; i++)
                 removedItems.Add(new CollectionChangeItemInfo(InnerList[i], i, -1));
-            
+
+            InnerList.Clear();
 
             //Raise event before dettaching parent
             if (removedItems.Any())
                 RaiseCollectionChanged(CollectionChangeAction.Remove, removedItems);
-
-            InnerList.Clear();
+            
             foreach (var itm in removedItems)
                 UpdateItemParent(itm.Element, false);
         }

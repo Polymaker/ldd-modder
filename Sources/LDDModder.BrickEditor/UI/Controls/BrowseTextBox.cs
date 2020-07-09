@@ -204,10 +204,26 @@ namespace LDDModder.BrickEditor.UI.Controls
             BrowseButtonClicked?.Invoke(this, e);
         }
 
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (keyData == Keys.Enter && ValueTextBox.ContainsFocus)
+            {
+                if (_Value != ValueTextBox.Text)
+                {
+                    ValueTextBox_Validated(null, null);
+                    return true;
+                }
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+
         private void ValueTextBox_Validated(object sender, EventArgs e)
         {
-            _Value = ValueTextBox.Text;
-            ValueChanged?.Invoke(this, EventArgs.Empty);
+            if (_Value != ValueTextBox.Text)
+            {
+                _Value = ValueTextBox.Text;
+                ValueChanged?.Invoke(this, EventArgs.Empty);
+            }
         }
 
         private void ValueTextBox_Validating(object sender, CancelEventArgs e)

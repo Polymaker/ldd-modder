@@ -19,12 +19,15 @@ namespace LDDModder.BrickEditor.UI.Panels
         internal ValidationPanel()
         {
             InitializeComponent();
+            CloseButtonVisible = false;
+            CloseButton = false;
         }
 
         public ValidationPanel(ProjectManager projectManager) : base(projectManager)
         {
             InitializeComponent();
-
+            CloseButtonVisible = false;
+            CloseButton = false;
             InitializeImageList();
             InitializeListView();
 
@@ -115,6 +118,13 @@ namespace LDDModder.BrickEditor.UI.Panels
                 ValidationMessageList.AddObjects(ProjectManager.ValidationMessages.ToList());
             }
 
+            UpdateStatusButtons();
+        }
+
+        public void ShowBuildMessages(IEnumerable<ValidationMessage> messages)
+        {
+            ValidationMessageList.ClearObjects();
+            ValidationMessageList.AddObjects(messages.ToList());
             UpdateStatusButtons();
         }
 

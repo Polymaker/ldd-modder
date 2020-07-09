@@ -14,6 +14,7 @@ using LDDModder.Simple3D;
 
 namespace LDDModder.BrickEditor.UI.Controls
 {
+    [DefaultEvent("ValueChanged")]
     public partial class TransformEditor : UserControl, INotifyPropertyChanged
     {
         private ItemTransform _Value;
@@ -30,6 +31,20 @@ namespace LDDModder.BrickEditor.UI.Controls
 
         public event EventHandler ValueChanged;
         public event PropertyChangedEventHandler PropertyChanged;
+
+        //[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        [DefaultValue(80)]
+        public int LabelsWidth
+        {
+            get
+            {
+                return (int)tableLayoutPanel1.ColumnStyles[0].Width - 3;
+            }
+            set
+            {
+                tableLayoutPanel1.ColumnStyles[0].Width = value + 3;
+            }
+        }
 
         public TransformEditor()
         {

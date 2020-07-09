@@ -22,6 +22,11 @@ namespace LDDModder.LDD.Primitives.Collisions
             Transform = transform;
         }
 
+        public override Simple3D.Vector3d GetSize()
+        {
+            return new Simple3D.Vector3d(Radius);
+        }
+
         public override XElement SerializeToXml()
         {
             var elem = new XElement("Sphere");

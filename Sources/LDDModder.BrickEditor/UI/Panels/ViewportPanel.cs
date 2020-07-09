@@ -20,6 +20,7 @@ using LDDModder.BrickEditor.Resources;
 using LDDModder.BrickEditor.Rendering.Gizmos;
 using LDDModder.BrickEditor.Rendering.UI;
 using LDDModder.BrickEditor.ProjectHandling;
+using LDDModder.BrickEditor.UI.Windows;
 
 namespace LDDModder.BrickEditor.UI.Panels
 {
@@ -35,7 +36,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private GridShaderProgram GridShader;
 
-        private List<GLSurfaceModel> SurfaceModels;
+        private List<SurfaceMeshBuffer> SurfaceModels;
         private List<CollisionModel> CollisionModels;
         private List<ConnectionModel> ConnectionModels;
 
@@ -49,18 +50,10 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private LoopController LoopController;
 
-        public bool ShowCollisions { get; set; }
-
-        public bool ShowConnections { get; set; }
-
-        public bool ShowMeshes { get; set; }
-
-        public RenderOptions ModelRenderingOptions { get; private set; }
-
         public ViewportPanel()
         {
             InitializeComponent();
-            SurfaceModels = new List<GLSurfaceModel>();
+            SurfaceModels = new List<SurfaceMeshBuffer>();
             CollisionModels = new List<CollisionModel>();
             ConnectionModels = new List<ConnectionModel>();
             UIElements = new List<UIElement>();
@@ -75,11 +68,11 @@ namespace LDDModder.BrickEditor.UI.Panels
             AllowEndUserDocking = false;
             CloseButton = false;
             CloseButtonVisible = false;
-            SurfaceModels = new List<GLSurfaceModel>();
+            SurfaceModels = new List<SurfaceMeshBuffer>();
             CollisionModels = new List<CollisionModel>();
             ConnectionModels = new List<ConnectionModel>();
             UIElements = new List<UIElement>();
-
+            ShowIcon = false;
             CreateGLControl();
             SelectionInfoPanel.BringToFront();
             SelectionInfoPanel.Visible = false;
@@ -114,7 +107,20 @@ namespace LDDModder.BrickEditor.UI.Panels
                 VisualStudioToolStripExtender.VsVersion.Vs2015,
                 DockPanel.Theme);
 
-            InitializeBase();
+            bool initSuccess = true;
+
+            try 
+            {
+                InitializeBase();
+            }
+            catch (Exception ex)
+            {
+                initSuccess = false;
+                ErrorMessageBox.Show(this, "An error occured while initializing GL view.", "Error", ex.ToString());
+            }
+
+            if (!initSuccess)
+                return;
 
             UpdateGLViewport();
 
@@ -126,13 +132,16 @@ namespace LDDModder.BrickEditor.UI.Panels
             mainForm.Activated += MainForm_Activated;
             mainForm.Deactivate += MainForm_Deactivate;
 
-            UpdateTitle();
+            UpdateDocumentTitle();
 
             ProjectManager.ProjectModified += ProjectManager_ProjectModified;
             ProjectManager.PartModelsVisibilityChanged += ProjectManager_ModelsVisibilityChanged;
             ProjectManager.CollisionsVisibilityChanged += ProjectManager_ModelsVisibilityChanged;
             ProjectManager.ConnectionsVisibilityChanged += ProjectManager_ModelsVisibilityChanged;
+            ProjectManager.PartRenderModeChanged += ProjectManager_PartRenderModeChanged;
         }
+
+        
 
         #region Initialization
 
@@ -144,15 +153,6 @@ namespace LDDModder.BrickEditor.UI.Panels
             CameraManipulator = new CameraManipulator(new Camera());
             CameraManipulator.Initialize(new Vector3(5), Vector3.Zero);
             //CameraManipulator.RotationButton = MouseButton.Right;
-
-            ShowMeshes = true;
-            ModelRenderingOptions = new RenderOptions()
-            {
-                DrawShaded = true,
-                DrawTextured = true,
-                DrawTransparent = false,
-                DrawWireframe = true
-            };
 
             InitializeTextures();
             InitializeUI();
@@ -212,10 +212,10 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             SelectGizmoButton = new UIButton()
             {
-                Texture= SelectionIcons,
-                NormalSprite = new SpriteBounds(0,0,0.25f,0.25f),
-                OverSprite = new SpriteBounds(0, 0.25f, 0.25f, 0.25f),
-                SelectedSprite = new SpriteBounds(0, 0.5f, 0.25f, 0.25f),
+                Texture = SelectionIcons,
+                NormalSprite =      new SpriteBounds(0,0,0.25f,0.25f),
+                OverSprite =        new SpriteBounds(0, 0.25f, 0.25f, 0.25f),
+                SelectedSprite =    new SpriteBounds(0, 0.5f, 0.25f, 0.25f),
                 Selected = true
             };
             SelectGizmoButton.Clicked += SelectGizmoButton_Clicked;
@@ -258,21 +258,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             {
                 gizmoButtons[i].Bounds = new Vector4(buttonSpacing, 64 + (buttonSize + buttonSpacing) * i, buttonSize, buttonSize);
             }
-
-            //var testButton = new UIButton()
-            //{
-            //    Bounds = new Vector4(8, 160, 32, 32),
-            //    Texture = SelectionIcons,
-            //    NormalSprite = new SpriteBounds(0.75f, 0, 0.25f, 0.25f),
-            //    OverSprite = new SpriteBounds(0.75f, 0.25f, 0.25f, 0.25f),
-            //    SelectedSprite = new SpriteBounds(0.75f, 0.5f, 0.25f, 0.25f),
-            //    Text = "Test",
-            //    TextColor = new Vector4(1f)
-            //};
-            //UIElements.Add(testButton);
         }
-
-        
 
         private void InitializeSelectionGizmo()
         {
@@ -378,16 +364,15 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             RenderHelper.InitializeMatrices(Camera);
 
-            //DrawGrid();
             DrawGrid();
-
-            if (ProjectManager.ShowCollisions)
-                DrawCollisions();
 
             if (ProjectManager.ShowPartModels)
                 DrawPartModels();
 
-            if (ProjectManager.ShowConnections)
+            if (ProjectManager.ShowCollisions && CollisionModels.Any())
+                DrawCollisions();
+
+            if (ProjectManager.ShowConnections && ConnectionModels.Any())
                 DrawConnections();
 
             DrawGrid();
@@ -406,24 +391,21 @@ namespace LDDModder.BrickEditor.UI.Panels
         private void DrawConnections()
         {
             GL.Disable(EnableCap.Texture2D);
-            if (ConnectionModels.Any())
-            {
-                var orderedModels = ConnectionModels.OrderByDescending(x => Camera.DistanceFromCamera(x.Transform));
-                //RenderHelper.UnbindModelTexture();
-                foreach (var connModel in orderedModels.Where(x => x.Visible))
-                    connModel.RenderModel(Camera);
-            }
+
+            foreach (var connModel in ConnectionModels.Where(x => x.Visible))
+                connModel.RenderModel(Camera);
+            //var orderedModels = ConnectionModels.OrderByDescending(x => Camera.DistanceFromCamera(x.Transform));
+
+            //foreach (var connModel in orderedModels.Where(x => x.Visible))
+            //    connModel.RenderModel(Camera);
         }
 
         private void DrawCollisions()
         {
             GL.Disable(EnableCap.Texture2D);
-            if (ProjectManager.ShowCollisions && CollisionModels.Any())
-            {
-                //RenderHelper.UnbindModelTexture();
-                foreach (var colModel in CollisionModels.Where(x => x.Visible))
-                    colModel.RenderModel(Camera);
-            }
+
+            foreach (var colModel in CollisionModels.Where(x => x.Visible))
+                colModel.RenderModel(Camera);
         }
 
         private void DrawPartModels()
@@ -432,49 +414,8 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             RenderHelper.BindModelTexture(CheckboardTexture, TextureUnit.Texture4);
 
-            if (ModelRenderingOptions.DrawTransparent)
-            {
-                GL.Enable(EnableCap.CullFace);
-                GL.CullFace(CullFaceMode.Front);
-                GL.Disable(EnableCap.DepthTest);
-                var wireColor = new Vector4(0f, 0f, 0f, 1f);
-                foreach (var surfaceModel in SurfaceModels)
-                    surfaceModel.RenderWireframe(wireColor, 0.5f);
-
-                bool wireframeEnabled = ModelRenderingOptions.DrawWireframe;
-                ModelRenderingOptions.DrawWireframe = false;
-
-                
-                GL.Disable(EnableCap.CullFace);
-
-                foreach (var surfaceModel in SurfaceModels)
-                    surfaceModel.Render(ModelRenderingOptions, true);
-
-
-                GL.Enable(EnableCap.CullFace);
-                GL.CullFace(CullFaceMode.Back);
-
-                foreach (var surfaceModel in SurfaceModels)
-                    surfaceModel.RenderWireframe(wireColor, 0.5f);
-
-                GL.Disable(EnableCap.CullFace);
-                GL.Enable(EnableCap.DepthTest);
-
-                ModelRenderingOptions.DrawWireframe = wireframeEnabled;
-                
-                //var wireframeOptions = new RenderOptions
-                //{
-                //    DrawWireframe = true
-                //};
-
-                //foreach (var surfaceModel in SurfaceModels)
-                //    surfaceModel.Render(wireframeOptions, true);
-            }
-            else
-            {
-                foreach (var surfaceModel in SurfaceModels)
-                    surfaceModel.Render(ModelRenderingOptions);
-            }
+            foreach (var surfaceModel in SurfaceModels)
+                surfaceModel.Render(Camera, ProjectManager.PartRenderMode);
 
             RenderHelper.UnbindModelTexture();
             CheckboardTexture.Bind(TextureUnit.Texture0);
@@ -727,11 +668,16 @@ namespace LDDModder.BrickEditor.UI.Panels
             DisposeGLResources();
         }
 
-        private void UpdateTitle()
+        private void UpdateDocumentTitle()
         {
-            Text = ProjectManager.GetProjectDisplayName();
-            if (ProjectManager.IsModified)
-                Text += "*";
+            if (InvokeRequired)
+                BeginInvoke(new MethodInvoker(UpdateDocumentTitle));
+            else
+            {
+                Text = ProjectManager.GetProjectDisplayName();
+                if (ProjectManager.IsModified)
+                    Text += "*";
+            }
         }
 
         #endregion
@@ -756,7 +702,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         protected override void OnProjectChanged()
         {
             base.OnProjectChanged();
-            UpdateTitle();
+            UpdateDocumentTitle();
         }
 
         protected override void OnProjectLoaded(PartProject project)
@@ -771,15 +717,12 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void ProjectManager_ProjectModified(object sender, EventArgs e)
         {
-            if (InvokeRequired)
-                BeginInvoke(new MethodInvoker(UpdateTitle));
-            else
-                UpdateTitle();
+            UpdateDocumentTitle();
         }
 
         private void AddPartSurfaceModel(PartSurface surface)
         {
-            var surfModel = new GLSurfaceModel(surface);
+            var surfModel = new SurfaceMeshBuffer(surface);
 
             surfModel.Material = new MaterialInfo
             {
@@ -831,6 +774,18 @@ namespace LDDModder.BrickEditor.UI.Panels
             else if (e.ElementType == typeof(PartConnection))
             {
                 ConnectionsChanged = true;
+            }
+        }
+
+        protected override void OnElementPropertyChanged(ElementValueChangedEventArgs e)
+        {
+            base.OnElementPropertyChanged(e);
+
+            if (e.Element is PartProperties && (
+                e.PropertyName == nameof(PartProperties.ID) ||
+                e.PropertyName == nameof(PartProperties.Description)))
+            {
+                UpdateDocumentTitle();
             }
         }
 
@@ -987,9 +942,8 @@ namespace LDDModder.BrickEditor.UI.Panels
             else
                 selectedModels = GetAllElementModels().Where(x => x.IsSelected);
 
-            return selectedModels/*
-                .Where(x => !onlyVisible || (onlyVisible && x.Visible))
-                .OrderBy(x => ProjectManager.GetSelectionIndex(x.Element))*/;
+            return selectedModels
+                .OrderBy(x => ProjectManager.GetSelectionIndex(x.Element));
         }
 
         #endregion
@@ -1397,6 +1351,16 @@ namespace LDDModder.BrickEditor.UI.Panels
             }
         }
 
+        private void ProjectManager_PartRenderModeChanged(object sender, EventArgs e)
+        {
+            using (FlagManager.UseFlag("PartRenderModeChanged"))
+            {
+                ModelRenderMode1Button.Checked = ProjectManager.PartRenderMode == MeshRenderMode.Wireframe;
+                ModelRenderMode2Button.Checked = ProjectManager.PartRenderMode == MeshRenderMode.Solid;
+                ModelRenderMode3Button.Checked = ProjectManager.PartRenderMode == MeshRenderMode.SolidWireframe;
+            }
+        }
+
         private void DisplayMenu_Collisions_CheckedChanged(object sender, EventArgs e)
         {
             if (!FlagManager.IsSet("ModelsVisibilityChanged"))
@@ -1419,6 +1383,19 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             if (e.CloseReason == ToolStripDropDownCloseReason.ItemClicked)
                 e.Cancel = true;
+        }
+
+        private void ModelRenderModeButton_Click(object sender, EventArgs e)
+        {
+            if (FlagManager.IsSet("ModelsVisibilityChanged"))
+                return;
+
+            if (sender == ModelRenderMode1Button)
+                ProjectManager.PartRenderMode = MeshRenderMode.Wireframe;
+            else if (sender == ModelRenderMode2Button)
+                ProjectManager.PartRenderMode = MeshRenderMode.Solid;
+            else if (sender == ModelRenderMode3Button)
+                ProjectManager.PartRenderMode = MeshRenderMode.SolidWireframe;
         }
 
         #region Tranform Gizmo Settings
@@ -1464,7 +1441,7 @@ namespace LDDModder.BrickEditor.UI.Panels
        
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
-            if (!SelectionInfoPanel.ContainsFocus)
+            if (ContainsFocus)
             {
                 if (keyData == Keys.NumPad0)
                 {
@@ -1491,5 +1468,27 @@ namespace LDDModder.BrickEditor.UI.Panels
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
+        private void toolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            if (ProjectManager.IsProjectOpen)
+            {
+                ProjectManager.StartBatchChanges();
+                var selectedMeshes = ProjectManager.GetSelectionHierarchy().OfType<ModelMeshReference>().ToList();
+                foreach (var meshRef in selectedMeshes)
+                    ProjectManager.CurrentProject.SplitMeshSurfaces(meshRef);
+                ProjectManager.EndBatchChanges();
+            }
+        }
+
+        private void test2ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (ProjectManager.IsProjectOpen)
+            {
+                ProjectManager.StartBatchChanges();
+                var selectedMeshes = ProjectManager.GetSelectionHierarchy().OfType<ModelMeshReference>().ToList();
+                ProjectManager.CurrentProject.CombineMeshes(selectedMeshes);
+                ProjectManager.EndBatchChanges();
+            }
+        }
     }
 }

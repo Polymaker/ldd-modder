@@ -21,6 +21,8 @@ namespace LDDModder.LDD.Primitives.Collisions
             set => SetPropertyValue(ref _Transform, value);
         }
 
+        public abstract Simple3D.Vector3d GetSize();
+
         public abstract void LoadFromXml(XElement element);
 
         public abstract XElement SerializeToXml();

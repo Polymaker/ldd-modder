@@ -20,6 +20,8 @@ namespace LDDModder.BrickEditor.Rendering
 
         public Matrix4 ParentTransform { get; set; }
 
+        private MaterialInfo ModelMaterial;
+
         private bool _DisplayInvertedGender;
 
         public bool DisplayInvertedGender
@@ -94,6 +96,16 @@ namespace LDDModder.BrickEditor.Rendering
             RenderingModel = null;
             ModelTransform = Matrix4.Identity;
             BoundingBox = BBox.Empty;
+            ModelMaterial = RenderHelper.ConnectionMaterial;
+
+            if (Connection.SubType < 1000)
+            {
+                if (Connection.SubType % 2 == 1)
+                    ModelMaterial = RenderHelper.MaleConnectorMaterial;
+                else
+                    ModelMaterial = RenderHelper.FemaleConnectorMaterial;
+            }
+            
 
             if (Connection.Connector is AxelConnector axelConnector)
             {
@@ -118,34 +130,47 @@ namespace LDDModder.BrickEditor.Rendering
             if (axelConnector.Length > 0)
             {
                 int renderType = axelConnector.SubType;
-                if (DisplayInvertedGender)
+                if (DisplayInvertedGender && renderType < 1000)
                     renderType += (renderType % 2 == 0) ? 1 : -1;
 
-                if (renderType == 3)
+                switch (renderType)
                 {
-                    RenderingModel = ModelManager.CylinderModel;
-                    ModelTransform = Matrix4.CreateScale(0.48f, axelConnector.Length, 0.48f);
+                    case 2:
+                        RenderingModel = ModelManager.TechnicPinFemaleModel;
+                        ModelTransform = Matrix4.CreateScale(1f, axelConnector.Length, 1f);
+                        break;
+
+                    case 3:
+                        RenderingModel = ModelManager.CylinderModel;
+                        ModelTransform = Matrix4.CreateScale(0.48f, axelConnector.Length, 0.48f);
+                        break;
+
+                    case 4:
+                        RenderingModel = ModelManager.CrossAxleFemaleModel;
+                        ModelTransform = Matrix4.CreateScale(1f, axelConnector.Length, 1f);
+                        break;
+
+                    case 5:
+                        RenderingModel = ModelManager.CrossAxleMaleModel;
+                        ModelTransform = Matrix4.CreateScale(1f, axelConnector.Length, 1f);
+                        break;
+
+                    case 6:
+                        RenderingModel = ModelManager.BarFemaleModel;
+                        ModelTransform = Matrix4.CreateScale(1f, axelConnector.Length, 1f);
+                        break;
+
+                    case 7:
+                        RenderingModel = ModelManager.CylinderModel;
+                        ModelTransform = Matrix4.CreateScale(0.32f, axelConnector.Length, 0.32f);
+                        break;
+
+                    case 15:
+                        RenderingModel = ModelManager.CylinderModel;
+                        ModelTransform = Matrix4.CreateScale(0.15f, axelConnector.Length, 0.15f);
+                        break;
                 }
-                else if (renderType == 4)
-                {
-                    RenderingModel = ModelManager.CrossAxleFemaleModel;
-                    ModelTransform = Matrix4.CreateScale(1f, axelConnector.Length, 1f);
-                }
-                else if (renderType == 5)
-                {
-                    RenderingModel = ModelManager.CrossAxleMaleModel;
-                    ModelTransform = Matrix4.CreateScale(1f, axelConnector.Length, 1f);
-                }
-                else if (renderType == 7)
-                {
-                    RenderingModel = ModelManager.CylinderModel;
-                    ModelTransform = Matrix4.CreateScale(0.32f, axelConnector.Length, 0.32f);
-                }
-                else if (renderType == 15)
-                {
-                    RenderingModel = ModelManager.CylinderModel;
-                    ModelTransform = Matrix4.CreateScale(0.15f, axelConnector.Length, 0.15f);
-                }
+                
             }
         }
 
@@ -177,11 +202,28 @@ namespace LDDModder.BrickEditor.Rendering
 
             if (RenderingModel != null)
             {
-                RenderHelper.BeginDrawModel(RenderingModel, 
-                    ModelTransform * Transform, RenderHelper.ConnectionMaterial);
-                RenderHelper.ModelShader.IsSelected.Set(IsSelected);
-                RenderingModel.DrawElements();
-                RenderHelper.EndDrawModel(RenderingModel);
+                var finalTransform = ModelTransform * Transform;
+
+                RenderHelper.RenderWithStencil(
+                    () =>
+                    {
+                        RenderHelper.BeginDrawModel(RenderingModel, finalTransform, ModelMaterial);
+
+                        RenderHelper.ModelShader.IsSelected.Set(IsSelected);
+                        RenderingModel.DrawElements();
+
+                        RenderHelper.EndDrawModel(RenderingModel);
+                    },
+                    () =>
+                    {
+                        var wireColor = IsSelected ? RenderHelper.SelectionOutlineColor : RenderHelper.WireframeColor;
+                        RenderHelper.BeginDrawWireframe(RenderingModel.VertexBuffer, finalTransform, 
+                            IsSelected ? 4f : 2f, wireColor);
+
+                        RenderingModel.DrawElements();
+
+                        RenderHelper.EndDrawWireframe(RenderingModel.VertexBuffer);
+                    });
             }
             else
             {

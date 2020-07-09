@@ -1,6 +1,7 @@
 ﻿using LDDModder.LDD.Files;
 using LDDModder.LDD.Meshes;
 using LDDModder.Serialization;
+using LDDModder.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -83,6 +84,7 @@ namespace LDDModder.Modding.Editing
             if (element.TryGetIntAttribute(nameof(SurfaceID), out int surfID))
                 SurfaceID = surfID;
 
+            InternalSetID(StringUtils.GenerateUUID($"Surface{SurfaceID}", 8));
             InternalSetName($"Surface{SurfaceID}");
 
             if (element.TryGetIntAttribute(nameof(SubMaterialIndex), out int matIDX))
@@ -127,6 +129,8 @@ namespace LDDModder.Modding.Editing
 
             if (SurfaceID == 0)
                 builder.RemoveTextureCoords();
+            else
+                builder.ForceTextureCoords();
 
             notLoadedModels.ForEach(x => x.UnloadModel());
 

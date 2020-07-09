@@ -139,7 +139,7 @@
     <value>Éléments</value>
   </data>
   <data name="ViewModeAll.Text" xml:space="preserve">
-    <value>Tous</value>
+    <value>Hiérarchie du projet</value>
   </data>
   <data name="ViewModeCollisions.Text" xml:space="preserve">
     <value>Collisions</value>
@@ -152,5 +152,14 @@
   </data>
   <data name="ViewModeBones.Text" xml:space="preserve">
     <value>Armature</value>
+  </data>
+  <data name="ContextMenu_Duplicate.Text" xml:space="preserve">
+    <value>Dupliquer</value>
+  </data>
+  <data name="ViewModeLabel.Text" xml:space="preserve">
+    <value>Affichage:</value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+    <value>Navigation</value>
   </data>
 </root>

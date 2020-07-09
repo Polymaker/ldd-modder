@@ -84,7 +84,7 @@ void main()
 	
 	if (length(axisDist) > 0 || majorDistInv > 0 || minorDistInv > 0) {
 	
-		float cameraDist = 1f;
+		float cameraDist = 1.0;
 		if (FadeDistance > 0)
 		{
 			cameraDist = clamp((vertex.w / FadeDistance) - 0.5, 0.0, 1.0);

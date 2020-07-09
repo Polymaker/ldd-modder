@@ -14,7 +14,7 @@ namespace LDDModder.BrickEditor.UI.Editors
     public partial class StudGridControl : Control
     {
         private Custom2DFieldConnector _StudConnector;
-       
+        private bool _ReadOnly;
         private Size _MaxGridSize;
         private System.Threading.Timer SelectionScrollTimer;
 
@@ -52,8 +52,27 @@ namespace LDDModder.BrickEditor.UI.Editors
             }
         }
 
+        [DefaultValue(false)]
+        public bool ReadOnly
+        {
+            get => _ReadOnly;
+            set
+            {
+                if (_ReadOnly != value)
+                {
+                    _ReadOnly = value;
+                    if (value && IsEditingNode)
+                        CancelEditNode();
+                }
+            }
+        }
+
         [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public Custom2DFieldNode SelectedNode => GetNodeFromCell(FocusedCell);
+
+        public event EventHandler ConnectorChanged;
+
+        public event EventHandler ConnectorSizeChanged;
 
         public StudGridControl()
         {
@@ -96,6 +115,8 @@ namespace LDDModder.BrickEditor.UI.Editors
 
             UpdateControlSize();
             Invalidate();
+
+            ConnectorChanged?.Invoke(this, EventArgs.Empty);
         }
 
         private void StudConnector_NodeValueChanged(object sender, PropertyChangedEventArgs e)
@@ -106,6 +127,9 @@ namespace LDDModder.BrickEditor.UI.Editors
         private void StudConnector_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             UpdateControlSize();
+            if (e.PropertyName == nameof(Custom2DFieldConnector.Width) ||
+                e.PropertyName == nameof(Custom2DFieldConnector.Height))
+                ConnectorSizeChanged.Invoke(this, EventArgs.Empty);
         }
 
         #region Size Calculation
@@ -434,7 +458,7 @@ namespace LDDModder.BrickEditor.UI.Editors
         {
             if (e.Button == MouseButtons.Left)
             {
-                if (SelectedNode != null)
+                if (SelectedNode != null && !ReadOnly)
                     BeginEditNode();
             }
 
@@ -452,7 +476,6 @@ namespace LDDModder.BrickEditor.UI.Editors
         }
         
         #endregion
-
 
         protected override void OnLostFocus(EventArgs e)
         {
@@ -510,7 +533,7 @@ namespace LDDModder.BrickEditor.UI.Editors
                     SelectionEnd = null;
                     Invalidate();
 
-                    if (wasEditing)
+                    if (wasEditing && !ReadOnly)
                         BeginEditNode();
 
                     return true;
@@ -552,7 +575,7 @@ namespace LDDModder.BrickEditor.UI.Editors
 
             if (e.KeyCode >= Keys.D0 && e.KeyCode <= Keys.D9)
             {
-                if (!IsEditingNode && SelectedNode != null)
+                if (!IsEditingNode && SelectedNode != null && !ReadOnly)
                 {
                     if (BeginEditNode())
                     {
@@ -563,7 +586,7 @@ namespace LDDModder.BrickEditor.UI.Editors
             }
             else if (e.KeyCode == Keys.Enter || e.KeyCode == Keys.Space)
             {
-                if (!IsEditingNode && SelectedNode != null)
+                if (!IsEditingNode && SelectedNode != null && !ReadOnly)
                     BeginEditNode();
             }
 
@@ -935,6 +958,23 @@ namespace LDDModder.BrickEditor.UI.Editors
                 UpdateScrollBarsValues();
                 Invalidate();
             }
+        }
+
+        protected override void OnMouseWheel(MouseEventArgs e)
+        {
+            if (VScrollBar.Visible)
+            {
+                int scrollMax = VScrollBar.Maximum - VScrollBar.LargeChange + 1;
+                int newScrollOffset = Math.Max(0, Math.Min(scrollMax, VScrollBar.Value - Math.Sign(e.Delta)));
+                if (ScrollOffset.Y != newScrollOffset)
+                {
+                    ScrollOffset.Y = newScrollOffset;
+                    UpdateScrollBarsValues();
+                    Invalidate();
+                }
+            }
+
+            base.OnMouseWheel(e);
         }
 
         #endregion

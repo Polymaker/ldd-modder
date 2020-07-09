@@ -29,6 +29,21 @@ namespace LDDModder.Serialization
             };
         }
 
+        public static XAttribute[] ToXmlAttributes(this Vector3d vector)
+        {
+            return ToXmlAttributes(vector, "X", "Y", "Z");
+        }
+
+        public static XAttribute[] ToXmlAttributes(this Vector3d vector, string name1, string name2, string name3)
+        {
+            return new XAttribute[]
+            {
+                new XAttribute(name1, vector.X.ToString(NumberFormatInfo.InvariantInfo)),
+                new XAttribute(name2, vector.Y.ToString(NumberFormatInfo.InvariantInfo)),
+                new XAttribute(name3, vector.Z.ToString(NumberFormatInfo.InvariantInfo))
+            };
+        }
+
         internal static string GetTypeXmlRootName(Type xmlObjType)
         {
             var xmlRootAttr = (XmlRootAttribute[])xmlObjType.GetCustomAttributes(typeof(XmlRootAttribute), false);

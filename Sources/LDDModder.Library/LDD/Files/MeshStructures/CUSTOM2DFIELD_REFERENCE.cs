@@ -6,18 +6,18 @@ using System.Threading.Tasks;
 
 namespace LDDModder.LDD.Files.MeshStructures
 {
-    public struct STUD_2DFIELD_REF
+    public struct CUSTOM2DFIELD_REFERENCE
     {
         public int ConnectorIndex;
-        public STUD_2DFIELD_IDX[] Indices;
+        public CUSTOM2DFIELD_INDEX[] Indices;
 
-        public STUD_2DFIELD_REF(int connectorIndex, int indexCount)
+        public CUSTOM2DFIELD_REFERENCE(int connectorIndex, int indexCount)
         {
             ConnectorIndex = connectorIndex;
-            Indices = new STUD_2DFIELD_IDX[indexCount];
+            Indices = new CUSTOM2DFIELD_INDEX[indexCount];
         }
 
-        public STUD_2DFIELD_REF(int connectorIndex, STUD_2DFIELD_IDX[] indices)
+        public CUSTOM2DFIELD_REFERENCE(int connectorIndex, CUSTOM2DFIELD_INDEX[] indices)
         {
             ConnectorIndex = connectorIndex;
             Indices = indices;

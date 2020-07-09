@@ -12,7 +12,6 @@ namespace LDDModder.BrickEditor.Rendering
     /// </summary>
     public class RenderOptions
     {
-        public bool Hidden { get; set; }
         public bool DrawWireframe { get; set; }
         public bool DrawTextured { get; set; }
         public bool DrawShaded { get; set; }

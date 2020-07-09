@@ -227,7 +227,8 @@ namespace LDDModder.Modding.Editing
                     meshSurf.SurfaceID,
                     lddPart.Primitive.GetSurfaceMaterialIndex(meshSurf.SurfaceID)
                 );
-                surfaceElement.ID = StringUtils.GenerateUUID($"Part{partID}_Surface{surfaceElement.SurfaceID}", 8);
+                surfaceElement.ID = StringUtils.GenerateUUID($"Surface{surfaceID}", 8);
+                //surfaceElement.ID = StringUtils.GenerateUUID($"Part{partID}_Surface{surfaceElement.SurfaceID}", 8);
                 project.Surfaces.Add(surfaceElement);
 
                 var surfaceMesh = project.AddMeshGeometry(
@@ -276,7 +277,6 @@ namespace LDDModder.Modding.Editing
             project.GenerateElementIDs(true);
             project.GenerateElementsNames();
             project.LinkStudReferences();
-
             project.IsLoading = false;
             return project;
         }
@@ -366,18 +366,21 @@ namespace LDDModder.Modding.Editing
 
         private void LoadFromXml(XDocument doc)
         {
+            IsLoading = true;
+
             Surfaces.Clear();
             Connections.Clear();
             Collisions.Clear();
             Bones.Clear();
             Aliases.Clear();
-
+            
             var rootElem = doc.Root;
 
             if (rootElem.HasElement("Properties", out XElement propsElem))
                 Properties.LoadFromXml(propsElem);
 
             var surfacesElem = doc.Root.Element("ModelSurfaces");
+
             if (surfacesElem != null)
             {
                 foreach (var surfElem in surfacesElem.Elements(PartSurface.NODE_NAME))
@@ -417,6 +420,8 @@ namespace LDDModder.Modding.Editing
             }
 
             LinkStudReferences();
+
+            IsLoading = false;
         }
 
         #endregion
@@ -496,7 +501,7 @@ namespace LDDModder.Modding.Editing
                     }
                 }
             }
-
+            
             ProjectPath = filename;
         }
 
@@ -586,10 +591,13 @@ namespace LDDModder.Modding.Editing
         private ModelMesh AddMeshGeometry(MeshGeometry geometry, string id, string name = null)
         {
             var modelMesh = new ModelMesh(geometry);
-            modelMesh.InternalSetNameAndID(id, name);
+            
+            modelMesh.IsInitializing = true;
 
             if (string.IsNullOrEmpty(id))
                 GenerateElementID(modelMesh);
+            else
+                modelMesh.InternalSetID(id);
 
             if (string.IsNullOrEmpty(name))
                 GenerateElementName(modelMesh);
@@ -597,7 +605,7 @@ namespace LDDModder.Modding.Editing
                 RenameElement(modelMesh, name);
 
             Meshes.Add(modelMesh);
-
+            modelMesh.IsInitializing = false;
             return modelMesh;
         }
 
@@ -836,8 +844,20 @@ namespace LDDModder.Modding.Editing
             foreach (var conn in Connections)
                 connectionIDs.Add(conn.ID);
 
-            foreach (var model in GetAllElements<PartCullingModel>())
-                model.ConnectionIndex = connectionIDs.IndexOf(model.ConnectionID);
+            foreach (var studRef in GetAllElements<StudReference>())
+                studRef.ConnectionIndex = connectionIDs.IndexOf(studRef.ConnectionID);
+        }
+
+        private void RenumberSurfaces()
+        {
+            int surfaceID = 0;
+
+            foreach (var surf in Surfaces)
+            {
+                surf.SurfaceID = surfaceID;
+                surf.InternalSetName($"Surface{surfaceID}");
+                surfaceID++;
+            }
         }
 
         private void LinkStudReferences()
@@ -846,24 +866,34 @@ namespace LDDModder.Modding.Editing
             {
                 foreach (var comp in surf.Components.OfType<PartCullingModel>())
                 {
-                    PartConnection linkedConnection = null;
-
-                    if (comp.ConnectionIndex != -1 &&
-                        comp.ConnectionIndex < Connections.Count &&
-                        Connections[comp.ConnectionIndex].ConnectorType == ConnectorType.Custom2DField)
+                    foreach (var studRef in comp.GetStudReferences())
                     {
-                        linkedConnection = Connections[comp.ConnectionIndex];
+                        PartConnection linkedConnection = null;
+
+                        if (studRef.ConnectionIndex != -1 &&
+                            studRef.ConnectionIndex < Connections.Count)
+                        {
+                            if (Connections[studRef.ConnectionIndex].ConnectorType == ConnectorType.Custom2DField)
+                                linkedConnection = Connections[studRef.ConnectionIndex];
+                            else
+                                Debug.WriteLine("Component references non Custom2DField connection!");
+                        }
+
+                        if (linkedConnection == null && !string.IsNullOrEmpty(studRef.ConnectionID))
+                        {
+                            linkedConnection = Connections
+                                .FirstOrDefault(x => x.ID == studRef.ConnectionID);
+                        }
+
+                        if (studRef.ConnectionIndex >= 0 && linkedConnection == null)
+                        {
+                            Debug.WriteLine("Could not find connection!");
+                        }
+
+                        studRef.ConnectionID = linkedConnection?.ID;
+                        
+                        studRef.ConnectionIndex = linkedConnection != null ? Connections.IndexOf(linkedConnection) : -1;
                     }
-
-                    if (linkedConnection == null && !string.IsNullOrEmpty(comp.ConnectionID))
-                    {
-                        linkedConnection = Connections
-                            .FirstOrDefault(x => x.ID == comp.ConnectionID);
-                    }
-
-                    comp.ConnectionID = linkedConnection?.ID;
-                    comp.ConnectionIndex = linkedConnection != null ? Connections.IndexOf(linkedConnection) : -1;
-
                 }
             }
         }
@@ -907,12 +937,45 @@ namespace LDDModder.Modding.Editing
             }
         }
 
+        public Simple3D.Vector3d CalculateCenterOfMass()
+        {
+            var meshRefs = Surfaces.SelectMany(x => x.GetAllMeshReferences()).ToList();
+            var unloadedMeshes = meshRefs.Select(x => x.ModelMesh).Where(x => !x.IsModelLoaded).Distinct().ToList();
+
+            double totalVolume = 0;
+            Simple3D.Vector3d center = Simple3D.Vector3d.Zero;
+
+            try
+            {
+                var vertices = new List<Vertex>();
+                foreach (var meshRef in meshRefs)
+                {
+                    var meshGeom = meshRef.GetGeometry(true);
+                    if (meshGeom != null)
+                    {
+                        foreach (var tri in meshGeom.Triangles)
+                        {
+                            var currentVolume = (tri.V1.Position.X * tri.V2.Position.Y * tri.V3.Position.Z - tri.V1.Position.X * tri.V3.Position.Y * tri.V2.Position.Z - tri.V2.Position.X * tri.V1.Position.Y * tri.V3.Position.Z + tri.V2.Position.X * tri.V3.Position.Y * tri.V1.Position.Z + tri.V3.Position.X * tri.V1.Position.Y * tri.V2.Position.Z - tri.V3.Position.X * tri.V2.Position.Y * tri.V1.Position.Z) / 6d;
+                            totalVolume += currentVolume;
+                            center += ((Simple3D.Vector3d)(tri.V1.Position + tri.V2.Position + tri.V3.Position) / 4d) * currentVolume;
+                        }
+                    }
+                }
+                center /= totalVolume;
+                return center;
+            }
+            finally
+            {
+                unloadedMeshes.ForEach(x => x.UnloadModel());
+            }
+        }
+
         public void RemoveUnreferencedMeshes()
         {
             var allMeshes = GetAllElements<ModelMesh>().ToList();
             var allRefs = GetAllElements<ModelMeshReference>().ToList();
 
-            foreach(var mesh in allMeshes)
+            foreach (var mesh in allMeshes)
             {
                 if (!allRefs.Any(x => x.MeshID == mesh.ID || x.ModelMesh == mesh))
                 {
@@ -927,6 +990,57 @@ namespace LDDModder.Modding.Editing
             var allMeshes = Surfaces.SelectMany(x => x.Components.SelectMany(c => c.Meshes));
             TotalTriangles = allMeshes.Sum(x => x.TriangleCount);
             TotalVertices = allMeshes.Sum(x => x.VertexCount == 0 ? x.ModelMesh?.VertexCount ?? 0 : x.VertexCount);
+        }
+
+        public void SplitMeshSurfaces(ModelMeshReference meshRef)
+        {
+            bool wasLoaded = meshRef.IsModelLoaded;
+            var meshGeom = meshRef.GetGeometry(true);
+
+            var splittedMeshes = GeometryBuilder.SplitSurfaces(meshGeom);
+
+            int ctr = 0;
+            var parentCollection = meshRef.GetParentCollection();
+
+            foreach (var createdMesh in splittedMeshes)
+            {
+                var modelMesh = AddMeshGeometry(createdMesh, $"{meshRef.Name}_{ctr++}");
+                parentCollection.Add(new ModelMeshReference(modelMesh));
+            }
+
+            parentCollection.Remove(meshRef);
+            RemoveUnreferencedMeshes();
+
+            if (!wasLoaded && meshRef.ModelMesh.CanUnloadModel)
+                meshRef.ModelMesh.UnloadModel();
+        }
+
+        public void CombineMeshes(IEnumerable<ModelMeshReference> meshRefs)
+        {
+            var meshParent = meshRefs.FirstOrDefault()?.Parent;
+            
+            if (!meshRefs.All(x => x.Parent == meshParent)) return;
+
+            var parentCollection = meshRefs.FirstOrDefault().GetParentCollection();
+
+            var builder = new GeometryBuilder();
+
+            foreach (var meshRef in meshRefs.ToArray())
+            {
+                bool wasLoaded = meshRef.IsModelLoaded;
+                var meshGeom = meshRef.GetGeometry(true);
+                builder.CombineGeometry(meshGeom);
+                if (!wasLoaded && meshRef.ModelMesh.CanUnloadModel)
+                    meshRef.ModelMesh.UnloadModel();
+
+                parentCollection.Remove(meshRef);
+            }
+
+            var finalGeom = builder.GetGeometry();
+            var newModel = AddMeshGeometry(finalGeom);
+
+            parentCollection.Add(new ModelMeshReference(newModel));
+            RemoveUnreferencedMeshes();
         }
 
         #endregion
@@ -947,14 +1061,22 @@ namespace LDDModder.Modding.Editing
                 }
             }
 
-            if (!IsLoading && ccea.Collection.ElementType == typeof(PartConnection) && 
-                GetAllElements<PartCullingModel>().Any())
+            if (!IsLoading)
             {
-                UpdateConnectionIndexes();
-            }
+                if (ccea.Collection.ElementType == typeof(PartConnection) &&
+                    GetAllElements<PartCullingModel>().Any())
+                {
+                    UpdateConnectionIndexes();
+                }
 
-            if (ccea.GetElementHierarchy().OfType<ModelMeshReference>().Any())
-                UpdateModelStatistics();
+                if (ccea.Collection.ElementType == typeof(PartSurface))
+                {
+                    RenumberSurfaces();
+                }
+
+                if (ccea.GetElementHierarchy().OfType<ModelMeshReference>().Any())
+                    UpdateModelStatistics();
+            }
 
             if (!IsLoading)
                 ElementCollectionChanged?.Invoke(this, ccea);

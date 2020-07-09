@@ -1,5 +1,6 @@
 ﻿using LDDModder.BrickEditor.Settings;
 using LDDModder.BrickEditor.UI.Controls;
+using LDDModder.LDD.Files;
 using LDDModder.Utilities;
 using System;
 using System.Collections.Generic;
@@ -18,15 +19,26 @@ namespace LDDModder.BrickEditor.UI.Windows
     {
         private bool LoadingSettings;
 
+        public enum SettingTab
+        {
+            LddPaths,
+            ProjectSettings
+        }
+
+        public SettingTab StartupTab { get; set; }
+
         public AppSettingsWindow()
         {
             InitializeComponent();
+            Icon = Properties.Resources.BrickStudioIcon;
         }
 
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+            LDD.LDDEnvironment.Current.CheckLifStatus();
             FillSettings(LDD.LDDEnvironment.Current);
+
         }
 
         private void FillSettings(LDD.LDDEnvironment environment)
@@ -82,8 +94,6 @@ namespace LDDModder.BrickEditor.UI.Windows
             UpdateLifsStatus(tmpEnv);
         }
 
-
-
         private void CloseButton_Click(object sender, EventArgs e)
         {
             DialogResult = DialogResult.OK;
@@ -91,12 +101,30 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         private void ExtractDBButton_Click(object sender, EventArgs e)
         {
-
+            ExtractLif(LDD.LddLif.DB);
         }
 
         private void ExtractAssetsButton_Click(object sender, EventArgs e)
         {
+            ExtractLif(LDD.LddLif.Assets);
+        }
 
+        private void ExtractLif(LDD.LddLif lif)
+        {
+            try
+            {
+                var tmpEnv = new LDD.LDDEnvironment(PrgmFilePathTextBox.Value, AppDataPathTextBox.Value);
+                string lifFilePath = tmpEnv.GetLifFilePath(lif);
+                string lifFolderPath = tmpEnv.GetLifFolderPath(lif);
+                if (!string.IsNullOrEmpty(lifFilePath) && File.Exists(lifFilePath))
+                {
+
+                    using (var lifFile = LifFile.Open(lifFilePath))
+                        lifFile.ExtractTempTo(lifFolderPath);
+                }
+                //LifFile.Open()
+            }
+            catch { }
         }
 
         private void PrgmFilePathTextBox_BrowseButtonClicked(object sender, EventArgs e)
@@ -133,7 +161,7 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         private void FindEnvironmentButton_Click(object sender, EventArgs e)
         {
-            var defaultEnv = LDD.LDDEnvironment.GetInstalledEnvironment();
+            var defaultEnv = LDD.LDDEnvironment.FindInstalledEnvironment();
 
             if (defaultEnv != null)
             {
@@ -173,7 +201,5 @@ namespace LDDModder.BrickEditor.UI.Windows
             SettingsManager.SaveSettings();
 
         }
-
-        
     }
 }

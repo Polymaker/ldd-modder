@@ -9,6 +9,11 @@ namespace System
 {
     public static class StringExtensions
     {
+        public static bool EqualsIC(this string text, string other)
+        {
+            return text.Equals(other, StringComparison.InvariantCultureIgnoreCase);
+        }
+
         public static string Tab(int amount, int length = 4)
         {
             return String.Empty.PadRight(amount * length, ' ');

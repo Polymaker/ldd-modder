@@ -11,24 +11,21 @@ namespace LDDModder.Modding.Editing
 
         public ElementCollection<ModelMeshReference> ReplacementMeshes { get; set; }
 
-        public ElementCollection<StudReference> Studs { get; set; }
-
         public FemaleStudModel()
         {
-            Studs = new ElementCollection<StudReference>(this);
             ReplacementMeshes = new ElementCollection<ModelMeshReference>(this);
         }
 
         internal override void LoadCullingInformation(MeshCulling culling)
         {
             base.LoadCullingInformation(culling);
-            foreach (var studInfo in culling.Studs)
-                Studs.Add(new StudReference(studInfo));
+
+            //Studs.AddRange(ConvertFromRefs(culling.Studs));
         }
 
         internal override void FillCullingInformation(MeshCulling culling)
         {
-            culling.Studs.AddRange(Studs.Select(x => GetFieldReference(x)));
+            base.FillCullingInformation(culling);
 
             if (ReplacementMeshes.Any())
             {
@@ -51,14 +48,11 @@ namespace LDDModder.Modding.Editing
         public override XElement SerializeToXml()
         {
             var elem = base.SerializeToXml();
+
             //elem.Add(new XComment("This geometry is used when all the studs (defined bellow) are connected"));
             var geomElem = elem.AddElement(nameof(ReplacementMeshes));
             foreach (var geom in ReplacementMeshes)
                 geomElem.Add(geom.SerializeToXml());
-
-            var studsElem = elem.AddElement(nameof(Studs));
-            foreach (var stud in Studs)
-                studsElem.Add(stud.SerializeToXml2());
 
             return elem;
         }
@@ -77,10 +71,16 @@ namespace LDDModder.Modding.Editing
                 }
             }
 
-            if (element.HasElement(nameof(Studs), out XElement studsElem))
+            //LEGACY
+            if (element.HasElement("Studs", out XElement studsElem))
             {
                 foreach (var studElem in studsElem.Elements(StudReference.NODE_NAME))
-                    Studs.Add(StudReference.FromXml(studElem));
+                {
+                    var studRef = StudReference.FromXml(studElem);
+                    if (!string.IsNullOrEmpty(LegacyConnectionID))
+                        studRef.ConnectionID = LegacyConnectionID;
+                    ReferencedStuds.Add(studRef);
+                }
             }
         }
 
@@ -96,7 +96,7 @@ namespace LDDModder.Modding.Editing
                 });
             }
 
-            if (!Studs.Any())
+            if (!ReferencedStuds.Any())
             {
                 if (ReplacementMeshes.Any())
                     AddMessage("MODEL_STUDS_NOT_DEFINED_ALT", ValidationLevel.Warning);
@@ -104,7 +104,7 @@ namespace LDDModder.Modding.Editing
                     AddMessage("MODEL_STUDS_NOT_DEFINED", ValidationLevel.Warning);
             }
             else
-                messages.AddRange(Studs.SelectMany(x => x.ValidateElement()));
+                messages.AddRange(ReferencedStuds.SelectMany(x => x.ValidateElement()));
 
             return messages;
         }

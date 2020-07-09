@@ -1,6 +1,8 @@
 ﻿using Assimp;
+using LDDModder.BrickEditor.Resources;
 using LDDModder.LDD.Meshes;
 using LDDModder.LDD.Parts;
+using LDDModder.Modding.Editing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -98,10 +100,11 @@ namespace LDDModder.BrickEditor.Meshes
                     int connectionIdx = 0;
                     foreach (var conn in connGroup)
                     {
-                        var connNode = new Node($"{connGroup.Key.ToString()}{connectionIdx++}_Type_{conn.SubType}");
-
+                        var connNode = new Node($"{connGroup.Key.ToString()}{connectionIdx++}_Type_{conn.SubType}")
+                        {
+                            Transform = conn.Transform.ToMatrix4().ToAssimp()
+                        };
                         //connNode.Metadata.Add("Type", new Assimp.Metadata.Entry(Assimp.MetaDataType.String, conn.Type.ToString()));
-                        connNode.Transform = conn.Transform.ToMatrix4().ToAssimp();
                         connectionsNode.Children.Add(connNode);
                     }
                 }
@@ -112,23 +115,31 @@ namespace LDDModder.BrickEditor.Meshes
                 var collisionsNode = new Node("Collisions");
                 scene.RootNode.Children.Add(collisionsNode);
 
+                var sphereMesh = ResourceHelper.GetResourceModel("Models.Sphere.obj", "obj").Meshes[0];
+                var boxMesh = ResourceHelper.GetResourceModel("Models.Cube.obj", "obj").Meshes[0];
+
                 foreach (var collGroup in part.Primitive.Collisions.GroupBy(x => x.CollisionType))
                 {
                     int collisionIdx = 0;
+
                     foreach (var collision in collGroup)
                     {
                         var collNode = new Node($"{collGroup.Key.ToString()}{collisionIdx++}");
+                        var meshTransform = 
+                            Simple3D.Matrix4d.FromScale(collision.GetSize() * 2f) * collision.Transform.ToMatrix4d();
 
-                        if (collision is LDDModder.LDD.Primitives.Collisions.CollisionBox collisionBox)
+                        if (collision.CollisionType == LDD.Primitives.Collisions.CollisionType.Box)
                         {
-                            var boxMesh = CreateBoxMesh(collisionBox.Size * 2f);
                             collNode.MeshIndices.Add(scene.MeshCount);
-                            scene.Meshes.Add(boxMesh);
+                            scene.Meshes.Add(boxMesh.Clone());
                         }
                         else
-                            continue;
+                        {
+                            collNode.MeshIndices.Add(scene.MeshCount);
+                            scene.Meshes.Add(sphereMesh.Clone());
+                        }
                         //connNode.Metadata.Add("Type", new Assimp.Metadata.Entry(Assimp.MetaDataType.String, conn.Type.ToString()));
-                        collNode.Transform = collision.Transform.ToMatrix4().ToAssimp();
+                        collNode.Transform = ((Simple3D.Matrix4)meshTransform).ToAssimp();
                         collisionsNode.Children.Add(collNode);
                     }
                 }
@@ -234,8 +245,6 @@ namespace LDDModder.BrickEditor.Meshes
             return armatureNode;
         }
 
-
-
         public static Mesh LddMeshToAssimp(MeshGeometry geometry)
         {
             var assimpMesh = new Mesh(Assimp.PrimitiveType.Triangle);
@@ -319,29 +328,21 @@ namespace LDDModder.BrickEditor.Meshes
             return meshNode;
         }
 
-        private static Mesh CreateBoxMesh(LDDModder.Simple3D.Vector3 size)
+        #endregion
+
+        #region Part Project -> Assimp
+
+        public static Scene PartProjectToAssimp(PartProject project, MeshExportOptions exportOptions = null)
         {
-            var assimpMesh = new Mesh(Assimp.PrimitiveType.Polygon);
-            var bbox = Rendering.BBox.FromCenterSize(OpenTK.Vector3.Zero, size.ToGL());
-            var vertices = bbox.GetCorners();
-            var bboxIndices = new List<int>();
-            assimpMesh.Vertices.AddRange(vertices.Select(v => v.ToAssimp()));
-
-            assimpMesh.Faces.Add(new Face(new int[] { 0, 2, 3, 1 }));
-            assimpMesh.Faces.Add(new Face(new int[] { 0, 6, 4, 2 }));
-            assimpMesh.Faces.Add(new Face(new int[] { 0, 1, 7, 6 }));
-            assimpMesh.Faces.Add(new Face(new int[] { 1, 3, 5, 7 }));
-            assimpMesh.Faces.Add(new Face(new int[] { 2, 4, 5, 3 }));
-            assimpMesh.Faces.Add(new Face(new int[] { 4, 6, 7, 5 }));
-
-            return assimpMesh;
+            var partWrapper = project.GenerateLddPart();
+            return LddPartToAssimp(partWrapper, exportOptions);
         }
 
         #endregion
 
         private static string GetBoneName(LDD.Primitives.FlexBone flexBone)
         {
-            return $"Bone_{flexBone.ID.ToString().PadLeft(4, '0')}";
+            return GetBoneName(flexBone.ID);
         }
 
         private static string GetBoneName(int boneID)

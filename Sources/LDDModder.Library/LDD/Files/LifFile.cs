@@ -223,18 +223,54 @@ namespace LDDModder.LDD.Files
             }
         }
 
+        /// <summary>
+        /// Extracts the content of the lif to the specified directory.
+        /// </summary>
+        /// <param name="directoryName"></param>
         public void ExtractTo(string directoryName) => ExtractTo(directoryName, CancellationToken.None, null);
 
+        /// <summary>
+        /// Extracts the content of the lif to the specified directory.
+        /// </summary>
+        /// <param name="directoryName"></param>
+        /// <param name="cancellationToken"></param>
         public void ExtractTo(string directoryName, CancellationToken cancellationToken) => ExtractTo(directoryName, cancellationToken, null);
 
-        //public void ExtractTo(string destination, CancellationToken cancellationToken, Action<ExtractionProgress> progressReport)
-        //{
-        //    ExtractEntry(RootFolder, destination, cancellationToken, progressReport);
-        //}
 
+        /// <summary>
+        /// Extracts the content of the lif to the specified directory.
+        /// </summary>
+        /// <param name="destination"></param>
+        /// <param name="cancellationToken"></param>
+        /// <param name="progressReport"></param>
         public void ExtractTo(string destination, CancellationToken cancellationToken, ExtractionProgressReportDelegate progressReport)
         {
             ExtractEntry(RootFolder, destination, cancellationToken, progressReport);
+        }
+
+        /// <summary>
+        /// Extracts the content of the lif in a temporary folder and moves the content into the specified directory.
+        /// <br/>The files are moved by the system so it won't crash if the destination folder requires admin rights (e.g. program files)
+        /// </summary>
+        /// <param name="directoryName"></param>
+        public void ExtractTempTo(string directoryName) => ExtractTempTo(directoryName, CancellationToken.None, null);
+
+        /// <summary>
+        /// Extracts the content of the lif in a temporary folder and moves the content into the specified directory.
+        /// <br/>The files are moved by the system so it won't crash if the destination folder requires admin rights (e.g. program files)
+        /// </summary>
+        /// <param name="destination"></param>
+        /// <param name="cancellationToken"></param>
+        /// <param name="progressReport"></param>
+        public void ExtractTempTo(string destination, CancellationToken cancellationToken, ExtractionProgressReportDelegate progressReport)
+        {
+            string tmpTargetDir = "LIF" + StringUtils.GenerateUID(8);
+            tmpTargetDir = Path.Combine(Path.GetTempPath(), tmpTargetDir);
+            Directory.CreateDirectory(tmpTargetDir);
+
+       
+            ExtractEntry(RootFolder, tmpTargetDir, cancellationToken, progressReport);
+            FileHelper.MoveFile(tmpTargetDir, destination, false);
         }
 
         public static void ExtractEntry(LifEntry entry,

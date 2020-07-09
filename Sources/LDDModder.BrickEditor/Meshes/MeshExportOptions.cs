@@ -14,5 +14,6 @@ namespace LDDModder.BrickEditor.Meshes
         public bool IncludeBones { get; set; }
         public bool IncludeAltMeshes { get; set; }
         public bool IncludeRoundEdgeData { get; set; }
+        public string FileFormatID { get; set; }
     }
 }

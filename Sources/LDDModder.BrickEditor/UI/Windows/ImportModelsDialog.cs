@@ -223,13 +223,14 @@ namespace LDDModder.BrickEditor.UI.Windows
                         browseTextBox1.Value = ofd.FileName;
                         SceneToImport = AssimpContext.ImportFile(ofd.FileName, 
                             Assimp.PostProcessSteps.Triangulate | 
-                            Assimp.PostProcessSteps.GenerateNormals);
+                            Assimp.PostProcessSteps.GenerateNormals | 
+                            Assimp.PostProcessSteps.FlipUVs);
 
                         FillModelsGridView();
                     }
                     catch (Exception ex)
                     {
-
+                        MessageBox.Show("Could not import file!");
                     }
                     
                 }

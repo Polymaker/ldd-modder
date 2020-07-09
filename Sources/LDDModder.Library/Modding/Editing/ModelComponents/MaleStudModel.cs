@@ -22,24 +22,35 @@ namespace LDDModder.Modding.Editing
         {
             base.LoadCullingInformation(culling);
 
-            if (culling.Studs.Count >= 1)
-                Stud = new StudReference(culling.Studs[0]);
-            else
+            //var referencedStuds = ConvertFromRefs(culling.Studs).ToList();
+            //Stud = referencedStuds.FirstOrDefault();
+
+            //if (referencedStuds.Count > 1)
+            //    Debug.WriteLine("Stud culling references more than one stud!");
+            //else if(referencedStuds.Count == 0)
+            //    Debug.WriteLine("Stud culling does not reference a stud!");
+
+            Stud = ReferencedStuds.FirstOrDefault();
+
+            if (ReferencedStuds.Count > 1)
+                Debug.WriteLine("Stud culling references more than one stud!");
+            else if (ReferencedStuds.Count == 0)
                 Debug.WriteLine("Stud culling does not reference a stud!");
         }
 
         internal override void FillCullingInformation(MeshCulling culling)
         {
-            if (Stud != null)
-                culling.Studs.Add(GetFieldReference(Stud));
+            base.FillCullingInformation(culling);
+            //if (Stud != null)
+            //    culling.Studs.Add(ConvertToRef(Stud));
         }
 
         public override XElement SerializeToXml()
         {
             var elem = base.SerializeToXml();
 
-            if (Stud != null)
-                elem.Add(Stud.SerializeToXml2());
+            //if (Stud != null)
+            //    elem.Add(Stud.SerializeToXml2());
 
             return elem;
         }
@@ -47,8 +58,17 @@ namespace LDDModder.Modding.Editing
         protected internal override void LoadFromXml(XElement element)
         {
             base.LoadFromXml(element);
+
+            //LEGACY
             if (element.HasElement(StudReference.NODE_NAME, out XElement studElem))
-                Stud = StudReference.FromXml(studElem);
+            {
+                var studRef = StudReference.FromXml(studElem);
+                if (!string.IsNullOrEmpty(LegacyConnectionID))
+                    studRef.ConnectionID = LegacyConnectionID;
+                ReferencedStuds.Add(studRef);
+            }
+
+            Stud = ReferencedStuds.FirstOrDefault();
         }
 
         public override List<ValidationMessage> ValidateElement()
@@ -62,10 +82,16 @@ namespace LDDModder.Modding.Editing
                 });
             }
 
-            if (Stud == null)
+            if (!ReferencedStuds.Any())
                 AddMessage("MODEL_STUDS_NOT_DEFINED", ValidationLevel.Warning);
-            else
-                messages.AddRange(Stud.ValidateElement());
+
+            if (ReferencedStuds.Any())
+                messages.AddRange(ReferencedStuds.SelectMany(x => x.ValidateElement()));
+
+            //if (Stud == null)
+            //    AddMessage("MODEL_STUDS_NOT_DEFINED", ValidationLevel.Warning);
+            //else
+            //    messages.AddRange(Stud.ValidateElement());
 
             return messages;
         }

@@ -76,10 +76,8 @@ namespace LDDModder.LDD.Primitives.Connectors
         {
             get
             {
-                int x = index % ArrayWidth;
-                //int y = (int)Math.Floor(index / (double)ArrayWidth);
-                int y = (index - x) / ArrayWidth;
-                return NodeArray[x, y];
+                var pos = IndexToPosition(index);
+                return NodeArray[pos.Item1, pos.Item2];
             }
         }
 
@@ -87,12 +85,21 @@ namespace LDDModder.LDD.Primitives.Connectors
         {
             _Width = 2;
             _Height = 2;
+            SubType = 23;
             Initialize2DArray();
         }
 
         public int PositionToIndex(int x, int y)
         {
             return (y * ArrayWidth) + x;
+        }
+
+        public Tuple<int,int> IndexToPosition(int index)
+        {
+            int x = index % ArrayWidth;
+            //int y = (int)Math.Floor(index / (double)ArrayWidth);
+            int y = (index - x) / ArrayWidth;
+            return new Tuple<int, int>(x, y);
         }
 
         public Custom2DFieldNode GetNode(int x, int y)
@@ -158,9 +165,9 @@ namespace LDDModder.LDD.Primitives.Connectors
             int width = nodeArray.GetLength(0);
             int height = nodeArray.GetLength(1);
 
-            for (int y = 0; y < width; y++)
+            for (int x = 0; x < width; x++)
             {
-                for (int x = 0; x < height; x++)
+                for (int y = 0; y < height; y++)
                 {
                     nodeArray[x, y].PropertyValueChanged -= FieldNode_PropertyValueChanged;
                 }

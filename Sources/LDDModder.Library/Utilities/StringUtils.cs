@@ -103,5 +103,10 @@ namespace LDDModder.Utilities
 
             return false;
         }
+
+        public static bool EqualsIC(string text, string other)
+        {
+            return text.Equals(other, StringComparison.InvariantCultureIgnoreCase);
+        }
     }
 }

@@ -17,6 +17,12 @@ namespace LDDModder.IO
         public Endianness DefaultEndian { get; set; }
         public StringMarshalingMode DefaultStringMarshaling { get; set; } = StringMarshalingMode.FixedLength;
 
+        public long Position
+        {
+            get => BaseStream.Position;
+            set => BaseStream.Position = value;
+        }
+
         public Encoding Encoding
         {
             get => _Encoding;

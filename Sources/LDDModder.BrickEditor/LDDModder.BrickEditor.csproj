@@ -93,6 +93,9 @@
     <OutputPath>bin\x86\PrepRelease\</OutputPath>
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Resources\BrickStudioIcon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="AssimpNet, Version=4.1.0.0, Culture=neutral, PublicKeyToken=0d51b391f59f42a6, processorArchitecture=MSIL">
       <HintPath>..\packages\AssimpNet.4.1.0\lib\net40\AssimpNet.dll</HintPath>
@@ -153,6 +156,7 @@
     <Compile Include="ProjectHandling\Extensions\BoneElementExtension.cs" />
     <Compile Include="ProjectHandling\Extensions\ModelElementExtension.cs" />
     <Compile Include="ProjectHandling\IProjectManager.cs" />
+    <Compile Include="ProjectHandling\ProjectBuildEventArgs.cs" />
     <Compile Include="ProjectHandling\ProjectManager.cs" />
     <Compile Include="Models\Navigation\ProjectTreeNodeCollection.cs" />
     <Compile Include="ProjectHandling\Extensions\FemaleStudModelExtension.cs" />
@@ -169,6 +173,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Messages.resx</DependentUpon>
     </Compile>
+    <Compile Include="Settings\BuildConfiguration.cs" />
+    <Compile Include="Settings\ProjectBuildSettings.cs" />
+    <Compile Include="Settings\ViewportDisplaySettings.cs" />
     <Compile Include="UI\Controls\CollapsiblePanel.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -211,11 +218,20 @@
     <Compile Include="UI\Editors\StudConnectionEditor.Designer.cs">
       <DependentUpon>StudConnectionEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\Editors\VectorEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Editors\VectorEditor.Designer.cs">
+      <DependentUpon>VectorEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\Panels\ElementDetailPanel.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="UI\Panels\ElementDetailPanel.Designer.cs">
       <DependentUpon>ElementDetailPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\VS2015DockPaneStrip.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="UI\Windows\ErrorMessageBox.cs">
       <SubType>Form</SubType>
@@ -228,6 +244,12 @@
     </Compile>
     <Compile Include="UI\Windows\SelectOutputLocationWindow.Designer.cs">
       <DependentUpon>SelectOutputLocationWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Windows\WaitPopup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Windows\WaitPopup.Designer.cs">
+      <DependentUpon>WaitPopup.cs</DependentUpon>
     </Compile>
     <Compile Include="Utilities\LocalizableString.cs" />
     <Compile Include="Utilities\LocalizableStringList.cs">
@@ -260,9 +282,8 @@
     <Compile Include="Rendering\Models\PartElementModel.cs" />
     <Compile Include="Rendering\Models\PartialModel.cs" />
     <Compile Include="Rendering\Models\SurfaceModelMesh.cs" />
-    <Compile Include="Rendering\Models\GLSurfaceModel.cs" />
+    <Compile Include="Rendering\Models\SurfaceMeshBuffer.cs" />
     <Compile Include="Rendering\Models\IndexedVertexBuffer.cs" />
-    <Compile Include="Rendering\Models\GLModel.cs" />
     <Compile Include="Rendering\InputManager.cs" />
     <Compile Include="Rendering\Maths\Plane.cs" />
     <Compile Include="Rendering\Maths\Ray.cs" />
@@ -424,6 +445,12 @@
     <EmbeddedResource Include="UI\Editors\StudConnectionEditor.resx">
       <DependentUpon>StudConnectionEditor.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\Editors\VectorEditor.resx">
+      <DependentUpon>VectorEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Panels\ElementDetailPanel.fr.resx">
+      <DependentUpon>ElementDetailPanel.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\Panels\ElementDetailPanel.resx">
       <DependentUpon>ElementDetailPanel.cs</DependentUpon>
     </EmbeddedResource>
@@ -436,6 +463,9 @@
     <EmbeddedResource Include="UI\Panels\NavigationPanel.resx">
       <DependentUpon>NavigationPanel.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Panels\PartPropertiesPanel.fr.resx">
+      <DependentUpon>PartPropertiesPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Panels\PartPropertiesPanel.resx">
       <DependentUpon>PartPropertiesPanel.cs</DependentUpon>
@@ -461,6 +491,9 @@
     <EmbeddedResource Include="UI\Windows\ErrorMessageBox.resx">
       <DependentUpon>ErrorMessageBox.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\Windows\ExportPartModelWindow.fr.resx">
+      <DependentUpon>ExportPartModelWindow.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\Windows\ExportPartModelWindow.resx">
       <DependentUpon>ExportPartModelWindow.cs</DependentUpon>
     </EmbeddedResource>
@@ -475,6 +508,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Windows\SelectOutputLocationWindow.resx">
       <DependentUpon>SelectOutputLocationWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Windows\WaitPopup.resx">
+      <DependentUpon>WaitPopup.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="OpenTK.dll.config" />
     <None Include="packages.config" />
@@ -502,6 +538,8 @@
     <EmbeddedResource Include="Resources\Models\CrossAxleFemale.obj" />
     <EmbeddedResource Include="Resources\Shaders\StudConnectionShader.glsl" />
     <EmbeddedResource Include="Resources\Shaders\SimpleTextureShader.glsl" />
+    <EmbeddedResource Include="Resources\Models\TechnicPinFemale.obj" />
+    <EmbeddedResource Include="Resources\Models\BarFemale.obj" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -520,6 +558,7 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <Content Include="Resources\BrickStudioIcon.ico" />
     <Content Include="Resources\Data\Primitive connectors.xml" />
     <Content Include="Resources\Images\DecorationSurfaceIcon.png" />
     <Content Include="Resources\Images\Hidden2Icon.png" />
@@ -528,10 +567,12 @@
     <Content Include="Resources\Images\MaleStudIcon.png" />
     <Content Include="Resources\Images\MeshIcon.png" />
     <Content Include="Resources\Images\NotVisibleIcon.png" />
+    <Content Include="Resources\Images\SolidWireframeIcon.png" />
     <Content Include="Resources\Images\StatusError.png" />
     <Content Include="Resources\Images\StatusInfo.png" />
     <Content Include="Resources\Images\StatusWarning.png" />
     <Content Include="Resources\Images\VisibleIcon.png" />
+    <Content Include="Resources\Images\WireframeIcon.png" />
     <EmbeddedResource Include="Resources\Textures\StudConnectionGrid.png" />
     <EmbeddedResource Include="Resources\Textures\StudGridTex.png" />
   </ItemGroup>

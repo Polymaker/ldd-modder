@@ -1,6 +1,9 @@
 ﻿using LDDModder.BrickEditor.Models.Navigation;
 using LDDModder.BrickEditor.Rendering;
 using LDDModder.BrickEditor.Resources;
+using LDDModder.BrickEditor.Settings;
+using LDDModder.LDD;
+using LDDModder.LDD.Parts;
 using LDDModder.Modding.Editing;
 using System;
 using System.Collections.Generic;
@@ -8,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace LDDModder.BrickEditor.ProjectHandling
 {
@@ -44,7 +48,6 @@ namespace LDDModder.BrickEditor.ProjectHandling
         public IList<PartElement> SelectedElements => _SelectedElements.AsReadOnly();
 
         public ProjectTreeNodeCollection NavigationTreeNodes { get; private set; }
-
 
         #region Events
 
@@ -93,6 +96,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
             UndoRedoManager.UndoHistoryChanged += UndoRedoManager_UndoHistoryChanged;
 
             _ShowPartModels = true;
+            _PartRenderMode = MeshRenderMode.SolidWireframe;
         }
 
         #region Project Loading/Closing
@@ -135,17 +139,11 @@ namespace LDDModder.BrickEditor.ProjectHandling
             project.ElementPropertyChanged += Project_ElementPropertyChanged;
             project.UpdateModelStatistics();
 
-            if (project.TryGetProperty("ShowModels", out bool showModels))
-                ShowPartModels = showModels;
-
-            if (project.TryGetProperty("ShowCollisions", out showModels))
-                ShowCollisions = showModels;
-
-            if (project.TryGetProperty("ShowConnections", out showModels))
-                ShowConnections = showModels;
+            //LoadUserProperties();
 
             LastValidation = -1;
             IsProjectAttached = true;
+
             InitializeElementExtensions();
         }
 
@@ -168,6 +166,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
         {
             if (IsProjectOpen)
             {
+                //SaveUserProperties();
                 CurrentProject.Save(targetPath);
                 CurrentProject.ProjectPath = targetPath;
                 LastSavedChange = UndoRedoManager.CurrentChangeID;
@@ -179,10 +178,78 @@ namespace LDDModder.BrickEditor.ProjectHandling
         {
             if (IsProjectOpen)
             {
+                //SaveUserProperties();
                 var projectXml = CurrentProject.GenerateProjectXml();
                 projectXml.Save(Path.Combine(CurrentProject.ProjectWorkingDir, PartProject.ProjectFileName));
             }
         }
+
+        #region Project User Properties
+
+
+        private void LoadUserProperties()
+        {
+            if (CurrentProject.TryGetProperty("ShowModels", out bool showModels))
+                ShowPartModels = showModels;
+
+            if (CurrentProject.TryGetProperty("ShowCollisions", out showModels))
+                ShowCollisions = showModels;
+
+            if (CurrentProject.TryGetProperty("ShowConnections", out showModels))
+                ShowConnections = showModels;
+
+            if (CurrentProject.TryGetProperty("PartRenderMode", out MeshRenderMode renderMode))
+                PartRenderMode = renderMode;
+
+            foreach (var elem in CurrentProject.GetAllElements())
+            {
+                var elemExt = elem.GetExtension<ModelElementExtension>();
+                if (elemExt == null)
+                    continue;
+
+                string elemCfg = string.Empty;
+                string elemKey = GetElemKey(elem);
+
+                if (!string.IsNullOrEmpty(elemKey) && 
+                    CurrentProject.ProjectProperties.ContainsKey(elemKey))
+                {
+                    elemCfg = CurrentProject.ProjectProperties[elemKey];
+                }
+
+                if (elemCfg.EqualsIC("Hidden"))
+                    elemExt.IsHidden = true;
+            }
+        }
+
+        private void SaveUserProperties()
+        {
+            CurrentProject.ProjectProperties.Clear();
+            CurrentProject.ProjectProperties["ShowModels"] = ShowPartModels.ToString();
+            CurrentProject.ProjectProperties["ShowCollisions"] = ShowCollisions.ToString();
+            CurrentProject.ProjectProperties["ShowConnections"] = ShowConnections.ToString();
+            CurrentProject.ProjectProperties["PartRenderMode"] = PartRenderMode.ToString();
+
+            foreach (var elem in CurrentProject.GetAllElements())
+            {
+                var elemExt = elem.GetExtension<ModelElementExtension>();
+
+                if (elemExt != null && elemExt.IsHidden)
+                {
+                    string elemKey = GetElemKey(elem);
+                    CurrentProject.ProjectProperties[elemKey] = "Hidden";
+                }
+            }
+        }
+
+        private string GetElemKey(PartElement element)
+        {
+            if (element is PartSurface)
+                return element.Name;
+            else
+                return $"Elem_{element.ID}";
+        }
+
+        #endregion
 
         #region Project Events
 
@@ -241,6 +308,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
         private bool _ShowPartModels;
         private bool _ShowCollisions;
         private bool _ShowConnections;
+        private MeshRenderMode _PartRenderMode;
 
         public bool ShowPartModels
         {
@@ -260,11 +328,19 @@ namespace LDDModder.BrickEditor.ProjectHandling
             set => SetConnectionsVisibility(value);
         }
 
+        public MeshRenderMode PartRenderMode
+        {
+            get => _PartRenderMode;
+            set => SetPartRenderMode(value);
+        }
+
         public event EventHandler PartModelsVisibilityChanged;
 
         public event EventHandler CollisionsVisibilityChanged;
 
         public event EventHandler ConnectionsVisibilityChanged;
+
+        public event EventHandler PartRenderModeChanged;
 
         private void SetPartModelsVisibility(bool visible)
         {
@@ -274,7 +350,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
                 if (IsProjectOpen && IsProjectAttached)
                 {
-                    CurrentProject.ProjectProperties["ShowModels"] = visible.ToString();
+                    //CurrentProject.ProjectProperties["ShowModels"] = visible.ToString();
                     InvalidateElementsVisibility(CurrentProject.Surfaces);
                 }
 
@@ -290,7 +366,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
                 if (IsProjectOpen && IsProjectAttached)
                 {
-                    CurrentProject.ProjectProperties["ShowCollisions"] = visible.ToString();
+                    //CurrentProject.ProjectProperties["ShowCollisions"] = visible.ToString();
                     InvalidateElementsVisibility(CurrentProject.Collisions);
                     InvalidateElementsVisibility(CurrentProject.Bones);
                 }
@@ -307,12 +383,23 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
                 if (IsProjectOpen && IsProjectAttached)
                 {
-                    CurrentProject.ProjectProperties["ShowConnections"] = visible.ToString();
+                    //CurrentProject.ProjectProperties["ShowConnections"] = visible.ToString();
                     InvalidateElementsVisibility(CurrentProject.Connections);
                     InvalidateElementsVisibility(CurrentProject.Bones);
                 }
 
                 ConnectionsVisibilityChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        private void SetPartRenderMode(MeshRenderMode renderMode)
+        {
+            if (renderMode != _PartRenderMode)
+            {
+                _PartRenderMode = renderMode;
+                if (IsProjectOpen && IsProjectAttached)
+                    //CurrentProject.ProjectProperties["PartRenderMode"] = renderMode.ToString();
+                PartRenderModeChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -380,6 +467,11 @@ namespace LDDModder.BrickEditor.ProjectHandling
             _SelectedElements.Clear();
             _SelectedElements.AddRange(elements);
             SelectionChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        public IEnumerable<PartElement> GetSelectionHierarchy()
+        {
+            return SelectedElements.SelectMany(x => x.GetChildsHierarchy(true)).Distinct();
         }
 
         public bool IsSelected(PartElement element)
@@ -517,50 +609,93 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
         public event EventHandler GenerationStarted;
 
-        public event EventHandler GenerationFinished;
+        public event EventHandler<ProjectBuildEventArgs> GenerationFinished;
 
-        //TODO: implement destination folder parameter to allow saving somewhere without overwritting LDD files
-        public void GenerateLddFiles(string targetDirectory = null)
+        public PartWrapper GenerateLddFiles(bool generateOutlines = true)
         {
-            if (IsProjectOpen)
+            if (!IsProjectOpen)
+                return null;
+
+            IsGeneratingFiles = true;
+            GenerationSuccessful = false;
+            GenerationStarted?.Invoke(this, EventArgs.Empty);
+            PartWrapper generatedPart = null;
+            var messages = new List<ValidationMessage>();
+
+            try
             {
-                IsGeneratingFiles = true;
-                GenerationSuccessful = false;
-                GenerationStarted?.Invoke(this, EventArgs.Empty);
+                generatedPart = CurrentProject.GenerateLddPart();
+                if (generateOutlines)
+                    generatedPart.ComputeEdgeOutlines();
+                else
+                    generatedPart.ClearEdgeOutlines();
 
-                try
-                {
-                    var lddPart = CurrentProject.GenerateLddPart();
-                    lddPart.ComputeEdgeOutlines();
-
-                    if (string.IsNullOrEmpty(targetDirectory))
-                        lddPart.SaveToLdd(LDD.LDDEnvironment.Current);
-                    else
-                        lddPart.SaveToDirectory(targetDirectory);
-
-                    GenerationSuccessful = true;
-                }
-                catch (Exception ex)
-                {
-                    _ValidationMessages.Add(new ValidationMessage("PROJECT", "UNHANDLED_EXCEPTION", ValidationLevel.Error)
-                    {
-                        Message = ex.ToString()
-                    });
-                }
-
-                IsGeneratingFiles = false;
-                GenerationFinished?.Invoke(this, EventArgs.Empty);
+                GenerationSuccessful = true;
             }
+            catch (Exception ex)
+            {
+                messages.Add(new ValidationMessage("PROJECT", "UNHANDLED_EXCEPTION", ValidationLevel.Error)
+                {
+                    Message = ex.ToString()
+                });
+            }
+
+            IsGeneratingFiles = false;
+
+            GenerationFinished?.Invoke(this, 
+                new ProjectBuildEventArgs(
+                    generatedPart, 
+                GenerationSuccessful,
+                messages
+                )
+            );
+
+            return generatedPart;
+        }
+
+        public string ExpandVariablePath(string path)
+        {
+            string result = path;
+
+            if (result.Contains("$(LddAppData)"))
+            {
+                if (string.IsNullOrEmpty(LDDEnvironment.Current.ApplicationDataPath) || 
+                    !Directory.Exists(LDDEnvironment.Current.ApplicationDataPath))
+                    throw new ArgumentException("Could not find LDD AppData directory");
+                result = result.Replace("$(LddAppData)", LDDEnvironment.Current.ApplicationDataPath);
+            }
+
+            if (result.Contains("$(ProjectDir)"))
+            {
+                if (!IsProjectOpen || !CurrentProject.IsLoadedFromDisk)
+                    throw new ArgumentException("Project is not saved to disk.");
+                result = result.Replace("$(ProjectDir)", Path.GetDirectoryName(CurrentProject.ProjectPath));
+            }
+
+            if (result.Contains("$(WorkspaceDir)"))
+            {
+                if (!SettingsManager.IsWorkspaceDefined)
+                    throw new ArgumentException("Workspace not defined!");
+                result = result.Replace("$(WorkspaceDir)", SettingsManager.Current.ProjectWorkspace);
+            }
+            if (result.Contains("$(PartID)"))
+            {
+                if (CurrentProject.PartID == 0)
+                    throw new ArgumentException("Part ID is not defined");
+                result = result.Replace("$(PartID)", CurrentProject.PartID.ToString());
+            }
+
+            return result;
         }
 
         #endregion
 
         #region Navigation Tree
 
-        public ProjectElementNode GetElementTreeNode(PartElement element)
-        {
-            throw new NotImplementedException();
-        }
+        //public ProjectElementNode GetElementTreeNode(PartElement element)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
         public void RebuildNavigationTree()
         {
@@ -574,7 +709,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
             {
                 NavigationTreeNodes.Add(new ProjectCollectionNode(
                     CurrentProject.Bones,
-                    "Bones"));
+                    ModelLocalizations.Label_Bones));
             }
             else
             {

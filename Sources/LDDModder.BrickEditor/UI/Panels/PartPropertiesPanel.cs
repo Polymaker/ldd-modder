@@ -90,16 +90,21 @@ namespace LDDModder.BrickEditor.UI.Panels
                 CalcGeomBoundingButton,
                 InertiaTensorTextBox,
                 MassNumberBox,
-                FrictionCheckBox);
+                FrictionCheckBox,
+                CenterOfMassEditor);
 
             DescriptionTextBox.DataBindings.Clear();
             BoundingEditor.DataBindings.Clear();
             GeomBoundingEditor.DataBindings.Clear();
+            MassNumberBox.DataBindings.Clear();
+            CenterOfMassEditor.DataBindings.Clear();
 
             InternalSet = true;
 
             if (CurrentProject != null)
             {
+                var partProps = CurrentProject.Properties;
+
                 PartIDTextBox.Value = CurrentProject.PartID;
                 //PartIDTextBox.ReadOnly = !(ProjectManager.IsNewProject);
                 AliasEdit.PartProperties = CurrentProject.Properties;
@@ -114,12 +119,27 @@ namespace LDDModder.BrickEditor.UI.Panels
                 CategoryComboBox.SelectedValue = CurrentProject.MainGroup?.ID ?? 0;
 
                 BoundingEditor.DataBindings.Add(new Binding("Value",
-                    CurrentProject.Properties, nameof(CurrentProject.Properties.Bounding), 
+                    partProps, nameof(CurrentProject.Properties.Bounding), 
                     false, DataSourceUpdateMode.OnPropertyChanged));
 
                 GeomBoundingEditor.DataBindings.Add(new Binding("Value",
-                    CurrentProject.Properties, nameof(CurrentProject.Properties.GeometryBounding),
+                    partProps, nameof(CurrentProject.Properties.GeometryBounding),
                     false, DataSourceUpdateMode.OnPropertyChanged));
+
+
+                MassNumberBox.DataBindings.Add(new Binding("Value",
+                    partProps.PhysicsAttributes, nameof(PartProperties.PhysicsAttributes.Mass),
+                    true, DataSourceUpdateMode.OnPropertyChanged));
+
+                CenterOfMassEditor.DataBindings.Add(new Binding("Value",
+                    partProps.PhysicsAttributes, nameof(PartProperties.PhysicsAttributes.CenterOfMass),
+                    true, DataSourceUpdateMode.OnPropertyChanged));
+
+                var matrixValues = partProps.PhysicsAttributes.InertiaTensor.ToArray();
+                string matrixStr = string.Join("; ", matrixValues);
+                InertiaTensorTextBox.Text = matrixStr;
+                //string matrixValues = partProps.PhysicsAttributes.GetInertiaTensorString();
+                //InertiaTensorTextBox.Text = matrixValues.Replace(",", ", ");
             }
             else
             {
@@ -131,6 +151,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                 CategoryComboBox.SelectedIndex = 0;
                 BoundingEditor.Value = new LDD.Primitives.BoundingBox();
                 GeomBoundingEditor.Value = new LDD.Primitives.BoundingBox();
+                CenterOfMassEditor.Value = Simple3D.Vector3d.Zero;
             }
 
             InternalSet = false;
@@ -226,11 +247,18 @@ namespace LDDModder.BrickEditor.UI.Panels
             AliasEditDropDown.Show(AliasesButtonBox, new Point(0, AliasesButtonBox.Height));
         }
 
-        private void SetControlDoubleBuffered(Control control)
+        private void PartPropertiesPanel_SizeChanged(object sender, EventArgs e)
         {
-            control.GetType().InvokeMember("DoubleBuffered", 
-                BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic, null,
-            control, new object[] { true });
+            if (Width > Height && flowLayoutPanel1.FlowDirection == FlowDirection.TopDown)
+            {
+                flowLayoutPanel1.FlowDirection = FlowDirection.LeftToRight;
+                flowLayoutPanel1.PerformLayout();
+            }
+            else if (Width < Height && flowLayoutPanel1.FlowDirection == FlowDirection.LeftToRight)
+            {
+                flowLayoutPanel1.FlowDirection = FlowDirection.TopDown;
+                flowLayoutPanel1.PerformLayout();
+            }
         }
     }
 }

@@ -42,6 +42,8 @@ namespace LDDModder.Modding.Editing
         [XmlAttribute]
         public ConnectorType ConnectorType { get; set; }
 
+        public int SubType => Connector?.SubType ?? 0;
+
         public event EventHandler TranformChanged;
 
         public PartConnection()

@@ -39,9 +39,14 @@ namespace LDDModder.Modding.Editing
                 TranformChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        public abstract void SetSize(Vector3 size);
+        public void SetSize(Vector3 size)
+        {
+            SetSize((Vector3d)size);
+        }
 
-        public abstract Vector3 GetSize();
+        public abstract void SetSize(Vector3d size);
+
+        public abstract Vector3d GetSize();
 
         public abstract Collision GenerateLDD();
 
@@ -80,10 +85,10 @@ namespace LDDModder.Modding.Editing
             return collision;
         }
 
-        public static PartCollision Create(CollisionType collisionType, float size = 1f)
+        public static PartCollision Create(CollisionType collisionType, double size = 1d)
         {
             if (collisionType == CollisionType.Box)
-                return new PartBoxCollision(new Vector3(size));
+                return new PartBoxCollision(new Vector3d(size));
             return new PartSphereCollision(size);
         }
 
@@ -101,6 +106,15 @@ namespace LDDModder.Modding.Editing
             elem.Add(new XComment(Transform.GetLddXml().ToString()));
             elem.Add(Transform.SerializeToXml(nameof(Transform)));
             return elem;
+        }
+
+        public PartCollision Clone()
+        {
+            if (this is PartBoxCollision boxCollision)
+                return new PartBoxCollision(boxCollision.Size) { Transform = Transform.Clone() };
+            if (this is PartSphereCollision sphereCollision)
+                return new PartSphereCollision(sphereCollision.Radius) { Transform = Transform.Clone() };
+            return null;
         }
     }
 }

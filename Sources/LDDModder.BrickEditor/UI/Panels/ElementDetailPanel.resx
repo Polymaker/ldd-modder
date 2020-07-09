@@ -117,7 +117,850 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="toolStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="NameTextBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>83, 22</value>
+  </data>
+  <data name="NameTextBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>150, 20</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="NameTextBox.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;NameTextBox.Name" xml:space="preserve">
+    <value>NameTextBox</value>
+  </data>
+  <data name="&gt;&gt;NameTextBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;NameTextBox.Parent" xml:space="preserve">
+    <value>PropertiesTableLayout</value>
+  </data>
+  <data name="&gt;&gt;NameTextBox.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="PropertiesTableLayout.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="PropertiesTableLayout.AutoSizeMode" type="System.Windows.Forms.AutoSizeMode, System.Windows.Forms">
+    <value>GrowAndShrink</value>
+  </data>
+  <data name="PropertiesTableLayout.ColumnCount" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="CollisionSizeLabel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Left</value>
+  </data>
+  <data name="CollisionSizeLabel.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="CollisionSizeLabel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="CollisionSizeLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 103</value>
+  </data>
+  <data name="CollisionSizeLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>27, 13</value>
+  </data>
+  <data name="CollisionSizeLabel.TabIndex" type="System.Int32, mscorlib">
+    <value>15</value>
+  </data>
+  <data name="CollisionSizeLabel.Text" xml:space="preserve">
+    <value>Size</value>
+  </data>
+  <data name="&gt;&gt;CollisionSizeLabel.Name" xml:space="preserve">
+    <value>CollisionSizeLabel</value>
+  </data>
+  <data name="&gt;&gt;CollisionSizeLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;CollisionSizeLabel.Parent" xml:space="preserve">
+    <value>PropertiesTableLayout</value>
+  </data>
+  <data name="&gt;&gt;CollisionSizeLabel.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="CollisionRadiusLabel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Left</value>
+  </data>
+  <data name="CollisionRadiusLabel.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="CollisionRadiusLabel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="CollisionRadiusLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 77</value>
+  </data>
+  <data name="CollisionRadiusLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>40, 13</value>
+  </data>
+  <data name="CollisionRadiusLabel.TabIndex" type="System.Int32, mscorlib">
+    <value>14</value>
+  </data>
+  <data name="CollisionRadiusLabel.Text" xml:space="preserve">
+    <value>Radius</value>
+  </data>
+  <data name="&gt;&gt;CollisionRadiusLabel.Name" xml:space="preserve">
+    <value>CollisionRadiusLabel</value>
+  </data>
+  <data name="&gt;&gt;CollisionRadiusLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;CollisionRadiusLabel.Parent" xml:space="preserve">
+    <value>PropertiesTableLayout</value>
+  </data>
+  <data name="&gt;&gt;CollisionRadiusLabel.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="SelectionTransformEdit.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="SelectionTransformEdit.AutoSizeMode" type="System.Windows.Forms.AutoSizeMode, System.Windows.Forms">
+    <value>GrowAndShrink</value>
+  </data>
+  <data name="SelectionTransformEdit.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 123</value>
+  </data>
+  <data name="SelectionTransformEdit.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>0, 0, 0, 0</value>
+  </data>
+  <data name="SelectionTransformEdit.Size" type="System.Drawing.Size, System.Drawing">
+    <value>302, 68</value>
+  </data>
+  <data name="SelectionTransformEdit.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;SelectionTransformEdit.Name" xml:space="preserve">
+    <value>SelectionTransformEdit</value>
+  </data>
+  <data name="&gt;&gt;SelectionTransformEdit.Type" xml:space="preserve">
+    <value>LDDModder.BrickEditor.UI.Controls.TransformEditor, Brick Studio, Version=1.0.2.23641, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;SelectionTransformEdit.Parent" xml:space="preserve">
+    <value>PropertiesTableLayout</value>
+  </data>
+  <data name="&gt;&gt;SelectionTransformEdit.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="NameLabel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Left</value>
+  </data>
+  <data name="NameLabel.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="NameLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 25</value>
+  </data>
+  <data name="NameLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>35, 13</value>
+  </data>
+  <data name="NameLabel.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="NameLabel.Text" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="&gt;&gt;NameLabel.Name" xml:space="preserve">
+    <value>NameLabel</value>
+  </data>
+  <data name="&gt;&gt;NameLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;NameLabel.Parent" xml:space="preserve">
+    <value>PropertiesTableLayout</value>
+  </data>
+  <data name="&gt;&gt;NameLabel.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="SubMaterialIndexLabel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Left</value>
+  </data>
+  <data name="SubMaterialIndexLabel.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="SubMaterialIndexLabel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="SubMaterialIndexLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 45</value>
+  </data>
+  <data name="SubMaterialIndexLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>66, 26</value>
+  </data>
+  <data name="SubMaterialIndexLabel.TabIndex" type="System.Int32, mscorlib">
+    <value>10</value>
+  </data>
+  <data name="SubMaterialIndexLabel.Text" xml:space="preserve">
+    <value>SubMaterial Index</value>
+  </data>
+  <data name="&gt;&gt;SubMaterialIndexLabel.Name" xml:space="preserve">
+    <value>SubMaterialIndexLabel</value>
+  </data>
+  <data name="&gt;&gt;SubMaterialIndexLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;SubMaterialIndexLabel.Parent" xml:space="preserve">
+    <value>PropertiesTableLayout</value>
+  </data>
+  <data name="&gt;&gt;SubMaterialIndexLabel.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="SubMaterialIndexBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>83, 48</value>
+  </data>
+  <data name="SubMaterialIndexBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>60, 20</value>
+  </data>
+  <data name="SubMaterialIndexBox.TabIndex" type="System.Int32, mscorlib">
+    <value>11</value>
+  </data>
+  <data name="&gt;&gt;SubMaterialIndexBox.Name" xml:space="preserve">
+    <value>SubMaterialIndexBox</value>
+  </data>
+  <data name="&gt;&gt;SubMaterialIndexBox.Type" xml:space="preserve">
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.2.23641, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;SubMaterialIndexBox.Parent" xml:space="preserve">
+    <value>PropertiesTableLayout</value>
+  </data>
+  <data name="&gt;&gt;SubMaterialIndexBox.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="CollisionSizeEditor.Location" type="System.Drawing.Point, System.Drawing">
+    <value>83, 100</value>
+  </data>
+  <data name="CollisionSizeEditor.Size" type="System.Drawing.Size, System.Drawing">
+    <value>216, 20</value>
+  </data>
+  <data name="CollisionSizeEditor.TabIndex" type="System.Int32, mscorlib">
+    <value>12</value>
+  </data>
+  <data name="&gt;&gt;CollisionSizeEditor.Name" xml:space="preserve">
+    <value>CollisionSizeEditor</value>
+  </data>
+  <data name="&gt;&gt;CollisionSizeEditor.Type" xml:space="preserve">
+    <value>LDDModder.BrickEditor.UI.Editors.VectorEditor, Brick Studio, Version=1.0.2.23641, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;CollisionSizeEditor.Parent" xml:space="preserve">
+    <value>PropertiesTableLayout</value>
+  </data>
+  <data name="&gt;&gt;CollisionSizeEditor.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="CollisionRadiusBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>83, 74</value>
+  </data>
+  <data name="CollisionRadiusBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>60, 20</value>
+  </data>
+  <data name="CollisionRadiusBox.TabIndex" type="System.Int32, mscorlib">
+    <value>13</value>
+  </data>
+  <data name="&gt;&gt;CollisionRadiusBox.Name" xml:space="preserve">
+    <value>CollisionRadiusBox</value>
+  </data>
+  <data name="&gt;&gt;CollisionRadiusBox.Type" xml:space="preserve">
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.2.23641, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;CollisionRadiusBox.Parent" xml:space="preserve">
+    <value>PropertiesTableLayout</value>
+  </data>
+  <data name="&gt;&gt;CollisionRadiusBox.ZOrder" xml:space="preserve">
+    <value>8</value>
+  </data>
+  <data name="SelectionInfoLabel.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="SelectionInfoLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>83, 3</value>
+  </data>
+  <data name="SelectionInfoLabel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="SelectionInfoLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>66, 13</value>
+  </data>
+  <data name="SelectionInfoLabel.TabIndex" type="System.Int32, mscorlib">
+    <value>16</value>
+  </data>
+  <data name="SelectionInfoLabel.Text" xml:space="preserve">
+    <value>No selection</value>
+  </data>
+  <data name="&gt;&gt;SelectionInfoLabel.Name" xml:space="preserve">
+    <value>SelectionInfoLabel</value>
+  </data>
+  <data name="&gt;&gt;SelectionInfoLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;SelectionInfoLabel.Parent" xml:space="preserve">
+    <value>PropertiesTableLayout</value>
+  </data>
+  <data name="&gt;&gt;SelectionInfoLabel.ZOrder" xml:space="preserve">
+    <value>9</value>
+  </data>
+  <data name="PropertiesTableLayout.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Top</value>
+  </data>
+  <data name="PropertiesTableLayout.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 3</value>
+  </data>
+  <data name="PropertiesTableLayout.RowCount" type="System.Int32, mscorlib">
+    <value>6</value>
+  </data>
+  <data name="PropertiesTableLayout.Size" type="System.Drawing.Size, System.Drawing">
+    <value>604, 191</value>
+  </data>
+  <data name="PropertiesTableLayout.TabIndex" type="System.Int32, mscorlib">
+    <value>6</value>
+  </data>
+  <data name="&gt;&gt;PropertiesTableLayout.Name" xml:space="preserve">
+    <value>PropertiesTableLayout</value>
+  </data>
+  <data name="&gt;&gt;PropertiesTableLayout.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;PropertiesTableLayout.Parent" xml:space="preserve">
+    <value>MainInfoTab</value>
+  </data>
+  <data name="&gt;&gt;PropertiesTableLayout.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="PropertiesTableLayout.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="CollisionSizeLabel" Row="4" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="CollisionRadiusLabel" Row="3" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="SelectionTransformEdit" Row="5" RowSpan="1" Column="0" ColumnSpan="2" /&gt;&lt;Control Name="NameTextBox" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="NameLabel" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="SubMaterialIndexLabel" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="SubMaterialIndexBox" Row="2" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="CollisionSizeEditor" Row="4" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="CollisionRadiusBox" Row="3" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="SelectionInfoLabel" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,80,Percent,100" /&gt;&lt;Rows Styles="AutoSize,20,AutoSize,0,AutoSize,20,AutoSize,20,AutoSize,20,AutoSize,31" /&gt;&lt;/TableLayoutSettings&gt;</value>
+  </data>
+  <data name="MainInfoTab.AutoScroll" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="MainInfoTab.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 22</value>
+  </data>
+  <data name="MainInfoTab.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="MainInfoTab.Size" type="System.Drawing.Size, System.Drawing">
+    <value>610, 299</value>
+  </data>
+  <data name="MainInfoTab.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="MainInfoTab.Text" xml:space="preserve">
+    <value>Element Properties</value>
+  </data>
+  <data name="&gt;&gt;MainInfoTab.Name" xml:space="preserve">
+    <value>MainInfoTab</value>
+  </data>
+  <data name="&gt;&gt;MainInfoTab.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;MainInfoTab.Parent" xml:space="preserve">
+    <value>tabControl1</value>
+  </data>
+  <data name="&gt;&gt;MainInfoTab.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="tableLayoutPanel1.ColumnCount" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="ConnectionRefLabel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Left</value>
+  </data>
+  <data name="ConnectionRefLabel.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="ConnectionRefLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 3</value>
+  </data>
+  <data name="ConnectionRefLabel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="ConnectionRefLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>66, 26</value>
+  </data>
+  <data name="ConnectionRefLabel.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="ConnectionRefLabel.Text" xml:space="preserve">
+    <value>Referenced connection</value>
+  </data>
+  <data name="&gt;&gt;ConnectionRefLabel.Name" xml:space="preserve">
+    <value>ConnectionRefLabel</value>
+  </data>
+  <data name="&gt;&gt;ConnectionRefLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ConnectionRefLabel.Parent" xml:space="preserve">
+    <value>tableLayoutPanel1</value>
+  </data>
+  <data name="&gt;&gt;ConnectionRefLabel.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="ConnectionRefCombo.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Left</value>
+  </data>
+  <data name="ConnectionRefCombo.Location" type="System.Drawing.Point, System.Drawing">
+    <value>116, 5</value>
+  </data>
+  <data name="ConnectionRefCombo.Size" type="System.Drawing.Size, System.Drawing">
+    <value>185, 21</value>
+  </data>
+  <data name="ConnectionRefCombo.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;ConnectionRefCombo.Name" xml:space="preserve">
+    <value>ConnectionRefCombo</value>
+  </data>
+  <data name="&gt;&gt;ConnectionRefCombo.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ConnectionRefCombo.Parent" xml:space="preserve">
+    <value>tableLayoutPanel1</value>
+  </data>
+  <data name="&gt;&gt;ConnectionRefCombo.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <metadata name="FieldIndexColumn.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <data name="FieldIndexColumn.HeaderText" xml:space="preserve">
+    <value>Field Index</value>
+  </data>
+  <metadata name="FieldPositionColumn.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <data name="FieldPositionColumn.HeaderText" xml:space="preserve">
+    <value>2D Index</value>
+  </data>
+  <metadata name="StudRefValue1Colunm.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <data name="StudRefValue1Colunm.HeaderText" xml:space="preserve">
+    <value>Value 1</value>
+  </data>
+  <metadata name="StudRefValue2Colunm.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <data name="StudRefValue2Colunm.HeaderText" xml:space="preserve">
+    <value>Value 2</value>
+  </data>
+  <data name="StudRefGridView.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="StudRefGridView.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 55</value>
+  </data>
+  <data name="StudRefGridView.Size" type="System.Drawing.Size, System.Drawing">
+    <value>598, 235</value>
+  </data>
+  <data name="StudRefGridView.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;StudRefGridView.Name" xml:space="preserve">
+    <value>StudRefGridView</value>
+  </data>
+  <data name="&gt;&gt;StudRefGridView.Type" xml:space="preserve">
+    <value>System.Windows.Forms.DataGridView, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;StudRefGridView.Parent" xml:space="preserve">
+    <value>tableLayoutPanel1</value>
+  </data>
+  <data name="&gt;&gt;StudRefGridView.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="label1.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 35</value>
+  </data>
+  <data name="label1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>94, 13</value>
+  </data>
+  <data name="label1.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="label1.Text" xml:space="preserve">
+    <value>Referenced studs:</value>
+  </data>
+  <data name="&gt;&gt;label1.Name" xml:space="preserve">
+    <value>label1</value>
+  </data>
+  <data name="&gt;&gt;label1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label1.Parent" xml:space="preserve">
+    <value>tableLayoutPanel1</value>
+  </data>
+  <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="tableLayoutPanel1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="tableLayoutPanel1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 3</value>
+  </data>
+  <data name="tableLayoutPanel1.RowCount" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="tableLayoutPanel1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>604, 293</value>
+  </data>
+  <data name="tableLayoutPanel1.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel1.Name" xml:space="preserve">
+    <value>tableLayoutPanel1</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel1.Parent" xml:space="preserve">
+    <value>StudRefTab</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel1.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="tableLayoutPanel1.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="ConnectionRefLabel" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="ConnectionRefCombo" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="StudRefGridView" Row="2" RowSpan="1" Column="0" ColumnSpan="2" /&gt;&lt;Control Name="label1" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,18,87417,Percent,81,12583" /&gt;&lt;Rows Styles="AutoSize,50,Absolute,20,Percent,50" /&gt;&lt;/TableLayoutSettings&gt;</value>
+  </data>
+  <data name="StudRefTab.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 22</value>
+  </data>
+  <data name="StudRefTab.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="StudRefTab.Size" type="System.Drawing.Size, System.Drawing">
+    <value>610, 299</value>
+  </data>
+  <data name="StudRefTab.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="StudRefTab.Text" xml:space="preserve">
+    <value>Stud references</value>
+  </data>
+  <data name="&gt;&gt;StudRefTab.Name" xml:space="preserve">
+    <value>StudRefTab</value>
+  </data>
+  <data name="&gt;&gt;StudRefTab.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;StudRefTab.Parent" xml:space="preserve">
+    <value>tabControl1</value>
+  </data>
+  <data name="&gt;&gt;StudRefTab.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="ConnectionTableLayout.ColumnCount" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="ConnectionSubTypeLabel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Left</value>
+  </data>
+  <data name="ConnectionSubTypeLabel.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="ConnectionSubTypeLabel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="ConnectionSubTypeLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 26</value>
+  </data>
+  <data name="ConnectionSubTypeLabel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="ConnectionSubTypeLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>50, 13</value>
+  </data>
+  <data name="ConnectionSubTypeLabel.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="ConnectionSubTypeLabel.Text" xml:space="preserve">
+    <value>SubType</value>
+  </data>
+  <data name="&gt;&gt;ConnectionSubTypeLabel.Name" xml:space="preserve">
+    <value>ConnectionSubTypeLabel</value>
+  </data>
+  <data name="&gt;&gt;ConnectionSubTypeLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ConnectionSubTypeLabel.Parent" xml:space="preserve">
+    <value>ConnectionTableLayout</value>
+  </data>
+  <data name="&gt;&gt;ConnectionSubTypeLabel.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="ConnectionTypeValueLabel.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="ConnectionTypeValueLabel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="ConnectionTypeValueLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>83, 3</value>
+  </data>
+  <data name="ConnectionTypeValueLabel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="ConnectionTypeValueLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>35, 13</value>
+  </data>
+  <data name="ConnectionTypeValueLabel.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="ConnectionTypeValueLabel.Text" xml:space="preserve">
+    <value>label1</value>
+  </data>
+  <data name="&gt;&gt;ConnectionTypeValueLabel.Name" xml:space="preserve">
+    <value>ConnectionTypeValueLabel</value>
+  </data>
+  <data name="&gt;&gt;ConnectionTypeValueLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ConnectionTypeValueLabel.Parent" xml:space="preserve">
+    <value>ConnectionTableLayout</value>
+  </data>
+  <data name="&gt;&gt;ConnectionTypeValueLabel.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="ConnectionTypeLabel.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="ConnectionTypeLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 3</value>
+  </data>
+  <data name="ConnectionTypeLabel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="ConnectionTypeLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>31, 13</value>
+  </data>
+  <data name="ConnectionTypeLabel.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="ConnectionTypeLabel.Text" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="&gt;&gt;ConnectionTypeLabel.Name" xml:space="preserve">
+    <value>ConnectionTypeLabel</value>
+  </data>
+  <data name="&gt;&gt;ConnectionTypeLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ConnectionTypeLabel.Parent" xml:space="preserve">
+    <value>ConnectionTableLayout</value>
+  </data>
+  <data name="&gt;&gt;ConnectionTypeLabel.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="ConnectionSubTypeCombo.Location" type="System.Drawing.Point, System.Drawing">
+    <value>83, 22</value>
+  </data>
+  <data name="ConnectionSubTypeCombo.Size" type="System.Drawing.Size, System.Drawing">
+    <value>161, 21</value>
+  </data>
+  <data name="ConnectionSubTypeCombo.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;ConnectionSubTypeCombo.Name" xml:space="preserve">
+    <value>ConnectionSubTypeCombo</value>
+  </data>
+  <data name="&gt;&gt;ConnectionSubTypeCombo.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ConnectionSubTypeCombo.Parent" xml:space="preserve">
+    <value>ConnectionTableLayout</value>
+  </data>
+  <data name="&gt;&gt;ConnectionSubTypeCombo.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="ConnectionTableLayout.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Top</value>
+  </data>
+  <data name="ConnectionTableLayout.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 3</value>
+  </data>
+  <data name="ConnectionTableLayout.RowCount" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="ConnectionTableLayout.Size" type="System.Drawing.Size, System.Drawing">
+    <value>604, 100</value>
+  </data>
+  <data name="ConnectionTableLayout.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;ConnectionTableLayout.Name" xml:space="preserve">
+    <value>ConnectionTableLayout</value>
+  </data>
+  <data name="&gt;&gt;ConnectionTableLayout.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ConnectionTableLayout.Parent" xml:space="preserve">
+    <value>ConnectionInfoTab</value>
+  </data>
+  <data name="&gt;&gt;ConnectionTableLayout.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="ConnectionTableLayout.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="ConnectionSubTypeLabel" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="ConnectionTypeValueLabel" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="ConnectionTypeLabel" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="ConnectionSubTypeCombo" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,80,Percent,100" /&gt;&lt;Rows Styles="AutoSize,50,AutoSize,50,Absolute,20" /&gt;&lt;/TableLayoutSettings&gt;</value>
+  </data>
+  <data name="ConnectionInfoTab.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 22</value>
+  </data>
+  <data name="ConnectionInfoTab.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="ConnectionInfoTab.Size" type="System.Drawing.Size, System.Drawing">
+    <value>610, 299</value>
+  </data>
+  <data name="ConnectionInfoTab.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="ConnectionInfoTab.Text" xml:space="preserve">
+    <value>Connection parameters</value>
+  </data>
+  <data name="&gt;&gt;ConnectionInfoTab.Name" xml:space="preserve">
+    <value>ConnectionInfoTab</value>
+  </data>
+  <data name="&gt;&gt;ConnectionInfoTab.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ConnectionInfoTab.Parent" xml:space="preserve">
+    <value>tabControl1</value>
+  </data>
+  <data name="&gt;&gt;ConnectionInfoTab.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="tabControl1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="tabControl1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="tabControl1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>618, 325</value>
+  </data>
+  <data name="tabControl1.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="&gt;&gt;tabControl1.Name" xml:space="preserve">
+    <value>tabControl1</value>
+  </data>
+  <data name="&gt;&gt;tabControl1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabControl, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tabControl1.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;tabControl1.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <metadata name="localizableStringList1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <data name="MultiSelectionMsg.Text" xml:space="preserve">
+    <value>Multiple elements selected</value>
+  </data>
+  <data name="NoSelectionMsg.Text" xml:space="preserve">
+    <value>No element selected</value>
+  </data>
+  <data name="TopStudsLabel.Text" xml:space="preserve">
+    <value>Top Studs</value>
+  </data>
+  <data name="BottomStudsLabel.Text" xml:space="preserve">
+    <value>Bottom Studs</value>
+  </data>
+  <data name="NoConnectorRefLabel.Text" xml:space="preserve">
+    <value>No reference</value>
+  </data>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+    <value>6, 13</value>
+  </data>
+  <data name="$this.AutoScroll" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
+    <value>618, 325</value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+    <value>Selection</value>
+  </data>
+  <data name="$this.ToolTipText" xml:space="preserve">
+    <value>Selection properties</value>
+  </data>
+  <data name="&gt;&gt;FieldIndexColumn.Name" xml:space="preserve">
+    <value>FieldIndexColumn</value>
+  </data>
+  <data name="&gt;&gt;FieldIndexColumn.Type" xml:space="preserve">
+    <value>System.Windows.Forms.DataGridViewTextBoxColumn, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;FieldPositionColumn.Name" xml:space="preserve">
+    <value>FieldPositionColumn</value>
+  </data>
+  <data name="&gt;&gt;FieldPositionColumn.Type" xml:space="preserve">
+    <value>System.Windows.Forms.DataGridViewTextBoxColumn, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;StudRefValue1Colunm.Name" xml:space="preserve">
+    <value>StudRefValue1Colunm</value>
+  </data>
+  <data name="&gt;&gt;StudRefValue1Colunm.Type" xml:space="preserve">
+    <value>System.Windows.Forms.DataGridViewTextBoxColumn, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;StudRefValue2Colunm.Name" xml:space="preserve">
+    <value>StudRefValue2Colunm</value>
+  </data>
+  <data name="&gt;&gt;StudRefValue2Colunm.Type" xml:space="preserve">
+    <value>System.Windows.Forms.DataGridViewTextBoxColumn, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;localizableStringList1.Name" xml:space="preserve">
+    <value>localizableStringList1</value>
+  </data>
+  <data name="&gt;&gt;localizableStringList1.Type" xml:space="preserve">
+    <value>LDDModder.BrickEditor.Localization.LocalizableStringList, Brick Studio, Version=1.0.2.23641, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;MultiSelectionMsg.Name" xml:space="preserve">
+    <value>MultiSelectionMsg</value>
+  </data>
+  <data name="&gt;&gt;MultiSelectionMsg.Type" xml:space="preserve">
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.2.23641, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;NoSelectionMsg.Name" xml:space="preserve">
+    <value>NoSelectionMsg</value>
+  </data>
+  <data name="&gt;&gt;NoSelectionMsg.Type" xml:space="preserve">
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.2.23641, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;TopStudsLabel.Name" xml:space="preserve">
+    <value>TopStudsLabel</value>
+  </data>
+  <data name="&gt;&gt;TopStudsLabel.Type" xml:space="preserve">
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.2.23641, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;BottomStudsLabel.Name" xml:space="preserve">
+    <value>BottomStudsLabel</value>
+  </data>
+  <data name="&gt;&gt;BottomStudsLabel.Type" xml:space="preserve">
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.2.23641, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;NoConnectorRefLabel.Name" xml:space="preserve">
+    <value>NoConnectorRefLabel</value>
+  </data>
+  <data name="&gt;&gt;NoConnectorRefLabel.Type" xml:space="preserve">
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.2.23641, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+    <value>ElementDetailPanel</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+    <value>LDDModder.BrickEditor.UI.Panels.ProjectDocumentPanel, Brick Studio, Version=1.0.2.23641, Culture=neutral, PublicKeyToken=null</value>
+  </data>
 </root>

@@ -31,12 +31,12 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PartPropertiesPanel));
             this.collapsiblePanel1 = new LDDModder.BrickEditor.UI.Controls.CollapsiblePanel();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-            this.GeomBoundingEditor = new LDDModder.BrickEditor.UI.Controls.BoundingBoxEditor();
-            this.BoundingEditor = new LDDModder.BrickEditor.UI.Controls.BoundingBoxEditor();
             this.LabelBounding = new System.Windows.Forms.Label();
             this.CalcBoundingButton = new System.Windows.Forms.Button();
+            this.BoundingEditor = new LDDModder.BrickEditor.UI.Controls.BoundingBoxEditor();
             this.LabelGeomBounding = new System.Windows.Forms.Label();
             this.CalcGeomBoundingButton = new System.Windows.Forms.Button();
+            this.GeomBoundingEditor = new LDDModder.BrickEditor.UI.Controls.BoundingBoxEditor();
             this.collapsiblePanel2 = new LDDModder.BrickEditor.UI.Controls.CollapsiblePanel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.LabelAliases = new System.Windows.Forms.Label();
@@ -55,10 +55,11 @@
             this.LabelCenterOfMass = new System.Windows.Forms.Label();
             this.InertiaTensorTextBox = new System.Windows.Forms.TextBox();
             this.LabelMass = new System.Windows.Forms.Label();
+            this.CenterOfMassEditor = new LDDModder.BrickEditor.UI.Editors.VectorEditor();
             this.MassNumberBox = new LDDModder.BrickEditor.UI.Controls.NumberTextBox();
             this.LabelFriction = new System.Windows.Forms.Label();
             this.FrictionCheckBox = new System.Windows.Forms.CheckBox();
-            this.collapsiblePanel4 = new LDDModder.BrickEditor.UI.Controls.CollapsiblePanel();
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.collapsiblePanel1.ContentPanel.SuspendLayout();
             this.collapsiblePanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
@@ -68,7 +69,7 @@
             this.collapsiblePanel3.ContentPanel.SuspendLayout();
             this.collapsiblePanel3.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
-            this.collapsiblePanel4.SuspendLayout();
+            this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // collapsiblePanel1
@@ -83,7 +84,7 @@
             this.collapsiblePanel1.DisplayStyle = LDDModder.BrickEditor.UI.Controls.CollapsiblePanel.HeaderDisplayStyle.Button;
             resources.ApplyResources(this.collapsiblePanel1, "collapsiblePanel1");
             this.collapsiblePanel1.Name = "collapsiblePanel1";
-            this.collapsiblePanel1.PanelHeight = 142;
+            this.collapsiblePanel1.PanelHeight = 220;
             // 
             // tableLayoutPanel2
             // 
@@ -95,18 +96,6 @@
             this.tableLayoutPanel2.Controls.Add(this.CalcGeomBoundingButton, 1, 2);
             this.tableLayoutPanel2.Controls.Add(this.GeomBoundingEditor, 0, 3);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
-            // 
-            // GeomBoundingEditor
-            // 
-            resources.ApplyResources(this.GeomBoundingEditor, "GeomBoundingEditor");
-            this.tableLayoutPanel2.SetColumnSpan(this.GeomBoundingEditor, 2);
-            this.GeomBoundingEditor.Name = "GeomBoundingEditor";
-            // 
-            // BoundingEditor
-            // 
-            resources.ApplyResources(this.BoundingEditor, "BoundingEditor");
-            this.tableLayoutPanel2.SetColumnSpan(this.BoundingEditor, 2);
-            this.BoundingEditor.Name = "BoundingEditor";
             // 
             // LabelBounding
             // 
@@ -120,6 +109,12 @@
             this.CalcBoundingButton.UseVisualStyleBackColor = true;
             this.CalcBoundingButton.Click += new System.EventHandler(this.CalcBoundingButton_Click);
             // 
+            // BoundingEditor
+            // 
+            resources.ApplyResources(this.BoundingEditor, "BoundingEditor");
+            this.tableLayoutPanel2.SetColumnSpan(this.BoundingEditor, 2);
+            this.BoundingEditor.Name = "BoundingEditor";
+            // 
             // LabelGeomBounding
             // 
             resources.ApplyResources(this.LabelGeomBounding, "LabelGeomBounding");
@@ -131,6 +126,12 @@
             this.CalcGeomBoundingButton.Name = "CalcGeomBoundingButton";
             this.CalcGeomBoundingButton.UseVisualStyleBackColor = true;
             this.CalcGeomBoundingButton.Click += new System.EventHandler(this.CalcGeomBoundingButton_Click);
+            // 
+            // GeomBoundingEditor
+            // 
+            resources.ApplyResources(this.GeomBoundingEditor, "GeomBoundingEditor");
+            this.tableLayoutPanel2.SetColumnSpan(this.GeomBoundingEditor, 2);
+            this.GeomBoundingEditor.Name = "GeomBoundingEditor";
             // 
             // collapsiblePanel2
             // 
@@ -244,7 +245,7 @@
             this.collapsiblePanel3.DisplayStyle = LDDModder.BrickEditor.UI.Controls.CollapsiblePanel.HeaderDisplayStyle.Button;
             resources.ApplyResources(this.collapsiblePanel3, "collapsiblePanel3");
             this.collapsiblePanel3.Name = "collapsiblePanel3";
-            this.collapsiblePanel3.PanelHeight = 91;
+            this.collapsiblePanel3.PanelHeight = 104;
             // 
             // tableLayoutPanel3
             // 
@@ -253,6 +254,7 @@
             this.tableLayoutPanel3.Controls.Add(this.LabelCenterOfMass, 0, 1);
             this.tableLayoutPanel3.Controls.Add(this.InertiaTensorTextBox, 1, 0);
             this.tableLayoutPanel3.Controls.Add(this.LabelMass, 0, 2);
+            this.tableLayoutPanel3.Controls.Add(this.CenterOfMassEditor, 1, 1);
             this.tableLayoutPanel3.Controls.Add(this.MassNumberBox, 1, 2);
             this.tableLayoutPanel3.Controls.Add(this.LabelFriction, 0, 3);
             this.tableLayoutPanel3.Controls.Add(this.FrictionCheckBox, 1, 3);
@@ -278,6 +280,11 @@
             resources.ApplyResources(this.LabelMass, "LabelMass");
             this.LabelMass.Name = "LabelMass";
             // 
+            // CenterOfMassEditor
+            // 
+            resources.ApplyResources(this.CenterOfMassEditor, "CenterOfMassEditor");
+            this.CenterOfMassEditor.Name = "CenterOfMassEditor";
+            // 
             // MassNumberBox
             // 
             resources.ApplyResources(this.MassNumberBox, "MassNumberBox");
@@ -294,27 +301,21 @@
             this.FrictionCheckBox.Name = "FrictionCheckBox";
             this.FrictionCheckBox.UseVisualStyleBackColor = true;
             // 
-            // collapsiblePanel4
+            // flowLayoutPanel1
             // 
-            // 
-            // collapsiblePanel4.ContentPanel
-            // 
-            resources.ApplyResources(this.collapsiblePanel4.ContentPanel, "collapsiblePanel4.ContentPanel");
-            this.collapsiblePanel4.ContentPanel.Name = "ContentPanel";
-            this.collapsiblePanel4.DisplayStyle = LDDModder.BrickEditor.UI.Controls.CollapsiblePanel.HeaderDisplayStyle.Button;
-            resources.ApplyResources(this.collapsiblePanel4, "collapsiblePanel4");
-            this.collapsiblePanel4.Name = "collapsiblePanel4";
-            this.collapsiblePanel4.PanelHeight = 30;
+            resources.ApplyResources(this.flowLayoutPanel1, "flowLayoutPanel1");
+            this.flowLayoutPanel1.Controls.Add(this.collapsiblePanel2);
+            this.flowLayoutPanel1.Controls.Add(this.collapsiblePanel3);
+            this.flowLayoutPanel1.Controls.Add(this.collapsiblePanel1);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             // 
             // PartPropertiesPanel
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.collapsiblePanel4);
-            this.Controls.Add(this.collapsiblePanel3);
-            this.Controls.Add(this.collapsiblePanel1);
-            this.Controls.Add(this.collapsiblePanel2);
+            this.Controls.Add(this.flowLayoutPanel1);
             this.Name = "PartPropertiesPanel";
+            this.SizeChanged += new System.EventHandler(this.PartPropertiesPanel_SizeChanged);
             this.collapsiblePanel1.ContentPanel.ResumeLayout(false);
             this.collapsiblePanel1.ContentPanel.PerformLayout();
             this.collapsiblePanel1.ResumeLayout(false);
@@ -333,7 +334,7 @@
             this.collapsiblePanel3.PerformLayout();
             this.tableLayoutPanel3.ResumeLayout(false);
             this.tableLayoutPanel3.PerformLayout();
-            this.collapsiblePanel4.ResumeLayout(false);
+            this.flowLayoutPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -359,7 +360,6 @@
         private Controls.CollapsiblePanel collapsiblePanel1;
         private Controls.CollapsiblePanel collapsiblePanel2;
         private Controls.CollapsiblePanel collapsiblePanel3;
-        private Controls.CollapsiblePanel collapsiblePanel4;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
         private System.Windows.Forms.Label LabelInertiaTensor;
         private System.Windows.Forms.Label LabelCenterOfMass;
@@ -370,5 +370,7 @@
         private System.Windows.Forms.CheckBox FrictionCheckBox;
         private System.Windows.Forms.Label LabelAliases;
         private Controls.BrowseTextBox AliasesButtonBox;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+        private Editors.VectorEditor CenterOfMassEditor;
     }
 }

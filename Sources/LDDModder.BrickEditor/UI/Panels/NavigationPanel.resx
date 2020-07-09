@@ -242,6 +242,12 @@
   <data name="toolStripSeparator1.Size" type="System.Drawing.Size, System.Drawing">
     <value>176, 6</value>
   </data>
+  <data name="ContextMenu_Duplicate.Size" type="System.Drawing.Size, System.Drawing">
+    <value>179, 22</value>
+  </data>
+  <data name="ContextMenu_Duplicate.Text" xml:space="preserve">
+    <value>Duplicate</value>
+  </data>
   <data name="ContextMenu_Rename.Size" type="System.Drawing.Size, System.Drawing">
     <value>179, 22</value>
   </data>
@@ -255,7 +261,7 @@
     <value>Delete</value>
   </data>
   <data name="ElementsContextMenu.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 142</value>
+    <value>180, 164</value>
   </data>
   <data name="&gt;&gt;ElementsContextMenu.Name" xml:space="preserve">
     <value>ElementsContextMenu</value>
@@ -297,34 +303,34 @@
   <data name="tableLayoutPanel1.ColumnCount" type="System.Int32, mscorlib">
     <value>1</value>
   </data>
-  <data name="label1.AutoSize" type="System.Boolean, mscorlib">
+  <data name="ViewModeLabel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
-  <data name="label1.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="ViewModeLabel.Location" type="System.Drawing.Point, System.Drawing">
     <value>3, 3</value>
   </data>
-  <data name="label1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+  <data name="ViewModeLabel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>3, 3, 3, 3</value>
   </data>
-  <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>35, 13</value>
+  <data name="ViewModeLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>33, 13</value>
   </data>
-  <data name="label1.TabIndex" type="System.Int32, mscorlib">
+  <data name="ViewModeLabel.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
   </data>
-  <data name="label1.Text" xml:space="preserve">
-    <value>label1</value>
+  <data name="ViewModeLabel.Text" xml:space="preserve">
+    <value>Current view:</value>
   </data>
-  <data name="&gt;&gt;label1.Name" xml:space="preserve">
-    <value>label1</value>
+  <data name="&gt;&gt;ViewModeLabel.Name" xml:space="preserve">
+    <value>ViewModeLabel</value>
   </data>
-  <data name="&gt;&gt;label1.Type" xml:space="preserve">
+  <data name="&gt;&gt;ViewModeLabel.Type" xml:space="preserve">
     <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;label1.Parent" xml:space="preserve">
+  <data name="&gt;&gt;ViewModeLabel.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
   </data>
-  <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;ViewModeLabel.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
   <data name="ViewModeComboBox.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
@@ -379,13 +385,13 @@
     <value>1</value>
   </data>
   <data name="tableLayoutPanel1.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="label1" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="ProjectTreeView" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="ViewModeComboBox" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,50" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0,Percent,50" /&gt;&lt;/TableLayoutSettings&gt;</value>
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="ViewModeLabel" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="ProjectTreeView" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="ViewModeComboBox" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,50" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0,Percent,50" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <metadata name="LocalizedStrings.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>263, 22</value>
   </metadata>
   <data name="ViewModeAll.Text" xml:space="preserve">
-    <value>All</value>
+    <value>Project Tree</value>
   </data>
   <data name="ViewModeBones.Text" xml:space="preserve">
     <value>Bones</value>
@@ -537,6 +543,12 @@
   <data name="&gt;&gt;toolStripSeparator1.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;ContextMenu_Duplicate.Name" xml:space="preserve">
+    <value>ContextMenu_Duplicate</value>
+  </data>
+  <data name="&gt;&gt;ContextMenu_Duplicate.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;ContextMenu_Rename.Name" xml:space="preserve">
     <value>ContextMenu_Rename</value>
   </data>
@@ -559,42 +571,42 @@
     <value>LocalizedStrings</value>
   </data>
   <data name="&gt;&gt;LocalizedStrings.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableStringList, LDDModder.BrickEditor, Version=1.0.0.19162, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableStringList, Brick Studio, Version=1.0.0.19048, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;ViewModeAll.Name" xml:space="preserve">
     <value>ViewModeAll</value>
   </data>
   <data name="&gt;&gt;ViewModeAll.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, LDDModder.BrickEditor, Version=1.0.0.19162, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.0.19048, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;ViewModeBones.Name" xml:space="preserve">
     <value>ViewModeBones</value>
   </data>
   <data name="&gt;&gt;ViewModeBones.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, LDDModder.BrickEditor, Version=1.0.0.19162, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.0.19048, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;ViewModeCollisions.Name" xml:space="preserve">
     <value>ViewModeCollisions</value>
   </data>
   <data name="&gt;&gt;ViewModeCollisions.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, LDDModder.BrickEditor, Version=1.0.0.19162, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.0.19048, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;ViewModeConnections.Name" xml:space="preserve">
     <value>ViewModeConnections</value>
   </data>
   <data name="&gt;&gt;ViewModeConnections.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, LDDModder.BrickEditor, Version=1.0.0.19162, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.0.19048, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;ViewModeSurfaces.Name" xml:space="preserve">
     <value>ViewModeSurfaces</value>
   </data>
   <data name="&gt;&gt;ViewModeSurfaces.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, LDDModder.BrickEditor, Version=1.0.0.19162, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.0.19048, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>NavigationPanel</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Panels.ProjectDocumentPanel, LDDModder.BrickEditor, Version=1.0.0.19162, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Panels.ProjectDocumentPanel, Brick Studio, Version=1.0.0.19048, Culture=neutral, PublicKeyToken=null</value>
   </data>
 </root>

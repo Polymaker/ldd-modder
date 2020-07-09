@@ -257,6 +257,8 @@
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.tableLayoutPanel3);
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "AppSettingsWindow";
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();

@@ -60,6 +60,15 @@ namespace LDDModder.LDD.Parts
             ShaderDataGenerator.ComputeEdgeOutlines(AllMeshes.SelectMany(x => x.Triangles));
         }
 
+        public void ClearEdgeOutlines()
+        {
+            foreach (var tri in AllMeshes.SelectMany(x => x.Triangles))
+            {
+                if (tri.Indices[0].RoundEdgeData != null)
+                    tri.Indices[0].RoundEdgeData.Reset();
+            }
+        }
+
         #endregion
 
         public BoundingBox CalculateBoundingBox()
@@ -190,6 +199,17 @@ namespace LDDModder.LDD.Parts
 
             foreach (var surface in Surfaces)
                 surface.Mesh.Save(Path.Combine(targetPath, surface.GetFileName()));
+        }
+
+        public void SavePrimitive(string targetDirectory)
+        {
+            Primitive.Save(Path.Combine(targetDirectory, $"{PartID}.xml"));
+        }
+
+        public void SaveMeshes(string targetDirectory)
+        {
+            foreach (var surface in Surfaces)
+                surface.Mesh.Save(Path.Combine(targetDirectory, surface.GetFileName()));
         }
 
         #endregion

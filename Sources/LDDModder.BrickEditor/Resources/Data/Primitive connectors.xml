@@ -1,6 +1,6 @@
 <Connectors>
 	<Axels>
-		<Connector type="Axel" subtype="2" gender="female" description="Technic hole Ø8mm" connectswith="3,19,5" />
+		<Connector type="Axel" subtype="2" gender="female" description="Technic hole Ø4.8mm" connectswith="3,19,5" />
 		
 		<!-- thick pin walls that cannot fit a bar inside -->
 		<Connector type="Axel" subtype="3" gender="male" description="Technic pin" connectswith="2" />

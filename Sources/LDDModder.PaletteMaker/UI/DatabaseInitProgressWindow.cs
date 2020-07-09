@@ -19,6 +19,8 @@ namespace LDDModder.PaletteMaker.UI
     {
         private Task InitUpdateTask;
         private CancellationTokenSource CTS;
+        private int TotalSteps;
+        private int CurrentStep;
 
         public DatabaseInitProgressWindow()
         {
@@ -79,7 +81,8 @@ namespace LDDModder.PaletteMaker.UI
             try
             {
                 DatabaseInitializer.InitializeOrUpdateDatabase(databasePath,
-                    DatabaseInitializer.InitializationStep.RebrickableSetParts, CTS.Token, this);
+                    DatabaseInitializer.InitializationStep.LddPartsAndElements |
+                    DatabaseInitializer.InitializationStep.RebrickableLddMappings , CTS.Token, this);
             }
             catch (Exception ex)
             {
@@ -94,7 +97,7 @@ namespace LDDModder.PaletteMaker.UI
             if (InvokeRequired)
                 Invoke((Action)(() => UpdateCurrentStep(stepName)));
             else
-                InitializationStepLabel.Text = stepName;
+                InitializationStepLabel.Text = $"{stepName} ({CurrentStep}/{TotalSteps})";
         }
 
         private void UpdateCurrentStatus(string statusText)
@@ -153,8 +156,15 @@ namespace LDDModder.PaletteMaker.UI
             }
         }
 
+        public void OnInitImportTask(int totalSteps)
+        {
+            TotalSteps = totalSteps;
+            CurrentStep = 0;
+        }
+
         public void OnBeginStep(string stepName)
         {
+            CurrentStep++;
             if (CurrentProgressTotal > 0)
                 UpdateCurrentProgress(CurrentProgress, CurrentProgressTotal);
             UpdateCurrentStep(stepName);
@@ -184,7 +194,7 @@ namespace LDDModder.PaletteMaker.UI
                 CurrentProgressTotal = totalRecords;
             }
 
-            if (CurrentProgress == CurrentProgressTotal)
+            if (CurrentProgress == CurrentProgressTotal)//force refresh when finished
                 UpdateCurrentProgress(CurrentProgress, CurrentProgressTotal);
         }
 

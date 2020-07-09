@@ -22,7 +22,7 @@ namespace LDDModder.PaletteMaker.Generation
 
         public LddPart LddPart { get; set; }
 
-        public string LddPartID => LddPart?.DesignID;
+        public string LddPartID => LddPart?.DesignID ?? string.Empty;
 
         public LddElement LddElement { get; set; }
 

@@ -132,8 +132,8 @@
     <Compile Include="LDD\Files\GFileWriter.cs" />
     <Compile Include="LDD\Files\LifFile.cs" />
     <Compile Include="LDD\Files\LocalizationFile.cs" />
-    <Compile Include="LDD\Files\MeshStructures\STUD_2DFIELD_IDX.cs" />
-    <Compile Include="LDD\Files\MeshStructures\STUD_2DFIELD_REF.cs" />
+    <Compile Include="LDD\Files\MeshStructures\CUSTOM2DFIELD_INDEX.cs" />
+    <Compile Include="LDD\Files\MeshStructures\CUSTOM2DFIELD_REFERENCE.cs" />
     <Compile Include="LDD\Files\MeshStructures\MESH_BONE_MAPPING.cs" />
     <Compile Include="LDD\Files\MeshStructures\MESH_BONE_WEIGHT.cs" />
     <Compile Include="LDD\Files\MeshStructures\MESH_CULLING.cs" />
@@ -176,6 +176,7 @@
     <Compile Include="LDD\Primitives\Connectors\AxelConnector.cs" />
     <Compile Include="LDD\Primitives\Connectors\BallConnector.cs" />
     <Compile Include="LDD\Primitives\Connectors\Connector.cs" />
+    <Compile Include="LDD\Primitives\Connectors\ConnectorInfo.cs" />
     <Compile Include="LDD\Primitives\Connectors\ConnectorType.cs" />
     <Compile Include="LDD\Primitives\Connectors\Custom2DFieldConnector.cs" />
     <Compile Include="LDD\Primitives\Connectors\Custom2DFieldNode.cs" />
