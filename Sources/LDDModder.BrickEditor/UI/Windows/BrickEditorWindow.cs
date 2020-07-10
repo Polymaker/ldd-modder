@@ -79,7 +79,7 @@ namespace LDDModder.BrickEditor.UI.Windows
         {
             SettingsManager.Initialize();
 
-            if (!LDDEnvironment.Current.IsValidInstall)
+            if (LDDEnvironment.Current == null || !LDDEnvironment.Current.IsValidInstall)
             {
                 if (!LDDEnvironment.IsInstalled)
                     MessageBox.Show(Messages.LddInstallNotFound, Messages.Caption_StartupValidations, MessageBoxButtons.OK);

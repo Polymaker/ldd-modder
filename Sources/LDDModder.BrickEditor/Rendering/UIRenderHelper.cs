@@ -44,6 +44,7 @@ namespace LDDModder.BrickEditor.Rendering
 
         public static void InitializeResources()
         {
+
             NormalFont = new QFont("C:\\Windows\\Fonts\\segoeui.ttf", 10,
                 new QFontBuilderConfiguration(true));
 
