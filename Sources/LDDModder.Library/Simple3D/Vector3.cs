@@ -368,15 +368,40 @@ namespace LDDModder.Simple3D
 
         public static Vector3 GetPerpendicular(Vector3 v1, Vector3 v2, Vector3 point)
         {
-            var dir1 = (v2 - v1).Normalized();
-            var dir2 = (point - v1).Normalized();
-            var c = Cross(dir1, dir2).Normalized();
-            var perp = Cross(c, dir1).Normalized();
-            var d1 = Distance(point, v1 + perp);
-            var d2 = Distance(point, v1 - perp);
-            if (d2 < d1)
-                perp *= -1;
-            return perp;
+            var d = (v2 - v1).Normalized();
+            var v = point - v1;
+            var t = Dot(v, d);
+            var P = v1 + (t * d);
+            return (point - P).Normalized();
+
+            //var dir1 = (v2 - v1).Normalized();
+            //var dir2 = (point - v1).Normalized();
+            //var c = Cross(dir1, dir2).Normalized();
+            //var perp = Cross(c, dir1).Normalized();
+            //var d1 = Distance(point, v1 + perp);
+            //var d2 = Distance(point, v1 - perp);
+            //if (d2 < d1)
+            //    perp *= -1;
+            //return perp;
+        }
+
+        public static Vector3 GetPerpendicular(Vector3 v1, Vector3 v2, Vector3 point, out float distance)
+        {
+            var d = (v2 - v1).Normalized();
+            var v = point - v1;
+            var t = Dot(v, d);
+            var P = v1 + (t * d);
+            distance = Distance(P, point);
+            return (point - P).Normalized();
+        }
+
+        public static float GetPerpendicularDistance(Vector3 v1, Vector3 v2, Vector3 point)
+        {
+            var d = (v2 - v1).Normalized();
+            var v = point - v1;
+            var t = Dot(v, d);
+            var P = v1 + (t * d);
+            return Distance(P, point);
         }
 
         public static Vector3 GetPerpIntersection(Vector3 v1, Vector3 v2, Vector3 point)
