@@ -23,14 +23,15 @@ namespace LDDModder.BrickEditor.UI.Windows
                 File_CreateFromBrickMenu.Enabled = LDDEnvironment.Current?.IsValidInstall ?? false;
                 ExportBrickMenuItem.Enabled = LDDEnvironment.Current?.IsValidInstall ?? false;
 
-                Edit_GenerateOutlines.Checked = SettingsManager.Current.BuildSettings.GenerateOutlines;
-
+                
                 File_SaveMenu.Enabled = ProjectManager.IsProjectOpen;
                 File_SaveAsMenu.Enabled = ProjectManager.IsProjectOpen;
                 File_CloseProjectMenu.Enabled = ProjectManager.IsProjectOpen;
                 Edit_ImportMeshMenu.Enabled = ProjectManager.IsProjectOpen;
                 Edit_ValidatePartMenu.Enabled = ProjectManager.IsProjectOpen;
                 Edit_GenerateFilesMenu.Enabled = ProjectManager.IsProjectOpen;
+                Edit_GenerateOutlines.Checked = SettingsManager.Current.BuildSettings.GenerateOutlines;
+                //Edit_GenerateOutlines.Enabled = ProjectManager.IsProjectOpen;
             }
 
             UpdateUndoRedoMenus();

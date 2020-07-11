@@ -205,7 +205,7 @@
     <value>BoundingEditor</value>
   </data>
   <data name="&gt;&gt;BoundingEditor.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.BoundingBoxEditor, Brick Studio, Version=1.0.3.23293, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.BoundingBoxEditor, Brick Studio, Version=1.0.3.26513, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;BoundingEditor.Parent" xml:space="preserve">
     <value>tableLayoutPanel2</value>
@@ -289,7 +289,7 @@
     <value>GeomBoundingEditor</value>
   </data>
   <data name="&gt;&gt;GeomBoundingEditor.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.BoundingBoxEditor, Brick Studio, Version=1.0.3.23293, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.BoundingBoxEditor, Brick Studio, Version=1.0.3.26513, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;GeomBoundingEditor.Parent" xml:space="preserve">
     <value>tableLayoutPanel2</value>
@@ -343,7 +343,7 @@
     <value>collapsiblePanel1.ContentPanel</value>
   </data>
   <data name="&gt;&gt;collapsiblePanel1.ContentPanel.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.CollapsiblePanel+CollapsiblePanelContainer, Brick Studio, Version=1.0.3.23293, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.CollapsiblePanel+CollapsiblePanelContainer, Brick Studio, Version=1.0.3.26513, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;collapsiblePanel1.ContentPanel.Parent" xml:space="preserve">
     <value>collapsiblePanel1</value>
@@ -367,7 +367,7 @@
     <value>collapsiblePanel1</value>
   </data>
   <data name="&gt;&gt;collapsiblePanel1.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.CollapsiblePanel, Brick Studio, Version=1.0.3.23293, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.CollapsiblePanel, Brick Studio, Version=1.0.3.26513, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;collapsiblePanel1.Parent" xml:space="preserve">
     <value>flowLayoutPanel1</value>
@@ -547,7 +547,7 @@
     <value>PartIDTextBox</value>
   </data>
   <data name="&gt;&gt;PartIDTextBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.3.23293, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.3.26513, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;PartIDTextBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -667,7 +667,7 @@
     <value>AliasesButtonBox</value>
   </data>
   <data name="&gt;&gt;AliasesButtonBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.BrowseTextBox, Brick Studio, Version=1.0.3.23293, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.BrowseTextBox, Brick Studio, Version=1.0.3.26513, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;AliasesButtonBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -721,7 +721,7 @@
     <value>collapsiblePanel2.ContentPanel</value>
   </data>
   <data name="&gt;&gt;collapsiblePanel2.ContentPanel.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.CollapsiblePanel+CollapsiblePanelContainer, Brick Studio, Version=1.0.3.23293, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.CollapsiblePanel+CollapsiblePanelContainer, Brick Studio, Version=1.0.3.26513, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;collapsiblePanel2.ContentPanel.Parent" xml:space="preserve">
     <value>collapsiblePanel2</value>
@@ -745,7 +745,7 @@
     <value>collapsiblePanel2</value>
   </data>
   <data name="&gt;&gt;collapsiblePanel2.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.CollapsiblePanel, Brick Studio, Version=1.0.3.23293, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.CollapsiblePanel, Brick Studio, Version=1.0.3.26513, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;collapsiblePanel2.Parent" xml:space="preserve">
     <value>flowLayoutPanel1</value>
@@ -892,7 +892,7 @@
     <value>CenterOfMassEditor</value>
   </data>
   <data name="&gt;&gt;CenterOfMassEditor.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Editors.VectorEditor, Brick Studio, Version=1.0.3.23293, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Editors.VectorEditor, Brick Studio, Version=1.0.3.26513, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;CenterOfMassEditor.Parent" xml:space="preserve">
     <value>tableLayoutPanel3</value>
@@ -913,7 +913,7 @@
     <value>MassNumberBox</value>
   </data>
   <data name="&gt;&gt;MassNumberBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.3.23293, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.3.26513, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;MassNumberBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel3</value>
@@ -1024,7 +1024,7 @@
     <value>collapsiblePanel3.ContentPanel</value>
   </data>
   <data name="&gt;&gt;collapsiblePanel3.ContentPanel.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.CollapsiblePanel+CollapsiblePanelContainer, Brick Studio, Version=1.0.3.23293, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.CollapsiblePanel+CollapsiblePanelContainer, Brick Studio, Version=1.0.3.26513, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;collapsiblePanel3.ContentPanel.Parent" xml:space="preserve">
     <value>collapsiblePanel3</value>
@@ -1048,7 +1048,7 @@
     <value>collapsiblePanel3</value>
   </data>
   <data name="&gt;&gt;collapsiblePanel3.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.CollapsiblePanel, Brick Studio, Version=1.0.3.23293, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.CollapsiblePanel, Brick Studio, Version=1.0.3.26513, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;collapsiblePanel3.Parent" xml:space="preserve">
     <value>flowLayoutPanel1</value>
@@ -1105,6 +1105,6 @@
     <value>PartPropertiesPanel</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Panels.ProjectDocumentPanel, Brick Studio, Version=1.0.3.23293, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Panels.ProjectDocumentPanel, Brick Studio, Version=1.0.3.26513, Culture=neutral, PublicKeyToken=null</value>
   </data>
 </root>

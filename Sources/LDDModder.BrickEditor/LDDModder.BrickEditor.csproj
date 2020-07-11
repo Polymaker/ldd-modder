@@ -233,6 +233,12 @@
     <Compile Include="UI\VS2015DockPaneStrip.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="UI\Windows\BatchBuildWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Windows\BatchBuildWindow.Designer.cs">
+      <DependentUpon>BatchBuildWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\Windows\ErrorMessageBox.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -481,6 +487,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Windows\AppSettingsWindow.fr.resx">
       <DependentUpon>AppSettingsWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Windows\BatchBuildWindow.resx">
+      <DependentUpon>BatchBuildWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Windows\BrickEditorWindow.fr.resx">
       <DependentUpon>BrickEditorWindow.cs</DependentUpon>

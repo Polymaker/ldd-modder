@@ -288,6 +288,7 @@
             // MassNumberBox
             // 
             resources.ApplyResources(this.MassNumberBox, "MassNumberBox");
+            this.MassNumberBox.MaximumValue = 99999D;
             this.MassNumberBox.Name = "MassNumberBox";
             // 
             // LabelFriction

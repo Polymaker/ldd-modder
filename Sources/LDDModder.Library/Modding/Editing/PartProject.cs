@@ -157,9 +157,13 @@ namespace LDDModder.Modding.Editing
         [XmlIgnore]
         public bool IsLoading { get; internal set; }
 
+        #region Events
+
         public event EventHandler<ElementValueChangedEventArgs> ElementPropertyChanged;
 
         public event EventHandler<ElementCollectionChangedEventArgs> ElementCollectionChanged;
+
+        #endregion
 
         public PartProject()
         {
@@ -298,6 +302,11 @@ namespace LDDModder.Modding.Editing
             Bounding = lddPart.Primitive.Bounding;
             if (lddPart.Primitive.DefaultOrientation != null)
                 DefaultOrientation = ItemTransform.FromLDD(lddPart.Primitive.DefaultOrientation);
+
+            if (lddPart.Primitive.ExtraElements.Any())
+            {
+
+            }
         }
 
         #endregion

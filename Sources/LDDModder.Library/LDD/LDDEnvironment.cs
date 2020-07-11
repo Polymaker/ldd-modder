@@ -1,4 +1,5 @@
 ﻿using LDDModder.Utilities;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -129,18 +130,58 @@ namespace LDDModder.LDD
 
         public static string FindInstallFolder()
         {
+            bool ValidateInstall(string path)
+            {
+                return File.Exists(Path.Combine(path, EXE_NAME));
+            }
+
+            if (FindInstallByRegistry(out string lddInstallPath) && 
+                ValidateInstall(lddInstallPath))
+                return lddInstallPath;
+
             string programFilesPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
             programFilesPath = programFilesPath.Substring(programFilesPath.IndexOf(Path.VolumeSeparatorChar) + 2);
 
             foreach (string volume in Environment.GetLogicalDrives())
             {
                 string installPath = Path.Combine(volume + programFilesPath, APP_DIR);
-                string exePath = Path.Combine(installPath, EXE_NAME);
-                if (File.Exists(exePath))
+                if (ValidateInstall(installPath))
+                    return installPath;
+
+                installPath = Path.Combine(volume, APP_DIR);
+                if (ValidateInstall(installPath))
                     return installPath;
             }
 
             return string.Empty;
+        }
+
+        private static bool FindInstallByRegistry(out string lddInstallPath)
+        {
+            lddInstallPath = string.Empty;
+
+            try
+            {
+                using (var hklm = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32))
+                {
+
+                    var installKey = hklm.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Uninstall\New LEGO Digital Designer");
+
+                    if (installKey != null)
+                    {
+                        string uninstallPath = installKey.GetValue("UninstallString", string.Empty) as string;
+                        if (!string.IsNullOrEmpty(uninstallPath))
+                        {
+                            lddInstallPath = Path.GetDirectoryName(uninstallPath);
+                            return true;
+                        }
+                        installKey.Dispose();
+                    }
+                }
+            }
+            catch { }
+
+            return false;
         }
 
         public static string FindAppDataFolder()

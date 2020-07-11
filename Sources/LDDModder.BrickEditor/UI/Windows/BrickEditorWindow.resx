@@ -159,111 +159,6 @@
   <metadata name="menuStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>665, 17</value>
   </metadata>
-  <data name="fileToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>37, 23</value>
-  </data>
-  <data name="fileToolStripMenuItem.Text" xml:space="preserve">
-    <value>File</value>
-  </data>
-  <data name="EditMenu_Undo.ShortcutKeyDisplayString" xml:space="preserve">
-    <value>Ctrl+Z</value>
-  </data>
-  <data name="EditMenu_Undo.Size" type="System.Drawing.Size, System.Drawing">
-    <value>191, 22</value>
-  </data>
-  <data name="EditMenu_Undo.Text" xml:space="preserve">
-    <value>Undo</value>
-  </data>
-  <data name="EditMenu_Redo.ShortcutKeyDisplayString" xml:space="preserve">
-    <value>Ctrl+Y</value>
-  </data>
-  <data name="EditMenu_Redo.Size" type="System.Drawing.Size, System.Drawing">
-    <value>191, 22</value>
-  </data>
-  <data name="EditMenu_Redo.Text" xml:space="preserve">
-    <value>Redo</value>
-  </data>
-  <data name="toolStripSeparator6.Size" type="System.Drawing.Size, System.Drawing">
-    <value>188, 6</value>
-  </data>
-  <data name="Edit_ImportMeshMenu.Size" type="System.Drawing.Size, System.Drawing">
-    <value>191, 22</value>
-  </data>
-  <data name="Edit_ImportMeshMenu.Text" xml:space="preserve">
-    <value>Import 3D Model...</value>
-  </data>
-  <data name="toolStripSeparator4.Size" type="System.Drawing.Size, System.Drawing">
-    <value>188, 6</value>
-  </data>
-  <data name="Edit_ValidatePartMenu.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
-    <value>F6</value>
-  </data>
-  <data name="Edit_ValidatePartMenu.Size" type="System.Drawing.Size, System.Drawing">
-    <value>191, 22</value>
-  </data>
-  <data name="Edit_ValidatePartMenu.Text" xml:space="preserve">
-    <value>Validate Part</value>
-  </data>
-  <data name="Edit_GenerateFilesMenu.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
-    <value>F5</value>
-  </data>
-  <data name="Edit_GenerateFilesMenu.Size" type="System.Drawing.Size, System.Drawing">
-    <value>191, 22</value>
-  </data>
-  <data name="Edit_GenerateFilesMenu.Text" xml:space="preserve">
-    <value>Generate LDD Files</value>
-  </data>
-  <data name="Edit_GenerateOutlines.Size" type="System.Drawing.Size, System.Drawing">
-    <value>191, 22</value>
-  </data>
-  <data name="Edit_GenerateOutlines.Text" xml:space="preserve">
-    <value>Generate Outlines</value>
-  </data>
-  <data name="editToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>39, 23</value>
-  </data>
-  <data name="editToolStripMenuItem.Text" xml:space="preserve">
-    <value>Edit</value>
-  </data>
-  <data name="ToolsMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>46, 23</value>
-  </data>
-  <data name="ToolsMenuItem.Text" xml:space="preserve">
-    <value>Tools</value>
-  </data>
-  <data name="SelectedBuildLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>85, 20</value>
-  </data>
-  <data name="SelectedBuildLabel.Text" xml:space="preserve">
-    <value>Output files in:</value>
-  </data>
-  <data name="BuildConfigComboBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>120, 23</value>
-  </data>
-  <data name="menuStrip1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
-  </data>
-  <data name="menuStrip1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>984, 27</value>
-  </data>
-  <data name="menuStrip1.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
-  </data>
-  <data name="menuStrip1.Text" xml:space="preserve">
-    <value>menuStrip1</value>
-  </data>
-  <data name="&gt;&gt;menuStrip1.Name" xml:space="preserve">
-    <value>menuStrip1</value>
-  </data>
-  <data name="&gt;&gt;menuStrip1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.MenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;menuStrip1.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;menuStrip1.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
   <data name="File_NewProjectMenu.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
     <value>Ctrl+N</value>
   </data>
@@ -336,6 +231,78 @@
   <data name="File_CloseProjectMenu.Text" xml:space="preserve">
     <value>Close Project</value>
   </data>
+  <data name="fileToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>37, 23</value>
+  </data>
+  <data name="fileToolStripMenuItem.Text" xml:space="preserve">
+    <value>File</value>
+  </data>
+  <data name="EditMenu_Undo.ShortcutKeyDisplayString" xml:space="preserve">
+    <value>Ctrl+Z</value>
+  </data>
+  <data name="EditMenu_Undo.Size" type="System.Drawing.Size, System.Drawing">
+    <value>191, 22</value>
+  </data>
+  <data name="EditMenu_Undo.Text" xml:space="preserve">
+    <value>Undo</value>
+  </data>
+  <data name="EditMenu_Redo.ShortcutKeyDisplayString" xml:space="preserve">
+    <value>Ctrl+Y</value>
+  </data>
+  <data name="EditMenu_Redo.Size" type="System.Drawing.Size, System.Drawing">
+    <value>191, 22</value>
+  </data>
+  <data name="EditMenu_Redo.Text" xml:space="preserve">
+    <value>Redo</value>
+  </data>
+  <data name="toolStripSeparator6.Size" type="System.Drawing.Size, System.Drawing">
+    <value>188, 6</value>
+  </data>
+  <data name="Edit_ImportMeshMenu.Size" type="System.Drawing.Size, System.Drawing">
+    <value>191, 22</value>
+  </data>
+  <data name="Edit_ImportMeshMenu.Text" xml:space="preserve">
+    <value>Import 3D Model...</value>
+  </data>
+  <data name="toolStripSeparator4.Size" type="System.Drawing.Size, System.Drawing">
+    <value>188, 6</value>
+  </data>
+  <data name="Edit_ValidatePartMenu.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>F6</value>
+  </data>
+  <data name="Edit_ValidatePartMenu.Size" type="System.Drawing.Size, System.Drawing">
+    <value>191, 22</value>
+  </data>
+  <data name="Edit_ValidatePartMenu.Text" xml:space="preserve">
+    <value>Validate Part</value>
+  </data>
+  <data name="Edit_GenerateFilesMenu.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>F5</value>
+  </data>
+  <data name="Edit_GenerateFilesMenu.Size" type="System.Drawing.Size, System.Drawing">
+    <value>191, 22</value>
+  </data>
+  <data name="Edit_GenerateFilesMenu.Text" xml:space="preserve">
+    <value>Generate LDD Files</value>
+  </data>
+  <data name="Edit_GenerateOutlines.Size" type="System.Drawing.Size, System.Drawing">
+    <value>191, 22</value>
+  </data>
+  <data name="Edit_GenerateOutlines.Text" xml:space="preserve">
+    <value>Generate Outlines</value>
+  </data>
+  <data name="Edit_BatchBuild.Size" type="System.Drawing.Size, System.Drawing">
+    <value>191, 22</value>
+  </data>
+  <data name="Edit_BatchBuild.Text" xml:space="preserve">
+    <value>Batch Build...</value>
+  </data>
+  <data name="editToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>39, 23</value>
+  </data>
+  <data name="editToolStripMenuItem.Text" xml:space="preserve">
+    <value>Edit</value>
+  </data>
   <data name="ExportBrickMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>183, 22</value>
   </data>
@@ -359,6 +326,45 @@
   </data>
   <data name="Tools_SettingsMenu.Text" xml:space="preserve">
     <value>Settings</value>
+  </data>
+  <data name="ToolsMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>46, 23</value>
+  </data>
+  <data name="ToolsMenuItem.Text" xml:space="preserve">
+    <value>Tools</value>
+  </data>
+  <data name="SelectedBuildLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>85, 20</value>
+  </data>
+  <data name="SelectedBuildLabel.Text" xml:space="preserve">
+    <value>Output files in:</value>
+  </data>
+  <data name="BuildConfigComboBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>120, 23</value>
+  </data>
+  <data name="menuStrip1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="menuStrip1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>984, 27</value>
+  </data>
+  <data name="menuStrip1.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="menuStrip1.Text" xml:space="preserve">
+    <value>menuStrip1</value>
+  </data>
+  <data name="&gt;&gt;menuStrip1.Name" xml:space="preserve">
+    <value>menuStrip1</value>
+  </data>
+  <data name="&gt;&gt;menuStrip1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.MenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;menuStrip1.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;menuStrip1.ZOrder" xml:space="preserve">
+    <value>1</value>
   </data>
   <metadata name="AutoSaveTimer.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>780, 17</value>
@@ -386,6 +392,9 @@
   </data>
   <data name="$this.Font" type="System.Drawing.Font, System.Drawing">
     <value>Segoe UI, 8.25pt</value>
+  </data>
+  <data name="$this.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>LDD Brick Studio</value>
@@ -522,6 +531,12 @@
   <data name="&gt;&gt;Edit_GenerateFilesMenu.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;Edit_GenerateOutlines.Name" xml:space="preserve">
+    <value>Edit_GenerateOutlines</value>
+  </data>
+  <data name="&gt;&gt;Edit_GenerateOutlines.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;ToolsMenuItem.Name" xml:space="preserve">
     <value>ToolsMenuItem</value>
   </data>
@@ -580,30 +595,30 @@
     <value>localizableStringList1</value>
   </data>
   <data name="&gt;&gt;localizableStringList1.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableStringList, Brick Studio, Version=1.0.3.30549, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableStringList, Brick Studio, Version=1.0.3.21818, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;StartLddText.Name" xml:space="preserve">
     <value>StartLddText</value>
   </data>
   <data name="&gt;&gt;StartLddText.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.3.30549, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.3.21818, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;RestartLddText.Name" xml:space="preserve">
     <value>RestartLddText</value>
   </data>
   <data name="&gt;&gt;RestartLddText.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.3.30549, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.3.21818, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;WindowTitle.Name" xml:space="preserve">
     <value>WindowTitle</value>
   </data>
   <data name="&gt;&gt;WindowTitle.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.3.30549, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.3.21818, Culture=neutral, PublicKeyToken=null</value>
   </data>
-  <data name="&gt;&gt;Edit_GenerateOutlines.Name" xml:space="preserve">
-    <value>Edit_GenerateOutlines</value>
+  <data name="&gt;&gt;Edit_BatchBuild.Name" xml:space="preserve">
+    <value>Edit_BatchBuild</value>
   </data>
-  <data name="&gt;&gt;Edit_GenerateOutlines.Type" xml:space="preserve">
+  <data name="&gt;&gt;Edit_BatchBuild.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">

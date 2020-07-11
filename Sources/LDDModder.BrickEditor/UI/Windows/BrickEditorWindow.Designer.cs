@@ -54,6 +54,7 @@
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.Edit_ValidatePartMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.Edit_GenerateFilesMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.Edit_GenerateOutlines = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ExportBrickMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
@@ -64,10 +65,10 @@
             this.BuildConfigComboBox = new System.Windows.Forms.ToolStripComboBox();
             this.AutoSaveTimer = new System.Windows.Forms.Timer(this.components);
             this.localizableStringList1 = new LDDModder.BrickEditor.Localization.LocalizableStringList(this.components);
-            this.StartLddText = new LDDModder.BrickEditor.Localization.LocalizableString();
-            this.RestartLddText = new LDDModder.BrickEditor.Localization.LocalizableString();
-            this.WindowTitle = new LDDModder.BrickEditor.Localization.LocalizableString();
-            this.Edit_GenerateOutlines = new System.Windows.Forms.ToolStripMenuItem();
+            this.StartLddText = ((LDDModder.BrickEditor.Localization.LocalizableString)(new LDDModder.BrickEditor.Localization.LocalizableString()));
+            this.RestartLddText = ((LDDModder.BrickEditor.Localization.LocalizableString)(new LDDModder.BrickEditor.Localization.LocalizableString()));
+            this.WindowTitle = ((LDDModder.BrickEditor.Localization.LocalizableString)(new LDDModder.BrickEditor.Localization.LocalizableString()));
+            this.Edit_BatchBuild = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -178,7 +179,8 @@
             this.toolStripSeparator4,
             this.Edit_ValidatePartMenu,
             this.Edit_GenerateFilesMenu,
-            this.Edit_GenerateOutlines});
+            this.Edit_GenerateOutlines,
+            this.Edit_BatchBuild});
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
             resources.ApplyResources(this.editToolStripMenuItem, "editToolStripMenuItem");
             // 
@@ -221,6 +223,15 @@
             this.Edit_GenerateFilesMenu.Name = "Edit_GenerateFilesMenu";
             resources.ApplyResources(this.Edit_GenerateFilesMenu, "Edit_GenerateFilesMenu");
             this.Edit_GenerateFilesMenu.Click += new System.EventHandler(this.Edit_GenerateFilesMenu_Click);
+            // 
+            // Edit_GenerateOutlines
+            // 
+            this.Edit_GenerateOutlines.Checked = true;
+            this.Edit_GenerateOutlines.CheckOnClick = true;
+            this.Edit_GenerateOutlines.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.Edit_GenerateOutlines.Name = "Edit_GenerateOutlines";
+            resources.ApplyResources(this.Edit_GenerateOutlines, "Edit_GenerateOutlines");
+            this.Edit_GenerateOutlines.CheckStateChanged += new System.EventHandler(this.Edit_GenerateOutlines_CheckStateChanged);
             // 
             // ToolsMenuItem
             // 
@@ -299,14 +310,10 @@
             // 
             resources.ApplyResources(this.WindowTitle, "WindowTitle");
             // 
-            // Edit_GenerateOutlines
+            // Edit_BatchBuild
             // 
-            this.Edit_GenerateOutlines.Checked = true;
-            this.Edit_GenerateOutlines.CheckOnClick = true;
-            this.Edit_GenerateOutlines.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.Edit_GenerateOutlines.Name = "Edit_GenerateOutlines";
-            resources.ApplyResources(this.Edit_GenerateOutlines, "Edit_GenerateOutlines");
-            this.Edit_GenerateOutlines.CheckStateChanged += new System.EventHandler(this.Edit_GenerateOutlines_CheckStateChanged);
+            this.Edit_BatchBuild.Name = "Edit_BatchBuild";
+            resources.ApplyResources(this.Edit_BatchBuild, "Edit_BatchBuild");
             // 
             // BrickEditorWindow
             // 
@@ -364,5 +371,6 @@
         private Localization.LocalizableString WindowTitle;
         private System.Windows.Forms.ToolStripComboBox BuildConfigComboBox;
         private System.Windows.Forms.ToolStripMenuItem Edit_GenerateOutlines;
+        private System.Windows.Forms.ToolStripMenuItem Edit_BatchBuild;
     }
 }
