@@ -7,7 +7,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using System.Xml.Serialization;
 
 namespace LDDModder.Modding.Editing
 {
@@ -15,27 +14,41 @@ namespace LDDModder.Modding.Editing
     {
         public const string NODE_NAME = "StudRef";
 
+        private string _ConnectionID;
+        private int _FieldIndex;
+        private int _Value1;
+        private int _Value2;
 
-        public string ConnectionID { get; set; }
+        public string ConnectionID
+        {
+            get => _ConnectionID;
+            set => SetPropertyValue(ref _ConnectionID, value);
+        }
 
         public int ConnectionIndex { get; set; } = -1;
 
-        [XmlIgnore]
         public PartConnection Connection => GetLinkedConnection();
 
-        [XmlAttribute]
-        public int FieldIndex { get; set; }
+        public int FieldIndex
+        {
+            get => _FieldIndex;
+            set => SetPropertyValue(ref _FieldIndex, value);
+        }
 
-        [XmlAttribute]
-        public int Value1 { get; set; }
+        public int Value1
+        {
+            get => _Value1;
+            set => SetPropertyValue(ref _Value1, value);
+        }
 
-        [XmlAttribute]
-        public int Value2 { get; set; }
+        public int Value2
+        {
+            get => _Value2;
+            set => SetPropertyValue(ref _Value2, value);
+        }
 
-        [XmlIgnore]
         public Custom2DFieldConnector Connector => GetCustom2DField();
 
-        [XmlIgnore]
         public Custom2DFieldNode FieldNode => Connector?.GetNode(FieldIndex);
 
         public StudReference()
@@ -43,13 +56,6 @@ namespace LDDModder.Modding.Editing
             ConnectionIndex = -1;
             FieldIndex = -1;
         }
-
-        //public StudReference(int fieldIndex, int value1, int value2)
-        //{
-        //    FieldIndex = fieldIndex;
-        //    Value1 = value1;
-        //    Value2 = value2;
-        //}
 
         public StudReference(int connectionIndex, int fieldIndex, int value1, int value2)
         {
@@ -61,10 +67,10 @@ namespace LDDModder.Modding.Editing
 
         public StudReference(string connectionID, int fieldIndex, int value1, int value2)
         {
-            ConnectionID = connectionID;
-            FieldIndex = fieldIndex;
-            Value1 = value1;
-            Value2 = value2;
+            _ConnectionID = connectionID;
+            _FieldIndex = fieldIndex;
+            _Value1 = value1;
+            _Value2 = value2;
         }
 
         public StudReference(Custom2DFieldReference fieldReference)
@@ -73,6 +79,11 @@ namespace LDDModder.Modding.Editing
             FieldIndex = fieldReference.FieldIndices[0].Index;
             Value1 = fieldReference.FieldIndices[0].Value2;
             Value2 = fieldReference.FieldIndices[0].Value4;
+        }
+
+        internal void SetConnectionID(string id)
+        {
+            _ConnectionID = id;
         }
 
         public PartConnection GetLinkedConnection()

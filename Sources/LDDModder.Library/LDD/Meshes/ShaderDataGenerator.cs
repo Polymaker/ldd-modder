@@ -110,9 +110,11 @@ namespace LDDModder.LDD.Meshes
 
             public Vector3 P1 { get; set; }
             public Vector3 P2 { get; set; }
-            public Vector3 FaceNormal { get; set; }
-            public Vector3 EdgeNormal { get; set; }
+            public Vector3 FaceNormal => Face.Normal;
+            public Vector3 EdgeNormal { get; private set; }
             public Vector3 PerpVec { get; set; }
+            public float Altitude { get; set; }
+
             public bool IsShared { get; set; } 
             public bool IsHard { get; set; }
             public Vector3 Direction => (P2 - P1).Normalized();
@@ -123,7 +125,7 @@ namespace LDDModder.LDD.Meshes
                 Edge = edge;
                 P1 = edge.P1.Position;
                 P2 = edge.P2.Position;
-                FaceNormal = tri.Normal;
+                //FaceNormal = tri.Normal;
                 EdgeNormal = edge.EdgeNormal;
                 IsShared = true;
             }
@@ -248,6 +250,19 @@ namespace LDDModder.LDD.Meshes
             }
         }
 
+        class ProjectedLine
+        {
+            //public TriangleWrapper Triangle { get; }
+            public Vector2 P1 { get; set; }
+            public Vector2 P2 { get; set; }
+            public Vector2 Direction => (P2 - P1).Normalized();
+            public Vector2 Perpendicular { get; set; }
+
+            public bool StartInTriangle { get; set; }
+            public bool EndInTriangle { get; set; }
+
+        }
+
         class TriangleWrapper
         {
             public Triangle Triangle { get; set; }
@@ -313,6 +328,8 @@ namespace LDDModder.LDD.Meshes
             }
         }
 
+        const float LineThickness = 0.013f;
+
         public static void ComputeEdgeOutlines(IEnumerable<Triangle> triangles, float breakAngle = 35f)
         {
             //outline thickness = 0.013 (world space)
@@ -324,6 +341,8 @@ namespace LDDModder.LDD.Meshes
             var edgeFaces = BuildEdgeFacesDictionary(triangleList);
 
             var hardEdges = ComputeHardEdges(edgeFaces, breakAngle);
+
+
 
             var edgesPerVert = BuildVertexEdgesDictionary(hardEdges);
 
@@ -368,9 +387,9 @@ namespace LDDModder.LDD.Meshes
 
                     var vertEdges = projectedEdges.Where(x => x.Contains(idxPos))
                         .OrderByDescending(x => x.IsTriangleEdge)
-                        .ThenBy(x=> Vector3.AngleBetween(x.Edge.FaceNormal, triangle.Normal))
+                        .ThenBy(x => Vector3.AngleBetween(x.Edge.FaceNormal, triangle.Normal))
                         .ToList();
-                    
+
                     RemoveNonIntersectingEdges(triangle, coordPairIdx, vertEdges);
 
                     int edgeCount = vertEdges.Count;
@@ -398,7 +417,7 @@ namespace LDDModder.LDD.Meshes
                         var edgeCoords = ProjectTriangle(triangle, idxPos, vertEdges[0].Edge);
                         vertEdges[0].UsedInUnion = true;
 
-                        if (edgeCoords.Max(p=>p.Y) < 0.013f)
+                        if (edgeCoords.Max(p => p.Y) < 0.013f)
                         {
 
                         }
@@ -451,10 +470,6 @@ namespace LDDModder.LDD.Meshes
                         //    vertEdges[1].UsedInUnion = true;
                         //}
                     }
-                    else if (vertEdges.Count > 2)
-                    {
-
-                    }
                 }
             }
         }
@@ -470,19 +485,19 @@ namespace LDDModder.LDD.Meshes
                 for (int i = 0; i < 3; i++)
                 {
                     var simpleEdge = new SimpleEdge(triangle.TriangleEdges[i]);
-
+                    var oppVert = triangle.Vertices[(i + 2) % 3].Position;
                     if (!edgeFaces.ContainsKey(simpleEdge))
                         edgeFaces.Add(simpleEdge, new List<FaceEdge>());
 
                     var faceEdge = new FaceEdge(triangle.Triangle, triangle.TriangleEdges[i])
                     {
-                        PerpVec = Vector3.GetPerpendicular(simpleEdge.P1, simpleEdge.P2, center)
+                        PerpVec = Vector3.GetPerpendicular(simpleEdge.P1, simpleEdge.P2, center),
+                        Altitude = Vector3.GetPerpendicularDistance(simpleEdge.P1, simpleEdge.P2, oppVert)
                     };
-
                     triangle.FaceEdges[i] = faceEdge;
                     edgeFaces[simpleEdge].Add(faceEdge);
 
-                    triangle.Triangle.Indices[i].RoundEdgeData.Reset();
+                    triangle.Indices[i].RoundEdgeData.Reset();
                 }
             }
 
@@ -681,5 +696,31 @@ namespace LDDModder.LDD.Meshes
             return coords;
         }
 
+        //public class OutlinesParameters
+        //{
+        //    public float BreakAngle { get; set; } = 35f;
+        //    //public bool MergeVertices { get; set; } = true;
+        //}
+
+        //public static void GenerateOutlines(OutlinesParameters config, IEnumerable<Triangle> triangles)
+        public static void GenerateOutlines(float breakAngle, IEnumerable<Triangle> triangles)
+        {
+            float breakAngleRad = breakAngle / 180f * fPI;
+
+            var triangleList = triangles.Select(x => new TriangleWrapper(x)).ToList();
+
+            var edgeFaces = BuildEdgeFacesDictionary(triangleList);
+
+            var hardEdges = ComputeHardEdges(edgeFaces, breakAngle);
+
+            //var edgesPerVert = BuildVertexEdgesDictionary(hardEdges);
+
+            
+        }
+
+        //private class EdgeDictionary
+        //{
+
+        //}
     }
 }

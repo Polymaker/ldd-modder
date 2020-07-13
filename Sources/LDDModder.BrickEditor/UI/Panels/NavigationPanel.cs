@@ -741,8 +741,24 @@ namespace LDDModder.BrickEditor.UI.Panels
         public IEnumerable<PartElement> GetSelectedElements()
         {
             var selectedNodes = ProjectTreeView.SelectedObjects.OfType<ProjectTreeNode>();
-            var elementNodes = selectedNodes.SelectMany(x => x.GetChildHierarchy(true)).OfType<ProjectElementNode>();
-            return elementNodes.Select(x => x.Element);
+
+            IEnumerable<PartElement> GetTopLevelElems(ProjectTreeNode treeNode)
+            {
+                if (treeNode is ProjectElementNode eNode)
+                    yield return eNode.Element;
+                else
+                {
+                    foreach (var node in treeNode.Nodes)
+                    {
+                        foreach (var subNode in GetTopLevelElems(node))
+                            yield return subNode;
+                    }
+                }
+                
+            }
+
+            var result = selectedNodes.SelectMany(x => GetTopLevelElems(x));
+            return result;
         }
 
         public IEnumerable<ProjectTreeNode> GetAllTreeNodes()
