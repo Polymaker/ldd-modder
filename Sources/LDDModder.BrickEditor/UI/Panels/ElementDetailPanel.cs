@@ -361,7 +361,9 @@ namespace LDDModder.BrickEditor.UI.Panels
                 return;
 
             UpdateStudConnectorList();
-            StudRefGridView.DataSource = model.ReferencedStuds.ToList();
+
+            StudRefGridView.DataSource = model.GetStudReferences().ToList();
+            AdjStudColumn.Visible = model != null && model.ComponentType == ModelComponentType.BrickTube;
         }
 
         private void InitializeStudRefGrid()
@@ -378,13 +380,20 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void StudRefGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-            if (e.RowIndex >= 0 && e.ColumnIndex == FieldPositionColumn.Index
-                && StudRefGridView.Rows[e.RowIndex].DataBoundItem is StudReference studRef)
+            if (e.RowIndex >= 0 && 
+                StudRefGridView.Rows[e.RowIndex].DataBoundItem is StudReference studRef)
             {
-                e.Value = studRef.FieldNode != null ? $"{studRef.FieldNode.X}, {studRef.FieldNode.Y}" : "N/A";
+
+                if (e.ColumnIndex == FieldPositionColumn.Index)
+                {
+                    e.Value = studRef.FieldNode != null ? $"{studRef.FieldNode.X}, {studRef.FieldNode.Y}" : "N/A";
+                }
+                else if (e.ColumnIndex == AdjStudColumn.Index && studRef.Parent is BrickTubeModel tubeModel)
+                {
+                    e.Value = tubeModel.AdjacentStuds.Contains(studRef);
+                }
             }
         }
-
 
         #endregion
 

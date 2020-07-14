@@ -2,8 +2,11 @@
 using LDDModder.LDD.Primitives.Connectors;
 using LDDModder.Modding.Editing;
 using OpenTK;
+using OpenTK.Graphics.OpenGL;
+using QuickFont;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -236,9 +239,44 @@ namespace LDDModder.BrickEditor.Rendering
             RenderHelper.DrawStudConnector2(Transform, connector);
 
             var color = IsSelected ? new Vector4(1f) : new Vector4(0, 0, 0, 1);
-            RenderHelper.DrawRectangle(Transform, 
+            RenderHelper.DrawRectangle(Transform,
                 new Vector2(connector.StudWidth * 0.8f, connector.StudHeight * 0.8f),
                 color, 3f);
+
+            using (OpenTKHelper.TempEnable(EnableCap.Texture2D))
+            {
+                float textScale = 0.007f;
+                var dp = RenderHelper.Create3DTextPrimitive(UIRenderHelper.MonoFont, Transform, Color.Black, textScale);
+
+                for (int y = 0; y < connector.ArrayHeight; y++)
+                {
+                    for (int x = 0; x < connector.ArrayWidth; x++)
+                    {
+                        float curPosX = 0.4f * x;
+                        float curPosY = (0.4f * y) * -1f;
+                        var hAling = StringAlignment.Center;
+                        var vAling = StringAlignment.Center;
+                        //if (x == 0)
+                        //    hAling = StringAlignment.Near;
+                        //else if (x == connector.ArrayWidth - 1)
+                        //    hAling = StringAlignment.Far;
+                        //if (y == 0)
+                        //    vAling = StringAlignment.Near;
+                        //else if (y == connector.ArrayHeight - 1)
+                        //    vAling = StringAlignment.Far;
+                        if (x == 0)
+                            curPosX += 0.08f;
+                        else if (x == connector.ArrayWidth - 1)
+                            curPosX -= 0.08f;
+                        if (y == 0)
+                            curPosY -= 0.08f;
+                        else if (y == connector.ArrayHeight - 1)
+                            curPosY += 0.08f;
+                        dp.AddText($"{x},{y}", new Vector2(curPosX / textScale, curPosY / textScale),
+                            vAling, hAling, 0.01f);
+                    }
+                }
+            }
         }
 
         private void RenderTechnicAxle(AxelConnector axel)
@@ -306,7 +344,6 @@ namespace LDDModder.BrickEditor.Rendering
             //return Ray.IntersectsSphere(localRay, bsphere, out distance);
 
         }
-
 
     }
 }

@@ -45,11 +45,6 @@
             this.MainInfoTab = new System.Windows.Forms.TabPage();
             this.StudRefTab = new System.Windows.Forms.TabPage();
             this.StudRefGridView = new System.Windows.Forms.DataGridView();
-            this.ConnectionColumn = new System.Windows.Forms.DataGridViewComboBoxColumn();
-            this.FieldIndexColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.FieldPositionColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.StudRefValue1Colunm = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.StudRefValue2Colunm = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ConnectionInfoTab = new System.Windows.Forms.TabPage();
             this.ConnectionTableLayout = new System.Windows.Forms.TableLayoutPanel();
             this.ConnectionSubTypeLabel = new System.Windows.Forms.Label();
@@ -62,6 +57,12 @@
             this.TopStudsLabel = new LDDModder.BrickEditor.Localization.LocalizableString();
             this.BottomStudsLabel = new LDDModder.BrickEditor.Localization.LocalizableString();
             this.NoConnectorRefLabel = new LDDModder.BrickEditor.Localization.LocalizableString();
+            this.ConnectionColumn = new System.Windows.Forms.DataGridViewComboBoxColumn();
+            this.FieldIndexColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.FieldPositionColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.StudRefValue1Colunm = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.StudRefValue2Colunm = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.AdjStudColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.PropertiesTableLayout.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.MainInfoTab.SuspendLayout();
@@ -172,40 +173,12 @@
             this.FieldIndexColumn,
             this.FieldPositionColumn,
             this.StudRefValue1Colunm,
-            this.StudRefValue2Colunm});
+            this.StudRefValue2Colunm,
+            this.AdjStudColumn});
             resources.ApplyResources(this.StudRefGridView, "StudRefGridView");
             this.StudRefGridView.Name = "StudRefGridView";
             this.StudRefGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.StudRefGridView_CellFormatting);
             this.StudRefGridView.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.StudRefGridView_DataError);
-            // 
-            // ConnectionColumn
-            // 
-            this.ConnectionColumn.DataPropertyName = "ConnectionID";
-            resources.ApplyResources(this.ConnectionColumn, "ConnectionColumn");
-            this.ConnectionColumn.Name = "ConnectionColumn";
-            // 
-            // FieldIndexColumn
-            // 
-            this.FieldIndexColumn.DataPropertyName = "FieldIndex";
-            resources.ApplyResources(this.FieldIndexColumn, "FieldIndexColumn");
-            this.FieldIndexColumn.Name = "FieldIndexColumn";
-            // 
-            // FieldPositionColumn
-            // 
-            resources.ApplyResources(this.FieldPositionColumn, "FieldPositionColumn");
-            this.FieldPositionColumn.Name = "FieldPositionColumn";
-            // 
-            // StudRefValue1Colunm
-            // 
-            this.StudRefValue1Colunm.DataPropertyName = "Value1";
-            resources.ApplyResources(this.StudRefValue1Colunm, "StudRefValue1Colunm");
-            this.StudRefValue1Colunm.Name = "StudRefValue1Colunm";
-            // 
-            // StudRefValue2Colunm
-            // 
-            this.StudRefValue2Colunm.DataPropertyName = "Value2";
-            resources.ApplyResources(this.StudRefValue2Colunm, "StudRefValue2Colunm");
-            this.StudRefValue2Colunm.Name = "StudRefValue2Colunm";
             // 
             // ConnectionInfoTab
             // 
@@ -273,6 +246,40 @@
             // 
             resources.ApplyResources(this.NoConnectorRefLabel, "NoConnectorRefLabel");
             // 
+            // ConnectionColumn
+            // 
+            this.ConnectionColumn.DataPropertyName = "ConnectionID";
+            resources.ApplyResources(this.ConnectionColumn, "ConnectionColumn");
+            this.ConnectionColumn.Name = "ConnectionColumn";
+            // 
+            // FieldIndexColumn
+            // 
+            this.FieldIndexColumn.DataPropertyName = "FieldIndex";
+            resources.ApplyResources(this.FieldIndexColumn, "FieldIndexColumn");
+            this.FieldIndexColumn.Name = "FieldIndexColumn";
+            // 
+            // FieldPositionColumn
+            // 
+            resources.ApplyResources(this.FieldPositionColumn, "FieldPositionColumn");
+            this.FieldPositionColumn.Name = "FieldPositionColumn";
+            // 
+            // StudRefValue1Colunm
+            // 
+            this.StudRefValue1Colunm.DataPropertyName = "Value1";
+            resources.ApplyResources(this.StudRefValue1Colunm, "StudRefValue1Colunm");
+            this.StudRefValue1Colunm.Name = "StudRefValue1Colunm";
+            // 
+            // StudRefValue2Colunm
+            // 
+            this.StudRefValue2Colunm.DataPropertyName = "Value2";
+            resources.ApplyResources(this.StudRefValue2Colunm, "StudRefValue2Colunm");
+            this.StudRefValue2Colunm.Name = "StudRefValue2Colunm";
+            // 
+            // AdjStudColumn
+            // 
+            resources.ApplyResources(this.AdjStudColumn, "AdjStudColumn");
+            this.AdjStudColumn.Name = "AdjStudColumn";
+            // 
             // ElementDetailPanel
             // 
             resources.ApplyResources(this, "$this");
@@ -326,5 +333,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn FieldPositionColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn StudRefValue1Colunm;
         private System.Windows.Forms.DataGridViewTextBoxColumn StudRefValue2Colunm;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn AdjStudColumn;
     }
 }

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using OpenTK.Graphics.OpenGL;
 
 namespace OpenTK
 {
@@ -39,6 +40,42 @@ namespace OpenTK
             }
 
             return avgQuat;
+        }
+
+        public static IDisposable TempEnable(EnableCap cap)
+        {
+            return new TempFlag(cap, true);
+        }
+
+        public static IDisposable TempDisable(EnableCap cap)
+        {
+            return new TempFlag(cap, false);
+        }
+
+        private class TempFlag : IDisposable
+        {
+            public EnableCap Flag { get; }
+            public bool Enable { get; set; }
+            public bool WasEnabled { get; }
+
+            public TempFlag(EnableCap flag, bool enable)
+            {
+                Flag = flag;
+                WasEnabled = GL.IsEnabled(flag);
+                Enable = enable;
+                if (enable)
+                    GL.Enable(flag);
+                else
+                    GL.Disable(flag);
+            }
+
+            public void Dispose()
+            {
+                if (Enable && !WasEnabled)
+                    GL.Disable(Flag);
+                else if (!Enable && WasEnabled)
+                    GL.Enable(Flag);
+            }
         }
     }
 }
