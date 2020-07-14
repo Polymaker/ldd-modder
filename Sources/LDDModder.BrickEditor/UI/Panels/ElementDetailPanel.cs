@@ -415,13 +415,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         private void FillConnectionDetails(PartConnection connection)
         {
             SetConnectionInfoVisibility(connection != null);
-
-            if (connection == null)
-                return;
-
-            ConnectionTypeValueLabel.Text = connection.ConnectorType.ToString();
-            ConnectionSubTypeCombo.Text = connection.SubType.ToString();
-
+            connectorEditor1.UpdateBindings(connection?.Connector);
         }
 
 

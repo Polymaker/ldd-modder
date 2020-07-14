@@ -14,16 +14,17 @@ namespace LDDModder.BrickEditor.UI.Controls
     public partial class ConnectorEditor : UserControl
     {
         public Connector CurrentObject { get; private set; }
-
+        private List<ConnectorInfo> SubTypeList { get; set; }
 
         public ConnectorEditor()
         {
             InitializeComponent();
+            SubTypeList = new List<ConnectorInfo>();
         }
 
         public void UpdateBindings(Connector connector)
         {
-            SubTypeComboBox.DataBindings.Clear();
+            ConnectionSubTypeCombo.DataBindings.Clear();
             LengthTextBox.DataBindings.Clear();
             StartCappedCheckBox.DataBindings.Clear();
             EndCappedCheckBox.DataBindings.Clear();
@@ -31,14 +32,21 @@ namespace LDDModder.BrickEditor.UI.Controls
             LengthTextBox.Visible = false;
             StartCappedCheckBox.Visible = false;
             EndCappedCheckBox.Visible = false;
+            ConnectionTypeValueLabel.Text = string.Empty;
 
             if (connector != null)
             {
                 FillSubTypeComboBox(connector.Type);
+                ConnectionTypeValueLabel.Text = connector.Type.ToString();
 
-                SubTypeComboBox.DataBindings.Add(
-                    new Binding("SelectedValue", connector, "SubType", 
-                    false, DataSourceUpdateMode.OnValidation));
+                //ConnectionSubTypeCombo.DataBindings.Add(
+                //    new Binding("SelectedValue", connector, "SubType", 
+                //    true, DataSourceUpdateMode.OnPropertyChanged));
+
+                if (SubTypeList.Any(x => x.SubType == connector.SubType))
+                    ConnectionSubTypeCombo.SelectedValue = connector.SubType;
+                else
+                    ConnectionSubTypeCombo.Text = connector.SubType.ToString();
 
                 if (connector is AxelConnector || 
                     connector is SliderConnector || 
@@ -67,11 +75,20 @@ namespace LDDModder.BrickEditor.UI.Controls
                 }
                 
             }
+            else
+            {
+                ConnectionSubTypeCombo.DataSource = null;
+            }
         }
 
         private void FillSubTypeComboBox(ConnectorType connectorType)
         {
-
+            ConnectionSubTypeCombo.DataSource = null;
+            SubTypeList = Resources.ResourceHelper.Connectors
+                .Where(x => x.Type == connectorType).ToList();
+            ConnectionSubTypeCombo.DataSource = SubTypeList;
+            ConnectionSubTypeCombo.DisplayMember = "SubTypeDisplayText";
+            ConnectionSubTypeCombo.ValueMember = "SubType";
         }
     }
 }

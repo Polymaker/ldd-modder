@@ -178,7 +178,7 @@
     <value>SelectionTransformEdit</value>
   </data>
   <data name="&gt;&gt;SelectionTransformEdit.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.TransformEditor, Brick Studio, Version=1.0.3.29641, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.TransformEditor, Brick Studio, Version=1.0.3.22381, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;SelectionTransformEdit.Parent" xml:space="preserve">
     <value>PropertiesTableLayout</value>
@@ -214,7 +214,7 @@
     <value>SubMaterialIndexBox</value>
   </data>
   <data name="&gt;&gt;SubMaterialIndexBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.3.29641, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.3.22381, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;SubMaterialIndexBox.Parent" xml:space="preserve">
     <value>PropertiesTableLayout</value>
@@ -226,7 +226,7 @@
     <value>CollisionSizeEditor</value>
   </data>
   <data name="&gt;&gt;CollisionSizeEditor.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Editors.VectorEditor, Brick Studio, Version=1.0.3.29641, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Editors.VectorEditor, Brick Studio, Version=1.0.3.22381, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;CollisionSizeEditor.Parent" xml:space="preserve">
     <value>PropertiesTableLayout</value>
@@ -238,7 +238,7 @@
     <value>CollisionRadiusBox</value>
   </data>
   <data name="&gt;&gt;CollisionRadiusBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.3.29641, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.3.22381, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;CollisionRadiusBox.Parent" xml:space="preserve">
     <value>PropertiesTableLayout</value>
@@ -376,7 +376,7 @@
     <value>SelectionTransformEdit</value>
   </data>
   <data name="&gt;&gt;SelectionTransformEdit.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.TransformEditor, Brick Studio, Version=1.0.3.29641, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.TransformEditor, Brick Studio, Version=1.0.3.22381, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;SelectionTransformEdit.Parent" xml:space="preserve">
     <value>PropertiesTableLayout</value>
@@ -460,7 +460,7 @@
     <value>SubMaterialIndexBox</value>
   </data>
   <data name="&gt;&gt;SubMaterialIndexBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.3.29641, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.3.22381, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;SubMaterialIndexBox.Parent" xml:space="preserve">
     <value>PropertiesTableLayout</value>
@@ -481,7 +481,7 @@
     <value>CollisionSizeEditor</value>
   </data>
   <data name="&gt;&gt;CollisionSizeEditor.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Editors.VectorEditor, Brick Studio, Version=1.0.3.29641, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Editors.VectorEditor, Brick Studio, Version=1.0.3.22381, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;CollisionSizeEditor.Parent" xml:space="preserve">
     <value>PropertiesTableLayout</value>
@@ -502,7 +502,7 @@
     <value>CollisionRadiusBox</value>
   </data>
   <data name="&gt;&gt;CollisionRadiusBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.3.29641, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.3.22381, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;CollisionRadiusBox.Parent" xml:space="preserve">
     <value>PropertiesTableLayout</value>
@@ -570,75 +570,6 @@
   <data name="&gt;&gt;MainInfoTab.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <metadata name="ConnectionColumn.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <data name="ConnectionColumn.HeaderText" xml:space="preserve">
-    <value>Connection</value>
-  </data>
-  <data name="ConnectionColumn.Width" type="System.Int32, mscorlib">
-    <value>160</value>
-  </data>
-  <metadata name="FieldIndexColumn.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <data name="FieldIndexColumn.HeaderText" xml:space="preserve">
-    <value>Field Index</value>
-  </data>
-  <data name="FieldIndexColumn.Width" type="System.Int32, mscorlib">
-    <value>60</value>
-  </data>
-  <metadata name="FieldPositionColumn.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <data name="FieldPositionColumn.HeaderText" xml:space="preserve">
-    <value>2D Index</value>
-  </data>
-  <data name="FieldPositionColumn.Width" type="System.Int32, mscorlib">
-    <value>60</value>
-  </data>
-  <metadata name="StudRefValue1Colunm.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <data name="StudRefValue1Colunm.HeaderText" xml:space="preserve">
-    <value>Value 1</value>
-  </data>
-  <data name="StudRefValue1Colunm.Width" type="System.Int32, mscorlib">
-    <value>60</value>
-  </data>
-  <metadata name="StudRefValue2Colunm.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <data name="StudRefValue2Colunm.HeaderText" xml:space="preserve">
-    <value>Value 2</value>
-  </data>
-  <data name="StudRefValue2Colunm.Width" type="System.Int32, mscorlib">
-    <value>60</value>
-  </data>
-  <metadata name="AdjStudColumn.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <data name="AdjStudColumn.HeaderText" xml:space="preserve">
-    <value>Adjacent</value>
-  </data>
-  <data name="AdjStudColumn.Width" type="System.Int32, mscorlib">
-    <value>60</value>
-  </data>
-  <data name="StudRefGridView.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="StudRefGridView.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 3</value>
-  </data>
-  <data name="StudRefGridView.RowHeadersWidth" type="System.Int32, mscorlib">
-    <value>25</value>
-  </data>
-  <data name="StudRefGridView.Size" type="System.Drawing.Size, System.Drawing">
-    <value>604, 293</value>
-  </data>
-  <data name="StudRefGridView.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
-  </data>
   <data name="&gt;&gt;StudRefGridView.Name" xml:space="preserve">
     <value>StudRefGridView</value>
   </data>
@@ -678,20 +609,29 @@
   <data name="&gt;&gt;StudRefTab.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
-  <data name="&gt;&gt;ConnectionTableLayout.Name" xml:space="preserve">
-    <value>ConnectionTableLayout</value>
+  <data name="connectorEditor1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Top</value>
   </data>
-  <data name="&gt;&gt;ConnectionTableLayout.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="connectorEditor1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 3</value>
   </data>
-  <data name="&gt;&gt;ConnectionTableLayout.Parent" xml:space="preserve">
-    <value>ConnectionInfoTab</value>
+  <data name="connectorEditor1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>604, 240</value>
   </data>
-  <data name="&gt;&gt;ConnectionTableLayout.ZOrder" xml:space="preserve">
+  <data name="connectorEditor1.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
   </data>
-  <data name="ConnectionTableLayout.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="ConnectionSubTypeLabel" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="ConnectionTypeValueLabel" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="ConnectionTypeLabel" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="ConnectionSubTypeCombo" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,80,Percent,100" /&gt;&lt;Rows Styles="AutoSize,50,AutoSize,50,Absolute,20" /&gt;&lt;/TableLayoutSettings&gt;</value>
+  <data name="&gt;&gt;connectorEditor1.Name" xml:space="preserve">
+    <value>connectorEditor1</value>
+  </data>
+  <data name="&gt;&gt;connectorEditor1.Type" xml:space="preserve">
+    <value>LDDModder.BrickEditor.UI.Controls.ConnectorEditor, Brick Studio, Version=1.0.3.22381, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;connectorEditor1.Parent" xml:space="preserve">
+    <value>ConnectionInfoTab</value>
+  </data>
+  <data name="&gt;&gt;connectorEditor1.ZOrder" xml:space="preserve">
+    <value>0</value>
   </data>
   <data name="ConnectionInfoTab.Location" type="System.Drawing.Point, System.Drawing">
     <value>4, 22</value>
@@ -744,206 +684,104 @@
   <data name="&gt;&gt;tabControl1.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="ConnectionTableLayout.ColumnCount" type="System.Int32, mscorlib">
-    <value>2</value>
+  <metadata name="ConnectionColumn.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="FieldIndexColumn.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="FieldPositionColumn.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="StudRefValue1Colunm.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="StudRefValue2Colunm.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="AdjStudColumn.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <data name="StudRefGridView.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
   </data>
-  <data name="&gt;&gt;ConnectionSubTypeLabel.Name" xml:space="preserve">
-    <value>ConnectionSubTypeLabel</value>
-  </data>
-  <data name="&gt;&gt;ConnectionSubTypeLabel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;ConnectionSubTypeLabel.Parent" xml:space="preserve">
-    <value>ConnectionTableLayout</value>
-  </data>
-  <data name="&gt;&gt;ConnectionSubTypeLabel.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;ConnectionTypeValueLabel.Name" xml:space="preserve">
-    <value>ConnectionTypeValueLabel</value>
-  </data>
-  <data name="&gt;&gt;ConnectionTypeValueLabel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;ConnectionTypeValueLabel.Parent" xml:space="preserve">
-    <value>ConnectionTableLayout</value>
-  </data>
-  <data name="&gt;&gt;ConnectionTypeValueLabel.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;ConnectionTypeLabel.Name" xml:space="preserve">
-    <value>ConnectionTypeLabel</value>
-  </data>
-  <data name="&gt;&gt;ConnectionTypeLabel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;ConnectionTypeLabel.Parent" xml:space="preserve">
-    <value>ConnectionTableLayout</value>
-  </data>
-  <data name="&gt;&gt;ConnectionTypeLabel.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="&gt;&gt;ConnectionSubTypeCombo.Name" xml:space="preserve">
-    <value>ConnectionSubTypeCombo</value>
-  </data>
-  <data name="&gt;&gt;ConnectionSubTypeCombo.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;ConnectionSubTypeCombo.Parent" xml:space="preserve">
-    <value>ConnectionTableLayout</value>
-  </data>
-  <data name="&gt;&gt;ConnectionSubTypeCombo.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="ConnectionTableLayout.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Top</value>
-  </data>
-  <data name="ConnectionTableLayout.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="StudRefGridView.Location" type="System.Drawing.Point, System.Drawing">
     <value>3, 3</value>
   </data>
-  <data name="ConnectionTableLayout.RowCount" type="System.Int32, mscorlib">
-    <value>3</value>
+  <data name="StudRefGridView.RowHeadersWidth" type="System.Int32, mscorlib">
+    <value>25</value>
   </data>
-  <data name="ConnectionTableLayout.Size" type="System.Drawing.Size, System.Drawing">
-    <value>604, 100</value>
+  <data name="StudRefGridView.Size" type="System.Drawing.Size, System.Drawing">
+    <value>604, 293</value>
   </data>
-  <data name="ConnectionTableLayout.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;ConnectionTableLayout.Name" xml:space="preserve">
-    <value>ConnectionTableLayout</value>
-  </data>
-  <data name="&gt;&gt;ConnectionTableLayout.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;ConnectionTableLayout.Parent" xml:space="preserve">
-    <value>ConnectionInfoTab</value>
-  </data>
-  <data name="&gt;&gt;ConnectionTableLayout.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="ConnectionTableLayout.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="ConnectionSubTypeLabel" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="ConnectionTypeValueLabel" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="ConnectionTypeLabel" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="ConnectionSubTypeCombo" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,80,Percent,100" /&gt;&lt;Rows Styles="AutoSize,50,AutoSize,50,Absolute,20" /&gt;&lt;/TableLayoutSettings&gt;</value>
-  </data>
-  <data name="ConnectionSubTypeLabel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Left</value>
-  </data>
-  <data name="ConnectionSubTypeLabel.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="ConnectionSubTypeLabel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="ConnectionSubTypeLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 26</value>
-  </data>
-  <data name="ConnectionSubTypeLabel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 3, 3, 3</value>
-  </data>
-  <data name="ConnectionSubTypeLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>50, 13</value>
-  </data>
-  <data name="ConnectionSubTypeLabel.TabIndex" type="System.Int32, mscorlib">
+  <data name="StudRefGridView.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
   </data>
-  <data name="ConnectionSubTypeLabel.Text" xml:space="preserve">
-    <value>SubType</value>
+  <data name="&gt;&gt;StudRefGridView.Name" xml:space="preserve">
+    <value>StudRefGridView</value>
   </data>
-  <data name="&gt;&gt;ConnectionSubTypeLabel.Name" xml:space="preserve">
-    <value>ConnectionSubTypeLabel</value>
+  <data name="&gt;&gt;StudRefGridView.Type" xml:space="preserve">
+    <value>System.Windows.Forms.DataGridView, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;ConnectionSubTypeLabel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;StudRefGridView.Parent" xml:space="preserve">
+    <value>StudRefTab</value>
   </data>
-  <data name="&gt;&gt;ConnectionSubTypeLabel.Parent" xml:space="preserve">
-    <value>ConnectionTableLayout</value>
-  </data>
-  <data name="&gt;&gt;ConnectionSubTypeLabel.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;StudRefGridView.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="ConnectionTypeValueLabel.AutoSize" type="System.Boolean, mscorlib">
+  <metadata name="ConnectionColumn.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
+  </metadata>
+  <data name="ConnectionColumn.HeaderText" xml:space="preserve">
+    <value>Connection</value>
   </data>
-  <data name="ConnectionTypeValueLabel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
+  <data name="ConnectionColumn.Width" type="System.Int32, mscorlib">
+    <value>180</value>
   </data>
-  <data name="ConnectionTypeValueLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>83, 3</value>
-  </data>
-  <data name="ConnectionTypeValueLabel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 3, 3, 3</value>
-  </data>
-  <data name="ConnectionTypeValueLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>35, 13</value>
-  </data>
-  <data name="ConnectionTypeValueLabel.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="ConnectionTypeValueLabel.Text" xml:space="preserve">
-    <value>label1</value>
-  </data>
-  <data name="&gt;&gt;ConnectionTypeValueLabel.Name" xml:space="preserve">
-    <value>ConnectionTypeValueLabel</value>
-  </data>
-  <data name="&gt;&gt;ConnectionTypeValueLabel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;ConnectionTypeValueLabel.Parent" xml:space="preserve">
-    <value>ConnectionTableLayout</value>
-  </data>
-  <data name="&gt;&gt;ConnectionTypeValueLabel.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="ConnectionTypeLabel.AutoSize" type="System.Boolean, mscorlib">
+  <metadata name="FieldIndexColumn.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
+  </metadata>
+  <data name="FieldIndexColumn.HeaderText" xml:space="preserve">
+    <value>Field Index</value>
   </data>
-  <data name="ConnectionTypeLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 3</value>
+  <data name="FieldIndexColumn.Width" type="System.Int32, mscorlib">
+    <value>60</value>
   </data>
-  <data name="ConnectionTypeLabel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 3, 3, 3</value>
+  <metadata name="FieldPositionColumn.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <data name="FieldPositionColumn.HeaderText" xml:space="preserve">
+    <value>2D Index</value>
   </data>
-  <data name="ConnectionTypeLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>31, 13</value>
+  <data name="FieldPositionColumn.Width" type="System.Int32, mscorlib">
+    <value>60</value>
   </data>
-  <data name="ConnectionTypeLabel.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
+  <metadata name="StudRefValue1Colunm.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <data name="StudRefValue1Colunm.HeaderText" xml:space="preserve">
+    <value>Value 1</value>
   </data>
-  <data name="ConnectionTypeLabel.Text" xml:space="preserve">
-    <value>Type</value>
+  <data name="StudRefValue1Colunm.Width" type="System.Int32, mscorlib">
+    <value>60</value>
   </data>
-  <data name="&gt;&gt;ConnectionTypeLabel.Name" xml:space="preserve">
-    <value>ConnectionTypeLabel</value>
+  <metadata name="StudRefValue2Colunm.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <data name="StudRefValue2Colunm.HeaderText" xml:space="preserve">
+    <value>Value 2</value>
   </data>
-  <data name="&gt;&gt;ConnectionTypeLabel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="StudRefValue2Colunm.Width" type="System.Int32, mscorlib">
+    <value>60</value>
   </data>
-  <data name="&gt;&gt;ConnectionTypeLabel.Parent" xml:space="preserve">
-    <value>ConnectionTableLayout</value>
+  <metadata name="AdjStudColumn.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <data name="AdjStudColumn.HeaderText" xml:space="preserve">
+    <value>Adjacent</value>
   </data>
-  <data name="&gt;&gt;ConnectionTypeLabel.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="ConnectionSubTypeCombo.Location" type="System.Drawing.Point, System.Drawing">
-    <value>83, 22</value>
-  </data>
-  <data name="ConnectionSubTypeCombo.Size" type="System.Drawing.Size, System.Drawing">
-    <value>161, 21</value>
-  </data>
-  <data name="ConnectionSubTypeCombo.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
-  </data>
-  <data name="&gt;&gt;ConnectionSubTypeCombo.Name" xml:space="preserve">
-    <value>ConnectionSubTypeCombo</value>
-  </data>
-  <data name="&gt;&gt;ConnectionSubTypeCombo.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;ConnectionSubTypeCombo.Parent" xml:space="preserve">
-    <value>ConnectionTableLayout</value>
-  </data>
-  <data name="&gt;&gt;ConnectionSubTypeCombo.ZOrder" xml:space="preserve">
-    <value>3</value>
+  <data name="AdjStudColumn.Width" type="System.Int32, mscorlib">
+    <value>60</value>
   </data>
   <metadata name="localizableStringList1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
@@ -981,42 +819,6 @@
   <data name="$this.ToolTipText" xml:space="preserve">
     <value>Selection properties</value>
   </data>
-  <data name="&gt;&gt;localizableStringList1.Name" xml:space="preserve">
-    <value>localizableStringList1</value>
-  </data>
-  <data name="&gt;&gt;localizableStringList1.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableStringList, Brick Studio, Version=1.0.3.29641, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;MultiSelectionMsg.Name" xml:space="preserve">
-    <value>MultiSelectionMsg</value>
-  </data>
-  <data name="&gt;&gt;MultiSelectionMsg.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.3.29641, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;NoSelectionMsg.Name" xml:space="preserve">
-    <value>NoSelectionMsg</value>
-  </data>
-  <data name="&gt;&gt;NoSelectionMsg.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.3.29641, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;TopStudsLabel.Name" xml:space="preserve">
-    <value>TopStudsLabel</value>
-  </data>
-  <data name="&gt;&gt;TopStudsLabel.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.3.29641, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;BottomStudsLabel.Name" xml:space="preserve">
-    <value>BottomStudsLabel</value>
-  </data>
-  <data name="&gt;&gt;BottomStudsLabel.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.3.29641, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;NoConnectorRefLabel.Name" xml:space="preserve">
-    <value>NoConnectorRefLabel</value>
-  </data>
-  <data name="&gt;&gt;NoConnectorRefLabel.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.3.29641, Culture=neutral, PublicKeyToken=null</value>
-  </data>
   <data name="&gt;&gt;ConnectionColumn.Name" xml:space="preserve">
     <value>ConnectionColumn</value>
   </data>
@@ -1053,10 +855,46 @@
   <data name="&gt;&gt;AdjStudColumn.Type" xml:space="preserve">
     <value>System.Windows.Forms.DataGridViewCheckBoxColumn, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;localizableStringList1.Name" xml:space="preserve">
+    <value>localizableStringList1</value>
+  </data>
+  <data name="&gt;&gt;localizableStringList1.Type" xml:space="preserve">
+    <value>LDDModder.BrickEditor.Localization.LocalizableStringList, Brick Studio, Version=1.0.3.22381, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;MultiSelectionMsg.Name" xml:space="preserve">
+    <value>MultiSelectionMsg</value>
+  </data>
+  <data name="&gt;&gt;MultiSelectionMsg.Type" xml:space="preserve">
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.3.22381, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;NoSelectionMsg.Name" xml:space="preserve">
+    <value>NoSelectionMsg</value>
+  </data>
+  <data name="&gt;&gt;NoSelectionMsg.Type" xml:space="preserve">
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.3.22381, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;TopStudsLabel.Name" xml:space="preserve">
+    <value>TopStudsLabel</value>
+  </data>
+  <data name="&gt;&gt;TopStudsLabel.Type" xml:space="preserve">
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.3.22381, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;BottomStudsLabel.Name" xml:space="preserve">
+    <value>BottomStudsLabel</value>
+  </data>
+  <data name="&gt;&gt;BottomStudsLabel.Type" xml:space="preserve">
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.3.22381, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;NoConnectorRefLabel.Name" xml:space="preserve">
+    <value>NoConnectorRefLabel</value>
+  </data>
+  <data name="&gt;&gt;NoConnectorRefLabel.Type" xml:space="preserve">
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.3.22381, Culture=neutral, PublicKeyToken=null</value>
+  </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>ElementDetailPanel</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Panels.ProjectDocumentPanel, Brick Studio, Version=1.0.3.29641, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Panels.ProjectDocumentPanel, Brick Studio, Version=1.0.3.22381, Culture=neutral, PublicKeyToken=null</value>
   </data>
 </root>

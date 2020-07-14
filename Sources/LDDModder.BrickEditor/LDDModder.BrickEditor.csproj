@@ -567,8 +567,10 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <EmbeddedResource Include="..\..\Documentation\Primitive connectors.xml">
+      <Link>Resources\Data\Primitive connectors.xml</Link>
+    </EmbeddedResource>
     <Content Include="Resources\BrickStudioIcon.ico" />
-    <Content Include="Resources\Data\Primitive connectors.xml" />
     <Content Include="Resources\Images\DecorationSurfaceIcon.png" />
     <Content Include="Resources\Images\Hidden2Icon.png" />
     <Content Include="Resources\Images\HiddenIcon.png" />

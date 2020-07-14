@@ -54,9 +54,11 @@ namespace LDDModder.BrickEditor.UI.Windows
             ProjectManager.ValidationFinished += ProjectManager_ValidationFinished;
             ProjectManager.GenerationFinished += ProjectManager_GenerationFinished;
             ProjectManager.ElementPropertyChanged += ProjectManager_ElementPropertyChanged;
+
             InitialCheckUp();
 
             ResourceHelper.LoadPlatformsAndCategories();
+            ResourceHelper.LoadConnectors();
 
             InitializePanels();
             RebuildRecentFilesMenu();

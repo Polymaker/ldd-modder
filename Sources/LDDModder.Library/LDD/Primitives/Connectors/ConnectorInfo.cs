@@ -13,6 +13,14 @@ namespace LDDModder.LDD.Primitives.Connectors
         public string Description { get; set; }
         public List<int> ConnectsWith { get; set; } = new List<int>();
 
-
+        public string SubTypeDisplayText
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(Description))
+                    return SubType.ToString();
+                return $"{SubType} - {Description}";
+            }
+        }
     }
 }
