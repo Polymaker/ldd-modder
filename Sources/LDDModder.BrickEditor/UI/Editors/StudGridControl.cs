@@ -21,6 +21,19 @@ namespace LDDModder.BrickEditor.UI.Editors
         private Point? SelectionStart;
         private Point? SelectionEnd;
         private Point? FocusedCell;
+
+        private Point SelectionSize
+        {
+            get
+            {
+                if (!SelectionEnd.HasValue)
+                    return Point.Empty;
+
+                return new Point(
+                        Math.Abs(SelectionEnd.Value.X - SelectionStart.Value.X) + 1,
+                        Math.Abs(SelectionEnd.Value.Y - SelectionStart.Value.Y) + 1);
+            }
+        }
         
         private Point ScrollOffset;
 
@@ -83,7 +96,7 @@ namespace LDDModder.BrickEditor.UI.Editors
             SetStyle(ControlStyles.ResizeRedraw | 
                 ControlStyles.OptimizedDoubleBuffer |
                 ControlStyles.Selectable, true);
-
+            SetStyle(ControlStyles.UserMouse, true);
             CalculateElementSizes();
 
             InitEditCombo();
@@ -130,6 +143,7 @@ namespace LDDModder.BrickEditor.UI.Editors
             if (e.PropertyName == nameof(Custom2DFieldConnector.Width) ||
                 e.PropertyName == nameof(Custom2DFieldConnector.Height))
                 ConnectorSizeChanged.Invoke(this, EventArgs.Empty);
+            Invalidate();
         }
 
         #region Size Calculation
@@ -292,6 +306,7 @@ namespace LDDModder.BrickEditor.UI.Editors
             //{
             //    focusedBorderPen = SystemPens.
             //}
+            var textColor = Enabled ? ForeColor : SystemColors.GrayText;
 
             for (int y = 0; y < CurrentGridSize.Height; y++)
             {
@@ -309,7 +324,7 @@ namespace LDDModder.BrickEditor.UI.Editors
                     if (SelectedNode == cellNode)
                         g.DrawRectangle(focusedBorderPen, cellRect);
 
-                    TextRenderer.DrawText(g, cellNode.ToString(), Font, cellRect, ForeColor, 
+                    TextRenderer.DrawText(g, cellNode.ToString(), Font, cellRect, textColor, 
                         TextFormatFlags.TextBoxControl | TextFormatFlags.NoClipping | 
                         TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
                     //g.DrawString(cellNode.ToString(), Font, Brushes.Black, cellRect, sf);
@@ -323,7 +338,9 @@ namespace LDDModder.BrickEditor.UI.Editors
         {
             var gridRects = new List<Rectangle>();
 
-            g.FillRectangle(Brushes.White, CellGridBounds);
+            var backColor = Enabled ? Color.White : Color.Gainsboro;
+            using (var brush = new SolidBrush(backColor))
+                g.FillRectangle(brush, CellGridBounds);
 
             using (var evenLineBrush = new SolidBrush(Color.FromArgb(70, 180, 180, 180)))
             {
@@ -360,9 +377,10 @@ namespace LDDModder.BrickEditor.UI.Editors
             if (ContainsFocus || Focused)
                 selectionColor = Color.FromArgb(100, 180, 180, 255);
 
+            Rectangle selectionRect = Rectangle.Empty;
             if (SelectionStart.HasValue)
             {
-                var selectionRect = GetCellRect(SelectionStart.Value);
+                selectionRect = GetCellRect(SelectionStart.Value);
 
                 if (SelectionEnd.HasValue)
                 {
@@ -386,6 +404,9 @@ namespace LDDModder.BrickEditor.UI.Editors
 
             foreach(var rect in gridRects)
                 g.DrawRectangle(Pens.Black, rect);
+
+            if (!selectionRect.IsEmpty && (SelectionSize.X > 1 || SelectionSize.Y > 1))
+                g.DrawRectangle(SystemPens.HotTrack, selectionRect);
         }
 
         private void DrawGridHeaders(Graphics g)
@@ -431,10 +452,19 @@ namespace LDDModder.BrickEditor.UI.Editors
                         if (IsEditingNode && !FinishEditNode())
                             return;
 
-                        IsSelectingRange = true;
                         FocusedCell = GetCellAddressFromPosition(e.Location);
-                        SelectionStart = FocusedCell;
-                        SelectionEnd = null;
+                        if (ModifierKeys.HasFlag(Keys.Shift) && SelectionStart != null)
+                        {
+                            SelectionEnd = FocusedCell;
+                            IsSelectingRange = false;
+                        }
+                        else
+                        {
+                            IsSelectingRange = true;
+                            SelectionStart = FocusedCell;
+                            SelectionEnd = null;
+                        }
+                        
                         Invalidate();
                     }
                 }
@@ -443,6 +473,8 @@ namespace LDDModder.BrickEditor.UI.Editors
 
             base.OnMouseDown(e);
         }
+
+        
 
         protected override void OnMouseUp(MouseEventArgs e)
         {
@@ -456,7 +488,7 @@ namespace LDDModder.BrickEditor.UI.Editors
 
         protected override void OnMouseDoubleClick(MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Left)
+            if (e.Button == MouseButtons.Left && CellGridBounds.Contains(e.Location))
             {
                 if (SelectedNode != null && !ReadOnly)
                     BeginEditNode();
@@ -474,8 +506,15 @@ namespace LDDModder.BrickEditor.UI.Editors
             }
             base.OnMouseMove(e);
         }
-        
+
         #endregion
+
+        protected override void OnGotFocus(EventArgs e)
+        {
+            base.OnGotFocus(e);
+            if (Enabled)
+                Invalidate();
+        }
 
         protected override void OnLostFocus(EventArgs e)
         {
@@ -502,6 +541,7 @@ namespace LDDModder.BrickEditor.UI.Editors
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
             Keys activeModifiers = Keys.None;
+            Keys origKeyData = keyData;
 
             for (int i = 0; i < MODIFIER_KEYS.Length; i++)
             {
@@ -540,7 +580,7 @@ namespace LDDModder.BrickEditor.UI.Editors
                 }
             }
 
-            return base.ProcessCmdKey(ref msg, keyData);
+            return base.ProcessCmdKey(ref msg, origKeyData);
         }
 
         protected override void OnKeyDown(KeyEventArgs e)

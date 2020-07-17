@@ -230,6 +230,12 @@
     <Compile Include="UI\Panels\ElementDetailPanel.Designer.cs">
       <DependentUpon>ElementDetailPanel.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\Panels\StudConnectionPanel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Panels\StudConnectionPanel.Designer.cs">
+      <DependentUpon>StudConnectionPanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\VS2015DockPaneStrip.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -476,6 +482,9 @@
     <EmbeddedResource Include="UI\Panels\PartPropertiesPanel.resx">
       <DependentUpon>PartPropertiesPanel.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\Panels\StudConnectionPanel.resx">
+      <DependentUpon>StudConnectionPanel.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\Panels\ValidationPanel.fr.resx">
       <DependentUpon>ValidationPanel.cs</DependentUpon>
     </EmbeddedResource>
@@ -572,6 +581,8 @@
     </EmbeddedResource>
     <Content Include="Resources\BrickStudioIcon.ico" />
     <Content Include="Resources\Images\DecorationSurfaceIcon.png" />
+    <Content Include="Resources\Images\GizmoOrientationIcon.png" />
+    <Content Include="Resources\Images\GizmoPivotPointIcon.png" />
     <Content Include="Resources\Images\Hidden2Icon.png" />
     <Content Include="Resources\Images\HiddenIcon.png" />
     <Content Include="Resources\Images\MainSurfaceIcon.png" />

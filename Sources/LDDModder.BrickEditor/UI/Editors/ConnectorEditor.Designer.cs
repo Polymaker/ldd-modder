@@ -41,6 +41,7 @@
             this.checkBox3 = new System.Windows.Forms.CheckBox();
             this.EndCappedCheckBox = new System.Windows.Forms.CheckBox();
             this.StartCappedCheckBox = new System.Windows.Forms.CheckBox();
+            this.OpenStudPanelButton = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.SuspendLayout();
@@ -54,6 +55,7 @@
             this.tableLayoutPanel1.Controls.Add(this.ConnectionSubTypeLabel, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.ConnectionSubTypeCombo, 1, 1);
             this.tableLayoutPanel1.Controls.Add(this.ConnectionTypeValueLabel, 1, 0);
+            this.tableLayoutPanel1.Controls.Add(this.OpenStudPanelButton, 1, 3);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             // 
             // ConnectionTypeLabel
@@ -121,6 +123,13 @@
             this.StartCappedCheckBox.Name = "StartCappedCheckBox";
             this.StartCappedCheckBox.UseVisualStyleBackColor = true;
             // 
+            // OpenStudPanelButton
+            // 
+            resources.ApplyResources(this.OpenStudPanelButton, "OpenStudPanelButton");
+            this.OpenStudPanelButton.Name = "OpenStudPanelButton";
+            this.OpenStudPanelButton.UseVisualStyleBackColor = true;
+            this.OpenStudPanelButton.Click += new System.EventHandler(this.OpenStudPanelButton_Click);
+            // 
             // ConnectorEditor
             // 
             resources.ApplyResources(this, "$this");
@@ -151,5 +160,6 @@
         private System.Windows.Forms.Label ConnectionSubTypeLabel;
         private System.Windows.Forms.ComboBox ConnectionSubTypeCombo;
         private System.Windows.Forms.Label ConnectionTypeValueLabel;
+        private System.Windows.Forms.Button OpenStudPanelButton;
     }
 }

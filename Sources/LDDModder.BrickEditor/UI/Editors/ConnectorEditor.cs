@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LDDModder.LDD.Primitives.Connectors;
+using LDDModder.BrickEditor.UI.Panels;
+using WeifenLuo.WinFormsUI.Docking;
 
 namespace LDDModder.BrickEditor.UI.Controls
 {
@@ -32,6 +34,7 @@ namespace LDDModder.BrickEditor.UI.Controls
             LengthTextBox.Visible = false;
             StartCappedCheckBox.Visible = false;
             EndCappedCheckBox.Visible = false;
+            OpenStudPanelButton.Visible = false;
             ConnectionTypeValueLabel.Text = string.Empty;
 
             if (connector != null)
@@ -73,7 +76,8 @@ namespace LDDModder.BrickEditor.UI.Controls
                         new Binding("Checked", connector, "EndCapped",
                         false, DataSourceUpdateMode.OnPropertyChanged));
                 }
-                
+
+                OpenStudPanelButton.Visible = connector is Custom2DFieldConnector;
             }
             else
             {
@@ -89,6 +93,13 @@ namespace LDDModder.BrickEditor.UI.Controls
             ConnectionSubTypeCombo.DataSource = SubTypeList;
             ConnectionSubTypeCombo.DisplayMember = "SubTypeDisplayText";
             ConnectionSubTypeCombo.ValueMember = "SubType";
+        }
+
+        private void OpenStudPanelButton_Click(object sender, EventArgs e)
+        {
+            var test = (ParentForm as ElementDetailPanel);
+            test.EditorWindow.StudConnectionPanel.Activate();
+            //test.EditorWindow.StudConnectionPanel.Show(test.EditorWindow.DockPanelControl, DockState.Document);
         }
     }
 }

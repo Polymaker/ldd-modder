@@ -340,29 +340,6 @@ namespace LDDModder.BrickEditor.UI.Windows
             }
         }
 
-        //private IEnumerable<BuildConfiguration> GenerateDefaultBuildConfigs()
-        //{
-        //    if (LDDEnvironment.IsInstalled)
-        //    {
-        //        var lddConfig = new BuildConfiguration()
-        //        {
-        //            Name = "LDD db",
-        //            OutputPath = LDDEnvironment.Current.GetAppDataSubDir("db\\Primitives"),
-        //            MeshBesideXml = false,
-        //            InternalFlag = 1
-        //        };
-        //        yield return lddConfig;
-        //    }
-
-        //    var selectPathConfig = new BuildConfiguration()
-        //    {
-        //        Name = "Browse dialog",
-        //        MeshBesideXml = false,
-        //        InternalFlag = 2
-        //    };
-        //    yield return selectPathConfig;
-        //}
-
         private void BuildConfigComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (FlagManager.IsSet("UpdateBuildConfig"))
@@ -485,6 +462,14 @@ namespace LDDModder.BrickEditor.UI.Windows
             var focusedControl = GetFocusedControl(ActiveControl);
             if (focusedControl is TextBox)
                 return true;
+
+            if (focusedControl is ComboBox cbo)
+            {
+                if (cbo.DroppedDown)
+                    return true;
+                
+                return cbo.DropDownStyle != ComboBoxStyle.DropDownList;
+            }
             return false;
         }
 

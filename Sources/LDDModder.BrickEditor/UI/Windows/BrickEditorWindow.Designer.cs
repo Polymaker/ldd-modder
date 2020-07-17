@@ -55,6 +55,7 @@
             this.Edit_ValidatePartMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.Edit_GenerateFilesMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.Edit_GenerateOutlines = new System.Windows.Forms.ToolStripMenuItem();
+            this.Edit_BatchBuild = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ExportBrickMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
@@ -65,10 +66,9 @@
             this.BuildConfigComboBox = new System.Windows.Forms.ToolStripComboBox();
             this.AutoSaveTimer = new System.Windows.Forms.Timer(this.components);
             this.localizableStringList1 = new LDDModder.BrickEditor.Localization.LocalizableStringList(this.components);
-            this.StartLddText = ((LDDModder.BrickEditor.Localization.LocalizableString)(new LDDModder.BrickEditor.Localization.LocalizableString()));
-            this.RestartLddText = ((LDDModder.BrickEditor.Localization.LocalizableString)(new LDDModder.BrickEditor.Localization.LocalizableString()));
-            this.WindowTitle = ((LDDModder.BrickEditor.Localization.LocalizableString)(new LDDModder.BrickEditor.Localization.LocalizableString()));
-            this.Edit_BatchBuild = new System.Windows.Forms.ToolStripMenuItem();
+            this.StartLddText = new LDDModder.BrickEditor.Localization.LocalizableString();
+            this.RestartLddText = new LDDModder.BrickEditor.Localization.LocalizableString();
+            this.WindowTitle = new LDDModder.BrickEditor.Localization.LocalizableString();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -233,6 +233,11 @@
             resources.ApplyResources(this.Edit_GenerateOutlines, "Edit_GenerateOutlines");
             this.Edit_GenerateOutlines.CheckStateChanged += new System.EventHandler(this.Edit_GenerateOutlines_CheckStateChanged);
             // 
+            // Edit_BatchBuild
+            // 
+            this.Edit_BatchBuild.Name = "Edit_BatchBuild";
+            resources.ApplyResources(this.Edit_BatchBuild, "Edit_BatchBuild");
+            // 
             // ToolsMenuItem
             // 
             this.ToolsMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -310,11 +315,6 @@
             // 
             resources.ApplyResources(this.WindowTitle, "WindowTitle");
             // 
-            // Edit_BatchBuild
-            // 
-            this.Edit_BatchBuild.Name = "Edit_BatchBuild";
-            resources.ApplyResources(this.Edit_BatchBuild, "Edit_BatchBuild");
-            // 
             // BrickEditorWindow
             // 
             resources.ApplyResources(this, "$this");
@@ -333,7 +333,6 @@
         }
 
         #endregion
-        private WeifenLuo.WinFormsUI.Docking.DockPanel DockPanelControl;
         private WeifenLuo.WinFormsUI.Docking.VS2015DarkTheme vS2015DarkTheme1;
         private WeifenLuo.WinFormsUI.Docking.VisualStudioToolStripExtender visualStudioToolStripExtender1;
         private WeifenLuo.WinFormsUI.Docking.VS2015LightTheme vS2015LightTheme1;
@@ -372,5 +371,6 @@
         private System.Windows.Forms.ToolStripComboBox BuildConfigComboBox;
         private System.Windows.Forms.ToolStripMenuItem Edit_GenerateOutlines;
         private System.Windows.Forms.ToolStripMenuItem Edit_BatchBuild;
+        public WeifenLuo.WinFormsUI.Docking.DockPanel DockPanelControl;
     }
 }

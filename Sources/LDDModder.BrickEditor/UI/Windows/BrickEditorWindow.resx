@@ -393,9 +393,6 @@
   <data name="$this.Font" type="System.Drawing.Font, System.Drawing">
     <value>Segoe UI, 8.25pt</value>
   </data>
-  <data name="$this.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
   <data name="$this.Text" xml:space="preserve">
     <value>LDD Brick Studio</value>
   </data>
@@ -537,6 +534,12 @@
   <data name="&gt;&gt;Edit_GenerateOutlines.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;Edit_BatchBuild.Name" xml:space="preserve">
+    <value>Edit_BatchBuild</value>
+  </data>
+  <data name="&gt;&gt;Edit_BatchBuild.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;ToolsMenuItem.Name" xml:space="preserve">
     <value>ToolsMenuItem</value>
   </data>
@@ -595,31 +598,25 @@
     <value>localizableStringList1</value>
   </data>
   <data name="&gt;&gt;localizableStringList1.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableStringList, Brick Studio, Version=1.0.3.21818, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableStringList, Brick Studio, Version=1.0.3.16734, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;StartLddText.Name" xml:space="preserve">
     <value>StartLddText</value>
   </data>
   <data name="&gt;&gt;StartLddText.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.3.21818, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.3.16734, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;RestartLddText.Name" xml:space="preserve">
     <value>RestartLddText</value>
   </data>
   <data name="&gt;&gt;RestartLddText.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.3.21818, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.3.16734, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;WindowTitle.Name" xml:space="preserve">
     <value>WindowTitle</value>
   </data>
   <data name="&gt;&gt;WindowTitle.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.3.21818, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;Edit_BatchBuild.Name" xml:space="preserve">
-    <value>Edit_BatchBuild</value>
-  </data>
-  <data name="&gt;&gt;Edit_BatchBuild.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.3.16734, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>BrickEditorWindow</value>

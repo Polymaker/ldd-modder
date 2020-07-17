@@ -245,7 +245,7 @@
             this.collapsiblePanel3.DisplayStyle = LDDModder.BrickEditor.UI.Controls.CollapsiblePanel.HeaderDisplayStyle.Button;
             resources.ApplyResources(this.collapsiblePanel3, "collapsiblePanel3");
             this.collapsiblePanel3.Name = "collapsiblePanel3";
-            this.collapsiblePanel3.PanelHeight = 104;
+            this.collapsiblePanel3.PanelHeight = 107;
             // 
             // tableLayoutPanel3
             // 

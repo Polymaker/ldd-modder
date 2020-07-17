@@ -256,7 +256,7 @@ namespace LDDModder.BrickEditor.Rendering
 
         public static void DrawStudConnector2(Matrix4 transform, LDDModder.LDD.Primitives.Connectors.Custom2DFieldConnector connector)
         {
-            float offset = connector.SubType == 23 ? 0.0001f : -0.0001f;
+            float offset = connector.SubType == 23 ? 0.0005f : -0.0005f;
             DrawTexturedQuad(transform, TextureManager.StudConnectionGrid,
                 new Vector2(connector.StudWidth * 0.8f, connector.StudHeight * 0.8f),
                 new Vector4(0, 0, connector.StudWidth, connector.StudHeight), offset);

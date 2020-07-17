@@ -179,6 +179,27 @@ namespace System.Collections.Generic
             }
         }
 
+        public void SyncItems(IEnumerable<T> items)
+        {
+            var itemsToRemove = Items.ToList();
+
+            RaiseListChangedEvents = false;
+            foreach (var item in items)
+            {
+                itemsToRemove.Remove(item);
+                if (!Contains(item))
+                    Add(item);
+            }
+            foreach (var item in itemsToRemove)
+                Remove(item);
+            RaiseListChangedEvents = true;
+
+            if (IsSorted)
+                ApplySort(PropertyDescriptor, SortDirection);
+            else
+                OnListChanged(new ListChangedEventArgs(ListChangedType.Reset, -1));
+        }
+
         public void InsertRange(int index, IEnumerable<T> items)
         {
             RaiseListChangedEvents = false;

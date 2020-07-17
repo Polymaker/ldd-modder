@@ -577,6 +577,11 @@ namespace LDDModder.Modding.Editing
             return GetAllElements().OfType<T>();
         }
 
+        public IEnumerable<T> GetAllElements<T>(Predicate<T> predicate) where T : PartElement
+        {
+            return GetAllElements().OfType<T>().Where(x => predicate(x));
+        }
+
         private void CheckFiles()
         {
             foreach (var mesh in Meshes)

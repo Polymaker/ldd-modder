@@ -42,14 +42,17 @@ namespace LDDModder.BrickEditor.UI.Editors
 
         private void LoadConnectorInfo()
         {
-            GridHeightBox.Value = StudConnector?.Height ?? 1;
-            GridWidthBox.Value = StudConnector?.Width ?? 1;
+            GridHeightBox.Value = StudConnector?.StudHeight ?? 1;
+            GridWidthBox.Value = StudConnector?.StudWidth ?? 1;
         }
 
         private void ApplySizeButton_Click(object sender, EventArgs e)
         {
-            StudConnector.Height = (int)GridHeightBox.Value;
-            StudConnector.Width = (int)GridWidthBox.Value;
+            if (StudConnector != null)
+            {
+                StudConnector.StudHeight = (int)GridHeightBox.Value;
+                StudConnector.StudWidth = (int)GridWidthBox.Value;
+            }
         }
     }
 }

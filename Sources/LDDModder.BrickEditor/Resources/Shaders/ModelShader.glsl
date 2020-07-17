@@ -114,6 +114,7 @@ void main()
     vec3 viewDir = normalize(ViewPosition - FragPos);
 	
 	vec4 baseColor = Material.Diffuse;
+	//FragColor = vec4((norm + vec3(1)) / 2, 1);
 	
 	if (UseTexture)
 	{

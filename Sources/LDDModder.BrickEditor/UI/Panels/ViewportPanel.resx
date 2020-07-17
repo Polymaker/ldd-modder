@@ -237,19 +237,19 @@
     <value>Camera</value>
   </data>
   <data name="DisplayMenu_Meshes.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>141, 22</value>
   </data>
   <data name="DisplayMenu_Meshes.Text" xml:space="preserve">
     <value>Meshes</value>
   </data>
   <data name="DisplayMenu_Collisions.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>141, 22</value>
   </data>
   <data name="DisplayMenu_Collisions.Text" xml:space="preserve">
     <value>Collisions</value>
   </data>
   <data name="DisplayMenu_Connections.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>141, 22</value>
   </data>
   <data name="DisplayMenu_Connections.Text" xml:space="preserve">
     <value>Connections</value>
@@ -328,31 +328,16 @@
     <value>Meshes</value>
   </data>
   <data name="globalToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>108, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="globalToolStripMenuItem.Text" xml:space="preserve">
     <value>Global</value>
   </data>
   <data name="localToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>108, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="localToolStripMenuItem.Text" xml:space="preserve">
     <value>Local</value>
-  </data>
-  <data name="GizmoOrientationMenu.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAIDSURBVDhPpZLrS5NhGMb3j4SWh0oRQVExD4gonkDpg4hG
-        YKxG6WBogkMZKgPNCEVJFBGdGETEvgwyO9DJE5syZw3PIlPEE9pgBCLZ5XvdMB8Ew8gXbl54nuf63dd9
-        0OGSnwCahxbPRNPAPMw9Xpg6ZmF46kZZ0xSKzJPIrhpDWsVnpBhGkKx3nAX8Pv7z1zg8OoY/cITdn4fw
-        bf/C0kYAN3Ma/w3gWfZL5kzTKBxjWyK2DftwI9tyMYCZKXbNHaD91bLYJrDXsYbrWfUKwJrPE9M2M1Oc
-        VzOOpHI7Jr376Hi9ogHqFIANO0/MmmmbmSmm9a8ze+I4MrNWAdjtoJgWcx+PSzg166yZZ8xM8XvXDix9
-        c4jIqFYAjoriBV9AhEPv1mH/sonogha0afbZMMZz+yreTGyhpusHwtNNCsA5U1zS4BLxzJIfg299qO32
-        Ir7UJtZfftyATqeT+8o2D8JSjQrAJblrncYL7ZJ2+bfaFnC/1S1NjL3diRat7qrO7wLRP3HjWsojBeCo
-        mDEo5mNjuweFGvjWg2EBhCbpkW78htSHHwRyNdmgAFzPEee2iFkzayy2OLXzT4gr6UdUnlXrullsxxQ+
-        kx0g8BTA3aZlButjSTyjODq/WcQcW/B/Je4OQhLvKQDnzN1mp0nnkvAhR8VuMzNrpm1mpjgkoVwB/v8D
-        TgDQASA1MVpwzwAAAABJRU5ErkJggg==
-</value>
   </data>
   <data name="GizmoOrientationMenu.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
     <value>Magenta</value>
@@ -392,21 +377,6 @@
   </data>
   <data name="cursorToolStripMenuItem.Text" xml:space="preserve">
     <value>3D Cursor</value>
-  </data>
-  <data name="GizmoPivotModeMenu.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAIDSURBVDhPpZLrS5NhGMb3j4SWh0oRQVExD4gonkDpg4hG
-        YKxG6WBogkMZKgPNCEVJFBGdGETEvgwyO9DJE5syZw3PIlPEE9pgBCLZ5XvdMB8Ew8gXbl54nuf63dd9
-        0OGSnwCahxbPRNPAPMw9Xpg6ZmF46kZZ0xSKzJPIrhpDWsVnpBhGkKx3nAX8Pv7z1zg8OoY/cITdn4fw
-        bf/C0kYAN3Ma/w3gWfZL5kzTKBxjWyK2DftwI9tyMYCZKXbNHaD91bLYJrDXsYbrWfUKwJrPE9M2M1Oc
-        VzOOpHI7Jr376Hi9ogHqFIANO0/MmmmbmSmm9a8ze+I4MrNWAdjtoJgWcx+PSzg166yZZ8xM8XvXDix9
-        c4jIqFYAjoriBV9AhEPv1mH/sonogha0afbZMMZz+yreTGyhpusHwtNNCsA5U1zS4BLxzJIfg299qO32
-        Ir7UJtZfftyATqeT+8o2D8JSjQrAJblrncYL7ZJ2+bfaFnC/1S1NjL3diRat7qrO7wLRP3HjWsojBeCo
-        mDEo5mNjuweFGvjWg2EBhCbpkW78htSHHwRyNdmgAFzPEee2iFkzayy2OLXzT4gr6UdUnlXrullsxxQ+
-        kx0g8BTA3aZlButjSTyjODq/WcQcW/B/Je4OQhLvKQDnzN1mp0nnkvAhR8VuMzNrpm1mpjgkoVwB/v8D
-        TgDQASA1MVpwzwAAAABJRU5ErkJggg==
-</value>
   </data>
   <data name="GizmoPivotModeMenu.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
     <value>Magenta</value>
@@ -508,7 +478,7 @@
     <value>PosZNumBox</value>
   </data>
   <data name="&gt;&gt;PosZNumBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.2.17460, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.3.22100, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;PosZNumBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -637,7 +607,7 @@
     <value>PosXNumBox</value>
   </data>
   <data name="&gt;&gt;PosXNumBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.2.17460, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.3.22100, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;PosXNumBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -667,7 +637,7 @@
     <value>PosYNumBox</value>
   </data>
   <data name="&gt;&gt;PosYNumBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.2.17460, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.3.22100, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;PosYNumBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -796,7 +766,7 @@
     <value>RotXNumBox</value>
   </data>
   <data name="&gt;&gt;RotXNumBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.2.17460, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.3.22100, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;RotXNumBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -892,7 +862,7 @@
     <value>RotYNumBox</value>
   </data>
   <data name="&gt;&gt;RotYNumBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.2.17460, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.3.22100, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;RotYNumBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -922,7 +892,7 @@
     <value>RotZNumBox</value>
   </data>
   <data name="&gt;&gt;RotZNumBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.2.17460, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.3.22100, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;RotZNumBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -1189,6 +1159,6 @@
     <value>ViewportPanel</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Panels.ProjectDocumentPanel, Brick Studio, Version=1.0.2.17460, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Panels.ProjectDocumentPanel, Brick Studio, Version=1.0.3.22100, Culture=neutral, PublicKeyToken=null</value>
   </data>
 </root>

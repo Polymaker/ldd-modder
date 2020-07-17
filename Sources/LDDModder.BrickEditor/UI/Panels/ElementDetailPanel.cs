@@ -35,6 +35,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             CloseButtonVisible = false;
             CloseButton = false;
             ConnectorList = new SortableBindingList<ConnectorComboItem>();
+            DockAreas ^= WeifenLuo.WinFormsUI.Docking.DockAreas.Document;
         }
 
         protected override void OnLoad(EventArgs e)
