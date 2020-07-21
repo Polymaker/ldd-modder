@@ -375,6 +375,14 @@ namespace LDDModder.BrickEditor.UI.Panels
             if (ProjectManager.ShowConnections && ConnectionModels.Any())
                 DrawConnections();
 
+            if (UIRenderHelper.TextRenderer.DrawingPrimitives.Any())
+            {
+                UIRenderHelper.TextRenderer.RefreshBuffers();
+                UIRenderHelper.TextRenderer.Draw();
+                UIRenderHelper.TextRenderer.DisableShader();
+            }
+            
+
             DrawGrid();
 
             GL.UseProgram(0);
@@ -384,7 +392,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                 GL.Clear(ClearBufferMask.DepthBufferBit);
                 SelectionGizmo.Render(Camera);
             }
-
+            
             GL.UseProgram(0);
         }
 
@@ -1438,7 +1446,9 @@ namespace LDDModder.BrickEditor.UI.Panels
         #endregion
 
         #endregion
-       
+
+        #region Keyboard Handling
+
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
             if (ContainsFocus)
@@ -1463,10 +1473,24 @@ namespace LDDModder.BrickEditor.UI.Panels
                     AlignToMenu_Right.PerformClick();
                     return true;
                 }
+                //else if (keyData == Keys.H)
+                //{
+                //    var selectedModels = ProjectManager.SelectedElements
+                //        .Select(x => x.GetExtension<ModelElementExtension>())
+                //        .Where(x => x != null).ToList();
+
+                //    //bool newState = InputManager.is
+                //    if (selectedModels.Any())
+                //    {
+                //        selectedModels.ForEach(x => x.IsHidden = true);
+                //    }
+                //}
             }
-            
+
             return base.ProcessCmdKey(ref msg, keyData);
         }
+
+        #endregion
 
         private void toolStripMenuItem1_Click(object sender, EventArgs e)
         {

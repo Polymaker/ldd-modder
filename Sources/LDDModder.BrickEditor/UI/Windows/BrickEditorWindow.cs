@@ -54,9 +54,11 @@ namespace LDDModder.BrickEditor.UI.Windows
             ProjectManager.ValidationFinished += ProjectManager_ValidationFinished;
             ProjectManager.GenerationFinished += ProjectManager_GenerationFinished;
             ProjectManager.ElementPropertyChanged += ProjectManager_ElementPropertyChanged;
+
             InitialCheckUp();
 
             ResourceHelper.LoadPlatformsAndCategories();
+            ResourceHelper.LoadConnectors();
 
             InitializePanels();
             RebuildRecentFilesMenu();
@@ -79,7 +81,7 @@ namespace LDDModder.BrickEditor.UI.Windows
         {
             SettingsManager.Initialize();
 
-            if (!LDDEnvironment.Current.IsValidInstall)
+            if (LDDEnvironment.Current == null || !LDDEnvironment.Current.IsValidInstall)
             {
                 if (!LDDEnvironment.IsInstalled)
                     MessageBox.Show(Messages.LddInstallNotFound, Messages.Caption_StartupValidations, MessageBoxButtons.OK);
@@ -115,11 +117,12 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         #region UI Layout
 
-        private NavigationPanel NavigationPanel;
-        private ViewportPanel ViewportPanel;
-        private ValidationPanel ValidationPanel;
-        private PartPropertiesPanel PropertiesPanel;
-        private ElementDetailPanel DetailPanel;
+        public NavigationPanel NavigationPanel { get; private set; }
+        public ViewportPanel ViewportPanel { get; private set; }
+        public ValidationPanel ValidationPanel { get; private set; }
+        public PartPropertiesPanel PropertiesPanel { get; private set; }
+        public ElementDetailPanel DetailPanel { get; private set; }
+        public StudConnectionPanel StudConnectionPanel { get; private set; }
 
         private void InitializePanels()
         {
@@ -128,8 +131,11 @@ namespace LDDModder.BrickEditor.UI.Windows
             ValidationPanel = new ValidationPanel(ProjectManager);
             PropertiesPanel = new PartPropertiesPanel(ProjectManager);
             DetailPanel = new ElementDetailPanel(ProjectManager);
+            StudConnectionPanel = new StudConnectionPanel(ProjectManager);
 
             ViewportPanel.Show(DockPanelControl, DockState.Document);
+            StudConnectionPanel.Show(DockPanelControl, DockState.Document);
+            ViewportPanel.Activate();
 
             DockPanelControl.DockLeftPortion = 250;
             NavigationPanel.Show(DockPanelControl, DockState.DockLeft);
@@ -142,7 +148,6 @@ namespace LDDModder.BrickEditor.UI.Windows
             ValidationPanel.Show(PropertiesPanel.Pane, null);
 
             PropertiesPanel.Activate();
-
         }
 
         #endregion
@@ -384,9 +389,7 @@ namespace LDDModder.BrickEditor.UI.Windows
                 imd.SelectFileOnStart = true;
 
                 if (imd.ShowDialog() == DialogResult.OK)
-                {
                     ImportAssimpModel(imd);
-                }
             }
         }
         

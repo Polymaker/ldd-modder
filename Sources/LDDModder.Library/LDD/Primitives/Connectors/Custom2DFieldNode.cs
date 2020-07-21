@@ -14,7 +14,7 @@ namespace LDDModder.LDD.Primitives.Connectors
             get => _Values;
             set
             {
-                if (value.Length == 3)
+                if (value != null && value.Length == 3)
                 {
                     SetPropertyValue(ref _Values, value);
                 }

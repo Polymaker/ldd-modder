@@ -32,9 +32,10 @@ namespace LDDModder.BrickEditor.Rendering
         private static List<SpriteElement> SpritesToRender;
         private static List<VertVT> VertexList;
 
-        private static QFontDrawing TextRenderer;
+        public static QFontDrawing TextRenderer { get; private set; }
         public static QFont NormalFont { get; private set; }
         public static QFont SmallFont { get; private set; }
+        public static QFont MonoFont { get; private set; }
 
         static UIRenderHelper()
         {
@@ -44,10 +45,14 @@ namespace LDDModder.BrickEditor.Rendering
 
         public static void InitializeResources()
         {
+
             NormalFont = new QFont("C:\\Windows\\Fonts\\segoeui.ttf", 10,
                 new QFontBuilderConfiguration(true));
 
             SmallFont = new QFont("C:\\Windows\\Fonts\\segoeui.ttf", 8,
+                new QFontBuilderConfiguration(true));
+
+            MonoFont = new QFont("C:\\Windows\\Fonts\\consola.ttf", 10,
                 new QFontBuilderConfiguration(true));
 
             TextRenderer = new QFontDrawing();
@@ -72,6 +77,10 @@ namespace LDDModder.BrickEditor.Rendering
             SmallFont.Dispose();
             TextRenderer.Dispose();
             UIShader.Dispose();
+
+            NormalFont.Dispose();
+            SmallFont.Dispose();
+            MonoFont.Dispose();
         }
 
         public static void InitializeMatrices(Camera camera)
@@ -102,6 +111,7 @@ namespace LDDModder.BrickEditor.Rendering
             });
             VertexList.AddRange(verts);
         }
+
         public static SpriteElement DrawSpriteBox(Texture2D texture, Vector4 destination, BoxSpriteBounds spriteBounds)
         {
             float scale = Math.Min(destination.Z, destination.W);
@@ -231,9 +241,12 @@ namespace LDDModder.BrickEditor.Rendering
             TextRenderer.DrawingPrimitives.Add(dp);
         }
 
+
+
         public static void IntializeBeforeRender()
         {
             TextRenderer.DrawingPrimitives.Clear();
+            TextRenderer.ProjectionMatrix = TextMatrix;
             VBO.Clear(OpenTK.Graphics.OpenGL.BufferTarget.ArrayBuffer);
             SpritesToRender.Clear();
             VertexList.Clear();

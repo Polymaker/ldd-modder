@@ -20,6 +20,8 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         protected FlagManager FlagManager { get; }
 
+        public Windows.BrickEditorWindow EditorWindow => DockPanel?.Parent as Windows.BrickEditorWindow;
+
         public ProjectDocumentPanel()
         {
             FlagManager = new FlagManager();
@@ -42,6 +44,28 @@ namespace LDDModder.BrickEditor.UI.Panels
             ProjectManager.ElementPropertyChanged += ProjectManager_ElementPropertyChanged;
             ProjectManager.SelectionChanged += ProjectManager_SelectionChanged;
             ProjectManager.UndoHistoryChanged += ProjectManager_UndoHistoryChanged;
+        }
+
+        private void DettachProjectManager()
+        {
+            if (ProjectManager == null)
+                return;
+
+            ProjectManager.ProjectClosed -= ProjectManager_ProjectClosed;
+            ProjectManager.ProjectChanged -= ProjectManager_ProjectChanged;
+            ProjectManager.ElementCollectionChanged -= ProjectManager_ElementCollectionChanged;
+            ProjectManager.ProjectElementsChanged -= ProjectManager_ProjectElementsChanged;
+            ProjectManager.ElementPropertyChanged -= ProjectManager_ElementPropertyChanged;
+            ProjectManager.SelectionChanged -= ProjectManager_SelectionChanged;
+            ProjectManager.UndoHistoryChanged -= ProjectManager_UndoHistoryChanged;
+
+            ProjectManager = null;
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            DettachProjectManager();
+            base.OnClosed(e);
         }
 
         private void ProjectManager_ProjectClosed(object sender, EventArgs e)

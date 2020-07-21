@@ -246,6 +246,7 @@
             this.GizmoOrientationMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.globalToolStripMenuItem,
             this.localToolStripMenuItem});
+            this.GizmoOrientationMenu.Image = global::LDDModder.BrickEditor.Properties.Resources.GizmoOrientationIcon;
             resources.ApplyResources(this.GizmoOrientationMenu, "GizmoOrientationMenu");
             this.GizmoOrientationMenu.Margin = new System.Windows.Forms.Padding(50, 1, 0, 2);
             this.GizmoOrientationMenu.Name = "GizmoOrientationMenu";
@@ -272,6 +273,7 @@
             this.medianBoundingBoxToolStripMenuItem,
             this.activeElementToolStripMenuItem,
             this.cursorToolStripMenuItem});
+            this.GizmoPivotModeMenu.Image = global::LDDModder.BrickEditor.Properties.Resources.GizmoPivotPointIcon;
             resources.ApplyResources(this.GizmoPivotModeMenu, "GizmoPivotModeMenu");
             this.GizmoPivotModeMenu.Margin = new System.Windows.Forms.Padding(0, 1, 20, 2);
             this.GizmoPivotModeMenu.Name = "GizmoPivotModeMenu";

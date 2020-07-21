@@ -44,35 +44,27 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.MainInfoTab = new System.Windows.Forms.TabPage();
             this.StudRefTab = new System.Windows.Forms.TabPage();
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.ConnectionRefLabel = new System.Windows.Forms.Label();
-            this.ConnectionRefCombo = new System.Windows.Forms.ComboBox();
             this.StudRefGridView = new System.Windows.Forms.DataGridView();
+            this.ConnectionColumn = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.FieldIndexColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.FieldPositionColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.StudRefValue1Colunm = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.StudRefValue2Colunm = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.label1 = new System.Windows.Forms.Label();
+            this.AdjStudColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.ConnectionInfoTab = new System.Windows.Forms.TabPage();
-            this.ConnectionTableLayout = new System.Windows.Forms.TableLayoutPanel();
-            this.ConnectionSubTypeLabel = new System.Windows.Forms.Label();
-            this.ConnectionTypeValueLabel = new System.Windows.Forms.Label();
-            this.ConnectionTypeLabel = new System.Windows.Forms.Label();
-            this.ConnectionSubTypeCombo = new System.Windows.Forms.ComboBox();
             this.localizableStringList1 = new LDDModder.BrickEditor.Localization.LocalizableStringList(this.components);
             this.MultiSelectionMsg = new LDDModder.BrickEditor.Localization.LocalizableString();
             this.NoSelectionMsg = new LDDModder.BrickEditor.Localization.LocalizableString();
             this.TopStudsLabel = new LDDModder.BrickEditor.Localization.LocalizableString();
             this.BottomStudsLabel = new LDDModder.BrickEditor.Localization.LocalizableString();
             this.NoConnectorRefLabel = new LDDModder.BrickEditor.Localization.LocalizableString();
+            this.connectorEditor1 = new LDDModder.BrickEditor.UI.Controls.ConnectorEditor();
             this.PropertiesTableLayout.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.MainInfoTab.SuspendLayout();
             this.StudRefTab.SuspendLayout();
-            this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.StudRefGridView)).BeginInit();
             this.ConnectionInfoTab.SuspendLayout();
-            this.ConnectionTableLayout.SuspendLayout();
             this.SuspendLayout();
             // 
             // NameTextBox
@@ -163,47 +155,35 @@
             // 
             // StudRefTab
             // 
-            this.StudRefTab.Controls.Add(this.tableLayoutPanel1);
+            this.StudRefTab.Controls.Add(this.StudRefGridView);
             resources.ApplyResources(this.StudRefTab, "StudRefTab");
             this.StudRefTab.Name = "StudRefTab";
             this.StudRefTab.UseVisualStyleBackColor = true;
-            // 
-            // tableLayoutPanel1
-            // 
-            resources.ApplyResources(this.tableLayoutPanel1, "tableLayoutPanel1");
-            this.tableLayoutPanel1.Controls.Add(this.ConnectionRefLabel, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.ConnectionRefCombo, 1, 0);
-            this.tableLayoutPanel1.Controls.Add(this.StudRefGridView, 0, 2);
-            this.tableLayoutPanel1.Controls.Add(this.label1, 0, 1);
-            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            // 
-            // ConnectionRefLabel
-            // 
-            resources.ApplyResources(this.ConnectionRefLabel, "ConnectionRefLabel");
-            this.ConnectionRefLabel.Name = "ConnectionRefLabel";
-            // 
-            // ConnectionRefCombo
-            // 
-            resources.ApplyResources(this.ConnectionRefCombo, "ConnectionRefCombo");
-            this.ConnectionRefCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.ConnectionRefCombo.FormattingEnabled = true;
-            this.ConnectionRefCombo.Name = "ConnectionRefCombo";
-            this.ConnectionRefCombo.SelectedIndexChanged += new System.EventHandler(this.ConnectionRefCombo_SelectedIndexChanged);
             // 
             // StudRefGridView
             // 
             this.StudRefGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.StudRefGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.ConnectionColumn,
             this.FieldIndexColumn,
             this.FieldPositionColumn,
             this.StudRefValue1Colunm,
-            this.StudRefValue2Colunm});
-            this.tableLayoutPanel1.SetColumnSpan(this.StudRefGridView, 2);
+            this.StudRefValue2Colunm,
+            this.AdjStudColumn});
             resources.ApplyResources(this.StudRefGridView, "StudRefGridView");
             this.StudRefGridView.Name = "StudRefGridView";
+            this.StudRefGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.StudRefGridView_CellFormatting);
+            this.StudRefGridView.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.StudRefGridView_DataError);
+            // 
+            // ConnectionColumn
+            // 
+            this.ConnectionColumn.DataPropertyName = "ConnectionID";
+            resources.ApplyResources(this.ConnectionColumn, "ConnectionColumn");
+            this.ConnectionColumn.Name = "ConnectionColumn";
             // 
             // FieldIndexColumn
             // 
+            this.FieldIndexColumn.DataPropertyName = "FieldIndex";
             resources.ApplyResources(this.FieldIndexColumn, "FieldIndexColumn");
             this.FieldIndexColumn.Name = "FieldIndexColumn";
             // 
@@ -214,55 +194,29 @@
             // 
             // StudRefValue1Colunm
             // 
+            this.StudRefValue1Colunm.DataPropertyName = "Value1";
             resources.ApplyResources(this.StudRefValue1Colunm, "StudRefValue1Colunm");
             this.StudRefValue1Colunm.Name = "StudRefValue1Colunm";
+            this.StudRefValue1Colunm.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
             // StudRefValue2Colunm
             // 
+            this.StudRefValue2Colunm.DataPropertyName = "Value2";
             resources.ApplyResources(this.StudRefValue2Colunm, "StudRefValue2Colunm");
             this.StudRefValue2Colunm.Name = "StudRefValue2Colunm";
+            this.StudRefValue2Colunm.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
-            // label1
+            // AdjStudColumn
             // 
-            resources.ApplyResources(this.label1, "label1");
-            this.label1.Name = "label1";
+            resources.ApplyResources(this.AdjStudColumn, "AdjStudColumn");
+            this.AdjStudColumn.Name = "AdjStudColumn";
             // 
             // ConnectionInfoTab
             // 
-            this.ConnectionInfoTab.Controls.Add(this.ConnectionTableLayout);
+            this.ConnectionInfoTab.Controls.Add(this.connectorEditor1);
             resources.ApplyResources(this.ConnectionInfoTab, "ConnectionInfoTab");
             this.ConnectionInfoTab.Name = "ConnectionInfoTab";
             this.ConnectionInfoTab.UseVisualStyleBackColor = true;
-            // 
-            // ConnectionTableLayout
-            // 
-            resources.ApplyResources(this.ConnectionTableLayout, "ConnectionTableLayout");
-            this.ConnectionTableLayout.Controls.Add(this.ConnectionSubTypeLabel, 0, 1);
-            this.ConnectionTableLayout.Controls.Add(this.ConnectionTypeValueLabel, 1, 0);
-            this.ConnectionTableLayout.Controls.Add(this.ConnectionTypeLabel, 0, 0);
-            this.ConnectionTableLayout.Controls.Add(this.ConnectionSubTypeCombo, 1, 1);
-            this.ConnectionTableLayout.Name = "ConnectionTableLayout";
-            // 
-            // ConnectionSubTypeLabel
-            // 
-            resources.ApplyResources(this.ConnectionSubTypeLabel, "ConnectionSubTypeLabel");
-            this.ConnectionSubTypeLabel.Name = "ConnectionSubTypeLabel";
-            // 
-            // ConnectionTypeValueLabel
-            // 
-            resources.ApplyResources(this.ConnectionTypeValueLabel, "ConnectionTypeValueLabel");
-            this.ConnectionTypeValueLabel.Name = "ConnectionTypeValueLabel";
-            // 
-            // ConnectionTypeLabel
-            // 
-            resources.ApplyResources(this.ConnectionTypeLabel, "ConnectionTypeLabel");
-            this.ConnectionTypeLabel.Name = "ConnectionTypeLabel";
-            // 
-            // ConnectionSubTypeCombo
-            // 
-            this.ConnectionSubTypeCombo.FormattingEnabled = true;
-            resources.ApplyResources(this.ConnectionSubTypeCombo, "ConnectionSubTypeCombo");
-            this.ConnectionSubTypeCombo.Name = "ConnectionSubTypeCombo";
             // 
             // localizableStringList1
             // 
@@ -293,6 +247,11 @@
             // 
             resources.ApplyResources(this.NoConnectorRefLabel, "NoConnectorRefLabel");
             // 
+            // connectorEditor1
+            // 
+            resources.ApplyResources(this.connectorEditor1, "connectorEditor1");
+            this.connectorEditor1.Name = "connectorEditor1";
+            // 
             // ElementDetailPanel
             // 
             resources.ApplyResources(this, "$this");
@@ -305,12 +264,8 @@
             this.MainInfoTab.ResumeLayout(false);
             this.MainInfoTab.PerformLayout();
             this.StudRefTab.ResumeLayout(false);
-            this.tableLayoutPanel1.ResumeLayout(false);
-            this.tableLayoutPanel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.StudRefGridView)).EndInit();
             this.ConnectionInfoTab.ResumeLayout(false);
-            this.ConnectionTableLayout.ResumeLayout(false);
-            this.ConnectionTableLayout.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -334,22 +289,16 @@
         private Localization.LocalizableStringList localizableStringList1;
         private Localization.LocalizableString MultiSelectionMsg;
         private Localization.LocalizableString NoSelectionMsg;
-        private System.Windows.Forms.TableLayoutPanel ConnectionTableLayout;
-        private System.Windows.Forms.Label ConnectionSubTypeLabel;
-        private System.Windows.Forms.Label ConnectionTypeValueLabel;
-        private System.Windows.Forms.Label ConnectionTypeLabel;
-        private System.Windows.Forms.ComboBox ConnectionSubTypeCombo;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private System.Windows.Forms.Label ConnectionRefLabel;
-        private System.Windows.Forms.ComboBox ConnectionRefCombo;
         private Localization.LocalizableString TopStudsLabel;
         private Localization.LocalizableString BottomStudsLabel;
         private Localization.LocalizableString NoConnectorRefLabel;
         private System.Windows.Forms.DataGridView StudRefGridView;
+        private System.Windows.Forms.DataGridViewComboBoxColumn ConnectionColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn FieldIndexColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn FieldPositionColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn StudRefValue1Colunm;
         private System.Windows.Forms.DataGridViewTextBoxColumn StudRefValue2Colunm;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn AdjStudColumn;
+        private Controls.ConnectorEditor connectorEditor1;
     }
 }

@@ -54,6 +54,8 @@
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.Edit_ValidatePartMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.Edit_GenerateFilesMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.Edit_GenerateOutlines = new System.Windows.Forms.ToolStripMenuItem();
+            this.Edit_BatchBuild = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ExportBrickMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
@@ -67,7 +69,6 @@
             this.StartLddText = new LDDModder.BrickEditor.Localization.LocalizableString();
             this.RestartLddText = new LDDModder.BrickEditor.Localization.LocalizableString();
             this.WindowTitle = new LDDModder.BrickEditor.Localization.LocalizableString();
-            this.Edit_GenerateOutlines = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -178,7 +179,8 @@
             this.toolStripSeparator4,
             this.Edit_ValidatePartMenu,
             this.Edit_GenerateFilesMenu,
-            this.Edit_GenerateOutlines});
+            this.Edit_GenerateOutlines,
+            this.Edit_BatchBuild});
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
             resources.ApplyResources(this.editToolStripMenuItem, "editToolStripMenuItem");
             // 
@@ -221,6 +223,20 @@
             this.Edit_GenerateFilesMenu.Name = "Edit_GenerateFilesMenu";
             resources.ApplyResources(this.Edit_GenerateFilesMenu, "Edit_GenerateFilesMenu");
             this.Edit_GenerateFilesMenu.Click += new System.EventHandler(this.Edit_GenerateFilesMenu_Click);
+            // 
+            // Edit_GenerateOutlines
+            // 
+            this.Edit_GenerateOutlines.Checked = true;
+            this.Edit_GenerateOutlines.CheckOnClick = true;
+            this.Edit_GenerateOutlines.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.Edit_GenerateOutlines.Name = "Edit_GenerateOutlines";
+            resources.ApplyResources(this.Edit_GenerateOutlines, "Edit_GenerateOutlines");
+            this.Edit_GenerateOutlines.CheckStateChanged += new System.EventHandler(this.Edit_GenerateOutlines_CheckStateChanged);
+            // 
+            // Edit_BatchBuild
+            // 
+            this.Edit_BatchBuild.Name = "Edit_BatchBuild";
+            resources.ApplyResources(this.Edit_BatchBuild, "Edit_BatchBuild");
             // 
             // ToolsMenuItem
             // 
@@ -299,15 +315,6 @@
             // 
             resources.ApplyResources(this.WindowTitle, "WindowTitle");
             // 
-            // Edit_GenerateOutlines
-            // 
-            this.Edit_GenerateOutlines.Checked = true;
-            this.Edit_GenerateOutlines.CheckOnClick = true;
-            this.Edit_GenerateOutlines.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.Edit_GenerateOutlines.Name = "Edit_GenerateOutlines";
-            resources.ApplyResources(this.Edit_GenerateOutlines, "Edit_GenerateOutlines");
-            this.Edit_GenerateOutlines.CheckStateChanged += new System.EventHandler(this.Edit_GenerateOutlines_CheckStateChanged);
-            // 
             // BrickEditorWindow
             // 
             resources.ApplyResources(this, "$this");
@@ -326,7 +333,6 @@
         }
 
         #endregion
-        private WeifenLuo.WinFormsUI.Docking.DockPanel DockPanelControl;
         private WeifenLuo.WinFormsUI.Docking.VS2015DarkTheme vS2015DarkTheme1;
         private WeifenLuo.WinFormsUI.Docking.VisualStudioToolStripExtender visualStudioToolStripExtender1;
         private WeifenLuo.WinFormsUI.Docking.VS2015LightTheme vS2015LightTheme1;
@@ -364,5 +370,7 @@
         private Localization.LocalizableString WindowTitle;
         private System.Windows.Forms.ToolStripComboBox BuildConfigComboBox;
         private System.Windows.Forms.ToolStripMenuItem Edit_GenerateOutlines;
+        private System.Windows.Forms.ToolStripMenuItem Edit_BatchBuild;
+        public WeifenLuo.WinFormsUI.Docking.DockPanel DockPanelControl;
     }
 }

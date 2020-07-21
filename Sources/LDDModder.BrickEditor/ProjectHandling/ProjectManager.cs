@@ -659,7 +659,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
             if (result.Contains("$(LddAppData)"))
             {
-                if (string.IsNullOrEmpty(LDDEnvironment.Current.ApplicationDataPath) || 
+                if (string.IsNullOrEmpty(LDDEnvironment.Current?.ApplicationDataPath) || 
                     !Directory.Exists(LDDEnvironment.Current.ApplicationDataPath))
                     throw new ArgumentException("Could not find LDD AppData directory");
                 result = result.Replace("$(LddAppData)", LDDEnvironment.Current.ApplicationDataPath);

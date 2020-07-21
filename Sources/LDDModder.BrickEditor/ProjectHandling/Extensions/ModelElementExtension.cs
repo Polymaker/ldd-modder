@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace LDDModder.BrickEditor.ProjectHandling
@@ -20,6 +21,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
         private bool _IsHidden;
         private bool _IsVisible;
         private bool visbilityDirty;
+        private static object DrillDownLock = new object();
 
         public bool IsHidden
         {
@@ -29,6 +31,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
                 if (_IsHidden != value)
                 {
                     _IsHidden = value;
+                    //visbilityDirty = true;
                     InvalidateVisibility();
                 }
             }
@@ -111,6 +114,9 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
         public bool IsHiddenOverride()
         {
+            if (Monitor.IsEntered(DrillDownLock))
+                Monitor.Wait(DrillDownLock);
+
             bool isParentVisible = IsParentVisible();
             bool isHiddenByConfigs = IsHiddenByConfigs();
             bool isHiddenByParent = IsHiddenByParent();
@@ -120,24 +126,42 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
         public void CalculateVisibility()
         {
+            if (Monitor.IsEntered(DrillDownLock))
+                Monitor.Wait(DrillDownLock);
+
             bool wasVisible = _IsVisible;
 
             _IsVisible = !IsHidden && !IsHiddenOverride();
             
             visbilityDirty = false;
-
+            //Debug.WriteLine($"{Element.Name} IsVisible {wasVisible} -> {_IsVisible}");
             if (_IsVisible != wasVisible)
                 VisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public void InvalidateVisibility(bool childrensOnly = false)
         {
-            foreach (var element in Element.GetChildsHierarchy(!childrensOnly))
+            Monitor.Enter(DrillDownLock);
+            try
             {
-                var modelExt = element.GetExtension<ModelElementExtension>();
-                if (modelExt != null)
-                    modelExt.visbilityDirty = true;
+                foreach (var element in Element.GetChildsHierarchy(!childrensOnly))
+                {
+                    var modelExt = element.GetExtension<ModelElementExtension>();
+                    if (modelExt != null)
+                        modelExt.InvalidateVisibilityCore();
+                }
             }
+            finally
+            {
+                Monitor.Exit(DrillDownLock);
+            }
+            
+        }
+
+        protected void InvalidateVisibilityCore()
+        {
+            visbilityDirty = true;
+            //Debug.WriteLine($"{Element.Name} visbilityDirty");
         }
     }
 }

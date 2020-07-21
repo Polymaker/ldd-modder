@@ -13,7 +13,7 @@ namespace LDDModder.BrickEditor.Rendering
 
         public bool Visible
         {
-            get => _Visible;
+            get => GetVisibleCore();
             set
             {
                 if (value != _Visible)
@@ -81,6 +81,11 @@ namespace LDDModder.BrickEditor.Rendering
         }
 
         #endregion
+
+        protected virtual bool GetVisibleCore()
+        {
+            return _Visible;
+        }
 
         protected void OnVisibilityChanged()
         {

@@ -187,11 +187,19 @@ namespace LDDModder.LDD.Primitives.Connectors
             _Height = element.ReadAttribute<int>("height");
             NodeArray = null;
             Initialize2DArray();
+            int expectedValueCount = (Width + 1) * (Height + 1);
 
-            var values = element.Value.Trim().Split(',');
-            for (int i = 0; i < values.Length; i++)
+            var values = element.Value.Trim().Split(',').ToList();
+            values.RemoveAll(x => string.IsNullOrWhiteSpace(x));
+
+            //if (values.Count != expectedValueCount)
+            //    throw new Exception("Unexpected number of values!");
+
+            for (int i = 0; i < values.Count; i++)
             {
                 int rowIdx = (int)Math.Floor(i / (double)(Width + 1));
+                if (rowIdx > Height + 1)
+                    break;
                 NodeArray[i % (Width + 1), rowIdx].Parse(values[i]);
             }
         }

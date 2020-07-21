@@ -17,6 +17,7 @@ namespace LDDModder.BrickEditor.UI.Panels
     public partial class ElementDetailPanel : ProjectDocumentPanel
     {
         private PartElement SelectedElement;
+        private SortableBindingList<ConnectorComboItem> ConnectorList;
 
         public ElementDetailPanel()
         {
@@ -24,6 +25,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             StudRefGridView.AutoGenerateColumns = false;
             CloseButtonVisible = false;
             CloseButton = false;
+            ConnectorList = new SortableBindingList<ConnectorComboItem>();
         }
 
         public ElementDetailPanel(ProjectManager projectManager) : base(projectManager)
@@ -32,12 +34,22 @@ namespace LDDModder.BrickEditor.UI.Panels
             StudRefGridView.AutoGenerateColumns = false;
             CloseButtonVisible = false;
             CloseButton = false;
+            ConnectorList = new SortableBindingList<ConnectorComboItem>();
+            DockAreas ^= WeifenLuo.WinFormsUI.Docking.DockAreas.Document;
         }
 
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
             SetControlDoubleBuffered(PropertiesTableLayout);
+            InitializeStudRefGrid();
+            FillSelectionDetails(null);
+            
+        }
+
+        protected override void OnProjectClosed()
+        {
+            base.OnProjectClosed();
             FillSelectionDetails(null);
         }
 
@@ -51,6 +63,14 @@ namespace LDDModder.BrickEditor.UI.Panels
             });
         }
 
+        protected override void OnElementCollectionChanged(ElementCollectionChangedEventArgs e)
+        {
+            base.OnElementCollectionChanged(e);
+
+            if (e.ElementType == typeof(PartConnection))
+                ExecuteOnThread(UpdateStudConnectorList);
+        }
+
         private void FillSelectionDetails(PartElement selection)
         {
             if (SelectedElement != null)
@@ -62,8 +82,17 @@ namespace LDDModder.BrickEditor.UI.Panels
             using (FlagManager.UseFlag("FillSelectionDetails"))
             {
                 FillElementProperties(selection);
-                FillConnectionDetails(selection as PartConnection);
-                FillStudRefDetails(selection as PartCullingModel);
+
+                if (ProjectManager.SelectedElements.Count > 1)
+                {
+                    FillConnectionDetails(null);
+                    FillStudRefDetails(null);
+                }
+                else
+                {
+                    FillConnectionDetails(selection as PartConnection);
+                    FillStudRefDetails(selection as PartCullingModel);
+                }
 
                 SelectedElement = selection;
                 if (SelectedElement != null)
@@ -85,8 +114,6 @@ namespace LDDModder.BrickEditor.UI.Panels
                             CollisionSizeEditor.Value = boxColl.Size * 2d;
                     }
                 });
-            
-            
         }
 
         private string GetElementTypeName(PartElement element)
@@ -271,14 +298,57 @@ namespace LDDModder.BrickEditor.UI.Panels
         private class ConnectorComboItem
         {
             public string ID { get; set; }
-            public string Name { get; set; }
-            public string DisplayText { get; set; }
 
-            public ConnectorComboItem(string iD, string name, string displayText)
+            public PartConnection Connection { get; set; }
+            public int SubType { get; set; }
+            //public string Name { get; set; }
+            public string DisplayText => (Connection?.Name ?? "DELETED") + $" ({ConnTypeText})";
+            public string ConnTypeText { get; set; }
+            public ConnectorComboItem(PartConnection connection)
             {
-                ID = iD;
-                Name = name;
-                DisplayText = displayText;
+                ID = connection.ID;
+                Connection = connection;
+                SubType = connection.SubType;
+            }
+        }
+
+        private void UpdateStudConnectorList()
+        {
+            if (CurrentProject == null)
+            {
+                ConnectorList.Clear();
+            }
+            else
+            {
+                var studConnections = CurrentProject.GetAllElements<PartConnection>()
+                    .Where(x => x.ConnectorType == ConnectorType.Custom2DField).ToList();
+
+                foreach (var studConn in studConnections)
+                {
+                    if (string.IsNullOrEmpty(studConn.ID))
+                        continue;
+
+                    var comboItem = ConnectorList.FirstOrDefault(x => x.ID == studConn.ID);
+                    if (comboItem== null)
+                    {
+                        comboItem = new ConnectorComboItem(studConn);
+                        comboItem.ConnTypeText = studConn.SubType == 22 ? BottomStudsLabel.Text : TopStudsLabel.Text;
+                        ConnectorList.Add(comboItem);
+                    }
+                }
+
+                var validConnectionIDs = studConnections.Select(x => x.ID).ToList();
+                var usedConnectionIDs = CurrentProject.GetAllElements<StudReference>()
+                    .Select(x => x.ConnectionID).Distinct().ToList();
+
+                foreach (var comboItem in ConnectorList.ToArray())
+                {
+                    if (!validConnectionIDs.Contains(comboItem.ID) && 
+                        !usedConnectionIDs.Contains(comboItem.ID))
+                    {
+                        ConnectorList.Remove(comboItem);
+                    }
+                }
             }
         }
 
@@ -286,48 +356,42 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             SetStudRefVisibility(model != null);
 
-            ConnectionRefCombo.DataSource = null;
             StudRefGridView.DataSource = null;
 
             if (model == null)
                 return;
 
-            var connectorList = model.Project.GetAllElements<PartConnection>()
-                .Where(x => x.ConnectorType == ConnectorType.Custom2DField).ToList();
+            UpdateStudConnectorList();
 
-            var comboItemList = new List<ConnectorComboItem>
-            {
-                new ConnectorComboItem("NULL", string.Empty, NoConnectorRefLabel.Text)
-            };
-            comboItemList.AddRange(connectorList.Select(x =>
-                new ConnectorComboItem(
-                    x.ID, x.Name,
-                    $"{x.Name} ({(x.SubType == 22 ? BottomStudsLabel.Text : TopStudsLabel.Text)})"
-                    )
-                )
-            );
-
-            //StudRefGridView.DataSource = c
-
-            ConnectionRefCombo.DataSource = comboItemList;
-            ConnectionRefCombo.DisplayMember = "DisplayText";
-            ConnectionRefCombo.ValueMember = "ID";
-
-            //if (!string.IsNullOrEmpty(model.ConnectionID))
-            //    ConnectionRefCombo.SelectedValue = model.ConnectionID;
+            StudRefGridView.DataSource = model.GetStudReferences().ToList();
+            AdjStudColumn.Visible = model != null && model.ComponentType == ModelComponentType.BrickTube;
         }
 
-        private void ConnectionRefCombo_SelectedIndexChanged(object sender, EventArgs e)
+        private void InitializeStudRefGrid()
         {
-            if (FlagManager.IsSet("FillSelectionDetails") ||
-                FlagManager.IsSet("UpdatePropertyValue"))
-                return;
+            ConnectionColumn.DataSource = ConnectorList;
+            ConnectionColumn.DisplayMember = "DisplayText";
+            ConnectionColumn.ValueMember = "ID";
+        }
+        private void StudRefGridView_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        {
+            e.ThrowException = false;
 
-            if (SelectedElement is PartCullingModel cullingModel)
+        }
+
+        private void StudRefGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (e.RowIndex >= 0 && 
+                StudRefGridView.Rows[e.RowIndex].DataBoundItem is StudReference studRef)
             {
-                if (cullingModel.GetStudReferences().Any())
+
+                if (e.ColumnIndex == FieldPositionColumn.Index)
                 {
-                    //TODO: show warning
+                    e.Value = studRef.FieldNode != null ? $"{studRef.FieldNode.X}, {studRef.FieldNode.Y}" : "N/A";
+                }
+                else if (e.ColumnIndex == AdjStudColumn.Index && studRef.Parent is BrickTubeModel tubeModel)
+                {
+                    e.Value = tubeModel.AdjacentStuds.Contains(studRef);
                 }
             }
         }
@@ -352,13 +416,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         private void FillConnectionDetails(PartConnection connection)
         {
             SetConnectionInfoVisibility(connection != null);
-
-            if (connection == null)
-                return;
-
-            ConnectionTypeValueLabel.Text = connection.ConnectorType.ToString();
-            ConnectionSubTypeCombo.Text = connection.SubType.ToString();
-
+            connectorEditor1.UpdateBindings(connection?.Connector);
         }
 
 
@@ -376,5 +434,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             }
             return base.ProcessCmdKey(ref msg, keyData);
         }
+
+        
     }
 }

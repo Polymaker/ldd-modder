@@ -349,6 +349,105 @@ namespace LDDModder.BrickEditor.UI.Panels
             }
         }
 
+        private void ProjectTreeView_SelectionChanged(object sender, EventArgs e)
+        {
+            if (!(FlagManager.IsSet("BuildingNavTree") ||
+                FlagManager.IsSet("ManualSelect") ||
+                FlagManager.IsSet("DragDropping") ||
+                FlagManager.IsSet("WaitForManualSelect") ||
+                FlagManager.IsSet("PreventSelection")))
+            {
+
+                using (FlagManager.UseFlag("SelectElements"))
+                    ProjectManager.SelectElements(GetSelectedElements());
+            }
+
+            FlagManager.Set("WaitForManualSelect", false);
+            FlagManager.Set("PreventSelection", false);
+        }
+
+        private List<ProjectTreeNode> SelectedItemCache;
+
+        private void ProjectTreeView_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                var hit = ProjectTreeView.OlvHitTest(e.X, e.Y);
+
+                if (hit.Column == olvColumnVisible)
+                {
+                    FlagManager.Set("PreventSelection");
+                    SelectedItemCache = new List<ProjectTreeNode>();
+                    SelectedItemCache.AddRange(ProjectTreeView.SelectedObjects.OfType<ProjectTreeNode>());
+                }
+            }
+        }
+
+        private void ProjectTreeView_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+                FlagManager.Unset("PreventSelection");
+        }
+
+        private void ProjectTreeView_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (FlagManager.IsSet("PreventSelection") &&
+                !FlagManager.IsSet("ItemSelectionChanged"))
+            {
+                using (FlagManager.UseFlag("ItemSelectionChanged"))
+                    ProjectTreeView.SelectObjects(SelectedItemCache);
+            }
+        }
+
+        private void ProjectTreeView_CellClick(object sender, CellClickEventArgs e)
+        {
+            if (e.Column == olvColumnVisible)
+            {
+                e.Handled = true;
+
+                if (e.Model is ProjectElementNode elementNode)
+                {
+                    var modelExt = elementNode.Element.GetExtension<ModelElementExtension>();
+                    if (modelExt != null)
+                    {
+                        //Debug.WriteLine($"ProjectTreeView_CellClick {elementNode.Element.Name} IsHidden {modelExt.IsHidden} -> {!modelExt.IsHidden}");
+                        modelExt.IsHidden = !modelExt.IsHidden;
+                        
+                        ProjectTreeView.RefreshObject(elementNode);
+                        if (elementNode.Parent is ElementGroupNode)
+                            ProjectTreeView.RefreshObject(elementNode.Parent);
+                    }
+                }
+                else if (e.Model is ElementCollectionNode elementColNode)
+                {
+                    var femaleStudExt = elementColNode.Element.GetExtension<FemaleStudModelExtension>();
+
+                    if (femaleStudExt != null)
+                    {
+                        femaleStudExt.ShowAlternateModels = !femaleStudExt.ShowAlternateModels;
+                        ProjectTreeView.RefreshObject(elementColNode.Parent);
+                    }
+                }
+                else if (e.Model is ProjectCollectionNode collectionNode)
+                {
+                    if (collectionNode.Collection == CurrentProject.Surfaces)
+                        ProjectManager.ShowPartModels = !ProjectManager.ShowPartModels;
+                    else if (collectionNode.Collection == CurrentProject.Collisions)
+                        ProjectManager.ShowCollisions = !ProjectManager.ShowCollisions;
+                    else if (collectionNode.Collection == CurrentProject.Connections)
+                        ProjectManager.ShowConnections = !ProjectManager.ShowConnections;
+
+                    ProjectTreeView.RefreshObject(collectionNode);
+                }
+                else if (e.Model is ElementGroupNode groupNode && groupNode.SupportsVisibility())
+                {
+
+                    //groupNode.ToggleVisibility();
+                    //ProjectTreeView.RefreshObject(groupNode);
+                }
+            }
+        }
+
         #endregion
 
         #region ContextMenu Handling
@@ -642,8 +741,24 @@ namespace LDDModder.BrickEditor.UI.Panels
         public IEnumerable<PartElement> GetSelectedElements()
         {
             var selectedNodes = ProjectTreeView.SelectedObjects.OfType<ProjectTreeNode>();
-            var elementNodes = selectedNodes.SelectMany(x => x.GetChildHierarchy(true)).OfType<ProjectElementNode>();
-            return elementNodes.Select(x => x.Element);
+
+            IEnumerable<PartElement> GetTopLevelElems(ProjectTreeNode treeNode)
+            {
+                if (treeNode is ProjectElementNode eNode)
+                    yield return eNode.Element;
+                else
+                {
+                    foreach (var node in treeNode.Nodes)
+                    {
+                        foreach (var subNode in GetTopLevelElems(node))
+                            yield return subNode;
+                    }
+                }
+                
+            }
+
+            var result = selectedNodes.SelectMany(x => GetTopLevelElems(x));
+            return result;
         }
 
         public IEnumerable<ProjectTreeNode> GetAllTreeNodes()
@@ -744,23 +859,6 @@ namespace LDDModder.BrickEditor.UI.Panels
                 using (FlagManager.UseFlag("ManualSelect"))
                     ProjectTreeView.SelectedObjects = null;
             }
-        }
-
-        private void ProjectTreeView_SelectionChanged(object sender, EventArgs e)
-        {
-            if (!(FlagManager.IsSet("BuildingNavTree") ||
-                FlagManager.IsSet("ManualSelect") ||
-                FlagManager.IsSet("DragDropping") ||
-                FlagManager.IsSet("WaitForManualSelect") ||
-                FlagManager.IsSet("PreventSelection")))
-            {
-
-                using (FlagManager.UseFlag("SelectElements"))
-                    ProjectManager.SelectElements(GetSelectedElements());
-            }
-
-            FlagManager.Set("WaitForManualSelect", false);
-            FlagManager.Set("PreventSelection", false);
         }
 
         #region Drag&Drop Handling
@@ -985,88 +1083,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         }
 
         #endregion
-
-        private void ProjectTreeView_CellClick(object sender, CellClickEventArgs e)
-        {
-            if (e.Column == olvColumnVisible)
-            {
-                e.Handled = true;
-
-                if (e.Model is ProjectElementNode elementNode)
-                {
-                    var modelExt = elementNode.Element.GetExtension<ModelElementExtension>();
-                    if (modelExt != null)
-                    {
-                        modelExt.IsHidden = !modelExt.IsHidden;
-                        ProjectTreeView.RefreshObject(elementNode);
-                        if (elementNode.Parent is ElementGroupNode)
-                            ProjectTreeView.RefreshObject(elementNode.Parent);
-                    }
-                }
-                else if (e.Model is ElementCollectionNode elementColNode)
-                {
-                    var femaleStudExt = elementColNode.Element.GetExtension<FemaleStudModelExtension>();
-
-                    if (femaleStudExt != null)
-                    {
-                        femaleStudExt.ShowAlternateModels = !femaleStudExt.ShowAlternateModels;
-                        ProjectTreeView.RefreshObject(elementColNode.Parent);
-                    }
-                }
-                else if (e.Model is ProjectCollectionNode collectionNode)
-                {
-                    if (collectionNode.Collection == CurrentProject.Surfaces)
-                        ProjectManager.ShowPartModels = !ProjectManager.ShowPartModels;
-                    else if (collectionNode.Collection == CurrentProject.Collisions)
-                        ProjectManager.ShowCollisions = !ProjectManager.ShowCollisions;
-                    else if (collectionNode.Collection == CurrentProject.Connections)
-                        ProjectManager.ShowConnections = !ProjectManager.ShowConnections;
-
-                    ProjectTreeView.RefreshObject(collectionNode); 
-                }
-                else if (e.Model is ElementGroupNode groupNode && groupNode.SupportsVisibility())
-                {
-
-                    //groupNode.ToggleVisibility();
-                    //ProjectTreeView.RefreshObject(groupNode);
-                }
-            }
-        }
-
-        private List<ProjectTreeNode> SelectedItemCache;
-
-        private void ProjectTreeView_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left)
-            {
-                var hit = ProjectTreeView.OlvHitTest(e.X, e.Y);
-
-                if (hit.Column == olvColumnVisible)
-                {
-                    FlagManager.Set("PreventSelection");
-                    SelectedItemCache = new List<ProjectTreeNode>();
-                    SelectedItemCache.AddRange(ProjectTreeView.SelectedObjects.OfType<ProjectTreeNode>());
-                }
-            }
-        }
-
-        private void ProjectTreeView_MouseUp(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left)
-                FlagManager.Unset("PreventSelection");
-        }
-
-        private void ProjectTreeView_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (FlagManager.IsSet("PreventSelection") &&
-                !FlagManager.IsSet("ItemSelectionChanged"))
-            {
-                using (FlagManager.UseFlag("ItemSelectionChanged"))
-                    ProjectTreeView.SelectObjects(SelectedItemCache);
-            }
-        }
-
-        
+ 
     }
 
 }

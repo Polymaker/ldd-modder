@@ -209,7 +209,6 @@
     <Compile Include="Modding\Editing\ModelComponents\ModelMeshReference.cs" />
     <Compile Include="Modding\Editing\PartBone.cs" />
     <Compile Include="Modding\Editing\PartProperties.cs" />
-    <Compile Include="Modding\Editing\PrimitiveElements\ConnectorProxy.cs" />
     <Compile Include="Modding\Editing\PrimitiveElements\PartBoxCollision.cs" />
     <Compile Include="Modding\Editing\PrimitiveElements\PartCollision.cs" />
     <Compile Include="Modding\Editing\PartElement.cs" />

@@ -11,7 +11,7 @@ namespace LDDModder.Modding.Editing
         public override ModelComponentType ComponentType => ModelComponentType.BrickTube;
 
         private StudReference _TubeStud;
-
+        
         public StudReference TubeStud
         {
             get => _TubeStud;
@@ -112,13 +112,14 @@ namespace LDDModder.Modding.Editing
 
         public void AutoGenerateAdjacentStuds()
         {
-            if (TubeStud != null && TubeStud.FieldNode != null)
+            var tubeStud = ReferencedStuds.FirstOrDefault();
+            if (tubeStud != null && tubeStud.FieldNode != null)
             {
                 AdjacentStuds.Clear();
-                var custom2DField = TubeStud.Connector;
+                var custom2DField = tubeStud.Connector;
 
-                int posX = TubeStud.FieldNode.X;
-                int posY = TubeStud.FieldNode.Y;
+                int posX = tubeStud.FieldNode.X;
+                int posY = tubeStud.FieldNode.Y;
                 int[] offsets = new int[] { -1, 1 };
 
                 for (int i = 0; i < 2; i++)
@@ -131,7 +132,7 @@ namespace LDDModder.Modding.Editing
 
                         if (adjField != null)
                         {
-                            var studRef = new StudReference(TubeStud.ConnectionID, adjField.Index, 1, 0);
+                            var studRef = new StudReference(tubeStud.ConnectionID, adjField.Index, 1, 0);
                             AdjacentStuds.Add(studRef);
                         }
                     }
@@ -158,6 +159,10 @@ namespace LDDModder.Modding.Editing
                 AddMessage("MODEL_MORE_THAN_ONE_STUD", ValidationLevel.Warning);
             //else if (!AdjacentStuds.Any())
             //    AddMessage("MODEL_ADJ_STUDS_NOT_DEFINED", ValidationLevel.Warning);//TODO: implement message
+
+            var connIDs = ReferencedStuds.Concat(AdjacentStuds).Select(x => x.ConnectionID).Distinct();
+            if (connIDs.Count() > 1)
+                AddMessage("MODEL_MORE_THAN_ONE_STUD_CONNECTOR", ValidationLevel.Warning);
 
             if (ReferencedStuds.Any())
                 messages.AddRange(ReferencedStuds.SelectMany(x => x.ValidateElement()));

@@ -54,7 +54,7 @@ namespace LDDModder.Modding.Editing
         public virtual IEnumerable<StudReference> GetStudReferences()
         {
             return OwnedElements.OfType<StudReference>()
-                .Concat(Collections.SelectMany(x => x.GetElements()).OfType<StudReference>());
+                .Concat(Collections.SelectMany(x => x.GetElements()).OfType<StudReference>()).Distinct();
         }
 
         public override XElement SerializeToXml()

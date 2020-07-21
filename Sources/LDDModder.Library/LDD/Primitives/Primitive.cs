@@ -22,7 +22,7 @@ namespace LDDModder.LDD.Primitives
 
         public Dictionary<string,string> ExtraAnnotations { get; }
 
-        private List<XElement> ExtraElements;
+        public List<XElement> ExtraElements { get; private set; }
 
         public Platform Platform { get; set; }
         public MainGroup MainGroup { get; set; }
@@ -47,6 +47,7 @@ namespace LDDModder.LDD.Primitives
             ExtraAnnotations = new Dictionary<string, string>();
             FlexBones = new List<FlexBone>();
             FileVersion = new VersionInfo(1, 0);
+            ExtraElements = new List<XElement>();
             PartVersion = 1;
         }
 
@@ -141,11 +142,14 @@ namespace LDDModder.LDD.Primitives
             {
                 foreach (var elem in ExtraElements)
                 {
-                    if (elem.Parent.Name.LocalName == "LEGOPrimitive")
+                    if (elem.Parent != null)
                     {
-                        elem.Remove(); //remove from parent
-                        rootElem.Add(elem);
+                        var parentElem = rootElem.Descendants().FirstOrDefault(x => x.Name.LocalName == elem.Parent.Name.LocalName);
+                        //if (parentElem != null)
+                        //    parentElem.Add(elem.)
                     }
+                    else
+                        rootElem.Add(elem);
                 }
             }
             return rootElem;
@@ -176,77 +180,18 @@ namespace LDDModder.LDD.Primitives
 
             if (rootElem.Name != "LEGOPrimitive")
                 throw new InvalidDataException();
+
             rootElem.TryGetIntAttribute("versionMajor", out int vMaj);
             rootElem.TryGetIntAttribute("versionMinor", out int vMin);
             FileVersion = new VersionInfo(vMaj, vMin);
 
+            ExtraElements.Clear();
             foreach (var element in rootElem.Elements())
             {
-                switch (element.Name.LocalName)
+                try { ReadPrimitiveSection(element); }
+                catch (Exception ex)
                 {
-                    case "Annotations":
-
-                        foreach (var annotationElem in element.Elements("Annotation"))
-                        {
-                            try { LoadAnnotation(annotationElem); }
-                            catch { }
-                        }
-                        break;
-
-                    case "Collision":
-                        foreach (var colElem in element.Elements())
-                            Collisions.Add(Collision.DeserializeCollision(colElem));
-                        break;
-
-                    case "Connectivity":
-                        foreach (var conElem in element.Elements())
-                            Connectors.Add(Connector.DeserializeConnector(conElem));
-                        break;
-
-                    case "PhysicsAttributes":
-                        PhysicsAttributes = XmlHelper.DefaultDeserialize<PhysicsAttributes>(element);
-                        break;
-
-                    case "Bounding":
-                        Bounding = new BoundingBox();
-                        Bounding.LoadFromXml(element.Element("AABB"));
-                        
-                        break;
-
-                    case "GeometryBounding":
-                        GeometryBounding = new BoundingBox();
-                        GeometryBounding.LoadFromXml(element.Element("AABB"));
-                        break;
-
-                    case "Decoration":
-                        int surfaceCount = element.ReadAttribute<int>("faces");
-                        SubMaterials = new int[surfaceCount];
-                        var values = element.ReadAttribute<string>("subMaterialRedirectLookupTable").Split(',');
-                        for (int i = 0; i < surfaceCount; i++)
-                            SubMaterials[i] = int.Parse(values[i]);
-                        break;
-
-                    case "Flex":
-                        foreach (var boneElement in element.Elements())
-                            FlexBones.Add(XmlHelper.DefaultDeserialize<FlexBone>(boneElement));
-                        break;
-
-                    case "DefaultOrientation":
-                        DefaultOrientation = Transform.FromElementAttributes(element);
-                        break;
-
-                    case "DefaultCamera":
-                        DefaultCamera = XmlHelper.DefaultDeserialize<Camera>(element);
-                        break;
-
-                    //case "Paths":
-                    //    break;
-
-                    default:
-                        if (ExtraElements == null)
-                            ExtraElements = new List<XElement>();
-                        ExtraElements.Add(element);
-                        break;
+                    throw new Exception($"Error while reading {element.Name.LocalName}", ex);
                 }
             }
 
@@ -259,7 +204,83 @@ namespace LDDModder.LDD.Primitives
 
         #region XML Element Loading
 
-        private void LoadAnnotation(XElement annotationElem)
+        const string SECTION_ANNOTATIONS = "Annotations";
+        const string SECTION_COLLISION = "Collision";
+        const string SECTION_CONNECTIVITY = "Connectivity";
+        const string SECTION_PHYSICSATTRIBUTES = "PhysicsAttributes";
+
+        private void ReadPrimitiveSection(XElement element)
+        {
+            switch (element.Name.LocalName)
+            {
+                case SECTION_ANNOTATIONS:
+
+                    foreach (var annotationElem in element.Elements("Annotation"))
+                    {
+                        try { ReadAnnotation(annotationElem); }
+                        catch { }
+                    }
+                    break;
+
+                case SECTION_COLLISION:
+                    foreach (var colElem in element.Elements())
+                        Collisions.Add(Collision.DeserializeCollision(colElem));
+                    break;
+
+                case SECTION_CONNECTIVITY:
+                    foreach (var conElem in element.Elements())
+                        Connectors.Add(Connector.DeserializeConnector(conElem));
+                    break;
+
+                case SECTION_PHYSICSATTRIBUTES:
+                    PhysicsAttributes = XmlHelper.DefaultDeserialize<PhysicsAttributes>(element);
+                    break;
+
+                case "Bounding":
+                    Bounding = new BoundingBox();
+                    Bounding.LoadFromXml(element.Element("AABB"));
+
+                    break;
+
+                case "GeometryBounding":
+                    GeometryBounding = new BoundingBox();
+                    GeometryBounding.LoadFromXml(element.Element("AABB"));
+                    break;
+
+                case "Decoration":
+                    int surfaceCount = element.ReadAttribute<int>("faces");
+                    SubMaterials = new int[surfaceCount];
+                    var values = element.ReadAttribute<string>("subMaterialRedirectLookupTable").Split(',');
+                    for (int i = 0; i < surfaceCount; i++)
+                        SubMaterials[i] = int.Parse(values[i]);
+                    break;
+
+                case "Flex":
+                    foreach (var boneElement in element.Elements())
+                        FlexBones.Add(XmlHelper.DefaultDeserialize<FlexBone>(boneElement));
+                    break;
+
+                case "DefaultOrientation":
+                    DefaultOrientation = Transform.FromElementAttributes(element);
+                    break;
+
+                case "DefaultCamera":
+                    DefaultCamera = XmlHelper.DefaultDeserialize<Camera>(element);
+                    break;
+
+                //case "Paths":
+                //    break;
+
+                default:
+                    //if (ExtraElements == null)
+                    //    ExtraElements = new List<XElement>();
+                    var clonedElem = XElement.Parse(element.ToString());
+                    ExtraElements.Add(clonedElem);
+                    break;
+            }
+        }
+
+        private void ReadAnnotation(XElement annotationElem)
         {
             var annotationAttr = annotationElem.FirstAttribute;
             string annotationName = annotationAttr.Name.LocalName;

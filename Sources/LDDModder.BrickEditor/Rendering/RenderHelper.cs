@@ -11,6 +11,7 @@ using ObjectTK.Textures;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
+using QuickFont;
 
 namespace LDDModder.BrickEditor.Rendering
 {
@@ -175,6 +176,10 @@ namespace LDDModder.BrickEditor.Rendering
             SimpleTextureShader.ViewMatrix.Set(viewMatrix);
             SimpleTextureShader.Projection.Set(projection);
 
+            UIRenderHelper.TextRenderer.ProjectionMatrix = projection;
+            UIRenderHelper.TextRenderer.DrawingPrimitives.Clear();
+            TextViewMatrix = viewMatrix;
+
             GL.UseProgram(0);
         }
 
@@ -225,10 +230,33 @@ namespace LDDModder.BrickEditor.Rendering
 
         #endregion
 
+        #region Draw 3D Text
+
+        public static float TextScale { get; set; } = 0.01f;
+        private static Matrix4 TextViewMatrix;
+
+        public static QFontDrawingPrimitive Create3DTextPrimitive(QFont font, Matrix4 transform, System.Drawing.Color textColor)
+        {
+            return Create3DTextPrimitive(font, transform, textColor, TextScale);
+        }
+
+        public static QFontDrawingPrimitive Create3DTextPrimitive(QFont font, Matrix4 transform, System.Drawing.Color textColor, float textScale)
+        {
+            var dp = new QFontDrawingPrimitive(font, new QFontRenderOptions()
+            {
+                Colour = textColor
+            });
+            var rotAdj = Matrix4.CreateRotationX(-((float)Math.PI / 2f));
+            dp.ModelViewMatrix = Matrix4.CreateScale(new Vector3(textScale)) * rotAdj * transform * TextViewMatrix;
+            UIRenderHelper.TextRenderer.DrawingPrimitives.Add(dp);
+            return dp;
+        }
+
+        #endregion
 
         public static void DrawStudConnector2(Matrix4 transform, LDDModder.LDD.Primitives.Connectors.Custom2DFieldConnector connector)
         {
-            float offset = connector.SubType == 23 ? 0.0001f : -0.0001f;
+            float offset = connector.SubType == 23 ? 0.0005f : -0.0005f;
             DrawTexturedQuad(transform, TextureManager.StudConnectionGrid,
                 new Vector2(connector.StudWidth * 0.8f, connector.StudHeight * 0.8f),
                 new Vector4(0, 0, connector.StudWidth, connector.StudHeight), offset);
