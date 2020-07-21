@@ -37,8 +37,9 @@ namespace LDDModder.BrickEditor.UI.Panels
         private GridShaderProgram GridShader;
 
         private List<SurfaceMeshBuffer> SurfaceModels;
-        private List<CollisionModel> CollisionModels;
-        private List<ConnectionModel> ConnectionModels;
+        //private List<CollisionModel> CollisionModels;
+        //private List<ConnectionModel> ConnectionModels;
+        private List<PartElementModel> LoadedModels;
 
         private List<UIElement> UIElements;
 
@@ -53,24 +54,25 @@ namespace LDDModder.BrickEditor.UI.Panels
         public ViewportPanel()
         {
             InitializeComponent();
-            SurfaceModels = new List<SurfaceMeshBuffer>();
-            CollisionModels = new List<CollisionModel>();
-            ConnectionModels = new List<ConnectionModel>();
-            UIElements = new List<UIElement>();
+            InitializeView();
         }
 
         public ViewportPanel(ProjectManager projectManager) : base(projectManager)
         {
             InitializeComponent();
-            //CloseButtonVisible = false;
-            //CloseButton = false;
+            InitializeView();
+        }
+
+        private void InitializeView()
+        {
             DockAreas = DockAreas.Document;
             AllowEndUserDocking = false;
             CloseButton = false;
             CloseButtonVisible = false;
             SurfaceModels = new List<SurfaceMeshBuffer>();
-            CollisionModels = new List<CollisionModel>();
-            ConnectionModels = new List<ConnectionModel>();
+            //CollisionModels = new List<CollisionModel>();
+            //ConnectionModels = new List<ConnectionModel>();
+            LoadedModels = new List<PartElementModel>();
             UIElements = new List<UIElement>();
             ShowIcon = false;
             CreateGLControl();
@@ -142,7 +144,6 @@ namespace LDDModder.BrickEditor.UI.Panels
         }
 
         
-
         #region Initialization
 
         private void InitializeBase()
@@ -309,8 +310,8 @@ namespace LDDModder.BrickEditor.UI.Panels
                     Diffuse = new Vector3(0.8f),
                     Specular = new Vector3(1f),
                     Constant = 1f,
-                    Linear = 0.07f,
-                    Quadratic = 0.017f
+                    Linear = 0.08f,
+                    Quadratic = 0.02f
                 },
                 //Fill Light
                 new LightInfo {
@@ -369,11 +370,24 @@ namespace LDDModder.BrickEditor.UI.Panels
             if (ProjectManager.ShowPartModels)
                 DrawPartModels();
 
-            if (ProjectManager.ShowCollisions && CollisionModels.Any())
-                DrawCollisions();
+            GL.Disable(EnableCap.Texture2D);
 
-            if (ProjectManager.ShowConnections && ConnectionModels.Any())
-                DrawConnections();
+            foreach (var model in LoadedModels)
+            {
+                if (model.Visible)
+                    model.RenderModel(Camera);
+            }
+
+            //if (ProjectManager.ShowCollisions)
+            //    DrawCollisions();
+
+            //if (ProjectManager.ShowConnections)
+            //    DrawConnections();
+
+            //if (CurrentProject?.Flexible ?? false)
+            //{
+            //    foreach
+            //}
 
             if (UIRenderHelper.TextRenderer.DrawingPrimitives.Any())
             {
@@ -400,19 +414,15 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             GL.Disable(EnableCap.Texture2D);
 
-            foreach (var connModel in ConnectionModels.Where(x => x.Visible))
+            foreach (var connModel in LoadedModels.OfType<ConnectionModel>().Where(x => x.Visible))
                 connModel.RenderModel(Camera);
-            //var orderedModels = ConnectionModels.OrderByDescending(x => Camera.DistanceFromCamera(x.Transform));
-
-            //foreach (var connModel in orderedModels.Where(x => x.Visible))
-            //    connModel.RenderModel(Camera);
         }
 
         private void DrawCollisions()
         {
             GL.Disable(EnableCap.Texture2D);
 
-            foreach (var colModel in CollisionModels.Where(x => x.Visible))
+            foreach (var colModel in LoadedModels.OfType<CollisionModel>().Where(x => x.Visible))
                 colModel.RenderModel(Camera);
         }
 
@@ -720,6 +730,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             RebuildSurfaceModels();
             RebuildCollisionModels();
             RebuildConnectionModels();
+            RebuildBoneModels();
             SetupDefaultCamera();
         }
 
@@ -734,9 +745,9 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             surfModel.Material = new MaterialInfo
             {
-                Diffuse = new Vector4(0.6f, 0.6f, 0.6f, 1f),
+                Diffuse = new Vector4(0.7f, 0.7f, 0.7f, 1f),
                 Specular = new Vector3(1f),
-                Shininess = 6f
+                Shininess = 8f
             };
 
             if (surface.SurfaceID > 0)
@@ -764,6 +775,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         private bool SurfaceMeshesChanged;
         private bool CollisionsChanged;
         private bool ConnectionsChanged;
+        private bool BonesChanged;
 
         protected override void OnElementCollectionChanged(ElementCollectionChangedEventArgs e)
         {
@@ -782,6 +794,10 @@ namespace LDDModder.BrickEditor.UI.Panels
             else if (e.ElementType == typeof(PartConnection))
             {
                 ConnectionsChanged = true;
+            }
+            else if (e.ElementType == typeof(PartBone))
+            {
+                BonesChanged = true;
             }
         }
 
@@ -810,9 +826,13 @@ namespace LDDModder.BrickEditor.UI.Panels
             if (ConnectionsChanged)
                 RebuildConnectionModels();
 
+            if (BonesChanged)
+                RebuildBoneModels();
+
             SurfaceMeshesChanged = false;
             CollisionsChanged = false;
             ConnectionsChanged = false;
+            BonesChanged = false;
         }
 
         #endregion
@@ -854,68 +874,114 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void RebuildCollisionModels()
         {
+            var existingModels = LoadedModels.OfType<CollisionModel>().ToList();
+
             if (ProjectManager.IsProjectOpen)
             {
                 var allCollisions = CurrentProject.GetAllElements<PartCollision>().ToList();
 
-                foreach (var colModel in CollisionModels.ToArray())
+                foreach (var colModel in existingModels)
                 {
                     if (!allCollisions.Contains(colModel.PartCollision))
                     {
                         colModel.Dispose();
-                        CollisionModels.Remove(colModel);
+                        LoadedModels.Remove(colModel);
                     }
                 }
 
                 foreach (var collision in allCollisions)
                 {
-                    if (!CollisionModels.Any(x => x.PartCollision == collision))
-                        CollisionModels.Add(new CollisionModel(collision));
+                    if (!existingModels.Any(x => x.PartCollision == collision))
+                        LoadedModels.Add(new CollisionModel(collision));
                 }
             }
-            else if (CollisionModels.Any())
+            else if (existingModels.Any())
             {
-                CollisionModels.ForEach(x => x.Dispose());
-                CollisionModels.Clear();
+                existingModels.ForEach(x =>
+                {
+                    x.Dispose();
+                    LoadedModels.Remove(x);
+                });
             }
         }
 
         private void RebuildConnectionModels()
         {
-            ConnectionModels.Clear();
+            var existingModels = LoadedModels.OfType<ConnectionModel>().ToList();
 
             if (ProjectManager.IsProjectOpen)
             {
                 var allConnections = CurrentProject.GetAllElements<PartConnection>().ToList();
 
-                foreach (var conModel in ConnectionModels.ToArray())
+                foreach (var conModel in existingModels)
                 {
                     if (!allConnections.Contains(conModel.Connection))
                     {
                         conModel.Dispose();
-                        ConnectionModels.Remove(conModel);
+                        LoadedModels.Remove(conModel);
                     }
                 }
 
                 foreach (var connection in allConnections)
                 {
-                    if (!ConnectionModels.Any(x => x.Connection == connection))
-                        ConnectionModels.Add(new ConnectionModel(connection));
+                    if (!existingModels.Any(x => x.Connection == connection))
+                        LoadedModels.Add(new ConnectionModel(connection));
                 }
             }
-            else if (ConnectionModels.Any())
+            else if (existingModels.Any())
             {
-                ConnectionModels.ForEach(x => x.Dispose());
-                ConnectionModels.Clear();
+                existingModels.ForEach(x =>
+                {
+                    x.Dispose();
+                    LoadedModels.Remove(x);
+                });
+            }
+        }
+
+        private void RebuildBoneModels()
+        {
+            var existingModels = LoadedModels.OfType<BoneModel>().ToList();
+
+            if (ProjectManager.IsProjectOpen)
+            {
+                var allBones = CurrentProject.GetAllElements<PartBone>().ToList();
+
+                foreach (var conModel in existingModels)
+                {
+                    if (!allBones.Contains(conModel.Bone))
+                    {
+                        conModel.Dispose();
+                        LoadedModels.Remove(conModel);
+                    }
+                }
+
+                foreach (var bone in allBones)
+                {
+                    if (!existingModels.Any(x => x.Bone == bone))
+                        LoadedModels.Add(new BoneModel(bone));
+                }
+            }
+            else if (existingModels.Any())
+            {
+                existingModels.ForEach(x =>
+                {
+                    x.Dispose();
+                    LoadedModels.Remove(x);
+                });
             }
         }
 
         private void UnloadModels()
         {
             SurfaceModels.ForEach(x => x.Dispose());
+
+            foreach (var model in LoadedModels)
+                model.Dispose();
+            LoadedModels.Clear();
+
             SurfaceModels.Clear();
-            CollisionModels.Clear();
-            ConnectionModels.Clear();
+            //CollisionModels.Clear();
+            //ConnectionModels.Clear();
             GC.Collect();
         }
 
@@ -924,10 +990,13 @@ namespace LDDModder.BrickEditor.UI.Panels
             foreach (var model in SurfaceModels.SelectMany(x => x.MeshModels))
                 yield return model;
 
-            foreach (var model in CollisionModels)
-                yield return model;
+            //foreach (var model in CollisionModels)
+            //    yield return model;
 
-            foreach (var model in ConnectionModels)
+            //foreach (var model in ConnectionModels)
+            //    yield return model;
+
+            foreach (var model in LoadedModels)
                 yield return model;
         }
 

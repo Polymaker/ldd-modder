@@ -70,6 +70,7 @@ namespace LDDModder.BrickEditor.Rendering
         }
 
         protected void SetTransformFromElement()
+
         {
             IsUpdatingTransform = true;
             SetTransform(GetElementTransform(), true);
