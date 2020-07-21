@@ -280,7 +280,7 @@ namespace LDDModder.Modding.Editing
 
             project.GenerateElementIDs(true);
             project.GenerateElementsNames();
-            project.LinkStudReferences();
+            project.LinkBonesAndStudReferences();
             project.IsLoading = false;
             return project;
         }
@@ -428,7 +428,7 @@ namespace LDDModder.Modding.Editing
                     ProjectProperties.Add(propElem.Name.LocalName, propElem.Value);
             }
 
-            LinkStudReferences();
+            LinkBonesAndStudReferences();
 
             IsLoading = false;
         }
@@ -874,7 +874,7 @@ namespace LDDModder.Modding.Editing
             }
         }
 
-        private void LinkStudReferences()
+        private void LinkBonesAndStudReferences()
         {
             foreach (var surf in Surfaces)
             {
@@ -884,22 +884,28 @@ namespace LDDModder.Modding.Editing
                     {
                         PartConnection linkedConnection = null;
 
-                        if (studRef.ConnectionIndex != -1 &&
-                            studRef.ConnectionIndex < Connections.Count)
-                        {
-                            if (Connections[studRef.ConnectionIndex].ConnectorType == ConnectorType.Custom2DField)
-                                linkedConnection = Connections[studRef.ConnectionIndex];
-                            else
-                                Debug.WriteLine("Component references non Custom2DField connection!");
-                        }
-
-                        if (linkedConnection == null && !string.IsNullOrEmpty(studRef.ConnectionID))
+                        if (!string.IsNullOrEmpty(studRef.ConnectionID))
                         {
                             linkedConnection = Connections
                                 .FirstOrDefault(x => x.ID == studRef.ConnectionID);
                         }
 
-                        if (studRef.ConnectionIndex >= 0 && linkedConnection == null)
+                        if (linkedConnection == null && 
+                            studRef.ConnectionIndex != -1 &&
+                            studRef.ConnectionIndex < Connections.Count)
+                        {
+                            linkedConnection = Connections[studRef.ConnectionIndex];
+                        }
+
+                        if (linkedConnection != null && linkedConnection.ConnectorType != ConnectorType.Custom2DField)
+                        {
+                            Debug.WriteLine("Component references non Custom2DField connection!");
+                            linkedConnection = null;
+                        }
+
+                        if (linkedConnection == null && 
+                                (studRef.ConnectionIndex >= 0 || !string.IsNullOrEmpty(studRef.ConnectionID))
+                            )
                         {
                             Debug.WriteLine("Could not find connection!");
                         }
@@ -908,6 +914,42 @@ namespace LDDModder.Modding.Editing
                         
                         studRef.ConnectionIndex = linkedConnection != null ? Connections.IndexOf(linkedConnection) : -1;
                     }
+                }
+            }
+
+            foreach (var bone in Bones)
+            {
+                if (bone.TargetBoneID < 0 /*|| bone.ConnectionIndex < 0*/)
+                    continue;
+
+                var prevBone = Bones.FirstOrDefault(x => x.BoneID == bone.TargetBoneID);
+                if (prevBone == null)
+                    continue;
+
+                PartConnection sourceConn = null, targetConn = null;
+
+                if (!string.IsNullOrEmpty(bone.SourceConnectionID))
+                    sourceConn = bone.Connections.FirstOrDefault(x => x.ID == bone.SourceConnectionID);
+
+                if (sourceConn == null && bone.SourceConnectionIndex < bone.Connections.Count)
+                    sourceConn = bone.Connections[bone.SourceConnectionIndex];
+
+                if (sourceConn != null)
+                {
+                    bone.SourceConnectionID = targetConn.ID;
+                    bone.SourceConnectionIndex = bone.Connections.IndexOf(targetConn);
+                }
+
+                if (!string.IsNullOrEmpty(bone.TargetConnectionID))
+                    targetConn = prevBone.Connections.FirstOrDefault(x => x.ID == bone.TargetConnectionID);
+
+                if (targetConn == null && bone.TargetConnectionIndex < prevBone.Connections.Count)
+                    targetConn = prevBone.Connections[bone.TargetConnectionIndex];
+
+                if (targetConn != null)
+                {
+                    bone.TargetConnectionID = targetConn.ID;
+                    bone.TargetConnectionIndex = prevBone.Connections.IndexOf(targetConn);
                 }
             }
         }
@@ -1174,6 +1216,22 @@ namespace LDDModder.Modding.Editing
             foreach (var coll in Collisions)
                 validationMessages.AddRange(coll.ValidateElement());
 
+            if (Bones.Any())
+            {
+                var duplicates = Bones.GroupBy(x => x.BoneID).Where(g => g.Count() > 1);
+                if (duplicates.Any())
+                    AddMessage("BONES_DUPLICATE_IDS", ValidationLevel.Error);
+
+                for (int i = 0; i < Bones.Count; i++)
+                {
+                    if (!Bones.Any(x => x.BoneID == i))
+                    {
+                        AddMessage("BONES_ID_GAP", ValidationLevel.Error, i);
+                        break;
+                    }
+                }
+            }
+
             foreach (var bone in Bones)
                 validationMessages.AddRange(bone.ValidateElement());
 
@@ -1185,6 +1243,8 @@ namespace LDDModder.Modding.Editing
 
         public Primitive GeneratePrimitive()
         {
+            LinkBonesAndStudReferences();
+
             var primitive = new Primitive()
             {
                 ID = PartID,
@@ -1209,12 +1269,18 @@ namespace LDDModder.Modding.Editing
             if (Aliases.Any())
                 primitive.Aliases.AddRange(Aliases);
 
-            foreach (var conn in Connections)
-                primitive.Connectors.Add(conn.GenerateLDD());
+            if (!Flexible)
+            {
+                foreach (var conn in Connections)
+                    primitive.Connectors.Add(conn.GenerateLDD());
 
-            foreach (var coll in Collisions)
-                primitive.Collisions.Add(coll.GenerateLDD());
-            
+                foreach (var coll in Collisions)
+                    primitive.Collisions.Add(coll.GenerateLDD());
+            }
+
+            foreach (var bone in Bones)
+                primitive.FlexBones.Add(bone.GenerateLDD());
+
             return primitive;
         }
 

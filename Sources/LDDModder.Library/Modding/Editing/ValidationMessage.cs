@@ -32,7 +32,7 @@ namespace LDDModder.Modding.Editing
             MessageArguments = arguments;
         }
 
-        public ValidationMessage(PartElement sourceElement, string messageCode, ValidationLevel level)
+        public ValidationMessage(PartElement sourceElement, string messageCode, ValidationLevel level, params object[] arguments)
         {
             Code = messageCode;
             Level = level;
@@ -47,6 +47,7 @@ namespace LDDModder.Modding.Editing
                 SourceKey = "BONE";
             else
                 SourceKey = "PROJECT";
+            MessageArguments = arguments;
         }
     }
 

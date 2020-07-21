@@ -35,9 +35,10 @@ namespace LDDModder.BrickEditor.Rendering
                 UpdateBoundingBox();
         }
 
-        protected override Matrix4 GetElementTransform()
+        protected override void ApplyTransformToElement(Matrix4 transform)
         {
-            return base.GetElementTransform();
+            base.ApplyTransformToElement(transform);
+
         }
 
         public override bool RayIntersects(Ray ray, out float distance)

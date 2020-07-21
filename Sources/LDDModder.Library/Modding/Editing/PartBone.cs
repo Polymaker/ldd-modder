@@ -16,6 +16,9 @@ namespace LDDModder.Modding.Editing
         public const string NODE_NAME = "Bone";
 
         private int _BoneID;
+        private int _TargetBoneID;
+        private string _SourceConnectionID;
+        private string _TargetConnectionID;
         private ItemTransform _Transform;
         private PhysicsAttributes _PhysicsAttributes;
         private BoundingBox _Bounding;
@@ -25,6 +28,29 @@ namespace LDDModder.Modding.Editing
             get => _BoneID;
             set => SetPropertyValue(ref _BoneID, value);
         }
+
+        public int SourceConnectionIndex { get; set; } = -1;
+
+        public string SourceConnectionID
+        {
+            get => _SourceConnectionID;
+            set => SetPropertyValue(ref _SourceConnectionID, value);
+        }
+
+        public int TargetBoneID
+        {
+            get => _TargetBoneID;
+            set => SetPropertyValue(ref _TargetBoneID, value);
+        }
+
+        public int TargetConnectionIndex { get; set; } = -1;
+
+        public string TargetConnectionID
+        {
+            get => _TargetConnectionID;
+            set => SetPropertyValue(ref _TargetConnectionID, value);
+        }
+        
 
         public ItemTransform Transform
         {
@@ -55,6 +81,8 @@ namespace LDDModder.Modding.Editing
             Connections = new ElementCollection<PartConnection>(this);
             Collisions = new ElementCollection<PartCollision>(this);
             Transform = new ItemTransform();
+            TargetBoneID = -1;
+            TargetConnectionIndex = -1;
         }
 
         public PartBone(int boneID)
@@ -63,6 +91,8 @@ namespace LDDModder.Modding.Editing
             Collisions = new ElementCollection<PartCollision>(this);
             Transform = new ItemTransform();
             _BoneID = boneID;
+            _TargetBoneID = -1;
+            TargetConnectionIndex = -1;
             InternalSetName($"Bone{boneID}");
         }
 
@@ -73,12 +103,27 @@ namespace LDDModder.Modding.Editing
                 TranformChanged?.Invoke(this, EventArgs.Empty);
         }
 
+        #region Convertion from/to LDD
+
         internal void LoadFromLDD(FlexBone flexBone)
         {
             BoneID = flexBone.ID;
             Transform = ItemTransform.FromLDD(flexBone.Transform);
             Bounding = flexBone.Bounding;
             PhysicsAttributes = flexBone.PhysicsAttributes;
+
+            if (flexBone.ConnectionCheck != null)
+            {
+                SourceConnectionIndex = flexBone.ConnectionCheck.Item1;
+                TargetBoneID = flexBone.ConnectionCheck.Item2;
+                TargetConnectionIndex = flexBone.ConnectionCheck.Item3;
+            }
+            else
+            {
+                SourceConnectionIndex = -1;
+                TargetBoneID = -1;
+                TargetConnectionIndex = -1;
+            }
 
             int elementIndex = 0;
 
@@ -98,11 +143,53 @@ namespace LDDModder.Modding.Editing
             }
         }
 
+        public FlexBone GenerateLDD()
+        {
+            var bone = new FlexBone()
+            {
+                ID = BoneID,
+                Bounding = Bounding,
+                PhysicsAttributes = PhysicsAttributes,
+                Transform = Transform.ToLDD()
+            };
+
+            bone.Collisions.AddRange(Collisions.Select(x => x.GenerateLDD()));
+            bone.Connectors.AddRange(Connections.Select(x => x.GenerateLDD()));
+
+            if (BoneID > 0)
+            {
+                //int connectionCount = Connections.Count(x => x.SubType < 999000);
+                bone.ConnectionCheck = new Tuple<int, int, int>(
+                    SourceConnectionIndex, 
+                    TargetBoneID,
+                    TargetConnectionIndex);
+            }
+            return bone;
+        }
+
+        #endregion
+
+        #region Convertion from/to XML
+
         public override XElement SerializeToXml()
         {
             var elem = SerializeToXmlBase(NODE_NAME);
 
             elem.Add(new XAttribute(nameof(BoneID), BoneID));
+            
+            if (TargetBoneID > 0)
+            {
+                if (BoneID > 0)
+                {
+                    elem.Add(new XComment($"flexCheckConnection=\"{SourceConnectionIndex},{TargetBoneID},{TargetConnectionIndex}\""));
+                }
+                
+                elem.Add(new XElement("ConnectsTo",
+                    new XAttribute("SourceConnectionID", SourceConnectionID),
+                    new XAttribute("TargetBoneID", TargetBoneID),
+                    new XAttribute("TargetConnectionID", TargetConnectionID)));
+            }
+
             elem.Add(Transform.SerializeToXml());
 
             if (PhysicsAttributes != null || Bounding != null)
@@ -143,6 +230,13 @@ namespace LDDModder.Modding.Editing
             base.LoadFromXml(element);
             BoneID = element.ReadAttribute<int>(nameof(BoneID));
 
+            if (element.HasElement("ConnectsTo", out XElement connInfo))
+            {
+                SourceConnectionID = connInfo.ReadAttribute("SourceConnectionID", string.Empty);
+                TargetBoneID = connInfo.ReadAttribute("TargetBoneID", -1);
+                TargetConnectionID = connInfo.ReadAttribute("TargetConnectionID", string.Empty);
+            }
+
             if (element.HasElement(nameof(Transform), out XElement transElem))
                 Transform = ItemTransform.FromXml(transElem);
 
@@ -169,6 +263,25 @@ namespace LDDModder.Modding.Editing
                 foreach (var connElem in collisionsElem.Elements(PartCollision.NODE_NAME))
                     Collisions.Add(PartCollision.FromXml(connElem));
             }
+        }
+
+        #endregion
+
+        public override List<ValidationMessage> ValidateElement()
+        {
+            var validationMessages = new List<ValidationMessage>();
+
+            void AddMessage(string code, ValidationLevel level, params object[] args)
+            {
+                validationMessages.Add(new ValidationMessage(this, code, level, args));
+            }
+
+            if (BoneID > 1)
+            {
+                //if (PreviousBoneID )
+            }
+
+            return validationMessages;
         }
     }
 }
