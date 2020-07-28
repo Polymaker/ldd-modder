@@ -60,10 +60,10 @@ namespace LDDModder.LDD.Meshes
             return vertex;
         }
 
-        public void AddTriangle(Vertex v1, Vertex v2, Vertex v3)
-        {
-            _Triangles.Add(new Triangle(AddVertex(v1), AddVertex(v2), AddVertex(v3)));
-        }
+        //public void AddTriangle(Vertex v1, Vertex v2, Vertex v3)
+        //{
+        //    _Triangles.Add(new Triangle(AddVertex(v1), AddVertex(v2), AddVertex(v3)));
+        //}
 
         public Triangle AddTriangle(int v1, int v2, int v3)
         {

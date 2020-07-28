@@ -931,19 +931,21 @@ namespace LDDModder.Modding.Editing
                 if (!string.IsNullOrEmpty(bone.SourceConnectionID))
                     sourceConn = bone.Connections.FirstOrDefault(x => x.ID == bone.SourceConnectionID);
 
-                if (sourceConn == null && bone.SourceConnectionIndex < bone.Connections.Count)
+                if (sourceConn == null && bone.SourceConnectionIndex >= 0 
+                    && bone.SourceConnectionIndex < bone.Connections.Count)
                     sourceConn = bone.Connections[bone.SourceConnectionIndex];
 
                 if (sourceConn != null)
                 {
-                    bone.SourceConnectionID = targetConn.ID;
-                    bone.SourceConnectionIndex = bone.Connections.IndexOf(targetConn);
+                    bone.SourceConnectionID = sourceConn.ID;
+                    bone.SourceConnectionIndex = bone.Connections.IndexOf(sourceConn);
                 }
 
                 if (!string.IsNullOrEmpty(bone.TargetConnectionID))
                     targetConn = prevBone.Connections.FirstOrDefault(x => x.ID == bone.TargetConnectionID);
 
-                if (targetConn == null && bone.TargetConnectionIndex < prevBone.Connections.Count)
+                if (targetConn == null && bone.TargetConnectionIndex >= 0 
+                    && bone.TargetConnectionIndex < prevBone.Connections.Count)
                     targetConn = prevBone.Connections[bone.TargetConnectionIndex];
 
                 if (targetConn != null)
@@ -1097,6 +1099,78 @@ namespace LDDModder.Modding.Editing
 
             parentCollection.Add(new ModelMeshReference(newModel));
             RemoveUnreferencedMeshes();
+        }
+
+
+
+        #endregion
+
+        #region Bones handling
+
+        public void RebuildBoneConnections()
+        {
+            if (Bones.Count == 0)
+                return;
+
+            foreach (var bone in Bones)
+                bone.Connections.RemoveAll(x => x.SubType >= 999000);
+
+            int lastBoneId = Bones.Max(x => x.BoneID);
+
+            int curConnType = 0;
+            int totalConnection = 0;
+
+            foreach (var bone in Bones.OrderBy(x => x.BoneID))
+            {
+                foreach (var linkedBone in Bones.Where(x => x.TargetBoneID == bone.BoneID))
+                {
+                    var targetConn = PartConnection.Create(ConnectorType.Ball);
+
+                    var ball1 = targetConn.GetConnector<BallConnector>();
+
+                    ball1.SubType = 999000 + curConnType;
+                    var targetBonePos = bone.Transform.ToMatrixD().TransformPosition(linkedBone.Transform.Position);
+                    var posOffset = linkedBone.Transform.Position - bone.Transform.Position;
+                    posOffset = bone.Transform.ToMatrixD().Inverted().TransformVector(posOffset);
+                    targetConn.Transform.Position = posOffset;
+                    curConnType = (++curConnType) % 4;
+
+                    bone.Connections.Add(targetConn);
+                    RenameElement(targetConn, $"FlexConn{totalConnection++}");
+
+                    PartConnection sourceConn = null;
+                    if (linkedBone.BoneID == lastBoneId)
+                    {
+                        sourceConn = PartConnection.Create(ConnectorType.Fixed);
+                        var ball2 = sourceConn.GetConnector<FixedConnector>();
+                        ball2.SubType = 999000 + curConnType;
+                    }
+                    else
+                    {
+                        sourceConn = PartConnection.Create(ConnectorType.Ball);
+                        var ball2 = sourceConn.GetConnector<BallConnector>();
+                        ball2.SubType = 999000 + curConnType;
+                        ball2.FlexAttributes = "-0.06,0.06,20,10,10";
+                    }
+
+                    curConnType = (++curConnType) % 4;
+                    linkedBone.Connections.Add(sourceConn);
+
+                    RenameElement(sourceConn, $"FlexConn{totalConnection++}");
+
+                    linkedBone.TargetConnectionID = targetConn.ID;
+                    linkedBone.SourceConnectionID = sourceConn.ID;
+
+                }
+            }
+        }
+
+        public void CalculateBoneBoundingBoxes()
+        {
+            foreach (var bone in Bones.OrderBy(x => x.BoneID))
+            {
+
+            }
         }
 
         #endregion

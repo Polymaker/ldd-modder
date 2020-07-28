@@ -14,6 +14,8 @@ namespace LDDModder.BrickEditor.Rendering
 
         public static PartialModel CubeModel { get; private set; }
 
+        public static PartialModel ConeModel { get; private set; }
+
         public static PartialModel SphereModel { get; private set; }
 
         public static PartialModel CrossAxleMaleModel { get; private set; }
@@ -32,6 +34,9 @@ namespace LDDModder.BrickEditor.Rendering
 
             var loadedMesh = ResourceHelper.GetResourceModel("Models.Cube.obj", "obj").Meshes[0];
             CubeModel = AppendPartialMesh(loadedMesh);
+
+            loadedMesh = ResourceHelper.GetResourceModel("Models.Cone.obj", "obj").Meshes[0];
+            ConeModel = AppendPartialMesh(loadedMesh);
 
             loadedMesh = ResourceHelper.GetResourceModel("Models.Sphere.obj", "obj").Meshes[0];
             SphereModel = AppendPartialMesh(loadedMesh);

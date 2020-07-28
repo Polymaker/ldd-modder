@@ -554,7 +554,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
         #endregion
 
-        #region Validation Handling
+        #region Part Validation Handling
 
         public bool IsValidatingProject { get; private set; }
 
@@ -596,6 +596,21 @@ namespace LDDModder.BrickEditor.ProjectHandling
                 ValidationFinished?.Invoke(this, EventArgs.Empty);
 
             }
+        }
+
+        #endregion
+
+        #region Element handling
+
+        public bool ConfirmCanDelete(PartElement element)
+        {
+            if (element is PartBone bone)
+            {
+
+
+
+            }
+            return false;
         }
 
         #endregion

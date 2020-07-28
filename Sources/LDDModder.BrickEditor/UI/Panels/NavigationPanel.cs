@@ -710,10 +710,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             base.OnProjectElementsChanged();
 
-            if (InvokeRequired)
-                BeginInvoke((Action)(() => RebuildNavigation(false)));
-            else
-                RebuildNavigation(false);
+            ExecuteOnThread(() => RebuildNavigation(false));
         }
 
         protected override void OnElementPropertyChanged(ElementValueChangedEventArgs e)
@@ -721,10 +718,11 @@ namespace LDDModder.BrickEditor.UI.Panels
             base.OnElementPropertyChanged(e);
             if (e.PropertyName == nameof(PartElement.Name))
             {
-                if (InvokeRequired)
-                    BeginInvoke((Action)(() => RefreshElementName(e.Element)));
-                else
-                    RefreshElementName(e.Element);
+                ExecuteOnThread(() => RefreshElementName(e.Element));
+            }
+            else if (e.PropertyName == nameof(PartProperties.Flexible) && e.Element is PartProperties)
+            {
+                ExecuteOnThread(() => RebuildNavigation(true));
             }
         }
 

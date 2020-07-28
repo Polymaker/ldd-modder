@@ -36,6 +36,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private GridShaderProgram GridShader;
 
+        //private SceneInfo Scene;
         private List<SurfaceMeshBuffer> SurfaceModels;
         //private List<CollisionModel> CollisionModels;
         //private List<ConnectionModel> ConnectionModels;
@@ -78,6 +79,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             CreateGLControl();
             SelectionInfoPanel.BringToFront();
             SelectionInfoPanel.Visible = false;
+            BonesDropDownMenu.Visible = false;
         }
 
         private void CreateGLControl()
@@ -150,10 +152,15 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             InputManager = new InputManager();
 
+            
+            
             //Camera = new Camera();
             CameraManipulator = new CameraManipulator(new Camera());
             CameraManipulator.Initialize(new Vector3(5), Vector3.Zero);
             //CameraManipulator.RotationButton = MouseButton.Right;
+
+            //Scene = new SceneInfo();
+            //Scene.Camera = CameraManipulator.Camera;
 
             InitializeTextures();
             InitializeUI();
@@ -370,24 +377,11 @@ namespace LDDModder.BrickEditor.UI.Panels
             if (ProjectManager.ShowPartModels)
                 DrawPartModels();
 
-            GL.Disable(EnableCap.Texture2D);
-
             foreach (var model in LoadedModels)
             {
                 if (model.Visible)
                     model.RenderModel(Camera);
             }
-
-            //if (ProjectManager.ShowCollisions)
-            //    DrawCollisions();
-
-            //if (ProjectManager.ShowConnections)
-            //    DrawConnections();
-
-            //if (CurrentProject?.Flexible ?? false)
-            //{
-            //    foreach
-            //}
 
             if (UIRenderHelper.TextRenderer.DrawingPrimitives.Any())
             {
@@ -395,7 +389,6 @@ namespace LDDModder.BrickEditor.UI.Panels
                 UIRenderHelper.TextRenderer.Draw();
                 UIRenderHelper.TextRenderer.DisableShader();
             }
-            
 
             DrawGrid();
 
@@ -408,22 +401,6 @@ namespace LDDModder.BrickEditor.UI.Panels
             }
             
             GL.UseProgram(0);
-        }
-
-        private void DrawConnections()
-        {
-            GL.Disable(EnableCap.Texture2D);
-
-            foreach (var connModel in LoadedModels.OfType<ConnectionModel>().Where(x => x.Visible))
-                connModel.RenderModel(Camera);
-        }
-
-        private void DrawCollisions()
-        {
-            GL.Disable(EnableCap.Texture2D);
-
-            foreach (var colModel in LoadedModels.OfType<CollisionModel>().Where(x => x.Visible))
-                colModel.RenderModel(Camera);
         }
 
         private void DrawPartModels()
@@ -602,6 +579,26 @@ namespace LDDModder.BrickEditor.UI.Panels
                 }
                 
             }
+
+            if (LoadedModels.OfType<BoneModel>().Any(x => x.IsLengthDirty))
+            {
+                foreach (var boneModel in LoadedModels.OfType<BoneModel>())
+                {
+                    var newLength = 0.4f;
+                    var target = boneModel.Bone.GetTargetBone();
+
+                    if (target != null)
+                        newLength = (float)(target.Transform.Position - boneModel.Bone.Transform.Position).Length;
+
+                    if (boneModel.BoneLength != newLength)
+                    {
+                        boneModel.BoneLength = newLength;
+                        boneModel.UpdateModelTransforms();
+                    }
+
+                    boneModel.IsLengthDirty = false;
+                }
+            }
         }
 
         #endregion
@@ -721,6 +718,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             base.OnProjectChanged();
             UpdateDocumentTitle();
+            BonesDropDownMenu.Visible = CurrentProject?.Flexible ?? false;
         }
 
         protected override void OnProjectLoaded(PartProject project)
@@ -777,6 +775,8 @@ namespace LDDModder.BrickEditor.UI.Panels
         private bool ConnectionsChanged;
         private bool BonesChanged;
 
+
+
         protected override void OnElementCollectionChanged(ElementCollectionChangedEventArgs e)
         {
             base.OnElementCollectionChanged(e);
@@ -805,11 +805,17 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             base.OnElementPropertyChanged(e);
 
-            if (e.Element is PartProperties && (
-                e.PropertyName == nameof(PartProperties.ID) ||
-                e.PropertyName == nameof(PartProperties.Description)))
+            if (e.Element is PartProperties)
             {
-                UpdateDocumentTitle();
+                if (e.PropertyName == nameof(PartProperties.ID) ||
+                    e.PropertyName == nameof(PartProperties.Description))
+                {
+                    UpdateDocumentTitle();
+                }
+                else if (e.PropertyName == nameof(PartProperties.Flexible))
+                {
+                    BonesDropDownMenu.Visible = CurrentProject.Flexible;
+                }
             }
         }
 
@@ -1030,9 +1036,20 @@ namespace LDDModder.BrickEditor.UI.Panels
         protected override void OnElementSelectionChanged()
         {
             base.OnElementSelectionChanged();
+            if (CurrentProject == null)
+                return;
+
+            bool isFlexible = CurrentProject.Bones.Any();
 
             foreach (var model in GetAllElementModels())
-                model.IsSelected = ProjectManager.IsContainedInSelection(model.Element);
+            {
+                if (isFlexible && model.Element.Parent is IPhysicalElement)
+                {
+                    model.IsSelected = ProjectManager.IsSelected(model.Element);
+                }
+                else
+                    model.IsSelected = ProjectManager.IsContainedInSelection(model.Element);
+            }
 
             UpdateGizmoFromSelection();
         }
@@ -1580,6 +1597,21 @@ namespace LDDModder.BrickEditor.UI.Panels
                 ProjectManager.StartBatchChanges();
                 var selectedMeshes = ProjectManager.GetSelectionHierarchy().OfType<ModelMeshReference>().ToList();
                 ProjectManager.CurrentProject.CombineMeshes(selectedMeshes);
+                ProjectManager.EndBatchChanges();
+            }
+        }
+
+        private void Bones_CalcBounding_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Bones_RebuildConnections_Click(object sender, EventArgs e)
+        {
+            if (CurrentProject != null)
+            {
+                ProjectManager.StartBatchChanges();
+                CurrentProject.RebuildBoneConnections();
                 ProjectManager.EndBatchChanges();
             }
         }

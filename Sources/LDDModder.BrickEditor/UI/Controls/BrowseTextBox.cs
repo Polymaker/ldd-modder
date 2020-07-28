@@ -13,7 +13,7 @@ using System.Windows.Forms.Design.Behavior;
 
 namespace LDDModder.BrickEditor.UI.Controls
 {
-    [Designer(typeof(BrowseTextBoxDesigner))]
+    [Designer(typeof(BrowseTextBoxDesigner)), DefaultEvent("BrowseButtonClicked")]
     public partial class BrowseTextBox : UserControl
     {
         public event EventHandler BrowseButtonClicked;

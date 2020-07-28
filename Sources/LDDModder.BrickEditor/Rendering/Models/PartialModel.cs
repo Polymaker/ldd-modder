@@ -65,28 +65,57 @@ namespace LDDModder.BrickEditor.Rendering.Models
             return !float.IsNaN(distance);
         }
 
+        //public bool RayIntersects(Ray ray, Matrix4 transform, out float distance)
+        //{
+        //    distance = float.NaN;
+
+        //    if (Vertices != null)
+        //    {
+        //        for (int i = 0; i < Vertices.Count; i += 3)
+        //        {
+        //            var v1 = Vector3.TransformPosition(Vertices[i + 0], transform);
+        //            var v2 = Vector3.TransformPosition(Vertices[i + 1], transform);
+        //            var v3 = Vector3.TransformPosition(Vertices[i + 2], transform);
+        //            if (Ray.IntersectsTriangle(ray, v1, v2, v3, out float hitDist))
+        //                distance = float.IsNaN(distance) ? hitDist : Math.Min(hitDist, distance);
+        //        }
+        //    }
+
+        //    return !float.IsNaN(distance);
+        //}
+
         public bool RayIntersects(Ray ray, Matrix4 transform, out float distance)
         {
-            distance = float.NaN;
+            var localRay = Ray.Transform(ray, transform.Inverted());
 
-            if (Vertices != null)
-            {
-                for (int i = 0; i < Vertices.Count; i += 3)
-                {
-                    var v1 = Vector3.TransformPosition(Vertices[i + 0], transform);
-                    var v2 = Vector3.TransformPosition(Vertices[i + 1], transform);
-                    var v3 = Vector3.TransformPosition(Vertices[i + 2], transform);
-                    if (Ray.IntersectsTriangle(ray, v1, v2, v3, out float hitDist))
-                        distance = float.IsNaN(distance) ? hitDist : Math.Min(hitDist, distance);
-                }
-            }
-
-            return !float.IsNaN(distance);
+            return RayIntersects(localRay, out distance);
         }
 
         public void DrawElements()
         {
             VertexBuffer.DrawElementsBaseVertex(PrimitiveType, StartVertex, IndexCount, StartIndex * 4);
+        }
+
+        public void DrawModel(Matrix4 transform, MaterialInfo material, bool isSelected)
+        {
+            RenderHelper.BeginDrawModel(VertexBuffer, transform, material);
+            RenderHelper.ModelShader.IsSelected.Set(isSelected);
+            DrawElements();
+            RenderHelper.EndDrawModel(VertexBuffer);
+        }
+
+        public void DrawColored(Matrix4 transform, Vector4 color)
+        {
+            RenderHelper.BeginDrawColor(VertexBuffer, transform, color);
+            DrawElements();
+            RenderHelper.EndDrawColor(VertexBuffer);
+        }
+
+        public void DrawWireframe(Matrix4 transform, float thickness, Vector4 color)
+        {
+            RenderHelper.BeginDrawWireframe(VertexBuffer, transform, thickness, color);
+            DrawElements();
+            RenderHelper.EndDrawWireframe(VertexBuffer);
         }
     }
 }

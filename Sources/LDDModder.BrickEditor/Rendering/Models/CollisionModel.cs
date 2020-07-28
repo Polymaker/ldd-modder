@@ -19,14 +19,11 @@ namespace LDDModder.BrickEditor.Rendering
 
         public CollisionType CollisionType => PartCollision.CollisionType;
 
-        public Matrix4 ParentTransform { get; set; }
-
         private Vector3 EditedScale { get; set; }
 
         public CollisionModel(PartCollision collision) : base(collision)
         {
             PartCollision = collision;
-            ParentTransform = Matrix4.Identity;
 
             SetTransformFromElement();
 
@@ -74,19 +71,6 @@ namespace LDDModder.BrickEditor.Rendering
             }
             else
                 base.ApplyTransformToElement(transform);
-        }
-
-        protected override Matrix4 GetElementTransform()
-        {
-            var baseTransform = PartCollision.Transform.ToMatrixD().ToGL();
-
-            if (PartCollision.Parent is PartBone partBone)
-            {
-                ParentTransform = partBone.Transform.ToMatrix().ToGL();
-                baseTransform = baseTransform * partBone.Transform.ToMatrixD().ToGL();
-            }
-
-            return baseTransform.ToMatrix4();
         }
 
         protected override void OnElementPropertyChanged(ElementValueChangedEventArgs e)

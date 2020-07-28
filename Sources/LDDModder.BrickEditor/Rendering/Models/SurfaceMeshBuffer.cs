@@ -18,6 +18,7 @@ namespace LDDModder.BrickEditor.Rendering
         public PartSurface Surface { get; set; }
 
         public IndexedVertexBuffer<VertVNT> VertexBuffer { get; private set; }
+        //public IndexedVertexBuffer<VertVBW> BoneWeightBuffer { get; private set; }
 
         public List<SurfaceModelMesh> MeshModels { get; private set; }
 
@@ -26,16 +27,18 @@ namespace LDDModder.BrickEditor.Rendering
         private VertVNT[] Vertices;
         private int[] Indices;
 
-        public SurfaceMeshBuffer()
-        {
-            VertexBuffer = new IndexedVertexBuffer<VertVNT>();
-            MeshModels = new List<SurfaceModelMesh>();
-        }
+        //public SurfaceMeshBuffer()
+        //{
+        //    VertexBuffer = new IndexedVertexBuffer<VertVNT>();
+        //    BoneWeightBuffer = new IndexedVertexBuffer<VertVBW>();
+        //    MeshModels = new List<SurfaceModelMesh>();
+        //}
 
         public SurfaceMeshBuffer(PartSurface surface)
         {
             Surface = surface;
             VertexBuffer = new IndexedVertexBuffer<VertVNT>();
+            //BoneWeightBuffer = new IndexedVertexBuffer<VertVBW>();
             MeshModels = new List<SurfaceModelMesh>();
         }
 
@@ -91,6 +94,12 @@ namespace LDDModder.BrickEditor.Rendering
             VertexBuffer.SetVertices(vertices);
         }
 
+        //public void BuildBoneWeightBuffer(int selectedBone)
+        //{
+        //    BoneWeightBuffer.ClearBuffers();
+
+        //}
+
         private SurfaceModelMesh AddMeshGeometry(ModelMeshReference modelMesh, List<int> indexList, List<VertVNT> vertexList)
         {
             var geometry = modelMesh.GetGeometry();
@@ -101,14 +110,14 @@ namespace LDDModder.BrickEditor.Rendering
             Vector3 maxPos = new Vector3(-9999f);
 
             indexList.AddRange(triangleIndices);
-
+            bool isTextured = geometry.IsTextured;
             foreach (var vertex in geometry.Vertices)
             {
                 var glVertex = new VertVNT()
                 {
                     Position = vertex.Position.ToGL(),
                     Normal = vertex.Normal.ToGL(),
-                    TexCoord = geometry.IsTextured ? vertex.TexCoord.ToGL() : Vector2.Zero
+                    TexCoord = isTextured ? vertex.TexCoord.ToGL() : Vector2.Zero
                 };
 
                 minPos = Vector3.ComponentMin(minPos, glVertex.Position);
@@ -140,10 +149,10 @@ namespace LDDModder.BrickEditor.Rendering
 
             foreach (var model in visibleMeshes)
             {
-                if (model.IsSelected && !useOutlineStencil)
-                {
+                //if (model.IsSelected && !useOutlineStencil)
+                //{
 
-                }
+                //}
 
                 RenderHelper.RenderWithStencil(model.IsSelected,
                     () =>
@@ -257,6 +266,8 @@ namespace LDDModder.BrickEditor.Rendering
         {
             if (VertexBuffer != null)
                 VertexBuffer.Dispose();
+            //if (BoneWeightBuffer != null)
+            //    BoneWeightBuffer.Dispose();
             Vertices = new VertVNT[0];
             Indices = new int[0];
             MeshModels.Clear();

@@ -177,17 +177,17 @@ namespace LDDModder.Modding.Editing
 
             elem.Add(new XAttribute(nameof(BoneID), BoneID));
             
-            if (TargetBoneID > 0)
+            if (TargetBoneID >= 0)
             {
-                if (BoneID > 0)
-                {
-                    elem.Add(new XComment($"flexCheckConnection=\"{SourceConnectionIndex},{TargetBoneID},{TargetConnectionIndex}\""));
-                }
+                //if (BoneID > 0)
+                //{
+                //    elem.Add(new XComment($"flexCheckConnection=\"{SourceConnectionIndex},{TargetBoneID},{TargetConnectionIndex}\""));
+                //}
                 
                 elem.Add(new XElement("ConnectsTo",
-                    new XAttribute("SourceConnectionID", SourceConnectionID),
+                    new XAttribute("SourceConnectionID", SourceConnectionID ?? string.Empty),
                     new XAttribute("TargetBoneID", TargetBoneID),
-                    new XAttribute("TargetConnectionID", TargetConnectionID)));
+                    new XAttribute("TargetConnectionID", TargetConnectionID ?? string.Empty)));
             }
 
             elem.Add(Transform.SerializeToXml());
@@ -266,6 +266,11 @@ namespace LDDModder.Modding.Editing
         }
 
         #endregion
+
+        public PartBone GetTargetBone()
+        {
+            return Project.Bones.FirstOrDefault(x => x.TargetBoneID == BoneID);
+        }
 
         public override List<ValidationMessage> ValidateElement()
         {

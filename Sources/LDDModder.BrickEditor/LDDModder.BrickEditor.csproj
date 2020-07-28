@@ -165,6 +165,7 @@
     <Compile Include="Rendering\MeshRenderMode.cs" />
     <Compile Include="Rendering\Models\BoneModel.cs" />
     <Compile Include="Rendering\Models\VertexArrayBuffer.cs" />
+    <Compile Include="Rendering\SceneInfo.cs" />
     <Compile Include="Rendering\Shaders\SimpleTextureShaderProgram.cs" />
     <Compile Include="Rendering\Shaders\StudGridCell.cs" />
     <Compile Include="Rendering\Shaders\StudConnectionShaderProgram.cs" />
@@ -559,6 +560,7 @@
     <EmbeddedResource Include="Resources\Shaders\SimpleTextureShader.glsl" />
     <EmbeddedResource Include="Resources\Models\TechnicPinFemale.obj" />
     <EmbeddedResource Include="Resources\Models\BarFemale.obj" />
+    <EmbeddedResource Include="Resources\Models\Cone.obj" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

@@ -22,6 +22,7 @@ namespace LDDModder.BrickEditor.Meshes
             var builder = new GeometryBuilder();
             var meshNode = Assimp.AssimpHelper.GetMeshNode(scene, mesh);
             var meshTransform = Assimp.AssimpHelper.GetFinalTransform(meshNode).ToLDD();
+
             
             for (int i = 0; i < mesh.VertexCount; i++)
             {
@@ -39,6 +40,23 @@ namespace LDDModder.BrickEditor.Meshes
                     continue;
 
                 builder.AddTriangle(mesh.Faces[i].Indices[0], mesh.Faces[i].Indices[1], mesh.Faces[i].Indices[2]);
+            }
+
+
+            if (mesh.HasBones)
+            {
+                var boneNames = scene.Meshes.SelectMany(x => x.Bones).Select(x => x.Name).Distinct().ToList();
+                var boneNodes = Assimp.AssimpHelper.GetNodeHierarchy(scene.RootNode)
+                    .Where(x => boneNames.Contains(x.Name))/*.OrderBy(x => x.GetLevel())*/.ToList();
+
+                boneNames = boneNodes.Select(x => x.Name).ToList();//names in order
+
+                for (int i = 0; i < mesh.BoneCount; i++)
+                {
+                    int boneIndex = boneNames.IndexOf(mesh.Bones[i].Name);
+                    foreach (var vw in mesh.Bones[i].VertexWeights)
+                        builder.Vertices[vw.VertexID].BoneWeights.Add(new BoneWeight(boneIndex, vw.Weight));
+                }
             }
 
             var geometry = builder.GetGeometry();
@@ -248,12 +266,13 @@ namespace LDDModder.BrickEditor.Meshes
         public static Mesh LddMeshToAssimp(MeshGeometry geometry)
         {
             var assimpMesh = new Mesh(Assimp.PrimitiveType.Triangle);
+            bool isTextured = geometry.IsTextured;
 
             foreach (var v in geometry.Vertices)
             {
                 assimpMesh.Vertices.Add(v.Position.ToAssimp());
                 assimpMesh.Normals.Add(v.Normal.ToAssimp());
-                if (geometry.IsTextured)
+                if (isTextured)
                     assimpMesh.TextureCoordinateChannels[0].Add(new Vector3D(v.TexCoord.X, v.TexCoord.Y, 0));
             }
 

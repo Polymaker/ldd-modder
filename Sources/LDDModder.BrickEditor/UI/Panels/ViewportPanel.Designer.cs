@@ -50,6 +50,7 @@
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.MeshesMenu_Separate = new System.Windows.Forms.ToolStripMenuItem();
             this.MeshesMenu_Merge = new System.Windows.Forms.ToolStripMenuItem();
+            this.BonesDropDownMenu = new System.Windows.Forms.ToolStripDropDownButton();
             this.GizmoOrientationMenu = new System.Windows.Forms.ToolStripDropDownButton();
             this.globalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.localToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -79,6 +80,8 @@
             this.label8 = new System.Windows.Forms.Label();
             this.RotYNumBox = new LDDModder.BrickEditor.UI.Controls.NumberTextBox();
             this.RotZNumBox = new LDDModder.BrickEditor.UI.Controls.NumberTextBox();
+            this.Bones_RebuildConnections = new System.Windows.Forms.ToolStripMenuItem();
+            this.Bones_CalcBounding = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1.SuspendLayout();
             this.SelectionInfoPanel.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -91,6 +94,7 @@
             this.CameraMenuDropDown,
             this.DisplayMenuDropDown,
             this.MeshesDropDownMenu,
+            this.BonesDropDownMenu,
             this.GizmoOrientationMenu,
             this.GizmoPivotModeMenu,
             this.ModelRenderMode1Button,
@@ -239,6 +243,15 @@
             this.MeshesMenu_Merge.Name = "MeshesMenu_Merge";
             resources.ApplyResources(this.MeshesMenu_Merge, "MeshesMenu_Merge");
             this.MeshesMenu_Merge.Click += new System.EventHandler(this.test2ToolStripMenuItem_Click);
+            // 
+            // BonesDropDownMenu
+            // 
+            this.BonesDropDownMenu.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.BonesDropDownMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.Bones_RebuildConnections,
+            this.Bones_CalcBounding});
+            resources.ApplyResources(this.BonesDropDownMenu, "BonesDropDownMenu");
+            this.BonesDropDownMenu.Name = "BonesDropDownMenu";
             // 
             // GizmoOrientationMenu
             // 
@@ -466,6 +479,18 @@
             this.RotZNumBox.Name = "RotZNumBox";
             this.RotZNumBox.ValueChanged += new System.EventHandler(this.RotationNumBoxes_ValueChanged);
             // 
+            // Bones_RebuildConnections
+            // 
+            this.Bones_RebuildConnections.Name = "Bones_RebuildConnections";
+            resources.ApplyResources(this.Bones_RebuildConnections, "Bones_RebuildConnections");
+            this.Bones_RebuildConnections.Click += new System.EventHandler(this.Bones_RebuildConnections_Click);
+            // 
+            // Bones_CalcBounding
+            // 
+            this.Bones_CalcBounding.Name = "Bones_CalcBounding";
+            resources.ApplyResources(this.Bones_CalcBounding, "Bones_CalcBounding");
+            this.Bones_CalcBounding.Click += new System.EventHandler(this.Bones_CalcBounding_Click);
+            // 
             // ViewportPanel
             // 
             resources.ApplyResources(this, "$this");
@@ -534,5 +559,8 @@
         private System.Windows.Forms.ToolStripMenuItem MeshesMenu_Merge;
         private System.Windows.Forms.ToolStripDropDownButton MeshesDropDownMenu;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem2;
+        private System.Windows.Forms.ToolStripDropDownButton BonesDropDownMenu;
+        private System.Windows.Forms.ToolStripMenuItem Bones_RebuildConnections;
+        private System.Windows.Forms.ToolStripMenuItem Bones_CalcBounding;
     }
 }

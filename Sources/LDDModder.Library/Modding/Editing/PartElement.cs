@@ -335,22 +335,27 @@ namespace LDDModder.Modding.Editing
 
         public Type GetElementType()
         {
-            if (this is PartSurface)
-                return typeof(PartSurface);
-            else if (this is SurfaceComponent)
-                return typeof(SurfaceComponent);
-            else if (this is ModelMesh)
-                return typeof(ModelMesh);
-            else if (this is PartCollision)
-                return typeof(PartCollision);
-            else if (this is PartConnection)
-                return typeof(PartConnection);
-            else if (this is StudReference)
-                return typeof(StudReference);
-            else if (this is ModelMeshReference)
-                return typeof(ModelMeshReference);
 
-            return typeof(PartElement);
+            //if (this is PartSurface)
+            //    return typeof(PartSurface);
+            //else if (this is SurfaceComponent)
+            //    return typeof(SurfaceComponent);
+            //else if (this is ModelMesh)
+            //    return typeof(ModelMesh);
+            //else if (this is PartCollision)
+            //    return typeof(PartCollision);
+            //else if (this is PartConnection)
+            //    return typeof(PartConnection);
+            //else if (this is StudReference)
+            //    return typeof(StudReference);
+            //else if (this is ModelMeshReference)
+            //    return typeof(ModelMeshReference);
+            //return typeof(PartElement);
+
+            if (this is PartCollision)
+                return typeof(PartCollision);
+            return GetType();
+            
         }
 
         public string GetFullElementType()

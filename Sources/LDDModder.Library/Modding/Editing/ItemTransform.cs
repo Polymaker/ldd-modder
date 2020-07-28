@@ -46,6 +46,11 @@ namespace LDDModder.Modding.Editing
             Rotation = rotation;
         }
 
+        public bool Equals(ItemTransform item)
+        {
+            return Position.Equals(item.Position) && Rotation.Equals(item.Rotation);
+        }
+
         public ItemTransform Clone()
         {
             return new ItemTransform(Position, Rotation);

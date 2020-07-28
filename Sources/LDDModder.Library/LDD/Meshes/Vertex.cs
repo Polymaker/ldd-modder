@@ -79,6 +79,8 @@ namespace LDDModder.LDD.Meshes
             hashCode = hashCode * -1521134295 + Position.Rounded(rounding).GetHashCode();
             hashCode = hashCode * -1521134295 + Normal.Rounded(rounding).GetHashCode();
             hashCode = hashCode * -1521134295 + TexCoord.Rounded(rounding).GetHashCode();
+            if (BoneWeights.Any())
+                hashCode = hashCode * -1521134295 + BoneWeights.GetHashCode();
             return hashCode;
         }
 

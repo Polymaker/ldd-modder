@@ -35,6 +35,16 @@ namespace LDDModder.BrickEditor.Rendering
                 Visible = ModelExtension.IsVisible;
                 ModelExtension.VisibilityChanged += Extender_VisibilityChanged;
             }
+
+            if (Element.Parent is IPhysicalElement parentElem)
+            {
+                parentElem.TranformChanged += ParentElem_TranformChanged;
+            }
+        }
+
+        private void ParentElem_TranformChanged(object sender, EventArgs e)
+        {
+            SetTransformFromElement();
         }
 
         private void Extender_VisibilityChanged(object sender, EventArgs e)
@@ -64,13 +74,23 @@ namespace LDDModder.BrickEditor.Rendering
         protected virtual void ApplyTransformToElement(Matrix4 transform)
         {
             IsApplyingTransform = true;
+
             if (Element is IPhysicalElement physicalElement)
-                physicalElement.Transform = ItemTransform.FromMatrix(transform.ToLDD());
+            {
+                if (Element.Parent is IPhysicalElement parentElem)
+                {
+                    var parentTrans = parentElem.Transform.ToMatrixD().ToGL();
+                    var localTrans = transform.ToMatrix4d() * parentTrans.Inverted();
+                    physicalElement.Transform = ItemTransform.FromMatrix(localTrans.ToLDD());
+                }
+                else
+                    physicalElement.Transform = ItemTransform.FromMatrix(transform.ToLDD());
+
+            }
             IsApplyingTransform = false;
         }
 
         protected void SetTransformFromElement()
-
         {
             IsUpdatingTransform = true;
             SetTransform(GetElementTransform(), true);
@@ -81,8 +101,15 @@ namespace LDDModder.BrickEditor.Rendering
         {
             if (Element is IPhysicalElement physicalElement)
             {
-                var baseTransform = physicalElement.Transform.ToMatrix().ToGL();
-                return baseTransform;
+                var baseTransform = physicalElement.Transform.ToMatrixD().ToGL();
+
+                if (Element.Parent is IPhysicalElement parentElem)
+                {
+                    var parentTransform = parentElem.Transform.ToMatrixD().ToGL();
+                    baseTransform = baseTransform * parentTransform;
+                }
+                
+                return baseTransform.ToMatrix4();
             }
             return Matrix4.Identity;
         }

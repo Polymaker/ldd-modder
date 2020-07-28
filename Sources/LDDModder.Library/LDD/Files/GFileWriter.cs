@@ -320,6 +320,8 @@ namespace LDDModder.LDD.Files
 
             var vertIndexer = new ListIndexer<Vertex>(meshGeometry.Vertices);
 
+            bool isTextured = meshGeometry.IsTextured;
+
             for (int i = 0; i < meshGeometry.Vertices.Count; i++)
             {
                 var vert = meshGeometry.Vertices[i];
@@ -327,7 +329,7 @@ namespace LDDModder.LDD.Files
                 meshData.Normals[i] = vert.Normal;
                 
                 if (file.IsTextured)
-                    meshData.UVs[i] = meshGeometry.IsTextured ? vert.TexCoord : new Vector2(0f);
+                    meshData.UVs[i] = isTextured ? vert.TexCoord : new Vector2(0f);
 
                 if (file.IsFlexible && vert.BoneWeights.Any())
                 {

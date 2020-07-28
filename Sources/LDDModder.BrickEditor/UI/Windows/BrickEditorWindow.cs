@@ -385,43 +385,11 @@ namespace LDDModder.BrickEditor.UI.Windows
         {
             using (var imd = new ImportModelsDialog())
             {
+                imd.ProjectManager = ProjectManager;
                 imd.Project = CurrentProject;
                 imd.SelectFileOnStart = true;
-
-                if (imd.ShowDialog() == DialogResult.OK)
-                    ImportAssimpModel(imd);
+                imd.ShowDialog();
             }
-        }
-        
-        private void ImportAssimpModel(ImportModelsDialog imd)
-        {
-            ProjectManager.StartBatchChanges();
-
-            foreach (var model in imd.ModelsToImport)
-            {
-                var geom = Meshes.MeshConverter.AssimpToLdd(imd.SceneToImport, model.Mesh);
-                var surface = CurrentProject.Surfaces.FirstOrDefault(x => x.SurfaceID == model.SurfaceID);
-
-                if (surface == null)
-                {
-                    surface = new PartSurface(model.SurfaceID, CurrentProject.Surfaces.Max(x => x.SubMaterialIndex) + 1);
-                    CurrentProject.Surfaces.Add(surface);
-                }
-
-                var partModel = surface.Components.FirstOrDefault(x => x.ComponentType == ModelComponentType.Part);
-
-                if (partModel == null)
-                {
-                    partModel = new PartModel();
-                    surface.Components.Add(partModel);
-                }
-                
-                var modelMesh = CurrentProject.AddMeshGeometry(geom, model.Name);
-                partModel.Meshes.Add(new ModelMeshReference(modelMesh));
-
-            }
-
-            ProjectManager.EndBatchChanges();
         }
         
         private void BrickEditorWindow_FormClosing(object sender, FormClosingEventArgs e)
