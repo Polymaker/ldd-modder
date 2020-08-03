@@ -36,10 +36,24 @@ namespace LDDModder.BrickEditor.Rendering
                 ModelExtension.VisibilityChanged += Extender_VisibilityChanged;
             }
 
+            Element.ParentChanging += Element_ParentChanging;
+            Element.ParentChanged += Element_ParentChanged;
+
+            Element_ParentChanged(null, EventArgs.Empty);
+        }
+
+        private void Element_ParentChanging(object sender, EventArgs e)
+        {
             if (Element.Parent is IPhysicalElement parentElem)
-            {
+                parentElem.TranformChanged -= ParentElem_TranformChanged;
+        }
+
+        private void Element_ParentChanged(object sender, EventArgs e)
+        {
+            if (Element.Parent is IPhysicalElement parentElem)
                 parentElem.TranformChanged += ParentElem_TranformChanged;
-            }
+
+            SetTransformFromElement();
         }
 
         private void ParentElem_TranformChanged(object sender, EventArgs e)

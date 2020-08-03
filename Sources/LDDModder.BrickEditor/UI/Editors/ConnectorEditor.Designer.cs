@@ -32,16 +32,16 @@
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.ConnectionTypeLabel = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.LengthTextBox = new LDDModder.BrickEditor.UI.Controls.NumberTextBox();
             this.ConnectionSubTypeLabel = new System.Windows.Forms.Label();
             this.ConnectionSubTypeCombo = new System.Windows.Forms.ComboBox();
             this.ConnectionTypeValueLabel = new System.Windows.Forms.Label();
+            this.OpenStudPanelButton = new System.Windows.Forms.Button();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.checkBox4 = new System.Windows.Forms.CheckBox();
             this.checkBox3 = new System.Windows.Forms.CheckBox();
             this.EndCappedCheckBox = new System.Windows.Forms.CheckBox();
             this.StartCappedCheckBox = new System.Windows.Forms.CheckBox();
-            this.OpenStudPanelButton = new System.Windows.Forms.Button();
+            this.LengthTextBox = new LDDModder.BrickEditor.UI.Controls.NumberTextBox();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.SuspendLayout();
@@ -68,12 +68,6 @@
             resources.ApplyResources(this.label2, "label2");
             this.label2.Name = "label2";
             // 
-            // LengthTextBox
-            // 
-            resources.ApplyResources(this.LengthTextBox, "LengthTextBox");
-            this.LengthTextBox.MaximumValue = 200D;
-            this.LengthTextBox.Name = "LengthTextBox";
-            // 
             // ConnectionSubTypeLabel
             // 
             resources.ApplyResources(this.ConnectionSubTypeLabel, "ConnectionSubTypeLabel");
@@ -84,11 +78,20 @@
             this.ConnectionSubTypeCombo.FormattingEnabled = true;
             resources.ApplyResources(this.ConnectionSubTypeCombo, "ConnectionSubTypeCombo");
             this.ConnectionSubTypeCombo.Name = "ConnectionSubTypeCombo";
+            this.ConnectionSubTypeCombo.Validating += new System.ComponentModel.CancelEventHandler(this.ConnectionSubTypeCombo_Validating);
+            this.ConnectionSubTypeCombo.Validated += new System.EventHandler(this.ConnectionSubTypeCombo_Validated);
             // 
             // ConnectionTypeValueLabel
             // 
             resources.ApplyResources(this.ConnectionTypeValueLabel, "ConnectionTypeValueLabel");
             this.ConnectionTypeValueLabel.Name = "ConnectionTypeValueLabel";
+            // 
+            // OpenStudPanelButton
+            // 
+            resources.ApplyResources(this.OpenStudPanelButton, "OpenStudPanelButton");
+            this.OpenStudPanelButton.Name = "OpenStudPanelButton";
+            this.OpenStudPanelButton.UseVisualStyleBackColor = true;
+            this.OpenStudPanelButton.Click += new System.EventHandler(this.OpenStudPanelButton_Click);
             // 
             // tableLayoutPanel2
             // 
@@ -123,12 +126,11 @@
             this.StartCappedCheckBox.Name = "StartCappedCheckBox";
             this.StartCappedCheckBox.UseVisualStyleBackColor = true;
             // 
-            // OpenStudPanelButton
+            // LengthTextBox
             // 
-            resources.ApplyResources(this.OpenStudPanelButton, "OpenStudPanelButton");
-            this.OpenStudPanelButton.Name = "OpenStudPanelButton";
-            this.OpenStudPanelButton.UseVisualStyleBackColor = true;
-            this.OpenStudPanelButton.Click += new System.EventHandler(this.OpenStudPanelButton_Click);
+            resources.ApplyResources(this.LengthTextBox, "LengthTextBox");
+            this.LengthTextBox.MaximumValue = 200D;
+            this.LengthTextBox.Name = "LengthTextBox";
             // 
             // ConnectorEditor
             // 

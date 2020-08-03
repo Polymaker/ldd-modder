@@ -48,6 +48,7 @@ namespace LDDModder.BrickEditor.Resources
 
             var connElems = xmlDoc.Descendants("Connector");
             Connectors.Clear();
+
             foreach (var connElem in connElems)
             {
                 if (!connElem.TryReadAttribute("type", out ConnectorType connType))
@@ -55,11 +56,13 @@ namespace LDDModder.BrickEditor.Resources
                 if (!connElem.TryReadAttribute("subtype", out int subType))
                     continue;
 
+                //connElem.TryReadAttribute("gender", out string gender);
+
                 var connInfo = new ConnectorInfo()
                 {
                     Type = connType,
                     SubType = subType,
-                    Description = connElem.ReadAttribute("description", string.Empty)
+                    Description = connElem.ReadAttribute("description", string.Empty),
                 };
                 Connectors.Add(connInfo);
             }

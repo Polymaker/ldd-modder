@@ -577,30 +577,21 @@ namespace LDDModder.BrickEditor.UI.Panels
                         PerformRaySelection(ray);
                     }
                 }
-                
             }
 
-            var boneModels = LoadedModels.OfType<BoneModel>().ToList();
-            if (boneModels.Any(x => x.IsLengthDirty))
+            try
             {
-                foreach (var boneModel in boneModels)
+                //TODO: improve access to LoadedModels list to prevent collection changed exceptions
+                var boneModels = LoadedModels.OfType<BoneModel>().ToList();
+                if (boneModels.Any(x => x.IsLengthDirty))
                 {
-                    boneModel.CalculateBoneLength();
-                    //var newLength = 0.4f;
-                    //var target = boneModel.Bone.GetTargetBone();
-
-                    //if (target != null)
-                    //    newLength = (float)(target.Transform.Position - boneModel.Bone.Transform.Position).Length;
-
-                    //if (boneModel.BoneLength != newLength)
-                    //{
-                    //    boneModel.BoneLength = newLength;
-                    //    boneModel.UpdateModelTransforms();
-                    //}
-
-                    //boneModel.IsLengthDirty = false;
+                    foreach (var boneModel in boneModels)
+                        boneModel.CalculateBoneLength();
                 }
+
             }
+            catch { }
+            
         }
 
         #endregion

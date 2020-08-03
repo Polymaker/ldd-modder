@@ -1010,73 +1010,79 @@ namespace LDDModder.BrickEditor.UI.Panels
             if (e.DataObject is BrightIdeasSoftware.OLVDataObject dataObj)
             {
                 var elementNodes = dataObj.ModelObjects.OfType<ProjectElementNode>().ToList();
-                var elemType = elementNodes.FirstOrDefault()?.Element.GetType();
+                var targetNode = e.DropTargetItem.RowObject as ProjectTreeNode;
+                var targetElement = (targetNode as ProjectElementNode)?.Element;
+                var movedNodes = new List<ProjectElementNode>();
 
-                if (elementNodes.All(x => x.Element.GetType() == elemType))
+                ProjectManager.StartBatchChanges();
+
+                foreach (var elemTypeGroup in elementNodes.GroupBy(x => x.ElementType))
                 {
-                    if (elemType == typeof(ModelMeshReference))
+                    var draggedElement = elemTypeGroup.Select(x => x.Element).ToList();
+
+                    IElementCollection targetCollection = null;
+
+                    if (targetNode is ElementCollectionNode elemCollectionNode &&
+                        elemCollectionNode.CollectionType == elemTypeGroup.Key)
                     {
-                        var meshRefElems = elementNodes.Select(x => x.Element).OfType<ModelMeshReference>().ToList();
-                        var targetNode = e.DropTargetItem.RowObject as ProjectTreeNode;
-                        var targetElement = (targetNode as ProjectElementNode)?.Element;
-
-                        IElementCollection targetCollection = null;
-
-                        if (targetNode is ProjectElementNode targetElemNode)
+                        targetCollection = elemCollectionNode.Collection;
+                    }
+                    else if (elemTypeGroup.Key == typeof(ModelMeshReference) && 
+                        targetElement is SurfaceComponent surface)
+                    {
+                        targetCollection = surface.Meshes;
+                    }
+                    else if (targetElement is PartBone bone)
+                    {
+                        if (elemTypeGroup.Key == typeof(PartCollision))
                         {
-                            if (targetElemNode.Element is SurfaceComponent surfaceComponent)
-                            {
-                                targetCollection = surfaceComponent.Meshes;
-                            }
-                            else if (targetElemNode.Element is ModelMeshReference modelRef)
-                            {
-                                var parentComponent = modelRef.Parent as SurfaceComponent;
-                                targetCollection = parentComponent.Meshes;
-
-                                if (parentComponent is FemaleStudModel femaleStud &&
-                                    femaleStud.ReplacementMeshes.Contains(modelRef))
-                                {
-                                    targetCollection = femaleStud.ReplacementMeshes;
-                                }
-                            }
+                            targetCollection = bone.Collisions;
                         }
-                        else if (targetNode is ElementCollectionNode elemCollectionNode)
+                        else if (elemTypeGroup.Key == typeof(PartConnection))
                         {
-                            if (elemCollectionNode.CollectionType == elemType)
-                                targetCollection = elemCollectionNode.Collection;
+                            targetCollection = bone.Connections;
                         }
+                    }
 
-                        if (targetCollection != null)
+                    if (targetCollection != null)
+                    {
+                        using (FlagManager.UseFlag("DragDropping"))
                         {
-                            using (FlagManager.UseFlag("DragDropping"))
+                            if (targetElement != null && 
+                                (e.DropTargetLocation == DropTargetLocation.BelowItem || 
+                                e.DropTargetLocation == DropTargetLocation.AboveItem) &&
+                                targetCollection.Contains(targetElement))
                             {
-                                ProjectManager.StartBatchChanges();
+                                int targetIndex = targetCollection.IndexOf(targetElement);
 
-                                if (targetElement != null && e.DropTargetLocation == DropTargetLocation.AboveItem)
+                                if (e.DropTargetLocation == DropTargetLocation.AboveItem)
                                 {
-                                    int itemIndex = targetCollection.IndexOf(targetElement);
-                                    meshRefElems.ForEach(x => x.TryRemove());
-                                    targetCollection.InsertAllAt(itemIndex, meshRefElems);
-                                }
-                                else if (targetElement != null && e.DropTargetLocation == DropTargetLocation.BelowItem)
-                                {
-                                    int itemIndex = targetCollection.IndexOf(targetElement);
-                                    meshRefElems.ForEach(x => x.TryRemove());
-                                    targetCollection.InsertAllAt(itemIndex + 1, meshRefElems);
+                                    draggedElement.ForEach(x => x.TryRemove());
+                                    targetCollection.InsertAllAt(targetIndex, draggedElement);
                                 }
                                 else
                                 {
-                                    meshRefElems.ForEach(x => x.TryRemove());
-                                    targetCollection.AddRange(meshRefElems);
+                                    draggedElement.ForEach(x => x.TryRemove());
+                                    targetCollection.InsertAllAt(targetIndex + 1, draggedElement);
                                 }
-
-                                ProjectManager.EndBatchChanges();
+                            }
+                            else
+                            {
+                                draggedElement.ForEach(x => x.TryRemove());
+                                targetCollection.AddRange(draggedElement);
                             }
 
-                            SetSelectedNodes(elementNodes);
+                            movedNodes.AddRange(elemTypeGroup);    
                         }
                     }
                 }
+
+                ProjectManager.EndBatchChanges();
+
+                if (movedNodes.Any())
+                    SetSelectedNodes(movedNodes);
+
+
             }
         }
 

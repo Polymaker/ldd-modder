@@ -76,7 +76,7 @@ namespace LDDModder.Modding.Editing
             if (_Project != null)
                 item.AssignProject(adding ? Project : null);
             else if (Owner != null)
-                item.Parent = adding ? Owner : null;
+                item.AssignParent(adding ? Owner : null);
         }
 
         

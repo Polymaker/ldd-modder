@@ -11,9 +11,10 @@ namespace LDDModder.LDD.Primitives.Connectors
 {
     public partial class Custom2DFieldConnector : Connector, IEnumerable<Custom2DFieldNode>
     {
-        private Custom2DFieldNode[,] NodeArray;
+        private Custom2DFieldNode[,] _NodeArray;
         private int _Width;
         private int _Height;
+        private bool PreventNodeEvents;
 
         public event PropertyValueChangedEventHandler NodeValueChanged;
 
@@ -69,7 +70,7 @@ namespace LDDModder.LDD.Primitives.Connectors
 
         public Custom2DFieldNode this[int x, int y]
         {
-            get => NodeArray[x, y];
+            get => _NodeArray[x, y];
         }
 
         public Custom2DFieldNode this[int index]
@@ -77,8 +78,14 @@ namespace LDDModder.LDD.Primitives.Connectors
             get
             {
                 var pos = IndexToPosition(index);
-                return NodeArray[pos.Item1, pos.Item2];
+                return _NodeArray[pos.Item1, pos.Item2];
             }
+        }
+
+        public Custom2DFieldNode[,] NodeArray
+        {
+            get => _NodeArray;
+            set => AssignArrayValues(value);
         }
 
         public Custom2DFieldConnector()
@@ -105,7 +112,7 @@ namespace LDDModder.LDD.Primitives.Connectors
         public Custom2DFieldNode GetNode(int x, int y)
         {
             if (x >= 0 && x <= Width && y >= 0 && y <= Height)
-                return NodeArray[x, y];
+                return _NodeArray[x, y];
             return null;
         }
 
@@ -118,19 +125,19 @@ namespace LDDModder.LDD.Primitives.Connectors
 
         private void Initialize2DArray()
         {
-            var oldValues = NodeArray;
+            var oldValues = _NodeArray;
 
-            if (NodeArray != null)
-                DettachNodeEvents(NodeArray);
+            if (_NodeArray != null)
+                DettachNodeEvents(_NodeArray);
 
-            NodeArray = new Custom2DFieldNode[Width + 1, Height + 1];
+            _NodeArray = new Custom2DFieldNode[Width + 1, Height + 1];
             int nodeIndex = 0;
 
             for (int y = 0; y < Height + 1; y++)
             {
                 for (int x = 0; x < Width + 1; x++)
                 {
-                    NodeArray[x, y] = new Custom2DFieldNode(x, y, nodeIndex++);
+                    _NodeArray[x, y] = new Custom2DFieldNode(x, y, nodeIndex++);
                 }
             }
 
@@ -141,16 +148,74 @@ namespace LDDModder.LDD.Primitives.Connectors
 
                 for (int x = 0; x < Math.Min(oldW, Width + 1); x++)
                     for (int y = 0; y < Math.Min(oldH, Height + 1); y++)
-                        NodeArray[x, y].Values = oldValues[x, y].Values;
+                        _NodeArray[x, y].Values = oldValues[x, y].Values;
             }
 
-            AttachNodeEvents(NodeArray);
+            AttachNodeEvents(_NodeArray);
+        }
+
+        public Custom2DFieldNode[,] GetArrayCopy()
+        {
+            var nodeArray = new Custom2DFieldNode[Width + 1, Height + 1];
+            for (int y = 0; y < ArrayHeight; y++)
+            {
+                for (int x = 0; x < ArrayWidth; x++)
+                {
+                    nodeArray[x, y] = _NodeArray[x, y].Clone();
+                }
+            }
+            return nodeArray;
+        }
+
+        public void AssignArrayValues(Custom2DFieldNode[,] nodeArray)
+        {
+            int width = nodeArray.GetLength(0);
+            int height = nodeArray.GetLength(1);
+
+            if (width == ArrayWidth && height == ArrayHeight)
+            {
+                bool hasChanges = false;
+
+                for (int x = 0; x < width; x++)
+                {
+                    for (int y = 0; y < height; y++)
+                    {
+                        if (NodeArray[x, y].Values != nodeArray[x, y].Values)
+                        {
+                            hasChanges = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!hasChanges)
+                    return;
+
+                PreventNodeEvents = true;
+
+
+                var oldValue = GetArrayCopy();
+
+
+
+                RaisePropertyValueChanging(new PropertyValueChangingEventArgs(nameof(NodeArray), oldValue, nodeArray));
+
+                for (int x = 0; x < width; x++)
+                {
+                    for (int y = 0; y < height; y++)
+                        NodeArray[x, y].Values = nodeArray[x, y].Values;
+                }
+
+                RaisePropertyValueChanged(new PropertyValueChangedEventArgs(nameof(NodeArray), oldValue, nodeArray));
+                PreventNodeEvents = false;
+            }
         }
 
         private void AttachNodeEvents(Custom2DFieldNode[,] nodeArray)
         {
             int width = nodeArray.GetLength(0);
             int height = nodeArray.GetLength(1);
+            
             for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < height; y++)
@@ -176,6 +241,8 @@ namespace LDDModder.LDD.Primitives.Connectors
 
         private void FieldNode_PropertyValueChanged(object sender, PropertyValueChangedEventArgs e)
         {
+            if (PreventNodeEvents)
+                return;
             RaiseChildObjectEvent(new ForwardedEventArgs(sender, "PropertyValueChanged", e));
             NodeValueChanged?.Invoke(sender, e);
         }
@@ -185,7 +252,7 @@ namespace LDDModder.LDD.Primitives.Connectors
             base.LoadFromXml(element);
             _Width = element.ReadAttribute<int>("width");
             _Height = element.ReadAttribute<int>("height");
-            NodeArray = null;
+            _NodeArray = null;
             Initialize2DArray();
             int expectedValueCount = (Width + 1) * (Height + 1);
 
@@ -200,7 +267,7 @@ namespace LDDModder.LDD.Primitives.Connectors
                 int rowIdx = (int)Math.Floor(i / (double)(Width + 1));
                 if (rowIdx > Height + 1)
                     break;
-                NodeArray[i % (Width + 1), rowIdx].Parse(values[i]);
+                _NodeArray[i % (Width + 1), rowIdx].Parse(values[i]);
             }
         }
 
@@ -213,7 +280,7 @@ namespace LDDModder.LDD.Primitives.Connectors
             {
                 string line = Environment.NewLine;
                 for (int x = 0; x <= Width; x++)
-                    line += NodeArray[x, y].ToString() + ",";
+                    line += _NodeArray[x, y].ToString() + ",";
                 content += line;
             }
             content = content.TrimEnd(',') + Environment.NewLine;
@@ -242,7 +309,7 @@ namespace LDDModder.LDD.Primitives.Connectors
 
         public IEnumerator<Custom2DFieldNode> GetEnumerator()
         {
-            return NodeArray.Cast<Custom2DFieldNode>().GetEnumerator();
+            return _NodeArray.Cast<Custom2DFieldNode>().GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()

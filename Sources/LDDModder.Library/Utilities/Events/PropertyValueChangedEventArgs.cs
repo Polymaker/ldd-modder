@@ -14,6 +14,8 @@ namespace System.ComponentModel
 
         public object NewValue { get; }
 
+        //public string BatchID { get; set; }
+
         public PropertyValueChangedEventArgs(string propertyName, object oldValue, object newValue) 
             : base(propertyName)
         {

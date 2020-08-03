@@ -98,6 +98,23 @@ namespace LDDModder.LDD.Primitives
             return new BoundingBox(Min, Max);
         }
 
+        public void Round(int decimals = 4)
+        {
+            if (!IsEmpty)
+            {
+                Min = Min.Rounded(decimals);
+                Max = Max.Rounded(decimals);
+            }
+        }
+
+        public BoundingBox Rounded(int decimals = 4)
+        {
+            if (IsEmpty)
+                return this;
+
+            return new BoundingBox(Min.Rounded(decimals), Max.Rounded(decimals));
+        }
+
         public static BoundingBox FromVertices(IEnumerable<Vertex> vertices)
         {
             //var minX = vertices.Select(x => x.Position.X).Min();

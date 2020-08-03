@@ -135,6 +135,14 @@ namespace LDDModder.BrickEditor.Models.Navigation
         {
             if (Element is ModelMeshReference)
                 return true;
+
+            if (Element.Project.Flexible)
+            {
+                if (Element is PartCollision || 
+                    Element is PartConnection)
+                    return true;
+            }
+            
             return base.CanDragDrop();
         }
 
@@ -150,6 +158,19 @@ namespace LDDModder.BrickEditor.Models.Navigation
                 else if (node is ElementCollectionNode collectionNode)
                 {
                     if (collectionNode.CollectionType == typeof(ModelMeshReference))
+                        return true;
+                }
+            }
+            else if (ElementType == typeof(PartCollision) || ElementType == typeof(PartConnection))
+            {
+                if (node is ProjectElementNode elementNode)
+                {
+                    if (elementNode.Element is PartBone)
+                        return true;
+                }
+                else if (node is ElementCollectionNode collectionNode)
+                {
+                    if (collectionNode.CollectionType == ElementType)
                         return true;
                 }
             }

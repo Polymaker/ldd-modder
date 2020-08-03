@@ -699,14 +699,74 @@ namespace LDDModder.BrickEditor.UI.Editors
 
         private void PasteContent(string content)
         {
-            var lines = content.Split('\r', '\n').ToList();
-            lines.RemoveAll(x => string.IsNullOrWhiteSpace(x?.Trim()));
-
-
-            for (int i = 0; i < lines.Count; i++)
+            if (Custom2DFieldNode.Parse(content, out int[] nodeValues)) //Single Value to be pasted
             {
-                var rowValues = lines[i].Trim().Split(',', ';', '\t');
+                var arrayClone = StudConnector.GetArrayCopy();
+                var selectedCells = GetSelectedNodes();
+                foreach (var cell in selectedCells)
+                    arrayClone[cell.X, cell.Y].Values = nodeValues;
+                StudConnector.AssignArrayValues(arrayClone);
+                return;
             }
+            else
+            {
+                var pastedNodes = new List<Custom2DFieldNode>();
+                var lines = content.Split('\r', '\n').ToList();
+                lines.RemoveAll(x => string.IsNullOrWhiteSpace(x?.Trim()));
+
+                var pastedValues = new string[lines.Count][];
+
+                for (int y = 0; y < lines.Count; y++)
+                {
+                    var rowValues = lines[y].Trim().Split(',', ';', '\t');
+                    pastedValues[y] = rowValues;
+                }
+
+                int colCount = pastedValues[0].Length;
+
+                if (pastedValues.All(x => x.Length == colCount))
+                {
+                    var arrayClone = StudConnector.GetArrayCopy();
+                    int startX = FocusedCell?.X ?? 0;
+                    int startY = FocusedCell?.Y ?? 0;
+                    int endX = StudConnector.Width;
+                    int endY = StudConnector.Height;
+
+                    if (SelectionEnd.HasValue)
+                    {
+                        startX = Math.Min(SelectionStart.Value.X, SelectionEnd.Value.X);
+                        startY = Math.Min(SelectionStart.Value.Y, SelectionEnd.Value.Y);
+
+                        if (SelectionSize.X > 1 || SelectionSize.Y > 1)
+                        {
+                            endX = startX + SelectionSize.X - 1;
+                            endY = startY + SelectionSize.Y - 1;
+                        }
+                    }
+
+                    for (int y = 0; y < lines.Count; y++)
+                    {
+                        for (int x = 0; x < colCount; x++)
+                        {
+                            int targetX = startX + x;
+                            int targetY = startY + y;
+
+                            if (targetX > endX || targetY > endY)
+                                continue;
+
+                            if (Custom2DFieldNode.Parse(pastedValues[y][x], out int[] cellValues))
+                                arrayClone[targetX, targetY].Values = cellValues;
+                        }
+                    }
+
+                    StudConnector.AssignArrayValues(arrayClone);
+                }
+                else
+                {
+                    //error, bad table formatting
+                }
+            }
+            
         }
 
         #endregion

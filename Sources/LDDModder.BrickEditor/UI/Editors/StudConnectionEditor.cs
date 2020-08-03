@@ -44,6 +44,7 @@ namespace LDDModder.BrickEditor.UI.Editors
         {
             GridHeightBox.Value = StudConnector?.StudHeight ?? 1;
             GridWidthBox.Value = StudConnector?.StudWidth ?? 1;
+            GidSizeBox_ValueChanged(null, EventArgs.Empty);
         }
 
         private void ApplySizeButton_Click(object sender, EventArgs e)
@@ -53,6 +54,15 @@ namespace LDDModder.BrickEditor.UI.Editors
                 StudConnector.StudHeight = (int)GridHeightBox.Value;
                 StudConnector.StudWidth = (int)GridWidthBox.Value;
             }
+        }
+
+        private void GidSizeBox_ValueChanged(object sender, EventArgs e)
+        {
+            if (StudConnector != null)
+            {
+                ApplySizeButton.Enabled = StudConnector.StudWidth != (int)GridWidthBox.Value || StudConnector.StudHeight != (int)GridHeightBox.Value;
+            }
+
         }
     }
 }

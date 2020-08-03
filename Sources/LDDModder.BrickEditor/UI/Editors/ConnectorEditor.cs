@@ -16,12 +16,13 @@ namespace LDDModder.BrickEditor.UI.Controls
     public partial class ConnectorEditor : UserControl
     {
         public Connector CurrentObject { get; private set; }
-        private List<ConnectorInfo> SubTypeList { get; set; }
+        private SortableBindingList<ConnectorInfo> SubTypeList { get; set; }
 
         public ConnectorEditor()
         {
             InitializeComponent();
-            SubTypeList = new List<ConnectorInfo>();
+            SubTypeList = new SortableBindingList<ConnectorInfo>();
+            SubTypeList.ApplySort("SubType", ListSortDirection.Ascending);
         }
 
         public void UpdateBindings(Connector connector)
@@ -88,8 +89,10 @@ namespace LDDModder.BrickEditor.UI.Controls
         private void FillSubTypeComboBox(ConnectorType connectorType)
         {
             ConnectionSubTypeCombo.DataSource = null;
-            SubTypeList = Resources.ResourceHelper.Connectors
-                .Where(x => x.Type == connectorType).ToList();
+            SubTypeList.Clear();
+
+            SubTypeList.AddRange(Resources.ResourceHelper.Connectors
+                .Where(x => x.Type == connectorType));
             ConnectionSubTypeCombo.DataSource = SubTypeList;
             ConnectionSubTypeCombo.DisplayMember = "SubTypeDisplayText";
             ConnectionSubTypeCombo.ValueMember = "SubType";
@@ -100,6 +103,35 @@ namespace LDDModder.BrickEditor.UI.Controls
             var test = (ParentForm as ElementDetailPanel);
             test.EditorWindow.StudConnectionPanel.Activate();
             //test.EditorWindow.StudConnectionPanel.Show(test.EditorWindow.DockPanelControl, DockState.Document);
+        }
+
+        private void ConnectionSubTypeCombo_Validating(object sender, CancelEventArgs e)
+        {
+            if (ConnectionSubTypeCombo.SelectedItem == null)
+            {
+                if (!int.TryParse(ConnectionSubTypeCombo.Text, out _))
+                    e.Cancel = true;
+            }
+        }
+
+        private void ConnectionSubTypeCombo_Validated(object sender, EventArgs e)
+        {
+            if (ConnectionSubTypeCombo.SelectedItem == null &&
+                int.TryParse(ConnectionSubTypeCombo.Text, out int subTypeID))
+            {
+                var connInfo = SubTypeList.FirstOrDefault(x => x.SubType == subTypeID);
+                if (connInfo == null)
+                {
+                    connInfo = new ConnectorInfo()
+                    {
+                        SubType = subTypeID,
+                        //Type = 
+                    };
+                    SubTypeList.AddSorted(connInfo);
+                }
+
+                ConnectionSubTypeCombo.SelectedItem = connInfo;
+            }
         }
     }
 }

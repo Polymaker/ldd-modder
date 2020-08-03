@@ -70,6 +70,9 @@ namespace LDDModder.Modding.Editing
 
         public event PropertyValueChangedEventHandler ExtendedPropertyChanged;
 
+        public event EventHandler ParentChanging;
+        public event EventHandler ParentChanged;
+
         public PartElement()
         {
             Collections = new List<IElementCollection>();
@@ -90,16 +93,43 @@ namespace LDDModder.Modding.Editing
 
         }
 
-        internal void AssignParent(PartElement parent)
+        private bool RemovingParent;
+
+        internal void AssignParent(PartElement parent, bool fromCollection = false)
         {
-            Parent = parent;
-            OnParentAssigned();
+            if (Parent != parent && !RemovingParent)
+            {
+                ParentChanging?.Invoke(this, EventArgs.Empty);
+
+                if (Parent != null)
+                {
+                    RemovingParent = true;
+                    TryRemove();
+                    RemovingParent = false;
+                    //var oldCollection = GetParentCollection();
+                    //if (oldCollection != null)
+                    //{
+                    //    oldCollection.Remove(this);
+                    //}
+                }
+
+                Parent = parent;
+                ParentChanged?.Invoke(this, EventArgs.Empty);
+            }
+            //bool changed = Parent != parent;
+            //if (changed)
+            //    ParentChanging?.Invoke(this, EventArgs.Empty);
+            //Parent = parent;
+            //OnParentAssigned();
+
+            //if (changed)
+            //    ParentChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        protected virtual void OnParentAssigned()
-        {
+        //protected virtual void OnParentAssigned()
+        //{
 
-        }
+        //}
 
         #endregion
 
@@ -209,10 +239,7 @@ namespace LDDModder.Modding.Editing
             }
         }
 
-
-
         #endregion
-
 
         public T GetExtension<T>() where T : IElementExtender
         {
@@ -282,6 +309,18 @@ namespace LDDModder.Modding.Editing
                         return collection;
                 }
             }
+            else if (Project != null)
+            {
+                if (Project.Collisions.Contains(this))
+                    return Project.Collisions;
+                else if (Project.Connections.Contains(this))
+                    return Project.Connections;
+                else if (Project.Surfaces.Contains(this))
+                    return Project.Surfaces;
+                else if (Project.Bones.Contains(this))
+                    return Project.Bones;
+            }
+
             return null;
         }
 

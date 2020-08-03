@@ -134,6 +134,9 @@
   <data name="ConnectionTypeLabel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
+  <data name="ConnectionTypeLabel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="ConnectionTypeLabel.Location" type="System.Drawing.Point, System.Drawing">
     <value>3, 3</value>
@@ -164,6 +167,9 @@
   </data>
   <data name="label2.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
+  </data>
+  <data name="label2.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
   </data>
   <data name="label2.Location" type="System.Drawing.Point, System.Drawing">
     <value>3, 52</value>
@@ -205,7 +211,7 @@
     <value>LengthTextBox</value>
   </data>
   <data name="&gt;&gt;LengthTextBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.3.26465, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.4.28801, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;LengthTextBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -303,6 +309,9 @@
   <data name="&gt;&gt;ConnectionTypeValueLabel.ZOrder" xml:space="preserve">
     <value>5</value>
   </data>
+  <data name="OpenStudPanelButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
   <data name="OpenStudPanelButton.Location" type="System.Drawing.Point, System.Drawing">
     <value>83, 75</value>
   </data>
@@ -369,6 +378,9 @@
   <data name="checkBox4.CheckAlign" type="System.Drawing.ContentAlignment, System.Drawing">
     <value>MiddleRight</value>
   </data>
+  <data name="checkBox4.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
   <data name="checkBox4.Location" type="System.Drawing.Point, System.Drawing">
     <value>145, 27</value>
   </data>
@@ -401,6 +413,9 @@
   </data>
   <data name="checkBox3.CheckAlign" type="System.Drawing.ContentAlignment, System.Drawing">
     <value>MiddleRight</value>
+  </data>
+  <data name="checkBox3.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
   </data>
   <data name="checkBox3.Location" type="System.Drawing.Point, System.Drawing">
     <value>3, 27</value>
@@ -435,6 +450,9 @@
   <data name="EndCappedCheckBox.CheckAlign" type="System.Drawing.ContentAlignment, System.Drawing">
     <value>MiddleRight</value>
   </data>
+  <data name="EndCappedCheckBox.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
   <data name="EndCappedCheckBox.Location" type="System.Drawing.Point, System.Drawing">
     <value>145, 3</value>
   </data>
@@ -467,6 +485,9 @@
   </data>
   <data name="StartCappedCheckBox.CheckAlign" type="System.Drawing.ContentAlignment, System.Drawing">
     <value>MiddleRight</value>
+  </data>
+  <data name="StartCappedCheckBox.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
   </data>
   <data name="StartCappedCheckBox.Location" type="System.Drawing.Point, System.Drawing">
     <value>3, 3</value>

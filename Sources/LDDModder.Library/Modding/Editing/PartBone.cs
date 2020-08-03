@@ -158,12 +158,12 @@ namespace LDDModder.Modding.Editing
 
             if (BoneID > 0)
             {
-                //int connectionCount = Connections.Count(x => x.SubType < 999000);
                 bone.ConnectionCheck = new Tuple<int, int, int>(
                     SourceConnectionIndex, 
                     TargetBoneID,
                     TargetConnectionIndex);
             }
+
             return bone;
         }
 

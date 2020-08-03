@@ -73,14 +73,14 @@
 		<Connector type="Ball" subtype="19" gender="male" description="3M ball" connectswith="18" />
 		
 		<!-- The following connectors are only used for flex bones (flexible parts) -->
-		<Connector type="Ball" subtype="999000" gender="" description="" />
-		<Connector type="Ball" subtype="999001" gender="" description="" />
-		<Connector type="Ball" subtype="999002" gender="" description="" />
-		<Connector type="Ball" subtype="999003" gender="" description="" />
+		<Connector type="Ball" subtype="999000" gender="" description="Bone joint" connectswith="999001" />
+		<Connector type="Ball" subtype="999001" gender="" description="Bone joint" connectswith="999000" />
+		<Connector type="Ball" subtype="999002" gender="" description="Bone joint" connectswith="999003" />
+		<Connector type="Ball" subtype="999003" gender="" description="Bone joint" connectswith="999002" />
 	</Balls>
 	<Custom2DFields>
-		<Connector type="Custom2DField" subtype="22" gender="female" description="Stud connection" />
-		<Connector type="Custom2DField" subtype="23" gender="male" description="Stud connection" />
+		<Connector type="Custom2DField" subtype="22" gender="female" description="Female studs" />
+		<Connector type="Custom2DField" subtype="23" gender="male" description="Male studs" />
 	</Custom2DFields>
 	<Fixed>
 		<Connector type="Fixed" subtype="2" gender="female" description="Tire Ø11mm" connectswith="2" />
@@ -238,10 +238,10 @@
 		<Connector type="Fixed" subtype="159" gender="" description="" />
 		
 		<!-- The following connectors are only used for flex bones (flexible parts) -->
-		<Connector type="Fixed" subtype="999000" gender="" description="" />
-		<Connector type="Fixed" subtype="999001" gender="" description="" />
-		<Connector type="Fixed" subtype="999002" gender="" description="" />
-		<Connector type="Fixed" subtype="999003" gender="" description="" />
+		<Connector type="Fixed" subtype="999000" gender="" description="Last bone joint" connectswith="999001" />
+		<Connector type="Fixed" subtype="999001" gender="" description="Last bone joint" connectswith="999000" />
+		<Connector type="Fixed" subtype="999002" gender="" description="Last bone joint" connectswith="999003" />
+		<Connector type="Fixed" subtype="999003" gender="" description="Last bone joint" connectswith="999002" />
 	</Fixed>
 	<Gears><!-- The gear connectors do not seem to connect with anything -->
 		<Connector type="Gear" subtype="3" description="Standard gear" />

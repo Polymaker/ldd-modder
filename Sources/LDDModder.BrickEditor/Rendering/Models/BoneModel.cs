@@ -122,7 +122,7 @@ namespace LDDModder.BrickEditor.Rendering
 
             //RenderHelper.DrawLine(Transform, new Vector4(1, 1, 0, 1), new Vector3(0), new Vector3(1, 0, 0), 3);
 
-            if (!BoneBounding.IsEmpty)
+            if (!BoneBounding.IsEmpty && IsSelected)
             {
                 RenderHelper.DrawBoundingBox(Transform, BoneBounding,
                         new Vector4(0f, 1f, 1f, 1f), IsSelected ? 1.5f : 1f);

@@ -988,7 +988,7 @@ namespace LDDModder.Modding.Editing
                     if (meshGeom != null)
                         vertices.AddRange(meshGeom.Vertices);
                 }
-                return BoundingBox.FromVertices(vertices);
+                return BoundingBox.FromVertices(vertices).Rounded();
             }
             finally
             {
@@ -1106,7 +1106,7 @@ namespace LDDModder.Modding.Editing
 
         #endregion
 
-        #region Bones handling
+        #region Bones data handling
 
         public void RebuildBoneConnections(float flexAmount = 0.06f)
         {
@@ -1201,22 +1201,31 @@ namespace LDDModder.Modding.Editing
                 var boneTrans = bone.Transform.ToMatrix().Inverted();
                 var verts = allVerts.Where(x => x.BoneWeights.Any(y => y.BoneID == bone.BoneID && y.Weight > 0.1f));
 
+                if (bone.PhysicsAttributes == null)
+                    bone.PhysicsAttributes = new PhysicsAttributes();
+
                 if (verts.Any())
                 {
                     var vertPos = verts.Select(x => boneTrans.TransformPosition(x.Position)).ToList();
                     var newBounds = BoundingBox.FromVertices(vertPos);
-                    var test = bone.Bounding;
+                    newBounds.Round();
                     bone.Bounding = newBounds;
+                    var physAttr = bone.PhysicsAttributes;
+                    physAttr.CenterOfMass = newBounds.Center;
                 }
                 else
                 {
                     bone.Bounding = new BoundingBox(new Simple3D.Vector3d(-0.0001d), new Simple3D.Vector3d(0.0001d));
+                    var physAttr = bone.PhysicsAttributes;
+                    physAttr.CenterOfMass = Simple3D.Vector3d.Zero;
+                    physAttr.Mass = 0;
+                    physAttr.InertiaTensor = Simple3D.Matrix3d.Zero;
                 }
             }
 
-
             unloadedMeshes.ForEach(x => x.UnloadModel());
         }
+
 
         #endregion
 

@@ -113,7 +113,7 @@ namespace LDDModder.LDD.Primitives.Connectors
                 else
                     values[i] = -1;
             }
-            return false;
+            return true;
         }
 
         public void Parse(string nodeID)
@@ -144,6 +144,14 @@ namespace LDDModder.LDD.Primitives.Connectors
             if (Value3 == -1)
                 return $"{Value1}:{Value2}";
             return $"{Value1}:{Value2}:{Value3}";
+        }
+
+        public Custom2DFieldNode Clone()
+        {
+            return new Custom2DFieldNode(X, Y, Index)
+            {
+                Values = Values
+            };
         }
     }
 
