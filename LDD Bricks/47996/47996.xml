@@ -1,0 +1,280 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<LEGOPrimitive versionMajor="1" versionMinor="0">
+  <Annotations>
+    <Annotation aliases="47996" />
+    <Annotation designname="LATTICE 3X28M Ø3.2" />
+    <Annotation maingroupid="235" />
+    <Annotation maingroupname="FENCES AND LADDERS" />
+    <Annotation platformid="200" />
+    <Annotation platformname="SYSTEM" />
+    <Annotation version="2" />
+  </Annotations>
+  <Flex>
+    <Bone boneId="0" angle="120" ax="0.5774" ay="0.5774" az="0.5774" tx="1.2" ty="0" tz="0">
+      <Connectivity>
+        <Ball type="999000" angle="0" ax="1" ay="0" az="0" tx="0.8" ty="0" tz="0" />
+      </Connectivity>
+      <Bounding>
+        <AABB minX="-0.160000681877136" minY="-0.160000413656235" minZ="-1.36000037193298" maxX="0.800000190734863" maxY="0.160000145435333" maxZ="1.35999953746796" />
+      </Bounding>
+    </Bone>
+    <Bone boneId="1" flexCheckConnection="0,0,0" angle="120" ax="0.5774" ay="0.5774" az="0.5774" tx="1.2" ty="0.8" tz="0">
+      <Connectivity>
+        <Ball type="999001" flexAttributes="-0.06,0.06,20,10,10" angle="0" ax="1" ay="0" az="0" tx="0" ty="0" tz="0" />
+        <Ball type="999002" angle="0" ax="1" ay="0" az="0" tx="0.8" ty="0" tz="0" />
+      </Connectivity>
+      <Bounding>
+        <AABB minX="-1.25197277611733E-06" minY="-0.160000324249268" minZ="-1.36000037193298" maxX="0.800000131130219" maxY="0.160000205039978" maxZ="1.35999953746796" />
+      </Bounding>
+    </Bone>
+    <Bone boneId="2" flexCheckConnection="0,1,1" angle="120" ax="0.5774" ay="0.5774" az="0.5774" tx="1.2" ty="1.6" tz="0">
+      <Connectivity>
+        <Ball type="999003" flexAttributes="-0.06,0.06,20,10,10" angle="0" ax="1" ay="0" az="0" tx="0" ty="0" tz="0" />
+        <Ball type="999000" angle="0" ax="1" ay="0" az="0" tx="0.8" ty="0" tz="0" />
+      </Connectivity>
+      <Bounding>
+        <AABB minX="2.38417996456519E-08" minY="-0.159999817609787" minZ="-1.36000037193298" maxX="0.800000071525574" maxY="0.160000205039978" maxZ="1.35999953746796" />
+      </Bounding>
+    </Bone>
+    <Bone boneId="3" flexCheckConnection="0,2,1" angle="120" ax="0.5774" ay="0.5774" az="0.5774" tx="1.2" ty="2.4" tz="0">
+      <Connectivity>
+        <Ball type="999001" flexAttributes="-0.06,0.06,20,10,10" angle="0" ax="1" ay="0" az="0" tx="0" ty="0" tz="0" />
+        <Ball type="999002" angle="0" ax="1" ay="0" az="0" tx="0.8" ty="0" tz="0" />
+      </Connectivity>
+      <Bounding>
+        <AABB minX="0" minY="-0.159999817609787" minZ="-1.36000037193298" maxX="0.959999084472656" maxY="0.160000205039978" maxZ="1.35999953746796" />
+      </Bounding>
+    </Bone>
+    <Bone boneId="4" flexCheckConnection="0,3,1" angle="120" ax="0.5774" ay="0.5774" az="0.5774" tx="1.2" ty="3.2" tz="0">
+      <Connectivity>
+        <Ball type="999003" flexAttributes="-0.06,0.06,20,10,10" angle="0" ax="1" ay="0" az="0" tx="0" ty="0" tz="0" />
+        <Ball type="999000" angle="0" ax="1" ay="0" az="0" tx="0.8" ty="0" tz="0" />
+      </Connectivity>
+      <Bounding>
+        <AABB minX="-0.160001277923584" minY="-0.159999817609787" minZ="-1.36000037193298" maxX="0.799996852874756" maxY="0.160000205039978" maxZ="1.35999953746796" />
+      </Bounding>
+    </Bone>
+    <Bone boneId="5" flexCheckConnection="0,4,1" angle="120" ax="0.5774" ay="0.5774" az="0.5774" tx="1.2" ty="4" tz="0">
+      <Connectivity>
+        <Ball type="999001" flexAttributes="-0.06,0.06,20,10,10" angle="0" ax="1" ay="0" az="0" tx="0" ty="0" tz="0" />
+        <Ball type="999002" angle="0" ax="1" ay="0" az="0" tx="0.8" ty="0" tz="0" />
+      </Connectivity>
+      <Bounding>
+        <AABB minX="-2.86102294921875E-06" minY="-0.159999817609787" minZ="-1.36000037193298" maxX="0.799996852874756" maxY="0.160000205039978" maxZ="1.35999953746796" />
+      </Bounding>
+    </Bone>
+    <Bone boneId="6" flexCheckConnection="0,5,1" angle="120" ax="0.5774" ay="0.5774" az="0.5774" tx="1.2" ty="4.8" tz="0">
+      <Connectivity>
+        <Ball type="999003" flexAttributes="-0.06,0.06,20,10,10" angle="0" ax="1" ay="0" az="0" tx="0" ty="0" tz="0" />
+        <Ball type="999000" angle="0" ax="1" ay="0" az="0" tx="0.8" ty="0" tz="0" />
+      </Connectivity>
+      <Bounding>
+        <AABB minX="-2.86102294921875E-06" minY="-0.159999817609787" minZ="-1.3600001335144" maxX="0.799997329711914" maxY="0.160000205039978" maxZ="1.36000049114227" />
+      </Bounding>
+    </Bone>
+    <Bone boneId="7" flexCheckConnection="0,6,1" angle="120" ax="0.5774" ay="0.5774" az="0.5774" tx="1.2" ty="5.6" tz="0">
+      <Connectivity>
+        <Ball type="999001" flexAttributes="-0.06,0.06,20,10,10" angle="0" ax="1" ay="0" az="0" tx="0" ty="0" tz="0" />
+        <Ball type="999002" angle="0" ax="1" ay="0" az="0" tx="0.8" ty="0" tz="0" />
+      </Connectivity>
+      <Bounding>
+        <AABB minX="-2.86102294921875E-06" minY="-0.159999817609787" minZ="-1.36000037193298" maxX="0.960000038146973" maxY="0.160000696778297" maxZ="1.36000049114227" />
+      </Bounding>
+    </Bone>
+    <Bone boneId="8" flexCheckConnection="0,7,1" angle="120" ax="0.5774" ay="0.5774" az="0.5774" tx="1.2" ty="6.4" tz="0">
+      <Connectivity>
+        <Ball type="999003" flexAttributes="-0.06,0.06,20,10,10" angle="0" ax="1" ay="0" az="0" tx="0" ty="0" tz="0" />
+        <Ball type="999000" angle="0" ax="1" ay="0" az="0" tx="0.8" ty="0" tz="0" />
+      </Connectivity>
+      <Bounding>
+        <AABB minX="-0.160004615783691" minY="-0.159999817609787" minZ="-1.36000037193298" maxX="0.799997329711914" maxY="0.160000696778297" maxZ="1.35999953746796" />
+      </Bounding>
+    </Bone>
+    <Bone boneId="9" flexCheckConnection="0,8,1" angle="120" ax="0.5774" ay="0.5774" az="0.5774" tx="1.2" ty="7.2" tz="0">
+      <Connectivity>
+        <Ball type="999001" flexAttributes="-0.06,0.06,20,10,10" angle="0" ax="1" ay="0" az="0" tx="0" ty="0" tz="0" />
+        <Ball type="999002" angle="0" ax="1" ay="0" az="0" tx="0.8" ty="0" tz="0" />
+      </Connectivity>
+      <Bounding>
+        <AABB minX="-2.86102294921875E-06" minY="-0.159999817609787" minZ="-1.36000037193298" maxX="0.799997329711914" maxY="0.160000205039978" maxZ="1.35999953746796" />
+      </Bounding>
+    </Bone>
+    <Bone boneId="10" flexCheckConnection="0,9,1" angle="120" ax="0.5774" ay="0.5774" az="0.5774" tx="1.2" ty="8" tz="0">
+      <Connectivity>
+        <Ball type="999003" flexAttributes="-0.06,0.06,20,10,10" angle="0" ax="1" ay="0" az="0" tx="0" ty="0" tz="0" />
+        <Ball type="999000" angle="0" ax="1" ay="0" az="0" tx="0.8" ty="0" tz="0" />
+      </Connectivity>
+      <Bounding>
+        <AABB minX="-9.5367431640625E-07" minY="-0.159999817609787" minZ="-1.3600001335144" maxX="0.800000190734863" maxY="0.160000205039978" maxZ="1.36000049114227" />
+      </Bounding>
+    </Bone>
+    <Bone boneId="11" flexCheckConnection="0,10,1" angle="120" ax="0.5774" ay="0.5774" az="0.5774" tx="1.2" ty="8.8" tz="0">
+      <Connectivity>
+        <Ball type="999001" flexAttributes="-0.06,0.06,20,10,10" angle="0" ax="1" ay="0" az="0" tx="0" ty="0" tz="0" />
+        <Ball type="999002" angle="0" ax="1" ay="0" az="0" tx="0.8" ty="0" tz="0" />
+      </Connectivity>
+      <Bounding>
+        <AABB minX="0" minY="-0.159999817609787" minZ="-1.36000037193298" maxX="0.960003852844238" maxY="0.160001203417778" maxZ="1.36000049114227" />
+      </Bounding>
+    </Bone>
+    <Bone boneId="12" flexCheckConnection="0,11,1" angle="120" ax="0.5774" ay="0.5774" az="0.5774" tx="1.2" ty="9.6" tz="0">
+      <Connectivity>
+        <Ball type="999003" flexAttributes="-0.06,0.06,20,10,10" angle="0" ax="1" ay="0" az="0" tx="0" ty="0" tz="0" />
+        <Ball type="999000" angle="0" ax="1" ay="0" az="0" tx="0.8" ty="0" tz="0" />
+      </Connectivity>
+      <Bounding>
+        <AABB minX="-0.160002708435059" minY="-0.159999817609787" minZ="-1.36000037193298" maxX="0.80000114440918" maxY="0.160001203417778" maxZ="1.35999965667725" />
+      </Bounding>
+    </Bone>
+    <Bone boneId="13" flexCheckConnection="0,12,1" angle="120" ax="0.5774" ay="0.5774" az="0.5774" tx="1.2" ty="10.4" tz="0">
+      <Connectivity>
+        <Ball type="999001" flexAttributes="-0.06,0.06,20,10,10" angle="0" ax="1" ay="0" az="0" tx="0" ty="0" tz="0" />
+        <Ball type="999002" angle="0" ax="1" ay="0" az="0" tx="0.8" ty="0" tz="0" />
+      </Connectivity>
+      <Bounding>
+        <AABB minX="1.9073486328125E-06" minY="-0.159999817609787" minZ="-1.36000037193298" maxX="0.800002098083496" maxY="0.160000205039978" maxZ="1.35999953746796" />
+      </Bounding>
+    </Bone>
+    <Bone boneId="14" flexCheckConnection="0,13,1" angle="120" ax="0.5774" ay="0.5774" az="0.5774" tx="1.2" ty="11.2" tz="0">
+      <Connectivity>
+        <Ball type="999003" flexAttributes="-0.06,0.06,20,10,10" angle="0" ax="1" ay="0" az="0" tx="0" ty="0" tz="0" />
+        <Ball type="999000" angle="0" ax="1" ay="0" az="0" tx="0.8" ty="0" tz="0" />
+      </Connectivity>
+      <Bounding>
+        <AABB minX="1.9073486328125E-06" minY="-0.159999817609787" minZ="-1.3600001335144" maxX="0.800002098083496" maxY="0.160000205039978" maxZ="1.36000049114227" />
+      </Bounding>
+    </Bone>
+    <Bone boneId="15" flexCheckConnection="0,14,1" angle="120" ax="0.5774" ay="0.5774" az="0.5774" tx="1.2" ty="12" tz="0">
+      <Connectivity>
+        <Ball type="999001" flexAttributes="-0.06,0.06,20,10,10" angle="0" ax="1" ay="0" az="0" tx="0" ty="0" tz="0" />
+        <Ball type="999002" angle="0" ax="1" ay="0" az="0" tx="0.8" ty="0" tz="0" />
+      </Connectivity>
+      <Bounding>
+        <AABB minX="9.5367431640625E-07" minY="-0.159999817609787" minZ="-1.36000037193298" maxX="0.960000991821289" maxY="0.160001799464226" maxZ="1.36000049114227" />
+      </Bounding>
+    </Bone>
+    <Bone boneId="16" flexCheckConnection="0,15,1" angle="120" ax="0.5774" ay="0.5774" az="0.5774" tx="1.2" ty="12.8" tz="0">
+      <Connectivity>
+        <Ball type="999003" flexAttributes="-0.06,0.06,20,10,10" angle="0" ax="1" ay="0" az="0" tx="0" ty="0" tz="0" />
+        <Ball type="999000" angle="0" ax="1" ay="0" az="0" tx="0.8" ty="0" tz="0" />
+      </Connectivity>
+      <Bounding>
+        <AABB minX="-0.159998893737793" minY="-0.159999817609787" minZ="-1.36000037193298" maxX="0.80000114440918" maxY="0.160001799464226" maxZ="1.35999953746796" />
+      </Bounding>
+    </Bone>
+    <Bone boneId="17" flexCheckConnection="0,16,1" angle="120" ax="0.5774" ay="0.5774" az="0.5774" tx="1.2" ty="13.6" tz="0">
+      <Connectivity>
+        <Ball type="999001" flexAttributes="-0.06,0.06,20,10,10" angle="0" ax="1" ay="0" az="0" tx="0" ty="0" tz="0" />
+        <Ball type="999002" angle="0" ax="1" ay="0" az="0" tx="0.8" ty="0" tz="0" />
+      </Connectivity>
+      <Bounding>
+        <AABB minX="1.9073486328125E-06" minY="-0.159999817609787" minZ="-1.36000037193298" maxX="0.80000114440918" maxY="0.160000205039978" maxZ="1.35999953746796" />
+      </Bounding>
+    </Bone>
+    <Bone boneId="18" flexCheckConnection="0,17,1" angle="120" ax="0.5774" ay="0.5774" az="0.5774" tx="1.2" ty="14.4" tz="0">
+      <Connectivity>
+        <Ball type="999003" flexAttributes="-0.06,0.06,20,10,10" angle="0" ax="1" ay="0" az="0" tx="0" ty="0" tz="0" />
+        <Ball type="999000" angle="0" ax="1" ay="0" az="0" tx="0.8" ty="0" tz="0" />
+      </Connectivity>
+      <Bounding>
+        <AABB minX="0" minY="-0.159999817609787" minZ="-1.36000025272369" maxX="0.800000190734863" maxY="0.160000205039978" maxZ="1.36000049114227" />
+      </Bounding>
+    </Bone>
+    <Bone boneId="19" flexCheckConnection="0,18,1" angle="120" ax="0.5774" ay="0.5774" az="0.5774" tx="1.2" ty="15.2" tz="0">
+      <Connectivity>
+        <Ball type="999001" flexAttributes="-0.06,0.06,20,10,10" angle="0" ax="1" ay="0" az="0" tx="0" ty="0" tz="0" />
+        <Ball type="999002" angle="0" ax="1" ay="0" az="0" tx="0.8" ty="0" tz="0" />
+      </Connectivity>
+      <Bounding>
+        <AABB minX="0" minY="-0.159999817609787" minZ="-1.36000037193298" maxX="0.960000038146973" maxY="0.160002306103706" maxZ="1.36000049114227" />
+      </Bounding>
+    </Bone>
+    <Bone boneId="20" flexCheckConnection="0,19,1" angle="120" ax="0.5774" ay="0.5774" az="0.5774" tx="1.2" ty="16" tz="0">
+      <Connectivity>
+        <Ball type="999003" flexAttributes="-0.06,0.06,20,10,10" angle="0" ax="1" ay="0" az="0" tx="0" ty="0" tz="0" />
+        <Ball type="999000" angle="0" ax="1" ay="0" az="0" tx="0.8" ty="0" tz="0" />
+      </Connectivity>
+      <Bounding>
+        <AABB minX="-0.159997940063477" minY="-0.159999817609787" minZ="-1.36000037193298" maxX="0.80000114440918" maxY="0.160002306103706" maxZ="1.35999953746796" />
+      </Bounding>
+    </Bone>
+    <Bone boneId="21" flexCheckConnection="0,20,1" angle="120" ax="0.5774" ay="0.5774" az="0.5774" tx="1.2" ty="16.8" tz="0">
+      <Connectivity>
+        <Ball type="999001" flexAttributes="-0.06,0.06,20,10,10" angle="0" ax="1" ay="0" az="0" tx="0" ty="0" tz="0" />
+        <Ball type="999002" angle="0" ax="1" ay="0" az="0" tx="0.8" ty="0" tz="0" />
+      </Connectivity>
+      <Bounding>
+        <AABB minX="0" minY="-0.159999817609787" minZ="-1.36000037193298" maxX="0.80000114440918" maxY="0.160000205039978" maxZ="1.35999953746796" />
+      </Bounding>
+    </Bone>
+    <Bone boneId="22" flexCheckConnection="0,21,1" angle="120" ax="0.5774" ay="0.5774" az="0.5774" tx="1.2" ty="17.6" tz="0">
+      <Connectivity>
+        <Ball type="999003" flexAttributes="-0.06,0.06,20,10,10" angle="0" ax="1" ay="0" az="0" tx="0" ty="0" tz="0" />
+        <Ball type="999000" angle="0" ax="1" ay="0" az="0" tx="0.8" ty="0" tz="0" />
+      </Connectivity>
+      <Bounding>
+        <AABB minX="1.9073486328125E-06" minY="-0.159999817609787" minZ="-1.36000025272369" maxX="0.80000114440918" maxY="0.160000205039978" maxZ="1.36000049114227" />
+      </Bounding>
+    </Bone>
+    <Bone boneId="23" flexCheckConnection="0,22,1" angle="120" ax="0.5774" ay="0.5774" az="0.5774" tx="1.2" ty="18.4" tz="0">
+      <Connectivity>
+        <Ball type="999001" flexAttributes="-0.06,0.06,20,10,10" angle="0" ax="1" ay="0" az="0" tx="0" ty="0" tz="0" />
+        <Ball type="999002" angle="0" ax="1" ay="0" az="0" tx="0.8" ty="0" tz="0" />
+      </Connectivity>
+      <Bounding>
+        <AABB minX="1.9073486328125E-06" minY="-0.159999817609787" minZ="-1.36000037193298" maxX="0.960052490234375" maxY="0.160003796219826" maxZ="1.36000049114227" />
+      </Bounding>
+    </Bone>
+    <Bone boneId="24" flexCheckConnection="0,23,1" angle="120" ax="0.5774" ay="0.5774" az="0.5774" tx="1.2" ty="19.2" tz="0">
+      <Connectivity>
+        <Ball type="999003" flexAttributes="-0.06,0.06,20,10,10" angle="0" ax="1" ay="0" az="0" tx="0" ty="0" tz="0" />
+        <Ball type="999000" angle="0" ax="1" ay="0" az="0" tx="0.8" ty="0" tz="0" />
+      </Connectivity>
+      <Bounding>
+        <AABB minX="-0.159997940063477" minY="-0.159999817609787" minZ="-1.36000227928162" maxX="0.800050735473633" maxY="0.160003796219826" maxZ="1.35999953746796" />
+      </Bounding>
+    </Bone>
+    <Bone boneId="25" flexCheckConnection="0,24,1" angle="120" ax="0.5774" ay="0.5774" az="0.5774" tx="1.2" ty="20" tz="0">
+      <Connectivity>
+        <Ball type="999001" flexAttributes="-0.06,0.06,20,10,10" angle="0" ax="1" ay="0" az="0" tx="0" ty="0" tz="0" />
+        <Ball type="999002" angle="0" ax="1" ay="0" az="0" tx="0.8" ty="0" tz="0" />
+      </Connectivity>
+      <Bounding>
+        <AABB minX="5.14984130859375E-05" minY="-0.159996211528778" minZ="-1.36000227928162" maxX="0.800052642822266" maxY="0.160003796219826" maxZ="1.35999763011932" />
+      </Bounding>
+    </Bone>
+    <Bone boneId="26" flexCheckConnection="0,25,1" angle="120" ax="0.5774" ay="0.5774" az="0.5774" tx="1.2" ty="20.8" tz="0">
+      <Connectivity>
+        <Ball type="999003" flexAttributes="-0.06,0.06,20,10,10" angle="0" ax="1" ay="0" az="0" tx="0" ty="0" tz="0" />
+        <Ball type="999000" angle="0" ax="1" ay="0" az="0" tx="0.8" ty="0" tz="0" />
+      </Connectivity>
+      <Bounding>
+        <AABB minX="5.14984130859375E-05" minY="-0.15999661386013" minZ="-1.36000204086304" maxX="0.800050735473633" maxY="0.160003796219826" maxZ="1.35999763011932" />
+      </Bounding>
+    </Bone>
+    <Bone boneId="27" flexCheckConnection="0,26,1" angle="120" ax="0.5774" ay="0.5774" az="0.5774" tx="1.2" ty="21.6" tz="0">
+      <Connectivity>
+        <Ball type="999001" flexAttributes="-0.06,0.06,20,10,10" angle="0" ax="1" ay="0" az="0" tx="0" ty="0" tz="0" />
+        <Fixed type="999002" angle="0" ax="1" ay="0" az="0" tx="0.8" ty="0" tz="0" />
+      </Connectivity>
+      <Bounding>
+        <AABB minX="4.9591064453125E-05" minY="-0.159996718168259" minZ="-1.36000192165375" maxX="0.959999084472656" maxY="0.160003736615181" maxZ="1.35999953746796" />
+      </Bounding>
+    </Bone>
+    <Bone boneId="28" flexCheckConnection="0,27,1" angle="120" ax="0.5774" ay="0.5774" az="0.5774" tx="1.2" ty="22.4" tz="0">
+      <Connectivity>
+        <Fixed type="999003" angle="0" ax="1" ay="0" az="0" tx="0" ty="0" tz="0" />
+      </Connectivity>
+      <Bounding>
+        <AABB minX="-0.0001" minY="-0.0001" minZ="-0.0001" maxX="0.0001" maxY="0.0001" maxZ="0.0001" />
+      </Bounding>
+    </Bone>
+  </Flex>
+  <PhysicsAttributes inertiaTensor="0,0,0,0,0,0,0,0,0" centerOfMass="1.2,11.2,0" mass="6" frictionType="0" />
+  <Bounding>
+    <AABB minX="-0.16" minY="-0.16" minZ="-0.16" maxX="2.56" maxY="22.56" maxZ="0.16" />
+  </Bounding>
+  <GeometryBounding>
+    <AABB minX="-0.16" minY="-0.16" minZ="-0.16" maxX="2.56" maxY="22.56" maxZ="0.16" />
+  </GeometryBounding>
+</LEGOPrimitive>

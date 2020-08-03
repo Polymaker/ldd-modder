@@ -24,6 +24,10 @@ namespace LDDModder.Modding.Editing
         public int StartVertex { get; set; }
         public int VertexCount { get; set; }
 
+        public int RoundEdgeLayer { get; set; }
+
+        public List<Triangle> GeneratedTriangles { get; set; }
+
         public ItemTransform Transform
         {
             get => _Transform;
@@ -39,6 +43,7 @@ namespace LDDModder.Modding.Editing
         public bool IsFlexible => GetModelMesh()?.IsFlexible ?? false;
 
         public int TriangleCount => (IndexCount > 0) ? IndexCount / 3 : (ModelMesh?.IndexCount ?? 0) / 3;
+
 
         public event EventHandler TranformChanged;
 
@@ -152,7 +157,10 @@ namespace LDDModder.Modding.Editing
                 elem.AddNumberAttribute(nameof(StartVertex), StartVertex);
                 elem.AddNumberAttribute(nameof(VertexCount), VertexCount);
             }
-            
+
+            if (RoundEdgeLayer != 0)
+                elem.AddNumberAttribute(nameof(RoundEdgeLayer), RoundEdgeLayer);
+
             return elem;
         }
 
@@ -164,6 +172,7 @@ namespace LDDModder.Modding.Editing
             IndexCount  = element.ReadAttribute(nameof(IndexCount ), 0);
             StartVertex = element.ReadAttribute(nameof(StartVertex), 0);
             VertexCount = element.ReadAttribute(nameof(VertexCount), 0);
+            RoundEdgeLayer = element.ReadAttribute(nameof(RoundEdgeLayer), 0);
 
             if (element.HasElement(nameof(Transform), out XElement transElem))
                 Transform = ItemTransform.FromXml(transElem);

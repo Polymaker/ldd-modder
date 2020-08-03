@@ -580,23 +580,25 @@ namespace LDDModder.BrickEditor.UI.Panels
                 
             }
 
-            if (LoadedModels.OfType<BoneModel>().Any(x => x.IsLengthDirty))
+            var boneModels = LoadedModels.OfType<BoneModel>().ToList();
+            if (boneModels.Any(x => x.IsLengthDirty))
             {
-                foreach (var boneModel in LoadedModels.OfType<BoneModel>())
+                foreach (var boneModel in boneModels)
                 {
-                    var newLength = 0.4f;
-                    var target = boneModel.Bone.GetTargetBone();
+                    boneModel.CalculateBoneLength();
+                    //var newLength = 0.4f;
+                    //var target = boneModel.Bone.GetTargetBone();
 
-                    if (target != null)
-                        newLength = (float)(target.Transform.Position - boneModel.Bone.Transform.Position).Length;
+                    //if (target != null)
+                    //    newLength = (float)(target.Transform.Position - boneModel.Bone.Transform.Position).Length;
 
-                    if (boneModel.BoneLength != newLength)
-                    {
-                        boneModel.BoneLength = newLength;
-                        boneModel.UpdateModelTransforms();
-                    }
+                    //if (boneModel.BoneLength != newLength)
+                    //{
+                    //    boneModel.BoneLength = newLength;
+                    //    boneModel.UpdateModelTransforms();
+                    //}
 
-                    boneModel.IsLengthDirty = false;
+                    //boneModel.IsLengthDirty = false;
                 }
             }
         }
@@ -1603,7 +1605,12 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void Bones_CalcBounding_Click(object sender, EventArgs e)
         {
-
+            if (CurrentProject != null)
+            {
+                ProjectManager.StartBatchChanges();
+                CurrentProject.CalculateBoneBoundingBoxes();
+                ProjectManager.EndBatchChanges();
+            }
         }
 
         private void Bones_RebuildConnections_Click(object sender, EventArgs e)

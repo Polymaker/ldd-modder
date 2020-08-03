@@ -55,9 +55,9 @@ namespace LDDModder.LDD.Parts
             ShaderDataGenerator.ComputeAverageNormals(AllMeshes.SelectMany(x => x.Triangles));
         }
 
-        public void ComputeEdgeOutlines()
+        public void ComputeEdgeOutlines(float breakAngle = 35f)
         {
-            ShaderDataGenerator.ComputeEdgeOutlines(AllMeshes.SelectMany(x => x.Triangles));
+            ShaderDataGenerator.ComputeEdgeOutlines(AllMeshes.SelectMany(x => x.Triangles), breakAngle);
         }
 
         public void ClearEdgeOutlines()

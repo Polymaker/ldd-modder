@@ -139,14 +139,23 @@ namespace LDDModder.Modding.Editing
             file.Cullings.AddRange(cullings);
             return file;
         }
+
+        //private class CombinedMeshInfo
+        //{
+        //    public string MeshRefID { get; set; }
+        //    public List<Triangle> Triangles { get; set; }
+        //}
     
         private static MeshCulling CombineMeshes(GeometryBuilder builder, IEnumerable<ModelMeshReference> models, MeshCullingType cullingType)
         {
             int fromIndex = builder.IndexCount;
             int fromVertex = builder.VertexCount;
-
+            
             foreach (var meshRef in models)
-                builder.CombineGeometry(meshRef.GetGeometry(true));
+            {
+                var meshGeom = meshRef.GetGeometry(true);
+                meshRef.GeneratedTriangles = builder.CombineGeometry(meshGeom);
+            }
 
             int indexCount = builder.IndexCount - fromIndex;
             int vertexCount = builder.VertexCount - fromVertex;

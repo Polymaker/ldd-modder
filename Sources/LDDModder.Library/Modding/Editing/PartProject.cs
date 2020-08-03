@@ -8,6 +8,7 @@ using LDDModder.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -1107,33 +1108,51 @@ namespace LDDModder.Modding.Editing
 
         #region Bones handling
 
-        public void RebuildBoneConnections()
+        public void RebuildBoneConnections(float flexAmount = 0.06f)
         {
             if (Bones.Count == 0)
                 return;
 
             foreach (var bone in Bones)
+            {
                 bone.Connections.RemoveAll(x => x.SubType >= 999000);
+                bone.TargetConnectionID = string.Empty;
+                bone.TargetConnectionIndex = -1;
+                bone.SourceConnectionID = string.Empty;
+                bone.SourceConnectionIndex = -1;
+            }
 
             int lastBoneId = Bones.Max(x => x.BoneID);
 
             int curConnType = 0;
             int totalConnection = 0;
+            string flexAttributes = string.Format(CultureInfo.InvariantCulture, "-{0},{0},20,10,10", flexAmount);
 
             foreach (var bone in Bones.OrderBy(x => x.BoneID))
             {
                 foreach (var linkedBone in Bones.Where(x => x.TargetBoneID == bone.BoneID))
                 {
-                    var targetConn = PartConnection.Create(ConnectorType.Ball);
+                    PartConnection targetConn = PartConnection.Create(ConnectorType.Ball);
 
-                    var ball1 = targetConn.GetConnector<BallConnector>();
+                    if (linkedBone.BoneID == lastBoneId)
+                    {
+                        targetConn = PartConnection.Create(ConnectorType.Fixed);
+                        var fixConn = targetConn.GetConnector<FixedConnector>();
+                        fixConn.SubType = 999000 + curConnType;
+                    }
+                    else
+                    {
+                        targetConn = PartConnection.Create(ConnectorType.Ball);
+                        var ballConn = targetConn.GetConnector<BallConnector>();
+                        ballConn.SubType = 999000 + curConnType;
+                    }
 
-                    ball1.SubType = 999000 + curConnType;
-                    var targetBonePos = bone.Transform.ToMatrixD().TransformPosition(linkedBone.Transform.Position);
+                    curConnType = (++curConnType) % 4;
+
                     var posOffset = linkedBone.Transform.Position - bone.Transform.Position;
                     posOffset = bone.Transform.ToMatrixD().Inverted().TransformVector(posOffset);
                     targetConn.Transform.Position = posOffset;
-                    curConnType = (++curConnType) % 4;
+                    
 
                     bone.Connections.Add(targetConn);
                     RenameElement(targetConn, $"FlexConn{totalConnection++}");
@@ -1142,20 +1161,19 @@ namespace LDDModder.Modding.Editing
                     if (linkedBone.BoneID == lastBoneId)
                     {
                         sourceConn = PartConnection.Create(ConnectorType.Fixed);
-                        var ball2 = sourceConn.GetConnector<FixedConnector>();
-                        ball2.SubType = 999000 + curConnType;
+                        var fixConn = sourceConn.GetConnector<FixedConnector>();
+                        fixConn.SubType = 999000 + curConnType;
                     }
                     else
                     {
                         sourceConn = PartConnection.Create(ConnectorType.Ball);
-                        var ball2 = sourceConn.GetConnector<BallConnector>();
-                        ball2.SubType = 999000 + curConnType;
-                        ball2.FlexAttributes = "-0.06,0.06,20,10,10";
+                        var ballConn = sourceConn.GetConnector<BallConnector>();
+                        ballConn.SubType = 999000 + curConnType;
+                        ballConn.FlexAttributes = flexAttributes;
                     }
 
                     curConnType = (++curConnType) % 4;
                     linkedBone.Connections.Add(sourceConn);
-
                     RenameElement(sourceConn, $"FlexConn{totalConnection++}");
 
                     linkedBone.TargetConnectionID = targetConn.ID;
@@ -1163,14 +1181,41 @@ namespace LDDModder.Modding.Editing
 
                 }
             }
+
+            UpdateConnectionIndexes();
         }
 
         public void CalculateBoneBoundingBoxes()
         {
+            var meshRefs = Surfaces.SelectMany(x => x.GetAllMeshReferences()).ToList();
+            //var meshes = meshRefs.Select(x => x.ModelMesh).Distinct().ToList();
+            var unloadedMeshes = meshRefs.Select(x => x.ModelMesh).Where(x => !x.IsModelLoaded).Distinct().ToList();
+
+            var allVerts = new List<Vertex>();
+            foreach(var mesh in GetAllElements<ModelMeshReference>())
+                allVerts.AddRange(mesh.GetGeometry().Vertices);
+            allVerts = allVerts.Distinct().ToList();
+
             foreach (var bone in Bones.OrderBy(x => x.BoneID))
             {
+                var boneTrans = bone.Transform.ToMatrix().Inverted();
+                var verts = allVerts.Where(x => x.BoneWeights.Any(y => y.BoneID == bone.BoneID && y.Weight > 0.1f));
 
+                if (verts.Any())
+                {
+                    var vertPos = verts.Select(x => boneTrans.TransformPosition(x.Position)).ToList();
+                    var newBounds = BoundingBox.FromVertices(vertPos);
+                    var test = bone.Bounding;
+                    bone.Bounding = newBounds;
+                }
+                else
+                {
+                    bone.Bounding = new BoundingBox(new Simple3D.Vector3d(-0.0001d), new Simple3D.Vector3d(0.0001d));
+                }
             }
+
+
+            unloadedMeshes.ForEach(x => x.UnloadModel());
         }
 
         #endregion
@@ -1381,10 +1426,19 @@ namespace LDDModder.Modding.Editing
             return part;
         }
 
-        public void ComputeEdgeOutlines()
+        public void ComputeEdgeOutlines(float breakAngle = 35f)
         {
-            var allMeshes = Surfaces.SelectMany(x => x.GetAllModelMeshes());
-            ShaderDataGenerator.ComputeEdgeOutlines(allMeshes.SelectMany(x => x.Geometry.Triangles));
+            var meshRefs = Surfaces.SelectMany(x => x.GetAllMeshReferences()).ToList();
+            //var unloadedMeshes = meshRefs.Select(x => x.ModelMesh).Where(x => !x.IsModelLoaded).Distinct().ToList();
+            foreach (var layerGroup in meshRefs.GroupBy(x => x.RoundEdgeLayer))
+            {
+                var layerTriangles = layerGroup.SelectMany(x => x.GeneratedTriangles);
+                ShaderDataGenerator.ComputeEdgeOutlines(layerTriangles, breakAngle);
+                //layerGroup.Select(x=>x.GetGeometry())
+            }
+            //unloadedMeshes.ForEach(x => x.UnloadModel());
+            //var allMeshes = Surfaces.SelectMany(x => x.GetAllModelMeshes());
+            //ShaderDataGenerator.ComputeEdgeOutlines(allMeshes.SelectMany(x => x.Geometry.Triangles));
         }
 
         #endregion

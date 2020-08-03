@@ -26,7 +26,7 @@ namespace LDDModder.BrickEditor.Rendering
             BoundingBox = BBox.FromCenterSize(Vector3.Zero, Vector3.One);
             BoneLength = 0.4f;
             UpdateModelTransforms();
-            IsLengthDirty = true;
+            CalculateBoneLength();
         }
 
         private void UpdateBoundingBox()
@@ -56,6 +56,23 @@ namespace LDDModder.BrickEditor.Rendering
             ConeTransform = Matrix4.CreateScale(0.4f, coneScale, 0.4f) *
                 Matrix4.CreateTranslation(0, 0.10f + (coneScale /2f), 0) *
                 Matrix4.CreateRotationZ((float)Math.PI * -0.5f);
+        }
+
+        public void CalculateBoneLength()
+        {
+            var newLength = 0.4f;
+            var target = Bone.GetTargetBone();
+
+            if (target != null)
+                newLength = (float)(target.Transform.Position - Bone.Transform.Position).Length;
+
+            if (BoneLength != newLength)
+            {
+                BoneLength = newLength;
+                UpdateModelTransforms();
+            }
+            BoundingBox = BBox.FromCenterSize(new Vector3(newLength / 2f, 0, 0), new Vector3(newLength, 0.4f, 0.4f));
+            IsLengthDirty = false;
         }
 
         protected override void OnElementPropertyChanged(ElementValueChangedEventArgs e)
@@ -105,10 +122,10 @@ namespace LDDModder.BrickEditor.Rendering
 
             //RenderHelper.DrawLine(Transform, new Vector4(1, 1, 0, 1), new Vector3(0), new Vector3(1, 0, 0), 3);
 
-            if (IsSelected && !BoneBounding.IsEmpty)
+            if (!BoneBounding.IsEmpty)
             {
                 RenderHelper.DrawBoundingBox(Transform, BoneBounding,
-                        new Vector4(0f, 1f, 1f, 1f), 1.5f);
+                        new Vector4(0f, 1f, 1f, 1f), IsSelected ? 1.5f : 1f);
             }
         }
     }

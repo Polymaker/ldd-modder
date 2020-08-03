@@ -65,26 +65,26 @@ namespace LDDModder.BrickEditor.Rendering.Models
             return !float.IsNaN(distance);
         }
 
-        //public bool RayIntersects(Ray ray, Matrix4 transform, out float distance)
-        //{
-        //    distance = float.NaN;
-
-        //    if (Vertices != null)
-        //    {
-        //        for (int i = 0; i < Vertices.Count; i += 3)
-        //        {
-        //            var v1 = Vector3.TransformPosition(Vertices[i + 0], transform);
-        //            var v2 = Vector3.TransformPosition(Vertices[i + 1], transform);
-        //            var v3 = Vector3.TransformPosition(Vertices[i + 2], transform);
-        //            if (Ray.IntersectsTriangle(ray, v1, v2, v3, out float hitDist))
-        //                distance = float.IsNaN(distance) ? hitDist : Math.Min(hitDist, distance);
-        //        }
-        //    }
-
-        //    return !float.IsNaN(distance);
-        //}
-
         public bool RayIntersects(Ray ray, Matrix4 transform, out float distance)
+        {
+            distance = float.NaN;
+
+            if (Vertices != null)
+            {
+                for (int i = 0; i < Vertices.Count; i += 3)
+                {
+                    var v1 = Vector3.TransformPosition(Vertices[i + 0], transform);
+                    var v2 = Vector3.TransformPosition(Vertices[i + 1], transform);
+                    var v3 = Vector3.TransformPosition(Vertices[i + 2], transform);
+                    if (Ray.IntersectsTriangle(ray, v1, v2, v3, out float hitDist))
+                        distance = float.IsNaN(distance) ? hitDist : Math.Min(hitDist, distance);
+                }
+            }
+
+            return !float.IsNaN(distance);
+        }
+
+        public bool RayIntersectsV2(Ray ray, Matrix4 transform, out float distance)
         {
             var localRay = Ray.Transform(ray, transform.Inverted());
 

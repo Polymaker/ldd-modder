@@ -88,8 +88,9 @@ namespace LDDModder.LDD.Meshes
             _Triangles.Add(newTriangle);
         }
 
-        public void CombineGeometry(MeshGeometry geometry)
+        public List<Triangle> CombineGeometry(MeshGeometry geometry)
         {
+            var newTriangles = new List<Triangle>();
             var triangleIndices = geometry.GetTriangleIndices();
             var addedVertices = geometry.Vertices.Select(x => x.Clone()).ToList();
             
@@ -104,7 +105,11 @@ namespace LDDModder.LDD.Meshes
                     triangleIndices[i + 2] + vertexOffset);
 
                 triangle.CopyIndexData(geometry.Triangles[i / 3]);
+
+                newTriangles.Add(triangle);
             }
+
+            return newTriangles;
         }
 
         //??? I don't rembemer what I wanted to do with this

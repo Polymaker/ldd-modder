@@ -639,9 +639,14 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
             try
             {
+                
                 generatedPart = CurrentProject.GenerateLddPart();
+                //CurrentProject.ComputeEdgeOutlines();
                 if (generateOutlines)
-                    generatedPart.ComputeEdgeOutlines();
+                {
+                    //generatedPart.ComputeEdgeOutlines(45);
+                    CurrentProject.ComputeEdgeOutlines();
+                }
                 else
                     generatedPart.ClearEdgeOutlines();
 
