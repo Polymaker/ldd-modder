@@ -69,7 +69,10 @@ namespace LDDModder.BrickEditor.Rendering
 
         public void ForceRender()
         {
-            DispatchRenderFrame(true);
+            if (!IsRunning)
+                RaiseRenderFrame();
+            else
+                DispatchRenderFrame(true);
         }
 
         public void ProcessEvent()

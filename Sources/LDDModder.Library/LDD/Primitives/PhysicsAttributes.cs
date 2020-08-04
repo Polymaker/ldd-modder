@@ -86,5 +86,16 @@ namespace LDDModder.LDD.Primitives
         {
             return SerializeToXml("PhysicsAttributes");
         }
+
+        public PhysicsAttributes Clone()
+        {
+            return new PhysicsAttributes()
+            {
+                CenterOfMass = CenterOfMass,
+                FrictionType = FrictionType,
+                InertiaTensor = InertiaTensor,
+                Mass = Mass
+            };
+        }
     }
 }

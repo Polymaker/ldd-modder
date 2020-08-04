@@ -3,12 +3,12 @@
 		<Connector type="Axel" subtype="2" gender="female" description="Technic hole Ø4.8mm" connectswith="3,19,5" />
 		
 		<!-- thick pin walls that cannot fit a bar inside -->
-		<Connector type="Axel" subtype="3" gender="male" description="Technic pin" connectswith="2" />
+		<Connector type="Axel" subtype="3" gender="male" description="Technic pin Ø4.8mm" connectswith="2" />
 		
-		<Connector type="Axel" subtype="4" gender="female" description="Cross axle" connectswith="5,7" />
+		<Connector type="Axel" subtype="4" gender="female" description="Cross axle hole" connectswith="5,7" />
 		<Connector type="Axel" subtype="5" gender="male" description="Cross axle" connectswith="4" />
 		
-		<Connector type="Axel" subtype="6" gender="female" description="Bar Ø3.2mm" connectswith="7" />
+		<Connector type="Axel" subtype="6" gender="female" description="Bar Ø3.2mm holder" connectswith="7" />
 		<Connector type="Axel" subtype="7" gender="male" description="Bar Ø3.2mm" connectswith="4,6" />
 		
 		<!-- a technic hole that accepts cross axles and pins, generally used in plates -->
@@ -16,13 +16,13 @@
 		
 		<!-- an hole that is the same size as a stud or technic pin.
 			only connect with cross axles (type 5). see brick 2498, 2376 -->
-		<Connector type="Axel" subtype="12" gender="female" description="Hole" connectswith="5" /> 
+		<Connector type="Axel" subtype="12" gender="female" description="Hole for axle" connectswith="5" /> 
 		
 		<!-- used for axles that fits a standard technic hole that do not snap, like flex rods -->
 		<Connector type="Axel" subtype="13" gender="male" description="Technic axle (no snap)" connectswith="2" />
 		
 		<!-- Thin bar connector, like hat accessories (feather) -->
-		<Connector type="Axel" subtype="14" gender="female" description="Thin bar Ø1.5mm" connectswith="15" />
+		<Connector type="Axel" subtype="14" gender="female" description="Thin bar Ø1.5mm holder" connectswith="15" />
 		<Connector type="Axel" subtype="15" gender="male" description="Thin bar Ø1.5mm" connectswith="14" />
 		
 		<!-- part that fits in the recess/lip of a technic hole (subtype 2)
@@ -33,7 +33,7 @@
 		
 		<!-- thin pin walls that can fit a bar inside, it is always combined with a type 6 Axel connection
 			seems to act like a subtype 3 Axel -->
-		<Connector type="Axel" subtype="19" gender="male" description="Technic Pin" connectswith="2" />
+		<Connector type="Axel" subtype="19" gender="male" description="Hollow Technic pin" connectswith="2" />
 		
 		<!-- the same as a bar connector (type 7) but physically has a thin hole (like type 14)
 			it is always combined with a type 14 connection.
@@ -58,8 +58,8 @@
 		
 		<!-- Only used by part 98562 - HANDCUFFS W. Ø4.85 HOLE and 53551 - CHAIN LINK 1X3X1/3 -->
 		<!-- Note: you must always use both because physically they are the same connector but the way LDD works you need a female and a male connector -->
-		<Connector type="Ball" subtype="12" gender="female" description="Chain link" connectswith="13" />
-		<Connector type="Ball" subtype="13" gender="male" description="Chain link" connectswith="12" />
+		<Connector type="Ball" subtype="12" gender="female" description="Chain link (female)" connectswith="13" />
+		<Connector type="Ball" subtype="13" gender="male" description="Chain link (male)" connectswith="12" />
 		
 		<!-- Only used by part 92911 - POWER JOINT -->
 		<Connector type="Ball" subtype="14" gender="female" description="Power joint cup" connectswith="15" />

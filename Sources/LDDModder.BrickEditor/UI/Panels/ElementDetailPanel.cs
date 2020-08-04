@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -56,7 +57,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         protected override void OnElementSelectionChanged()
         {
             base.OnElementSelectionChanged();
- 
+            //Trace.WriteLine($"SelectedElement => {ProjectManager.SelectedElement}");
             ExecuteOnThread(() =>
             {
                 FillSelectionDetails(ProjectManager.SelectedElement);

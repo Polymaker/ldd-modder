@@ -96,6 +96,14 @@ namespace LDDModder.LDD.Primitives.Connectors
             Initialize2DArray();
         }
 
+        public Custom2DFieldConnector(int subType, int width, int height)
+        {
+            _Width = (int)(Math.Round(width / 2d) * 2);
+            _Height = (int)(Math.Round(height / 2d) * 2);
+            SubType = subType;
+            Initialize2DArray();
+        }
+
         public int PositionToIndex(int x, int y)
         {
             return (y * ArrayWidth) + x;
@@ -315,6 +323,13 @@ namespace LDDModder.LDD.Primitives.Connectors
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
+        }
+
+        public override Connector Clone()
+        {
+            var conn = new Custom2DFieldConnector(SubType, Width, Height);
+            conn.AssignArrayValues(NodeArray);
+            return conn;
         }
     }
 }

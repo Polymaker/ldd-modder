@@ -29,12 +29,12 @@
         private void InitializeComponent()
         {
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.studGridControl1 = new LDDModder.BrickEditor.UI.Editors.StudGridControl();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
+            this.ApplySizeButton = new System.Windows.Forms.Button();
+            this.studGridControl1 = new LDDModder.BrickEditor.UI.Editors.StudGridControl();
             this.GridWidthBox = new LDDModder.BrickEditor.UI.Controls.NumberTextBox();
             this.GridHeightBox = new LDDModder.BrickEditor.UI.Controls.NumberTextBox();
-            this.ApplySizeButton = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -61,19 +61,6 @@
             this.tableLayoutPanel1.Size = new System.Drawing.Size(432, 170);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
-            // studGridControl1
-            // 
-            this.tableLayoutPanel1.SetColumnSpan(this.studGridControl1, 5);
-            this.studGridControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.studGridControl1.Location = new System.Drawing.Point(3, 32);
-            this.studGridControl1.MaxGridSize = new System.Drawing.Size(10, 10);
-            this.studGridControl1.Name = "studGridControl1";
-            this.studGridControl1.Size = new System.Drawing.Size(426, 135);
-            this.studGridControl1.TabIndex = 0;
-            this.studGridControl1.Text = "studGridControl1";
-            this.studGridControl1.ConnectorChanged += new System.EventHandler(this.studGridControl1_ConnectorChanged);
-            this.studGridControl1.ConnectorSizeChanged += new System.EventHandler(this.studGridControl1_ConnectorSizeChanged);
-            // 
             // label1
             // 
             this.label1.Anchor = System.Windows.Forms.AnchorStyles.Left;
@@ -95,6 +82,29 @@
             this.label2.Size = new System.Drawing.Size(38, 13);
             this.label2.TabIndex = 2;
             this.label2.Text = "Height";
+            // 
+            // ApplySizeButton
+            // 
+            this.ApplySizeButton.Location = new System.Drawing.Point(220, 3);
+            this.ApplySizeButton.Name = "ApplySizeButton";
+            this.ApplySizeButton.Size = new System.Drawing.Size(75, 23);
+            this.ApplySizeButton.TabIndex = 5;
+            this.ApplySizeButton.Text = "Apply";
+            this.ApplySizeButton.UseVisualStyleBackColor = true;
+            this.ApplySizeButton.Click += new System.EventHandler(this.ApplySizeButton_Click);
+            // 
+            // studGridControl1
+            // 
+            this.tableLayoutPanel1.SetColumnSpan(this.studGridControl1, 5);
+            this.studGridControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.studGridControl1.Location = new System.Drawing.Point(3, 32);
+            this.studGridControl1.MaxGridSize = new System.Drawing.Size(10, 10);
+            this.studGridControl1.Name = "studGridControl1";
+            this.studGridControl1.Size = new System.Drawing.Size(426, 135);
+            this.studGridControl1.TabIndex = 0;
+            this.studGridControl1.Text = "studGridControl1";
+            this.studGridControl1.ConnectorChanged += new System.EventHandler(this.studGridControl1_ConnectorChanged);
+            this.studGridControl1.ConnectorSizeChanged += new System.EventHandler(this.studGridControl1_ConnectorSizeChanged);
             // 
             // GridWidthBox
             // 
@@ -121,16 +131,6 @@
             this.GridHeightBox.TabIndex = 4;
             this.GridHeightBox.Value = 1D;
             this.GridHeightBox.ValueChanged += new System.EventHandler(this.GidSizeBox_ValueChanged);
-            // 
-            // ApplySizeButton
-            // 
-            this.ApplySizeButton.Location = new System.Drawing.Point(220, 3);
-            this.ApplySizeButton.Name = "ApplySizeButton";
-            this.ApplySizeButton.Size = new System.Drawing.Size(75, 23);
-            this.ApplySizeButton.TabIndex = 5;
-            this.ApplySizeButton.Text = "Apply";
-            this.ApplySizeButton.UseVisualStyleBackColor = true;
-            this.ApplySizeButton.Click += new System.EventHandler(this.ApplySizeButton_Click);
             // 
             // StudConnectionEditor
             // 

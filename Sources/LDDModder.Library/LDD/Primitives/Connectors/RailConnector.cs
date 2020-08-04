@@ -31,5 +31,15 @@ namespace LDDModder.LDD.Primitives.Connectors
             if (element.TryReadAttribute("length", out float length))
                 Length = length;
         }
+
+        public override Connector Clone()
+        {
+            return new RailConnector()
+            {
+                Length = Length,
+                SubType = SubType,
+                Transform = Transform.Clone()
+            };
+        }
     }
 }

@@ -129,6 +129,11 @@ namespace LDDModder.LDD.Primitives
                 matrix.ExtractTranslation().Rounded());
         }
 
+        public Transform Clone()
+        {
+            return new Transform(Angle, Axis, Translation);
+        }
+
         //public Vector3 GetPosition()
         //{
         //    return ToMatrix4().TransformPosition(Vector3.Zero);

@@ -1,12 +1,17 @@
 ﻿using LDDModder.BrickEditor.Models.Navigation;
+using LDDModder.BrickEditor.ProjectHandling.ViewInterfaces;
 using LDDModder.BrickEditor.Rendering;
 using LDDModder.BrickEditor.Resources;
 using LDDModder.BrickEditor.Settings;
+using LDDModder.BrickEditor.UI.Windows;
 using LDDModder.LDD;
 using LDDModder.LDD.Parts;
+using LDDModder.LDD.Primitives.Collisions;
+using LDDModder.LDD.Primitives.Connectors;
 using LDDModder.Modding.Editing;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -48,6 +53,12 @@ namespace LDDModder.BrickEditor.ProjectHandling
         public IList<PartElement> SelectedElements => _SelectedElements.AsReadOnly();
 
         public ProjectTreeNodeCollection NavigationTreeNodes { get; private set; }
+
+        #region Windows
+
+        public IViewportWindow ViewportWindow { get; set; }
+
+        #endregion
 
         #region Events
 
@@ -346,6 +357,8 @@ namespace LDDModder.BrickEditor.ProjectHandling
         {
             if (visible != ShowPartModels)
             {
+                Trace.WriteLine($"{nameof(SetPartModelsVisibility)}( visible => {visible} )");
+
                 _ShowPartModels = visible;
 
                 if (IsProjectOpen && IsProjectAttached)
@@ -362,6 +375,8 @@ namespace LDDModder.BrickEditor.ProjectHandling
         {
             if (visible != ShowCollisions)
             {
+                Trace.WriteLine($"{nameof(SetCollisionsVisibility)}( visible => {visible} )");
+
                 _ShowCollisions = visible;
 
                 if (IsProjectOpen && IsProjectAttached)
@@ -379,6 +394,8 @@ namespace LDDModder.BrickEditor.ProjectHandling
         {
             if (visible != ShowConnections)
             {
+                Trace.WriteLine($"{nameof(SetConnectionsVisibility)}( visible => {visible} )");
+
                 _ShowConnections = visible;
 
                 if (IsProjectOpen && IsProjectAttached)
@@ -397,7 +414,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
             if (renderMode != _PartRenderMode)
             {
                 _PartRenderMode = renderMode;
-                if (IsProjectOpen && IsProjectAttached)
+                //if (IsProjectOpen && IsProjectAttached)
                     //CurrentProject.ProjectProperties["PartRenderMode"] = renderMode.ToString();
                 PartRenderModeChanged?.Invoke(this, EventArgs.Empty);
             }
@@ -520,6 +537,13 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
         public void StartBatchChanges()
         {
+            UndoRedoManager.StartBatchChanges();
+        }
+
+        public void StartBatchChanges(string description)
+        {
+            //TODO
+            Trace.WriteLine($"Executing: {description}");
             UndoRedoManager.StartBatchChanges();
         }
 
@@ -742,6 +766,124 @@ namespace LDDModder.BrickEditor.ProjectHandling
                     ModelLocalizations.Label_Connections));
             }
         }
+
+        #endregion
+
+        #region Editor Actions
+
+        #region Element Editing
+
+        public PartSurface AddSurface()
+        {
+            StartBatchChanges($"{nameof(AddSurface)}");
+            var newSurface = CurrentProject.AddSurface();
+            EndBatchChanges();
+
+            SelectElement(newSurface);
+
+            return newSurface;
+        }
+
+        public PartConnection AddConnection(ConnectorType type, PartBone parent)
+        {
+            if (CurrentProject == null)
+                return null;
+
+            StartBatchChanges($"{nameof(AddConnection)}( type => {type}, parent => {parent?.Name ?? "null"})");
+
+            var newConnection = PartConnection.Create(type);
+            if (parent != null)
+                parent.Connections.Add(newConnection);
+            else
+                CurrentProject.Connections.Add(newConnection);
+
+            EndBatchChanges();
+
+            if (!ShowConnections)
+                ShowConnections = true;
+
+            SelectElement(newConnection);
+
+            return newConnection;
+        }
+
+        public PartCollision AddCollision(CollisionType type, PartBone parent)
+        {
+            if (CurrentProject == null)
+                return null;
+
+            StartBatchChanges($"{nameof(AddCollision)}( type => {type}, parent => {parent?.Name ?? "null"})");
+
+            var newCollision = PartCollision.Create(type);
+            if (parent != null)
+                parent.Collisions.Add(newCollision);
+            else
+                CurrentProject.Collisions.Add(newCollision);
+
+            EndBatchChanges();
+
+            if (!ShowCollisions)
+                ShowCollisions = true;
+
+            SelectElement(newCollision);
+
+            return newCollision;
+        }
+
+        public PartElement DuplicateElement(PartElement element)
+        {
+            PartElement newElement = null;
+
+            StartBatchChanges($"{nameof(DuplicateElement)}( element => {element.Name} )");
+
+            if (element is PartConnection connection)
+            {
+                newElement = connection.Clone();
+                var collection = (element.Parent as PartBone)?.Connections ?? CurrentProject.Connections;
+                collection.Add(newElement);
+
+                if (!ShowConnections)
+                    ShowConnections = true;
+            }
+            else if (element is PartCollision collision)
+            {
+                newElement = collision.Clone();
+                var collection = (element.Parent as PartBone)?.Collisions ?? CurrentProject.Collisions;
+                collection.Add(newElement);
+
+                if (!ShowCollisions)
+                    ShowCollisions = true;
+            }
+
+            EndBatchChanges();
+
+            if (newElement != null)
+                SelectElement(newElement);
+
+
+            return newElement;
+        }
+
+        #endregion
+
+        #region Dialogs
+
+        public void ShowCopyBoneDataDialog()
+        {
+            if (CurrentProject == null)
+                return;
+
+            Trace.WriteLine($"Executing: {nameof(ShowCopyBoneDataDialog)}");
+
+            using (var dlg = new BoneDataCopyDialog(this))
+            {
+                StartBatchChanges("BoneDataCopyDialog");
+                dlg.ShowDialog();
+                EndBatchChanges();
+            }
+        }
+
+        #endregion
 
         #endregion
     }

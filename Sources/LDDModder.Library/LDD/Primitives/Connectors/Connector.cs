@@ -103,6 +103,8 @@ namespace LDDModder.LDD.Primitives.Connectors
             return connector;
         }
 
+        public abstract Connector Clone();
+
         public static Type GetClassType(ConnectorType type)
         {
             switch (type)

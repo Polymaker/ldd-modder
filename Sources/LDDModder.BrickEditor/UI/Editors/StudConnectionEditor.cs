@@ -62,7 +62,6 @@ namespace LDDModder.BrickEditor.UI.Editors
             {
                 ApplySizeButton.Enabled = StudConnector.StudWidth != (int)GridWidthBox.Value || StudConnector.StudHeight != (int)GridHeightBox.Value;
             }
-
         }
     }
 }

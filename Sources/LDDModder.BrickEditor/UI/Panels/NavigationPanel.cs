@@ -537,20 +537,12 @@ namespace LDDModder.BrickEditor.UI.Panels
                 Enum.TryParse(connectionTypeStr, 
                 out LDD.Primitives.Connectors.ConnectorType connectorType))
             {
-                if (!ProjectManager.ShowConnections)
-                    ProjectManager.ShowConnections = true;
-
-                var newConnection = PartConnection.Create(connectorType);
-
                 var focusedBoneNode = GetFocusedParentElement<PartBone>();
 
-                if (focusedBoneNode != null)
-                    (focusedBoneNode.Element as PartBone).Connections.Add(newConnection);
-                else
-                    CurrentProject.Connections.Add(newConnection);
+                var newConnection = ProjectManager.AddConnection(connectorType, focusedBoneNode?.Element as PartBone);
 
-                ProjectManager.SelectElement(newConnection);
-                SelectElementNodeDelayed(newConnection);
+                if (newConnection != null)
+                    SelectElementNodeDelayed(newConnection);
             }
         }
 
@@ -561,20 +553,12 @@ namespace LDDModder.BrickEditor.UI.Panels
             if (!string.IsNullOrEmpty(collisionTypeStr) &&
                 Enum.TryParse(collisionTypeStr, out LDD.Primitives.Collisions.CollisionType collisionType))
             {
-                if (!ProjectManager.ShowCollisions)
-                    ProjectManager.ShowCollisions = true;
-
-                var newCollision = PartCollision.Create(collisionType, 0.4f);
-
                 var focusedBoneNode = GetFocusedParentElement<PartBone>();
 
-                if (focusedBoneNode != null)
-                    (focusedBoneNode.Element as PartBone).Collisions.Add(newCollision);
-                else
-                    CurrentProject.Collisions.Add(newCollision);
+                var newCollision = ProjectManager.AddCollision(collisionType, focusedBoneNode?.Element as PartBone);
 
-                ProjectManager.SelectElement(newCollision);
-                SelectElementNodeDelayed(newCollision);
+                if (newCollision != null)
+                    SelectElementNodeDelayed(newCollision);
             }
         }
 
@@ -582,8 +566,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             if (CurrentProject != null)
             {
-                var newSurface = CurrentProject.AddSurface();
-                ProjectManager.SelectElement(newSurface);
+                var newSurface = ProjectManager.AddSurface();
                 SelectElementNodeDelayed(newSurface);
             }
         }
@@ -638,14 +621,31 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             if (ProjectTreeView.SelectedObject is ProjectElementNode projectElementNode)
             {
-                switch (projectElementNode.Element)
-                {
-                    case PartCollision collision:
-                        var newCol = collision.Clone();
-                        CurrentProject.Collisions.Add(newCol);
-                        ProjectManager.SelectElement(newCol);
-                        break;
-                }
+                ProjectManager.DuplicateElement(projectElementNode.Element);
+
+                //switch (projectElementNode.Element)
+                //{
+                //    case PartCollision collision:
+                //        {
+                //            var newCol = collision.Clone();
+                //            if (newCol.Parent is PartBone bone)
+                //                bone.Collisions.Add(newCol);
+                //            else
+                //                CurrentProject.Collisions.Add(newCol);
+                //            ProjectManager.SelectElement(newCol);
+                //            break;
+                //        }
+                //    case PartConnection connection:
+                //        {
+                //            var newConn = connection.Clone();
+                //            if (newConn.Parent is PartBone bone)
+                //                bone.Connections.Add(newConn);
+                //            else
+                //                CurrentProject.Connections.Add(newConn);
+                //            ProjectManager.SelectElement(newConn);
+                //            break;
+                //        }
+                //}
             }
         }
 

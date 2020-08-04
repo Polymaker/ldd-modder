@@ -87,6 +87,8 @@ namespace LDDModder.BrickEditor.UI.Editors
 
         public event EventHandler ConnectorSizeChanged;
 
+        public event EventHandler DataChanged;
+
         public StudGridControl()
         {
             InitializeComponent();
@@ -135,6 +137,7 @@ namespace LDDModder.BrickEditor.UI.Editors
         private void StudConnector_NodeValueChanged(object sender, PropertyChangedEventArgs e)
         {
             Invalidate();
+            DataChanged?.Invoke(this, EventArgs.Empty);
         }
 
         private void StudConnector_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -144,6 +147,7 @@ namespace LDDModder.BrickEditor.UI.Editors
                 e.PropertyName == nameof(Custom2DFieldConnector.Height))
                 ConnectorSizeChanged.Invoke(this, EventArgs.Empty);
             Invalidate();
+            DataChanged?.Invoke(this, EventArgs.Empty);
         }
 
         #region Size Calculation

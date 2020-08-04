@@ -48,6 +48,9 @@ namespace LDDModder.BrickEditor.Rendering
             }
         }
 
+        /// <summary>
+        /// Minimum X
+        /// </summary>
         public float Left
         {
             get { return Min.X; }
@@ -57,6 +60,9 @@ namespace LDDModder.BrickEditor.Rendering
             }
         }
 
+        /// <summary>
+        /// Maximum X
+        /// </summary>
         public float Right
         {
             get { return Max.X; }
@@ -66,6 +72,9 @@ namespace LDDModder.BrickEditor.Rendering
             }
         }
 
+        /// <summary>
+        /// Maximum Y
+        /// </summary>
         public float Top
         {
             get { return Max.Y; }
@@ -75,6 +84,9 @@ namespace LDDModder.BrickEditor.Rendering
             }
         }
 
+        /// <summary>
+        /// Minimum Y
+        /// </summary>
         public float Bottom
         {
             get { return Min.Y; }

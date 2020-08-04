@@ -282,6 +282,20 @@ namespace System.Collections.Generic
             }
         }
 
+        public IEnumerable<TResult> OfType<TResult>() where TResult : T
+        {
+            _Lock.EnterWriteLock();
+            try
+            {
+                foreach (var item in _Items.OfType<TResult>())
+                    yield return item;
+            }
+            finally
+            {
+                _Lock.ExitWriteLock();
+            }
+        }
+
         public void CopyTo(T[] array, int arrayIndex)
         {
             _Lock.EnterReadLock();

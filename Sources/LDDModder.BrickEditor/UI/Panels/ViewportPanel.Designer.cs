@@ -51,6 +51,8 @@
             this.MeshesMenu_Separate = new System.Windows.Forms.ToolStripMenuItem();
             this.MeshesMenu_Merge = new System.Windows.Forms.ToolStripMenuItem();
             this.BonesDropDownMenu = new System.Windows.Forms.ToolStripDropDownButton();
+            this.Bones_RebuildConnections = new System.Windows.Forms.ToolStripMenuItem();
+            this.Bones_CalcBounding = new System.Windows.Forms.ToolStripMenuItem();
             this.GizmoOrientationMenu = new System.Windows.Forms.ToolStripDropDownButton();
             this.globalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.localToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -80,8 +82,7 @@
             this.label8 = new System.Windows.Forms.Label();
             this.RotYNumBox = new LDDModder.BrickEditor.UI.Controls.NumberTextBox();
             this.RotZNumBox = new LDDModder.BrickEditor.UI.Controls.NumberTextBox();
-            this.Bones_RebuildConnections = new System.Windows.Forms.ToolStripMenuItem();
-            this.Bones_CalcBounding = new System.Windows.Forms.ToolStripMenuItem();
+            this.Bones_CopyData = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1.SuspendLayout();
             this.SelectionInfoPanel.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -249,9 +250,22 @@
             this.BonesDropDownMenu.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.BonesDropDownMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.Bones_RebuildConnections,
-            this.Bones_CalcBounding});
+            this.Bones_CalcBounding,
+            this.Bones_CopyData});
             resources.ApplyResources(this.BonesDropDownMenu, "BonesDropDownMenu");
             this.BonesDropDownMenu.Name = "BonesDropDownMenu";
+            // 
+            // Bones_RebuildConnections
+            // 
+            this.Bones_RebuildConnections.Name = "Bones_RebuildConnections";
+            resources.ApplyResources(this.Bones_RebuildConnections, "Bones_RebuildConnections");
+            this.Bones_RebuildConnections.Click += new System.EventHandler(this.Bones_RebuildConnections_Click);
+            // 
+            // Bones_CalcBounding
+            // 
+            this.Bones_CalcBounding.Name = "Bones_CalcBounding";
+            resources.ApplyResources(this.Bones_CalcBounding, "Bones_CalcBounding");
+            this.Bones_CalcBounding.Click += new System.EventHandler(this.Bones_CalcBounding_Click);
             // 
             // GizmoOrientationMenu
             // 
@@ -479,17 +493,11 @@
             this.RotZNumBox.Name = "RotZNumBox";
             this.RotZNumBox.ValueChanged += new System.EventHandler(this.RotationNumBoxes_ValueChanged);
             // 
-            // Bones_RebuildConnections
+            // Bones_CopyData
             // 
-            this.Bones_RebuildConnections.Name = "Bones_RebuildConnections";
-            resources.ApplyResources(this.Bones_RebuildConnections, "Bones_RebuildConnections");
-            this.Bones_RebuildConnections.Click += new System.EventHandler(this.Bones_RebuildConnections_Click);
-            // 
-            // Bones_CalcBounding
-            // 
-            this.Bones_CalcBounding.Name = "Bones_CalcBounding";
-            resources.ApplyResources(this.Bones_CalcBounding, "Bones_CalcBounding");
-            this.Bones_CalcBounding.Click += new System.EventHandler(this.Bones_CalcBounding_Click);
+            this.Bones_CopyData.Name = "Bones_CopyData";
+            resources.ApplyResources(this.Bones_CopyData, "Bones_CopyData");
+            this.Bones_CopyData.Click += new System.EventHandler(this.Bones_CopyData_Click);
             // 
             // ViewportPanel
             // 
@@ -562,5 +570,6 @@
         private System.Windows.Forms.ToolStripDropDownButton BonesDropDownMenu;
         private System.Windows.Forms.ToolStripMenuItem Bones_RebuildConnections;
         private System.Windows.Forms.ToolStripMenuItem Bones_CalcBounding;
+        private System.Windows.Forms.ToolStripMenuItem Bones_CopyData;
     }
 }

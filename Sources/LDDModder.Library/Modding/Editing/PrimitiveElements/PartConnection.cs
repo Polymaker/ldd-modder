@@ -150,6 +150,13 @@ namespace LDDModder.Modding.Editing
             return _Connector as T;
         }
 
+        public PartConnection Clone()
+        {
+            var connClone = Connector.Clone();
+            connClone.Transform = Transform.ToLDD();
+            return new PartConnection(connClone);
+        }
+
         public Connector GenerateLDD()
         {
             IsAssigningConnectorProperties = true;

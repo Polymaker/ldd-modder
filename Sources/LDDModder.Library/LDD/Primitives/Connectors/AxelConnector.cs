@@ -88,5 +88,19 @@ namespace LDDModder.LDD.Primitives.Connectors
             StartCapped = element.GetBoolAttribute("startCapped");
             EndCapped = element.GetBoolAttribute("endCapped");
         }
+
+        public override Connector Clone()
+        {
+            return new AxelConnector()
+            {
+                EndCapped = EndCapped,
+                IsGrabbingRequired = IsGrabbingRequired,
+                Grabbing = Grabbing,
+                Length = Length,
+                StartCapped = StartCapped,
+                SubType = SubType,
+                Transform = Transform.Clone()
+            };
+        }
     }
 }

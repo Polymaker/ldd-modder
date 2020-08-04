@@ -31,7 +31,8 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ConnectorEditor));
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.ConnectionTypeLabel = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
+            this.LengthLabel = new System.Windows.Forms.Label();
+            this.LengthTextBox = new LDDModder.BrickEditor.UI.Controls.NumberTextBox();
             this.ConnectionSubTypeLabel = new System.Windows.Forms.Label();
             this.ConnectionSubTypeCombo = new System.Windows.Forms.ComboBox();
             this.ConnectionTypeValueLabel = new System.Windows.Forms.Label();
@@ -41,7 +42,6 @@
             this.checkBox3 = new System.Windows.Forms.CheckBox();
             this.EndCappedCheckBox = new System.Windows.Forms.CheckBox();
             this.StartCappedCheckBox = new System.Windows.Forms.CheckBox();
-            this.LengthTextBox = new LDDModder.BrickEditor.UI.Controls.NumberTextBox();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.SuspendLayout();
@@ -50,7 +50,7 @@
             // 
             resources.ApplyResources(this.tableLayoutPanel1, "tableLayoutPanel1");
             this.tableLayoutPanel1.Controls.Add(this.ConnectionTypeLabel, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.label2, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this.LengthLabel, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.LengthTextBox, 1, 2);
             this.tableLayoutPanel1.Controls.Add(this.ConnectionSubTypeLabel, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.ConnectionSubTypeCombo, 1, 1);
@@ -63,10 +63,16 @@
             resources.ApplyResources(this.ConnectionTypeLabel, "ConnectionTypeLabel");
             this.ConnectionTypeLabel.Name = "ConnectionTypeLabel";
             // 
-            // label2
+            // LengthLabel
             // 
-            resources.ApplyResources(this.label2, "label2");
-            this.label2.Name = "label2";
+            resources.ApplyResources(this.LengthLabel, "LengthLabel");
+            this.LengthLabel.Name = "LengthLabel";
+            // 
+            // LengthTextBox
+            // 
+            resources.ApplyResources(this.LengthTextBox, "LengthTextBox");
+            this.LengthTextBox.MaximumValue = 200D;
+            this.LengthTextBox.Name = "LengthTextBox";
             // 
             // ConnectionSubTypeLabel
             // 
@@ -78,6 +84,7 @@
             this.ConnectionSubTypeCombo.FormattingEnabled = true;
             resources.ApplyResources(this.ConnectionSubTypeCombo, "ConnectionSubTypeCombo");
             this.ConnectionSubTypeCombo.Name = "ConnectionSubTypeCombo";
+            this.ConnectionSubTypeCombo.SelectedIndexChanged += new System.EventHandler(this.ConnectionSubTypeCombo_SelectedIndexChanged);
             this.ConnectionSubTypeCombo.Validating += new System.ComponentModel.CancelEventHandler(this.ConnectionSubTypeCombo_Validating);
             this.ConnectionSubTypeCombo.Validated += new System.EventHandler(this.ConnectionSubTypeCombo_Validated);
             // 
@@ -126,12 +133,6 @@
             this.StartCappedCheckBox.Name = "StartCappedCheckBox";
             this.StartCappedCheckBox.UseVisualStyleBackColor = true;
             // 
-            // LengthTextBox
-            // 
-            resources.ApplyResources(this.LengthTextBox, "LengthTextBox");
-            this.LengthTextBox.MaximumValue = 200D;
-            this.LengthTextBox.Name = "LengthTextBox";
-            // 
             // ConnectorEditor
             // 
             resources.ApplyResources(this, "$this");
@@ -152,7 +153,7 @@
 
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Label ConnectionTypeLabel;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label LengthLabel;
         private Controls.NumberTextBox LengthTextBox;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
         private System.Windows.Forms.CheckBox checkBox4;

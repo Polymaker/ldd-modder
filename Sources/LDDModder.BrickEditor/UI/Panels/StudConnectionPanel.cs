@@ -41,9 +41,21 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             base.OnLoad(e);
             FillSelectedConnector(false);
+            //studConnectionEditor1.GridEditor.DataChanged += GridEditor_DataChanged;
+            studConnectionEditor1.GridEditor.ConnectorSizeChanged += GridEditor_ConnectorSizeChanged;
         }
 
-        
+        private void GridEditor_ConnectorSizeChanged(object sender, EventArgs e)
+        {
+            if (DockState == WeifenLuo.WinFormsUI.Docking.DockState.Float)
+                ProjectManager.ViewportWindow.ForceRender();
+        }
+
+        //private void GridEditor_DataChanged(object sender, EventArgs e)
+        //{
+        //    if (DockState == WeifenLuo.WinFormsUI.Docking.DockState.Float)
+        //        ProjectManager.ViewportWindow.ForceRender();
+        //}
 
         protected override void OnProjectChanged()
         {

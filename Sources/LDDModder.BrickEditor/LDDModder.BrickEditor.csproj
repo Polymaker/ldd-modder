@@ -161,6 +161,8 @@
     <Compile Include="Models\Navigation\ProjectTreeNodeCollection.cs" />
     <Compile Include="ProjectHandling\Extensions\FemaleStudModelExtension.cs" />
     <Compile Include="ProjectHandling\UndoRedoManager.cs" />
+    <Compile Include="ProjectHandling\ViewInterfaces\IMainWindow.cs" />
+    <Compile Include="ProjectHandling\ViewInterfaces\IViewportWindow.cs" />
     <Compile Include="Rendering\Gizmos\ScalingHandle.cs" />
     <Compile Include="Rendering\MeshRenderMode.cs" />
     <Compile Include="Rendering\Models\BoneModel.cs" />
@@ -246,6 +248,12 @@
     </Compile>
     <Compile Include="UI\Windows\BatchBuildWindow.Designer.cs">
       <DependentUpon>BatchBuildWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Windows\BoneDataCopyDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Windows\BoneDataCopyDialog.Designer.cs">
+      <DependentUpon>BoneDataCopyDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\Windows\ErrorMessageBox.cs">
       <SubType>Form</SubType>
@@ -501,6 +509,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Windows\BatchBuildWindow.resx">
       <DependentUpon>BatchBuildWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Windows\BoneDataCopyDialog.resx">
+      <DependentUpon>BoneDataCopyDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Windows\BrickEditorWindow.fr.resx">
       <DependentUpon>BrickEditorWindow.cs</DependentUpon>

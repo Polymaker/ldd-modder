@@ -95,5 +95,20 @@ namespace LDDModder.LDD.Primitives.Connectors
             Tag = element.ReadAttribute("tag", string.Empty);
         }
 
+
+        public override Connector Clone()
+        {
+            return new HingeConnector()
+            {
+                Oriented = Oriented,
+                Tag = Tag,
+                FlipLimitMax = FlipLimitMax,
+                FlipLimitMin = FlipLimitMin,
+                LimitMax = LimitMax,
+                LimitMin = LimitMin,
+                SubType = SubType,
+                Transform = Transform.Clone()
+            };
+        }
     }
 }

@@ -97,5 +97,20 @@ namespace LDDModder.LDD.Primitives.Connectors
             else
                 Spring = null;
         }
+
+        public override Connector Clone()
+        {
+            return new SliderConnector()
+            {
+                Cylindrical = Cylindrical,
+                EndCapped = EndCapped,
+                Length = Length,
+                Spring = Spring,
+                StartCapped = StartCapped,
+                Tag = Tag,
+                SubType = SubType,
+                Transform = Transform.Clone()
+            };
+        }
     }
 }
