@@ -85,16 +85,19 @@ namespace LDDModder.Modding.Editing
 
         public Matrix4d ToMatrixD()
         {
-            var quat = Quaterniond.FromEuler((Vector3d)Rotation * (Math.PI / 180d));
+            var quat = Quaterniond.FromEuler(Rotation * (Math.PI / 180d));
             quat.ToAxisAngle(out Vector3d axis, out double angle);
             var rot = Matrix4d.FromAngleAxis(angle, axis);
-            var trans = Matrix4d.FromTranslation((Vector3d)Position);
+            var trans = Matrix4d.FromTranslation(Position);
             return rot * trans;
         }
 
         public LDD.Primitives.Transform ToLDD()
         {
-            return LDD.Primitives.Transform.FromMatrix(ToMatrixD());
+            var lddTrans = LDD.Primitives.Transform.FromMatrix(ToMatrixD());
+            lddTrans.Axis = lddTrans.Axis.Rounded(6);
+            lddTrans.Translation = lddTrans.Translation.Rounded(6);
+            return lddTrans;
         }
 
         public XElement GetLddXml()
@@ -106,12 +109,14 @@ namespace LDDModder.Modding.Editing
         public XElement SerializeToXml(string elementName = "Transform")
         {
             var elem = new XElement(elementName);
-            elem.AddNumberAttribute("X", Position.X);
-            elem.AddNumberAttribute("Y", Position.Y);
-            elem.AddNumberAttribute("Z", Position.Z);
-            elem.AddNumberAttribute("Pitch", Rotation.X);
-            elem.AddNumberAttribute("Yaw", Rotation.Y);
-            elem.AddNumberAttribute("Roll", Rotation.Z);
+            var roundPos = Position.Rounded(6);
+            var roundRot = Rotation.Rounded(6);
+            elem.AddNumberAttribute("X", roundPos.X);
+            elem.AddNumberAttribute("Y", roundPos.Y);
+            elem.AddNumberAttribute("Z", roundPos.Z);
+            elem.AddNumberAttribute("Pitch",    roundRot.X);
+            elem.AddNumberAttribute("Yaw",      roundRot.Y);
+            elem.AddNumberAttribute("Roll",     roundRot.Z);
             return elem;
         }
 

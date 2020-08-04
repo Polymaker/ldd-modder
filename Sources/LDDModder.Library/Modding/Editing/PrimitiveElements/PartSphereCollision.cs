@@ -1,5 +1,6 @@
 ﻿using LDDModder.LDD.Primitives.Collisions;
 using LDDModder.Simple3D;
+using System.Globalization;
 using System.Xml.Linq;
 
 namespace LDDModder.Modding.Editing
@@ -43,9 +44,11 @@ namespace LDDModder.Modding.Editing
 
         public override XElement SerializeToXml()
         {
-            var elem = base.SerializeToXml();
-            elem.Add(new XElement("Size", new XAttribute("Radius", Radius)));
-            return elem;
+            var baseElem = base.SerializeToXml();
+            var sizeElem = new XElement("Size");
+            sizeElem.AddNumberAttribute("Radius", System.Math.Round(Radius, 6));
+            baseElem.Add(sizeElem);
+            return baseElem;
         }
 
         protected internal override void LoadFromXml(XElement element)
@@ -53,6 +56,8 @@ namespace LDDModder.Modding.Editing
             base.LoadFromXml(element);
             if (element.HasElement("Size", out XElement sizeElem))
                 Radius = sizeElem.ReadAttribute("Radius", 1d);
+
+            //Radius = System.Math.Round(Radius, 6);
         }
     }
 }
