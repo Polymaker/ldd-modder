@@ -121,16 +121,16 @@
     <value>Exporter un modèle LDD</value>
   </data>
   <data name="ChkAltMeshes.Text" xml:space="preserve">
-    <value>Inclure les modèles alternatifs</value>
+    <value>Modèles alternatifs</value>
   </data>
   <data name="ChkBones.Text" xml:space="preserve">
-    <value>Inclure</value>
+    <value>Armature</value>
   </data>
   <data name="ChkCollisions.Text" xml:space="preserve">
-    <value>Inclure les collisions</value>
+    <value>Collisions</value>
   </data>
   <data name="ChkConnections.Text" xml:space="preserve">
-    <value>Inclure les connexions</value>
+    <value>Connexions</value>
   </data>
   <data name="CurrentProjectRb.Text" xml:space="preserve">
     <value>Projet en cours</value>

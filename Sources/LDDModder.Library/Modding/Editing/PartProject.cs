@@ -1377,8 +1377,8 @@ namespace LDDModder.Modding.Editing
             {
                 ID = PartID,
                 Name = PartDescription,
-                Bounding = Bounding,
-                GeometryBounding = GeometryBounding,
+                Bounding = Bounding?.Rounded(6),
+                GeometryBounding = GeometryBounding?.Rounded(6),
                 DefaultCamera = DefaultCamera,
                 DefaultOrientation = DefaultOrientation?.ToLDD(),
                 MainGroup = MainGroup,
@@ -1441,7 +1441,8 @@ namespace LDDModder.Modding.Editing
             //var unloadedMeshes = meshRefs.Select(x => x.ModelMesh).Where(x => !x.IsModelLoaded).Distinct().ToList();
             foreach (var layerGroup in meshRefs.GroupBy(x => x.RoundEdgeLayer))
             {
-                var layerTriangles = layerGroup.SelectMany(x => x.GeneratedTriangles);
+                var layerTriangles = layerGroup.Where(x => x.GeneratedTriangles != null)
+                    .SelectMany(x => x.GeneratedTriangles);
                 ShaderDataGenerator.ComputeEdgeOutlines(layerTriangles, breakAngle);
                 //layerGroup.Select(x=>x.GetGeometry())
             }

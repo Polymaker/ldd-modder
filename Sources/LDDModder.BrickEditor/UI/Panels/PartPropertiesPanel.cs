@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -10,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using LDDModder.BrickEditor.ProjectHandling;
 using LDDModder.BrickEditor.Resources;
+using LDDModder.BrickEditor.Utilities;
 using LDDModder.LDD.Data;
 using LDDModder.Modding.Editing;
 
@@ -258,6 +260,45 @@ namespace LDDModder.BrickEditor.UI.Panels
             {
                 flowLayoutPanel1.FlowDirection = FlowDirection.TopDown;
                 flowLayoutPanel1.PerformLayout();
+            }
+        }
+
+        private void FillInertiaTensor(Simple3D.Matrix3d matrix)
+        {
+            var matrixValues = matrix.ToArray();
+            string matrixStr = string.Join("; ", matrixValues);
+            InertiaTensorTextBox.Text = matrixStr;
+        }
+
+        private void InertiaTensorTextBox_Validated(object sender, EventArgs e)
+        {
+            if (CurrentProject == null)
+                return;
+
+            var matValues = InertiaTensorTextBox.Text.Split(';');
+            if (matValues.Length == 9)
+            {
+                var inertiaMatrix = new Simple3D.Matrix3d();
+                bool validValues = true;
+                for (int i = 0; i < 9; i++)
+                {
+                    if (NumberHelper.SmartTryParse(matValues[i], out double cellValue))
+                        inertiaMatrix[i] = cellValue;
+                    else
+                    {
+                        validValues = false;
+                        break;
+                    }
+                }
+
+                if (validValues)
+                {
+                    CurrentProject.PhysicsAttributes.InertiaTensor = inertiaMatrix;
+                }
+                else
+                {
+                    FillInertiaTensor(CurrentProject.PhysicsAttributes.InertiaTensor);
+                }
             }
         }
     }

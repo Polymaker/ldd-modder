@@ -98,38 +98,38 @@ namespace LDDModder.Simple3D
             {
                 switch (row)
                 {
+                    case 0:
+                        switch (col)
+                        {
+                            case 0:
+                                return A1;
+                            case 1:
+                                return A2;
+                            case 2:
+                                return A3;
+                            default:
+                                return 0f;
+                        }
                     case 1:
                         switch (col)
                         {
+                            case 0:
+                                return B1;
                             case 1:
-                                return A1;
+                                return B2;
                             case 2:
-                                return A2;
-                            case 3:
-                                return A3;
+                                return B3;
                             default:
                                 return 0f;
                         }
                     case 2:
                         switch (col)
                         {
-                            case 1:
-                                return B1;
-                            case 2:
-                                return B2;
-                            case 3:
-                                return B3;
-                            default:
-                                return 0f;
-                        }
-                    case 3:
-                        switch (col)
-                        {
-                            case 1:
+                            case 0:
                                 return C1;
-                            case 2:
+                            case 1:
                                 return C2;
-                            case 3:
+                            case 2:
                                 return C3;
                             default:
                                 return 0f;
@@ -142,44 +142,44 @@ namespace LDDModder.Simple3D
             {
                 switch (row)
                 {
+                    case 0:
+                        switch (col)
+                        {
+                            case 0:
+                                A1 = value;
+                                break;
+                            case 1:
+                                A2 = value;
+                                break;
+                            case 2:
+                                A3 = value;
+                                break;
+                        }
+                        break;
                     case 1:
                         switch (col)
                         {
+                            case 0:
+                                B1 = value;
+                                break;
                             case 1:
-                                A1 = value;
+                                B2 = value;
                                 break;
                             case 2:
-                                A2 = value;
-                                break;
-                            case 3:
-                                A3 = value;
+                                B3 = value;
                                 break;
                         }
                         break;
                     case 2:
                         switch (col)
                         {
-                            case 1:
-                                B1 = value;
-                                break;
-                            case 2:
-                                B2 = value;
-                                break;
-                            case 3:
-                                B3 = value;
-                                break;
-                        }
-                        break;
-                    case 3:
-                        switch (col)
-                        {
-                            case 1:
+                            case 0:
                                 C1 = value;
                                 break;
-                            case 2:
+                            case 1:
                                 C2 = value;
                                 break;
-                            case 3:
+                            case 2:
                                 C3 = value;
                                 break;
                         }

@@ -156,10 +156,10 @@ namespace LDDModder.Modding.Editing
                 propsElem.Add(PhysicsAttributes.SerializeToXml());
 
             if (Bounding != null)
-                propsElem.Add(XmlHelper.DefaultSerialize(Bounding, nameof(Bounding)));
+                propsElem.Add(XmlHelper.DefaultSerialize(Bounding.Rounded(6), nameof(Bounding)));
 
             if (GeometryBounding != null)
-                propsElem.Add(XmlHelper.DefaultSerialize(GeometryBounding, nameof(GeometryBounding)));
+                propsElem.Add(XmlHelper.DefaultSerialize(GeometryBounding.Rounded(6), nameof(GeometryBounding)));
 
             if (DefaultOrientation != null)
                 propsElem.Add(DefaultOrientation.SerializeToXml(nameof(DefaultOrientation)));

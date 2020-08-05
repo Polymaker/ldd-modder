@@ -327,12 +327,16 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             var keyPos = ((ltfCorner + rtfCorner) / 2f);
             keyPos += ((keyPos - sceneBounds.Center).Normalized() * 8f);
+            keyPos.Y = Math.Max(keyPos.Y, 4);
 
             var backPos = ((ltbCorner + ltfCorner) / 2f)/* + ((ltbCorner - sceneBounds.Center).Normalized() * 5f)*/;
             backPos += ((backPos - sceneBounds.Center).Normalized() * 8f);
+            backPos.Y = Math.Max(backPos.Y, 4);
 
             var fillPos = ((rtfCorner + rtbCorner) / 2f)/* + ((ltbCorner - sceneBounds.Center).Normalized() * 5f)*/;
             fillPos += ((fillPos - sceneBounds.Center).Normalized() * 8f);
+            fillPos.Y = Math.Max(fillPos.Y, 4);
+
 
             SceneLights = new List<LightInfo>()
             {

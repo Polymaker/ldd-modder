@@ -31,7 +31,10 @@ namespace LDDModder.Modding.Editing
             {
                 var builder = new GeometryBuilder();
                 foreach(var meshRef in ReplacementMeshes)
-                    builder.CombineGeometry(meshRef.GetGeometry(true));
+                {
+                    var meshGeom = meshRef.GetGeometry(true);
+                    meshRef.GeneratedTriangles = builder.CombineGeometry(meshGeom);
+                }
 
                 if (Surface.SurfaceID == 0)
                     builder.RemoveTextureCoords();

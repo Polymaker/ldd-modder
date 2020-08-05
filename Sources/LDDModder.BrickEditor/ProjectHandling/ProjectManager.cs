@@ -665,6 +665,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
             {
                 
                 generatedPart = CurrentProject.GenerateLddPart();
+                
                 //CurrentProject.ComputeEdgeOutlines();
                 if (generateOutlines)
                 {
