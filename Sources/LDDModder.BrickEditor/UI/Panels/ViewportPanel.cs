@@ -263,6 +263,13 @@ namespace LDDModder.BrickEditor.UI.Panels
             };
             ScaleGizmoButton.Clicked += ScaleGizmoButton_Clicked;
             UIElements.Add(ScaleGizmoButton);
+            //var viewSize = new Vector2(glControl1.Width, glControl1.Height);
+            //UIElements.Add(new UIPanel()
+            //{
+            //    Texture = SelectionIcons,
+            //    TextureRect = new SpriteBounds(0, 0.75f, 0.25f, 0.25f),
+            //    Bounds = new Vector4(viewSize.X - 30, 0, 30, 30)
+            //});
 
             var gizmoButtons = new UIButton[] { SelectGizmoButton, MoveGizmoButton, RotateGizmoButton, ScaleGizmoButton };
 
@@ -379,6 +386,12 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         #endregion
 
+        public void StopRenderingLoop()
+        {
+            if (LoopController.IsRunning)
+                LoopController.Stop();
+        }
+
         #region Render Loop
 
         private void RenderWorld()
@@ -438,8 +451,6 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             
             GL.UseProgram(0);
-
-            
             
         }
 
@@ -477,7 +488,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void RenderUI()
         {
-            var viewSize = new Vector2(glControl1.Width, glControl1.Height);
+            //var viewSize = new Vector2(glControl1.Width, glControl1.Height);
 
             GL.Disable(EnableCap.DepthTest);
 
@@ -911,7 +922,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
                 foreach (var surface in CurrentProject.Surfaces)
                 {
-                    if (!SurfaceModels.Any(x=>x.Surface == surface))
+                    if (!SurfaceModels.Any(x => x.Surface == surface))
                     {
                         AddPartSurfaceModel(surface);
                     }
@@ -1028,7 +1039,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             }
         }
 
-        private void UnloadModels()
+        public void UnloadModels()
         {
             SurfaceModels.ForEach(x => x.Dispose());
 

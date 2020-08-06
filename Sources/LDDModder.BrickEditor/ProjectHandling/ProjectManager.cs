@@ -56,6 +56,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
         #region Windows
 
+        public IMainWindow MainWindow { get; set; }
         public IViewportWindow ViewportWindow { get; set; }
 
         #endregion

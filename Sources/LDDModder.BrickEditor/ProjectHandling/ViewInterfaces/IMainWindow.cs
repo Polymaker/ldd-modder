@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace LDDModder.BrickEditor.ProjectHandling.ViewInterfaces
 {
-    interface IMainWindow
+    public interface IMainWindow
     {
+
     }
 }

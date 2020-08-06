@@ -16,9 +16,9 @@ namespace LDDModder.BrickEditor.UI.Windows
 {
     public partial class ImportModelsDialog : Form
     {
-        public PartProject Project { get; set; }
-
         public ProjectManager ProjectManager { get; set; }
+
+        public PartProject Project => ProjectManager.CurrentProject;
 
         private Assimp.AssimpContext AssimpContext;
 
@@ -36,8 +36,9 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         public bool SelectFileOnStart { get; set; }
 
-        public ImportModelsDialog()
+        public ImportModelsDialog(ProjectManager projectManager)
         {
+            ProjectManager = projectManager;
             InitializeComponent();
             InitializeGridView();
             ModelsToImport = new List<ImportModelInfo>();
@@ -71,7 +72,6 @@ namespace LDDModder.BrickEditor.UI.Windows
             if (SelectFileOnStart)
                 ShowSelectFileDialog();
         }
-
 
         private void FillModelsGridView()
         {

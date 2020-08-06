@@ -91,8 +91,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void ProjectManager_ElementCollectionChanged(object sender, ElementCollectionChangedEventArgs e)
         {
-            //if (!(ProjectManager.IsExecutingBatchChanges || ProjectManager.IsExecutingUndoRedo))
-                OnElementCollectionChanged(e);
+            OnElementCollectionChanged(e);
         }
 
         protected virtual void OnElementCollectionChanged(ElementCollectionChangedEventArgs e)
@@ -115,6 +114,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             OnElementPropertyChanged(e);
         }
 
+
         protected virtual void OnElementPropertyChanged(ElementValueChangedEventArgs e)
         {
 
@@ -123,8 +123,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void ProjectManager_SelectionChanged(object sender, EventArgs e)
         {
-            //InvokeMethod(OnElementSelectionChanged, nameof(OnElementSelectionChanged));
-            OnElementSelectionChanged();
+            BeginInvokeOnce(OnElementSelectionChanged, nameof(OnElementSelectionChanged));
         }
 
         protected virtual void OnElementSelectionChanged()
@@ -156,7 +155,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                 action();
         }
 
-        protected void InvokeMethod(Action action, string actionName)
+        protected void BeginInvokeOnce(Action action, string actionName)
         {
             if (InvokeRequired)
             {

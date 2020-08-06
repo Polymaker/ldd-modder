@@ -1,4 +1,5 @@
 ﻿using LDDModder.BrickEditor.ProjectHandling;
+using LDDModder.BrickEditor.ProjectHandling.ViewInterfaces;
 using LDDModder.BrickEditor.Resources;
 using LDDModder.BrickEditor.Settings;
 using LDDModder.BrickEditor.UI.Panels;
@@ -21,7 +22,7 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace LDDModder.BrickEditor.UI.Windows
 {
-    public partial class BrickEditorWindow : Form
+    public partial class BrickEditorWindow : Form, IMainWindow
     {
 
         public ProjectManager ProjectManager { get; private set; }
@@ -49,6 +50,7 @@ namespace LDDModder.BrickEditor.UI.Windows
             base.OnLoad(e);
 
             ProjectManager = new ProjectManager();
+            ProjectManager.MainWindow = this;
             ProjectManager.ProjectChanged += ProjectManager_ProjectChanged;
             ProjectManager.UndoHistoryChanged += ProjectManager_UndoHistoryChanged;
             ProjectManager.ValidationFinished += ProjectManager_ValidationFinished;
@@ -300,6 +302,7 @@ namespace LDDModder.BrickEditor.UI.Windows
 
                 string workingDirPath = CurrentProject?.ProjectWorkingDir;
 
+                //Delete temporary project working directory
                 if (!string.IsNullOrEmpty(workingDirPath) && Directory.Exists(workingDirPath))
                 {
                     Task.Factory.StartNew(() => FileHelper.DeleteFileOrFolder(workingDirPath, true, true));
@@ -383,10 +386,8 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         private void ImportMeshFile()
         {
-            using (var imd = new ImportModelsDialog())
+            using (var imd = new ImportModelsDialog(ProjectManager))
             {
-                imd.ProjectManager = ProjectManager;
-                imd.Project = CurrentProject;
                 imd.SelectFileOnStart = true;
                 imd.ShowDialog();
             }
@@ -422,6 +423,9 @@ namespace LDDModder.BrickEditor.UI.Windows
             Debug.WriteLine($"TryCloseProjectAndExit at {DateTime.Now:HH:mm:ss.ff}");
             if (CloseCurrentProject())
             {
+                ViewportPanel.StopRenderingLoop();
+                ViewportPanel.UnloadModels();
+
                 //Application.DoEvents();
                 Task.Factory.StartNew(() =>
                 {

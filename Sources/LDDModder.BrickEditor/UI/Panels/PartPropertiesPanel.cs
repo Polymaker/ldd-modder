@@ -164,7 +164,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             if (CurrentProject != null && !InternalSet)
             {
                 var bounding = CurrentProject.CalculateBoundingBox();
-                BoundingEditor.Value = bounding;
+                BoundingEditor.Value = bounding.Rounded(6);
             }
         }
 
@@ -173,7 +173,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             if (CurrentProject != null && !InternalSet)
             {
                 var bounding = CurrentProject.CalculateBoundingBox();
-                GeomBoundingEditor.Value = bounding;
+                GeomBoundingEditor.Value = bounding.Rounded(6);
             }
         }
 
