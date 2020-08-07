@@ -166,12 +166,14 @@
     <Compile Include="Rendering\Gizmos\ScalingHandle.cs" />
     <Compile Include="Rendering\MeshRenderMode.cs" />
     <Compile Include="Rendering\Models\BoneModel.cs" />
+    <Compile Include="Rendering\Models\EditorGridModel.cs" />
     <Compile Include="Rendering\Models\VertexArrayBuffer.cs" />
-    <Compile Include="Rendering\SceneInfo.cs" />
+    <Compile Include="Rendering\BrickEditorScene.cs" />
     <Compile Include="Rendering\Shaders\SimpleTextureShaderProgram.cs" />
     <Compile Include="Rendering\Shaders\StudGridCell.cs" />
     <Compile Include="Rendering\Shaders\StudConnectionShaderProgram.cs" />
     <Compile Include="Rendering\TextureManager.cs" />
+    <Compile Include="Rendering\UI\UIAnchor.cs" />
     <Compile Include="Rendering\UI\UIPanel.cs" />
     <Compile Include="Resources\Messages.Designer.cs">
       <AutoGen>True</AutoGen>

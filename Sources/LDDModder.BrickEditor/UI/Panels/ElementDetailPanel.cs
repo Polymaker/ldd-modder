@@ -45,7 +45,6 @@ namespace LDDModder.BrickEditor.UI.Panels
             SetControlDoubleBuffered(PropertiesTableLayout);
             InitializeStudRefGrid();
             FillSelectionDetails(null);
-            
         }
 
         protected override void OnProjectClosed()

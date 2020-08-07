@@ -8,6 +8,6 @@ namespace LDDModder.BrickEditor.ProjectHandling.ViewInterfaces
 {
     public interface IMainWindow
     {
-
+        
     }
 }

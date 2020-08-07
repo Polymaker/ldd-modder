@@ -58,7 +58,6 @@ namespace LDDModder.BrickEditor.Rendering
                 case nameof(PartElement.ID):
                 case nameof(PartElement.Name):
                 case nameof(PartConnection.Transform):
-                case nameof(PartConnection.Comments):
                     break;
 
                 default:

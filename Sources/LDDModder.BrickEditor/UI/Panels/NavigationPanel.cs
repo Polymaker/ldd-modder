@@ -149,16 +149,15 @@ namespace LDDModder.BrickEditor.UI.Panels
                 return new ArrayList();
             };
 
-            ProjectTreeView.CellToolTipGetter += (col, model) =>
-            {
-                if (model is ProjectElementNode node)
-                {
-                    if (!string.IsNullOrEmpty(node.Element.Comments))
-                        return node.Element.Comments;
-                    //return node.Element.Name;
-                }
-                return string.Empty;
-            };
+            //ProjectTreeView.CellToolTipGetter += (col, model) =>
+            //{
+            //    if (model is ProjectElementNode node)
+            //    {
+               
+            //        //return node.Element.Name;
+            //    }
+            //    return string.Empty;
+            //};
 
             ProjectTreeView.DropSink = new NavigationDropHandler();
             ProjectTreeView.DragSource = new NavigationDragHandler();
@@ -1043,6 +1042,10 @@ namespace LDDModder.BrickEditor.UI.Panels
                             targetCollection = bone.Connections;
                         }
                     }
+                    else if (targetElement.GetElementType() == elemTypeGroup.Key)
+                    {
+                        targetCollection = targetElement.GetParentCollection();
+                    }
 
                     if (targetCollection != null)
                     {
@@ -1081,8 +1084,6 @@ namespace LDDModder.BrickEditor.UI.Panels
 
                 if (movedNodes.Any())
                     SetSelectedNodes(movedNodes);
-
-
             }
         }
 

@@ -35,12 +35,9 @@ namespace LDDModder.BrickEditor.UI.Panels
         private Texture2D CheckboardTexture;
         private Texture2D SelectionIcons;
 
-        private GridShaderProgram GridShader;
 
-        //private SceneInfo Scene;
         private List<SurfaceMeshBuffer> SurfaceModels;
-        //private List<CollisionModel> CollisionModels;
-        //private List<ConnectionModel> ConnectionModels;
+
         private ThreadSafeList<PartElementModel> LoadedModels;
 
         private List<UIElement> UIElements;
@@ -75,8 +72,6 @@ namespace LDDModder.BrickEditor.UI.Panels
             CloseButton = false;
             CloseButtonVisible = false;
             SurfaceModels = new List<SurfaceMeshBuffer>();
-            //CollisionModels = new List<CollisionModel>();
-            //ConnectionModels = new List<ConnectionModel>();
             LoadedModels = new ThreadSafeList<PartElementModel>();
             UIElements = new List<UIElement>();
             ShowIcon = false;
@@ -172,6 +167,8 @@ namespace LDDModder.BrickEditor.UI.Panels
             InitializeShaders();
 
             InitializeSelectionGizmo();
+
+            SetupSceneLights();
         }
 
         private void InitializeMenus()
@@ -294,30 +291,9 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void InitializeShaders()
         {
-            GridShader = ProgramFactory.Create<GridShaderProgram>();
-            GridShader.Use();
-
-            GridShader.MajorGridLine.Set(new GridShaderProgram.GridLineInfo()
-            {
-                Color = new Color4(1, 1, 1, 0.8f),
-                Spacing = 0.8f,
-                Thickness = 1f,
-                OffCenter = true
-            });
-
-            GridShader.MinorGridLine.Set(new GridShaderProgram.GridLineInfo()
-            {
-                Color = new Color4(0.8f, 0.6f, 0.6f, 0.8f),
-                Spacing = 0.4f,
-                Thickness = 0.75f,
-                OffCenter = false
-            });
-
             UIRenderHelper.InitializeResources();
             RenderHelper.InitializeResources();
             ModelManager.InitializeResources();
-
-            SetupSceneLights();
         }
 
         private void SetupSceneLights()
@@ -333,36 +309,52 @@ namespace LDDModder.BrickEditor.UI.Panels
             var rtbCorner = new Vector3(sceneBounds.Right, sceneBounds.Top, sceneBounds.Back);
 
             var keyPos = ((ltfCorner + rtfCorner) / 2f);
-            keyPos += ((keyPos - sceneBounds.Center).Normalized() * 8f);
-            keyPos.Y = Math.Max(keyPos.Y, 4);
+            keyPos.Y = keyPos.Y / 2f;
+            //keyPos += ((keyPos - sceneBounds.Center).Normalized() * 8f);
+            keyPos += new Vector3(0, 1, 1).Normalized() * 8;
+            //keyPos.Y = Math.Max(keyPos.Y, 4);
 
             var backPos = ((ltbCorner + ltfCorner) / 2f)/* + ((ltbCorner - sceneBounds.Center).Normalized() * 5f)*/;
-            backPos += ((backPos - sceneBounds.Center).Normalized() * 8f);
-            backPos.Y = Math.Max(backPos.Y, 4);
+            //backPos += ((backPos - sceneBounds.Center).Normalized() * 8f);
+            backPos.Y = backPos.Y / 2f;
+            backPos += new Vector3(-1, 1, 0).Normalized() * 8;
+            //backPos.Y = Math.Max(backPos.Y, 4);
 
             var fillPos = ((rtfCorner + rtbCorner) / 2f)/* + ((ltbCorner - sceneBounds.Center).Normalized() * 5f)*/;
-            fillPos += ((fillPos - sceneBounds.Center).Normalized() * 8f);
-            fillPos.Y = Math.Max(fillPos.Y, 4);
+            //fillPos += ((fillPos - sceneBounds.Center).Normalized() * 8f);
+            fillPos.Y = fillPos.Y / 2f;
+            fillPos += new Vector3(1, 1, 0).Normalized() * 8;
+            //fillPos.Y = Math.Max(fillPos.Y, 4);
 
 
             SceneLights = new List<LightInfo>()
             {
+                //Ambiant Light
+                new LightInfo {
+                    Position = new Vector3(10,50,10),
+                    Ambient = new Vector3(0.7f),
+                    Diffuse = new Vector3(0.2f),
+                    Specular = new Vector3(0.2f),
+                    Constant = 1f,
+                    Linear = 0.007f,
+                    Quadratic = 0.0002f
+                },
                 //Key Light
                 new LightInfo {
                     Position = keyPos,
-                    Ambient = new Vector3(0.3f),
+                    Ambient = new Vector3(0.1f),
                     Diffuse = new Vector3(0.8f),
                     Specular = new Vector3(1f),
                     Constant = 1f,
-                    Linear = 0.08f,
-                    Quadratic = 0.02f
+                    Linear = 0.07f,
+                    Quadratic = 0.017f
                 },
                 //Fill Light
                 new LightInfo {
                     Position = fillPos,
-                    Ambient = new Vector3(0.3f),
+                    Ambient = new Vector3(0.1f),
                     Diffuse = new Vector3(0.6f),
-                    Specular = new Vector3(0.6f),
+                    Specular = new Vector3(0.3f),
                     Constant = 1f,
                     Linear = 0.07f,
                     Quadratic = 0.017f
@@ -370,12 +362,12 @@ namespace LDDModder.BrickEditor.UI.Panels
                 //Back Light
                 new LightInfo {
                     Position = backPos,
-                    Ambient = new Vector3(0.2f),
+                    Ambient = new Vector3(0.1f),
                     Diffuse = new Vector3(0.6f),
-                    Specular = new Vector3(0.6f),
+                    Specular = new Vector3(0.3f),
                     Constant = 1f,
-                    Linear = 0.045f,
-                    Quadratic = 0.075f
+                    Linear = 0.07f,
+                    Quadratic = 0.017f
                 },
             };
 
@@ -433,13 +425,13 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             DrawGrid();
 
-            if (SceneLights != null)
-            {
-                foreach (var light in SceneLights)
-                {
-                    RenderHelper.DrawGizmoAxes(Matrix4.CreateTranslation(light.Position), 0.5f, false);
-                }
-            }
+            //if (SceneLights != null)
+            //{
+            //    foreach (var light in SceneLights)
+            //    {
+            //        RenderHelper.DrawGizmoAxes(Matrix4.CreateTranslation(light.Position), 0.5f, false);
+            //    }
+            //}
 
             GL.UseProgram(0);
 
@@ -470,10 +462,10 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void DrawGrid()
         {
-            GridShader.Use();
-            GridShader.MVMatrix.Set(Camera.GetViewMatrix());
-            GridShader.PMatrix.Set(Camera.GetProjectionMatrix());
-            GridShader.FadeDistance.Set(Camera.IsPerspective ? 20f : 0f);
+            RenderHelper.GridShader.Use();
+            RenderHelper.GridShader.MVMatrix.Set(Camera.GetViewMatrix());
+            RenderHelper.GridShader.PMatrix.Set(Camera.GetProjectionMatrix());
+            RenderHelper.GridShader.FadeDistance.Set(Camera.IsPerspective ? 20f : 0f);
             GL.DepthMask(false);
             GL.Begin(PrimitiveType.Quads);
             GL.Vertex3(-40, 0, -40);
@@ -768,7 +760,6 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             SelectionGizmo.Dispose();
 
-            GridShader.Dispose();
             CheckboardTexture.Dispose();
         }
 

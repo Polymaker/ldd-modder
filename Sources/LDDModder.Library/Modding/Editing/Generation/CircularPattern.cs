@@ -17,6 +17,8 @@ namespace LDDModder.Modding.Editing
 
         public int Repetitions { get; set; }
 
+        //public List<int> 
+
         public float Angle { get; set; }
     }
 }

@@ -23,6 +23,8 @@ namespace LDDModder.BrickEditor.Rendering.UI
 
         public bool Visible { get; set; } = true;
 
+        public UIAnchor Anchor { get; set; }
+
         public virtual void OnPaint()
         {
             if (!string.IsNullOrEmpty(Text))

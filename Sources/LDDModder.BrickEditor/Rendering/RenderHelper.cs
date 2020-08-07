@@ -32,6 +32,8 @@ namespace LDDModder.BrickEditor.Rendering
 
         public static SimpleTextureShaderProgram SimpleTextureShader { get; private set; }
 
+        public static GridShaderProgram GridShader { get; private set; }
+
         public static IndexedVertexBuffer<Vector3> BoundingBoxBufffer;
 
         //public static Buffer<StudGridCell> StudGridBuffer { get; private set; }
@@ -46,6 +48,24 @@ namespace LDDModder.BrickEditor.Rendering
             WireframeShader2 = ProgramFactory.Create<WireframeShader2Program>();
             StudConnectionShader = ProgramFactory.Create<StudConnectionShaderProgram>();
             SimpleTextureShader = ProgramFactory.Create<SimpleTextureShaderProgram>();
+            GridShader = ProgramFactory.Create<GridShaderProgram>();
+            GridShader.Use();
+
+            GridShader.MajorGridLine.Set(new GridShaderProgram.GridLineInfo()
+            {
+                Color = new Color4(1, 1, 1, 0.8f),
+                Spacing = 0.8f,
+                Thickness = 1f,
+                OffCenter = true
+            });
+
+            GridShader.MinorGridLine.Set(new GridShaderProgram.GridLineInfo()
+            {
+                Color = new Color4(0.8f, 0.6f, 0.6f, 0.8f),
+                Spacing = 0.4f,
+                Thickness = 0.75f,
+                OffCenter = false
+            });
 
             BoundingBoxBufffer = new IndexedVertexBuffer<Vector3>();
             var box = BBox.FromCenterSize(Vector3.Zero, Vector3.One);
@@ -143,6 +163,12 @@ namespace LDDModder.BrickEditor.Rendering
             {
                 SimpleTextureShader.Dispose();
                 SimpleTextureShader = null;
+            }
+
+            if (GridShader != null)
+            {
+                GridShader.Dispose();
+                GridShader = null;
             }
         }
 

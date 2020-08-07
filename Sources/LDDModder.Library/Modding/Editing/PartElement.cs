@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 
@@ -18,10 +16,8 @@ namespace LDDModder.Modding.Editing
         internal PartProject _Project;
         private Dictionary<Type, IElementExtender> _Extenders;
 
-        [XmlAttribute]
         public string ID { get; set; }
         
-        [XmlAttribute]
         public string Name
         {
             get => _Name;
@@ -36,13 +32,6 @@ namespace LDDModder.Modding.Editing
                         _Name = value;
                 }
             }
-        }
-
-        [XmlElement]
-        public string Comments
-        {
-            get => _Comments;
-            set => SetPropertyValue(ref _Comments, value);
         }
 
         internal List<PartElement> OwnedElements { get; }
@@ -95,41 +84,31 @@ namespace LDDModder.Modding.Editing
 
         private bool RemovingParent;
 
-        internal void AssignParent(PartElement parent, bool fromCollection = false)
+
+        internal void BeginChangeParent(PartElement newParent)
         {
-            if (Parent != parent && !RemovingParent)
+            if (Parent == newParent || RemovingParent)
+                return;
+
+            ParentChanging?.Invoke(this, EventArgs.Empty);
+
+            if (Parent != null)
             {
-                ParentChanging?.Invoke(this, EventArgs.Empty);
-
-                if (Parent != null)
-                {
-                    RemovingParent = true;
-                    TryRemove();
-                    RemovingParent = false;
-                    //var oldCollection = GetParentCollection();
-                    //if (oldCollection != null)
-                    //{
-                    //    oldCollection.Remove(this);
-                    //}
-                }
-
-                Parent = parent;
-                ParentChanged?.Invoke(this, EventArgs.Empty);
+                RemovingParent = true;
+                TryRemove();
+                RemovingParent = false;
             }
-            //bool changed = Parent != parent;
-            //if (changed)
-            //    ParentChanging?.Invoke(this, EventArgs.Empty);
-            //Parent = parent;
-            //OnParentAssigned();
-
-            //if (changed)
-            //    ParentChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        //protected virtual void OnParentAssigned()
-        //{
-
-        //}
+        internal void AssignParent(PartElement parent)
+        {
+            if (Parent != parent)
+            {
+                Parent = parent;
+                if (!RemovingParent)
+                    ParentChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
 
         #endregion
 
@@ -150,9 +129,6 @@ namespace LDDModder.Modding.Editing
             if (!string.IsNullOrEmpty(Name))
                 elem.Add(new XAttribute("Name", Name));
 
-            if (!string.IsNullOrEmpty(Comments))
-                elem.Add(new XElement("Comments", Comments));
-
             return elem;
         }
 
@@ -163,9 +139,6 @@ namespace LDDModder.Modding.Editing
 
             if (element.HasAttribute("Name", out XAttribute nameAttr))
                 InternalSetName(nameAttr.Value);
-
-            if (element.HasElement("Comments", out XElement commentElem))
-                Comments = commentElem.Value;
         }
 
         #endregion

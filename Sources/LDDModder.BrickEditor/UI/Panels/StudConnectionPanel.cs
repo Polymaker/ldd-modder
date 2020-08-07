@@ -35,6 +35,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             ConnectorComboBox.ComboBox.DataSource = Connections;
             ConnectorComboBox.ComboBox.DisplayMember = "Name";
             ConnectorComboBox.ComboBox.ValueMember = "ID";
+            CloseButtonVisible = false;
         }
 
         protected override void OnLoad(EventArgs e)
@@ -162,6 +163,24 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             
         }
-        
+
+        protected override void OnDockStateChanged(EventArgs e)
+        {
+            base.OnDockStateChanged(e);
+            if (DockState == WeifenLuo.WinFormsUI.Docking.DockState.Float)
+                CloseButtonVisible = true;
+            else
+                CloseButtonVisible = false;
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            if (DockState == WeifenLuo.WinFormsUI.Docking.DockState.Float)
+            {
+                e.Cancel = true;
+                Show(DockHandler.DockPanel, WeifenLuo.WinFormsUI.Docking.DockState.Document);
+            }
+            base.OnClosing(e);
+        }
     }
 }

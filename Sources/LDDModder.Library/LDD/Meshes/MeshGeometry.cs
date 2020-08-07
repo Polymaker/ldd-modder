@@ -33,6 +33,8 @@ namespace LDDModder.LDD.Meshes
 
         public bool IsFlexible => Vertices.Any(x => x.BoneWeights.Any());
 
+        public bool HasRoundEdgeData { get; set; }
+
         public MeshGeometry()
         {
             _Vertices = new List<Vertex>();
@@ -297,7 +299,12 @@ namespace LDDModder.LDD.Meshes
                     avgNormals.Add(new Vector3(br.ReadSingles(3)));
 
                 for (int i = 0; i < idxCount; i++)
-                    reCoords.Add(new RoundEdgeData(br.ReadSingles(12)));
+                {
+                    var reData = new RoundEdgeData(br.ReadSingles(12));
+                    if (!geom.HasRoundEdgeData && !reData.IsEmpty)
+                        geom.HasRoundEdgeData = true;
+                    reCoords.Add(reData);
+                }
 
                 var triangles = new List<Triangle>();
 

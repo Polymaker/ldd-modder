@@ -76,10 +76,26 @@ namespace LDDModder.Modding.Editing
             if (_Project != null)
                 item.AssignProject(adding ? Project : null);
             else if (Owner != null)
+            {
                 item.AssignParent(adding ? Owner : null);
+            }
         }
 
-        
+        private void UpdateItemParent(PartElement item, bool adding, Action listAction)
+        {
+            if (_Project != null)
+            {
+                item.AssignProject(adding ? Project : null);
+                listAction();
+            }
+            else if (Owner != null)
+            {
+                item.BeginChangeParent(Owner);
+                listAction();
+                item.AssignParent(adding ? Owner : null);
+            }
+        }
+
 
         protected void RaiseCollectionChanged(
             CollectionChangeAction action,
@@ -125,15 +141,14 @@ namespace LDDModder.Modding.Editing
             if (index > Count)
                 index = Count;
 
-            UpdateItemParent(item, true);
-            InnerList.Insert(index, item);
+            UpdateItemParent(item, true, ()=> InnerList.Insert(index, item));
+
             return new CollectionChangeItemInfo(item, -1, index);
         }
 
         protected CollectionChangeItemInfo AddItem(T item)
         {
-            UpdateItemParent(item, true);
-            InnerList.Add(item);
+            UpdateItemParent(item, true, ()=> InnerList.Add(item));
             return new CollectionChangeItemInfo(item, -1, Count - 1);
         }
 
@@ -145,8 +160,8 @@ namespace LDDModder.Modding.Editing
             {
                 if (!runDry)
                 {
-                    InnerList.RemoveAt(itemIndex);
-                    UpdateItemParent(item, false);
+                    //InnerList.RemoveAt(itemIndex);
+                    UpdateItemParent(item, false, ()=> InnerList.RemoveAt(itemIndex));
                 }
                 
                 return new CollectionChangeItemInfo(item, itemIndex, -1);
@@ -161,8 +176,7 @@ namespace LDDModder.Modding.Editing
             {
                 if (!runDry)
                 {
-                    InnerList.RemoveAt(index);
-                    UpdateItemParent(item, false);
+                    UpdateItemParent(item, false, ()=> InnerList.RemoveAt(index));
                 }
                 
                 return new CollectionChangeItemInfo(item, index, -1);

@@ -48,6 +48,13 @@ namespace LDDModder.BrickEditor.Models.Navigation
             Manager = node?.Manager;
         }
 
+        public virtual void FreeObjects()
+        {
+            foreach (var child in Nodes)
+                child.FreeObjects();
+            Manager = null;
+        }
+
         #region Children Handling
 
         protected bool nodesDirty;

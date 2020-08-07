@@ -52,13 +52,13 @@
             this.StudRefValue2Colunm = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.AdjStudColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.ConnectionInfoTab = new System.Windows.Forms.TabPage();
+            this.connectorEditor1 = new LDDModder.BrickEditor.UI.Controls.ConnectorEditor();
             this.localizableStringList1 = new LDDModder.BrickEditor.Localization.LocalizableStringList(this.components);
             this.MultiSelectionMsg = new LDDModder.BrickEditor.Localization.LocalizableString();
             this.NoSelectionMsg = new LDDModder.BrickEditor.Localization.LocalizableString();
             this.TopStudsLabel = new LDDModder.BrickEditor.Localization.LocalizableString();
             this.BottomStudsLabel = new LDDModder.BrickEditor.Localization.LocalizableString();
             this.NoConnectorRefLabel = new LDDModder.BrickEditor.Localization.LocalizableString();
-            this.connectorEditor1 = new LDDModder.BrickEditor.UI.Controls.ConnectorEditor();
             this.PropertiesTableLayout.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.MainInfoTab.SuspendLayout();
@@ -104,6 +104,7 @@
             resources.ApplyResources(this.SelectionTransformEdit, "SelectionTransformEdit");
             this.PropertiesTableLayout.SetColumnSpan(this.SelectionTransformEdit, 2);
             this.SelectionTransformEdit.Name = "SelectionTransformEdit";
+            this.SelectionTransformEdit.ViewLayout = LDDModder.BrickEditor.UI.Controls.TransformEditor.EditLayout.Vertical;
             // 
             // NameLabel
             // 
@@ -218,6 +219,11 @@
             this.ConnectionInfoTab.Name = "ConnectionInfoTab";
             this.ConnectionInfoTab.UseVisualStyleBackColor = true;
             // 
+            // connectorEditor1
+            // 
+            resources.ApplyResources(this.connectorEditor1, "connectorEditor1");
+            this.connectorEditor1.Name = "connectorEditor1";
+            // 
             // localizableStringList1
             // 
             this.localizableStringList1.Items.AddRange(new LDDModder.BrickEditor.Localization.LocalizableString[] {
@@ -246,11 +252,6 @@
             // NoConnectorRefLabel
             // 
             resources.ApplyResources(this.NoConnectorRefLabel, "NoConnectorRefLabel");
-            // 
-            // connectorEditor1
-            // 
-            resources.ApplyResources(this.connectorEditor1, "connectorEditor1");
-            this.connectorEditor1.Name = "connectorEditor1";
             // 
             // ElementDetailPanel
             // 

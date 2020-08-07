@@ -40,12 +40,6 @@ namespace LDDModder.Modding.Editing
             set => Properties.Description = value;
         }
 
-        public string Comments
-        {
-            get => Properties.Comments;
-            set => Properties.Comments = value;
-        }
-
         public List<int> Aliases => Properties.Aliases;
 
         public Platform Platform
@@ -1382,11 +1376,10 @@ namespace LDDModder.Modding.Editing
                 DefaultCamera = DefaultCamera,
                 DefaultOrientation = DefaultOrientation?.ToLDD(),
                 MainGroup = MainGroup,
-                Platform= Platform,
+                Platform = Platform,
                 PhysicsAttributes = PhysicsAttributes,
                 PartVersion = PartVersion,
                 FileVersion = PrimitiveFileVersion,
-                //SubMaterials = Surfaces.Select(x => x.SubMaterialIndex).ToArray()
             };
 
             if (Surfaces.Count > 1)
@@ -1435,21 +1428,25 @@ namespace LDDModder.Modding.Editing
             return part;
         }
 
+        //public void RecalculateRoundEdges(float breakAngle = 35f, bool overwrite = false)
+        //{
+
+        //}
+
         public void ComputeEdgeOutlines(float breakAngle = 35f)
         {
             var meshRefs = Surfaces.SelectMany(x => x.GetAllMeshReferences()).ToList();
             //var unloadedMeshes = meshRefs.Select(x => x.ModelMesh).Where(x => !x.IsModelLoaded).Distinct().ToList();
+
             foreach (var layerGroup in meshRefs.GroupBy(x => x.RoundEdgeLayer))
             {
                 var layerTriangles = layerGroup.Where(x => x.GeneratedTriangles != null)
                     .SelectMany(x => x.GeneratedTriangles);
                 ShaderDataGenerator.ComputeEdgeOutlines(layerTriangles, breakAngle);
-                //layerGroup.Select(x=>x.GetGeometry())
             }
-            //unloadedMeshes.ForEach(x => x.UnloadModel());
-            //var allMeshes = Surfaces.SelectMany(x => x.GetAllModelMeshes());
-            //ShaderDataGenerator.ComputeEdgeOutlines(allMeshes.SelectMany(x => x.Geometry.Triangles));
         }
+
+
 
         #endregion
     }

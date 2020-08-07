@@ -8,8 +8,6 @@ namespace LDDModder.BrickEditor.Models.Navigation
 {
     public class ProjectElementNode : ProjectTreeNode
     {
-        //public override PartProject Project => Element.Project;
-
         public PartElement Element { get; set; }
 
         public Type ElementType => Element?.GetElementType();
@@ -20,18 +18,26 @@ namespace LDDModder.BrickEditor.Models.Navigation
             NodeID = element.ID;
             if (string.IsNullOrEmpty(NodeID))
                 NodeID = element.GetHashCode().ToString();
+            Element.ParentChanged += Element_ParentChanged;
         }
 
-        public ProjectElementNode(PartElement element, string text)
+        public override void FreeObjects()
         {
-            Element = element;
-            NodeID = element.ID;
-            if (string.IsNullOrEmpty(NodeID))
-                NodeID = element.GetHashCode().ToString();
-            Text = text;
+            base.FreeObjects();
+
+            if (Element != null)
+            {
+                Element.ParentChanged -= Element_ParentChanged;
+                Element = null;
+            }
         }
 
-        
+        private void Element_ParentChanged(object sender, EventArgs e)
+        {
+            var modelExt = Element.GetExtension<ModelElementExtension>();
+            modelExt.InvalidateVisibility();
+            UpdateVisibility();
+        }
 
         protected override void RebuildChildrens()
         {
@@ -136,7 +142,7 @@ namespace LDDModder.BrickEditor.Models.Navigation
             if (Element is ModelMeshReference)
                 return true;
 
-            if (Element.Project.Flexible)
+            //if (Element.Project.Flexible)
             {
                 if (Element is PartCollision || 
                     Element is PartConnection)
@@ -180,29 +186,31 @@ namespace LDDModder.BrickEditor.Models.Navigation
 
         public override bool CanDropBefore(ProjectTreeNode node)
         {
+            var targetElement = (node as ProjectElementNode)?.Element;
+
             if (ElementType == typeof(ModelMeshReference))
-            {
-                if (node is ProjectElementNode elementNode)
-                {
-                    if (elementNode.Element is ModelMeshReference)
-                        return true;
-                }
-            }
+                return targetElement is ModelMeshReference;
+            else if (ElementType == typeof(PartCollision))
+                return targetElement is PartCollision;
+            else if (ElementType == typeof(PartConnection))
+                return targetElement is PartConnection;
             return base.CanDropBefore(node);
         }
 
         public override bool CanDropAfter(ProjectTreeNode node)
         {
-            if (ElementType == typeof(ModelMeshReference))
-            {
-                if (node is ProjectElementNode elementNode)
-                {
-                    if (elementNode.Element is ModelMeshReference)
-                        return true;
-                }
-            }
+            var targetElement = (node as ProjectElementNode)?.Element;
+
+            if(ElementType == typeof(ModelMeshReference))
+                return targetElement is ModelMeshReference;
+            else if (ElementType == typeof(PartCollision))
+                return targetElement is PartCollision;
+            else if (ElementType == typeof(PartConnection))
+                return targetElement is PartConnection;
+
             return base.CanDropAfter(node);
         }
+
 
         public override void UpdateVisibility()
         {

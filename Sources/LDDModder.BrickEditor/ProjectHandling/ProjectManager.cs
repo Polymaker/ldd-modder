@@ -738,13 +738,11 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
         #region Navigation Tree
 
-        //public ProjectElementNode GetElementTreeNode(PartElement element)
-        //{
-        //    throw new NotImplementedException();
-        //}
 
         public void RebuildNavigationTree()
         {
+            foreach (var node in NavigationTreeNodes)
+                node.FreeObjects();
             NavigationTreeNodes.Clear();
 
             NavigationTreeNodes.Add(new ProjectCollectionNode(
