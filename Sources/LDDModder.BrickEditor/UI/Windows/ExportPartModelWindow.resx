@@ -526,7 +526,7 @@
     <value>PartBrowseTextBox</value>
   </data>
   <data name="&gt;&gt;PartBrowseTextBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.BrowseTextBox, Brick Studio, Version=1.0.0.25527, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.BrowseTextBox, Brick Studio, Version=1.0.4.14336, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;PartBrowseTextBox.Parent" xml:space="preserve">
     <value>Step1GroupBox</value>

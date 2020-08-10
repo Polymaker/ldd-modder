@@ -229,7 +229,7 @@
     <value>0, 0, 0, 0</value>
   </data>
   <data name="SelectionTransformEdit.Size" type="System.Drawing.Size, System.Drawing">
-    <value>175, 94</value>
+    <value>302, 74</value>
   </data>
   <data name="SelectionTransformEdit.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -238,7 +238,7 @@
     <value>SelectionTransformEdit</value>
   </data>
   <data name="&gt;&gt;SelectionTransformEdit.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.TransformEditor, Brick Studio, Version=1.0.4.20591, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.TransformEditor, Brick Studio, Version=1.0.4.14336, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;SelectionTransformEdit.Parent" xml:space="preserve">
     <value>PropertiesTableLayout</value>
@@ -322,7 +322,7 @@
     <value>SubMaterialIndexBox</value>
   </data>
   <data name="&gt;&gt;SubMaterialIndexBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.4.20591, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.4.14336, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;SubMaterialIndexBox.Parent" xml:space="preserve">
     <value>PropertiesTableLayout</value>
@@ -343,7 +343,7 @@
     <value>CollisionSizeEditor</value>
   </data>
   <data name="&gt;&gt;CollisionSizeEditor.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Editors.VectorEditor, Brick Studio, Version=1.0.4.20591, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Editors.VectorEditor, Brick Studio, Version=1.0.4.14336, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;CollisionSizeEditor.Parent" xml:space="preserve">
     <value>PropertiesTableLayout</value>
@@ -364,7 +364,7 @@
     <value>CollisionRadiusBox</value>
   </data>
   <data name="&gt;&gt;CollisionRadiusBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.4.20591, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.4.14336, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;CollisionRadiusBox.Parent" xml:space="preserve">
     <value>PropertiesTableLayout</value>
@@ -412,7 +412,7 @@
     <value>6</value>
   </data>
   <data name="PropertiesTableLayout.Size" type="System.Drawing.Size, System.Drawing">
-    <value>604, 217</value>
+    <value>604, 197</value>
   </data>
   <data name="PropertiesTableLayout.TabIndex" type="System.Int32, mscorlib">
     <value>6</value>
@@ -586,7 +586,7 @@
     <value>connectorEditor1</value>
   </data>
   <data name="&gt;&gt;connectorEditor1.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.ConnectorEditor, Brick Studio, Version=1.0.4.20591, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.ConnectorEditor, Brick Studio, Version=1.0.4.14336, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;connectorEditor1.Parent" xml:space="preserve">
     <value>ConnectionInfoTab</value>
@@ -721,42 +721,42 @@
     <value>localizableStringList1</value>
   </data>
   <data name="&gt;&gt;localizableStringList1.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableStringList, Brick Studio, Version=1.0.4.20591, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableStringList, Brick Studio, Version=1.0.4.14336, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;MultiSelectionMsg.Name" xml:space="preserve">
     <value>MultiSelectionMsg</value>
   </data>
   <data name="&gt;&gt;MultiSelectionMsg.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.4.20591, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.4.14336, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;NoSelectionMsg.Name" xml:space="preserve">
     <value>NoSelectionMsg</value>
   </data>
   <data name="&gt;&gt;NoSelectionMsg.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.4.20591, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.4.14336, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;TopStudsLabel.Name" xml:space="preserve">
     <value>TopStudsLabel</value>
   </data>
   <data name="&gt;&gt;TopStudsLabel.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.4.20591, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.4.14336, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;BottomStudsLabel.Name" xml:space="preserve">
     <value>BottomStudsLabel</value>
   </data>
   <data name="&gt;&gt;BottomStudsLabel.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.4.20591, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.4.14336, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;NoConnectorRefLabel.Name" xml:space="preserve">
     <value>NoConnectorRefLabel</value>
   </data>
   <data name="&gt;&gt;NoConnectorRefLabel.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.4.20591, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.4.14336, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>ElementDetailPanel</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Panels.ProjectDocumentPanel, Brick Studio, Version=1.0.4.20591, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Panels.ProjectDocumentPanel, Brick Studio, Version=1.0.4.14336, Culture=neutral, PublicKeyToken=null</value>
   </data>
 </root>

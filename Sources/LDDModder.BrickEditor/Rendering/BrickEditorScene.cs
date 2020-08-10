@@ -1,4 +1,5 @@
 ﻿using LDDModder.BrickEditor.Rendering.UI;
+using OpenTK;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,8 @@ namespace LDDModder.BrickEditor.Rendering
     public class BrickEditorScene : IDisposable
     {
         public Camera Camera { get; set; }
+
+        public Vector2 ViewSize { get; private set; }
 
         public OpenTK.GLControl GLControl { get; private set; }
 
@@ -31,7 +34,12 @@ namespace LDDModder.BrickEditor.Rendering
 
         private void GLViewSizeChanged(object sender, EventArgs e)
         {
-            
+            UpdateViewSize();
+        }
+
+        private void UpdateViewSize()
+        {
+            ViewSize = new Vector2(GLControl.Width, GLControl.Height);
         }
 
         public void Dispose()
@@ -45,9 +53,15 @@ namespace LDDModder.BrickEditor.Rendering
             }
         }
 
+        #region Model Management
+
         public PartElementModel GetElementModel(Modding.Editing.PartElement element)
         {
             return Models.OfType<PartElementModel>().FirstOrDefault(x => x.Element == element);
         }
+
+        #endregion
+
+
     }
 }

@@ -142,8 +142,6 @@
             // ChkConnections
             // 
             resources.ApplyResources(this.ChkConnections, "ChkConnections");
-            this.ChkConnections.Checked = true;
-            this.ChkConnections.CheckState = System.Windows.Forms.CheckState.Checked;
             this.ChkConnections.Name = "ChkConnections";
             this.ChkConnections.UseVisualStyleBackColor = true;
             // 

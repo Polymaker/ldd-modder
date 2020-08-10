@@ -8,6 +8,13 @@ using System.Xml.Linq;
 
 namespace System.Xml.Linq
 {
+    public enum BooleanXmlRepresentation
+    {
+        TrueFalse,
+        YesNo,
+        OneZero
+    }
+
     public static class LinqXmlExtensions
     {
         #region Attributes
@@ -345,12 +352,7 @@ namespace System.Xml.Linq
             return newElem;
         }
 
-        public enum BooleanXmlRepresentation
-        {
-            TrueFalse,
-            YesNo,
-            OneZero
-        }
+        
 
         public static void AddBooleanAttribute(this XElement element, string attributeName, bool value, BooleanXmlRepresentation representation = BooleanXmlRepresentation.OneZero)
         {

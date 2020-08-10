@@ -71,7 +71,7 @@ namespace System.Collections.Generic
             }
         }
 
-        public bool IsReadOnly => throw new NotImplementedException();
+        public bool IsReadOnly => false;
 
         /// <summary>
         /// Initializes a new instance of the ThreadSafeList class.
@@ -234,6 +234,21 @@ namespace System.Collections.Generic
             return cloneList.AsReadOnly();
         }
 
+        public void CopyTo(T[] array, int arrayIndex)
+        {
+            _Lock.EnterReadLock();
+            try
+            {
+                _Items.CopyTo(array, arrayIndex);
+            }
+            finally
+            {
+                _Lock.ExitReadLock();
+            }
+        }
+
+        #region LinQ & Helper functions
+
         public void ForEach(Action<T> predicate)
         {
             foreach (var item in this)
@@ -296,18 +311,8 @@ namespace System.Collections.Generic
             }
         }
 
-        public void CopyTo(T[] array, int arrayIndex)
-        {
-            _Lock.EnterReadLock();
-            try
-            {
-                _Items.CopyTo(array, arrayIndex);
-            }
-            finally
-            {
-                _Lock.ExitReadLock();
-            }
-        }
+        #endregion
+        
     }
 
 }

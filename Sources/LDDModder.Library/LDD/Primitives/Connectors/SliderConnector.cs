@@ -1,10 +1,5 @@
 ﻿using LDDModder.Simple3D;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 
 namespace LDDModder.LDD.Primitives.Connectors
@@ -61,19 +56,27 @@ namespace LDDModder.LDD.Primitives.Connectors
             element.AddNumberAttribute("length", Length);
 
             if (Cylindrical)
-                element.AddBooleanAttribute("cylindrical", Cylindrical);
+                element.AddBooleanAttribute("cylindrical", Cylindrical, 
+                    BooleanXmlRepresentation.OneZero);
 
             if (!string.IsNullOrEmpty(Tag))
                 element.Add(new XAttribute("tag", Tag));
 
-            element.AddBooleanAttribute("startCapped", StartCapped);
-            element.AddBooleanAttribute("endCapped", EndCapped);
+            element.AddBooleanAttribute("startCapped", StartCapped,
+                    BooleanXmlRepresentation.OneZero);
+
+            element.AddBooleanAttribute("endCapped", EndCapped,
+                    BooleanXmlRepresentation.OneZero);
 
             if (Spring.HasValue)
             {
                 element.Add(new XAttribute("spring", 
-                    string.Format(CultureInfo.InvariantCulture, "{0},{1},{2}", Spring.Value.X, Spring.Value.Y, Spring.Value.Z)
-                    ));
+                    string.Format(CultureInfo.InvariantCulture, "{0},{1},{2}", 
+                        Spring.Value.X, 
+                        Spring.Value.Y, 
+                        Spring.Value.Z)
+                    )
+                );
             }
         }
 

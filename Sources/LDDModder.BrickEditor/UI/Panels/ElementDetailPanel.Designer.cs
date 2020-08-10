@@ -104,7 +104,6 @@
             resources.ApplyResources(this.SelectionTransformEdit, "SelectionTransformEdit");
             this.PropertiesTableLayout.SetColumnSpan(this.SelectionTransformEdit, 2);
             this.SelectionTransformEdit.Name = "SelectionTransformEdit";
-            this.SelectionTransformEdit.ViewLayout = LDDModder.BrickEditor.UI.Controls.TransformEditor.EditLayout.Vertical;
             // 
             // NameLabel
             // 
