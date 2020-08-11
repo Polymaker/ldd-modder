@@ -8,10 +8,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LDDModder.LDD.Primitives.Connectors;
+using LDDModder.BrickEditor.UI.Controls;
 
 namespace LDDModder.BrickEditor.UI.Editors
 {
-    public partial class StudConnectionEditor : UserControl
+    public partial class StudConnectionEditor : ProjectAwareControl
     {
         [Browsable(false)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -51,8 +52,21 @@ namespace LDDModder.BrickEditor.UI.Editors
         {
             if (StudConnector != null)
             {
-                StudConnector.StudHeight = (int)GridHeightBox.Value;
-                StudConnector.StudWidth = (int)GridWidthBox.Value;
+                int newWidth = (int)GridWidthBox.Value;
+                int newHeight = (int)GridHeightBox.Value;
+
+                if (ProjectManager != null)
+                {
+                    if (!ProjectManager.ValidateResizeStud(StudConnector, newWidth, newHeight))
+                    {
+                        GridHeightBox.Value = StudConnector.StudHeight;
+                        GridWidthBox.Value = StudConnector.StudWidth;
+                        return;
+                    }
+                }
+
+                StudConnector.StudHeight = newHeight;
+                StudConnector.StudWidth = newWidth;
             }
         }
 

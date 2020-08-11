@@ -62,11 +62,11 @@ namespace LDDModder.LDD.Palettes
 
             bagElem.Add(new XAttribute("countable", Countable));
             
-            bagElem.AddBooleanAttribute("buyable", Buyable, LinqXmlExtensions.BooleanXmlRepresentation.TrueFalse);
+            bagElem.AddBooleanAttribute("buyable", Buyable, BooleanXmlRepresentation.TrueFalse);
 
             bagElem.Add(new XAttribute("brand", ParentBrand.ToString()));
 
-            bagElem.AddBooleanAttribute("brandFilter", BrandFilter, LinqXmlExtensions.BooleanXmlRepresentation.TrueFalse);
+            bagElem.AddBooleanAttribute("brandFilter", BrandFilter, BooleanXmlRepresentation.TrueFalse);
             doc.Save(stream);
         }
 

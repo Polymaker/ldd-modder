@@ -16,6 +16,8 @@ namespace LDDModder.Modding.Editing
 
         private string _ConnectionID;
         private int _FieldIndex;
+        private int _PositionX;
+        private int _PositionY;
         private int _Value1;
         private int _Value2;
 
@@ -29,10 +31,18 @@ namespace LDDModder.Modding.Editing
 
         public PartConnection Connection => GetLinkedConnection();
 
-        public int FieldIndex
+        public int FieldIndex { get; set; }
+
+        public int PositionX
         {
-            get => _FieldIndex;
-            set => SetPropertyValue(ref _FieldIndex, value);
+            get => _PositionX;
+            set => SetPropertyValue(ref _PositionX, value);
+        }
+
+        public int PositionY
+        {
+            get => _PositionY;
+            set => SetPropertyValue(ref _PositionY, value);
         }
 
         public int Value1
@@ -49,12 +59,22 @@ namespace LDDModder.Modding.Editing
 
         public Custom2DFieldConnector Connector => GetCustom2DField();
 
-        public Custom2DFieldNode FieldNode => Connector?.GetNode(FieldIndex);
+        public Custom2DFieldNode FieldNode
+        {
+            get
+            {
+                if (PositionX >= 0 && PositionY >= 0)
+                    return Connector?.GetNode(PositionX, PositionY);
+                return Connector?.GetNode(FieldIndex);
+            }
+        }
 
         public StudReference()
         {
             ConnectionIndex = -1;
             FieldIndex = -1;
+            PositionX = -1;
+            PositionY = -1;
         }
 
         public StudReference(int connectionIndex, int fieldIndex, int value1, int value2)
@@ -63,28 +83,32 @@ namespace LDDModder.Modding.Editing
             FieldIndex = fieldIndex;
             Value1 = value1;
             Value2 = value2;
+            PositionX = -1;
+            PositionY = -1;
         }
 
         public StudReference(string connectionID, int fieldIndex, int value1, int value2)
         {
             _ConnectionID = connectionID;
-            _FieldIndex = fieldIndex;
+            FieldIndex = fieldIndex;
             _Value1 = value1;
             _Value2 = value2;
+            PositionX = -1;
+            PositionY = -1;
         }
 
-        public StudReference(Custom2DFieldReference fieldReference)
-        {
-            ConnectionIndex = fieldReference.ConnectorIndex;
-            FieldIndex = fieldReference.FieldIndices[0].Index;
-            Value1 = fieldReference.FieldIndices[0].Value2;
-            Value2 = fieldReference.FieldIndices[0].Value4;
-        }
+        //public StudReference(Custom2DFieldReference fieldReference)
+        //{
+        //    ConnectionIndex = fieldReference.ConnectorIndex;
+        //    FieldIndex = fieldReference.FieldIndices[0].Index;
+        //    Value1 = fieldReference.FieldIndices[0].Value2;
+        //    Value2 = fieldReference.FieldIndices[0].Value4;
+        //}
 
-        internal void SetConnectionID(string id)
-        {
-            _ConnectionID = id;
-        }
+        //internal void SetConnectionID(string id)
+        //{
+        //    _ConnectionID = id;
+        //}
 
         public PartConnection GetLinkedConnection()
         {
@@ -103,7 +127,20 @@ namespace LDDModder.Modding.Editing
             base.LoadFromXml(element);
 
             ConnectionID = element.ReadAttribute(nameof(ConnectionID), string.Empty);
-            FieldIndex = element.ReadAttribute(nameof(FieldIndex), -1);
+
+            if (element.HasAttribute("X") && element.HasAttribute("Y"))
+            {
+                PositionX = element.ReadAttribute("X", -1);
+                PositionY = element.ReadAttribute("Y", -1);
+                FieldIndex = -1;
+            }
+            else
+            {
+                PositionX = -1;
+                PositionY = -1;
+                FieldIndex = element.ReadAttribute(nameof(FieldIndex), -1);
+            }
+            
             Value1 = element.ReadAttribute(nameof(Value1), 0);
             Value2 = element.ReadAttribute(nameof(Value2), 0);
 
@@ -118,25 +155,34 @@ namespace LDDModder.Modding.Editing
         public override XElement SerializeToXml()
         {
             var elem = SerializeToXmlBase(NODE_NAME);
+
             if (!string.IsNullOrEmpty(ConnectionID))
                 elem.WriteAttribute(nameof(ConnectionID), ConnectionID);
-            elem.AddNumberAttribute(nameof(FieldIndex), FieldIndex);
+
+            if (PositionX >=0 && PositionY >= 0)
+            {
+                elem.AddNumberAttribute("X", PositionX);
+                elem.AddNumberAttribute("Y", PositionY);
+            }
+            else
+                elem.AddNumberAttribute(nameof(FieldIndex), FieldIndex);
+
             elem.AddNumberAttribute(nameof(Value1), Value1);
             elem.AddNumberAttribute(nameof(Value2), Value2);
 
             return elem;
         }
 
-        public XNode[] SerializeToXml2()
-        {
-            var studElem = SerializeToXml();
+        //public XNode[] SerializeToXml2()
+        //{
+        //    var studElem = SerializeToXml();
 
-            if (FieldNode == null)
-                return new XNode[] { studElem };
+        //    if (FieldNode == null)
+        //        return new XNode[] { studElem };
 
-            var info = new XComment($"Stud position X: {FieldNode.X} Y: {FieldNode.Y}");
-            return new XNode[] { info, studElem };
-        }
+        //    var info = new XComment($"Stud position X: {FieldNode.X} Y: {FieldNode.Y}");
+        //    return new XNode[] { info, studElem };
+        //}
 
         public static StudReference FromXml(XElement element)
         {

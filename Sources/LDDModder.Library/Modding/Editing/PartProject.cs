@@ -847,16 +847,6 @@ namespace LDDModder.Modding.Editing
 
         #region Methods
 
-        public void UpdateConnectionIndexes()
-        {
-            var connectionIDs = new List<string>();
-            foreach (var conn in Connections)
-                connectionIDs.Add(conn.ID);
-
-            foreach (var studRef in GetAllElements<StudReference>())
-                studRef.ConnectionIndex = connectionIDs.IndexOf(studRef.ConnectionID);
-        }
-
         private void RenumberSurfaces()
         {
             int surfaceID = 0;
@@ -869,49 +859,62 @@ namespace LDDModder.Modding.Editing
             }
         }
 
-        private void LinkBonesAndStudReferences()
+        private void UpdateStudReferencesIndices()
         {
-            foreach (var surf in Surfaces)
+            foreach (var studRef in GetAllElements<StudReference>())
             {
-                foreach (var comp in surf.Components.OfType<PartCullingModel>())
+                PartConnection linkedConnection = null;
+
+                if (!string.IsNullOrEmpty(studRef.ConnectionID))
                 {
-                    foreach (var studRef in comp.GetStudReferences())
+                    linkedConnection = Connections
+                        .FirstOrDefault(x => x.ID == studRef.ConnectionID);
+                }
+
+                if (linkedConnection == null &&
+                    studRef.ConnectionIndex != -1 &&
+                    studRef.ConnectionIndex < Connections.Count)
+                {
+                    linkedConnection = Connections[studRef.ConnectionIndex];
+                }
+
+                if (linkedConnection != null && linkedConnection.ConnectorType != ConnectorType.Custom2DField)
+                {
+                    Debug.WriteLine("Component references non Custom2DField connection!");
+                    linkedConnection = null;
+                }
+
+                if (linkedConnection == null &&
+                        (studRef.ConnectionIndex >= 0 || !string.IsNullOrEmpty(studRef.ConnectionID))
+                    )
+                {
+                    Debug.WriteLine("Could not find connection!");
+                }
+
+                studRef.ConnectionID = linkedConnection?.ID;
+
+                studRef.ConnectionIndex = linkedConnection != null ? Connections.IndexOf(linkedConnection) : -1;
+
+                if (studRef.Connector != null)
+                {
+                    if (studRef.PositionX >= 0 && studRef.PositionY >= 0)
                     {
-                        PartConnection linkedConnection = null;
-
-                        if (!string.IsNullOrEmpty(studRef.ConnectionID))
-                        {
-                            linkedConnection = Connections
-                                .FirstOrDefault(x => x.ID == studRef.ConnectionID);
-                        }
-
-                        if (linkedConnection == null && 
-                            studRef.ConnectionIndex != -1 &&
-                            studRef.ConnectionIndex < Connections.Count)
-                        {
-                            linkedConnection = Connections[studRef.ConnectionIndex];
-                        }
-
-                        if (linkedConnection != null && linkedConnection.ConnectorType != ConnectorType.Custom2DField)
-                        {
-                            Debug.WriteLine("Component references non Custom2DField connection!");
-                            linkedConnection = null;
-                        }
-
-                        if (linkedConnection == null && 
-                                (studRef.ConnectionIndex >= 0 || !string.IsNullOrEmpty(studRef.ConnectionID))
-                            )
-                        {
-                            Debug.WriteLine("Could not find connection!");
-                        }
-
-                        studRef.ConnectionID = linkedConnection?.ID;
-                        
-                        studRef.ConnectionIndex = linkedConnection != null ? Connections.IndexOf(linkedConnection) : -1;
+                        studRef.FieldIndex = studRef.Connector.PositionToIndex(studRef.PositionX, studRef.PositionY);
+                    }
+                    else if (studRef.FieldIndex >= 0)
+                    {
+                        var pos = studRef.Connector.IndexToPosition(studRef.FieldIndex);
+                        studRef.PositionX = pos.Item1;
+                        studRef.PositionY = pos.Item2;
                     }
                 }
+                else
+                    studRef.FieldIndex = -1;
             }
+        }
 
+        private void UpdateBoneReferencesIndices()
+        {
             foreach (var bone in Bones)
             {
                 if (bone.TargetBoneID < 0 /*|| bone.ConnectionIndex < 0*/)
@@ -926,7 +929,7 @@ namespace LDDModder.Modding.Editing
                 if (!string.IsNullOrEmpty(bone.SourceConnectionID))
                     sourceConn = bone.Connections.FirstOrDefault(x => x.ID == bone.SourceConnectionID);
 
-                if (sourceConn == null && bone.SourceConnectionIndex >= 0 
+                if (sourceConn == null && bone.SourceConnectionIndex >= 0
                     && bone.SourceConnectionIndex < bone.Connections.Count)
                     sourceConn = bone.Connections[bone.SourceConnectionIndex];
 
@@ -939,7 +942,7 @@ namespace LDDModder.Modding.Editing
                 if (!string.IsNullOrEmpty(bone.TargetConnectionID))
                     targetConn = prevBone.Connections.FirstOrDefault(x => x.ID == bone.TargetConnectionID);
 
-                if (targetConn == null && bone.TargetConnectionIndex >= 0 
+                if (targetConn == null && bone.TargetConnectionIndex >= 0
                     && bone.TargetConnectionIndex < prevBone.Connections.Count)
                     targetConn = prevBone.Connections[bone.TargetConnectionIndex];
 
@@ -949,6 +952,13 @@ namespace LDDModder.Modding.Editing
                     bone.TargetConnectionIndex = prevBone.Connections.IndexOf(targetConn);
                 }
             }
+        }
+
+        private void LinkBonesAndStudReferences()
+        {
+            UpdateStudReferencesIndices();
+
+            UpdateBoneReferencesIndices();
         }
 
         public MeshGeometry LoadModelMesh(ModelMesh modelMesh)
@@ -1176,7 +1186,7 @@ namespace LDDModder.Modding.Editing
                 }
             }
 
-            UpdateConnectionIndexes();
+            UpdateBoneReferencesIndices();
         }
 
         public void CalculateBoneBoundingBoxes()
@@ -1242,9 +1252,10 @@ namespace LDDModder.Modding.Editing
             if (!IsLoading)
             {
                 if (ccea.Collection.ElementType == typeof(PartConnection) &&
-                    GetAllElements<PartCullingModel>().Any())
+                    ccea.ChangedElements.OfType<PartConnection>()
+                        .Any(x => x.ConnectorType == ConnectorType.Custom2DField))
                 {
-                    UpdateConnectionIndexes();
+                    UpdateStudReferencesIndices();
                 }
 
                 if (ccea.Collection.ElementType == typeof(PartSurface))

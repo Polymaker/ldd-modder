@@ -625,6 +625,22 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
         #endregion
 
+        #region Editing Validation
+
+        public bool ValidateResizeStud(Custom2DFieldConnector connector, int newWidth, int newHeight)
+        {
+            //var connection = CurrentProject.GetAllElements<PartConnection>(x => x.Connector == connector).FirstOrDefault();
+            var studRefs = CurrentProject.GetAllElements<StudReference>(x => x.Connector == connector).ToList();
+            if (studRefs.Any(x => x.PositionX >= newWidth || x.PositionY >= newHeight))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        #endregion
+
         #region Element handling
 
         public bool ConfirmCanDelete(PartElement element)

@@ -71,7 +71,7 @@ namespace LDDModder.Modding.Editing
                 elem.Add(new XComment("The following 4 studs are adjacent to the tube"));
                 var studsElem = elem.AddElement(nameof(AdjacentStuds));
                 foreach (var stud in AdjacentStuds)
-                    studsElem.Add(stud.SerializeToXml2());
+                    studsElem.Add(stud.SerializeToXml());
             }
             
             return elem;

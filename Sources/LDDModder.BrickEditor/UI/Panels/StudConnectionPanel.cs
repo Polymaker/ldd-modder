@@ -36,6 +36,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             ConnectorComboBox.ComboBox.DisplayMember = "Name";
             ConnectorComboBox.ComboBox.ValueMember = "ID";
             CloseButtonVisible = false;
+            studConnectionEditor1.AssignManager(ProjectManager);
         }
 
         protected override void OnLoad(EventArgs e)
