@@ -52,8 +52,8 @@ namespace LDDModder.BrickEditor.UI.Editors
         {
             if (StudConnector != null)
             {
-                int newWidth = (int)GridWidthBox.Value;
-                int newHeight = (int)GridHeightBox.Value;
+                int newWidth = (int)GridWidthBox.Value * 2;
+                int newHeight = (int)GridHeightBox.Value * 2;
 
                 if (ProjectManager != null)
                 {
@@ -63,10 +63,14 @@ namespace LDDModder.BrickEditor.UI.Editors
                         GridWidthBox.Value = StudConnector.StudWidth;
                         return;
                     }
+                    
                 }
 
-                StudConnector.StudHeight = newHeight;
-                StudConnector.StudWidth = newWidth;
+                ProjectManager?.StartBatchChanges();
+
+                StudConnector.Resize(newWidth, newHeight);
+
+                ProjectManager?.EndBatchChanges();
             }
         }
 

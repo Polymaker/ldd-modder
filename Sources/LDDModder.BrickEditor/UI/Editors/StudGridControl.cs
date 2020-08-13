@@ -120,18 +120,23 @@ namespace LDDModder.BrickEditor.UI.Editors
             if (_StudConnector != null)
             {
                 _StudConnector.PropertyChanged -= StudConnector_PropertyChanged;
-                _StudConnector.NodeValueChanged -= StudConnector_NodeValueChanged;
+                _StudConnector.SizeChanged -= StudConnector_SizeChanged;
             }
 
             _StudConnector = connector ?? new Custom2DFieldConnector();
 
             _StudConnector.PropertyChanged += StudConnector_PropertyChanged;
-            _StudConnector.NodeValueChanged += StudConnector_NodeValueChanged;
-
+            _StudConnector.SizeChanged += StudConnector_SizeChanged;
             UpdateControlSize();
             Invalidate();
 
             ConnectorChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void StudConnector_SizeChanged(object sender, EventArgs e)
+        {
+            UpdateControlSize();
+            ConnectorSizeChanged.Invoke(this, EventArgs.Empty);
         }
 
         private void StudConnector_NodeValueChanged(object sender, PropertyChangedEventArgs e)
@@ -142,10 +147,10 @@ namespace LDDModder.BrickEditor.UI.Editors
 
         private void StudConnector_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            UpdateControlSize();
-            if (e.PropertyName == nameof(Custom2DFieldConnector.Width) ||
-                e.PropertyName == nameof(Custom2DFieldConnector.Height))
-                ConnectorSizeChanged.Invoke(this, EventArgs.Empty);
+            //UpdateControlSize();
+            //if (e.PropertyName == nameof(Custom2DFieldConnector.Width) ||
+            //    e.PropertyName == nameof(Custom2DFieldConnector.Height))
+            //    ConnectorSizeChanged.Invoke(this, EventArgs.Empty);
             Invalidate();
             DataChanged?.Invoke(this, EventArgs.Empty);
         }
@@ -705,7 +710,7 @@ namespace LDDModder.BrickEditor.UI.Editors
         {
             if (Custom2DFieldNode.Parse(content, out int[] nodeValues)) //Single Value to be pasted
             {
-                var arrayClone = StudConnector.GetArrayCopy();
+                var arrayClone = (Custom2DFieldValue[,])StudConnector.Values.Clone();
                 var selectedCells = GetSelectedNodes();
                 foreach (var cell in selectedCells)
                     arrayClone[cell.X, cell.Y].Values = nodeValues;
@@ -714,7 +719,6 @@ namespace LDDModder.BrickEditor.UI.Editors
             }
             else
             {
-                var pastedNodes = new List<Custom2DFieldNode>();
                 var lines = content.Split('\r', '\n').ToList();
                 lines.RemoveAll(x => string.IsNullOrWhiteSpace(x?.Trim()));
 
@@ -730,7 +734,7 @@ namespace LDDModder.BrickEditor.UI.Editors
 
                 if (pastedValues.All(x => x.Length == colCount))
                 {
-                    var arrayClone = StudConnector.GetArrayCopy();
+                    var arrayClone = (Custom2DFieldValue[,])StudConnector.Values.Clone();
                     int startX = FocusedCell?.X ?? 0;
                     int startY = FocusedCell?.Y ?? 0;
                     int endX = StudConnector.Width;
@@ -758,8 +762,8 @@ namespace LDDModder.BrickEditor.UI.Editors
                             if (targetX > endX || targetY > endY)
                                 continue;
 
-                            if (Custom2DFieldNode.Parse(pastedValues[y][x], out int[] cellValues))
-                                arrayClone[targetX, targetY].Values = cellValues;
+                            if (Custom2DFieldValue.Parse(pastedValues[y][x], out Custom2DFieldValue cellValues))
+                                arrayClone[targetX, targetY] = cellValues;
                         }
                     }
 

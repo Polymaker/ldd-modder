@@ -109,9 +109,12 @@ namespace LDDModder.Modding.Editing
                     return;
                 }
 
-                var changeArgs = new ElementValueChangedEventArgs(this, 
-                    e.ChildObject, eventArgs.PropertyName, 
-                    eventArgs.OldValue, eventArgs.NewValue);
+                var changeArgs = new ElementValueChangedEventArgs(this,
+                    e.ChildObject, eventArgs.PropertyName,
+                    eventArgs.OldValue, eventArgs.NewValue)
+                {
+                    Index = eventArgs.Index
+                };
                 RaisePropertyValueChanged(changeArgs);
             }
         }
@@ -121,7 +124,10 @@ namespace LDDModder.Modding.Editing
             if (IsAssigningConnectorProperties)
                 return;
 
-            var changeArgs = new ElementValueChangedEventArgs(this, Connector, e.PropertyName, e.OldValue, e.NewValue);
+            var changeArgs = new ElementValueChangedEventArgs(this, Connector, e.PropertyName, e.OldValue, e.NewValue)
+            {
+                Index = e.Index
+            };
             RaisePropertyValueChanged(changeArgs);
         }
 

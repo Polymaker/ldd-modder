@@ -118,8 +118,8 @@ namespace LDDModder.Modding.Editing
                 AdjacentStuds.Clear();
                 var custom2DField = tubeStud.Connector;
 
-                int posX = tubeStud.FieldNode.X;
-                int posY = tubeStud.FieldNode.Y;
+                int posX = tubeStud.PositionX;
+                int posY = tubeStud.PositionY;
                 int[] offsets = new int[] { -1, 1 };
 
                 for (int i = 0; i < 2; i++)

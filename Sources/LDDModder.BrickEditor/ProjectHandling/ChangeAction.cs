@@ -74,8 +74,25 @@ namespace LDDModder.BrickEditor.ProjectHandling
         {
             object objToAssign = Data.ChildProperty ?? Data.Element;
             var propInfo = objToAssign.GetType().GetProperty(Data.PropertyName);
+
             if (propInfo != null)
-                propInfo.SetValue(objToAssign, value);
+            {
+                if (Data.Index != null)
+                {
+                    //TODO: find a way to remove this hard-coded case
+                    if (Data.Index.Length == 2 && 
+                        objToAssign is LDD.Primitives.Connectors.Custom2DFieldConnector connector)
+                    {
+                        connector.SetValue(Data.Index[0], Data.Index[1], (LDD.Primitives.Connectors.Custom2DFieldValue)value);
+                        return;
+                    }
+                    var arrayObj = propInfo.GetValue(objToAssign) as Array;
+                    if (arrayObj != null)
+                        arrayObj.SetValue(value, Data.Index);
+                }
+                else
+                    propInfo.SetValue(objToAssign, value);
+            }
         }
 
         public override void Undo()

@@ -53,9 +53,81 @@ namespace System.ComponentModel
                 if (oldValue is ChangeTrackingObject oldTracking)
                     DettachChildEvents(oldTracking);
 
-                RaisePropertyValueChanging(new PropertyValueChangingEventArgs(propertyName, index, oldValue, value));
+                RaisePropertyValueChanging(new PropertyValueChangingEventArgs(propertyName, new int[] { index }, oldValue, value));
 
                 property[index] = value;
+
+                RaisePropertyValueChanged(new PropertyValueChangedEventArgs(propertyName, new int[] { index }, oldValue, value));
+
+                if (value is ChangeTrackingObject newTracking)
+                    AttachChildEvents(newTracking);
+
+                return true;
+            }
+            return false;
+        }
+
+        //protected bool SetIndexedPropertyValue<T>(object[] index, T value, [CallerMemberName] string propertyName = null)
+        //{
+        //    var propInfo = GetType().GetProperty(propertyName);
+        //    var oldValue = propInfo.GetValue(this, index);
+            
+        //    if (!AreEquals(oldValue, value))
+        //    {
+        //        if (oldValue is ChangeTrackingObject oldTracking)
+        //            DettachChildEvents(oldTracking);
+
+        //        RaisePropertyValueChanging(new PropertyValueChangingEventArgs(propertyName, index, oldValue, value));
+
+        //        propInfo.SetValue(this, value, index);
+
+        //        RaisePropertyValueChanged(new PropertyValueChangedEventArgs(propertyName, index, oldValue, value));
+
+        //        if (value is ChangeTrackingObject newTracking)
+        //            AttachChildEvents(newTracking);
+
+        //        return true;
+        //    }
+
+        //    return false;
+        //}
+
+        protected bool SetIndexedPropertyValue<T>(ref T[] property, int index, T value, [CallerMemberName] string propertyName = null)
+        {
+            var oldValue = property[index];
+
+            if (!AreEquals(oldValue, value))
+            {
+                if (oldValue is ChangeTrackingObject oldTracking)
+                    DettachChildEvents(oldTracking);
+
+                RaisePropertyValueChanging(new PropertyValueChangingEventArgs(propertyName, new int[] { index }, oldValue, value));
+
+                property[index] = value;
+
+                RaisePropertyValueChanged(new PropertyValueChangedEventArgs(propertyName, new int[] { index }, oldValue, value));
+
+                if (value is ChangeTrackingObject newTracking)
+                    AttachChildEvents(newTracking);
+
+                return true;
+            }
+
+            return false;
+        }
+
+        protected bool SetIndexedPropertyValue<T>(ref T[,] property, int[] index, T value, [CallerMemberName] string propertyName = null)
+        {
+            var oldValue = property[index[0], index[1]];
+
+            if (!AreEquals(oldValue, value))
+            {
+                if (oldValue is ChangeTrackingObject oldTracking)
+                    DettachChildEvents(oldTracking);
+
+                RaisePropertyValueChanging(new PropertyValueChangingEventArgs(propertyName, index, oldValue, value));
+
+                property[index[0], index[1]] = value;
 
                 RaisePropertyValueChanged(new PropertyValueChangedEventArgs(propertyName, index, oldValue, value));
 
@@ -64,6 +136,7 @@ namespace System.ComponentModel
 
                 return true;
             }
+
             return false;
         }
 

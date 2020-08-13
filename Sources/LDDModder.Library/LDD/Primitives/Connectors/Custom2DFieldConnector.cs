@@ -12,11 +12,13 @@ namespace LDDModder.LDD.Primitives.Connectors
     public partial class Custom2DFieldConnector : Connector, IEnumerable<Custom2DFieldNode>
     {
         private Custom2DFieldNode[,] _NodeArray;
+        private Custom2DFieldValue[,] _ValueArray;
+
         private int _Width;
         private int _Height;
-        private bool PreventNodeEvents;
 
         public event PropertyValueChangedEventHandler NodeValueChanged;
+        public event EventHandler SizeChanged;
 
         public override ConnectorType Type => ConnectorType.Custom2DField;
 
@@ -28,11 +30,12 @@ namespace LDDModder.LDD.Primitives.Connectors
             get => _Width;
             set
             {
-                if ((value % 2) == 0 && value > 0)
-                {
-                    if (SetPropertyValue(ref _Width, value))
-                        Initialize2DArray();
-                }
+                Resize(value, Height);
+                //if ((value % 2) == 0 && value > 0)
+                //{
+                //    if (SetPropertyValue(ref _Width, value))
+                //        Initialize2DArray();
+                //}
             }
         }
 
@@ -52,11 +55,12 @@ namespace LDDModder.LDD.Primitives.Connectors
             get => _Height;
             set
             {
-                if ((value % 2) == 0 && value > 0)
-                {
-                    if (SetPropertyValue(ref _Height, value))
-                        Initialize2DArray();
-                }
+                Resize(Width, value);
+                //if ((value % 2) == 0 && value > 0)
+                //{
+                //    if (SetPropertyValue(ref _Height, value))
+                //        Initialize2DArray();
+                //}
             }
         }
 
@@ -71,6 +75,15 @@ namespace LDDModder.LDD.Primitives.Connectors
         public Custom2DFieldNode this[int x, int y]
         {
             get => _NodeArray[x, y];
+            set
+            {
+                if (value != null)
+                {
+                    var node = GetNode(x, y);
+                    if (node != null)
+                        node.Values = value.Values;
+                }
+            }
         }
 
         public Custom2DFieldNode this[int index]
@@ -80,11 +93,25 @@ namespace LDDModder.LDD.Primitives.Connectors
                 var pos = IndexToPosition(index);
                 return _NodeArray[pos.Item1, pos.Item2];
             }
+            set
+            {
+                if (value != null)
+                {
+                    var pos = IndexToPosition(index);
+                    _NodeArray[pos.Item1, pos.Item2].Values = value.Values;
+                } 
+            }
         }
 
         public Custom2DFieldNode[,] NodeArray
         {
             get => _NodeArray;
+            //set => AssignArrayValues(value);
+        }
+
+        public Custom2DFieldValue[,] Values
+        {
+            get => _ValueArray;
             set => AssignArrayValues(value);
         }
 
@@ -93,7 +120,7 @@ namespace LDDModder.LDD.Primitives.Connectors
             _Width = 2;
             _Height = 2;
             SubType = 23;
-            Initialize2DArray();
+            Rebuild2DArray(false);
         }
 
         public Custom2DFieldConnector(int subType, int width, int height)
@@ -101,7 +128,28 @@ namespace LDDModder.LDD.Primitives.Connectors
             _Width = (int)(Math.Round(width / 2d) * 2);
             _Height = (int)(Math.Round(height / 2d) * 2);
             SubType = subType;
-            Initialize2DArray();
+            Rebuild2DArray(false);
+        }
+
+        public void Resize(int newWidth, int newHeight)
+        {
+            if (newWidth % 2 != 0 || newHeight % 2 != 0)
+            {
+                newWidth = (int)(Math.Round(newWidth / 2d) * 2);
+                newHeight = (int)(Math.Round(newHeight / 2d) * 2);
+            }
+
+            if (newWidth <= 0 || newHeight <= 0)
+                return;
+
+            if (newWidth == Width && newHeight == Height)
+                return;
+
+            _Width = newWidth;
+            _Height = newHeight;
+
+            Rebuild2DArray(true);
+            SizeChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public int PositionToIndex(int x, int y)
@@ -131,22 +179,33 @@ namespace LDDModder.LDD.Primitives.Connectors
             return null;
         }
 
-        private void Initialize2DArray()
+        public Custom2DFieldValue GetValue(int x, int y)
         {
-            var oldValues = _NodeArray;
+            if (x >= 0 && x <= Width && y >= 0 && y <= Height)
+                return _ValueArray[x, y];
+            return new Custom2DFieldValue();
+        }
 
-            if (_NodeArray != null)
-                DettachNodeEvents(_NodeArray);
+        public Custom2DFieldValue GetValue(int index)
+        {
+            if (index >= 0 && index < (Width + 1) * (Height + 1))
+            {
+                var pos = IndexToPosition(index);
+                return _ValueArray[pos.Item1, pos.Item2];
+            }
+            return new Custom2DFieldValue();
+        }
 
-            _NodeArray = new Custom2DFieldNode[Width + 1, Height + 1];
-            int nodeIndex = 0;
+        private void Rebuild2DArray(bool raiseChange)
+        {
+            var oldValues = _ValueArray;
+
+            var newValues = new Custom2DFieldValue[Width + 1, Height + 1];
 
             for (int y = 0; y < Height + 1; y++)
             {
                 for (int x = 0; x < Width + 1; x++)
-                {
-                    _NodeArray[x, y] = new Custom2DFieldNode(x, y, nodeIndex++);
-                }
+                    newValues[x, y] = new Custom2DFieldValue(new int[] { 29, 0, 0 });
             }
 
             if (oldValues != null)
@@ -155,104 +214,94 @@ namespace LDDModder.LDD.Primitives.Connectors
                 int oldH = oldValues.GetLength(1);
 
                 for (int x = 0; x < Math.Min(oldW, Width + 1); x++)
-                    for (int y = 0; y < Math.Min(oldH, Height + 1); y++)
-                        _NodeArray[x, y].Values = oldValues[x, y].Values;
-            }
-
-            AttachNodeEvents(_NodeArray);
-        }
-
-        public Custom2DFieldNode[,] GetArrayCopy()
-        {
-            var nodeArray = new Custom2DFieldNode[Width + 1, Height + 1];
-            for (int y = 0; y < ArrayHeight; y++)
-            {
-                for (int x = 0; x < ArrayWidth; x++)
                 {
-                    nodeArray[x, y] = _NodeArray[x, y].Clone();
+                    for (int y = 0; y < Math.Min(oldH, Height + 1); y++)
+                        newValues[x, y] = oldValues[x, y];
                 }
             }
-            return nodeArray;
+
+            if (raiseChange)
+                RaisePropertyValueChanging(new PropertyValueChangingEventArgs(nameof(Values), oldValues, newValues));
+
+            _ValueArray = newValues;
+
+            if (raiseChange)
+                RaisePropertyValueChanged(new PropertyValueChangedEventArgs(nameof(Values), oldValues, newValues));
+
+
+
+            RebuildNodes();
         }
 
-        public void AssignArrayValues(Custom2DFieldNode[,] nodeArray)
+        private void RebuildNodes()
         {
-            int width = nodeArray.GetLength(0);
-            int height = nodeArray.GetLength(1);
+            _NodeArray = new Custom2DFieldNode[Width + 1, Height + 1];
 
-            if (width == ArrayWidth && height == ArrayHeight)
+            for (int y = 0; y < Height + 1; y++)
             {
-                bool hasChanges = false;
+                for (int x = 0; x < Width + 1; x++)
+                    _NodeArray[x, y] = new Custom2DFieldNode(this, x, y);
+            }
+        }
 
-                for (int x = 0; x < width; x++)
+        public void AssignArrayValues(Custom2DFieldValue[,] valuesArray)
+        {
+            int newWidth = valuesArray.GetLength(0);
+            int newHeight = valuesArray.GetLength(1);
+
+
+            if (newWidth <= 0 || newHeight <= 0)
+                return;
+            
+            bool sizeChanged = newWidth != ArrayWidth|| newHeight != ArrayHeight;
+            bool hasChanges = sizeChanged;
+
+            if (!hasChanges)
+            {
+                for (int x = 0; x < newWidth; x++)
                 {
-                    for (int y = 0; y < height; y++)
+                    for (int y = 0; y < newHeight; y++)
                     {
-                        if (NodeArray[x, y].Values != nodeArray[x, y].Values)
+                        if (_ValueArray[x, y].Values != valuesArray[x, y].Values)
                         {
                             hasChanges = true;
                             break;
                         }
                     }
                 }
-
-                if (!hasChanges)
-                    return;
-
-                PreventNodeEvents = true;
-
-
-                var oldValue = GetArrayCopy();
-
-
-
-                RaisePropertyValueChanging(new PropertyValueChangingEventArgs(nameof(NodeArray), oldValue, nodeArray));
-
-                for (int x = 0; x < width; x++)
-                {
-                    for (int y = 0; y < height; y++)
-                        NodeArray[x, y].Values = nodeArray[x, y].Values;
-                }
-
-                RaisePropertyValueChanged(new PropertyValueChangedEventArgs(nameof(NodeArray), oldValue, nodeArray));
-                PreventNodeEvents = false;
             }
-        }
 
-        private void AttachNodeEvents(Custom2DFieldNode[,] nodeArray)
-        {
-            int width = nodeArray.GetLength(0);
-            int height = nodeArray.GetLength(1);
-            
-            for (int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < height; y++)
-                {
-                    nodeArray[x, y].PropertyValueChanged += FieldNode_PropertyValueChanged;
-                }
-            }
-        }
-
-        private void DettachNodeEvents(Custom2DFieldNode[,] nodeArray)
-        {
-            int width = nodeArray.GetLength(0);
-            int height = nodeArray.GetLength(1);
-
-            for (int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < height; y++)
-                {
-                    nodeArray[x, y].PropertyValueChanged -= FieldNode_PropertyValueChanged;
-                }
-            }
-        }
-
-        private void FieldNode_PropertyValueChanged(object sender, PropertyValueChangedEventArgs e)
-        {
-            if (PreventNodeEvents)
+            if (!hasChanges)
                 return;
-            RaiseChildObjectEvent(new ForwardedEventArgs(sender, "PropertyValueChanged", e));
-            NodeValueChanged?.Invoke(sender, e);
+
+            var oldValue = _ValueArray;
+
+            RaisePropertyValueChanging(new PropertyValueChangingEventArgs(nameof(Values), oldValue, valuesArray));
+
+            _Width = newWidth - 1;
+            _Height = newHeight - 1;
+            _ValueArray = valuesArray;
+            RebuildNodes();
+
+            RaisePropertyValueChanged(new PropertyValueChangedEventArgs(nameof(Values), oldValue, valuesArray));
+
+            if (sizeChanged)
+                SizeChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        internal void InternalSetValue(int x, int y, Custom2DFieldValue value)
+        {
+            _ValueArray[x, y] = value;
+        }
+
+        public void SetValue(int x, int y, Custom2DFieldValue value)
+        {
+            if (_ValueArray[x, y] != value)
+            {
+                SetIndexedPropertyValue(ref _ValueArray, new int[] { x, y }, value, nameof(Values));
+            }
+            //var node = GetNode(x, y);
+            //node.SetArrayValue(value);
         }
 
         public override void LoadFromXml(XElement element)
@@ -260,8 +309,8 @@ namespace LDDModder.LDD.Primitives.Connectors
             base.LoadFromXml(element);
             _Width = element.ReadAttribute<int>("width");
             _Height = element.ReadAttribute<int>("height");
-            _NodeArray = null;
-            Initialize2DArray();
+
+            Rebuild2DArray(false);
             int expectedValueCount = (Width + 1) * (Height + 1);
 
             var values = element.Value.Trim().Split(',').ToList();
@@ -275,7 +324,9 @@ namespace LDDModder.LDD.Primitives.Connectors
                 int rowIdx = (int)Math.Floor(i / (double)(Width + 1));
                 if (rowIdx > Height + 1)
                     break;
-                _NodeArray[i % (Width + 1), rowIdx].Parse(values[i]);
+
+                if (Custom2DFieldValue.Parse(values[i], out Custom2DFieldValue value))
+                    _ValueArray[i % (Width + 1), rowIdx] = value;
             }
         }
 
@@ -288,7 +339,7 @@ namespace LDDModder.LDD.Primitives.Connectors
             {
                 string line = Environment.NewLine;
                 for (int x = 0; x <= Width; x++)
-                    line += _NodeArray[x, y].ToString() + ",";
+                    line += _ValueArray[x, y].ToString() + ",";
                 content += line;
             }
             content = content.TrimEnd(',') + Environment.NewLine;
@@ -327,8 +378,12 @@ namespace LDDModder.LDD.Primitives.Connectors
 
         public override Connector Clone()
         {
-            var conn = new Custom2DFieldConnector(SubType, Width, Height);
-            conn.AssignArrayValues(NodeArray);
+            var conn = new Custom2DFieldConnector(SubType, Width, Height)
+            {
+                _ValueArray = Values
+            };
+            conn.RebuildNodes();
+            //conn.AssignArrayValues(Values);
             return conn;
         }
     }

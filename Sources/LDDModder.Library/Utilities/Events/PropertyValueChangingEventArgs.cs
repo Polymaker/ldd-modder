@@ -8,7 +8,7 @@ namespace System.ComponentModel
 {
     public class PropertyValueChangingEventArgs : PropertyChangingEventArgs
     {
-        public int? Index { get; set; }
+        public int[] Index { get; set; }
 
         public object OldValue { get; }
 
@@ -21,7 +21,7 @@ namespace System.ComponentModel
             NewValue = newValue;
         }
 
-        public PropertyValueChangingEventArgs(string propertyName, int index, object oldValue, object newValue)
+        public PropertyValueChangingEventArgs(string propertyName, int[] index, object oldValue, object newValue)
             : base(propertyName)
         {
             Index = index;
