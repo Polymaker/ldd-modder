@@ -708,12 +708,12 @@ namespace LDDModder.BrickEditor.UI.Editors
 
         private void PasteContent(string content)
         {
-            if (Custom2DFieldNode.Parse(content, out int[] nodeValues)) //Single Value to be pasted
+            if (Custom2DFieldValue.TryParse(content, out Custom2DFieldValue fieldValue)) //Single Value to be pasted
             {
                 var arrayClone = (Custom2DFieldValue[,])StudConnector.Values.Clone();
                 var selectedCells = GetSelectedNodes();
                 foreach (var cell in selectedCells)
-                    arrayClone[cell.X, cell.Y].Values = nodeValues;
+                    arrayClone[cell.X, cell.Y] = fieldValue;
                 StudConnector.AssignArrayValues(arrayClone);
                 return;
             }
@@ -762,7 +762,7 @@ namespace LDDModder.BrickEditor.UI.Editors
                             if (targetX > endX || targetY > endY)
                                 continue;
 
-                            if (Custom2DFieldValue.Parse(pastedValues[y][x], out Custom2DFieldValue cellValues))
+                            if (Custom2DFieldValue.TryParse(pastedValues[y][x], out Custom2DFieldValue cellValues))
                                 arrayClone[targetX, targetY] = cellValues;
                         }
                     }
@@ -1263,7 +1263,7 @@ namespace LDDModder.BrickEditor.UI.Editors
             if (IsCancelingEdit)
                 return;
 
-            if (!Custom2DFieldConnector.TryParseNode(EditCombo.Text))
+            if (!Custom2DFieldValue.Validate(EditCombo.Text))
             {
                 e.Cancel = true;
             }

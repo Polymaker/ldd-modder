@@ -19,6 +19,20 @@ namespace LDDModder.BrickEditor.Models.Navigation
             if (string.IsNullOrEmpty(NodeID))
                 NodeID = element.GetHashCode().ToString();
             Element.ParentChanged += Element_ParentChanged;
+
+            var modelExtension = GetElementExtension<ModelElementExtension>();
+            if (modelExtension != null)
+                modelExtension.VisibilityChanged += ModelExtension_VisibilityChanged;
+        }
+
+        private void ModelExtension_VisibilityChanged(object sender, EventArgs e)
+        {
+            Manager?.RefreshNavigationNode(this);
+        }
+
+        public T GetElementExtension<T>() where T : IElementExtender
+        {
+            return Element.GetExtension<T>();
         }
 
         public override void FreeObjects()
@@ -27,6 +41,9 @@ namespace LDDModder.BrickEditor.Models.Navigation
 
             if (Element != null)
             {
+                var modelExtension = GetElementExtension<ModelElementExtension>();
+                if (modelExtension != null)
+                    modelExtension.VisibilityChanged -= ModelExtension_VisibilityChanged;
                 Element.ParentChanged -= Element_ParentChanged;
                 Element = null;
             }

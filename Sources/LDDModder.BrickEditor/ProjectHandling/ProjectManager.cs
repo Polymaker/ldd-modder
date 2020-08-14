@@ -58,6 +58,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
         public IMainWindow MainWindow { get; set; }
         public IViewportWindow ViewportWindow { get; set; }
+        public INavigationWindow NavigationWindow { get; set; }
 
         #endregion
 
@@ -643,6 +644,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
         #region Element handling
 
+        //TODO
         public bool ConfirmCanDelete(PartElement element)
         {
             if (element is PartBone bone)
@@ -651,7 +653,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
 
             }
-            return false;
+            return true;
         }
 
         #endregion
@@ -754,7 +756,6 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
         #region Navigation Tree
 
-
         public void RebuildNavigationTree()
         {
             foreach (var node in NavigationTreeNodes)
@@ -781,6 +782,11 @@ namespace LDDModder.BrickEditor.ProjectHandling
                     CurrentProject.Connections,
                     ModelLocalizations.Label_Connections));
             }
+        }
+
+        public void RefreshNavigationNode(ProjectTreeNode node)
+        {
+            NavigationWindow?.RefreshNavigationNode(node);
         }
 
         #endregion
@@ -882,6 +888,99 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
         #endregion
 
+        public void SetElementHidden(PartElement element, bool hidden)
+        {
+            var elementExt = element.GetExtension<ModelElementExtension>();
+
+            if (elementExt != null && elementExt.IsHidden != hidden)
+            {
+                elementExt.IsHidden = hidden;
+                elementExt.CalculateVisibility();
+
+                UndoRedoManager.AddEditorAction(new HideElementAction(
+                    nameof(HideSelectedElements), 
+                    new PartElement[] { element } ,
+                    hidden));
+            }
+        }
+
+        public void HideSelectedElements()
+        {
+            var hideableElements = SelectedElements.Where(x => x.GetExtension<ModelElementExtension>() != null);
+            var hiddenElems = new List<PartElement>();
+
+            foreach (var elem in hideableElements)
+            {
+                var elementExt = elem.GetExtension<ModelElementExtension>();
+                if (elementExt != null && !elementExt.IsHidden)
+                {
+                    hiddenElems.Add(elem);
+                    elementExt.IsHidden = true;
+                    elementExt.CalculateVisibility();
+                }
+            }
+
+            if (hiddenElems.Any())
+            {
+                UndoRedoManager.AddEditorAction(new HideElementAction(nameof(HideSelectedElements), hiddenElems, true));
+            }
+        }
+
+        public void HideUnselectedElements()
+        {
+            var selectedElements = SelectedElements.Select(x => x.GetExtension<ModelElementExtension>()).Where(x => x != null);
+            if (!selectedElements.Any(x => x.IsVisible))
+                return;
+
+            var hideableElements = CurrentProject.GetAllElements(x => x.GetExtension<ModelElementExtension>() != null);
+            var hiddenElems = new List<PartElement>();
+
+            foreach (var elem in hideableElements)
+            {
+                if (IsContainedInSelection(elem))
+                    continue;
+
+                if (elem.GetChildsHierarchy().Any(x => IsSelected(x)))
+                    continue;
+
+                var elementExt = elem.GetExtension<ModelElementExtension>();
+
+                if (elementExt != null && !elementExt.IsHidden)
+                {
+                    hiddenElems.Add(elem);
+                    elementExt.IsHidden = true;
+                    elementExt.CalculateVisibility();
+                }
+            }
+
+            if (hiddenElems.Any())
+            {
+                UndoRedoManager.AddEditorAction(new HideElementAction(nameof(HideSelectedElements), hiddenElems, true));
+            }
+        }
+
+        public void UnhideEverything()
+        {
+            var hideableElements = CurrentProject.GetAllElements(x => x.GetExtension<ModelElementExtension>() != null);
+            var hiddenElems = new List<PartElement>();
+
+            foreach (var elem in hideableElements)
+            {
+                var elementExt = elem.GetExtension<ModelElementExtension>();
+                if (elementExt != null && elementExt.IsHidden)
+                {
+                    hiddenElems.Add(elem);
+                    elementExt.IsHidden = false;
+                    elementExt.CalculateVisibility();
+                }
+            }
+
+            if (hiddenElems.Any())
+            {
+                UndoRedoManager.AddEditorAction(new HideElementAction(nameof(HideSelectedElements), hiddenElems, false));
+            }
+        }
+
         #region Dialogs
 
         public void ShowCopyBoneDataDialog()
@@ -900,6 +999,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
         }
 
         #endregion
+
 
         #endregion
     }

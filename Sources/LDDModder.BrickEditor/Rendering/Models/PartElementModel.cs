@@ -21,6 +21,7 @@ namespace LDDModder.BrickEditor.Rendering
         public bool IsSelected { get; set; }
 
         protected bool IsApplyingTransform { get; set; }
+
         protected bool IsUpdatingTransform { get; set; }
 
         protected PartElementModel(PartElement element)
@@ -33,13 +34,23 @@ namespace LDDModder.BrickEditor.Rendering
             if (ModelExtension != null)
             {
                 Visible = ModelExtension.IsVisible;
-                ModelExtension.VisibilityChanged += Extender_VisibilityChanged;
+                ModelExtension.VisibileChanged += Extender_VisibileChanged;
             }
 
             Element.ParentChanging += Element_ParentChanging;
             Element.ParentChanged += Element_ParentChanged;
 
             Element_ParentChanged(null, EventArgs.Empty);
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+
+            if (ModelExtension != null)
+            {
+                ModelExtension.VisibileChanged -= Extender_VisibileChanged;
+            }
         }
 
         private void Element_ParentChanging(object sender, EventArgs e)
@@ -61,7 +72,7 @@ namespace LDDModder.BrickEditor.Rendering
             SetTransformFromElement();
         }
 
-        private void Extender_VisibilityChanged(object sender, EventArgs e)
+        private void Extender_VisibileChanged(object sender, EventArgs e)
         {
             var extender = Element.GetExtension<ModelElementExtension>();
             Visible = extender.IsVisible;

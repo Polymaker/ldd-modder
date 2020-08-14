@@ -125,6 +125,8 @@ namespace LDDModder.BrickEditor.UI.Windows
         public PartPropertiesPanel PropertiesPanel { get; private set; }
         public ElementDetailPanel DetailPanel { get; private set; }
         public StudConnectionPanel StudConnectionPanel { get; private set; }
+        public ConnectionEditorPanel ConnectionPanel { get; private set; }
+
 
         private void InitializePanels()
         {
@@ -134,6 +136,7 @@ namespace LDDModder.BrickEditor.UI.Windows
             PropertiesPanel = new PartPropertiesPanel(ProjectManager);
             DetailPanel = new ElementDetailPanel(ProjectManager);
             StudConnectionPanel = new StudConnectionPanel(ProjectManager);
+            ConnectionPanel = new ConnectionEditorPanel(ProjectManager);
 
             ViewportPanel.Show(DockPanelControl, DockState.Document);
             StudConnectionPanel.Show(DockPanelControl, DockState.Document);
@@ -148,6 +151,7 @@ namespace LDDModder.BrickEditor.UI.Windows
             PropertiesPanel.Show(DockPanelControl, DockState.DockBottom);
             DetailPanel.Show(PropertiesPanel.Pane, null);
             ValidationPanel.Show(PropertiesPanel.Pane, null);
+            ConnectionPanel.Show(PropertiesPanel.Pane, null);
 
             PropertiesPanel.Activate();
         }

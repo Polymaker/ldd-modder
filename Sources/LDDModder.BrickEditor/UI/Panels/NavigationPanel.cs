@@ -1,6 +1,7 @@
 ﻿using BrightIdeasSoftware;
 using LDDModder.BrickEditor.Models.Navigation;
 using LDDModder.BrickEditor.ProjectHandling;
+using LDDModder.BrickEditor.ProjectHandling.ViewInterfaces;
 using LDDModder.BrickEditor.Resources;
 using LDDModder.Modding.Editing;
 using LDDModder.Utilities;
@@ -21,7 +22,7 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace LDDModder.BrickEditor.UI.Panels
 {
-    public partial class NavigationPanel : ProjectDocumentPanel
+    public partial class NavigationPanel : ProjectDocumentPanel, INavigationWindow
     {
         public enum NavigationViewMode
         {
@@ -64,7 +65,8 @@ namespace LDDModder.BrickEditor.UI.Panels
         public NavigationPanel(ProjectManager projectManager) : base (projectManager)
         {
             InitializeComponent();
-            
+            projectManager.NavigationWindow = this;
+
             CloseButtonVisible = false;
             CloseButton = false;
             ContextMenu_Delete.ShortcutKeys = Keys.Delete;
@@ -410,11 +412,13 @@ namespace LDDModder.BrickEditor.UI.Panels
                     if (modelExt != null)
                     {
                         //Debug.WriteLine($"ProjectTreeView_CellClick {elementNode.Element.Name} IsHidden {modelExt.IsHidden} -> {!modelExt.IsHidden}");
-                        modelExt.IsHidden = !modelExt.IsHidden;
-                        
-                        ProjectTreeView.RefreshObject(elementNode);
-                        if (elementNode.Parent is ElementGroupNode)
-                            ProjectTreeView.RefreshObject(elementNode.Parent);
+                        //modelExt.IsHidden = !modelExt.IsHidden;
+
+                        //ProjectTreeView.RefreshObject(elementNode);
+                        //if (elementNode.Parent is ElementGroupNode)
+                        //    ProjectTreeView.RefreshObject(elementNode.Parent);
+
+                        ProjectManager.SetElementHidden(elementNode.Element, !modelExt.IsHidden);
                     }
                 }
                 else if (e.Model is ElementCollectionNode elementColNode)
@@ -445,6 +449,12 @@ namespace LDDModder.BrickEditor.UI.Panels
                     //ProjectTreeView.RefreshObject(groupNode);
                 }
             }
+        }
+
+
+        public void RefreshNavigationNode(ProjectTreeNode node)
+        {
+            ExecuteOnThread(() => ProjectTreeView.RefreshObject(node));
         }
 
         #endregion
@@ -1088,7 +1098,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         }
 
         #endregion
- 
+
     }
 
 }

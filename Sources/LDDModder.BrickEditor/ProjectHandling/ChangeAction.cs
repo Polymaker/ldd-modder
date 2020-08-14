@@ -127,4 +127,53 @@ namespace LDDModder.BrickEditor.ProjectHandling
                 action.Redo();
         }
     }
+
+    public abstract class EditorAction : ChangeAction
+    {
+        public string ActionName { get; set; }
+
+        public EditorAction(string actionName)
+        {
+            ActionName = actionName;
+        }
+    }
+
+    public class HideElementAction : EditorAction
+    {
+        public PartElement[] AffectedElements { get; private set; }
+        public bool HideState { get; private set; }
+
+        public HideElementAction(string actionName, IEnumerable<PartElement> elements, bool hideStatus) : base(actionName)
+        {
+            AffectedElements = elements.ToArray();
+            HideState = hideStatus;
+
+        }
+
+        public override void Undo()
+        {
+            foreach (var elem in AffectedElements)
+            {
+                var elementExt = elem.GetExtension<ModelElementExtension>();
+                if (elementExt != null)
+                {
+                    elementExt.IsHidden = !HideState;
+                    elementExt.CalculateVisibility();
+                }
+            }
+        }
+
+        public override void Redo()
+        {
+            foreach (var elem in AffectedElements)
+            {
+                var elementExt = elem.GetExtension<ModelElementExtension>();
+                if (elementExt != null)
+                {
+                    elementExt.IsHidden = HideState;
+                    elementExt.CalculateVisibility();
+                }
+            }
+        }
+    }
 }

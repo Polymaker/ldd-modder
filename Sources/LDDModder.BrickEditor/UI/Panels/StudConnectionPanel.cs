@@ -92,7 +92,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                 if (CurrentProject != null)
                 {
                     var studConnectors = CurrentProject.GetAllElements<PartConnection>(x =>
-                            x.ConnectorType == LDD.Primitives.Connectors.ConnectorType.Custom2DField);
+                            x.ConnectorType == ConnectorType.Custom2DField);
 
                     if (rebuild)
                         Connections.AddRange(studConnectors);

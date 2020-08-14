@@ -572,6 +572,11 @@ namespace LDDModder.Modding.Editing
             return GetAllElements().OfType<T>();
         }
 
+        public IEnumerable<PartElement> GetAllElements(Predicate<PartElement> predicate)
+        {
+            return GetAllElements().Where(x => predicate(x));
+        }
+
         public IEnumerable<T> GetAllElements<T>(Predicate<T> predicate) where T : PartElement
         {
             return GetAllElements().OfType<T>().Where(x => predicate(x));

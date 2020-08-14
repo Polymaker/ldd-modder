@@ -15,7 +15,6 @@ namespace LDDModder.Modding.Editing
         public const string NODE_NAME = "StudRef";
 
         private string _ConnectionID;
-        private int _FieldIndex;
         private int _PositionX;
         private int _PositionY;
         private int _Value1;
@@ -144,12 +143,6 @@ namespace LDDModder.Modding.Editing
             Value1 = element.ReadAttribute(nameof(Value1), 0);
             Value2 = element.ReadAttribute(nameof(Value2), 0);
 
-            //if (element.TryGetIntAttribute(nameof(FieldIndex), out int v1))
-            //    FieldIndex = v1;
-            //if (element.TryGetIntAttribute(nameof(Value1), out int v2))
-            //    Value1 = v2;
-            //if (element.TryGetIntAttribute(nameof(Value2), out int v3))
-            //    Value2 = v3;
         }
 
         public override XElement SerializeToXml()

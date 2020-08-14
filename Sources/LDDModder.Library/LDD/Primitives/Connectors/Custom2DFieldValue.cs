@@ -101,11 +101,17 @@ namespace LDDModder.LDD.Primitives.Connectors
             return hashCode;
         }
 
-        public static bool Parse(string nodeID, out Custom2DFieldValue value)
+        public static bool Validate(string values)
+        {
+            return TryParse(values, out _);
+        }
+
+
+        public static bool TryParse(string values, out Custom2DFieldValue value)
         {
             value = new Custom2DFieldValue();
 
-            string[] strValues = nodeID.Trim().Split(':');
+            string[] strValues = values.Trim().Split(':');
 
             if (strValues.Length < 2 || strValues.Length > 3)
                 return false;

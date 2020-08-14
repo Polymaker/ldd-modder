@@ -1061,7 +1061,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         public IEnumerable<PartElementModel> GetVisibleModels()
         {
-            foreach(var model in GetAllElementModels())
+            foreach (var model in GetAllElementModels())
             {
                 var elementExt = model.Element.GetExtension<ModelElementExtension>();
                 if (elementExt?.IsVisible ?? model.Visible)
@@ -1315,7 +1315,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         public void ResetCameraAlignment(CameraAlignment alignment)
         {
             var visibleModels = GetAllElementModels().OfType<SurfaceModelMesh>();
-            var bounding = CalculateBoundingBox(visibleModels);
+            var bounding = GetSceneBoundingBox();
 
             Vector3 cameraDirection = Vector3.Zero;
             Vector3 upVector = Vector3.UnitY;
@@ -1432,7 +1432,6 @@ namespace LDDModder.BrickEditor.UI.Panels
             {
                 if (glControl1.ContainsFocus && !InputManager.ContainsFocus)
                 {
-                    //Trace.WriteLine("GlControl1_GotFocus FIX");
                     InputManager.ContainsFocus = true;
                     glControl1.Focus();
                 }
@@ -1441,13 +1440,11 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void GlControl1_GotFocus(object sender, EventArgs e)
         {
-            //Trace.WriteLine("GlControl1_GotFocus");
             InputManager.ContainsFocus = true;
         }
 
         private void GlControl1_LostFocus(object sender, EventArgs e)
         {
-            //Trace.WriteLine("GlControl1_LostFocus");
             InputManager.ContainsFocus = false;
         }
 
@@ -1602,40 +1599,87 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
-            if (ContainsFocus)
-            {
-                if (keyData == Keys.NumPad0)
-                {
-                    CameraMenu_ResetCamera.PerformClick();
-                    return true;
-                }
-                else if (keyData == Keys.NumPad7)
-                {
-                    AlignToMenu_Top.PerformClick();
-                    return true;
-                }
-                else if (keyData == Keys.NumPad1)
-                {
-                    AlignToMenu_Front.PerformClick();
-                    return true;
-                }
-                else if (keyData == Keys.NumPad3)
-                {
-                    AlignToMenu_Right.PerformClick();
-                    return true;
-                }
-                //else if (keyData == Keys.H)
-                //{
-                //    var selectedModels = ProjectManager.SelectedElements
-                //        .Select(x => x.GetExtension<ModelElementExtension>())
-                //        .Where(x => x != null).ToList();
+            //Trace.WriteLine($"ProcessCmdKey( keyData => {keyData} ({(int)keyData}))");
+            var normalKey = keyData & ~Keys.Control;
+            normalKey &= ~Keys.Shift;
+            normalKey &= ~Keys.Alt;
 
-                //    //bool newState = InputManager.is
-                //    if (selectedModels.Any())
-                //    {
-                //        selectedModels.ForEach(x => x.IsHidden = true);
-                //    }
-                //}
+            bool isControlPressed = (keyData & Keys.Control) != 0;
+            bool isShiftPressed = (keyData & Keys.Shift) != 0;
+            bool isAltPressed = (keyData & Keys.Alt) != 0;
+            //Trace.WriteLine($"normalKey=> {normalKey} isControlPressed => {isControlPressed}, Is3DViewFocused => {Is3DViewFocused}");
+            
+            if (Is3DViewFocused)
+            {
+                if (normalKey == Keys.NumPad0)
+                {
+                    ResetCameraAlignment(CameraAlignment.Isometric);
+                    return true;
+                }
+                else if (normalKey == Keys.NumPad7)
+                {
+                    if (isControlPressed)
+                        ResetCameraAlignment(CameraAlignment.Bottom);
+                    else
+                        ResetCameraAlignment(CameraAlignment.Top);
+                    return true;
+                }
+                else if (normalKey == Keys.NumPad1)
+                {
+                    if (isControlPressed)
+                        ResetCameraAlignment(CameraAlignment.Back);
+                    else
+                        ResetCameraAlignment(CameraAlignment.Front);
+                    return true;
+                }
+                else if (normalKey == Keys.NumPad3)
+                {
+                    if (isControlPressed)
+                        ResetCameraAlignment(CameraAlignment.Left);
+                    else
+                        ResetCameraAlignment(CameraAlignment.Right);
+
+                    return true;
+                }
+                else if (normalKey == Keys.Delete)
+                {
+
+                    var selectedModels = GetSelectedModels(true).ToList();
+                    if (selectedModels.Count > 0)
+                    {
+                        ProjectManager.StartBatchChanges();
+                        foreach (var elem in selectedModels.Select(x => x.Element))
+                        {
+                            if (ProjectManager.ConfirmCanDelete(elem))
+                            {
+                                elem.TryRemove();
+                            }
+                        }
+                        ProjectManager.EndBatchChanges();
+                    }
+                    return true;
+                }
+                else if (normalKey == Keys.H)
+                {
+                    var allModels = GetAllElementModels().ToList();
+
+                    if (!isShiftPressed && !isAltPressed)
+                    {
+                        ProjectManager.HideSelectedElements();
+                        return true;
+                    }
+                    else if (isShiftPressed)
+                    {
+                        ProjectManager.HideUnselectedElements();
+                        return true;
+                    }
+                    else if (isAltPressed)
+                    {
+                        ProjectManager.UnhideEverything();
+                        return true;
+                    }
+                    
+                }
             }
 
             return base.ProcessCmdKey(ref msg, keyData);
@@ -1706,6 +1750,8 @@ namespace LDDModder.BrickEditor.UI.Panels
             if (!LoopController.IsRunning)
                 LoopController.ForceRender();
         }
+
+        public bool Is3DViewFocused => InputManager.ContainsFocus;
 
         #endregion
 

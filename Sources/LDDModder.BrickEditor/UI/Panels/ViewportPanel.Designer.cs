@@ -53,6 +53,7 @@
             this.BonesDropDownMenu = new System.Windows.Forms.ToolStripDropDownButton();
             this.Bones_RebuildConnections = new System.Windows.Forms.ToolStripMenuItem();
             this.Bones_CalcBounding = new System.Windows.Forms.ToolStripMenuItem();
+            this.Bones_CopyData = new System.Windows.Forms.ToolStripMenuItem();
             this.GizmoOrientationMenu = new System.Windows.Forms.ToolStripDropDownButton();
             this.globalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.localToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -82,7 +83,6 @@
             this.label8 = new System.Windows.Forms.Label();
             this.RotYNumBox = new LDDModder.BrickEditor.UI.Controls.NumberTextBox();
             this.RotZNumBox = new LDDModder.BrickEditor.UI.Controls.NumberTextBox();
-            this.Bones_CopyData = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1.SuspendLayout();
             this.SelectionInfoPanel.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -266,6 +266,12 @@
             this.Bones_CalcBounding.Name = "Bones_CalcBounding";
             resources.ApplyResources(this.Bones_CalcBounding, "Bones_CalcBounding");
             this.Bones_CalcBounding.Click += new System.EventHandler(this.Bones_CalcBounding_Click);
+            // 
+            // Bones_CopyData
+            // 
+            this.Bones_CopyData.Name = "Bones_CopyData";
+            resources.ApplyResources(this.Bones_CopyData, "Bones_CopyData");
+            this.Bones_CopyData.Click += new System.EventHandler(this.Bones_CopyData_Click);
             // 
             // GizmoOrientationMenu
             // 
@@ -492,12 +498,6 @@
             this.RotZNumBox.MinimumValue = -360D;
             this.RotZNumBox.Name = "RotZNumBox";
             this.RotZNumBox.ValueChanged += new System.EventHandler(this.RotationNumBoxes_ValueChanged);
-            // 
-            // Bones_CopyData
-            // 
-            this.Bones_CopyData.Name = "Bones_CopyData";
-            resources.ApplyResources(this.Bones_CopyData, "Bones_CopyData");
-            this.Bones_CopyData.Click += new System.EventHandler(this.Bones_CopyData_Click);
             // 
             // ViewportPanel
             // 

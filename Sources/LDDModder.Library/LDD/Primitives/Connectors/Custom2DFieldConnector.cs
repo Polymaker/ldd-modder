@@ -17,7 +17,6 @@ namespace LDDModder.LDD.Primitives.Connectors
         private int _Width;
         private int _Height;
 
-        public event PropertyValueChangedEventHandler NodeValueChanged;
         public event EventHandler SizeChanged;
 
         public override ConnectorType Type => ConnectorType.Custom2DField;
@@ -228,8 +227,6 @@ namespace LDDModder.LDD.Primitives.Connectors
             if (raiseChange)
                 RaisePropertyValueChanged(new PropertyValueChangedEventArgs(nameof(Values), oldValues, newValues));
 
-
-
             RebuildNodes();
         }
 
@@ -325,7 +322,7 @@ namespace LDDModder.LDD.Primitives.Connectors
                 if (rowIdx > Height + 1)
                     break;
 
-                if (Custom2DFieldValue.Parse(values[i], out Custom2DFieldValue value))
+                if (Custom2DFieldValue.TryParse(values[i], out Custom2DFieldValue value))
                     _ValueArray[i % (Width + 1), rowIdx] = value;
             }
         }
@@ -344,26 +341,6 @@ namespace LDDModder.LDD.Primitives.Connectors
             }
             content = content.TrimEnd(',') + Environment.NewLine;
             element.Value = content;
-        }
-
-        public static bool TryParseNode(string nodeValue)
-        {
-            string[] values = nodeValue.Trim().Split(':');
-
-            if (values.Length < 2 || values.Length > 3)
-                return false;
-
-            if (!int.TryParse(values[0], out _))
-                return false;
-            if (!int.TryParse(values[1], out _))
-                return false;
-            if (values.Length == 3)
-            {
-                if (values.Length == 3 && !int.TryParse(values[2], out _))
-                    return false;
-            }
-
-            return true;
         }
 
         public IEnumerator<Custom2DFieldNode> GetEnumerator()

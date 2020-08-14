@@ -125,7 +125,7 @@
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="CameraMenu_ResetCamera.Size" type="System.Drawing.Size, System.Drawing">
-    <value>165, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="CameraMenu_ResetCamera.Text" xml:space="preserve">
     <value>Reset</value>
@@ -141,10 +141,6 @@
   </data>
   <data name="AlignToMenu_Bottom.ShortcutKeyDisplayString" xml:space="preserve">
     <value>Ctrl Numpad 7</value>
-  </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="AlignToMenu_Bottom.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
-    <value>Ctrl+NumPad7</value>
   </data>
   <data name="AlignToMenu_Bottom.Size" type="System.Drawing.Size, System.Drawing">
     <value>199, 22</value>
@@ -164,9 +160,6 @@
   <data name="AlignToMenu_Back.ShortcutKeyDisplayString" xml:space="preserve">
     <value>Ctrl Numpad 1</value>
   </data>
-  <data name="AlignToMenu_Back.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
-    <value>Ctrl+NumPad1</value>
-  </data>
   <data name="AlignToMenu_Back.Size" type="System.Drawing.Size, System.Drawing">
     <value>199, 22</value>
   </data>
@@ -185,9 +178,6 @@
   <data name="AlignToMenu_Left.ShortcutKeyDisplayString" xml:space="preserve">
     <value>Ctrl Numpad 3</value>
   </data>
-  <data name="AlignToMenu_Left.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
-    <value>Ctrl+NumPad3</value>
-  </data>
   <data name="AlignToMenu_Left.Size" type="System.Drawing.Size, System.Drawing">
     <value>199, 22</value>
   </data>
@@ -195,19 +185,19 @@
     <value>Left</value>
   </data>
   <data name="CameraMenu_AlignTo.Size" type="System.Drawing.Size, System.Drawing">
-    <value>165, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="CameraMenu_AlignTo.Text" xml:space="preserve">
     <value>Align to</value>
   </data>
   <data name="CameraMenu_LookAt.Size" type="System.Drawing.Size, System.Drawing">
-    <value>165, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="CameraMenu_LookAt.Text" xml:space="preserve">
     <value>Look at selection</value>
   </data>
   <data name="CameraMenu_Orthographic.Size" type="System.Drawing.Size, System.Drawing">
-    <value>165, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="CameraMenu_Orthographic.Text" xml:space="preserve">
     <value>Orthographic</value>
@@ -429,6 +419,7 @@
   <data name="GizmoPivotModeMenu.Text" xml:space="preserve">
     <value>Pivot point</value>
   </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="ModelRenderMode1Button.ImageScaling" type="System.Windows.Forms.ToolStripItemImageScaling, System.Windows.Forms">
     <value>None</value>
   </data>
@@ -520,7 +511,7 @@
     <value>PosZNumBox</value>
   </data>
   <data name="&gt;&gt;PosZNumBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.4.14455, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.4.17892, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;PosZNumBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -649,7 +640,7 @@
     <value>PosXNumBox</value>
   </data>
   <data name="&gt;&gt;PosXNumBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.4.14455, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.4.17892, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;PosXNumBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -679,7 +670,7 @@
     <value>PosYNumBox</value>
   </data>
   <data name="&gt;&gt;PosYNumBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.4.14455, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.4.17892, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;PosYNumBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -808,7 +799,7 @@
     <value>RotXNumBox</value>
   </data>
   <data name="&gt;&gt;RotXNumBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.4.14455, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.4.17892, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;RotXNumBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -904,7 +895,7 @@
     <value>RotYNumBox</value>
   </data>
   <data name="&gt;&gt;RotYNumBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.4.14455, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.4.17892, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;RotYNumBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -934,7 +925,7 @@
     <value>RotZNumBox</value>
   </data>
   <data name="&gt;&gt;RotZNumBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.4.14455, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.4.17892, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;RotZNumBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -1137,6 +1128,12 @@
   <data name="&gt;&gt;Bones_CalcBounding.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;Bones_CopyData.Name" xml:space="preserve">
+    <value>Bones_CopyData</value>
+  </data>
+  <data name="&gt;&gt;Bones_CopyData.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;GizmoOrientationMenu.Name" xml:space="preserve">
     <value>GizmoOrientationMenu</value>
   </data>
@@ -1213,18 +1210,12 @@
     <value>visualStudioToolStripExtender1</value>
   </data>
   <data name="&gt;&gt;visualStudioToolStripExtender1.Type" xml:space="preserve">
-    <value>WeifenLuo.WinFormsUI.Docking.VisualStudioToolStripExtender, WeifenLuo.WinFormsUI.Docking, Version=3.0.4.0, Culture=neutral, PublicKeyToken=5cded1a1a0a7b481</value>
-  </data>
-  <data name="&gt;&gt;Bones_CopyData.Name" xml:space="preserve">
-    <value>Bones_CopyData</value>
-  </data>
-  <data name="&gt;&gt;Bones_CopyData.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>WeifenLuo.WinFormsUI.Docking.VisualStudioToolStripExtender, WeifenLuo.WinFormsUI.Docking, Version=3.0.6.0, Culture=neutral, PublicKeyToken=5cded1a1a0a7b481</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>ViewportPanel</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Panels.ProjectDocumentPanel, Brick Studio, Version=1.0.4.14455, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Panels.ProjectDocumentPanel, Brick Studio, Version=1.0.4.17892, Culture=neutral, PublicKeyToken=null</value>
   </data>
 </root>

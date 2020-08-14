@@ -154,6 +154,14 @@ namespace LDDModder.BrickEditor.ProjectHandling
             return new BatchChangeAction(combinedChanges);
         }
 
+        public void AddEditorAction(EditorAction action)
+        {
+            if (IsInBatch)
+                BatchChanges.Add(action);
+            else
+                AddAction(action);
+        }
+
         private void AddAction(ChangeAction action)
         {
             RedoHistory.Clear();
