@@ -496,21 +496,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                 elem.Draw();
 
             if (CurrentProject != null && CurrentProject.Flexible)
-            {
-                var boneModels = LoadedModels.OfType<BoneModel>().ToList();
-
-                foreach (var bone in boneModels)
-                {
-                    var rootPos = bone.Transform.ExtractTranslation();
-                    var tipPos = rootPos + Vector3.TransformVector(new Vector3(bone.BoneLength, 0, 0), bone.Transform);
-                    var avgPos = (rootPos + tipPos) / 2f;
-                    var screenPos = Camera.WorldPointToScreen(avgPos);
-                    //screenPos.X += 10;
-                    //screenPos.Y -= 10;
-                    UIRenderHelper.DrawShadowText(bone.Element.Name,
-                        UIRenderHelper.NormalFont, Color.White, screenPos);
-                }
-            }
+                DrawBoneNames();
 
 
             if (AvgRenderFPS == 0)
@@ -521,24 +507,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             UIRenderHelper.DrawText($"Render FPS: {AvgRenderFPS:0}", UIRenderHelper.NormalFont, Color.White, new Vector2(10, 10));
 
             if (SelectionGizmo.IsEditing)
-            {
-                //UIRenderHelper.DrawText("Hold Ctrl to snap", Color.Black, new Vector2(10, UIRenderHelper.ViewSize.Y - 20));
-
-                string amountStr = "";
-                if (SelectionGizmo.DisplayStyle == GizmoStyle.Rotation)
-                {
-                    float degrees = (SelectionGizmo.TransformedAmount / (float)Math.PI) * 180f;
-                    amountStr = $"Rotation: {degrees:0.##}°";
-                }
-                else if (SelectionGizmo.DisplayStyle == GizmoStyle.Scaling)
-                {
-                    amountStr = $"Scaling: {SelectionGizmo.TransformedAmount:0.##}";
-                }
-                else if (SelectionGizmo.DisplayStyle == GizmoStyle.Translation)
-                    amountStr = $"Translation: {SelectionGizmo.TransformedAmount:0.##}";
-
-                UIRenderHelper.DrawText(amountStr, UIRenderHelper.NormalFont, Color.Black, new Vector2(10, UIRenderHelper.ViewSize.Y - 20));
-            }
+                DrawGizmoStatus();
 
             if (CurrentProject != null)
             {
@@ -548,6 +517,41 @@ namespace LDDModder.BrickEditor.UI.Panels
             }
             
             UIRenderHelper.RenderElements();
+        }
+
+        private void DrawBoneNames()
+        {
+            var boneModels = LoadedModels.OfType<BoneModel>().ToList();
+
+            foreach (var bone in boneModels)
+            {
+                var rootPos = bone.Transform.ExtractTranslation();
+                var tipPos = rootPos + Vector3.TransformVector(new Vector3(bone.BoneLength, 0, 0), bone.Transform);
+                var avgPos = (rootPos + tipPos) / 2f;
+                var screenPos = Camera.WorldPointToScreen(avgPos);
+                //screenPos.X += 10;
+                //screenPos.Y -= 10;
+                UIRenderHelper.DrawShadowText(bone.Element.Name,
+                    UIRenderHelper.NormalFont, Color.White, screenPos);
+            }
+        }
+
+        private void DrawGizmoStatus()
+        {
+            string amountStr = "";
+            if (SelectionGizmo.DisplayStyle == GizmoStyle.Rotation)
+            {
+                float degrees = (SelectionGizmo.TransformedAmount / (float)Math.PI) * 180f;
+                amountStr = $"Rotation: {degrees:0.##}°";
+            }
+            else if (SelectionGizmo.DisplayStyle == GizmoStyle.Scaling)
+            {
+                amountStr = $"Scaling: {SelectionGizmo.TransformedAmount:0.##}";
+            }
+            else if (SelectionGizmo.DisplayStyle == GizmoStyle.Translation)
+                amountStr = $"Translation: {SelectionGizmo.TransformedAmount:0.##}";
+
+            UIRenderHelper.DrawText(amountStr, UIRenderHelper.NormalFont, Color.Black, new Vector2(10, UIRenderHelper.ViewSize.Y - 20));
         }
 
         private void LoopController_RenderFrame()

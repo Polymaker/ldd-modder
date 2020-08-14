@@ -251,14 +251,16 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void PartPropertiesPanel_SizeChanged(object sender, EventArgs e)
         {
-            if (Width > Height && flowLayoutPanel1.FlowDirection == FlowDirection.TopDown)
-            {
-                flowLayoutPanel1.FlowDirection = FlowDirection.LeftToRight;
-                flowLayoutPanel1.PerformLayout();
-            }
-            else if (Width < Height && flowLayoutPanel1.FlowDirection == FlowDirection.LeftToRight)
+            if (Width <= collapsiblePanel1.Width + (collapsiblePanel1.Width * 0.33))
             {
                 flowLayoutPanel1.FlowDirection = FlowDirection.TopDown;
+                flowLayoutPanel1.WrapContents = false;
+                flowLayoutPanel1.PerformLayout();
+            }
+            else
+            {
+                flowLayoutPanel1.FlowDirection = FlowDirection.LeftToRight;
+                flowLayoutPanel1.WrapContents = true;
                 flowLayoutPanel1.PerformLayout();
             }
         }

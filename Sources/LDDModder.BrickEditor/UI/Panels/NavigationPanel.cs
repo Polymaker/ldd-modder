@@ -410,16 +410,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                 {
                     var modelExt = elementNode.Element.GetExtension<ModelElementExtension>();
                     if (modelExt != null)
-                    {
-                        //Debug.WriteLine($"ProjectTreeView_CellClick {elementNode.Element.Name} IsHidden {modelExt.IsHidden} -> {!modelExt.IsHidden}");
-                        //modelExt.IsHidden = !modelExt.IsHidden;
-
-                        //ProjectTreeView.RefreshObject(elementNode);
-                        //if (elementNode.Parent is ElementGroupNode)
-                        //    ProjectTreeView.RefreshObject(elementNode.Parent);
-
                         ProjectManager.SetElementHidden(elementNode.Element, !modelExt.IsHidden);
-                    }
                 }
                 else if (e.Model is ElementCollectionNode elementColNode)
                 {
@@ -708,11 +699,6 @@ namespace LDDModder.BrickEditor.UI.Panels
                         ProjectTreeView.Expand(surfaceNode);
                 }
             }
-
-            //string projectTitle = ProjectManager.GetProjectDisplayName();
-
-            //ViewModeLabel.Text = ProjectManager.IsProjectOpen ? projectTitle : $"<{projectTitle}> ";
-            
         }
 
         protected override void OnProjectElementsChanged()

@@ -61,11 +61,11 @@
             this.ViewModeLabel = new System.Windows.Forms.Label();
             this.ViewModeComboBox = new System.Windows.Forms.ComboBox();
             this.LocalizedStrings = new LDDModder.BrickEditor.Localization.LocalizableStringList(this.components);
-            this.ViewModeAll = ((LDDModder.BrickEditor.Localization.LocalizableString)(new LDDModder.BrickEditor.Localization.LocalizableString()));
-            this.ViewModeBones = ((LDDModder.BrickEditor.Localization.LocalizableString)(new LDDModder.BrickEditor.Localization.LocalizableString()));
-            this.ViewModeCollisions = ((LDDModder.BrickEditor.Localization.LocalizableString)(new LDDModder.BrickEditor.Localization.LocalizableString()));
-            this.ViewModeConnections = ((LDDModder.BrickEditor.Localization.LocalizableString)(new LDDModder.BrickEditor.Localization.LocalizableString()));
-            this.ViewModeSurfaces = ((LDDModder.BrickEditor.Localization.LocalizableString)(new LDDModder.BrickEditor.Localization.LocalizableString()));
+            this.ViewModeAll = new LDDModder.BrickEditor.Localization.LocalizableString();
+            this.ViewModeBones = new LDDModder.BrickEditor.Localization.LocalizableString();
+            this.ViewModeCollisions = new LDDModder.BrickEditor.Localization.LocalizableString();
+            this.ViewModeConnections = new LDDModder.BrickEditor.Localization.LocalizableString();
+            this.ViewModeSurfaces = new LDDModder.BrickEditor.Localization.LocalizableString();
             ((System.ComponentModel.ISupportInitialize)(this.ProjectTreeView)).BeginInit();
             this.ElementsContextMenu.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
