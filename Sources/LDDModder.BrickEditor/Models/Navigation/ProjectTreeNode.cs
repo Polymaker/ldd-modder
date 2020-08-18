@@ -84,6 +84,8 @@ namespace LDDModder.BrickEditor.Models.Navigation
 
         protected virtual void RebuildChildrens()
         {
+            foreach (var child in Nodes)
+                child.FreeObjects();
             Nodes.Clear();
         }
 

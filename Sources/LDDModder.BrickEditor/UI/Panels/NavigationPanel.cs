@@ -445,7 +445,12 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         public void RefreshNavigationNode(ProjectTreeNode node)
         {
-            ExecuteOnThread(() => ProjectTreeView.RefreshObject(node));
+            ExecuteOnThread(() =>
+            {
+                //if (ProjectTreeView.)
+                ProjectTreeView.RefreshObject(node);
+
+            });
         }
 
         #endregion

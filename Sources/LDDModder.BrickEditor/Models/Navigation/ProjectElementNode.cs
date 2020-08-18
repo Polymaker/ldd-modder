@@ -27,7 +27,8 @@ namespace LDDModder.BrickEditor.Models.Navigation
 
         private void ModelExtension_VisibilityChanged(object sender, EventArgs e)
         {
-            Manager?.RefreshNavigationNode(this);
+            if (Element.Project != null)
+                Manager?.RefreshNavigationNode(this);
         }
 
         public T GetElementExtension<T>() where T : IElementExtender
