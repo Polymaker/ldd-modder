@@ -42,7 +42,14 @@ namespace LDDModder.Modding.Editing
         [XmlAttribute]
         public ConnectorType ConnectorType { get; set; }
 
-        public int SubType => Connector?.SubType ?? 0;
+        public int SubType
+        {
+            get => Connector?.SubType ?? 0;
+            set {
+                if (Connector != null) 
+                    Connector.SubType = value;
+            }
+        }
 
         public event EventHandler TranformChanged;
 
@@ -73,7 +80,7 @@ namespace LDDModder.Modding.Editing
                 //{
                 //    oldTransform.
                 //}
-                Trace.WriteLine("PartConnection.OnPropertyChanged: Transform");
+                //Trace.WriteLine("PartConnection.OnPropertyChanged: Transform");
                 TranformChanged?.Invoke(this, EventArgs.Empty);
             }
         }

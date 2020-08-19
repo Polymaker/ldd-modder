@@ -190,6 +190,12 @@
     <Compile Include="UI\Controls\CollapsiblePanel.Designer.cs">
       <DependentUpon>CollapsiblePanel.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\Controls\ControlLabel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\Controls\ControlLabel.Designer.cs">
+      <DependentUpon>ControlLabel.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\Controls\ProjectAwareControl.cs">
       <SubType>UserControl</SubType>
     </Compile>

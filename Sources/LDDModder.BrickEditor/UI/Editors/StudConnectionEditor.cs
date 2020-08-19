@@ -81,5 +81,19 @@ namespace LDDModder.BrickEditor.UI.Editors
                 ApplySizeButton.Enabled = StudConnector.StudWidth != (int)GridWidthBox.Value || StudConnector.StudHeight != (int)GridHeightBox.Value;
             }
         }
+
+        private void GidSizeBox_BeginEdit(object sender, EventArgs e)
+        {
+            if (StudConnector != null)
+                ApplySizeButton.Enabled = true;
+        }
+
+        private void GidSizeBox_EndEdit(object sender, EventArgs e)
+        {
+            if (StudConnector != null)
+            {
+                ApplySizeButton.Enabled = StudConnector.StudWidth != (int)GridWidthBox.Value || StudConnector.StudHeight != (int)GridHeightBox.Value;
+            }
+        }
     }
 }

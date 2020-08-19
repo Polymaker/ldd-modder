@@ -150,8 +150,9 @@ namespace LDDModder.BrickEditor.UI.Windows
 
             PropertiesPanel.Show(DockPanelControl, DockState.DockBottom);
             DetailPanel.Show(PropertiesPanel.Pane, null);
-            ValidationPanel.Show(PropertiesPanel.Pane, null);
             ConnectionPanel.Show(PropertiesPanel.Pane, null);
+            ValidationPanel.Show(PropertiesPanel.Pane, null);
+            
 
             PropertiesPanel.Activate();
         }

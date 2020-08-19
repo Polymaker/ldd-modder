@@ -863,7 +863,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
                 newElement = connection.Clone();
                 var collection = (element.Parent as PartBone)?.Connections ?? CurrentProject.Connections;
                 collection.Add(newElement);
-
+                CurrentProject.RenameElement(newElement, element.Name);
                 if (!ShowConnections)
                     ShowConnections = true;
             }
@@ -872,7 +872,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
                 newElement = collision.Clone();
                 var collection = (element.Parent as PartBone)?.Collisions ?? CurrentProject.Collisions;
                 collection.Add(newElement);
-
+                CurrentProject.RenameElement(newElement, element.Name);
                 if (!ShowCollisions)
                     ShowCollisions = true;
             }
