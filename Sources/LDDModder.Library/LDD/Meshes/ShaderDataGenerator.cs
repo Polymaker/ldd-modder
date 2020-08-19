@@ -417,11 +417,6 @@ namespace LDDModder.LDD.Meshes
                         var edgeCoords = ProjectTriangle(triangle, idxPos, vertEdges[0].Edge);
                         vertEdges[0].UsedInUnion = true;
 
-                        if (edgeCoords.Max(p => p.Y) < 0.013f)
-                        {
-
-                        }
-
                         for (int j = 0; j < 3; j++)
                         {
                             var reData = triangle.Indices[j].RoundEdgeData;

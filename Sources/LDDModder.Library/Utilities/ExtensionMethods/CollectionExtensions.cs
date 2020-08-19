@@ -52,5 +52,16 @@ namespace System.Collections.Generic
             }
             return -1;
         }
+
+        public static Type GetCollectionType(this Type type)
+        {
+            if (type.IsArray)
+                return type.GetElementType();
+
+            var genericArgs = type.GetGenericArguments();
+
+            return genericArgs.Length > 0 ? genericArgs[0] : null;
+        }
+
     }
 }
