@@ -2,6 +2,7 @@
 using LDDModder.BrickEditor.Resources;
 using LDDModder.LDD.Primitives.Connectors;
 using LDDModder.Modding.Editing;
+using LDDModder.Simple3D;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -19,6 +20,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         private SortableBindingList<PartConnection> Connections;
         private SortableBindingList<ConnectorInfo> SubTypeList { get; set; }
         private List<ControlConnType> EditControlHelpers;
+   
         //private PartConnection _SelectedElement;
 
         public PartConnection SelectedElement { get; private set; }
@@ -54,20 +56,24 @@ namespace LDDModder.BrickEditor.UI.Panels
             EditControlHelpers = new List<ControlConnType>()
             {
                 new ControlConnType(HingeLayoutPanel, ConnectorType.Hinge),
-                new ControlConnType(TagLabel, TagTextBox,
+                new ControlConnType(GearLayoutPanel, ConnectorType.Gear),
+                new ControlConnType(TagControlLabel,
                     ConnectorType.Hinge, ConnectorType.Fixed, ConnectorType.Slider),
-                new ControlConnType(LengthLabel, LengthBox,
-                    ConnectorType.Axel, ConnectorType.Slider, ConnectorType.Rail)
+                new ControlConnType(LengthControlLabel, LengthBox,
+                    ConnectorType.Axel, ConnectorType.Slider, ConnectorType.Rail),
+                new ControlConnType(SpringPanel, ConnectorType.Slider),
+                new ControlConnType(AxesControlLabel, ConnectorType.Fixed),
+                new ControlConnType(GrabbingLayoutPanel, ConnectorType.Axel),
+                new ControlConnType(CapLayoutPanel, ConnectorType.Axel, ConnectorType.Slider)
             };
         }
 
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            FindNameForFunction(null, false);
+            SetCurrentObject(null, false);
             AddConnectionDropDown.Enabled = false;
             BuildAddMenu();
-
             EditControlHelpers.ForEach(x => x.SetVisibility(false));
         }
 
@@ -75,8 +81,8 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             foreach(ConnectorType connectorType in Enum.GetValues(typeof(ConnectorType)))
             {
-                if (connectorType == ConnectorType.Custom2DField)
-                    continue;
+                //if (connectorType == ConnectorType.Custom2DField)
+                //    continue;
 
                 string menuText = ModelLocalizations.ResourceManager.GetString($"ConnectorType_{connectorType}");
                 menuText = menuText.Replace("&", "&&");
@@ -90,7 +96,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             var menu = sender as ToolStripItem;
             var newConnection = ProjectManager.AddConnection((ConnectorType)menu.Tag, null);
-            FindNameForFunction(newConnection, false);
+            SetCurrentObject(newConnection, false);
         }
 
         #endregion
@@ -149,17 +155,17 @@ namespace LDDModder.BrickEditor.UI.Panels
             
             string currentSelectedID = ElementsComboBox.ComboBox.SelectedValue as string;
             if (prevSelectedID != currentSelectedID)
-                FindNameForFunction(ElementsComboBox.SelectedItem as PartConnection, false);
+                SetCurrentObject(ElementsComboBox.SelectedItem as PartConnection, false);
         }
 
 
         private void ElementsComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (FlagManager.IsSet(nameof(UpdateElementList)) || 
-                FlagManager.IsSet(nameof(FindNameForFunction)))
+                FlagManager.IsSet(nameof(SetCurrentObject)))
                 return;
 
-            FindNameForFunction(ElementsComboBox.SelectedItem as PartConnection, true);
+            SetCurrentObject(ElementsComboBox.SelectedItem as PartConnection, true);
         }
 
         #endregion
@@ -214,7 +220,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void ConnectionSubTypeCombo_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (FlagManager.IsSet(nameof(FindNameForFunction)))
+            if (FlagManager.IsSet(nameof(SetCurrentObject)))
                 return;
 
             if (SelectedElement != null &&
@@ -243,6 +249,12 @@ namespace LDDModder.BrickEditor.UI.Panels
             public ControlConnType(Control[] controls, params ConnectorType[] connectorTypes)
             {
                 Controls = controls;
+                ConnectorTypes = connectorTypes;
+            }
+
+            public ControlConnType(Control control, params ConnectorType[] connectorTypes)
+            {
+                Controls = new Control[] { control };
                 ConnectorTypes = connectorTypes;
             }
 
@@ -278,13 +290,12 @@ namespace LDDModder.BrickEditor.UI.Panels
             }
         }
 
-        private void FindNameForFunction(PartConnection connection, bool fromComboBox)
+        private void SetCurrentObject(PartConnection connection, bool fromComboBox)
         {
-            //ElementNameTextBox.DataBindings.Clear();
             foreach (var ctrl in GetAllEditControl())
                 ctrl.DataBindings.Clear();
 
-            using (FlagManager.UseFlag(nameof(FindNameForFunction)))
+            using (FlagManager.UseFlag(nameof(SetCurrentObject)))
             {
                 if (SelectedElement != null)
                 {
@@ -296,6 +307,10 @@ namespace LDDModder.BrickEditor.UI.Panels
 
                 if (SelectedElement != null)
                 {
+                    ElementNameTextBox.Enabled = true;
+                    ConnectionSubTypeCombo.Enabled = true;
+                    TransformEdit.Enabled = true;
+
                     TypeValueLabel.Text = connection.ConnectorType.ToString();
                     ElementNameTextBox.DataBindings.Add(new Binding(
                         "Text",
@@ -305,6 +320,8 @@ namespace LDDModder.BrickEditor.UI.Panels
 
                     EditControlHelpers.ForEach(x => x.UpdateVisibility(SelectedElement.ConnectorType));
                     //HingeLayoutPanel.Visible = (SelectedElement.ConnectorType == ConnectorType.Hinge);
+
+                    TransformEdit.BindPhysicalElement(connection);
 
                     switch (SelectedElement.ConnectorType)
                     {
@@ -339,6 +356,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                                     DataSourceUpdateMode.OnPropertyChanged));
                             }
                             break;
+
                         case ConnectorType.Axel:
                             {
                                 LengthBox.DataBindings.Add(new Binding(
@@ -346,15 +364,66 @@ namespace LDDModder.BrickEditor.UI.Panels
                                     connection.Connector,
                                     nameof(AxelConnector.Length), true,
                                     DataSourceUpdateMode.OnPropertyChanged));
+
+                                StartCappedCheckBox.DataBindings.Add(new Binding(
+                                    "Checked",
+                                    connection.Connector,
+                                    nameof(AxelConnector.StartCapped), true,
+                                    DataSourceUpdateMode.OnPropertyChanged));
+                                EndCappedCheckBox.DataBindings.Add(new Binding(
+                                    "Checked",
+                                    connection.Connector,
+                                    nameof(AxelConnector.EndCapped), true,
+                                    DataSourceUpdateMode.OnPropertyChanged));
+
+                                GrabbingCheckBox.DataBindings.Add(new Binding(
+                                    "Checked",
+                                    connection.Connector,
+                                    nameof(AxelConnector.Grabbing), true,
+                                    DataSourceUpdateMode.OnPropertyChanged));
+                                GrabbingRequiredCheckBox.DataBindings.Add(new Binding(
+                                    "Checked",
+                                    connection.Connector,
+                                    nameof(AxelConnector.IsGrabbingRequired), true,
+                                    DataSourceUpdateMode.OnPropertyChanged));
                             }
                             break;
+
+                        case ConnectorType.Gear:
+                            {
+                                ToothNumBox.DataBindings.Add(new Binding(
+                                    "Value",
+                                    connection.Connector,
+                                    nameof(GearConnector.ToothCount), true,
+                                    DataSourceUpdateMode.OnPropertyChanged));
+                                RadiusNumBox.DataBindings.Add(new Binding(
+                                    "Value",
+                                    connection.Connector,
+                                    nameof(GearConnector.Radius), true,
+                                    DataSourceUpdateMode.OnPropertyChanged));
+                            }
+                            break;
+
                         case ConnectorType.Slider:
                             {
+                                var sliderConn = connection.Connector as SliderConnector;
                                 LengthBox.DataBindings.Add(new Binding(
                                     "Value",
                                     connection.Connector,
                                     nameof(SliderConnector.Length), true,
                                     DataSourceUpdateMode.OnPropertyChanged));
+                                StartCappedCheckBox.DataBindings.Add(new Binding(
+                                    "Checked",
+                                    connection.Connector,
+                                    nameof(SliderConnector.StartCapped), true,
+                                    DataSourceUpdateMode.OnPropertyChanged));
+                                EndCappedCheckBox.DataBindings.Add(new Binding(
+                                    "Checked",
+                                    connection.Connector,
+                                    nameof(SliderConnector.EndCapped), true,
+                                    DataSourceUpdateMode.OnPropertyChanged));
+                                UpdateSliderSpringValue();
+                                
                             }
                             break;
                         case ConnectorType.Rail:
@@ -363,6 +432,16 @@ namespace LDDModder.BrickEditor.UI.Panels
                                     "Value",
                                     connection.Connector,
                                     nameof(RailConnector.Length), true,
+                                    DataSourceUpdateMode.OnPropertyChanged));
+                            }
+                            break;
+
+                        case ConnectorType.Fixed:
+                            {
+                                AxesNumberBox.DataBindings.Add(new Binding(
+                                    "Value",
+                                    connection.Connector,
+                                    nameof(FixedConnector.Axes), true,
                                     DataSourceUpdateMode.OnPropertyChanged));
                             }
                             break;
@@ -383,6 +462,10 @@ namespace LDDModder.BrickEditor.UI.Panels
                 {
                     TypeValueLabel.Text = string.Empty;
                     EditControlHelpers.ForEach(x => x.SetVisibility(false));
+                    ElementNameTextBox.Enabled = false;
+                    ConnectionSubTypeCombo.Enabled = false;
+                    TransformEdit.Enabled = false;
+                    TransformEdit.BindPhysicalElement(null);
                     //HingeLayoutPanel.Visible = false;
                 }
 
@@ -395,22 +478,34 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void SelectedElement_PropertyChanged(object sender, ElementValueChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(PartConnection.SubType) && SelectedElement != null)
-                SetSubTypeComboValue(SelectedElement.SubType);
-
-            foreach (Control ctrl in tableLayoutPanel1.Controls)
+            if (InvokeRequired)
             {
-                if (ctrl.DataBindings.Count == 0)
-                    continue;
-
-                var binding = ctrl.DataBindings[0];
-
-                if (binding.DataSource == e.Element && 
-                    binding.BindingMemberInfo.BindingMember == e.PropertyName)
+                BeginInvoke((Action)(() =>
                 {
-                    binding.ReadValue();
-                    break;
+                    SelectedElement_PropertyChanged(sender, e);
+                }));
+                return;
+            }
+
+            using (FlagManager.UseFlag(nameof(SelectedElement_PropertyChanged)))
+            {
+                if (e.PropertyName == nameof(PartConnection.SubType) && SelectedElement != null)
+                    SetSubTypeComboValue(SelectedElement.SubType);
+
+                foreach (Control ctrl in GetAllEditControl())
+                {
+                    var binding = ctrl.DataBindings[0];
+
+                    if (binding.DataSource == e.Element &&
+                        binding.BindingMemberInfo.BindingMember == e.PropertyName)
+                    {
+                        binding.ReadValue();
+                        break;
+                    }
                 }
+
+                if (e.PropertyName == nameof(SliderConnector.Spring))
+                    UpdateSliderSpringValue();
             }
         }
 
@@ -428,7 +523,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                 using (FlagManager.UseFlag(nameof(SyncToCurrentSelection)))
                 {
                     //ElementsComboBox.SelectedItem = selectedConnectors.FirstOrDefault();
-                    FindNameForFunction(selectedConnectors.FirstOrDefault(), false);
+                    SetCurrentObject(selectedConnectors.FirstOrDefault(), false);
                 }
             }
         }
@@ -444,7 +539,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         private IEnumerable<Control> GetAllEditControl(Control.ControlCollection controlCollection = null)
         {
             if (controlCollection == null)
-                controlCollection = tableLayoutPanel1.Controls;
+                controlCollection = flowLayoutPanel1.Controls;
 
             foreach (Control ctrl in controlCollection)
             {
@@ -459,5 +554,91 @@ namespace LDDModder.BrickEditor.UI.Panels
             }
         }
 
+        
+
+        private void UpdateSliderSpringValue()
+        {
+            if (SelectedElement?.Connector is SliderConnector slider)
+            {
+                SpringCheckBox.Checked = slider.Spring.HasValue;
+                if (slider.Spring.HasValue)
+                    SpringEditor.Value = slider.Spring.Value;
+                else
+                    SpringEditor.Value = Vector3d.Zero;
+            }
+        }
+
+        private void SpringCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            SpringEditor.Enabled = SpringCheckBox.Checked;
+
+            if (FlagManager.IsSet(nameof(SelectedElement_PropertyChanged)) ||
+                FlagManager.IsSet(nameof(SetCurrentObject)))
+                return;
+
+            if (SelectedElement?.Connector is SliderConnector slider)
+            {
+                slider.Spring = SpringCheckBox.Checked ? (Vector3d?)SpringEditor.Value : null;
+            }  
+        }
+
+        private void SpringEditor_ValueChanged(object sender, EventArgs e)
+        {
+            if (FlagManager.IsSet(nameof(SelectedElement_PropertyChanged)) ||
+                FlagManager.IsSet(nameof(SetCurrentObject)))
+                return;
+
+            if (SpringCheckBox.Checked && SelectedElement?.Connector is SliderConnector slider)
+                slider.Spring = SpringEditor.Value;
+        }
+
+        private void SpringEditor_SizeChanged(object sender, EventArgs e)
+        {
+            SpringPanel.Height = SpringEditor.Bottom + 3;
+        }
+
+        private void flowLayoutPanel1_Layout(object sender, LayoutEventArgs e)
+        {
+            AdjustFlowBreak();
+        }
+
+        private void AdjustFlowBreak()
+        {
+
+            Control currentFlowBreak = null;
+            Control ctrlBeforeTransform = null;
+            foreach (Control ctrl in flowLayoutPanel1.Controls)
+            {
+                bool isFlowBreak = flowLayoutPanel1.GetFlowBreak(ctrl);
+                if (isFlowBreak)
+                    currentFlowBreak = ctrl;
+
+                if (ctrl == TransformEdit)
+                    break;
+
+                if (ctrl.Visible)
+                    ctrlBeforeTransform = ctrl;
+            }
+
+            if (Width >= NameControlLabel.Width * 1.75)
+            {
+                if (ctrlBeforeTransform != null && ctrlBeforeTransform != currentFlowBreak)
+                {
+                    if (currentFlowBreak != null)
+                        flowLayoutPanel1.SetFlowBreak(currentFlowBreak, false);
+
+                    //only flow break if the last control is in the first column
+                    if (ctrlBeforeTransform.Left <= 50) 
+                        flowLayoutPanel1.SetFlowBreak(ctrlBeforeTransform, true);
+                }
+                else if (currentFlowBreak != null)
+                    flowLayoutPanel1.SetFlowBreak(currentFlowBreak, false);
+
+            }
+            else if (currentFlowBreak != null)
+            {
+                flowLayoutPanel1.SetFlowBreak(currentFlowBreak, false);
+            }
+        }
     }
 }

@@ -492,6 +492,9 @@
     <EmbeddedResource Include="UI\Editors\VectorEditor.resx">
       <DependentUpon>VectorEditor.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\Panels\ConnectionEditorPanel.fr.resx">
+      <DependentUpon>ConnectionEditorPanel.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\Panels\ConnectionEditorPanel.resx">
       <DependentUpon>ConnectionEditorPanel.cs</DependentUpon>
     </EmbeddedResource>

@@ -16,13 +16,24 @@ namespace LDDModder.BrickEditor.UI.Controls
     public partial class ControlLabel : Control
     {
         const string DefaultText = "<Empty>";
-        private Size LabelSize;
-        private Size Minimum_Size;
+
+        private Size LabelMinSize;
+        private Size ControlMinSize;
+
+        private Size TotalMinimumSize => new Size(
+                Padding.Horizontal + LabelBounds.Width + ChildControlBounds.Width,
+                Padding.Vertical + LabelBounds.Height + ChildControlBounds.Height
+            );
+
+        private Rectangle LabelBounds;
         private Rectangle ChildControlBounds;
+        private bool BoundsInitialized;
 
         private int _LabelWidth;
         private bool _AutoSizeHeight;
         private bool _AutoSizeWidth;
+
+        private ContentAlignment _LabelAlignment;
 
         [DefaultValue(-1), RefreshProperties(RefreshProperties.Repaint)]
         public int LabelWidth
@@ -32,8 +43,25 @@ namespace LDDModder.BrickEditor.UI.Controls
             {
                 if ((value > 0 || value == -1) && _LabelWidth != value)
                 {
-                    _LabelWidth = value;
-                    RecalculateLabelSize();
+                    AdjustSize(value, false, false, AdjustSpecified.LabelWidth);
+                }
+            }
+        }
+
+        [Browsable(false)]
+        public bool AutoSizeLabel => LabelWidth == -1;
+
+        [DefaultValue(ContentAlignment.MiddleLeft), RefreshProperties(RefreshProperties.Repaint)]
+        public ContentAlignment LabelAlignment
+        {
+            get => _LabelAlignment;
+            set
+            {
+                if (_LabelAlignment != value)
+                {
+                    _LabelAlignment = value;
+                    AdjustSize(0, false, false, AdjustSpecified.LabelDisplay);
+                    //CalculateLabelSize();
                 }
             }
         }
@@ -46,8 +74,9 @@ namespace LDDModder.BrickEditor.UI.Controls
             {
                 if (_AutoSizeHeight != value)
                 {
-                    _AutoSizeHeight = value;
-                    AdjustControlSize();
+                    AdjustSize(0, false, _AutoSizeHeight, AdjustSpecified.AutoHeight);
+                    //_AutoSizeHeight = value;
+                    //AdjustControlSize();
                 }
             }
         }
@@ -60,11 +89,15 @@ namespace LDDModder.BrickEditor.UI.Controls
             {
                 if (_AutoSizeWidth != value)
                 {
-                    _AutoSizeWidth = value;
-                    AdjustControlSize();
+                    AdjustSize(0, _AutoSizeHeight, false, AdjustSpecified.AutoWidth);
+                    //_AutoSizeWidth = value;
+                    //AdjustControlSize();
                 }
             }
         }
+
+        [Browsable(false)]
+        public bool AutoSizeAll => AutoSizeWidth && AutoSizeHeight;
 
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -73,127 +106,263 @@ namespace LDDModder.BrickEditor.UI.Controls
         public override Rectangle DisplayRectangle => 
             ChildControlBounds.IsEmpty ? base.DisplayRectangle : ChildControlBounds;
 
-        
 
         public ControlLabel()
         {
             InitializeComponent();
             _LabelWidth = -1;
             _AutoSizeHeight = true;
+            _LabelAlignment = ContentAlignment.MiddleLeft;
             SetStyle(ControlStyles.ResizeRedraw | ControlStyles.OptimizedDoubleBuffer, true);
         }
 
         protected override void OnHandleCreated(EventArgs e)
         {
             base.OnHandleCreated(e);
-            RecalculateLabelSize(false);
+            CalculateChildControlMinSize(); 
+            CalculateLabelSize();
+            UpdateLabelBounds();
+            UpdateChildControlBounds();
         }
 
         protected override void OnFontChanged(EventArgs e)
         {
             base.OnFontChanged(e);
-            RecalculateLabelSize();
+            AdjustSize(0, false, false, AdjustSpecified.LabelDisplay);
         }
 
         protected override void OnTextChanged(EventArgs e)
         {
             base.OnTextChanged(e);
-            RecalculateLabelSize();
+            AdjustSize(0, false, false, AdjustSpecified.LabelDisplay);
         }
 
         protected override void OnPaddingChanged(EventArgs e)
         {
             base.OnPaddingChanged(e);
-            AdjustControlSize();
+            if (AutoSizeWidth || AutoSizeHeight)
+            {
+                AdjustSize(0, false, false, AdjustSpecified.LabelDisplay);
+            }
         }
 
-        private void RecalculateLabelSize(bool invalidate = true)
+        private void CalculateLabelSize()
         {
             string textToMeasure = string.IsNullOrEmpty(Text) ? DefaultText : Text;
-            var labelBounds = new Size(LabelWidth > 0 ? LabelWidth : 999999, Height);
+            var testSize = new Size(LabelWidth > 0 ? LabelWidth : 999999, Height);
+            testSize.Width -= Padding.Left;
 
-            LabelSize = TextRenderer.MeasureText(textToMeasure, Font, labelBounds, 
-                TextFormatFlags.WordBreak | TextFormatFlags.EndEllipsis);
-
-            AdjustControlSize();
-
-            if (invalidate)
-                Invalidate();
+            LabelMinSize = TextRenderer.MeasureText(textToMeasure, Font, testSize, GetLabelFormatFlags());
+            if (LabelWidth > 0)
+                LabelMinSize.Width = LabelWidth;
         }
+
+        private void UpdateLabelBounds()
+        {
+            LabelBounds = new Rectangle(
+                Padding.Left,
+                Padding.Top,
+                LabelMinSize.Width,
+                Height - Padding.Vertical);
+        }
+
+        private void CalculateChildControlMinSize()
+        {
+            if (Control != null)
+            {
+                if (AutoSizeWidth && AutoSizeHeight)
+                {
+                    ControlMinSize = Control.Size;
+                    ControlMinSize.Width += Control.Margin.Horizontal;
+                    ControlMinSize.Height += Control.Margin.Vertical;
+                }
+                else
+                {
+                    ControlMinSize = new Size(
+                        AutoSizeWidth ? (Control.Width + Control.Margin.Horizontal) : Font.Height,
+                        AutoSizeHeight ? (Control.Height + Control.Margin.Vertical) : Font.Height);
+                    //int remainingWidth = Width - Minimum_Size.Width;
+                    //if (remainingWidth < 0)
+                    //    remainingWidth = 0;
+                    //var ctrlMinSize = Control.GetPreferredSize(new Size(remainingWidth, Height));
+                    //if (AutoSizeWidth)
+                    //    ctrlMinSize.Width = Control.Width;
+                    //if (AutoSizeHeight)
+                    //    ctrlMinSize.Height = Control.Height;
+                    //ctrlMinSize.Width += Control.Margin.Horizontal;
+                    //ctrlMinSize.Height += Control.Margin.Vertical;
+                    //ControlMinSize = ctrlMinSize;
+                }
+            }
+            else
+            {
+                ControlMinSize = new Size(Font.Height, Font.Height);
+            }
+
+            UpdateChildControlBounds();
+        }
+
+        private void UpdateChildControlBounds()
+        {
+            var oldPos = ChildControlBounds.Location;
+            ChildControlBounds = new Rectangle(
+                LabelMinSize.Width + Padding.Left,
+                Padding.Top, Width - LabelMinSize.Width - Padding.Horizontal,
+                Height - Padding.Vertical);
+
+            if (oldPos != ChildControlBounds.Location)
+                PositionChildControl();
+        }
+
+
+        private Rectangle GetChildControlBounds()
+        {
+            return new Rectangle(
+                LabelMinSize.Width + Padding.Left,
+                Padding.Top, Width - LabelMinSize.Width - Padding.Horizontal,
+                Height - Padding.Vertical);
+        }
+
+        private Size GetMinimumSize()
+        {
+            return new Size(
+                   LabelMinSize.Width + ControlMinSize.Width + Padding.Horizontal,
+                   Math.Max(LabelMinSize.Height, ControlMinSize.Height) + Padding.Vertical
+               );
+        }
+
+        private TextFormatFlags GetLabelFormatFlags()
+        {
+            var flags = TextFormatFlags.Default;
+
+            var alignStr = LabelAlignment.ToString();
+            if (alignStr.Contains("Top"))
+                flags |= TextFormatFlags.Top;
+            else if (alignStr.Contains("Bottom"))
+                flags |= TextFormatFlags.Bottom;
+            else if (alignStr.Contains("Middle"))
+                flags |= TextFormatFlags.VerticalCenter;
+
+            if (alignStr.Contains("Left"))
+                flags |= TextFormatFlags.Left;
+            else if (alignStr.Contains("Right"))
+                flags |= TextFormatFlags.Right;
+            else if (alignStr.Contains("Center"))
+                flags |= TextFormatFlags.HorizontalCenter;
+
+            return flags | TextFormatFlags.WordBreak | TextFormatFlags.EndEllipsis;
+        }
+
+        
 
         protected override void OnControlAdded(ControlEventArgs e)
         {
             base.OnControlAdded(e);
-            AdjustControlSize();
-            PositionChildControl();
+            OnControlAssigned();
+
             e.Control.SizeChanged += Control_SizeChanged;
-            
+            e.Control.MarginChanged += Control_MarginChanged;
         }
 
         protected override void OnControlRemoved(ControlEventArgs e)
         {
             base.OnControlRemoved(e);
             e.Control.SizeChanged -= Control_SizeChanged;
-            AdjustControlSize();
+            e.Control.MarginChanged -= Control_MarginChanged;
+
+            AdjustSize(0, false, false, AdjustSpecified.ControlSize);
+            //if (AutoSizeHeight || AutoSizeWidth)
+            //    AdjustControlSize();
         }
 
         private void Control_SizeChanged(object sender, EventArgs e)
         {
-
-            //if (AutoSizeWidth || AutoSizeHeight)
-            //    AdjustControlSize();
-
-            //if (!AutoSizeWidth && Control != null && Control.Right + Control.Margin.Right > Width)
-            //{
-            //    SetBounds(0, 0, Control.Right + Control.Margin.Right, 0, BoundsSpecified.Width);
-            //}
+            AdjustSize(0, false, false, AdjustSpecified.ControlSize);
         }
 
-        private void AdjustControlSize()
+        private void Control_MarginChanged(object sender, EventArgs e)
         {
-            Minimum_Size = new Size(
-                LabelSize.Width + Padding.Horizontal, 
-                LabelSize.Height + Padding.Vertical);
+            AdjustSize(0, false, false, AdjustSpecified.ControlSize);
+        }
 
-            if (Control != null)
+
+        private enum AdjustSpecified
+        {
+            None = 0,
+            LabelWidth = 1,
+            LabelDisplay = 2,
+            AutoWidth = 4,
+            AutoHeight = 8,
+            AutoSize = AutoWidth | AutoHeight,
+            ControlSize = 16
+        }
+
+        private void AdjustSize(int labelW, bool autoW, bool autoH, AdjustSpecified specified)
+        {
+            bool autoWChanged = /*autoW != _AutoSizeWidth && */specified.HasFlag(AdjustSpecified.AutoWidth);
+            bool autoHChanged = /*autoH != _AutoSizeHeight && */specified.HasFlag(AdjustSpecified.AutoHeight);
+            bool labelWChanged = /*labelW != _LabelWidth && */specified.HasFlag(AdjustSpecified.LabelWidth);
+
+
+            if (labelWChanged || specified.HasFlag(AdjustSpecified.LabelDisplay))
             {
-                int remainingWidth = Width - Minimum_Size.Width;
-                if (remainingWidth < 0)
-                    remainingWidth = 0;
-                var ctrlMinSize = Control.GetPreferredSize(new Size(remainingWidth, Height));
-                if (AutoSizeWidth)
-                    ctrlMinSize.Width = Control.Width;
-                if (AutoSizeHeight)
-                    ctrlMinSize.Height = Control.Height;
-                ctrlMinSize.Width += Control.Margin.Horizontal;
-                ctrlMinSize.Height += Control.Margin.Vertical;
+                var oldSize = LabelMinSize;
+                if (labelWChanged)
+                    _LabelWidth = labelW;
 
-                Minimum_Size.Width += ctrlMinSize.Width;
-                Minimum_Size.Height = Math.Max(LabelSize.Height, ctrlMinSize.Height) + Padding.Vertical;
+                CalculateLabelSize();
+                UpdateLabelBounds();
+                UpdateChildControlBounds();
 
+                if (AutoSizeAll)
+                {
+                    SetBounds(0, 0, 0, 0, BoundsSpecified.Size);
+                }
+                else
+                {
+                    ResizeIfNeeded();
+                    //var sizeDiff = LabelMinSize - oldSize;
+                    //int newW = Width + sizeDiff.Width;
+                    //int newH = Height + sizeDiff.Height;
+                    //SetBounds(0, 0, newW, newH, BoundsSpecified.Size);
+                }
+                Invalidate();
             }
+
+            if (autoWChanged)
+                _AutoSizeWidth = autoW;
+
+            if (autoHChanged)
+                _AutoSizeHeight = autoH;
+
+            if (autoWChanged || autoHChanged || specified.HasFlag(AdjustSpecified.ControlSize))
+            {
+                CalculateChildControlMinSize();
+            }
+
+        }
+
+        protected void OnControlAssigned()
+        {
+            CalculateChildControlMinSize();
+
+            if (AutoSizeAll)
+                SetBounds(0, 0, 0, 0, BoundsSpecified.Size); // Force resize
             else
+                ResizeIfNeeded();
+        }
+
+        private void ResizeIfNeeded()
+        {
+            var minSize = GetMinimumSize();
+
+            if (Width < minSize.Width || Height < minSize.Height)
             {
-                Minimum_Size.Width += Font.Height;
+                SetBounds(0, 0,
+                    Math.Max(minSize.Width, Width),
+                    Math.Max(minSize.Height, Height),
+                    BoundsSpecified.Size);
             }
-
-            CalculateChildControlArea();
-            if (Control != null)
-                PositionChildControl();
-
-            var boundsToSet = BoundsSpecified.None;
-            if ((AutoSizeWidth && Width != MinimumSize.Width) || 
-                (!AutoSizeWidth && Width < Minimum_Size.Width))
-                boundsToSet = BoundsSpecified.Width;
-
-            if ((AutoSizeHeight && Height != MinimumSize.Height) ||
-                (!AutoSizeHeight && Height < Minimum_Size.Height))
-                boundsToSet |= BoundsSpecified.Height;
-
-            if (boundsToSet != BoundsSpecified.None)
-                SetBounds(0, 0, Minimum_Size.Width, Minimum_Size.Height, boundsToSet);
-
-            
         }
 
         protected override void OnLayout(LayoutEventArgs levent)
@@ -207,57 +376,48 @@ namespace LDDModder.BrickEditor.UI.Controls
 
         private void PositionChildControl()
         {
+            if (Control == null)
+                return;
+
+
             Control.Location = new Point(
                 ChildControlBounds.Left + Control.Margin.Left, 
                 ChildControlBounds.Top + Control.Margin.Top);
         }
 
-        //private bool IsPositionChildControl;
-        //private void PositionChildControl()
-        //{
-        //    if (Control == null || Width < 10 || Height < 10)
-        //        return;
-        //    IsPositionChildControl = true;
-        //    var controlPosX = 0;
-        //    var controlPosY = 0;
-
-        //    if (Control.Anchor.HasFlag(AnchorStyles.Right) && !Control.Anchor.HasFlag(AnchorStyles.Left))
-        //        controlPosX = ChildControlBounds.Right - Control.Margin.Right - Control.Width;
-        //    else if (Control.Anchor.HasFlag(AnchorStyles.Left) && !Control.Anchor.HasFlag(AnchorStyles.Right))
-        //        controlPosX = ChildControlBounds.Left + Control.Margin.Left;
-        //    else
-        //        controlPosX = ChildControlBounds.Left + (ChildControlBounds.Width - Control.Width) / 2;
-
-        //    if (Control.Anchor.HasFlag(AnchorStyles.Bottom) && !Control.Anchor.HasFlag(AnchorStyles.Top))
-        //        controlPosY = ChildControlBounds.Bottom - Control.Margin.Bottom - Control.Height;
-        //    else if (Control.Anchor.HasFlag(AnchorStyles.Top))
-        //        controlPosY = ChildControlBounds.Top + Control.Margin.Top;
-        //    else
-        //        controlPosY = ChildControlBounds.Top + (ChildControlBounds.Height - Control.Height) / 2;
-
-        //    Control.Location = new Point(controlPosX, controlPosY);
-        //    IsPositionChildControl = false;
-        //}
-
-        private void CalculateChildControlArea()
+        public override Size GetPreferredSize(Size proposedSize)
         {
-            ChildControlBounds = new Rectangle(
-                LabelSize.Width + Padding.Left,
-                Padding.Top, Width - LabelSize.Width - Padding.Horizontal, 
-                Height - Padding.Vertical);
+            var minSize = new Size(
+                    LabelMinSize.Width + ControlMinSize.Width + Padding.Horizontal,
+                    Math.Max(LabelMinSize.Height, ControlMinSize.Height) + Padding.Vertical
+                );
+            return minSize;
         }
 
         protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified)
         {
-            if (width < Minimum_Size.Width || AutoSizeWidth)
-                width = Minimum_Size.Width;
-            if (height < Minimum_Size.Height || AutoSizeHeight)
-                height = Minimum_Size.Height;
+            bool sizeAssigned = false;
+
+            if (specified.HasFlag(BoundsSpecified.Width) ||
+                specified.HasFlag(BoundsSpecified.Height))
+            {
+                sizeAssigned = true;
+
+                var minSize = GetMinimumSize();
+
+                if (width < minSize.Width || AutoSizeWidth)
+                    width = minSize.Width;
+                if (height < minSize.Height || AutoSizeHeight)
+                    height = minSize.Height;
+            }
 
             base.SetBoundsCore(x, y, width, height, specified);
 
-            CalculateChildControlArea();
-            //PositionChildControl();
+            if (sizeAssigned)
+            {
+                UpdateLabelBounds();
+                UpdateChildControlBounds();
+            }
         }
 
         protected override void OnPaint(PaintEventArgs pe)
@@ -265,8 +425,8 @@ namespace LDDModder.BrickEditor.UI.Controls
             base.OnPaint(pe);
             string textToDraw = string.IsNullOrEmpty(Text) ? DefaultText : Text;
             TextRenderer.DrawText(pe.Graphics, textToDraw, Font, 
-                new Rectangle(0 ,0, LabelSize.Width, Height), ForeColor, 
-                TextFormatFlags.VerticalCenter | TextFormatFlags.WordBreak | TextFormatFlags.EndEllipsis);
+                LabelBounds, ForeColor,
+                GetLabelFormatFlags());
 
             if (DesignMode && !ChildControlBounds.IsEmpty)
             {
@@ -282,6 +442,23 @@ namespace LDDModder.BrickEditor.UI.Controls
         //private bool PassThrough;
 
         protected override bool AllowControlLasso => false;
+
+        private ControlLabel LabelControl => Control as ControlLabel;
+
+        public override SelectionRules SelectionRules
+        {
+            get
+            {
+                var rules = base.SelectionRules;
+  
+                if (LabelControl.AutoSizeHeight)
+                    rules &= ~(SelectionRules.TopSizeable | SelectionRules.BottomSizeable);
+                if (LabelControl.AutoSizeWidth)
+                    rules &= ~(SelectionRules.LeftSizeable | SelectionRules.RightSizeable);
+
+                return rules;
+            }
+        }
 
         public override void Initialize(IComponent component)
         {

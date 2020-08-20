@@ -10,7 +10,7 @@ namespace LDDModder.LDD.Primitives.Connectors
         private bool _StartCapped;
         private bool _EndCapped;
         private bool _Cylindrical;
-        private Vector3? _Spring;
+        private Vector3d? _Spring;
         private string _Tag;
 
         public override ConnectorType Type => ConnectorType.Slider;
@@ -39,7 +39,7 @@ namespace LDDModder.LDD.Primitives.Connectors
             set => SetPropertyValue(ref _Cylindrical, value);
         }
 
-        public Vector3? Spring
+        public Vector3d? Spring
         {
             get => _Spring;
             set => SetPropertyValue(ref _Spring, value);
@@ -92,10 +92,10 @@ namespace LDDModder.LDD.Primitives.Connectors
             if (element.HasAttribute("spring", out XAttribute springAttr))
             {
                 var springValues = springAttr.Value.Split(',');
-                Spring = new Vector3(
-                    float.Parse(springValues[0].Trim(), CultureInfo.InvariantCulture),
-                    float.Parse(springValues[1].Trim(), CultureInfo.InvariantCulture),
-                    float.Parse(springValues[2].Trim(), CultureInfo.InvariantCulture));
+                Spring = new Vector3d(
+                    double.Parse(springValues[0].Trim(), CultureInfo.InvariantCulture),
+                    double.Parse(springValues[1].Trim(), CultureInfo.InvariantCulture),
+                    double.Parse(springValues[2].Trim(), CultureInfo.InvariantCulture));
             }
             else
                 Spring = null;

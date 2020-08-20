@@ -54,6 +54,11 @@ namespace LDDModder.LDD.Primitives.Connectors
             set => SetPropertyValue(ref _Tag, value);
         }
 
+        public HingeConnector()
+        {
+            SubType = 2;
+        }
+
         protected override void SerializeBeforeTransform(XElement element)
         {
             element.AddBooleanAttribute("oriented", Oriented);
