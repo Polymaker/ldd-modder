@@ -63,7 +63,6 @@ namespace LDDModder.BrickEditor.UI.Editors
                         GridWidthBox.Value = StudConnector.StudWidth;
                         return;
                     }
-                    
                 }
 
                 ProjectManager?.StartBatchChanges();

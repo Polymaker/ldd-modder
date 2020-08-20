@@ -88,6 +88,24 @@ namespace LDDModder.BrickEditor.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Confirmation.
+        /// </summary>
+        internal static string Caption_Confirmation {
+            get {
+                return ResourceManager.GetString("Caption_Confirmation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Delete confirmation.
+        /// </summary>
+        internal static string Caption_DeleteConfirmation {
+            get {
+                return ResourceManager.GetString("Caption_DeleteConfirmation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à LDD part files generation.
         /// </summary>
         internal static string Caption_LddPartGeneration {
@@ -175,6 +193,36 @@ namespace LDDModder.BrickEditor.Resources {
         internal static string LddInstallNotFound {
             get {
                 return ResourceManager.GetString("LddInstallNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à The connection &quot;{0}&quot; is used by bones.
+        ///Do you want to delete anyway?.
+        /// </summary>
+        internal static string Message_ConfirmDeleteBoneConnection {
+            get {
+                return ResourceManager.GetString("Message_ConfirmDeleteBoneConnection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à The connection &quot;{0}&quot; is referenced by elements of the model.
+        ///Do you want to delete anyway?.
+        /// </summary>
+        internal static string Message_ConfirmDeleteStudConnection {
+            get {
+                return ResourceManager.GetString("Message_ConfirmDeleteStudConnection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Some model components references studs that are outside the new size.
+        ///Do you want to proceed anyway?.
+        /// </summary>
+        internal static string Message_ConfirmResizeStuds {
+            get {
+                return ResourceManager.GetString("Message_ConfirmResizeStuds", resourceCulture);
             }
         }
         

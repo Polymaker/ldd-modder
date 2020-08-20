@@ -1358,7 +1358,10 @@ namespace LDDModder.Modding.Editing
             {
                 var duplicates = Bones.GroupBy(x => x.BoneID).Where(g => g.Count() > 1);
                 if (duplicates.Any())
-                    AddMessage("BONES_DUPLICATE_IDS", ValidationLevel.Error);
+                {
+                    AddMessage("BONES_DUPLICATE_IDS", ValidationLevel.Error, 
+                        string.Join(", ", duplicates.Select(x => x.Key)));
+                }
 
                 for (int i = 0; i < Bones.Count; i++)
                 {

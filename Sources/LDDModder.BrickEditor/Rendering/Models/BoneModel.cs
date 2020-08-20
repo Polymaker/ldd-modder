@@ -61,7 +61,7 @@ namespace LDDModder.BrickEditor.Rendering
         public void CalculateBoneLength()
         {
             var newLength = 0.4f;
-            var target = Bone.GetTargetBone();
+            var target = Bone.GetLinkedBone();
 
             if (target != null)
                 newLength = (float)(target.Transform.Position - Bone.Transform.Position).Length;

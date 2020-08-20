@@ -201,10 +201,10 @@ namespace LDDModder.Modding.Editing
 
             if (Connector != null && FieldNode == null)
             {
-                if (FieldIndex < 0)
-                    AddMessage("STUD_CONNECTION_FIELD_NOT_DEFINED", ValidationLevel.Error);
-                else
+                if (PositionX >= 0 && PositionY >= 0)
                     AddMessage("STUD_CONNECTION_FIELD_INVALID", ValidationLevel.Error);
+                else
+                    AddMessage("STUD_CONNECTION_FIELD_NOT_DEFINED", ValidationLevel.Error);
             }
 
             return messages;

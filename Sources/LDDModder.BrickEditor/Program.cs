@@ -19,7 +19,7 @@ namespace LDDModder.BrickEditor
         {
             //LDD.LDDEnvironment.Initialize();
 
-            //Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("fr-CA");
+            //Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-CA");
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

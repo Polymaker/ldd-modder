@@ -510,6 +510,42 @@
   <data name="CapLayoutPanel.ColumnCount" type="System.Int32, mscorlib">
     <value>2</value>
   </data>
+  <data name="CylindricalCheckBox.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="CylindricalCheckBox.CheckAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleRight</value>
+  </data>
+  <data name="CylindricalCheckBox.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="CylindricalCheckBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 26</value>
+  </data>
+  <data name="CylindricalCheckBox.MinimumSize" type="System.Drawing.Size, System.Drawing">
+    <value>100, 0</value>
+  </data>
+  <data name="CylindricalCheckBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 17</value>
+  </data>
+  <data name="CylindricalCheckBox.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="CylindricalCheckBox.Text" xml:space="preserve">
+    <value>Cylindrical</value>
+  </data>
+  <data name="&gt;&gt;CylindricalCheckBox.Name" xml:space="preserve">
+    <value>CylindricalCheckBox</value>
+  </data>
+  <data name="&gt;&gt;CylindricalCheckBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;CylindricalCheckBox.Parent" xml:space="preserve">
+    <value>CapLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;CylindricalCheckBox.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
   <data name="EndCappedCheckBox.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -544,7 +580,7 @@
     <value>CapLayoutPanel</value>
   </data>
   <data name="&gt;&gt;EndCappedCheckBox.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>1</value>
   </data>
   <data name="StartCappedCheckBox.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -580,7 +616,7 @@
     <value>CapLayoutPanel</value>
   </data>
   <data name="&gt;&gt;StartCappedCheckBox.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>2</value>
   </data>
   <data name="CapLayoutPanel.Location" type="System.Drawing.Point, System.Drawing">
     <value>3, 124</value>
@@ -592,10 +628,10 @@
     <value>320, 0</value>
   </data>
   <data name="CapLayoutPanel.RowCount" type="System.Int32, mscorlib">
-    <value>1</value>
+    <value>2</value>
   </data>
   <data name="CapLayoutPanel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>320, 23</value>
+    <value>320, 46</value>
   </data>
   <data name="CapLayoutPanel.TabIndex" type="System.Int32, mscorlib">
     <value>12</value>
@@ -613,7 +649,7 @@
     <value>5</value>
   </data>
   <data name="CapLayoutPanel.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="EndCappedCheckBox" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="StartCappedCheckBox" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="AutoSize,0,Percent,100" /&gt;&lt;Rows Styles="Percent,100" /&gt;&lt;/TableLayoutSettings&gt;</value>
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="CylindricalCheckBox" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="EndCappedCheckBox" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="StartCappedCheckBox" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="AutoSize,0,Percent,100" /&gt;&lt;Rows Styles="Percent,100,AutoSize,20" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <data name="GrabbingLayoutPanel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -691,7 +727,7 @@
     <value>1</value>
   </data>
   <data name="GrabbingLayoutPanel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 147</value>
+    <value>3, 170</value>
   </data>
   <data name="GrabbingLayoutPanel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>0, 0, 0, 0</value>
@@ -748,7 +784,7 @@
     <value>0</value>
   </data>
   <data name="SpringPanel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 170</value>
+    <value>3, 193</value>
   </data>
   <data name="SpringPanel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>0, 0, 0, 0</value>
@@ -898,7 +934,7 @@
     <value>3</value>
   </data>
   <data name="GearLayoutPanel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 196</value>
+    <value>323, 0</value>
   </data>
   <data name="GearLayoutPanel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>0, 0, 0, 0</value>
@@ -1207,7 +1243,7 @@
     <value>8</value>
   </data>
   <data name="HingeLayoutPanel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>323, 0</value>
+    <value>323, 26</value>
   </data>
   <data name="HingeLayoutPanel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>0, 0, 0, 0</value>
@@ -1261,7 +1297,7 @@
     <value>0</value>
   </data>
   <data name="TagControlLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>323, 68</value>
+    <value>323, 94</value>
   </data>
   <data name="TagControlLabel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>0, 0, 0, 0</value>
@@ -1297,7 +1333,7 @@
     <value>GrowAndShrink</value>
   </data>
   <data name="TransformEdit.Location" type="System.Drawing.Point, System.Drawing">
-    <value>323, 97</value>
+    <value>323, 123</value>
   </data>
   <data name="TransformEdit.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>0, 3, 0, 0</value>

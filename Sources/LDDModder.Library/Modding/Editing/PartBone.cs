@@ -50,7 +50,6 @@ namespace LDDModder.Modding.Editing
             get => _TargetConnectionID;
             set => SetPropertyValue(ref _TargetConnectionID, value);
         }
-        
 
         public ItemTransform Transform
         {
@@ -267,9 +266,19 @@ namespace LDDModder.Modding.Editing
 
         #endregion
 
-        public PartBone GetTargetBone()
+        public PartBone GetLinkedBone()
         {
             return Project.Bones.FirstOrDefault(x => x.TargetBoneID == BoneID);
+        }
+
+        public IEnumerable<PartBone> GetLinkedBones()
+        {
+            return Project.Bones.Where(x => x.TargetBoneID == BoneID);
+        }
+
+        public PartBone GetTargetBone()
+        {
+            return Project.Bones.FirstOrDefault(x => x.BoneID == TargetBoneID);
         }
 
         public override List<ValidationMessage> ValidateElement()
@@ -281,10 +290,25 @@ namespace LDDModder.Modding.Editing
                 validationMessages.Add(new ValidationMessage(this, code, level, args));
             }
 
+            if (Bounding == null || Bounding.IsEmpty)
+                AddMessage("BONE_NO_BOUNDING", ValidationLevel.Warning);
+
             if (BoneID > 1)
             {
-                //if (PreviousBoneID )
+                var targetBone = GetTargetBone();
+                if (targetBone == null)
+                    AddMessage("BONE_NOT_LINKED", ValidationLevel.Error);
+                else
+                {
+                    var myConn = Connections.FirstOrDefault(x => x.ID == SourceConnectionID);
+                    var targetConn = targetBone.Connections.FirstOrDefault(x => x.ID == TargetConnectionID);
+                    if (myConn == null || targetConn == null)
+                        AddMessage("BONE_CONNECTION_NOT_SET", ValidationLevel.Error);
+                }
             }
+
+            if (GetLinkedBones().Count() > 1)
+                AddMessage("BONE_MULTIPLE_LINKS", ValidationLevel.Warning);
 
             return validationMessages;
         }

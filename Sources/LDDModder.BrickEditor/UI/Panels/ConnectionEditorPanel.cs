@@ -61,7 +61,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                     ConnectorType.Hinge, ConnectorType.Fixed, ConnectorType.Slider),
                 new ControlConnType(LengthControlLabel, LengthBox,
                     ConnectorType.Axel, ConnectorType.Slider, ConnectorType.Rail),
-                new ControlConnType(SpringPanel, ConnectorType.Slider),
+                new ControlConnType(SpringPanel, CylindricalCheckBox, ConnectorType.Slider),
                 new ControlConnType(AxesControlLabel, ConnectorType.Fixed),
                 new ControlConnType(GrabbingLayoutPanel, ConnectorType.Axel),
                 new ControlConnType(CapLayoutPanel, ConnectorType.Axel, ConnectorType.Slider)
@@ -319,7 +319,6 @@ namespace LDDModder.BrickEditor.UI.Panels
                         DataSourceUpdateMode.OnValidation));
 
                     EditControlHelpers.ForEach(x => x.UpdateVisibility(SelectedElement.ConnectorType));
-                    //HingeLayoutPanel.Visible = (SelectedElement.ConnectorType == ConnectorType.Hinge);
 
                     TransformEdit.BindPhysicalElement(connection);
 
@@ -412,6 +411,13 @@ namespace LDDModder.BrickEditor.UI.Panels
                                     connection.Connector,
                                     nameof(SliderConnector.Length), true,
                                     DataSourceUpdateMode.OnPropertyChanged));
+
+                                CylindricalCheckBox.DataBindings.Add(new Binding(
+                                    "Checked",
+                                    connection.Connector,
+                                    nameof(SliderConnector.Cylindrical), true,
+                                    DataSourceUpdateMode.OnPropertyChanged));
+
                                 StartCappedCheckBox.DataBindings.Add(new Binding(
                                     "Checked",
                                     connection.Connector,

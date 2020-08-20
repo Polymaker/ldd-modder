@@ -73,6 +73,7 @@
             this.TagControlLabel = new LDDModder.BrickEditor.UI.Controls.ControlLabel();
             this.TagTextBox = new System.Windows.Forms.TextBox();
             this.TransformEdit = new LDDModder.BrickEditor.UI.Controls.TransformEditor();
+            this.CylindricalCheckBox = new System.Windows.Forms.CheckBox();
             this.SelectionToolStrip.SuspendLayout();
             this.panel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
@@ -225,6 +226,7 @@
             // CapLayoutPanel
             // 
             resources.ApplyResources(this.CapLayoutPanel, "CapLayoutPanel");
+            this.CapLayoutPanel.Controls.Add(this.CylindricalCheckBox, 0, 1);
             this.CapLayoutPanel.Controls.Add(this.EndCappedCheckBox, 1, 0);
             this.CapLayoutPanel.Controls.Add(this.StartCappedCheckBox, 0, 0);
             this.CapLayoutPanel.Name = "CapLayoutPanel";
@@ -394,6 +396,12 @@
             resources.ApplyResources(this.TransformEdit, "TransformEdit");
             this.TransformEdit.Name = "TransformEdit";
             // 
+            // CylindricalCheckBox
+            // 
+            resources.ApplyResources(this.CylindricalCheckBox, "CylindricalCheckBox");
+            this.CylindricalCheckBox.Name = "CylindricalCheckBox";
+            this.CylindricalCheckBox.UseVisualStyleBackColor = true;
+            // 
             // ConnectionEditorPanel
             // 
             resources.ApplyResources(this, "$this");
@@ -477,5 +485,6 @@
         private System.Windows.Forms.TableLayoutPanel CapLayoutPanel;
         private System.Windows.Forms.CheckBox EndCappedCheckBox;
         private System.Windows.Forms.CheckBox StartCappedCheckBox;
+        private System.Windows.Forms.CheckBox CylindricalCheckBox;
     }
 }

@@ -150,4 +150,22 @@ Check validation panel for more details.</value>
   <data name="Caption_StartupValidations" xml:space="preserve">
     <value>Startup validations</value>
   </data>
+  <data name="Message_ConfirmResizeStuds" xml:space="preserve">
+    <value>Some model components references studs that are outside the new size.
+Do you want to proceed anyway?</value>
+  </data>
+  <data name="Caption_Confirmation" xml:space="preserve">
+    <value>Confirmation</value>
+  </data>
+  <data name="Message_ConfirmDeleteStudConnection" xml:space="preserve">
+    <value>The connection "{0}" is referenced by elements of the model.
+Do you want to delete anyway?</value>
+  </data>
+  <data name="Message_ConfirmDeleteBoneConnection" xml:space="preserve">
+    <value>The connection "{0}" is used by bones.
+Do you want to delete anyway?</value>
+  </data>
+  <data name="Caption_DeleteConfirmation" xml:space="preserve">
+    <value>Delete confirmation</value>
+  </data>
 </root>

@@ -632,29 +632,26 @@ namespace LDDModder.BrickEditor.ProjectHandling
         {
             //var connection = CurrentProject.GetAllElements<PartConnection>(x => x.Connector == connector).FirstOrDefault();
             var studRefs = CurrentProject.GetAllElements<StudReference>(x => x.Connector == connector).ToList();
-            if (studRefs.Any(x => x.PositionX > newWidth || x.PositionY > newHeight))
+            
+            if (studRefs.Any(x => x.FieldNode != null && (x.PositionX > newWidth || x.PositionY > newHeight)))
             {
-                return false;
+                var dlgResult = MessageBox.Show(
+                    Messages.Message_ConfirmResizeStuds, 
+                    Messages.Caption_Confirmation, 
+                    MessageBoxButtons.YesNo);
+                return dlgResult == DialogResult.Yes;
             }
 
             return true;
         }
+
+
 
         #endregion
 
         #region Element handling
 
-        //TODO
-        public bool ConfirmCanDelete(PartElement element)
-        {
-            if (element is PartBone bone)
-            {
-
-
-
-            }
-            return true;
-        }
+        
 
         #endregion
 
@@ -886,7 +883,79 @@ namespace LDDModder.BrickEditor.ProjectHandling
             return newElement;
         }
 
+        public void DeleteElements(IEnumerable<PartElement> elements)
+        {
+            var elemsToDelete = new List<PartElement>();
+
+            foreach (var elem in elements)
+            {
+                var dlgResult = ConfirmCanDelete(elem);
+
+                if (dlgResult == DialogResult.Cancel)
+                {
+                    elemsToDelete.Clear();
+                    break;
+                }
+
+                if (dlgResult == DialogResult.Yes)
+                    elemsToDelete.Add(elem);
+            }
+
+            if (elemsToDelete.Any())
+            {
+                StartBatchChanges(nameof(DeleteElements));
+                ClearSelection();
+
+                var removedElements = elemsToDelete.Where(x => x.TryRemove()).ToList();
+
+                if (removedElements.OfType<ModelMeshReference>().Any())
+                    CurrentProject.RemoveUnreferencedMeshes();
+
+                EndBatchChanges();
+            }
+        }
+
+        private DialogResult ConfirmCanDelete(PartElement element)
+        {
+            if (element is PartConnection conn)
+            {
+                if (conn.ConnectorType == ConnectorType.Custom2DField)
+                {
+                    var allStudRefs = CurrentProject.GetAllElements<StudReference>();
+                    if (allStudRefs.Any(x => x.ConnectionID == conn.ID))
+                    {
+                        return MessageBox.Show(
+                            string.Format(Messages.Message_ConfirmDeleteStudConnection, conn.Name), 
+                            Messages.Caption_DeleteConfirmation, 
+                            MessageBoxButtons.YesNoCancel);
+                    }
+                }
+                else if (conn.ConnectorType == ConnectorType.Ball || 
+                    conn.ConnectorType == ConnectorType.Fixed)
+                {
+                    if (CurrentProject.Bones.Any(x => 
+                        x.SourceConnectionID == conn.ID ||
+                        x.TargetConnectionID == conn.ID))
+                    {
+                        return MessageBox.Show(
+                            string.Format(Messages.Message_ConfirmDeleteBoneConnection, conn.Name), 
+                            Messages.Caption_DeleteConfirmation, 
+                            MessageBoxButtons.YesNoCancel);
+                    }
+                }
+            }
+            if (element is PartBone bone)
+            {
+
+
+
+            }
+            return DialogResult.Yes;
+        }
+
         #endregion
+
+        #region Visibility Handling
 
         public void SetElementHidden(PartElement element, bool hidden)
         {
@@ -898,8 +967,8 @@ namespace LDDModder.BrickEditor.ProjectHandling
                 elementExt.CalculateVisibility();
 
                 UndoRedoManager.AddEditorAction(new HideElementAction(
-                    nameof(HideSelectedElements), 
-                    new PartElement[] { element } ,
+                    nameof(HideSelectedElements),
+                    new PartElement[] { element },
                     hidden));
             }
         }
@@ -980,6 +1049,8 @@ namespace LDDModder.BrickEditor.ProjectHandling
                 UndoRedoManager.AddEditorAction(new HideElementAction(nameof(HideSelectedElements), hiddenElems, false));
             }
         }
+
+        #endregion
 
         #region Dialogs
 

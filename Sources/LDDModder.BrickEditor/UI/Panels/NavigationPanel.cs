@@ -628,29 +628,6 @@ namespace LDDModder.BrickEditor.UI.Panels
             {
                 ProjectManager.DuplicateElement(projectElementNode.Element);
 
-                //switch (projectElementNode.Element)
-                //{
-                //    case PartCollision collision:
-                //        {
-                //            var newCol = collision.Clone();
-                //            if (newCol.Parent is PartBone bone)
-                //                bone.Collisions.Add(newCol);
-                //            else
-                //                CurrentProject.Collisions.Add(newCol);
-                //            ProjectManager.SelectElement(newCol);
-                //            break;
-                //        }
-                //    case PartConnection connection:
-                //        {
-                //            var newConn = connection.Clone();
-                //            if (newConn.Parent is PartBone bone)
-                //                bone.Connections.Add(newConn);
-                //            else
-                //                CurrentProject.Connections.Add(newConn);
-                //            ProjectManager.SelectElement(newConn);
-                //            break;
-                //        }
-                //}
             }
         }
 
@@ -668,22 +645,12 @@ namespace LDDModder.BrickEditor.UI.Panels
             var elements = GetSelectedElements().ToList();
 
 
-            if (elements.Count > 1)
-            {
-                //TODO: show confirmation message when deleting more than one
-            }
 
-            ProjectManager.ClearSelection();
-
-            ProjectManager.StartBatchChanges();
-
-            var removedElements = elements.Where(x => x.TryRemove()).ToList();
-
-            if (removedElements.OfType<ModelMeshReference>().Any())
-                CurrentProject.RemoveUnreferencedMeshes();
-
-            ProjectManager.EndBatchChanges();
-
+            //if (elements.Count > 1)
+            //{
+            //    //TODO: show confirmation message when deleting more than one
+            //}
+            ProjectManager.DeleteElements(elements);
         }
 
         #endregion

@@ -170,4 +170,22 @@ Voir le panneau de validation pour plus d'informations.</value>
   <data name="Caption_StartupValidations" xml:space="preserve">
     <value>Validations de démarrage</value>
   </data>
+  <data name="Message_ConfirmResizeStuds" xml:space="preserve">
+    <value>Certains composants du modèle font référence à des Studs qui sont en dehors de la nouvelle taille.
+Voulez-vous quand même continuer?</value>
+  </data>
+  <data name="Caption_Confirmation" xml:space="preserve">
+    <value>Confirmation</value>
+  </data>
+  <data name="Caption_DeleteConfirmation" xml:space="preserve">
+    <value>Confirmation de suppression</value>
+  </data>
+  <data name="Message_ConfirmDeleteBoneConnection" xml:space="preserve">
+    <value>La connexion "{0}" est utilisée par les os.
+Voulez-vous quand même supprimer?</value>
+  </data>
+  <data name="Message_ConfirmDeleteStudConnection" xml:space="preserve">
+    <value>La connexion "{0}" est référencée par des éléments du modèle.
+Voulez-vous quand même supprimer?</value>
+  </data>
 </root>

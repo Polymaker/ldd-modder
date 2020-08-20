@@ -51,20 +51,18 @@
             this.StudRefValue1Colunm = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.StudRefValue2Colunm = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.AdjStudColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.ConnectionInfoTab = new System.Windows.Forms.TabPage();
-            this.connectorEditor1 = new LDDModder.BrickEditor.UI.Controls.ConnectorEditor();
             this.localizableStringList1 = new LDDModder.BrickEditor.Localization.LocalizableStringList(this.components);
             this.MultiSelectionMsg = new LDDModder.BrickEditor.Localization.LocalizableString();
             this.NoSelectionMsg = new LDDModder.BrickEditor.Localization.LocalizableString();
             this.TopStudsLabel = new LDDModder.BrickEditor.Localization.LocalizableString();
             this.BottomStudsLabel = new LDDModder.BrickEditor.Localization.LocalizableString();
             this.NoConnectorRefLabel = new LDDModder.BrickEditor.Localization.LocalizableString();
+            this.label1 = new System.Windows.Forms.Label();
             this.PropertiesTableLayout.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.MainInfoTab.SuspendLayout();
             this.StudRefTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.StudRefGridView)).BeginInit();
-            this.ConnectionInfoTab.SuspendLayout();
             this.SuspendLayout();
             // 
             // NameTextBox
@@ -141,7 +139,6 @@
             // 
             this.tabControl1.Controls.Add(this.MainInfoTab);
             this.tabControl1.Controls.Add(this.StudRefTab);
-            this.tabControl1.Controls.Add(this.ConnectionInfoTab);
             resources.ApplyResources(this.tabControl1, "tabControl1");
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -155,6 +152,7 @@
             // 
             // StudRefTab
             // 
+            this.StudRefTab.Controls.Add(this.label1);
             this.StudRefTab.Controls.Add(this.StudRefGridView);
             resources.ApplyResources(this.StudRefTab, "StudRefTab");
             this.StudRefTab.Name = "StudRefTab";
@@ -162,6 +160,7 @@
             // 
             // StudRefGridView
             // 
+            resources.ApplyResources(this.StudRefGridView, "StudRefGridView");
             this.StudRefGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.StudRefGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.ConnectionColumn,
@@ -170,8 +169,8 @@
             this.StudRefValue1Colunm,
             this.StudRefValue2Colunm,
             this.AdjStudColumn});
-            resources.ApplyResources(this.StudRefGridView, "StudRefGridView");
             this.StudRefGridView.Name = "StudRefGridView";
+            this.StudRefGridView.ReadOnly = true;
             this.StudRefGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.StudRefGridView_CellFormatting);
             this.StudRefGridView.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.StudRefGridView_DataError);
             // 
@@ -211,18 +210,6 @@
             resources.ApplyResources(this.AdjStudColumn, "AdjStudColumn");
             this.AdjStudColumn.Name = "AdjStudColumn";
             // 
-            // ConnectionInfoTab
-            // 
-            this.ConnectionInfoTab.Controls.Add(this.connectorEditor1);
-            resources.ApplyResources(this.ConnectionInfoTab, "ConnectionInfoTab");
-            this.ConnectionInfoTab.Name = "ConnectionInfoTab";
-            this.ConnectionInfoTab.UseVisualStyleBackColor = true;
-            // 
-            // connectorEditor1
-            // 
-            resources.ApplyResources(this.connectorEditor1, "connectorEditor1");
-            this.connectorEditor1.Name = "connectorEditor1";
-            // 
             // localizableStringList1
             // 
             this.localizableStringList1.Items.AddRange(new LDDModder.BrickEditor.Localization.LocalizableString[] {
@@ -252,6 +239,11 @@
             // 
             resources.ApplyResources(this.NoConnectorRefLabel, "NoConnectorRefLabel");
             // 
+            // label1
+            // 
+            resources.ApplyResources(this.label1, "label1");
+            this.label1.Name = "label1";
+            // 
             // ElementDetailPanel
             // 
             resources.ApplyResources(this, "$this");
@@ -264,8 +256,8 @@
             this.MainInfoTab.ResumeLayout(false);
             this.MainInfoTab.PerformLayout();
             this.StudRefTab.ResumeLayout(false);
+            this.StudRefTab.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.StudRefGridView)).EndInit();
-            this.ConnectionInfoTab.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -278,7 +270,6 @@
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage MainInfoTab;
         private System.Windows.Forms.TabPage StudRefTab;
-        private System.Windows.Forms.TabPage ConnectionInfoTab;
         private System.Windows.Forms.Label CollisionSizeLabel;
         private System.Windows.Forms.Label CollisionRadiusLabel;
         private System.Windows.Forms.Label SubMaterialIndexLabel;
@@ -299,6 +290,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn StudRefValue1Colunm;
         private System.Windows.Forms.DataGridViewTextBoxColumn StudRefValue2Colunm;
         private System.Windows.Forms.DataGridViewCheckBoxColumn AdjStudColumn;
-        private Controls.ConnectorEditor connectorEditor1;
+        private System.Windows.Forms.Label label1;
     }
 }

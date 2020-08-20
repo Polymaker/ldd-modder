@@ -1648,20 +1648,15 @@ namespace LDDModder.BrickEditor.UI.Panels
                 else if (normalKey == Keys.Delete)
                 {
 
-                    var selectedModels = GetSelectedModels(true).ToList();
-                    if (selectedModels.Count > 0)
+                    var selectedModelElements = GetSelectedModels(true)
+                        .Select(x => x.Element).ToList();
+
+                    if (selectedModelElements.Any())
                     {
-                        ProjectManager.StartBatchChanges();
-                        foreach (var elem in selectedModels.Select(x => x.Element))
-                        {
-                            if (ProjectManager.ConfirmCanDelete(elem))
-                            {
-                                elem.TryRemove();
-                            }
-                        }
-                        ProjectManager.EndBatchChanges();
+                        ProjectManager.DeleteElements(selectedModelElements);
+                        return true;
                     }
-                    return true;
+                    
                 }
                 else if (normalKey == Keys.H)
                 {

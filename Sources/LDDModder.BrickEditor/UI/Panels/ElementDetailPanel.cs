@@ -85,12 +85,10 @@ namespace LDDModder.BrickEditor.UI.Panels
 
                 if (ProjectManager.SelectedElements.Count > 1)
                 {
-                    FillConnectionDetails(null);
                     FillStudRefDetails(null);
                 }
                 else
                 {
-                    FillConnectionDetails(selection as PartConnection);
                     FillStudRefDetails(selection as PartCullingModel);
                 }
 
@@ -270,7 +268,6 @@ namespace LDDModder.BrickEditor.UI.Panels
             }
         }
 
-
         private void NameTextBox_Validated(object sender, EventArgs e)
         {
             var newName = CurrentProject.RenameElement(ProjectManager.SelectedElement, NameTextBox.Text);
@@ -387,7 +384,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
                 if (e.ColumnIndex == FieldPositionColumn.Index)
                 {
-                    e.Value = studRef.FieldNode != null ? $"{studRef.FieldNode.X}, {studRef.FieldNode.Y}" : "N/A";
+                    e.Value =  $"{studRef.PositionX}, {studRef.PositionY}";
                 }
                 else if (e.ColumnIndex == AdjStudColumn.Index && studRef.Parent is BrickTubeModel tubeModel)
                 {
@@ -398,29 +395,6 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         #endregion
 
-        #region Connection Details Handling
-
-        private void SetConnectionInfoVisibility(bool visible)
-        {
-            bool isVisible = tabControl1.TabPages.Contains(ConnectionInfoTab);
-
-            if (isVisible != visible)
-            {
-                if (visible)
-                    tabControl1.TabPages.Add(ConnectionInfoTab);
-                else
-                    tabControl1.TabPages.Remove(ConnectionInfoTab);
-            }
-        }
-
-        private void FillConnectionDetails(PartConnection connection)
-        {
-            SetConnectionInfoVisibility(connection != null);
-            connectorEditor1.UpdateBindings(connection?.Connector);
-        }
-
-
-        #endregion
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
