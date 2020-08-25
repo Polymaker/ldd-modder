@@ -114,6 +114,7 @@
     <Compile Include="LDD\Data\MaterialType.cs" />
     <Compile Include="LDD\LddDirectory.cs" />
     <Compile Include="LDD\LddLif.cs" />
+    <Compile Include="LDD\Meshes\OutlinesGenerator.cs" />
     <Compile Include="LDD\Models\Assembly.cs" />
     <Compile Include="LDD\Models\Bone.cs" />
     <Compile Include="LDD\Models\Brick.cs" />

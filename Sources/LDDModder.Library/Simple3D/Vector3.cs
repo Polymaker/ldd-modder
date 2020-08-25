@@ -268,6 +268,39 @@ namespace LDDModder.Simple3D
                 (float)Math.Round(Z, decimals));
         }
 
+        public static Vector3 RoundByStep(Vector3 vector, float step)
+        {
+            if (vector.IsEmpty)
+                return Empty;
+
+            return new Vector3(
+                (float)Math.Round(vector.X / step) * step,
+                (float)Math.Round(vector.Y / step) * step,
+                (float)Math.Round(vector.Z / step) * step);
+        }
+
+        public static Vector3 FloorByStep(Vector3 vector, float step)
+        {
+            if (vector.IsEmpty)
+                return Empty;
+
+            return new Vector3(
+                (float)Math.Floor(vector.X / step) * step,
+                (float)Math.Floor(vector.Y / step) * step,
+                (float)Math.Floor(vector.Z / step) * step);
+        }
+
+        public static Vector3 CeilingByStep(Vector3 vector, float step)
+        {
+            if (vector.IsEmpty)
+                return Empty;
+
+            return new Vector3(
+                (float)Math.Ceiling(vector.X / step) * step,
+                (float)Math.Ceiling(vector.Y / step) * step,
+                (float)Math.Ceiling(vector.Z / step) * step);
+        }
+
         public static float Dot(Vector3 left, Vector3 right)
         {
             return (left.X * right.X) + (left.Y * right.Y) + (left.Z * right.Z);

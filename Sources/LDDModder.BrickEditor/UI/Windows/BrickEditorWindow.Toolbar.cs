@@ -210,8 +210,8 @@ namespace LDDModder.BrickEditor.UI.Windows
                     ValidationPanel.Activate();
                     return;
                 }
-
-                ProjectManager.GenerateLddFiles(SettingsManager.Current.BuildSettings.GenerateOutlines);
+                //SettingsManager.Current.BuildSettings.GenerateOutlines
+                ProjectManager.GenerateLddFiles();
             }
         }
 

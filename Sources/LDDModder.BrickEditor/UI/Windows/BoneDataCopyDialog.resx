@@ -448,6 +448,9 @@ collisions / connections</value>
   <data name="ApplyButton.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Right</value>
   </data>
+  <data name="ApplyButton.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
   <data name="ApplyButton.Location" type="System.Drawing.Point, System.Drawing">
     <value>21, 232</value>
   </data>

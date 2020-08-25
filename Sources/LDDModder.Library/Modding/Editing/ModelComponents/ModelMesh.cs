@@ -231,6 +231,20 @@ namespace LDDModder.Modding.Editing
             return FileFlag == 1;
         }
     
+        public void SaveFile()
+        {
+            if (Project?.IsLoadedFromDisk ?? false)
+            {
+                //bool wasLoaded = IsModelLoaded;
+                if (!IsModelLoaded)
+                    LoadModel();
+
+                var targetFilePath = Project.GetFileFullPath(FileName);
+                Geometry.Save(targetFilePath);
+                CheckFileExist();
+            }
+        }
+
         /// <summary>
         /// Soft delete
         /// </summary>

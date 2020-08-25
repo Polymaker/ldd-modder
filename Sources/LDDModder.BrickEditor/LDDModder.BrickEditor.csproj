@@ -202,12 +202,6 @@
     <Compile Include="UI\Controls\ProjectAwareControl.Designer.cs">
       <DependentUpon>ProjectAwareControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Editors\ConnectorEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="UI\Editors\ConnectorEditor.Designer.cs">
-      <DependentUpon>ConnectorEditor.cs</DependentUpon>
-    </Compile>
     <Compile Include="UI\Editors\PartAliasesEditControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -467,9 +461,6 @@
     <EmbeddedResource Include="Resources\ModelLocalizations.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ModelLocalizations.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\Editors\ConnectorEditor.resx">
-      <DependentUpon>ConnectorEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Editors\BoundingBoxEditor.resx">
       <DependentUpon>BoundingBoxEditor.cs</DependentUpon>

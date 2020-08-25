@@ -42,7 +42,6 @@ namespace LDDModder.BrickEditor.Meshes
                 builder.AddTriangle(mesh.Faces[i].Indices[0], mesh.Faces[i].Indices[1], mesh.Faces[i].Indices[2]);
             }
 
-
             if (mesh.HasBones)
             {
                 var boneNames = scene.Meshes.SelectMany(x => x.Bones).Select(x => x.Name).Distinct().ToList();

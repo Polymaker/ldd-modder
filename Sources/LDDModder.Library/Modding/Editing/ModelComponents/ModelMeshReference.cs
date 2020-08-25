@@ -44,7 +44,6 @@ namespace LDDModder.Modding.Editing
 
         public int TriangleCount => (IndexCount > 0) ? IndexCount / 3 : (ModelMesh?.IndexCount ?? 0) / 3;
 
-
         public event EventHandler TranformChanged;
 
         public ModelMeshReference()
@@ -140,6 +139,20 @@ namespace LDDModder.Modding.Editing
             }
 
             return modelGeometry;
+        }
+
+        public void UpdateMeshOutlines(MeshGeometry geometry)
+        {
+            var modelMesh = GetModelMesh();
+            if (!modelMesh.IsModelLoaded)
+                modelMesh.LoadModel();
+
+            for (int i = 0; i < geometry.IndexCount; i++)
+            {
+                var origIndex = modelMesh.Geometry.Indices[i + StartIndex];
+                var newIndex = geometry.Indices[i];
+                origIndex.RoundEdgeData = newIndex.RoundEdgeData.Clone();
+            }
         }
 
         public override XElement SerializeToXml()

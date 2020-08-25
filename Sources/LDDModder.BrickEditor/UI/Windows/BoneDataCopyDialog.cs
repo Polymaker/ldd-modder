@@ -121,5 +121,18 @@ namespace LDDModder.BrickEditor.UI.Windows
 
             textBrush.Dispose();
         }
+
+        private void DataCheckBoxes_CheckedChanged(object sender, EventArgs e)
+        {
+            var boxes = new CheckBox[]
+            {
+                CollisionsCheckBox,
+                BoundingCheckBox,
+                CollisionsCheckBox,
+                ConnectionsCheckBox
+            };
+
+            ApplyButton.Enabled = boxes.Any(x => x.Checked);
+        }
     }
 }

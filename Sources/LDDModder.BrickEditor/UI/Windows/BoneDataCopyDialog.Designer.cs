@@ -34,15 +34,15 @@
             this.ConnectionsCheckBox = new System.Windows.Forms.CheckBox();
             this.PhysicAttrCheckBox = new System.Windows.Forms.CheckBox();
             this.BoundingCheckBox = new System.Windows.Forms.CheckBox();
+            this.ClearOldDataCheckBox = new System.Windows.Forms.CheckBox();
             this.SourceCombo = new System.Windows.Forms.ComboBox();
             this.TargetListBox = new System.Windows.Forms.ListBox();
             this.SourceBoneLabel = new System.Windows.Forms.Label();
             this.TargetBonesLabel = new System.Windows.Forms.Label();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.label1 = new System.Windows.Forms.Label();
-            this.ApplyButton = new System.Windows.Forms.Button();
             this.CloseButton = new System.Windows.Forms.Button();
-            this.ClearOldDataCheckBox = new System.Windows.Forms.CheckBox();
+            this.ApplyButton = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
             this.flowLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -65,24 +65,36 @@
             resources.ApplyResources(this.CollisionsCheckBox, "CollisionsCheckBox");
             this.CollisionsCheckBox.Name = "CollisionsCheckBox";
             this.CollisionsCheckBox.UseVisualStyleBackColor = true;
+            this.CollisionsCheckBox.CheckedChanged += new System.EventHandler(this.DataCheckBoxes_CheckedChanged);
             // 
             // ConnectionsCheckBox
             // 
             resources.ApplyResources(this.ConnectionsCheckBox, "ConnectionsCheckBox");
             this.ConnectionsCheckBox.Name = "ConnectionsCheckBox";
             this.ConnectionsCheckBox.UseVisualStyleBackColor = true;
+            this.ConnectionsCheckBox.CheckedChanged += new System.EventHandler(this.DataCheckBoxes_CheckedChanged);
             // 
             // PhysicAttrCheckBox
             // 
             resources.ApplyResources(this.PhysicAttrCheckBox, "PhysicAttrCheckBox");
             this.PhysicAttrCheckBox.Name = "PhysicAttrCheckBox";
             this.PhysicAttrCheckBox.UseVisualStyleBackColor = true;
+            this.PhysicAttrCheckBox.CheckedChanged += new System.EventHandler(this.DataCheckBoxes_CheckedChanged);
             // 
             // BoundingCheckBox
             // 
             resources.ApplyResources(this.BoundingCheckBox, "BoundingCheckBox");
             this.BoundingCheckBox.Name = "BoundingCheckBox";
             this.BoundingCheckBox.UseVisualStyleBackColor = true;
+            this.BoundingCheckBox.CheckedChanged += new System.EventHandler(this.DataCheckBoxes_CheckedChanged);
+            // 
+            // ClearOldDataCheckBox
+            // 
+            resources.ApplyResources(this.ClearOldDataCheckBox, "ClearOldDataCheckBox");
+            this.ClearOldDataCheckBox.Checked = true;
+            this.ClearOldDataCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.ClearOldDataCheckBox.Name = "ClearOldDataCheckBox";
+            this.ClearOldDataCheckBox.UseVisualStyleBackColor = true;
             // 
             // SourceCombo
             // 
@@ -129,10 +141,12 @@
             this.splitContainer1.Panel2.Controls.Add(this.label1);
             this.splitContainer1.Panel2.Controls.Add(this.flowLayoutPanel1);
             // 
-            // label1
+            // CloseButton
             // 
-            resources.ApplyResources(this.label1, "label1");
-            this.label1.Name = "label1";
+            resources.ApplyResources(this.CloseButton, "CloseButton");
+            this.CloseButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.CloseButton.Name = "CloseButton";
+            this.CloseButton.UseVisualStyleBackColor = true;
             // 
             // ApplyButton
             // 
@@ -141,20 +155,10 @@
             this.ApplyButton.UseVisualStyleBackColor = true;
             this.ApplyButton.Click += new System.EventHandler(this.ApplyButton_Click);
             // 
-            // CloseButton
+            // label1
             // 
-            resources.ApplyResources(this.CloseButton, "CloseButton");
-            this.CloseButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.CloseButton.Name = "CloseButton";
-            this.CloseButton.UseVisualStyleBackColor = true;
-            // 
-            // ClearOldDataCheckBox
-            // 
-            resources.ApplyResources(this.ClearOldDataCheckBox, "ClearOldDataCheckBox");
-            this.ClearOldDataCheckBox.Checked = true;
-            this.ClearOldDataCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ClearOldDataCheckBox.Name = "ClearOldDataCheckBox";
-            this.ClearOldDataCheckBox.UseVisualStyleBackColor = true;
+            resources.ApplyResources(this.label1, "label1");
+            this.label1.Name = "label1";
             // 
             // BoneDataCopyDialog
             // 

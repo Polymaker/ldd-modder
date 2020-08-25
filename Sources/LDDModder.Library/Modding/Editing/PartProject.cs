@@ -1441,30 +1441,57 @@ namespace LDDModder.Modding.Editing
             foreach (var surface in Surfaces)
             {
                 var surfaceMesh = surface.GenerateMeshFile();
+                var test = surfaceMesh.Geometry.CheckHasRoundEdgeData();
                 part.AddSurfaceMesh(surface.SurfaceID, surfaceMesh);
             }
 
             return part;
         }
 
-        //public void RecalculateRoundEdges(float breakAngle = 35f, bool overwrite = false)
-        //{
-
-        //}
-
         public void ComputeEdgeOutlines(float breakAngle = 35f)
         {
             var meshRefs = Surfaces.SelectMany(x => x.GetAllMeshReferences()).ToList();
-            //var unloadedMeshes = meshRefs.Select(x => x.ModelMesh).Where(x => !x.IsModelLoaded).Distinct().ToList();
+            var unloadedMeshes = meshRefs.Select(x => x.ModelMesh).Where(x => !x.IsModelLoaded).Distinct().ToList();
 
             foreach (var layerGroup in meshRefs.GroupBy(x => x.RoundEdgeLayer))
             {
-                var layerTriangles = layerGroup.Where(x => x.GeneratedTriangles != null)
-                    .SelectMany(x => x.GeneratedTriangles);
-                ShaderDataGenerator.ComputeEdgeOutlines(layerTriangles, breakAngle);
+                var meshesGeoms = layerGroup.Select(x => new Tuple<ModelMeshReference, MeshGeometry>(x, x.GetGeometry(true))).ToList();
+
+                foreach (var mg in meshesGeoms)
+                    mg.Item2.ClearRoundEdgeData();
+
+                var triangles = meshesGeoms.SelectMany(x => x.Item2.Triangles);
+                //ShaderDataGenerator.ComputeEdgeOutlines(triangles, breakAngle);
+                OutlinesGenerator.GenerateOutlines(triangles, breakAngle);
+
+                foreach (var mg in meshesGeoms)
+                    mg.Item1.UpdateMeshOutlines(mg.Item2);
             }
+
+            var models = meshRefs.Select(x => x.ModelMesh).Distinct().ToList();
+            models.ForEach(x => x.SaveFile());
+            unloadedMeshes.ForEach(x => x.UnloadModel());
         }
 
+        public void ClearEdgeOutlines()
+        {
+            var meshRefs = Surfaces.SelectMany(x => x.GetAllMeshReferences()).ToList();
+            var meshModels = meshRefs.Select(x => x.ModelMesh).Distinct().ToList();
+            var unloadedMeshes = meshModels.Where(x => !x.IsModelLoaded).ToList();
+
+            foreach (var model in meshModels)
+            {
+                if (!model.IsModelLoaded)
+                {
+                    if (!model.LoadModel())
+                        continue;
+                }
+                model.Geometry.ClearRoundEdgeData();
+                model.SaveFile();
+            }
+
+            unloadedMeshes.ForEach(x => x.UnloadModel());
+        }
 
 
         #endregion

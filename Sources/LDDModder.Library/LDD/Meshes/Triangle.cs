@@ -126,6 +126,16 @@ namespace LDDModder.LDD.Meshes
             return false;
         }
 
+        public Vertex GetVertexByPosition(Vector3 position)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                if (Vertices[i].Position.Equals(position))
+                    return Vertices[i];
+            }
+            return null;
+        }
+
         public Edge[] GetVerticeEdges(int vertexIndex)
         {
             return new Edge[] { Edges[vertexIndex], Edges[(vertexIndex + 2) % 3] };

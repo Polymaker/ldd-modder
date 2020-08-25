@@ -25,6 +25,18 @@ namespace LDDModder.BrickEditor.UI.Controls
 
         private EditLayout _ViewLayout;
 
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public IPhysicalElement PhysicalElement
+        {
+            get => _PhysicalElement;
+            set
+            {
+                if (value != _PhysicalElement)
+                    BindPhysicalElement(value);
+            }
+        }
+
         [Browsable(false), Bindable(true)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public ItemTransform Value

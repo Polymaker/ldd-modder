@@ -163,21 +163,6 @@ namespace LDDModder.BrickEditor.UI.Windows
                     surface.Components.Add(partModel);
                 }
 
-                //if (model.Mesh.HasBones)
-                //{
-
-                    
-
-
-                //    foreach (var meshBone in model.Mesh.Bones)
-                //    {
-                        
-
-
-                //        //var bone = new PartBone(meshBone)
-                //    }
-                //}
-
                 var modelMesh = Project.AddMeshGeometry(geom, model.Name);
                 partModel.Meshes.Add(new ModelMeshReference(modelMesh));
 
@@ -195,8 +180,19 @@ namespace LDDModder.BrickEditor.UI.Windows
             var bones = new List<BoneMapping>();
             var boneNames = SceneToImport.Meshes.SelectMany(x => x.Bones).Select(x => x.Name).Distinct().ToList();
 
+            if (!boneNames.Any())
+                return bones;
+
             var boneNodes = Assimp.AssimpHelper.GetNodeHierarchy(SceneToImport.RootNode)
                 .Where(x => boneNames.Contains(x.Name))/*.OrderBy(x => x.GetLevel())*/.ToList();
+
+            //include last bone if no weight
+            if (boneNodes.LastOrDefault()?.ChildCount > 0)
+            {
+                var lastBone = boneNodes.Last();
+                if (lastBone.MeshCount == 0)
+                    boneNodes.Add(lastBone.Children[0]);
+            }
 
             boneNames = boneNodes.Select(x => x.Name).ToList();//names in order
 

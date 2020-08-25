@@ -545,5 +545,17 @@ namespace LDDModder.LDD.Meshes
                 vert.Normal = Matrix4.TransformNormal(matrix, vert.Normal);
             }
         }
+
+        public void ClearRoundEdgeData()
+        {
+            foreach(var idx in Indices)
+                idx.RoundEdgeData.Reset();
+        }
+
+        public bool CheckHasRoundEdgeData()
+        {
+            HasRoundEdgeData = Indices.Any(x => !x.RoundEdgeData.IsEmpty);
+            return HasRoundEdgeData;
+        }
     }
 }

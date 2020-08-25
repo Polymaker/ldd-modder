@@ -165,4 +165,16 @@
   <data name="TypeValueLabel.Text" xml:space="preserve">
     <value>&lt;Type de connexion&gt;</value>
   </data>
+  <data name="RadiusLabel.Text" xml:space="preserve">
+    <value>Rayon</value>
+  </data>
+  <data name="ToothCountLabel.Text" xml:space="preserve">
+    <value>Nb. dents</value>
+  </data>
+  <data name="AxesControlLabel.Text" xml:space="preserve">
+    <value>Axes</value>
+  </data>
+  <data name="CylindricalCheckBox.Text" xml:space="preserve">
+    <value>Cylindrique</value>
+  </data>
 </root>
