@@ -4,6 +4,7 @@ using LDDModder.BrickEditor.Resources;
 using LDDModder.BrickEditor.Settings;
 using LDDModder.BrickEditor.UI.Panels;
 using LDDModder.LDD;
+using LDDModder.LDD.Parts;
 using LDDModder.Modding.Editing;
 using LDDModder.Utilities;
 using System;
@@ -31,10 +32,6 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         protected FlagManager FlagManager { get; }
 
-
-
-        //private string TemporaryFolder;
-
         public BrickEditorWindow()
         {
             InitializeComponent();
@@ -51,24 +48,19 @@ namespace LDDModder.BrickEditor.UI.Windows
         {
             base.OnLoad(e);
 
-
             InitializeProjectManager();
             menuStrip1.Enabled = false;
-
         }
 
         protected override void OnShown(EventArgs e)
         {
             base.OnShown(e);
 
-            InitialCheckUp();
-
             Task.Factory.StartNew(() =>
             {
                 ResourceHelper.LoadResources();
             });
-
-            RebuildRecentFilesMenu();
+            
             UpdateMenuItemStates();
             UpdateWindowTitle();
 
@@ -80,7 +72,7 @@ namespace LDDModder.BrickEditor.UI.Windows
         }
        
 
-        private void InitialCheckUp()
+        private void LoadAndValidateSettings()
         {
             SettingsManager.Initialize();
 
@@ -97,6 +89,11 @@ namespace LDDModder.BrickEditor.UI.Windows
                 {
                     Models.BrickListCache.Initialize();
                 });
+            }
+
+            if (!FlagManager.IsSet("OnLoadAsync"))
+            {
+                AutoSaveTimer.Interval = SettingsManager.Current.AutoSaveInterval * 1000;
             }
         }
 
@@ -180,12 +177,19 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         private void OnInitializationPopupLoaded(object sender, EventArgs e)
         {
-            FlagManager.Set("OnLoadAsync");
-            AutoSaveTimer.Interval = 500;
-            AutoSaveTimer.Start();
-            DockPanelControl.Layout += DockPanelControl_Layout;
-            WaitPopup.Shown -= OnInitializationPopupLoaded;
-            InitializePanels();
+            Task.Factory.StartNew(() =>
+            {
+                Thread.Sleep(100);
+                BeginInvoke((Action)(() =>
+                {
+                    FlagManager.Set("OnLoadAsync");
+                    AutoSaveTimer.Interval = 500;
+                    AutoSaveTimer.Start();
+                    DockPanelControl.Layout += DockPanelControl_Layout;
+                    WaitPopup.Shown -= OnInitializationPopupLoaded;
+                    InitializePanels();
+                }));
+            });
         }
 
         private void DockPanelControl_Layout(object sender, LayoutEventArgs e)
@@ -209,6 +213,10 @@ namespace LDDModder.BrickEditor.UI.Windows
 
             menuStrip1.Enabled = true;
             WaitPopup.Hide();
+
+            LoadAndValidateSettings();
+            UpdateMenuItemStates();
+            RebuildRecentFilesMenu();
 
             Task.Factory.StartNew(() =>
             {
@@ -323,6 +331,63 @@ namespace LDDModder.BrickEditor.UI.Windows
 
             if (loadedProject != null)
                 LoadPartProject(loadedProject);
+        }
+
+        private void OpenPartFromFiles(string primitiveFilepath)
+        {
+
+            string filename = Path.GetFileNameWithoutExtension(primitiveFilepath);
+            string fileType = Path.GetExtension(primitiveFilepath);
+
+            if (!int.TryParse(filename, out int partID))
+            {
+                //TODO: Show message
+                return;
+            }
+
+            LDD.Primitives.Primitive primitive = null;
+            
+            if (fileType.ToLower() == ".xml")
+            {
+                try
+                {
+                    primitive = LDD.Primitives.Primitive.Load(primitiveFilepath);
+                }
+                catch
+                {
+                    ErrorMessageBox.Show(this,
+                        Messages.Error_OpeningFile, //TODO: change
+                        Messages.Caption_OpeningProject,
+                        "File is not an LDD Primitive."); //TODO: translate
+
+                    return;
+                }
+            }
+            else if (fileType.ToLower().StartsWith(".g"))
+            {
+
+            }
+
+            string fileDir = Path.GetDirectoryName(primitiveFilepath);
+            string fileDirLod0 = Path.Combine(fileDir, "Lod0");
+
+            var meshFiles = Directory.GetFiles(fileDir, primitive.ID + ".g*");
+
+            if (meshFiles.Length == 0 && Directory.Exists(fileDirLod0))
+            {
+                meshFiles = Directory.GetFiles(fileDirLod0, primitive.ID + ".g*");
+            }
+
+            if (meshFiles.Length == 0)
+            {
+                ErrorMessageBox.Show(this,
+                    Messages.Error_OpeningFile, //TODO: change
+                    Messages.Caption_OpeningProject,
+                    "No mesh file found."); //TODO: translate
+                return;
+            }
+
+            
         }
 
         private void LoadNewPartProject(PartProject project)
@@ -524,7 +589,11 @@ namespace LDDModder.BrickEditor.UI.Windows
                 FlagManager.Unset("OnLoadAsync");
                 DockPanelControl.Layout += DockPanelControl_Layout;
                 AutoSaveTimer.Stop();
-                AutoSaveTimer.Interval = 15000;
+
+                if (SettingsManager.HasInitialized)
+                    AutoSaveTimer.Interval = SettingsManager.Current.AutoSaveInterval * 1000;
+                else
+                    AutoSaveTimer.Interval = 15000;
 
                 Task.Factory.StartNew(() =>
                 {
@@ -539,7 +608,5 @@ namespace LDDModder.BrickEditor.UI.Windows
                 ProjectManager.SaveWorkingProject();
 
         }
-
-        
     }
 }

@@ -33,6 +33,9 @@ namespace LDDModder.BrickEditor.Settings
         [JsonIgnore]
         public int InternalFlag { get; set; }
 
+        [JsonIgnore]
+        public bool IsInternalConfig => InternalFlag > 0;
+
         public bool ShouldSerializeName()
         {
             return InternalFlag == 0;

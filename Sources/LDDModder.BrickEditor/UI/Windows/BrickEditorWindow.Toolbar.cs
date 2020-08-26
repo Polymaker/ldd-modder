@@ -20,9 +20,16 @@ namespace LDDModder.BrickEditor.UI.Windows
         {
             using (FlagManager.UseFlag("UpdateMenuItemStates"))
             {
-                File_CreateFromBrickMenu.Enabled = LDDEnvironment.Current?.IsValidInstall ?? false;
-                ExportBrickMenuItem.Enabled = LDDEnvironment.Current?.IsValidInstall ?? false;
-
+                if (SettingsManager.HasInitialized)
+                {
+                    File_CreateFromBrickMenu.Enabled = LDDEnvironment.Current?.IsValidInstall ?? false;
+                    ExportBrickMenuItem.Enabled = LDDEnvironment.Current?.IsValidInstall ?? false;
+                }
+                else
+                {
+                    File_CreateFromBrickMenu.Enabled = false;
+                    ExportBrickMenuItem.Enabled = false;
+                }
                 
                 File_SaveMenu.Enabled = ProjectManager.IsProjectOpen;
                 File_SaveAsMenu.Enabled = ProjectManager.IsProjectOpen;
@@ -30,12 +37,12 @@ namespace LDDModder.BrickEditor.UI.Windows
                 Edit_ImportMeshMenu.Enabled = ProjectManager.IsProjectOpen;
                 Edit_ValidatePartMenu.Enabled = ProjectManager.IsProjectOpen;
                 Edit_GenerateFilesMenu.Enabled = ProjectManager.IsProjectOpen;
-                Edit_GenerateOutlines.Checked = SettingsManager.Current.BuildSettings.GenerateOutlines;
-                //Edit_GenerateOutlines.Enabled = ProjectManager.IsProjectOpen;
             }
 
             UpdateUndoRedoMenus();
-            UpdateBuildConfigs();
+
+            if (SettingsManager.HasInitialized)
+                UpdateBuildConfigs();
             
         }
 
@@ -77,9 +84,28 @@ namespace LDDModder.BrickEditor.UI.Windows
             }
         }
 
+        private void FileMenu_OpenPartFiles_Click(object sender, EventArgs e)
+        {
+            using (var ofd = new OpenFileDialog())
+            {
+                //if (!string.IsNullOrEmpty(SettingsManager.Current.ProjectWorkspace) &&
+                //    Directory.Exists(SettingsManager.Current.ProjectWorkspace))
+                //{
+                //    ofd.InitialDirectory = SettingsManager.Current.ProjectWorkspace;
+                //}
+
+                ofd.Filter = "LDD Primitive file|*.xml|LDD Mesh file|*.g|LDD Textured Mesh file|*.g*|All|*.xml;*.g;*.g*";
+                if (ofd.ShowDialog() == DialogResult.OK)
+                    OpenPartFromFiles(ofd.FileName);
+            }
+        }
+
         private void RebuildRecentFilesMenu()
         {
             File_OpenRecentMenu.DropDownItems.Clear();
+
+            if (!SettingsManager.HasInitialized)
+                return;
 
             int currentFileIndex = 1;
             foreach (var recentProject in SettingsManager.Current.RecentProjectFiles.ToArray())
@@ -215,15 +241,6 @@ namespace LDDModder.BrickEditor.UI.Windows
             }
         }
 
-        private void Edit_GenerateOutlines_CheckStateChanged(object sender, EventArgs e)
-        {
-            if (FlagManager.IsSet("UpdateMenuItemStates"))
-                return;
-
-            SettingsManager.Current.BuildSettings.GenerateOutlines = Edit_GenerateOutlines.Checked;
-            SettingsManager.SaveSettings();
-        }
-
         #endregion
 
         #region Tools Menu
@@ -233,7 +250,7 @@ namespace LDDModder.BrickEditor.UI.Windows
             ShowSettingsWindow();
         }
 
-        public void ShowSettingsWindow(AppSettingsWindow.SettingTab defaultTab = AppSettingsWindow.SettingTab.LddPaths)
+        public void ShowSettingsWindow(AppSettingsWindow.SettingTab defaultTab = AppSettingsWindow.SettingTab.LddEnvironment)
         {
             using (var dlg = new AppSettingsWindow())
             {
@@ -304,6 +321,9 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         private void UpdateBuildConfigs()
         {
+            if (!SettingsManager.HasInitialized)
+                return;
+
             using (FlagManager.UseFlag("UpdateBuildConfig"))
             {
                 var currentSelection = SelectedBuildConfig;
@@ -351,8 +371,7 @@ namespace LDDModder.BrickEditor.UI.Windows
                 {
                     using (FlagManager.UseFlag("UpdateBuildConfig"))
                         BuildConfigComboBox.SelectedIndex = BuildConfigList.IndexOf(SelectedBuildConfig);
-                    ShowSettingsWindow(AppSettingsWindow.SettingTab.ProjectSettings);
-
+                    ShowSettingsWindow(AppSettingsWindow.SettingTab.BuildSettings);
                 }
                 else
                 {

@@ -29,6 +29,9 @@ namespace LDDModder.BrickEditor.UI.Windows
         {
             
             StartPosition = FormStartPosition.Manual;
+            int offsetX = (parent.Width - Width) / 2;
+            int offsetY = (parent.Height - Height) / 2;
+            Location = new Point(parent.Left + offsetX, parent.Top + offsetY);
 
             parent.Move += Parent_Move;
             Show(parent);

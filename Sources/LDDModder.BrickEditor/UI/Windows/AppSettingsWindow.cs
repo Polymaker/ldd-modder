@@ -21,8 +21,9 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         public enum SettingTab
         {
-            LddPaths,
-            ProjectSettings
+            LddEnvironment,
+            BuildSettings,
+            //ProjectSettings
         }
 
         public SettingTab StartupTab { get; set; }
@@ -31,18 +32,33 @@ namespace LDDModder.BrickEditor.UI.Windows
         {
             InitializeComponent();
             Icon = Properties.Resources.BrickStudioIcon;
+            StartupTab = SettingTab.LddEnvironment;
         }
 
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            LDD.LDDEnvironment.Current.CheckLifStatus();
-            FillSettings(LDD.LDDEnvironment.Current);
-
+            LoadSettings();
+            switch (StartupTab)
+            {
+                case SettingTab.BuildSettings:
+                    tabControl1.SelectedTab = BuildSettingsTabPage;
+                    break;
+            }
         }
 
-        private void FillSettings(LDD.LDDEnvironment environment)
+        private void LoadSettings()
         {
+            FillLddSettings(LDD.LDDEnvironment.Current);
+            FillBuildSettingsList();
+        }
+
+        #region LDD Settings
+
+        private void FillLddSettings(LDD.LDDEnvironment environment)
+        {
+            environment.CheckLifStatus();
+
             LoadingSettings = true;
 
             PrgmFilePathTextBox.Value = environment?.ProgramFilesPath;
@@ -133,7 +149,7 @@ namespace LDDModder.BrickEditor.UI.Windows
 
             using (var fbd = new FolderBrowserDialog())
             {
-                if (FileHelper.IsValidDirectory(sourceBox.Value , true))
+                if (FileHelper.IsValidDirectory(sourceBox.Value, true))
                     fbd.SelectedPath = sourceBox.Value;
                 else
                 {
@@ -145,7 +161,7 @@ namespace LDDModder.BrickEditor.UI.Windows
 
                 if (fbd.ShowDialog() == DialogResult.OK)
                 {
-                    
+
                     string selectedDir = fbd.SelectedPath;
 
                     if (sourceBox == PrgmFilePathTextBox && !ValidateProgramPath(ref selectedDir))
@@ -166,7 +182,7 @@ namespace LDDModder.BrickEditor.UI.Windows
             if (defaultEnv != null)
             {
                 defaultEnv.CheckLifStatus();
-                FillSettings(defaultEnv);
+                FillLddSettings(defaultEnv);
             }
             else
                 MessageBox.Show(this, LddExeNotFound, this.Text, MessageBoxButtons.OK);
@@ -187,6 +203,104 @@ namespace LDDModder.BrickEditor.UI.Windows
             return File.Exists(exePath);
         }
 
+        #endregion
+
+        #region Build Settings
+
+        private void FillBuildSettingsList()
+        {
+            var buildConfigs = SettingsManager.GetBuildConfigurations();
+
+            foreach (var config in buildConfigs)
+            {
+                var lvi = new ListViewItem(config.Name)
+                {
+                    Tag = config
+                };
+                BuildConfigListView.Items.Add(lvi);
+            }
+
+            BuildConfigListView.Items[0].Selected = true;
+        }
+
+
+        private void BuildConfigListView_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (BuildConfigListView.SelectedItems.Count == 1
+                && BuildConfigListView.SelectedItems[0].Tag is BuildConfiguration config)
+            {
+                FillBuildConfigDetails(config);
+            }
+        }
+
+        private void FillBuildConfigDetails(BuildConfiguration config)
+        {
+            BuildCfg_NameBox.DataBindings.Clear();
+            BuildCfg_PathBox.DataBindings.Clear();
+            BuildCfg_Lod0Chk.DataBindings.Clear();
+            BuildCfg_OverwriteChk.DataBindings.Clear();
+
+            if (config != null)
+            {
+                BuildCfg_NameBox.DataBindings.Add(new Binding(
+                    "Text",
+                    config,
+                    nameof(BuildConfiguration.Name),
+                    true,
+                    DataSourceUpdateMode.OnValidation
+                    )
+                );
+
+                BuildCfg_NameBox.Enabled = true;
+                BuildCfg_NameBox.ReadOnly = config.IsInternalConfig;
+
+                if (!config.IsInternalConfig)
+                {
+                    BuildCfg_PathBox.DataBindings.Add(new Binding(
+                        "Value",
+                        config,
+                        nameof(BuildConfiguration.OutputPath),
+                        true,
+                        DataSourceUpdateMode.OnValidation
+                        )
+                    );
+                }
+
+                BuildCfg_PathBox.Enabled = !config.IsInternalConfig;
+
+                BuildCfg_Lod0Chk.DataBindings.Add(new Binding(
+                    "Checked",
+                    config,
+                    nameof(BuildConfiguration.LOD0Subdirectory),
+                    true,
+                    DataSourceUpdateMode.OnPropertyChanged
+                    )
+                );
+
+                BuildCfg_Lod0Chk.Enabled = config.InternalFlag != 1;
+
+                BuildCfg_OverwriteChk.DataBindings.Add(new Binding(
+                    "Checked",
+                    config,
+                    nameof(BuildConfiguration.ConfirmOverwrite),
+                    true,
+                    DataSourceUpdateMode.OnPropertyChanged
+                    )
+                );
+                BuildCfg_OverwriteChk.Enabled = true;
+            }
+            else
+            {
+                BuildCfg_NameBox.Enabled = false;
+                BuildCfg_PathBox.Enabled = false;
+                BuildCfg_Lod0Chk.Enabled = false;
+                BuildCfg_OverwriteChk.Enabled = false;
+            }
+        }
+
+        #endregion
+
+
         private void SaveButton_Click(object sender, EventArgs e)
         {
             if (!string.IsNullOrEmpty(PrgmFilePathTextBox.Value))
@@ -200,6 +314,16 @@ namespace LDDModder.BrickEditor.UI.Windows
 
             SettingsManager.SaveSettings();
 
+        }
+
+        private void BuildCfg_PathBox_BrowseButtonClicked(object sender, EventArgs e)
+        {
+            using(var fbd = new FolderBrowserDialog())
+            {
+                //if (!string.IsNullOrEmpty(BuildCfg_PathBox.Value) && Dire)
+                if (fbd.ShowDialog() == DialogResult.OK)
+                    BuildCfg_PathBox.Value = fbd.SelectedPath;
+            }
         }
     }
 }

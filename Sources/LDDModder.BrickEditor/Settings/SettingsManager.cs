@@ -21,6 +21,8 @@ namespace LDDModder.BrickEditor.Settings
 
         public static int MaximumRecentFiles { get; set; } = 10;
 
+        public static bool HasInitialized { get; private set; }
+
         static SettingsManager()
         {
             AppDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
@@ -36,6 +38,8 @@ namespace LDDModder.BrickEditor.Settings
                 LDDEnvironment.Initialize();
 
             LoadSettings();
+
+            HasInitialized = true;
         }
 
         public static void LoadSettings()

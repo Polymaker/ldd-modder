@@ -183,11 +183,18 @@ namespace LDDModder.Modding.Editing
         public static PartProject CreateFromLddPart(LDD.LDDEnvironment environment, int partID)
         {
             var lddPart = LDD.Parts.PartWrapper.LoadPart(environment, partID, true);
+            return CreateFromLddPart(lddPart);
+        }
+
+        public static PartProject CreateFromLddPart(LDD.Parts.PartWrapper lddPart)
+        {
+            int partID = lddPart.PartID;
 
             var project = new PartProject()
             {
                 IsLoading = true
             };
+
             project.SetBaseInfo(lddPart);
 
             int elementIndex = 0;
@@ -262,7 +269,7 @@ namespace LDDModder.Modding.Editing
                         else// if (cullingComp is BrickTubeModel brickTube)
                         {
                             Debug.WriteLine($"{cullingComp.ComponentType} has a replacement mesh!!!");
-                            
+
                             //cullingComp.Meshes
                             //    .Add(new ModelMeshReference(replacementMesh));
                         }

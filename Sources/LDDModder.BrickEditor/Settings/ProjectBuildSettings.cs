@@ -20,13 +20,12 @@ namespace LDDModder.BrickEditor.Settings
         [JsonProperty("userDefined")]
         public List<BuildConfiguration> UserDefined { get; set; }
 
-        [JsonProperty("generateOutlines", DefaultValueHandling = DefaultValueHandling.Ignore), DefaultValue(true)]
-        public bool GenerateOutlines { get; set; }
+        //[JsonProperty("generateOutlines", DefaultValueHandling = DefaultValueHandling.Ignore), DefaultValue(true)]
+        //public bool GenerateOutlines { get; set; }
 
         public ProjectBuildSettings()
         {
             UserDefined = new List<BuildConfiguration>();
-            GenerateOutlines = true;
         }
 
         public void InitializeDefaults()

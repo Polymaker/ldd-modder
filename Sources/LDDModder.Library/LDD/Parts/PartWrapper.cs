@@ -107,12 +107,15 @@ namespace LDDModder.LDD.Parts
 
             var surfaces = new List<PartSurfaceMesh>();
 
-            foreach (string meshPath in Directory.GetFiles(meshesDir, $"{partID}.g*"))
+            if (Directory.Exists(meshesDir))
             {
-                if (!PartSurfaceMesh.ParseSurfaceID(meshPath, out int surfID))
-                    surfID = surfaces.Count;
+                foreach (string meshPath in Directory.GetFiles(meshesDir, $"{partID}.g*"))
+                {
+                    if (!PartSurfaceMesh.ParseSurfaceID(meshPath, out int surfID))
+                        surfID = surfaces.Count;
 
-                surfaces.Add(new PartSurfaceMesh(partID, surfID, loadMeshes ? MeshFile.Read(meshPath) : null));
+                    surfaces.Add(new PartSurfaceMesh(partID, surfID, loadMeshes ? MeshFile.Read(meshPath) : null));
+                }
             }
 
             if (!surfaces.Any())
