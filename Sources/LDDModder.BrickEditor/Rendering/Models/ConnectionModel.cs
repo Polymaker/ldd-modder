@@ -208,7 +208,7 @@ namespace LDDModder.BrickEditor.Rendering
 
         private void RenderCustom2DField(Custom2DFieldConnector connector)
         {
-            RenderHelper.DrawStudConnector2(Transform, connector);
+            RenderHelper.DrawStudConnectorGrid(Transform, connector);
 
             var color = IsSelected ? new Vector4(1f) : new Vector4(0, 0, 0, 1);
             RenderHelper.DrawRectangle(Transform,

@@ -72,15 +72,15 @@ namespace LDDModder.BrickEditor.UI.Panels
             ContextMenu_Delete.ShortcutKeys = Keys.Delete;
 
             DockAreas = DockAreas.DockLeft | DockAreas.DockRight | DockAreas.Float | DockAreas.Document;
-
-            InitializeNavigationImageList();
-            InitializeContextMenus();
-            InitializeNavigationTreeView();
         }
 
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+
+            InitializeNavigationImageList();
+            InitializeContextMenus();
+            InitializeNavigationTreeView();
             InitializeViewComboBox();
 
             //ViewModeLabel.Text = $"<{ModelLocalizations.Label_NoActiveProject}> ";

@@ -24,6 +24,12 @@ namespace LDDModder.LDD.Meshes
                 P2 = edge.P2.Position.Rounded();
             }
 
+            public SimpleEdge(Vector3 p1, Vector3 p2)
+            {
+                P1 = p1;
+                P2 = p2;
+            }
+
             public bool Equals(SimpleEdge other)
             {
                 return (other.P1.Equals(P1) && other.P2.Equals(P2)) || (other.P1.Equals(P2) && other.P2.Equals(P1));
@@ -107,6 +113,14 @@ namespace LDDModder.LDD.Meshes
                 EdgeNormal = ((v1.Normal + v2.Normal) / 2f).Normalized().Rounded();
                 FaceNormal = face.Normal.Rounded();
                 OutlineDirection = Vector3.GetPerpendicular(P1, P2, face.GetCenter()).Normalized().Rounded();
+            }
+
+            public HardEdge(Vector3 p1, Vector3 p2, Vector3 faceNormal, Vector3 outlineDirection)
+            {
+                P1 = p1;
+                P2 = p2;
+                FaceNormal = faceNormal;
+                OutlineDirection = outlineDirection;
             }
 
             public void CorrectOrder()
@@ -211,8 +225,6 @@ namespace LDDModder.LDD.Meshes
             public Vector3 Direction { get; set; }
 
             public bool IsTriangleEdge { get; set; }
-            public bool EndAtP1 => OrigEdge.PrevEdge == null;
-            public bool EndAtP2 => OrigEdge.NextEdge == null;
 
             public PlanarEdge(HardEdge edge, Triangle triangle, Plane plane)
             {
@@ -325,7 +337,7 @@ namespace LDDModder.LDD.Meshes
 
             public bool IsDeadEnd { get; set; }
 
-            public ProjectedEdge IntersectWith { get; set; }
+            public ProjectedEdge CombineWith { get; set; }
 
             public void ValidateValues()
             {
@@ -335,7 +347,7 @@ namespace LDDModder.LDD.Meshes
                 if (minPos.Y < 0 && Math.Abs(minPos.Y) > LineThickness)
                     NeedsToBeClipped = true;
 
-                if (maxPos.Y < LineThickness)
+                if (maxPos.Y < LineThickness && (maxPos.Y - minPos.Y) > LineThickness)
                     IsOutsideTriangle = true;
 
                 //Dead End
@@ -383,8 +395,6 @@ namespace LDDModder.LDD.Meshes
                 }
             }
         }
-
-        
 
         class HardEdgeDictionary
         {
@@ -460,7 +470,7 @@ namespace LDDModder.LDD.Meshes
 
                 return closeEdges
                     .Distinct()
-                    .Where(e => Vector3.AngleBetween(triangle.Normal, e.FaceNormal) <= BreakAngleRad);
+                    .Where(e => Vector3.AngleBetween(triangle.Normal, e.EdgeNormal) <= BreakAngleRad);
             }
 
             public bool GetBySharedVertex(HardEdge edge, Vector3 vertex, out HardEdge result)
@@ -471,7 +481,7 @@ namespace LDDModder.LDD.Meshes
                     var nearEdges = sharedEdges
                         .Where(x => x != edge 
                             && Vector3.AngleBetween(x.FaceNormal, edge.FaceNormal) <= BreakAngleRad
-                            && Vector3.AngleBetween(x.OutlineDirection, edge.OutlineDirection) <= fPI * 0.60
+                            && Vector3.AngleBetween(x.OutlineDirection, edge.OutlineDirection) <= fPI * 0.85
                         )
                         .OrderBy(x => Vector3.AngleBetween(x.FaceNormal, edge.FaceNormal))
                         .ThenBy(x => Vector3.AngleBetween(x.OutlineDirection, edge.OutlineDirection));
@@ -499,17 +509,12 @@ namespace LDDModder.LDD.Meshes
             Console.WriteLine($"CalculateHardEdges => {sw.Elapsed}");
 
             sw.Restart();
-            int totalData = 0;
 
             foreach (var triangle in triangleList)
             {
                 var facePlane = new Plane(triangle.GetCenter(), triangle.Normal);
 
                 var closeEdges = hardEdgeDict.GetEdgesForTriangle(triangle);
-                //if (closeEdges.Count() > 6)
-                //{
-
-                //}
 
                 var planarEdges = closeEdges.Select(x => new PlanarEdge(x, triangle, facePlane)).ToList();
 
@@ -517,23 +522,26 @@ namespace LDDModder.LDD.Meshes
 
                 foreach (var vert in triangle.Vertices)
                 {
-                    var vertEdges = planarEdges.Where(x => x.Contains(vert.Position)).ToList();
-                    var projections = vertEdges.Select(x => x.ProjectTriangle(triangle, vert.Position)).ToList();
+                    var edgesConnectedToVertex = planarEdges.Where(x => x.Contains(vert.Position)).ToList();
+                    var projections = edgesConnectedToVertex.Select(x => x.ProjectTriangle(triangle, vert.Position)).ToList();
 
 
-                    if (vert.Position.Equals(new Vector3(1.6f, 2.08f, 1.52f), 0.001f)
-                        /*&& triangle.Normal == Vector3.UnitZ*/)
+                    //if (vert.Position.Equals(new Vector3(1.6f, 2.08f, 1.52f), 0.001f)
+                    //    //&& triangle.Vertices.Any(v=>v.Position.Y == 2.07874f)
+                    //    //&& triangle.Normal.Equals(Vector3.UnitZ, 0.8f)
+                    //    )
+                    //{
+
+                    //}
+
+                    projections.RemoveAll(p => p.IsOutsideTriangle);
+
+                    if (projections.Count(p => p.IsDeadEnd) >= 2)
                     {
-
-                    }
-
-                    projections.RemoveAll(x => x.IsOutsideTriangle);
-
-                    if (projections.Count(c => c.IsDeadEnd) >= 2)
-                    {
-                        projections.RemoveAt(0);
-
-
+                        var deadEnds = projections.Where(p => p.IsDeadEnd);
+                        var triCenter = triangle.GetCenter();
+                        var projectionToKeep = deadEnds.OrderBy(p => Vector3.Distance(vert.Position + p.PlanarEdge.OutlineDirection, triCenter)).First();
+                        projections.RemoveAll(p => p.IsDeadEnd && p != projectionToKeep);
                     }
 
                     if (projections.Count == 2)
@@ -549,8 +557,8 @@ namespace LDDModder.LDD.Meshes
                                 projectedEdges.Add(projection1);
                             else
                             {
-                                projection1.IntersectWith = projection2;
-                                projection2.IntersectWith = projection1;
+                                projection1.CombineWith = projection2;
+                                projection2.CombineWith = projection1;
                                 projectedEdges.Add(projection1);
                                 projectedEdges.Add(projection2);
                             }
@@ -558,20 +566,22 @@ namespace LDDModder.LDD.Meshes
                         else
                         {
                             var opp1 = edge1.GetOppositeVertex(vert.Position);
-                            var opp2 = edge2.GetOppositeVertex(vert.Position);
+                            //var opp2 = edge2.GetOppositeVertex(vert.Position);
                             var dir1 = (opp1 - vert.Position).Normalized();
-                            var dir2 = (opp2 - vert.Position).Normalized();
+                            //var dir2 = (opp2 - vert.Position).Normalized();
 
                             var avgNormal = Vector3.Avg(edge1.OutlineDirection, edge2.OutlineDirection).Normalized();
 
                             var edgeAngleDiff = Vector3.AngleBetween(avgNormal, dir1);
+
                             if (edgeAngleDiff * 2f > fPI)
                             {
                                 projection1.NeedsToBeClipped = true;
                                 projection2.NeedsToBeClipped = true;
                             }
-                            projection1.IntersectWith = projection2;
-                            projection2.IntersectWith = projection1;
+
+                            projection1.CombineWith = projection2;
+                            projection2.CombineWith = projection1;
                             projectedEdges.Add(projection1);
                             projectedEdges.Add(projection2);
                         }
@@ -581,20 +591,21 @@ namespace LDDModder.LDD.Meshes
                         var projection = projections[0];
                         projectedEdges.Add(projection);
 
-
                         if (projection.NeedsToBeClipped)
                         {
-                            var endEdge = new SimpleEdge()
-                            {
-                                P1 = vert.Position,
-                                P2 = vert.Position + projection.PlanarEdge.OutlineDirection
-                            };
                             var oppVert = projection.PlanarEdge.GetOppositeVertex(vert.Position);
                             var outlineDir = (vert.Position - oppVert).Normalized();
-                            var planarEndEdge = new PlanarEdge(endEdge, outlineDir, triangle, facePlane);
+                            var interEdge = new HardEdge(
+                                vert.Position,
+                                vert.Position + projection.PlanarEdge.OutlineDirection,
+                                triangle.Normal, 
+                                outlineDir);
+                            interEdge.CorrectOrder();
+                            var planarEndEdge = new PlanarEdge(interEdge, triangle, facePlane);
                             var interProjected = planarEndEdge.ProjectTriangle(triangle, vert.Position);
-                            projection.IntersectWith = interProjected;
-                            interProjected.IntersectWith = projection;
+                            interProjected.NeedsToBeClipped = true;
+                            projection.CombineWith = interProjected;
+                            interProjected.CombineWith = projection;
                             projectedEdges.Add(interProjected);
                         }
                     }
@@ -604,9 +615,6 @@ namespace LDDModder.LDD.Meshes
                     }
                 }
 
-                projectedEdges.RemoveAll(x => x.IsOutsideTriangle);
-
-                totalData += projectedEdges.Count();
                 if (projectedEdges.Any())
                 {
                     int pairIdx = 0;
@@ -614,11 +622,11 @@ namespace LDDModder.LDD.Meshes
 
                     while (pairIdx < 3 && projectedEdges.Any())
                     {
-                        var projection = projectedEdges.OrderByDescending(x => x.IntersectWith != null)
+                        var projection = projectedEdges.OrderByDescending(x => x.CombineWith != null)
                             .FirstOrDefault();
                         projectedEdges.Remove(projection);
 
-                        var nextEdge = projection.IntersectWith;
+                        var nextEdge = projection.CombineWith;
 
                         //if (combineStandAlones && nextEdge == null)
                         //{
@@ -631,21 +639,10 @@ namespace LDDModder.LDD.Meshes
                             projectedEdges.Remove(nextEdge);
 
                         SetOutlineCoords(triangle, pairIdx++, projection, nextEdge);
-
                         
                     }
-                    if (projectedEdges.Any())
-                    {
-
-                    }
                 }
-
-                //var planarEdges = closeEdges.Select(x => ProjectEdge(x, triangle)).ToList();
-
             }
-
-            sw.Stop();
-            Console.WriteLine($"find edges by triangle => {sw.Elapsed}");
         }
 
         static void SetOutlineCoords(Triangle triangle, int coordIdx, ProjectedEdge e1, ProjectedEdge e2)
@@ -667,57 +664,6 @@ namespace LDDModder.LDD.Meshes
                 triangle.Indices[i].RoundEdgeData.SetCoordsPair(coordIdx, uv2, uv1, mode);
             }
         }
-
-        // By edge distance to triangle
-        //public static void GenerateOutlines(IEnumerable<Triangle> triangles, float breakAngle)
-        //{
-
-        //    var triangleList = triangles.ToList();
-        //    var sw = Stopwatch.StartNew();
-        //    var hardEdges = CalculateHardEdges(triangleList, breakAngle);
-        //    sw.Stop();
-        //    Console.WriteLine($"CalculateHardEdges => {sw.Elapsed}");
-
-        //    var hardEdgeMap = new Dictionary<Vector3, List<HardEdge>>();
-        //    sw.Restart();
-        //    var bbox = BoundingBox.FromVertices(triangleList.SelectMany(x => x.Vertices));
-        //    const float mapStep = 0.5f;
-        //    var minPos = Vector3.FloorByStep((Vector3)bbox.Min, mapStep);
-        //    var maxPos = Vector3.CeilingByStep((Vector3)bbox.Max, mapStep);
-
-        //    for (float x = minPos.X; x <= maxPos.X; x += mapStep)
-        //    {
-        //        for (float y = minPos.Y; y <= maxPos.Y; y += mapStep)
-        //        {
-        //            for (float z = minPos.Z; z <= maxPos.Z; z += mapStep)
-        //            {
-        //                var mapPos = new Vector3(x, y, z).Rounded();
-        //                var closeEdges = hardEdges.Where(e => e.DistanceFrom(mapPos) <= mapStep);
-        //                hardEdgeMap.Add(mapPos, closeEdges.ToList());
-        //            }
-        //        }
-        //    }
-        //    sw.Stop();
-        //    Console.WriteLine($"hardEdgeMap => {sw.Elapsed}");
-
-        //    sw.Restart();
-        //    foreach (var triangle in triangleList)
-        //    {
-        //        var closeEdges = new List<HardEdge>();
-        //        for (int i = 0; i < 3; i++)
-        //        {
-        //            var triMapPos = Vector3.RoundByStep(triangle.Vertices[i].Position, mapStep).Rounded();
-        //            closeEdges.AddRange(hardEdgeMap[triMapPos]);
-        //        }
-
-
-        //        //var closeEdges = hardEdges
-        //        //    .Where(e => e.DistanceFrom(triangle) <= LineThickness).ToList();
-        //    }
-
-        //    sw.Stop();
-        //    Console.WriteLine($"find edges by triangle => {sw.Elapsed}");
-        //}
 
         private static List<HardEdge> CalculateHardEdges(List<Triangle> triangleList, float breakAngle)
         {

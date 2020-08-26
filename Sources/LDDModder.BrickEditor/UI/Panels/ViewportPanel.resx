@@ -280,18 +280,8 @@
   <data name="MeshesMenu_RemoveOutlines.Text" xml:space="preserve">
     <value>Remove Outlines</value>
   </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="toolStripMenuItem2.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="toolStripMenuItem2.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Segoe UI Semibold, 9pt, style=Bold</value>
-  </data>
-  <data name="toolStripMenuItem2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
-  </data>
-  <data name="toolStripMenuItem2.Text" xml:space="preserve">
-    <value>Unfinished features!</value>
+  <data name="MeshesMenu_Separator1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>177, 6</value>
   </data>
   <data name="MeshesMenu_Separate.Size" type="System.Drawing.Size, System.Drawing">
     <value>180, 22</value>
@@ -372,13 +362,13 @@
     <value>Bones</value>
   </data>
   <data name="globalToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>108, 22</value>
   </data>
   <data name="globalToolStripMenuItem.Text" xml:space="preserve">
     <value>Global</value>
   </data>
   <data name="localToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>108, 22</value>
   </data>
   <data name="localToolStripMenuItem.Text" xml:space="preserve">
     <value>Local</value>
@@ -474,6 +464,7 @@
   <data name="toolStrip1.Size" type="System.Drawing.Size, System.Drawing">
     <value>549, 27</value>
   </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="toolStrip1.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
   </data>
@@ -517,7 +508,7 @@
     <value>transformEditor1</value>
   </data>
   <data name="&gt;&gt;transformEditor1.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.TransformEditor, Brick Studio, Version=1.0.4.28180, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.TransformEditor, Brick Studio, Version=1.0.4.14792, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;transformEditor1.Parent" xml:space="preserve">
     <value>SelectionInfoPanel</value>
@@ -654,10 +645,16 @@
   <data name="&gt;&gt;MeshesDropDownMenu.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripDropDownButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;toolStripMenuItem2.Name" xml:space="preserve">
-    <value>toolStripMenuItem2</value>
+  <data name="&gt;&gt;MeshesMenu_CalculateOutlines.Name" xml:space="preserve">
+    <value>MeshesMenu_CalculateOutlines</value>
   </data>
-  <data name="&gt;&gt;toolStripMenuItem2.Type" xml:space="preserve">
+  <data name="&gt;&gt;MeshesMenu_CalculateOutlines.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;MeshesMenu_RemoveOutlines.Name" xml:space="preserve">
+    <value>MeshesMenu_RemoveOutlines</value>
+  </data>
+  <data name="&gt;&gt;MeshesMenu_RemoveOutlines.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;MeshesMenu_Separate.Name" xml:space="preserve">
@@ -774,22 +771,16 @@
   <data name="&gt;&gt;visualStudioToolStripExtender1.Type" xml:space="preserve">
     <value>WeifenLuo.WinFormsUI.Docking.VisualStudioToolStripExtender, WeifenLuo.WinFormsUI.Docking, Version=3.0.6.0, Culture=neutral, PublicKeyToken=5cded1a1a0a7b481</value>
   </data>
-  <data name="&gt;&gt;MeshesMenu_CalculateOutlines.Name" xml:space="preserve">
-    <value>MeshesMenu_CalculateOutlines</value>
+  <data name="&gt;&gt;MeshesMenu_Separator1.Name" xml:space="preserve">
+    <value>MeshesMenu_Separator1</value>
   </data>
-  <data name="&gt;&gt;MeshesMenu_CalculateOutlines.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;MeshesMenu_RemoveOutlines.Name" xml:space="preserve">
-    <value>MeshesMenu_RemoveOutlines</value>
-  </data>
-  <data name="&gt;&gt;MeshesMenu_RemoveOutlines.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;MeshesMenu_Separator1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>ViewportPanel</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Panels.ProjectDocumentPanel, Brick Studio, Version=1.0.4.28180, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Panels.ProjectDocumentPanel, Brick Studio, Version=1.0.4.14792, Culture=neutral, PublicKeyToken=null</value>
   </data>
 </root>

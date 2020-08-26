@@ -62,6 +62,11 @@ namespace LDDModder.BrickEditor.UI.Panels
             ProjectManager = null;
         }
 
+        public virtual void DefferedInitialization()
+        {
+
+        }
+
         protected override void OnClosed(EventArgs e)
         {
             DettachProjectManager();

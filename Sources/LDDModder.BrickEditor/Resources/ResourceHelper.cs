@@ -21,13 +21,25 @@ namespace LDDModder.BrickEditor.Resources
 
         public static List<MainGroup> Categories { get; set; }
 
-        public static List<LDD.Primitives.Connectors.ConnectorInfo> Connectors { get; set; }
+        public static List<ConnectorInfo> Connectors { get; set; }
+
+        public static event EventHandler ResourceDataInitialized;
+
+        public static bool IsResourceDataInitialized { get; private set; }
 
         static ResourceHelper()
         {
             Platforms = new List<Platform>();
             Categories = new List<MainGroup>();
             Connectors = new List<LDD.Primitives.Connectors.ConnectorInfo>();
+        }
+
+        public static void LoadResources()
+        {
+            LoadPlatformsAndCategories();
+            LoadConnectors();
+            IsResourceDataInitialized = true;
+            ResourceDataInitialized?.Invoke(null, EventArgs.Empty);
         }
 
         public static void LoadPlatformsAndCategories()

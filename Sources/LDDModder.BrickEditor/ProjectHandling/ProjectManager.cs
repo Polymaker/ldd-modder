@@ -679,7 +679,6 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
             try
             {
-                
                 generatedPart = CurrentProject.GenerateLddPart();
                 GenerationSuccessful = true;
             }

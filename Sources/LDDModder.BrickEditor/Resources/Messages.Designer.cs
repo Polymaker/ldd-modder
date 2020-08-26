@@ -237,6 +237,24 @@ namespace LDDModder.BrickEditor.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Initializing Resources.
+        /// </summary>
+        internal static string Message_InitializingResources {
+            get {
+                return ResourceManager.GetString("Message_InitializingResources", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Initializing User Interface.
+        /// </summary>
+        internal static string Message_InitializingUI {
+            get {
+                return ResourceManager.GetString("Message_InitializingUI", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à TODO.
         /// </summary>
         internal static string Message_RecoverProject {

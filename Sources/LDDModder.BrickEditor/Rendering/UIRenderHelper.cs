@@ -57,7 +57,6 @@ namespace LDDModder.BrickEditor.Rendering
                 Characters = CharacterSet.General | CharacterSet.Japanese | CharacterSet.Thai | CharacterSet.Cyrillic
             };
 
-
             NormalFont = new QFont("C:\\Windows\\Fonts\\segoeui.ttf", 10,
                 builderConfig);
 
@@ -68,6 +67,7 @@ namespace LDDModder.BrickEditor.Rendering
                 builderConfig);
 
             TextRenderer = new QFontDrawing();
+
             UIShader = ProgramFactory.Create<UIShaderProgram>();
 
             UIShader.Use();

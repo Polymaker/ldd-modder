@@ -28,7 +28,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             InitializeComponent();
         }
 
-        internal PartPropertiesPanel(ProjectManager projectManager) : base(projectManager)
+        public PartPropertiesPanel(ProjectManager projectManager) : base(projectManager)
         {
             InitializeComponent();
             CloseButtonVisible = false;
@@ -43,18 +43,39 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             base.OnLoad(e);
 
-            PlatformComboBox.DataSource = ResourceHelper.Platforms.ToList();
-            PlatformComboBox.ValueMember = "ID";
-            PlatformComboBox.DisplayMember = "Display";
+            if (ResourceHelper.IsResourceDataInitialized)
+            {
+                PlatformComboBox.DataSource = ResourceHelper.Platforms.ToList();
+                PlatformComboBox.ValueMember = "ID";
+                PlatformComboBox.DisplayMember = "Display";
+                Categories = ResourceHelper.Categories.ToList();
+                UpdateCategoriesCombobox();
+            }
+            else
+            {
+                ResourceHelper.ResourceDataInitialized += ResourceHelper_ResourceDataInitialized;
+            }
+
             PlatformComboBox.MouseWheel += ComboBox_MouseWheel;
-
-            Categories = ResourceHelper.Categories.ToList();
             CategoryComboBox.MouseWheel += ComboBox_MouseWheel;
-            int test = AliasesButtonBox.Height;
-
-            UpdateCategoriesCombobox();
+            
             InitializeAliasDropDown();
             UpdateControlBindings();
+        }
+
+        private void ResourceHelper_ResourceDataInitialized(object sender, EventArgs e)
+        {
+            ExecuteOnThread(() =>
+            {
+                PlatformComboBox.DataSource = ResourceHelper.Platforms.ToList();
+                PlatformComboBox.ValueMember = "ID";
+                PlatformComboBox.DisplayMember = "Display";
+
+                Categories = ResourceHelper.Categories.ToList();
+                UpdateCategoriesCombobox();
+            });
+            
+            ResourceHelper.ResourceDataInitialized -= ResourceHelper_ResourceDataInitialized;
         }
 
         private void UpdateCategoriesCombobox()

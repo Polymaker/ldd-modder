@@ -14,29 +14,50 @@ namespace LDDModder.BrickEditor.Rendering
 {
     static class TextureManager
     {
-        public static Texture2D StudGridTexture { get; private set; }
+        //public static Texture2D StudGridTexture { get; private set; }
         public static Texture2D StudConnectionGrid { get; private set; }
+        public static Texture2D Checkerboard { get; private set; }
+        public static Texture2D SelectionIcons { get; private set; }
+
         public static void InitializeResources()
         {
-            StudGridTexture = LoadTexture("Textures.StudGridTex.png", 
-                TextureMinFilter.Linear, TextureMagFilter.Linear, TextureWrapMode.Clamp);
+            //StudGridTexture = LoadTexture("Textures.StudGridTex.png", 
+            //    TextureMinFilter.Linear, TextureMagFilter.Linear, TextureWrapMode.Clamp);
 
             StudConnectionGrid = LoadTexture("Textures.StudConnectionGrid.png",
                 TextureMinFilter.Linear, TextureMagFilter.Linear, TextureWrapMode.Repeat);
+
+            Checkerboard = LoadTexture("Textures.DefaultTexture.png",
+                TextureMinFilter.Linear, TextureMagFilter.Linear, TextureWrapMode.Repeat);
+
+            SelectionIcons = LoadTexture("Textures.SelectionIcons.png",
+                TextureMinFilter.Linear, TextureMagFilter.Linear, TextureWrapMode.Clamp);
         }
 
         public static void ReleaseResources()
         {
-            if (StudGridTexture != null)
-            {
-                StudGridTexture.Dispose();
-                StudGridTexture = null;
-            }
+            //if (StudGridTexture != null)
+            //{
+            //    StudGridTexture.Dispose();
+            //    StudGridTexture = null;
+            //}
 
             if (StudConnectionGrid != null)
             {
                 StudConnectionGrid.Dispose();
                 StudConnectionGrid = null;
+            }
+
+            if (Checkerboard != null)
+            {
+                Checkerboard.Dispose();
+                Checkerboard = null;
+            }
+
+            if (SelectionIcons != null)
+            {
+                SelectionIcons.Dispose();
+                SelectionIcons = null;
             }
         }
 

@@ -168,4 +168,10 @@ Do you want to delete anyway?</value>
   <data name="Caption_DeleteConfirmation" xml:space="preserve">
     <value>Delete confirmation</value>
   </data>
+  <data name="Message_InitializingUI" xml:space="preserve">
+    <value>Initializing User Interface</value>
+  </data>
+  <data name="Message_InitializingResources" xml:space="preserve">
+    <value>Initializing Resources</value>
+  </data>
 </root>

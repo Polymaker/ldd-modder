@@ -22,6 +22,7 @@ using LDDModder.BrickEditor.Rendering.UI;
 using LDDModder.BrickEditor.ProjectHandling;
 using LDDModder.BrickEditor.UI.Windows;
 using LDDModder.BrickEditor.ProjectHandling.ViewInterfaces;
+using System.Threading.Tasks;
 
 namespace LDDModder.BrickEditor.UI.Panels
 {
@@ -31,10 +32,6 @@ namespace LDDModder.BrickEditor.UI.Panels
         private bool IsClosing;
 
         private GLControl glControl1;
-
-        private Texture2D CheckboardTexture;
-        private Texture2D SelectionIcons;
-
 
         private List<SurfaceMeshBuffer> SurfaceModels;
 
@@ -55,14 +52,14 @@ namespace LDDModder.BrickEditor.UI.Panels
         public ViewportPanel()
         {
             InitializeComponent();
-            InitializeView();
+            //InitializeView();
         }
 
         public ViewportPanel(ProjectManager projectManager) : base(projectManager)
         {
             projectManager.ViewportWindow = this;
             InitializeComponent();
-            InitializeView();
+            //InitializeView();
         }
 
         private void InitializeView()
@@ -75,7 +72,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             LoadedModels = new ThreadSafeList<PartElementModel>();
             UIElements = new List<UIElement>();
             ShowIcon = false;
-            CreateGLControl();
+            
             SelectionInfoPanel.BringToFront();
             SelectionInfoPanel.Visible = false;
             BonesDropDownMenu.Visible = false;
@@ -106,73 +103,47 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             base.OnLoad(e);
 
-            visualStudioToolStripExtender1.SetStyle(toolStrip1,
-                VisualStudioToolStripExtender.VsVersion.Vs2015,
-                DockPanel.Theme);
-
-            bool initSuccess = true;
-
-            try 
-            {
-                InitializeBase();
-            }
-            catch (Exception ex)
-            {
-                initSuccess = false;
-                ErrorMessageBox.Show(this, "An error occured while initializing GL view.", "Error", ex.ToString());
-            }
-
-            if (!initSuccess)
-                return;
-
-            UpdateGLViewport();
+            InitializeView();
 
             InitializeMenus();
-
-            LoopController.Start();
+            UpdateDocumentTitle();
 
             var mainForm = DockPanel.FindForm();
             mainForm.Activated += MainForm_Activated;
             mainForm.Deactivate += MainForm_Deactivate;
-
-            UpdateDocumentTitle();
-
-            ProjectManager.ProjectModified += ProjectManager_ProjectModified;
-            ProjectManager.PartModelsVisibilityChanged += ProjectManager_ModelsVisibilityChanged;
-            ProjectManager.CollisionsVisibilityChanged += ProjectManager_ModelsVisibilityChanged;
-            ProjectManager.ConnectionsVisibilityChanged += ProjectManager_ModelsVisibilityChanged;
-            ProjectManager.PartRenderModeChanged += ProjectManager_PartRenderModeChanged;
         }
 
         
         #region Initialization
 
-        private void InitializeBase()
+        public override void DefferedInitialization()
         {
-            InputManager = new InputManager();
+            bool initSuccess = false;
 
-            
-            
-            //Camera = new Camera();
-            CameraManipulator = new CameraManipulator(new Camera());
-            CameraManipulator.Initialize(new Vector3(5), Vector3.Zero);
-            //CameraManipulator.RotationButton = MouseButton.Right;
+            try
+            {
+                InitializeGlEnvironment();
+                initSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                ErrorMessageBox.Show(this, "An error occured while initializing GL view.", "Error", ex.ToString());
+            }
 
-            //Scene = new SceneInfo();
-            //Scene.Camera = CameraManipulator.Camera;
+            if (initSuccess)
+                LoopController.Start();
+            else
+                ViewInitialized = false;
 
-            InitializeTextures();
-            InitializeUI();
-
-            InitializeShaders();
-
-            InitializeSelectionGizmo();
-
-            SetupSceneLights();
+            SelectCurrentGizmoOptions();
         }
 
         private void InitializeMenus()
         {
+            visualStudioToolStripExtender1.SetStyle(toolStrip1,
+                VisualStudioToolStripExtender.VsVersion.Vs2015,
+                DockPanel.Theme);
+
             globalToolStripMenuItem.Tag = OrientationMode.Global.ToString();
             localToolStripMenuItem.Tag = OrientationMode.Local.ToString();
 
@@ -183,29 +154,38 @@ namespace LDDModder.BrickEditor.UI.Panels
             activeElementToolStripMenuItem.Tag = PivotPointMode.ActiveElement.ToString();
 
             DisplayMenuDropDown.DropDown.Closing += DisplayDropDown_Closing;
-
-            SelectCurrentGizmoOptions();
+            
+            UpdateToolbarMenu();
         }
 
-        private void InitializeTextures()
+        protected override void InitializeProjectManager(ProjectManager projectManager)
         {
-            TextureManager.InitializeResources();
+            base.InitializeProjectManager(projectManager);
+            ProjectManager.ProjectModified += ProjectManager_ProjectModified;
+            ProjectManager.PartModelsVisibilityChanged += ProjectManager_ModelsVisibilityChanged;
+            ProjectManager.CollisionsVisibilityChanged += ProjectManager_ModelsVisibilityChanged;
+            ProjectManager.ConnectionsVisibilityChanged += ProjectManager_ModelsVisibilityChanged;
+            ProjectManager.PartRenderModeChanged += ProjectManager_PartRenderModeChanged;
+        }
 
-            var checkboardImage = (Bitmap)Bitmap.FromStream(System.Reflection.Assembly.GetExecutingAssembly()
-                .GetManifestResourceStream("LDDModder.BrickEditor.Resources.Textures.DefaultTexture.png"));
+        private void InitializeGlEnvironment()
+        {
+            CreateGLControl();
 
-            BitmapTexture.CreateCompatible(checkboardImage, out CheckboardTexture, 1);
-            CheckboardTexture.LoadBitmap(checkboardImage, 0);
-            CheckboardTexture.SetFilter(TextureMinFilter.Linear, TextureMagFilter.Linear);
-            CheckboardTexture.SetWrapMode(TextureWrapMode.Repeat);
+            InitializeGlResources();
 
-            var selectionIconsImage = (Bitmap)Bitmap.FromStream(System.Reflection.Assembly.GetExecutingAssembly()
-                .GetManifestResourceStream("LDDModder.BrickEditor.Resources.Textures.SelectionIcons.png"));
+            SetupUIElements();
 
-            BitmapTexture.CreateCompatible(selectionIconsImage, out SelectionIcons, 1);
-            SelectionIcons.LoadBitmap(selectionIconsImage, 0);
-            SelectionIcons.SetFilter(TextureMinFilter.Linear, TextureMagFilter.Linear);
-            SelectionIcons.SetWrapMode(TextureWrapMode.Clamp);
+            InputManager = new InputManager();
+
+            CameraManipulator = new CameraManipulator(new Camera());
+            CameraManipulator.Initialize(new Vector3(5), Vector3.Zero);
+
+            InitializeSelectionGizmo();
+            SetupSceneLights();
+
+            UpdateGLViewport();
+
         }
 
         private UIButton SelectGizmoButton;
@@ -213,7 +193,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         private UIButton RotateGizmoButton;
         private UIButton ScaleGizmoButton;
 
-        private void InitializeUI()
+        private void SetupUIElements()
         {
             int buttonSpacing = 2;
 
@@ -221,7 +201,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             SelectGizmoButton = new UIButton()
             {
-                Texture = SelectionIcons,
+                Texture = TextureManager.SelectionIcons,
                 NormalSprite =      new SpriteBounds(0,0,0.25f,0.25f),
                 OverSprite =        new SpriteBounds(0, 0.25f, 0.25f, 0.25f),
                 SelectedSprite =    new SpriteBounds(0, 0.5f, 0.25f, 0.25f),
@@ -232,7 +212,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             MoveGizmoButton = new UIButton()
             {
-                Texture = SelectionIcons,
+                Texture = TextureManager.SelectionIcons,
                 NormalSprite =      new SpriteBounds(0.25f, 0, 0.25f, 0.25f),
                 OverSprite =        new SpriteBounds(0.25f, 0.25f, 0.25f, 0.25f),
                 SelectedSprite =    new SpriteBounds(0.25f, 0.5f, 0.25f, 0.25f),
@@ -242,7 +222,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             RotateGizmoButton = new UIButton()
             {
-                Texture = SelectionIcons,
+                Texture = TextureManager.SelectionIcons,
                 NormalSprite =      new SpriteBounds(0.5f, 0, 0.25f, 0.25f),
                 OverSprite =        new SpriteBounds(0.5f, 0.25f, 0.25f, 0.25f),
                 SelectedSprite =    new SpriteBounds(0.5f, 0.5f, 0.25f, 0.25f),
@@ -252,7 +232,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             ScaleGizmoButton = new UIButton()
             {
-                Texture = SelectionIcons,
+                Texture = TextureManager.SelectionIcons,
                 NormalSprite =      new SpriteBounds(0.75f, 0, 0.25f, 0.25f),
                 OverSprite =        new SpriteBounds(0.75f, 0.25f, 0.25f, 0.25f),
                 SelectedSprite =    new SpriteBounds(0.75f, 0.5f, 0.25f, 0.25f),
@@ -289,10 +269,15 @@ namespace LDDModder.BrickEditor.UI.Panels
             SelectionGizmo.DisplayStyleChanged += SelectionGizmo_DisplayStyleChanged;
         }
 
-        private void InitializeShaders()
+        private void InitializeGlResources()
         {
+            //TODO: Find a way to reduce load on main thread
+            TextureManager.InitializeResources();
+            Application.DoEvents();
             UIRenderHelper.InitializeResources();
+            Application.DoEvents();
             RenderHelper.InitializeResources();
+            Application.DoEvents();
             ModelManager.InitializeResources();
         }
 
@@ -450,13 +435,13 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             GL.Enable(EnableCap.Texture2D);
 
-            RenderHelper.BindModelTexture(CheckboardTexture, TextureUnit.Texture4);
+            RenderHelper.BindModelTexture(TextureManager.Checkerboard, TextureUnit.Texture4);
 
             foreach (var surfaceModel in SurfaceModels)
                 surfaceModel.Render(Camera, ProjectManager.PartRenderMode);
 
             RenderHelper.UnbindModelTexture();
-            CheckboardTexture.Bind(TextureUnit.Texture0);
+            TextureManager.Checkerboard.Bind(TextureUnit.Texture0);
             GL.Disable(EnableCap.Texture2D);
         }
 
@@ -759,15 +744,12 @@ namespace LDDModder.BrickEditor.UI.Panels
         private void DisposeGLResources()
         {
             UnloadModels();
-
+            SelectionGizmo.Dispose();
             UIRenderHelper.ReleaseResources();
             RenderHelper.ReleaseResources();
             ModelManager.ReleaseResources();
             TextureManager.ReleaseResources();
-
-            SelectionGizmo.Dispose();
-
-            CheckboardTexture.Dispose();
+            SelectionGizmo = null;
         }
 
         #region Project Handling
@@ -776,7 +758,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             base.OnProjectChanged();
             UpdateDocumentTitle();
-            BonesDropDownMenu.Visible = CurrentProject?.Flexible ?? false;
+            UpdateToolbarMenu();
         }
 
         protected override void OnProjectLoaded(PartProject project)
@@ -1385,18 +1367,26 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void GlControl_MouseEnter(object sender, EventArgs e)
         {
-            InputManager.SetContainsMouse(true);
+            if (ViewInitialized && InputManager != null)
+                InputManager.SetContainsMouse(true);
         }
 
         private void GlControl_MouseLeave(object sender, EventArgs e)
         {
+            if (!ViewInitialized || InputManager == null)
+                return;
+
             InputManager.SetContainsMouse(false);
             foreach (var elem in UIElements)
                 elem.SetIsOver(false);
+
         }
 
         private void GlControl1_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
         {
+            if (!ViewInitialized || InputManager == null)
+                return;
+
             if (e.Button == MouseButtons.Left)
             {
                 if (glControl1.ContainsFocus && !InputManager.ContainsFocus)
@@ -1409,12 +1399,14 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void GlControl1_GotFocus(object sender, EventArgs e)
         {
-            InputManager.ContainsFocus = true;
+            if (ViewInitialized && InputManager != null)
+                InputManager.ContainsFocus = true;
         }
 
         private void GlControl1_LostFocus(object sender, EventArgs e)
         {
-            InputManager.ContainsFocus = false;
+            if (ViewInitialized && InputManager != null)
+                InputManager.ContainsFocus = false;
         }
 
         private void MainForm_Activated(object sender, EventArgs e)
@@ -1431,12 +1423,20 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void GlControl_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
         {
-            InputManager.ProcessMouseMove(e);
+            if (ViewInitialized && InputManager != null)
+                InputManager.ProcessMouseMove(e);
         }
 
         #endregion
 
         #region Toolbar Menu
+
+        private void UpdateToolbarMenu()
+        {
+            BonesDropDownMenu.Visible = CurrentProject?.Flexible ?? false;
+            MeshesMenu_CalculateOutlines.Enabled = ProjectManager.IsProjectOpen;
+            MeshesMenu_RemoveOutlines.Enabled = ProjectManager.IsProjectOpen;
+        }
 
         private void CameraMenu_ResetCamera_Click(object sender, EventArgs e)
         {
@@ -1523,6 +1523,18 @@ namespace LDDModder.BrickEditor.UI.Panels
                 ProjectManager.PartRenderMode = MeshRenderMode.SolidWireframe;
         }
 
+        private void MeshesDropDownMenu_DropDownOpening(object sender, EventArgs e)
+        {
+            bool hasSelectedMeshes = false;
+            if (ProjectManager.IsProjectOpen)
+            {
+                hasSelectedMeshes = ProjectManager.GetSelectionHierarchy().OfType<ModelMeshReference>().Any();
+            }
+
+            MeshesMenu_Merge.Enabled = hasSelectedMeshes;
+            MeshesMenu_Separate.Enabled = hasSelectedMeshes;
+        }
+
         private void MeshesMenu_Separate_Click(object sender, EventArgs e)
         {
             if (ProjectManager.IsProjectOpen)
@@ -1549,12 +1561,14 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void MeshesMenu_CalculateOutlines_Click(object sender, EventArgs e)
         {
-            CurrentProject.ComputeEdgeOutlines();
+            if (ProjectManager.IsProjectOpen)
+                CurrentProject.ComputeEdgeOutlines();
         }
 
         private void MeshesMenu_RemoveOutlines_Click(object sender, EventArgs e)
         {
-            CurrentProject.ClearEdgeOutlines();
+            if (ProjectManager.IsProjectOpen)
+                CurrentProject.ClearEdgeOutlines();
         }
 
         private void Bones_CalcBounding_Click(object sender, EventArgs e)
@@ -1606,6 +1620,9 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void SelectCurrentGizmoOptions()
         {
+            if (SelectionGizmo == null)
+                return;
+
             foreach (ToolStripMenuItem item in GizmoOrientationMenu.DropDownItems)
             {
                 if (Enum.TryParse(item.Tag as string, out OrientationMode mode))
@@ -1728,6 +1745,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         }
 
         public bool Is3DViewFocused => InputManager.ContainsFocus;
+
 
         #endregion
 

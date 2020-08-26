@@ -165,6 +165,7 @@
     <Compile Include="ProjectHandling\ViewInterfaces\INavigationWindow.cs" />
     <Compile Include="ProjectHandling\ViewInterfaces\IViewportWindow.cs" />
     <Compile Include="Rendering\Gizmos\ScalingHandle.cs" />
+    <Compile Include="Rendering\GLResourceLoader.cs" />
     <Compile Include="Rendering\MeshRenderMode.cs" />
     <Compile Include="Rendering\Models\BoneModel.cs" />
     <Compile Include="Rendering\Models\EditorGridModel.cs" />
@@ -176,6 +177,7 @@
     <Compile Include="Rendering\TextureManager.cs" />
     <Compile Include="Rendering\UI\UIAnchor.cs" />
     <Compile Include="Rendering\UI\UIPanel.cs" />
+    <Compile Include="Resources\GlResource.cs" />
     <Compile Include="Resources\Messages.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -283,11 +285,11 @@
     <Compile Include="UI\Windows\SelectOutputLocationWindow.Designer.cs">
       <DependentUpon>SelectOutputLocationWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Windows\WaitPopup.cs">
+    <Compile Include="UI\Windows\ProgressPopupWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\Windows\WaitPopup.Designer.cs">
-      <DependentUpon>WaitPopup.cs</DependentUpon>
+    <Compile Include="UI\Windows\ProgressPopupWindow.Designer.cs">
+      <DependentUpon>ProgressPopupWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="Utilities\LocalizableString.cs" />
     <Compile Include="Utilities\LocalizableStringList.cs">
@@ -559,8 +561,8 @@
     <EmbeddedResource Include="UI\Windows\SelectOutputLocationWindow.resx">
       <DependentUpon>SelectOutputLocationWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Windows\WaitPopup.resx">
-      <DependentUpon>WaitPopup.cs</DependentUpon>
+    <EmbeddedResource Include="UI\Windows\ProgressPopupWindow.resx">
+      <DependentUpon>ProgressPopupWindow.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="OpenTK.dll.config" />
     <None Include="packages.config" />

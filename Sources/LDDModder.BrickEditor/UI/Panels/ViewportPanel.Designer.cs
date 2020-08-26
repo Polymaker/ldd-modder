@@ -47,7 +47,8 @@
             this.DisplayMenu_Collisions = new System.Windows.Forms.ToolStripMenuItem();
             this.DisplayMenu_Connections = new System.Windows.Forms.ToolStripMenuItem();
             this.MeshesDropDownMenu = new System.Windows.Forms.ToolStripDropDownButton();
-            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
+            this.MeshesMenu_CalculateOutlines = new System.Windows.Forms.ToolStripMenuItem();
+            this.MeshesMenu_RemoveOutlines = new System.Windows.Forms.ToolStripMenuItem();
             this.MeshesMenu_Separate = new System.Windows.Forms.ToolStripMenuItem();
             this.MeshesMenu_Merge = new System.Windows.Forms.ToolStripMenuItem();
             this.BonesDropDownMenu = new System.Windows.Forms.ToolStripDropDownButton();
@@ -69,8 +70,7 @@
             this.visualStudioToolStripExtender1 = new WeifenLuo.WinFormsUI.Docking.VisualStudioToolStripExtender(this.components);
             this.SelectionInfoPanel = new System.Windows.Forms.Panel();
             this.transformEditor1 = new LDDModder.BrickEditor.UI.Controls.TransformEditor();
-            this.MeshesMenu_CalculateOutlines = new System.Windows.Forms.ToolStripMenuItem();
-            this.MeshesMenu_RemoveOutlines = new System.Windows.Forms.ToolStripMenuItem();
+            this.MeshesMenu_Separator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStrip1.SuspendLayout();
             this.SelectionInfoPanel.SuspendLayout();
             this.SuspendLayout();
@@ -211,16 +211,24 @@
             this.MeshesDropDownMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.MeshesMenu_CalculateOutlines,
             this.MeshesMenu_RemoveOutlines,
-            this.toolStripMenuItem2,
+            this.MeshesMenu_Separator1,
             this.MeshesMenu_Separate,
             this.MeshesMenu_Merge});
             resources.ApplyResources(this.MeshesDropDownMenu, "MeshesDropDownMenu");
             this.MeshesDropDownMenu.Name = "MeshesDropDownMenu";
+            this.MeshesDropDownMenu.DropDownOpening += new System.EventHandler(this.MeshesDropDownMenu_DropDownOpening);
             // 
-            // toolStripMenuItem2
+            // MeshesMenu_CalculateOutlines
             // 
-            resources.ApplyResources(this.toolStripMenuItem2, "toolStripMenuItem2");
-            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
+            this.MeshesMenu_CalculateOutlines.Name = "MeshesMenu_CalculateOutlines";
+            resources.ApplyResources(this.MeshesMenu_CalculateOutlines, "MeshesMenu_CalculateOutlines");
+            this.MeshesMenu_CalculateOutlines.Click += new System.EventHandler(this.MeshesMenu_CalculateOutlines_Click);
+            // 
+            // MeshesMenu_RemoveOutlines
+            // 
+            this.MeshesMenu_RemoveOutlines.Name = "MeshesMenu_RemoveOutlines";
+            resources.ApplyResources(this.MeshesMenu_RemoveOutlines, "MeshesMenu_RemoveOutlines");
+            this.MeshesMenu_RemoveOutlines.Click += new System.EventHandler(this.MeshesMenu_RemoveOutlines_Click);
             // 
             // MeshesMenu_Separate
             // 
@@ -372,17 +380,10 @@
             this.transformEditor1.Name = "transformEditor1";
             this.transformEditor1.ViewLayout = LDDModder.BrickEditor.UI.Controls.TransformEditor.EditLayout.Vertical;
             // 
-            // MeshesMenu_CalculateOutlines
+            // MeshesMenu_Separator1
             // 
-            this.MeshesMenu_CalculateOutlines.Name = "MeshesMenu_CalculateOutlines";
-            resources.ApplyResources(this.MeshesMenu_CalculateOutlines, "MeshesMenu_CalculateOutlines");
-            this.MeshesMenu_CalculateOutlines.Click += new System.EventHandler(this.MeshesMenu_CalculateOutlines_Click);
-            // 
-            // MeshesMenu_RemoveOutlines
-            // 
-            this.MeshesMenu_RemoveOutlines.Name = "MeshesMenu_RemoveOutlines";
-            resources.ApplyResources(this.MeshesMenu_RemoveOutlines, "MeshesMenu_RemoveOutlines");
-            this.MeshesMenu_RemoveOutlines.Click += new System.EventHandler(this.MeshesMenu_RemoveOutlines_Click);
+            this.MeshesMenu_Separator1.Name = "MeshesMenu_Separator1";
+            resources.ApplyResources(this.MeshesMenu_Separator1, "MeshesMenu_Separator1");
             // 
             // ViewportPanel
             // 
@@ -435,7 +436,6 @@
         private System.Windows.Forms.ToolStripMenuItem MeshesMenu_Separate;
         private System.Windows.Forms.ToolStripMenuItem MeshesMenu_Merge;
         private System.Windows.Forms.ToolStripDropDownButton MeshesDropDownMenu;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem2;
         private System.Windows.Forms.ToolStripDropDownButton BonesDropDownMenu;
         private System.Windows.Forms.ToolStripMenuItem Bones_RebuildConnections;
         private System.Windows.Forms.ToolStripMenuItem Bones_CalcBounding;
@@ -443,5 +443,6 @@
         private Controls.TransformEditor transformEditor1;
         private System.Windows.Forms.ToolStripMenuItem MeshesMenu_CalculateOutlines;
         private System.Windows.Forms.ToolStripMenuItem MeshesMenu_RemoveOutlines;
+        private System.Windows.Forms.ToolStripSeparator MeshesMenu_Separator1;
     }
 }

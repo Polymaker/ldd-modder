@@ -1,5 +1,6 @@
 ﻿using LDDModder.BrickEditor.Rendering.Models;
 using LDDModder.BrickEditor.Resources;
+using OpenTK;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,8 @@ namespace LDDModder.BrickEditor.Rendering
     static class ModelManager
     {
         public static IndexedVertexBuffer<VertVN> GeneralMeshBuffer;
+
+        public static IndexedVertexBuffer<Vector3> BoundingBoxBufffer;
 
         public static PartialModel CubeModel { get; private set; }
 
@@ -55,6 +58,29 @@ namespace LDDModder.BrickEditor.Rendering
 
             loadedMesh = ResourceHelper.GetResourceModel("Models.BarFemale.obj", "obj").Meshes[0];
             BarFemaleModel = AppendPartialMesh(loadedMesh);
+
+            InitializeBoundingBoxBuffer();
+        }
+
+        private static void InitializeBoundingBoxBuffer()
+        {
+            BoundingBoxBufffer = new IndexedVertexBuffer<Vector3>();
+            var box = BBox.FromCenterSize(Vector3.Zero, Vector3.One);
+
+            BoundingBoxBufffer.SetVertices(box.GetCorners());
+            var bboxIndices = new List<int>();
+
+            for (int i = 0; i < 4; i++)
+            {
+                bboxIndices.Add((i * 2));
+                bboxIndices.Add((i * 2) + 1);
+                bboxIndices.Add((i * 2));
+                bboxIndices.Add(((i + 1) * 2) % 8);
+                bboxIndices.Add((i * 2) + 1);
+                bboxIndices.Add((((i + 1) * 2) + 1) % 8);
+            }
+
+            BoundingBoxBufffer.SetIndices(bboxIndices);
         }
 
         private static PartialModel AppendPartialMesh(Assimp.Mesh mesh)
@@ -86,11 +112,21 @@ namespace LDDModder.BrickEditor.Rendering
                 GeneralMeshBuffer = null;
             }
 
+            if (BoundingBoxBufffer != null)
+            {
+                BoundingBoxBufffer.Dispose();
+                BoundingBoxBufffer = null;
+            }
+
             CubeModel = null;
+            ConeModel = null;
             SphereModel = null;
             CrossAxleMaleModel = null;
             CrossAxleFemaleModel = null;
+            TechnicPinFemaleModel = null;
+            BarFemaleModel = null;
             CylinderModel = null;
+
         }
     }
 }

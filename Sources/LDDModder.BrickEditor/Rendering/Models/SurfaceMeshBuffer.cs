@@ -265,7 +265,10 @@ namespace LDDModder.BrickEditor.Rendering
         public void Dispose()
         {
             if (VertexBuffer != null)
+            {
                 VertexBuffer.Dispose();
+                VertexBuffer = null;
+            }
             //if (BoneWeightBuffer != null)
             //    BoneWeightBuffer.Dispose();
             Vertices = new VertVNT[0];

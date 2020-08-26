@@ -84,14 +84,20 @@ namespace LDDModder.BrickEditor.Rendering
             }
 
             var mouseWheelDelta = input.MouseState.WheelPrecise - input.LastMouseState.WheelPrecise;
-            bool isZoomingByRotation = input.IsButtonDown(RotationButton) && (input.IsKeyDown(Key.ControlLeft) || input.IsKeyDown(Key.ControlRight));
-
+            bool isZoomingByRotation = input.IsButtonDown(RotationButton) && input.IsControlDown();
+            
             if (mouseWheelDelta != 0 && !isZoomingByRotation)
             {
                 if (Camera.IsPerspective)
                 {
                     float zoomAmount = mouseWheelDelta * (CameraDistance / 10f);
-                    Camera.Position += Camera.Forward * zoomAmount;
+                    var travelAmount = Camera.Forward * zoomAmount;
+
+                    Camera.Position += travelAmount;
+                    if (input.IsShiftDown())
+                    {
+                        Gimbal += travelAmount;
+                    }
                 }
                 else
                 {

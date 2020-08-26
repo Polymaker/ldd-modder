@@ -31,6 +31,8 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         protected FlagManager FlagManager { get; }
 
+
+
         //private string TemporaryFolder;
 
         public BrickEditorWindow()
@@ -49,35 +51,34 @@ namespace LDDModder.BrickEditor.UI.Windows
         {
             base.OnLoad(e);
 
-            ProjectManager = new ProjectManager();
-            ProjectManager.MainWindow = this;
-            ProjectManager.ProjectChanged += ProjectManager_ProjectChanged;
-            ProjectManager.UndoHistoryChanged += ProjectManager_UndoHistoryChanged;
-            ProjectManager.ValidationFinished += ProjectManager_ValidationFinished;
-            ProjectManager.GenerationFinished += ProjectManager_GenerationFinished;
-            ProjectManager.ElementPropertyChanged += ProjectManager_ElementPropertyChanged;
 
-            InitialCheckUp();
+            InitializeProjectManager();
+            menuStrip1.Enabled = false;
 
-            ResourceHelper.LoadPlatformsAndCategories();
-            ResourceHelper.LoadConnectors();
-
-            InitializePanels();
-            RebuildRecentFilesMenu();
-            UpdateMenuItemStates();
-            UpdateWindowTitle();
         }
 
         protected override void OnShown(EventArgs e)
         {
             base.OnShown(e);
 
+            InitialCheckUp();
+
+            Task.Factory.StartNew(() =>
+            {
+                ResourceHelper.LoadResources();
+            });
+
+            RebuildRecentFilesMenu();
+            UpdateMenuItemStates();
+            UpdateWindowTitle();
+
             Task.Factory.StartNew(() =>
             {
                 Thread.Sleep(200);
-                Invoke(new MethodInvoker(CheckCanRecoverProject));
+                BeginInvoke(new MethodInvoker(BeginLoadingUI));
             });
         }
+       
 
         private void InitialCheckUp()
         {
@@ -127,6 +128,7 @@ namespace LDDModder.BrickEditor.UI.Windows
         public StudConnectionPanel StudConnectionPanel { get; private set; }
         public ConnectionEditorPanel ConnectionPanel { get; private set; }
 
+        public ProgressPopupWindow WaitPopup { get; private set; }
 
         private void InitializePanels()
         {
@@ -139,27 +141,96 @@ namespace LDDModder.BrickEditor.UI.Windows
             ConnectionPanel = new ConnectionEditorPanel(ProjectManager);
 
             ViewportPanel.Show(DockPanelControl, DockState.Document);
+
             StudConnectionPanel.Show(DockPanelControl, DockState.Document);
+
             ViewportPanel.Activate();
 
             DockPanelControl.DockLeftPortion = 250;
+
             NavigationPanel.Show(DockPanelControl, DockState.DockLeft);
 
             DockPanelControl.DockWindows[DockState.DockBottom].BringToFront();
-            DockPanelControl.DockBottomPortion = 230;
+            DockPanelControl.DockBottomPortion = 250;
 
             PropertiesPanel.Show(DockPanelControl, DockState.DockBottom);
+
             DetailPanel.Show(PropertiesPanel.Pane, null);
+
             ConnectionPanel.Show(PropertiesPanel.Pane, null);
+
             ValidationPanel.Show(PropertiesPanel.Pane, null);
-            
 
             PropertiesPanel.Activate();
+
+            foreach (IDockContent dockPanel in DockPanelControl.Contents)
+            {
+                if (dockPanel is ProjectDocumentPanel documentPanel)
+                    documentPanel.Enabled = false;
+            }
+        }
+
+        private void BeginLoadingUI()
+        {
+            WaitPopup = new ProgressPopupWindow();
+            WaitPopup.Message = Messages.Message_InitializingUI;
+            WaitPopup.Shown += OnInitializationPopupLoaded;
+            WaitPopup.ShowCenter(this);
+        }
+
+        private void OnInitializationPopupLoaded(object sender, EventArgs e)
+        {
+            FlagManager.Set("OnLoadAsync");
+            AutoSaveTimer.Interval = 500;
+            AutoSaveTimer.Start();
+            DockPanelControl.Layout += DockPanelControl_Layout;
+            WaitPopup.Shown -= OnInitializationPopupLoaded;
+            InitializePanels();
+        }
+
+        private void DockPanelControl_Layout(object sender, LayoutEventArgs e)
+        {
+            AutoSaveTimer.Stop();
+            AutoSaveTimer.Start();
+        }
+
+        private void InitializeAfterShown()
+        {
+            WaitPopup.Message = Messages.Message_InitializingResources;
+            Application.DoEvents();
+
+            var documentPanels = DockPanelControl.Contents.OfType<ProjectDocumentPanel>().ToList();
+
+            foreach (var documentPanel in documentPanels)
+            {
+                documentPanel.Enabled = true;
+                documentPanel.DefferedInitialization();
+            }
+
+            menuStrip1.Enabled = true;
+            WaitPopup.Hide();
+
+            Task.Factory.StartNew(() =>
+            {
+                Thread.Sleep(200);
+                Invoke(new MethodInvoker(CheckCanRecoverProject));
+            });
         }
 
         #endregion
 
         #region Project Handling
+
+        private void InitializeProjectManager()
+        {
+            ProjectManager = new ProjectManager();
+            ProjectManager.MainWindow = this;
+            ProjectManager.ProjectChanged += ProjectManager_ProjectChanged;
+            ProjectManager.UndoHistoryChanged += ProjectManager_UndoHistoryChanged;
+            ProjectManager.ValidationFinished += ProjectManager_ValidationFinished;
+            ProjectManager.GenerationFinished += ProjectManager_GenerationFinished;
+            ProjectManager.ElementPropertyChanged += ProjectManager_ElementPropertyChanged;
+        }
 
         private void ProjectManager_ProjectChanged(object sender, EventArgs e)
         {
@@ -448,7 +519,25 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         private void AutoSaveTimer_Tick(object sender, EventArgs e)
         {
-            ProjectManager.SaveWorkingProject();
+            if (FlagManager.IsSet("OnLoadAsync"))
+            {
+                FlagManager.Unset("OnLoadAsync");
+                DockPanelControl.Layout += DockPanelControl_Layout;
+                AutoSaveTimer.Stop();
+                AutoSaveTimer.Interval = 15000;
+
+                Task.Factory.StartNew(() =>
+                {
+                    Thread.Sleep(200);
+                    BeginInvoke(new MethodInvoker(InitializeAfterShown));
+                });
+
+                return;
+            }
+
+            if (ProjectManager.IsProjectOpen)
+                ProjectManager.SaveWorkingProject();
+
         }
 
         
