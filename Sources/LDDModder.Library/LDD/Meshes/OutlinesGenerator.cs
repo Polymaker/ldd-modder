@@ -323,6 +323,8 @@ namespace LDDModder.LDD.Meshes
 
             public bool IsOutsideTriangle { get; set; }
 
+            public bool IsDeadEnd { get; set; }
+
             public ProjectedEdge IntersectWith { get; set; }
 
             public void ValidateValues()
@@ -340,7 +342,7 @@ namespace LDDModder.LDD.Meshes
                 if (!PlanarEdge.IsVertexLinked(TargetVertex))
                 {
                     //TO IMPROVE
-
+                    IsDeadEnd = true;
 
                     //if (minPos.X - LineThickness  >= MaxX || maxPos.X + LineThickness <= MinX)
                     //{
@@ -517,15 +519,22 @@ namespace LDDModder.LDD.Meshes
                 {
                     var vertEdges = planarEdges.Where(x => x.Contains(vert.Position)).ToList();
                     var projections = vertEdges.Select(x => x.ProjectTriangle(triangle, vert.Position)).ToList();
-                    
 
-                    //if (vert.Position.Equals(new Vector3(-1.6f, 2.08f, 1.52f), 0.001f) 
-                    //    /*&& triangle.Normal == Vector3.UnitZ*/)
-                    //{
 
-                    //}
+                    if (vert.Position.Equals(new Vector3(1.6f, 2.08f, 1.52f), 0.001f)
+                        /*&& triangle.Normal == Vector3.UnitZ*/)
+                    {
+
+                    }
 
                     projections.RemoveAll(x => x.IsOutsideTriangle);
+
+                    if (projections.Count(c => c.IsDeadEnd) >= 2)
+                    {
+                        projections.RemoveAt(0);
+
+
+                    }
 
                     if (projections.Count == 2)
                     {

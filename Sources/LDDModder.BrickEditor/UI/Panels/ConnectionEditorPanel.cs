@@ -619,6 +619,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                 if (isFlowBreak)
                     currentFlowBreak = ctrl;
 
+
                 if (ctrl == TransformEdit)
                     break;
 
@@ -637,7 +638,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                     if (ctrlBeforeTransform.Left <= 50) 
                         flowLayoutPanel1.SetFlowBreak(ctrlBeforeTransform, true);
                 }
-                else if (currentFlowBreak != null)
+                else if (currentFlowBreak != null && ctrlBeforeTransform == null)
                     flowLayoutPanel1.SetFlowBreak(currentFlowBreak, false);
 
             }
