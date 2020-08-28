@@ -35,8 +35,12 @@ namespace LDDModder.BrickEditor.UI.Controls
                 if (_ReadOnly != value)
                 {
                     _ReadOnly = value;
-                    ValueTextBox.ReadOnly = value;
-                    ValueTextBox.BackColor = (_ReadOnly && UseReadOnlyColor) ? SystemColors.Control : SystemColors.Window;
+
+                    if (ControlsHandlesCreated)
+                    {
+                        ValueTextBox.ReadOnly = value;
+                        RefreshTextboxColor();
+                    }
                 }
             }
         }
@@ -50,7 +54,7 @@ namespace LDDModder.BrickEditor.UI.Controls
                 if (_UseReadOnlyColor != value)
                 {
                     _UseReadOnlyColor = value;
-                    ValueTextBox.BackColor = (ReadOnly && _UseReadOnlyColor) ? SystemColors.Control : SystemColors.Window;
+                    RefreshTextboxColor();
                 }
             }
         }
@@ -63,13 +67,16 @@ namespace LDDModder.BrickEditor.UI.Controls
                 value = value ?? string.Empty;
                 if (_Value != value)
                 {
-                    ValueTextBox.Text = value;
+                    
                     _Value = value;
                     ValueChanged?.Invoke(this, EventArgs.Empty);
+                    if (ControlsHandlesCreated)
+                        ValueTextBox.Text = value;
                 }
             }
         }
 
+        [Localizable(true)]
         public string ButtonText
         {
             get => _ButtonText;
@@ -77,9 +84,12 @@ namespace LDDModder.BrickEditor.UI.Controls
             {
                 if (_ButtonText != value)
                 {
-                    BrowseButton.Text = value;
                     _ButtonText = value;
-                    RecalculateButtonWidth();
+                    if (ControlsHandlesCreated)
+                    {
+                        BrowseButton.Text = value;
+                        RecalculateButtonWidth();
+                    }
                 }
             }
         }
@@ -93,7 +103,8 @@ namespace LDDModder.BrickEditor.UI.Controls
                 if (!AutoSizeButton && _ButtonWidth != value && value > 3)
                 {
                     _ButtonWidth = value;
-                    RepositionControls();
+                    if (ControlsHandlesCreated)
+                        RepositionControls();
                 }
             }
         }
@@ -107,17 +118,27 @@ namespace LDDModder.BrickEditor.UI.Controls
                 if (_AutoSizeButton != value)
                 {
                     _AutoSizeButton = value;
-                    RecalculateButtonWidth();
+                    if (ControlsHandlesCreated)
+                        RecalculateButtonWidth();
                 }
             }
         }
 
+        private BorderStyle _BorderStyle;
+
         [DefaultValue(BorderStyle.Fixed3D)]
         public new BorderStyle BorderStyle
         {
-            get => ValueTextBox.BorderStyle;
-            set => ValueTextBox.BorderStyle = value;
-        } 
+            get => _BorderStyle;
+            set
+            {
+                _BorderStyle = value;
+                if (ControlsHandlesCreated)
+                    ValueTextBox.BorderStyle = value;
+            }
+        }
+
+        private bool ControlsHandlesCreated => BrowseButton.IsHandleCreated && ValueTextBox.IsHandleCreated;
 
         public BrowseTextBox()
         {
@@ -126,15 +147,36 @@ namespace LDDModder.BrickEditor.UI.Controls
             _Value = string.Empty;
             _ButtonWidth = 75;
             _AutoSizeButton = false;
+            _BorderStyle = BorderStyle.Fixed3D;
         }
 
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            if (AutoSizeButton)
-                RecalculateButtonWidth();
+            BrowseButton.Text = _ButtonText;
+            ValueTextBox.Text = _Value;
+            ValueTextBox.BorderStyle = _BorderStyle;
 
-            RepositionControls();
+            try
+            {
+                if (AutoSizeButton)
+                    RecalculateButtonWidth();
+
+                RepositionControls();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("BrowseTextBox.OnLoad() => \r\n" + ex.ToString());
+            }
+            
+        }
+
+        private void RefreshTextboxColor()
+        {
+            if (!ValueTextBox.IsHandleCreated)
+                return;
+
+            ValueTextBox.BackColor = (_ReadOnly && _UseReadOnlyColor) ? SystemColors.Control : SystemColors.Window;
         }
 
         protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified)

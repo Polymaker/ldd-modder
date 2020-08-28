@@ -31,6 +31,7 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ImportModelsDialog));
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.BrowseModelBox = new LDDModder.BrickEditor.UI.Controls.BrowseTextBox();
             this.ModelsGridView = new System.Windows.Forms.DataGridView();
             this.SelectionColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.ModelNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -44,7 +45,6 @@
             this.ReturnButton = new System.Windows.Forms.Button();
             this.CheckUncheckButton = new System.Windows.Forms.Button();
             this.WarningMessageLabel = new System.Windows.Forms.Label();
-            this.BrowseModelBox = new LDDModder.BrickEditor.UI.Controls.BrowseTextBox();
             this.LocalizableMessages = new LDDModder.BrickEditor.Localization.LocalizableStringList(this.components);
             this.WarningNotAllFlexible = new LDDModder.BrickEditor.Localization.LocalizableString();
             this.tableLayoutPanel1.SuspendLayout();
@@ -63,6 +63,18 @@
             this.tableLayoutPanel1.Controls.Add(this.CheckUncheckButton, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.WarningMessageLabel, 2, 1);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            // 
+            // BrowseModelBox
+            // 
+            this.BrowseModelBox.AutoSizeButton = true;
+            this.BrowseModelBox.ButtonText = "Select model...";
+            this.BrowseModelBox.ButtonWidth = 87;
+            this.tableLayoutPanel1.SetColumnSpan(this.BrowseModelBox, 4);
+            resources.ApplyResources(this.BrowseModelBox, "BrowseModelBox");
+            this.BrowseModelBox.Name = "BrowseModelBox";
+            this.BrowseModelBox.ReadOnly = true;
+            this.BrowseModelBox.Value = "";
+            this.BrowseModelBox.BrowseButtonClicked += new System.EventHandler(this.BrowseModelBox_BrowseButtonClicked);
             // 
             // ModelsGridView
             // 
@@ -161,18 +173,6 @@
             // 
             resources.ApplyResources(this.WarningMessageLabel, "WarningMessageLabel");
             this.WarningMessageLabel.Name = "WarningMessageLabel";
-            // 
-            // BrowseModelBox
-            // 
-            this.BrowseModelBox.AutoSizeButton = true;
-            this.BrowseModelBox.ButtonText = "Select model...";
-            this.BrowseModelBox.ButtonWidth = 87;
-            this.tableLayoutPanel1.SetColumnSpan(this.BrowseModelBox, 4);
-            resources.ApplyResources(this.BrowseModelBox, "BrowseModelBox");
-            this.BrowseModelBox.Name = "BrowseModelBox";
-            this.BrowseModelBox.ReadOnly = true;
-            this.BrowseModelBox.Value = "";
-            this.BrowseModelBox.BrowseButtonClicked += new System.EventHandler(this.BrowseModelBox_BrowseButtonClicked);
             // 
             // LocalizableMessages
             // 

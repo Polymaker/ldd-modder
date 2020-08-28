@@ -38,11 +38,12 @@ namespace LDDModder.BrickEditor.UI.Windows
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+
             LoadSettings();
             switch (StartupTab)
             {
                 case SettingTab.BuildSettings:
-                    tabControl1.SelectedTab = BuildSettingsTabPage;
+                    SettingsTabControl.SelectedTab = BuildSettingsTabPage;
                     break;
             }
         }
@@ -230,6 +231,11 @@ namespace LDDModder.BrickEditor.UI.Windows
                 && BuildConfigListView.SelectedItems[0].Tag is BuildConfiguration config)
             {
                 FillBuildConfigDetails(config);
+                DelBuildCfgBtn.Enabled = (config.InternalFlag == 0);
+            }
+            else
+            {
+                DelBuildCfgBtn.Enabled = false;
             }
         }
 
@@ -253,7 +259,6 @@ namespace LDDModder.BrickEditor.UI.Windows
 
                 BuildCfg_NameBox.Enabled = true;
                 BuildCfg_NameBox.ReadOnly = config.IsInternalConfig;
-
                 if (!config.IsInternalConfig)
                 {
                     BuildCfg_PathBox.DataBindings.Add(new Binding(

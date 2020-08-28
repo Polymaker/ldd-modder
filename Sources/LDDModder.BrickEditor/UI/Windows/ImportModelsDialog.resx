@@ -139,7 +139,7 @@
     <value>BrowseModelBox</value>
   </data>
   <data name="&gt;&gt;BrowseModelBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.BrowseTextBox, Brick Studio, Version=1.0.4.23193, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.BrowseTextBox, Brick Studio, Version=1.0.4.15103, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;BrowseModelBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -487,13 +487,13 @@
     <value>LocalizableMessages</value>
   </data>
   <data name="&gt;&gt;LocalizableMessages.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableStringList, Brick Studio, Version=1.0.4.23193, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableStringList, Brick Studio, Version=1.0.4.15103, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;WarningNotAllFlexible.Name" xml:space="preserve">
     <value>WarningNotAllFlexible</value>
   </data>
   <data name="&gt;&gt;WarningNotAllFlexible.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.4.23193, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.4.15103, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>ImportModelsDialog</value>
