@@ -1686,7 +1686,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
                     return true;
                 }
-                else if (normalKey == Keys.Delete)
+                else if (normalKey == Keys.Delete && ProjectManager.IsProjectOpen)
                 {
 
                     var selectedModelElements = GetSelectedModels(true)
@@ -1699,7 +1699,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                     }
                     
                 }
-                else if (normalKey == Keys.H)
+                else if (normalKey == Keys.H && ProjectManager.IsProjectOpen)
                 {
                     var allModels = GetAllElementModels().ToList();
 
@@ -1718,7 +1718,16 @@ namespace LDDModder.BrickEditor.UI.Panels
                         ProjectManager.UnhideEverything();
                         return true;
                     }
-                    
+                }
+                else if (normalKey == Keys.C && isControlPressed && ProjectManager.IsProjectOpen)
+                {
+                    ProjectManager.CopySelectedElementsToClipboard();
+                    return true;
+                }
+                else if (normalKey == Keys.V && isControlPressed && ProjectManager.IsProjectOpen)
+                {
+                    ProjectManager.HandlePasteFromClipboard();
+                    return true;
                 }
             }
 

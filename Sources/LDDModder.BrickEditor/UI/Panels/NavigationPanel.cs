@@ -179,7 +179,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
                 return string.Empty;
             };
-
+            
             ProjectTreeView.TreeColumnRenderer = new Controls.TreeRendererEx();
         }
 
@@ -445,11 +445,28 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         public void RefreshNavigationNode(ProjectTreeNode node)
         {
+            if (IsRefreshingAll)
+                return;
+
             ExecuteOnThread(() =>
             {
-                //if (ProjectTreeView.)
+                if (IsRefreshingAll)
+                    return;
                 ProjectTreeView.RefreshObject(node);
+            });
+        }
 
+        private bool IsRefreshingAll;
+
+        public void RefreshAllNavigation()
+        {
+            IsRefreshingAll = true;
+            ExecuteOnThread(() =>
+            {
+                
+                //if (ProjectTreeView.)
+                ProjectTreeView.Refresh();
+                IsRefreshingAll = false;
             });
         }
 
@@ -837,7 +854,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                 {
                     int selectionLevel = selectedNodes.First().TreeLevel;
                     var parent = selectedNodes.First().Parent;
-
+                    
                     if (selectedNodes.All(x => x.CanDragDrop()/* && x.Level == selectionLevel*/))
                         return base.StartDrag(olv, button, item);
                 }
@@ -1057,6 +1074,36 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         #endregion
 
+
+        protected override bool ProcessDialogKey(Keys keyData)
+        {
+            var normalKey = keyData & ~Keys.Control;
+            normalKey &= ~Keys.Shift;
+            normalKey &= ~Keys.Alt;
+
+            bool isControlPressed = (keyData & Keys.Control) != 0;
+            bool isShiftPressed = (keyData & Keys.Shift) != 0;
+            bool isAltPressed = (keyData & Keys.Alt) != 0;
+
+            if (ProjectTreeView.Focused)
+            {
+                if (ProjectManager.IsProjectOpen)
+                {
+                    if (normalKey == Keys.C && isControlPressed)
+                    {
+                        ProjectManager.CopySelectedElementsToClipboard();
+                        return true;
+                    }
+                    else if (normalKey == Keys.V && isControlPressed)
+                    {
+                        ProjectManager.HandlePasteFromClipboard();
+                        return true;
+                    }
+                }
+            }
+            
+            return base.ProcessDialogKey(keyData);
+        }
     }
 
 }

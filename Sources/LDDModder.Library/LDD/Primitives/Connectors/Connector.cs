@@ -67,9 +67,12 @@ namespace LDDModder.LDD.Primitives.Connectors
 
         public static Connector DeserializeConnector(XElement element)
         {
+            if (!Enum.TryParse(element.Name.LocalName, true, out ConnectorType connType))
+                return null;
+
             Connector connector = null;
-            
-            switch ((ConnectorType)Enum.Parse(typeof(ConnectorType), element.Name.LocalName))
+
+            switch (connType)
             {
                 case ConnectorType.Axel:
                     connector = new AxelConnector();

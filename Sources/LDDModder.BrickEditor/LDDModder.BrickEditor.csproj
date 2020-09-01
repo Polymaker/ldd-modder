@@ -291,6 +291,7 @@
     <Compile Include="UI\Windows\ProgressPopupWindow.Designer.cs">
       <DependentUpon>ProgressPopupWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="Utilities\ClipboardDataObject.cs" />
     <Compile Include="Utilities\LocalizableString.cs" />
     <Compile Include="Utilities\LocalizableStringList.cs">
       <SubType>Component</SubType>
@@ -442,6 +443,7 @@
     </Compile>
     <Compile Include="Utilities\AssimpHelper.cs" />
     <Compile Include="Utilities\Converter.cs" />
+    <Compile Include="Utilities\MultiInstanceManager.cs" />
     <Compile Include="Utilities\NumberHelper.cs" />
     <Compile Include="Utilities\OpenTKHelper.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">

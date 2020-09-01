@@ -398,12 +398,13 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         private void SaveGeneratedPart(LDD.Parts.PartWrapper part, BuildConfiguration buildConfig)
         {
-            if (buildConfig.InternalFlag == 1)
+            if (buildConfig.InternalFlag == BuildConfiguration.LDD_FLAG)
             {
                 part.SaveToLdd(LDDEnvironment.Current);
                 MessageBox.Show("Part files generated!");
                 return;
             }
+
             string targetPath = buildConfig.OutputPath;
 
             if (targetPath.Contains("$"))
@@ -411,7 +412,8 @@ namespace LDDModder.BrickEditor.UI.Windows
                 targetPath = ProjectManager.ExpandVariablePath(targetPath);
             }
 
-            if (buildConfig.InternalFlag == 2 || string.IsNullOrEmpty(buildConfig.OutputPath))
+            if (buildConfig.InternalFlag == BuildConfiguration.MANUAL_FLAG || 
+                string.IsNullOrEmpty(buildConfig.OutputPath))
             {
                 using (var sfd = new SaveFileDialog())
                 {

@@ -82,6 +82,7 @@
             this.olvColumnElement,
             this.olvColumnVisible});
             this.ProjectTreeView.ContextMenuStrip = this.ElementsContextMenu;
+            this.ProjectTreeView.CopySelectionOnControlC = false;
             this.ProjectTreeView.Cursor = System.Windows.Forms.Cursors.Default;
             resources.ApplyResources(this.ProjectTreeView, "ProjectTreeView");
             this.ProjectTreeView.FullRowSelect = true;

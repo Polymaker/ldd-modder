@@ -22,6 +22,8 @@ namespace LDDModder.BrickEditor.Settings
 
         //[JsonProperty("viewport.default")]
         //public ViewportDisplaySettings ViewportSettings { get; set; }
+        //[JsonProperty("file.history")]
+        //public List<RecentFileInfo> OpenedProjects { get; set; }
 
         [JsonProperty("currentProjectPath")]
         public RecentFileInfo LastOpenProject { get; set; }

@@ -42,6 +42,7 @@ namespace LDDModder.BrickEditor.Settings
             LDD.Name = Messages.BuildConfig_LDD;
             LDD.InternalFlag = 1;
             LDD.LOD0Subdirectory = true;
+            LDD.GenerateUniqueID();
 
             if (Manual == null)
             {
@@ -55,11 +56,10 @@ namespace LDDModder.BrickEditor.Settings
             Manual.OutputPath = string.Empty;
             Manual.Name = Messages.BuildConfig_Browse;
             Manual.InternalFlag = 2;
+            Manual.GenerateUniqueID();
 
             if (UserDefined == null)
                 UserDefined = new List<BuildConfiguration>();
         }
-
-        
     }
 }

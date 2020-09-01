@@ -10,5 +10,7 @@ namespace LDDModder.BrickEditor.ProjectHandling.ViewInterfaces
     public interface INavigationWindow
     {
         void RefreshNavigationNode(ProjectTreeNode node);
+
+        void RefreshAllNavigation();
     }
 }

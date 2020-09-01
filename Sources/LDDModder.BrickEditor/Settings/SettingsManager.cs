@@ -23,6 +23,8 @@ namespace LDDModder.BrickEditor.Settings
 
         public static bool HasInitialized { get; private set; }
 
+        public static int AppInstanceID { get; set; }
+
         static SettingsManager()
         {
             AppDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
@@ -161,7 +163,10 @@ namespace LDDModder.BrickEditor.Settings
                 yield return Current.BuildSettings.Manual;
 
             foreach (var cfg in Current.BuildSettings.UserDefined)
+            {
+                cfg.GenerateUniqueID();
                 yield return cfg;
+            }
         }
 
 

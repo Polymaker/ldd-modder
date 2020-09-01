@@ -29,13 +29,13 @@ namespace LDDModder.LDD.Primitives.Collisions
 
         public static Collision DeserializeCollision(XElement element)
         {
-            if (element.Name.LocalName == "Box")
+            if (element.Name.LocalName.ToLower() == "box")
             {
                 var col = new CollisionBox();
                 col.LoadFromXml(element);
                 return col;
             }
-            else if (element.Name.LocalName == "Sphere")
+            else if (element.Name.LocalName.ToLower() == "sphere")
             {
                 var col = new CollisionSphere();
                 col.LoadFromXml(element);

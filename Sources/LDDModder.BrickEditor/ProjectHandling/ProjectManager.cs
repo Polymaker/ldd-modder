@@ -17,6 +17,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Linq;
 
 namespace LDDModder.BrickEditor.ProjectHandling
 {
@@ -24,7 +25,6 @@ namespace LDDModder.BrickEditor.ProjectHandling
     {
         private List<PartElement> _SelectedElements;
         private List<ValidationMessage> _ValidationMessages;
-
         private long LastValidation;
         private long LastSavedChange;
 
@@ -102,7 +102,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
             _SelectedElements = new List<PartElement>();
             _ValidationMessages = new List<ValidationMessage>();
             NavigationTreeNodes = new ProjectTreeNodeCollection(this);
-
+            
             UndoRedoManager = new UndoRedoManager(this);
             UndoRedoManager.BeginUndoRedo += UndoRedoManager_BeginUndoRedo;
             UndoRedoManager.EndUndoRedo += UndoRedoManager_EndUndoRedo;
@@ -123,10 +123,9 @@ namespace LDDModder.BrickEditor.ProjectHandling
                 PreventProjectChange = false;
 
                 CurrentProject = project;
-
+                
                 if (project != null)
                     AttachPartProject(project);
-
                 ProjectChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -140,6 +139,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
                 ProjectClosed?.Invoke(this, EventArgs.Empty);
 
                 CurrentProject = null;
+                UndoRedoManager.ClearHistory();
 
                 if (!PreventProjectChange)
                     ProjectChanged?.Invoke(this, EventArgs.Empty);
@@ -322,6 +322,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
         private bool _ShowCollisions;
         private bool _ShowConnections;
         private MeshRenderMode _PartRenderMode;
+        private bool BatchChangingVisibility;
 
         public bool ShowPartModels
         {
@@ -367,6 +368,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
                 {
                     //CurrentProject.ProjectProperties["ShowModels"] = visible.ToString();
                     InvalidateElementsVisibility(CurrentProject.Surfaces);
+                    RefreshAllNavigation();
                 }
 
                 PartModelsVisibilityChanged?.Invoke(this, EventArgs.Empty);
@@ -383,9 +385,8 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
                 if (IsProjectOpen && IsProjectAttached)
                 {
-                    //CurrentProject.ProjectProperties["ShowCollisions"] = visible.ToString();
-                    InvalidateElementsVisibility(CurrentProject.Collisions);
-                    InvalidateElementsVisibility(CurrentProject.Bones);
+                    InvalidateElementsVisibility(CurrentProject.GetAllElements<PartCollision>());
+                    RefreshAllNavigation();
                 }
 
                 CollisionsVisibilityChanged?.Invoke(this, EventArgs.Empty);
@@ -402,9 +403,8 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
                 if (IsProjectOpen && IsProjectAttached)
                 {
-                    //CurrentProject.ProjectProperties["ShowConnections"] = visible.ToString();
-                    InvalidateElementsVisibility(CurrentProject.Connections);
-                    InvalidateElementsVisibility(CurrentProject.Bones);
+                    InvalidateElementsVisibility(CurrentProject.GetAllElements<PartConnection>());
+                    RefreshAllNavigation();
                 }
 
                 ConnectionsVisibilityChanged?.Invoke(this, EventArgs.Empty);
@@ -416,16 +416,24 @@ namespace LDDModder.BrickEditor.ProjectHandling
             if (renderMode != _PartRenderMode)
             {
                 _PartRenderMode = renderMode;
-                //if (IsProjectOpen && IsProjectAttached)
-                    //CurrentProject.ProjectProperties["PartRenderMode"] = renderMode.ToString();
                 PartRenderModeChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
         private void InvalidateElementsVisibility(IEnumerable<PartElement> elements)
         {
-            foreach (var elem in elements)
-                elem.GetExtension<ModelElementExtension>()?.InvalidateVisibility();
+            BatchChangingVisibility = true;
+            var elemExtensions = elements.Select(x => x.GetExtension<ModelElementExtension>()).ToList();
+            elemExtensions.RemoveAll(e => e == null);
+
+            foreach (var elemExt in elemExtensions)
+                elemExt.InvalidateVisibility();
+
+            foreach (var elemExt in elemExtensions)
+                elemExt.CalculateVisibility();
+
+            var test = elemExtensions.Where(x => x.IsVisibilityDirty);
+            BatchChangingVisibility = false;
         }
 
         #endregion
@@ -772,7 +780,13 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
         public void RefreshNavigationNode(ProjectTreeNode node)
         {
-            NavigationWindow?.RefreshNavigationNode(node);
+            if (!BatchChangingVisibility)
+                NavigationWindow?.RefreshNavigationNode(node);
+        }
+
+        public void RefreshAllNavigation()
+        {
+            NavigationWindow.RefreshAllNavigation();
         }
 
         #endregion
@@ -940,6 +954,107 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
             }
             return DialogResult.Yes;
+        }
+
+        public void CopySelectedElementsToClipboard()
+        {
+            if (!IsProjectOpen)
+                return;
+
+            string clipboardText = string.Empty;
+            foreach (var elem in GetSelectionHierarchy())
+            {
+                if (elem is PartCollision collision)
+                {
+                    var colXml = collision.GenerateLDD().SerializeToXml();
+                    if (!string.IsNullOrEmpty(clipboardText))
+                        clipboardText += Environment.NewLine;
+                    clipboardText += colXml.ToString();
+                }
+                else if (elem is PartConnection connection)
+                {
+
+                    var colXml = connection.GenerateLDD().SerializeToXml();
+                    if (!string.IsNullOrEmpty(clipboardText))
+                        clipboardText += Environment.NewLine;
+                    clipboardText += colXml.ToString();
+                }
+            }
+
+            if (!string.IsNullOrEmpty(clipboardText))
+            {
+                Clipboard.SetText(clipboardText, TextDataFormat.Text);
+            }
+        }
+
+        public void HandlePasteFromClipboard()
+        {
+            if (!IsProjectOpen)
+                return;
+
+            var clipboardText = Clipboard.GetText(TextDataFormat.Text);
+            if (string.IsNullOrEmpty(clipboardText))
+                return;
+
+            clipboardText = $"<Root>{clipboardText}</Root>";
+            try
+            {
+                var tmpXml = XElement.Parse(clipboardText);
+                var pastedElements = new List<PartElement>();
+
+                foreach (var elem in tmpXml.Elements())
+                {
+                    var conn = Connector.DeserializeConnector(elem);
+                    if (conn != null)
+                    {
+                        var connElem = new PartConnection(conn);
+                        pastedElements.Add(connElem);
+                        continue;
+                    }
+
+                    var coll = Collision.DeserializeCollision(elem);
+                    if (coll != null)
+                    {
+                        var collElem = PartCollision.FromLDD(coll);
+                        pastedElements.Add(collElem);
+                        continue;
+                    }
+                }
+
+                if (pastedElements.Any())
+                {
+                    StartBatchChanges(nameof(HandlePasteFromClipboard));
+                    var newCollisions = pastedElements.OfType<PartCollision>();
+                    var newConnections = pastedElements.OfType<PartConnection>();
+
+                    if (newCollisions.Any() && !ShowCollisions)
+                        ShowCollisions = true;
+
+                    if (newConnections.Any() && !ShowConnections)
+                        ShowConnections = true;
+
+                    if (SelectedElement is PartBone selectedBone)
+                    {
+                        if (newCollisions.Any())
+                            selectedBone.Collisions.AddRange(newCollisions);
+                        if (newConnections.Any())
+                            selectedBone.Connections.AddRange(newConnections);
+                    }
+                    else
+                    {
+                        if (newCollisions.Any())
+                            CurrentProject.Collisions.AddRange(newCollisions);
+                        if (newConnections.Any())
+                            CurrentProject.Connections.AddRange(newConnections);
+                    }
+
+                    EndBatchChanges();
+
+                    SelectElements(pastedElements);
+                }
+                
+            }
+            catch { }
         }
 
         #endregion

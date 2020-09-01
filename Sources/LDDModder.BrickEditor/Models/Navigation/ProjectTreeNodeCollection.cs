@@ -14,6 +14,8 @@ namespace LDDModder.BrickEditor.Models.Navigation
 
         public IProjectManager Manager { get; private set; }
 
+        //public IProjectDocument Document { get; private set; }
+
         public ProjectTreeNode Owner { get; private set; }
 
         public ProjectTreeNode this[int index] { get => InnerList[index]; set => InnerList[index] = value; }
@@ -34,6 +36,12 @@ namespace LDDModder.BrickEditor.Models.Navigation
             InnerList = new List<ProjectTreeNode>();
         }
 
+        //public ProjectTreeNodeCollection(IProjectDocument document)
+        //{
+        //    Document = document;
+        //    InnerList = new List<ProjectTreeNode>();
+        //}
+
         private void UpdateNodeParent(ProjectTreeNode node, bool assign)
         {
             if (assign)
@@ -41,7 +49,10 @@ namespace LDDModder.BrickEditor.Models.Navigation
                 if (Owner != null)
                     node.AssignParent(Owner);
                 else
+                {
                     node.Manager = Manager;
+                    //node.Document = Document;
+                }
             }
             else
                 node.AssignParent(null);

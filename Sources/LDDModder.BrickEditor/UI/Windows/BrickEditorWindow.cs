@@ -3,6 +3,7 @@ using LDDModder.BrickEditor.ProjectHandling.ViewInterfaces;
 using LDDModder.BrickEditor.Resources;
 using LDDModder.BrickEditor.Settings;
 using LDDModder.BrickEditor.UI.Panels;
+using LDDModder.BrickEditor.Utilities;
 using LDDModder.LDD;
 using LDDModder.LDD.Parts;
 using LDDModder.Modding.Editing;
@@ -44,9 +45,17 @@ namespace LDDModder.BrickEditor.UI.Windows
             Icon = Properties.Resources.BrickStudioIcon;
         }
 
+        protected override void OnHandleCreated(EventArgs e)
+        {
+            
+            base.OnHandleCreated(e);
+        }
+
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+            //MultiInstanceManager.MainWindow = this;
+            //MultiInstanceManager.CheckInstances();
 
             InitializeProjectManager();
             menuStrip1.Enabled = false;
@@ -218,11 +227,14 @@ namespace LDDModder.BrickEditor.UI.Windows
             UpdateMenuItemStates();
             RebuildRecentFilesMenu();
 
-            Task.Factory.StartNew(() =>
+            if (SettingsManager.AppInstanceID == 0)
             {
-                Thread.Sleep(200);
-                Invoke(new MethodInvoker(CheckCanRecoverProject));
-            });
+                Task.Factory.StartNew(() =>
+                {
+                    Thread.Sleep(200);
+                    Invoke(new MethodInvoker(CheckCanRecoverProject));
+                });
+            }
         }
 
         #endregion
@@ -386,8 +398,6 @@ namespace LDDModder.BrickEditor.UI.Windows
                     "No mesh file found."); //TODO: translate
                 return;
             }
-
-            
         }
 
         private void LoadNewPartProject(PartProject project)
@@ -606,7 +616,18 @@ namespace LDDModder.BrickEditor.UI.Windows
 
             if (ProjectManager.IsProjectOpen)
                 ProjectManager.SaveWorkingProject();
+        }
 
+        public DockPanel GetDockPanelControl()
+        {
+            return DockPanelControl;
+        }
+
+
+        protected override void WndProc(ref Message m)
+        {
+            if (!MultiInstanceManager.ProcessMessage(ref m))
+                base.WndProc(ref m);
         }
     }
 }

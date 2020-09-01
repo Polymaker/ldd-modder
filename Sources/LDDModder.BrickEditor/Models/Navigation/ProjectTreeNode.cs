@@ -16,6 +16,8 @@ namespace LDDModder.BrickEditor.Models.Navigation
         public string Text { get; set; }
 
         public IProjectManager Manager { get; set; }
+        //public IProjectDocument Document { get; set; }
+
 
         public ProjectTreeNode Parent { get; set; }
 
