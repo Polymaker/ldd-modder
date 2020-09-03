@@ -204,7 +204,9 @@ namespace LDDModder.BrickEditor.UI.Windows
                     MessageBox.Show(Messages.Message_FileGenerationError, Messages.Caption_LddPartGeneration);
                 }
                 else
+                {
                     ProjectManager.GenerateLddFiles();
+                }
             }
         }
 
@@ -227,8 +229,8 @@ namespace LDDModder.BrickEditor.UI.Windows
                 if (!ProjectManager.IsPartValidated)
                 {
                     GenerateFileAfterValidation = true;
-                    ProjectManager.ValidateProject();
                     ValidationPanel.Activate();
+                    ProjectManager.ValidateProject();
                     return;
                 }
                 else if (!ProjectManager.IsPartValid)
@@ -236,7 +238,6 @@ namespace LDDModder.BrickEditor.UI.Windows
                     ValidationPanel.Activate();
                     return;
                 }
-                //SettingsManager.Current.BuildSettings.GenerateOutlines
                 ProjectManager.GenerateLddFiles();
             }
         }
@@ -349,8 +350,17 @@ namespace LDDModder.BrickEditor.UI.Windows
                 }
                 else if (BuildConfigList.Count > 1)
                 {
-                    BuildConfigComboBox.SelectedIndex = 0;
-                    SelectedBuildConfig = BuildConfigList[0];
+                    var defaultCfg = BuildConfigList.FirstOrDefault(x => x.IsDefault);
+                    if (defaultCfg != null)
+                    {
+                        BuildConfigComboBox.SelectedItem = defaultCfg;
+                        SelectedBuildConfig = defaultCfg;
+                    }
+                    else
+                    {
+                        BuildConfigComboBox.SelectedIndex = 0;
+                        SelectedBuildConfig = BuildConfigList[0];
+                    }
                 }
                 else
                 {
@@ -371,7 +381,7 @@ namespace LDDModder.BrickEditor.UI.Windows
                 {
                     using (FlagManager.UseFlag("UpdateBuildConfig"))
                         BuildConfigComboBox.SelectedIndex = BuildConfigList.IndexOf(SelectedBuildConfig);
-                    ShowSettingsWindow(AppSettingsWindow.SettingTab.BuildSettings);
+                    ShowSettingsWindow(AppSettingsWindow.SettingTab.EditorSettings);
                 }
                 else
                 {
@@ -385,8 +395,7 @@ namespace LDDModder.BrickEditor.UI.Windows
             //TODO: localize and improve messages
             if (e.Successful)
             {
-                SaveGeneratedPart(e.Result, SelectedBuildConfig);
-                
+                ProjectManager.SaveGeneratedPart(e.Result, SelectedBuildConfig);
             }
             else
             {
@@ -394,67 +403,6 @@ namespace LDDModder.BrickEditor.UI.Windows
                 ValidationPanel.Activate();
                 ValidationPanel.ShowBuildMessages(e.Messages);
             }
-        }
-
-        private void SaveGeneratedPart(LDD.Parts.PartWrapper part, BuildConfiguration buildConfig)
-        {
-            if (buildConfig.InternalFlag == BuildConfiguration.LDD_FLAG)
-            {
-                part.SaveToLdd(LDDEnvironment.Current);
-                MessageBox.Show("Part files generated!");
-                return;
-            }
-
-            string targetPath = buildConfig.OutputPath;
-
-            if (targetPath.Contains("$"))
-            {
-                targetPath = ProjectManager.ExpandVariablePath(targetPath);
-            }
-
-            if (buildConfig.InternalFlag == BuildConfiguration.MANUAL_FLAG || 
-                string.IsNullOrEmpty(buildConfig.OutputPath))
-            {
-                using (var sfd = new SaveFileDialog())
-                {
-                    if (!string.IsNullOrEmpty(targetPath) &&
-                        FileHelper.IsValidDirectory(targetPath))
-                        sfd.InitialDirectory = targetPath;
-
-                    sfd.FileName = part.PartID.ToString();
-                    //if (buildConfig.CreateZip)
-                    //{
-                    //    sfd.FileName += ".zip";
-                    //    sfd.DefaultExt = ".zip";
-                    //}
-
-                    if (sfd.ShowDialog() != DialogResult.OK)
-                    {
-                        //show canceled message
-                        return;
-                    }
-
-                    //if (buildConfig.CreateZip)
-                    //    targetPath = sfd.FileName;
-                    //else
-                        targetPath = Path.GetDirectoryName(sfd.FileName);
-                }
-            }
-
-            Directory.CreateDirectory(targetPath);
-            part.SavePrimitive(targetPath);
-
-            if (!buildConfig.LOD0Subdirectory)
-                part.SaveMeshes(targetPath);
-            else
-            {
-                targetPath = Path.Combine(targetPath, "LOD0");
-                Directory.CreateDirectory(targetPath);
-                part.SaveMeshes(targetPath);
-            }
-
-            MessageBox.Show("Part files generated!");
-
         }
 
         #endregion

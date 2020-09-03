@@ -258,6 +258,7 @@
     <Compile Include="Utilities\MathHelper.cs" />
     <Compile Include="Utilities\SortableBindingList.cs" />
     <Compile Include="Utilities\StringUtils.cs" />
+    <Compile Include="Utilities\TaskHelper.cs" />
     <Compile Include="Utilities\ThreadSafeList.cs" />
   </ItemGroup>
   <ItemGroup />

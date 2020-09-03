@@ -146,7 +146,7 @@ Certaines fonctionnalités ne fonctionneront pas correctement.</value>
     <value>Enregistrement du projet</value>
   </data>
   <data name="Message_RecoverProject" xml:space="preserve">
-    <value>TODO</value>
+    <value>L'application ne s'est pas fermée correctement, souhaitez-vous récupérer le projet?</value>
   </data>
   <data name="Message_FileGenerationError" xml:space="preserve">
     <value>Impossible de générer les fichiers de brique LDD.
@@ -193,5 +193,17 @@ Voulez-vous quand même supprimer?</value>
   </data>
   <data name="Message_InitializingResources" xml:space="preserve">
     <value>Initialisation des ressources</value>
+  </data>
+  <data name="Message_LddFilesGenerated" xml:space="preserve">
+    <value>Fichiers générés avec succès.</value>
+  </data>
+  <data name="Message_ConfirmOverwritePartFiles" xml:space="preserve">
+    <value>Les fichiers de cette pièce existent déjà.
+Voulez-vous vraiment les écraser?
+
+*Vous pouvez supprimer cette confirmation dans les paramètres.</value>
+  </data>
+  <data name="Caption_RecoverLastProject" xml:space="preserve">
+    <value>Récupération de la session</value>
   </data>
 </root>

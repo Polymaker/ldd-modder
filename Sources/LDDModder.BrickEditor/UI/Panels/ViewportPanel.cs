@@ -127,7 +127,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             }
             catch (Exception ex)
             {
-                ErrorMessageBox.Show(this, "An error occured while initializing GL view.", "Error", ex.ToString());
+                MessageBoxEX.ShowDetails(this, "An error occured while initializing GL view.", "Error", ex.ToString());
             }
 
             if (initSuccess)

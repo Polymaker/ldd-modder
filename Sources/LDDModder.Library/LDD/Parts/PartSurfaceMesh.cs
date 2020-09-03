@@ -13,11 +13,24 @@ namespace LDDModder.LDD.Parts
         public int SurfaceID { get; set; }
         public MeshFile Mesh { get; set; }
 
+        public string Filepath { get; set; }
+
         public string GetFileName()
         {
-            if (SurfaceID > 0)
-                return $"{PartID}.g{SurfaceID}";
-            return $"{PartID}.g";
+            return GetFileName(PartID, SurfaceID);
+        }
+
+        public static string GetFileName(int partID, int surfaceID)
+        {
+            if (surfaceID > 0)
+                return $"{partID}.g{surfaceID}";
+            return $"{partID}.g";
+        }
+
+        public PartSurfaceMesh(int partID, int surfaceID)
+        {
+            PartID = partID;
+            SurfaceID = surfaceID;
         }
 
         public PartSurfaceMesh(int partID, int surfaceID, MeshFile mesh)

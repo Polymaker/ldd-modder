@@ -273,11 +273,11 @@
     <Compile Include="UI\Windows\BoneDataCopyDialog.Designer.cs">
       <DependentUpon>BoneDataCopyDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Windows\ErrorMessageBox.cs">
+    <Compile Include="UI\Windows\MessageBoxEX.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\Windows\ErrorMessageBox.Designer.cs">
-      <DependentUpon>ErrorMessageBox.cs</DependentUpon>
+    <Compile Include="UI\Windows\MessageBoxEX.Designer.cs">
+      <DependentUpon>MessageBoxEX.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\Windows\SelectOutputLocationWindow.cs">
       <SubType>Form</SubType>
@@ -542,8 +542,8 @@
     <EmbeddedResource Include="UI\Windows\BrickEditorWindow.resx">
       <DependentUpon>BrickEditorWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Windows\ErrorMessageBox.resx">
-      <DependentUpon>ErrorMessageBox.cs</DependentUpon>
+    <EmbeddedResource Include="UI\Windows\MessageBoxEX.resx">
+      <DependentUpon>MessageBoxEX.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Windows\ExportPartModelWindow.fr.resx">
       <DependentUpon>ExportPartModelWindow.cs</DependentUpon>

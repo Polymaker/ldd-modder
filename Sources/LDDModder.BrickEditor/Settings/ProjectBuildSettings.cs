@@ -20,8 +20,22 @@ namespace LDDModder.BrickEditor.Settings
         [JsonProperty("userDefined")]
         public List<BuildConfiguration> UserDefined { get; set; }
 
-        //[JsonProperty("generateOutlines", DefaultValueHandling = DefaultValueHandling.Ignore), DefaultValue(true)]
-        //public bool GenerateOutlines { get; set; }
+        [JsonProperty("default", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [DefaultValue("")]
+        public string DefaultConfigName { get; set; }
+
+        public BuildConfiguration DefaultConfiguration
+        {
+            get
+            {
+                if (DefaultConfigName == "ldd")
+                    return LDD;
+                if (DefaultConfigName == "manual")
+                    return Manual;
+
+                return UserDefined.FirstOrDefault(x => x.Name == DefaultConfigName);
+            }
+        }
 
         public ProjectBuildSettings()
         {
@@ -60,6 +74,22 @@ namespace LDDModder.BrickEditor.Settings
 
             if (UserDefined == null)
                 UserDefined = new List<BuildConfiguration>();
+
+
+            if (DefaultConfiguration != null)
+                DefaultConfiguration.IsDefault = true;
+            else
+                DefaultConfigName = string.Empty;
+        }
+
+        public IEnumerable<BuildConfiguration> GetAllConfigurations()
+        {
+            yield return LDD;
+
+            yield return Manual;
+
+            foreach (var cfg in UserDefined)
+                yield return cfg;
         }
     }
 }

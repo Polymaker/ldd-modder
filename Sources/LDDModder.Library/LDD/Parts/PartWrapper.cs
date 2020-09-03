@@ -15,6 +15,7 @@ namespace LDDModder.LDD.Parts
     {
         public int PartID { get; set; }
         public Primitive Primitive { get; set; }
+
         public List<PartSurfaceMesh> Surfaces { get; set; }
 
         public PartSurfaceMesh MainSurface => Surfaces.FirstOrDefault(x => x.SurfaceID == 0);
@@ -30,6 +31,8 @@ namespace LDDModder.LDD.Parts
         public bool IsDecorated => DecorationSurfaces.Any();
 
         public bool IsFlexible => AllMeshes.Any(x => x.IsFlexible) || Primitive.FlexBones.Any();
+
+        public string Filepath { get; set; }
 
         public PartWrapper()
         {
@@ -114,14 +117,22 @@ namespace LDDModder.LDD.Parts
                     if (!PartSurfaceMesh.ParseSurfaceID(meshPath, out int surfID))
                         surfID = surfaces.Count;
 
-                    surfaces.Add(new PartSurfaceMesh(partID, surfID, loadMeshes ? MeshFile.Read(meshPath) : null));
+                    var surfaceInfo = new PartSurfaceMesh(partID, surfID, loadMeshes ? MeshFile.Read(meshPath) : null)
+                    {
+                        Filepath = meshPath
+                    };
+                    surfaces.Add(surfaceInfo);
                 }
             }
 
             if (!surfaces.Any())
                 throw new FileNotFoundException($"Mesh file not found. ({partID}.g)");
 
-            return new PartWrapper(Primitive.Load(primitiveFile), surfaces) { PartID = partID };
+            return new PartWrapper(Primitive.Load(primitiveFile), surfaces) 
+            { 
+                PartID = partID, 
+                Filepath = primitiveFile 
+            };
         }
 
         public static PartWrapper GetPartFromLif(LifFile lif, int partID, bool loadMeshes)
@@ -140,8 +151,9 @@ namespace LDDModder.LDD.Parts
                 if (!PartSurfaceMesh.ParseSurfaceID(meshEntry.Name, out int surfID))
                     surfID = surfaces.Count;
 
-                surfaces.Add(new PartSurfaceMesh(partID, surfID,
-                    loadMeshes ? MeshFile.Read(meshEntry.GetStream()) : null));
+                var surfaceInfo = new PartSurfaceMesh(partID, surfID,
+                    loadMeshes ? MeshFile.Read(meshEntry.GetStream()) : null);
+                surfaces.Add(surfaceInfo);
             }
 
             if (!surfaces.Any())
@@ -187,35 +199,72 @@ namespace LDDModder.LDD.Parts
         public void SaveToLdd(LDDEnvironment environment)
         {
             var primitivesDir = environment.GetAppDataSubDir("db\\Primitives\\");
-            //var meshesDir = environment.GetAppDataSubDir("db\\Primitives\\LOD0\\");
+            var meshesDir = environment.GetAppDataSubDir("db\\Primitives\\LOD0\\");
 
-            Primitive.Save(Path.Combine(primitivesDir, $"{PartID}.xml"));
-
-            foreach (var surface in Surfaces)
-                surface.Mesh.Save(Path.Combine(primitivesDir, "LOD0", surface.GetFileName()));
+            SaveToDirectory(primitivesDir, meshesDir);
         }
 
-        public void SaveToDirectory(string targetPath)
+        public void SaveToDirectory(string primitiveDirectory, string meshesDirectory)
         {
-            Directory.CreateDirectory(targetPath);
-
-            Primitive.Save(Path.Combine(targetPath, $"{PartID}.xml"));
-
-            foreach (var surface in Surfaces)
-                surface.Mesh.Save(Path.Combine(targetPath, surface.GetFileName()));
+            SavePrimitive(primitiveDirectory);
+            SaveMeshes(meshesDirectory);
         }
 
         public void SavePrimitive(string targetDirectory)
         {
-            Primitive.Save(Path.Combine(targetDirectory, $"{PartID}.xml"));
+            Directory.CreateDirectory(targetDirectory);
+            Filepath = Path.Combine(targetDirectory, $"{PartID}.xml");
+            Primitive.Save(Filepath);
         }
 
         public void SaveMeshes(string targetDirectory)
         {
+            Directory.CreateDirectory(targetDirectory);
+
             foreach (var surface in Surfaces)
-                surface.Mesh.Save(Path.Combine(targetDirectory, surface.GetFileName()));
+            {
+                string meshPath = Path.Combine(targetDirectory, surface.GetFileName());
+                surface.Mesh.Save(meshPath);
+                surface.Filepath = meshPath;
+            }
         }
 
         #endregion
+
+        public bool CheckFilesExists(string primitiveDir, string meshesDir)
+        {
+            if (Directory.Exists(primitiveDir) &&
+                File.Exists(Path.Combine(primitiveDir, $"{PartID}.xml")))
+                return true;
+
+            if (!Directory.Exists(meshesDir))
+                return false;
+
+            foreach (var surface in Surfaces)
+            {
+                if (File.Exists(Path.Combine(meshesDir, surface.GetFileName())))
+                    return true;
+            }
+
+            return false;
+        }
+    
+        public static List<PartSurfaceMesh> FindSurfaceMeshes(string directory, int partID)
+        {
+            var surfaces = new List<PartSurfaceMesh>();
+
+            if (Directory.Exists(directory))
+            {
+                foreach (string meshPath in Directory.GetFiles(directory, $"{partID}.g*"))
+                {
+                    if (!PartSurfaceMesh.ParseSurfaceID(meshPath, out int surfID))
+                        surfID = surfaces.Count;
+
+                    surfaces.Add(new PartSurfaceMesh(partID, surfID,  null));
+                }
+            }
+
+            return surfaces;
+        }
     }
 }

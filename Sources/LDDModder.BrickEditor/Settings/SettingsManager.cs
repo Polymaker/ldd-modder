@@ -46,20 +46,7 @@ namespace LDDModder.BrickEditor.Settings
 
         public static void LoadSettings()
         {
-            string settingsPath = Path.Combine(AppDataFolder, AppSettingsFileName);
-
-            if (File.Exists(settingsPath))
-            {
-                try
-                {
-                    Current = JsonConvert.DeserializeObject<AppSettings>(File.ReadAllText(settingsPath));
-                }
-                catch
-                {
-
-                }
-            }
-
+            Current = LoadAppSettings();
 
             if (Current == null)
                 Current = AppSettings.CreateDefault();
@@ -69,6 +56,31 @@ namespace LDDModder.BrickEditor.Settings
             ValidateLddPaths();
 
             SaveSettings();
+        }
+
+        public static AppSettings LoadAppSettings()
+        {
+            string settingsPath = Path.Combine(AppDataFolder, AppSettingsFileName);
+
+            if (File.Exists(settingsPath))
+            {
+                try
+                {
+                    return JsonConvert.DeserializeObject<AppSettings>(File.ReadAllText(settingsPath));
+                }
+                catch { }
+            }
+
+            return null;
+        }
+
+        public static void ReloadFilesHistory()
+        {
+            var currentSettings = LoadAppSettings();
+            if (currentSettings == null)
+                return;
+            Current.RecentProjectFiles = currentSettings.RecentProjectFiles;
+            Current.OpenedProjects = currentSettings.OpenedProjects;
         }
 
         private static void ValidateLddPaths()
@@ -112,22 +124,34 @@ namespace LDDModder.BrickEditor.Settings
 
         public static void SaveSettings()
         {
-            string settingsPath = Path.Combine(AppDataFolder, AppSettingsFileName);
+            SaveSettings(Current);
+        }
 
+        private static void SaveSettings(AppSettings settings)
+        {
+            string settingsPath = Path.Combine(AppDataFolder, AppSettingsFileName);
 
             using (var fs = File.Open(settingsPath, FileMode.Create))
             using (var sw = new StreamWriter(fs))
-                sw.Write(JsonConvert.SerializeObject(Current, Formatting.Indented));
+                sw.Write(JsonConvert.SerializeObject(settings, Formatting.Indented));
+        }
 
-            //LDDEnvironment.SetEnvironmentPaths(
-            //    Current.LddProgramFilesPath, 
-            //    Current.LddApplicationDataPath);
+        public static void SaveFilesHistory()
+        {
+            var currentSettings = LoadAppSettings();
+            if (currentSettings == null)
+                return;
+            currentSettings.OpenedProjects = Current.OpenedProjects;
+            currentSettings.RecentProjectFiles = Current.RecentProjectFiles;
+            SaveSettings(currentSettings);
         }
 
         public static void AddRecentProject(PartProject project, bool isSavedFile = false)
         {
             if (Current.RecentProjectFiles == null)
                 Current.RecentProjectFiles = new List<RecentFileInfo>();
+
+            ReloadFilesHistory();
 
             if (isSavedFile && !Current.RecentProjectFiles.Any(x => x.ProjectFile == project.ProjectPath))
             {
@@ -136,7 +160,6 @@ namespace LDDModder.BrickEditor.Settings
                 while (Current.RecentProjectFiles.Count > MaximumRecentFiles)
                     Current.RecentProjectFiles.RemoveAt(Current.RecentProjectFiles.Count - 1);
 
-                SaveSettings();
             }
             else if (!isSavedFile)
             {
@@ -146,8 +169,35 @@ namespace LDDModder.BrickEditor.Settings
                 while (Current.RecentProjectFiles.Count > MaximumRecentFiles)
                     Current.RecentProjectFiles.RemoveAt(Current.RecentProjectFiles.Count - 1);
 
-                SaveSettings();
             }
+
+            SaveFilesHistory();
+        }
+
+        public static void AddOpenedFile(PartProject project)
+        {
+            ReloadFilesHistory();
+            var fileInfo = new RecentFileInfo(project, true);
+
+            if (!Current.OpenedProjects.Any(x => x.WorkingDirectory == fileInfo.WorkingDirectory))
+            {
+                Current.OpenedProjects.Add(fileInfo);
+                SaveFilesHistory();
+            }
+        }
+
+        public static void RemoveOpenedFile(PartProject project)
+        {
+            ReloadFilesHistory();
+            Current.OpenedProjects.RemoveAll(x => x.WorkingDirectory == project?.ProjectWorkingDir);
+            SaveFilesHistory();
+        }
+
+        public static void RemoveOpenedFile(RecentFileInfo fileInfo)
+        {
+            ReloadFilesHistory();
+            Current.OpenedProjects.RemoveAll(x => x.WorkingDirectory == fileInfo.WorkingDirectory);
+            SaveFilesHistory();
         }
 
         #region Project Configuration

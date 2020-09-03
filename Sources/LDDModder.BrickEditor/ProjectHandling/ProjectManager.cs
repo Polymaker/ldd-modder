@@ -9,6 +9,7 @@ using LDDModder.LDD.Parts;
 using LDDModder.LDD.Primitives.Collisions;
 using LDDModder.LDD.Primitives.Connectors;
 using LDDModder.Modding.Editing;
+using LDDModder.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -626,9 +627,8 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
                 IsValidatingProject = false;
                 LastValidation = UndoRedoManager.CurrentChangeID;
-
+                
                 ValidationFinished?.Invoke(this, EventArgs.Empty);
-
             }
         }
 
@@ -674,7 +674,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
         public event EventHandler<ProjectBuildEventArgs> GenerationFinished;
 
-        public PartWrapper GenerateLddFiles(bool generateOutlines = true)
+        public PartWrapper GenerateLddFiles()
         {
             if (!IsProjectOpen)
                 return null;
@@ -744,6 +744,70 @@ namespace LDDModder.BrickEditor.ProjectHandling
             }
 
             return result;
+        }
+
+        public void SaveGeneratedPart(LDD.Parts.PartWrapper part, BuildConfiguration buildConfig)
+        {
+            string targetPath = buildConfig.OutputPath;
+
+            if (targetPath.Contains("$"))
+            {
+                targetPath = ExpandVariablePath(targetPath);
+            }
+
+            if (buildConfig.InternalFlag == BuildConfiguration.MANUAL_FLAG ||
+                string.IsNullOrEmpty(buildConfig.OutputPath))
+            {
+                using (var sfd = new SaveFileDialog())
+                {
+                    if (!string.IsNullOrEmpty(targetPath) &&
+                        FileHelper.IsValidDirectory(targetPath))
+                        sfd.InitialDirectory = targetPath;
+
+                    sfd.FileName = part.PartID.ToString();
+
+                    if (sfd.ShowDialog() != DialogResult.OK)
+                    {
+                        //show canceled message
+                        return;
+                    }
+
+                    targetPath = Path.GetDirectoryName(sfd.FileName);
+                }
+            }
+
+            string meshDirectory = targetPath;
+            if (buildConfig.LOD0Subdirectory)
+                meshDirectory = Path.Combine(targetPath, "LOD0");
+
+            bool filesExists = part.CheckFilesExists(targetPath, meshDirectory);
+
+            if (buildConfig.ConfirmOverwrite && filesExists)
+            {
+                var msgResult = MessageBoxEX.Show(MainWindow,
+                    Messages.Message_ConfirmOverwritePartFiles, 
+                    Messages.Caption_LddPartGeneration, MessageBoxButtons.YesNo);
+                if (msgResult != DialogResult.Yes)
+                    return;
+            }
+
+            part.SaveToDirectory(targetPath, meshDirectory);
+
+            var generatedFiles = new List<string>() { part.Filepath };
+            generatedFiles.AddRange(part.Surfaces.Select(s => s.Filepath));
+            //string parentDirectory = string.Empty;
+            //var dirInfo = new DirectoryInfo(targetPath);
+            //if (dirInfo.Parent != null)
+            //    parentDirectory = dirInfo.Parent.FullName;
+            for (int i = 0; i < generatedFiles.Count; i++)
+                generatedFiles[i] = generatedFiles[i].Replace(targetPath, string.Empty);
+
+            MessageBoxEX.ShowDetails(MainWindow, 
+                Messages.Message_LddFilesGenerated, 
+                Messages.Caption_LddPartGeneration, 
+                string.Join(Environment.NewLine, generatedFiles), 
+                MessageBoxButtons.OK, 
+                MessageBoxIcon.Information);
         }
 
         #endregion

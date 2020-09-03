@@ -22,7 +22,7 @@ namespace LDDModder.BrickEditor.UI.Windows
         public enum SettingTab
         {
             LddEnvironment,
-            BuildSettings,
+            EditorSettings,
             //ProjectSettings
         }
 
@@ -40,11 +40,16 @@ namespace LDDModder.BrickEditor.UI.Windows
         {
             base.OnLoad(e);
 
-            
+            if (DesignMode)
+                return;
+
+            AddBuildCfgBtn.Anchor = AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right;
+            DelBuildCfgBtn.Anchor = AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right;
+
             switch (StartupTab)
             {
-                case SettingTab.BuildSettings:
-                    SettingsTabControl.SelectedTab = BuildSettingsTabPage;
+                case SettingTab.EditorSettings:
+                    SettingsTabControl.SelectedTab = EditorSettingsTabPage;
                     break;
             }
 
@@ -267,6 +272,10 @@ namespace LDDModder.BrickEditor.UI.Windows
                     {
                         Tag = config.Clone()
                     };
+
+                    if (config.IsDefault)
+                        lvi.Text += "*";
+
                     BuildConfigListView.Items.Add(lvi);
                 }
             }
@@ -540,19 +549,15 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         #endregion
 
-
         private void SaveButton_Click(object sender, EventArgs e)
         {
             SaveLddEnvironmentSettings();
-
         }
 
         private void SettingsTabControl_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (SettingsTabControl.SelectedTab == BuildSettingsTabPage)
+            if (SettingsTabControl.SelectedTab == EditorSettingsTabPage)
                 BuildConfigsShown = true;
         }
-
-        
     }
 }

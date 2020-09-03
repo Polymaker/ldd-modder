@@ -133,6 +133,15 @@ namespace LDDModder.BrickEditor.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Recover last session.
+        /// </summary>
+        internal static string Caption_RecoverLastProject {
+            get {
+                return ResourceManager.GetString("Caption_RecoverLastProject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Save project.
         /// </summary>
         internal static string Caption_SaveBeforeClose {
@@ -217,6 +226,18 @@ namespace LDDModder.BrickEditor.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à The files for this part already exists.
+        ///Are-you sure you want to overwrite  them?
+        ///
+        ///*You can remove this confirmation in the settings..
+        /// </summary>
+        internal static string Message_ConfirmOverwritePartFiles {
+            get {
+                return ResourceManager.GetString("Message_ConfirmOverwritePartFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Some model components references studs that are outside the new size.
         ///Do you want to proceed anyway?.
         /// </summary>
@@ -255,7 +276,16 @@ namespace LDDModder.BrickEditor.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à TODO.
+        ///   Recherche une chaîne localisée semblable à Files generated successfully..
+        /// </summary>
+        internal static string Message_LddFilesGenerated {
+            get {
+                return ResourceManager.GetString("Message_LddFilesGenerated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à The app did not close correctly, do you want to recover the project?.
         /// </summary>
         internal static string Message_RecoverProject {
             get {

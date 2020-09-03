@@ -53,9 +53,10 @@
             this.SaveButton = new System.Windows.Forms.Button();
             this.SettingsTabControl = new System.Windows.Forms.TabControl();
             this.LDDEnvPanel = new System.Windows.Forms.TabPage();
-            this.BuildSettingsTabPage = new System.Windows.Forms.TabPage();
+            this.EditorSettingsTabPage = new System.Windows.Forms.TabPage();
             this.BuildConfigsGroupBox = new System.Windows.Forms.GroupBox();
             this.BuildCfgSplitContainer = new System.Windows.Forms.SplitContainer();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.DelBuildCfgBtn = new System.Windows.Forms.Button();
             this.AddBuildCfgBtn = new System.Windows.Forms.Button();
             this.BuildConfigListView = new System.Windows.Forms.ListView();
@@ -67,8 +68,8 @@
             this.BuildCfg_PathBox = new LDDModder.BrickEditor.UI.Controls.BrowseTextBox();
             this.BuildCfg_NameBox = new System.Windows.Forms.TextBox();
             this.BuildCfg_Lod0Chk = new System.Windows.Forms.CheckBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
+            this.BuildCfgNameLabel = new System.Windows.Forms.Label();
+            this.BuildCfgPathLabel = new System.Windows.Forms.Label();
             this.LifNotExtractedMessage = new LDDModder.BrickEditor.Localization.LocalizableString();
             this.LifExtractedMessage = new LDDModder.BrickEditor.Localization.LocalizableString();
             this.localizableStringList1 = new LDDModder.BrickEditor.Localization.LocalizableStringList(this.components);
@@ -81,12 +82,13 @@
             this.LddLifsLayout.SuspendLayout();
             this.SettingsTabControl.SuspendLayout();
             this.LDDEnvPanel.SuspendLayout();
-            this.BuildSettingsTabPage.SuspendLayout();
+            this.EditorSettingsTabPage.SuspendLayout();
             this.BuildConfigsGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.BuildCfgSplitContainer)).BeginInit();
             this.BuildCfgSplitContainer.Panel1.SuspendLayout();
             this.BuildCfgSplitContainer.Panel2.SuspendLayout();
             this.BuildCfgSplitContainer.SuspendLayout();
+            this.tableLayoutPanel1.SuspendLayout();
             this.BuildCfgEditLayout.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -243,7 +245,7 @@
             // SettingsTabControl
             // 
             this.SettingsTabControl.Controls.Add(this.LDDEnvPanel);
-            this.SettingsTabControl.Controls.Add(this.BuildSettingsTabPage);
+            this.SettingsTabControl.Controls.Add(this.EditorSettingsTabPage);
             resources.ApplyResources(this.SettingsTabControl, "SettingsTabControl");
             this.SettingsTabControl.Name = "SettingsTabControl";
             this.SettingsTabControl.SelectedIndex = 0;
@@ -259,34 +261,41 @@
             this.LDDEnvPanel.Name = "LDDEnvPanel";
             this.LDDEnvPanel.UseVisualStyleBackColor = true;
             // 
-            // BuildSettingsTabPage
+            // EditorSettingsTabPage
             // 
-            this.BuildSettingsTabPage.Controls.Add(this.BuildConfigsGroupBox);
-            resources.ApplyResources(this.BuildSettingsTabPage, "BuildSettingsTabPage");
-            this.BuildSettingsTabPage.Name = "BuildSettingsTabPage";
-            this.BuildSettingsTabPage.UseVisualStyleBackColor = true;
+            this.EditorSettingsTabPage.Controls.Add(this.BuildConfigsGroupBox);
+            resources.ApplyResources(this.EditorSettingsTabPage, "EditorSettingsTabPage");
+            this.EditorSettingsTabPage.Name = "EditorSettingsTabPage";
+            this.EditorSettingsTabPage.UseVisualStyleBackColor = true;
             // 
             // BuildConfigsGroupBox
             // 
-            resources.ApplyResources(this.BuildConfigsGroupBox, "BuildConfigsGroupBox");
             this.BuildConfigsGroupBox.Controls.Add(this.BuildCfgSplitContainer);
+            resources.ApplyResources(this.BuildConfigsGroupBox, "BuildConfigsGroupBox");
             this.BuildConfigsGroupBox.Name = "BuildConfigsGroupBox";
             this.BuildConfigsGroupBox.TabStop = false;
             // 
             // BuildCfgSplitContainer
             // 
             resources.ApplyResources(this.BuildCfgSplitContainer, "BuildCfgSplitContainer");
+            this.BuildCfgSplitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
             this.BuildCfgSplitContainer.Name = "BuildCfgSplitContainer";
             // 
             // BuildCfgSplitContainer.Panel1
             // 
-            this.BuildCfgSplitContainer.Panel1.Controls.Add(this.DelBuildCfgBtn);
-            this.BuildCfgSplitContainer.Panel1.Controls.Add(this.AddBuildCfgBtn);
-            this.BuildCfgSplitContainer.Panel1.Controls.Add(this.BuildConfigListView);
+            this.BuildCfgSplitContainer.Panel1.Controls.Add(this.tableLayoutPanel1);
             // 
             // BuildCfgSplitContainer.Panel2
             // 
             this.BuildCfgSplitContainer.Panel2.Controls.Add(this.BuildCfgEditLayout);
+            // 
+            // tableLayoutPanel1
+            // 
+            resources.ApplyResources(this.tableLayoutPanel1, "tableLayoutPanel1");
+            this.tableLayoutPanel1.Controls.Add(this.DelBuildCfgBtn, 1, 1);
+            this.tableLayoutPanel1.Controls.Add(this.AddBuildCfgBtn, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.BuildConfigListView, 0, 0);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             // 
             // DelBuildCfgBtn
             // 
@@ -307,6 +316,7 @@
             resources.ApplyResources(this.BuildConfigListView, "BuildConfigListView");
             this.BuildConfigListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.BuildCfgNameColumn});
+            this.tableLayoutPanel1.SetColumnSpan(this.BuildConfigListView, 2);
             this.BuildConfigListView.FullRowSelect = true;
             this.BuildConfigListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
             this.BuildConfigListView.HideSelection = false;
@@ -330,8 +340,8 @@
             this.BuildCfgEditLayout.Controls.Add(this.BuildCfg_PathBox, 1, 1);
             this.BuildCfgEditLayout.Controls.Add(this.BuildCfg_NameBox, 1, 0);
             this.BuildCfgEditLayout.Controls.Add(this.BuildCfg_Lod0Chk, 1, 2);
-            this.BuildCfgEditLayout.Controls.Add(this.label3, 0, 0);
-            this.BuildCfgEditLayout.Controls.Add(this.label4, 0, 1);
+            this.BuildCfgEditLayout.Controls.Add(this.BuildCfgNameLabel, 0, 0);
+            this.BuildCfgEditLayout.Controls.Add(this.BuildCfgPathLabel, 0, 1);
             this.BuildCfgEditLayout.Name = "BuildCfgEditLayout";
             // 
             // CancelBuildCfgBtn
@@ -383,15 +393,15 @@
             this.BuildCfg_Lod0Chk.UseVisualStyleBackColor = true;
             this.BuildCfg_Lod0Chk.CheckedChanged += new System.EventHandler(this.BuildCfgProperty_ValueChanged);
             // 
-            // label3
+            // BuildCfgNameLabel
             // 
-            resources.ApplyResources(this.label3, "label3");
-            this.label3.Name = "label3";
+            resources.ApplyResources(this.BuildCfgNameLabel, "BuildCfgNameLabel");
+            this.BuildCfgNameLabel.Name = "BuildCfgNameLabel";
             // 
-            // label4
+            // BuildCfgPathLabel
             // 
-            resources.ApplyResources(this.label4, "label4");
-            this.label4.Name = "label4";
+            resources.ApplyResources(this.BuildCfgPathLabel, "BuildCfgPathLabel");
+            this.BuildCfgPathLabel.Name = "BuildCfgPathLabel";
             // 
             // LifNotExtractedMessage
             // 
@@ -438,12 +448,13 @@
             this.LddLifsLayout.PerformLayout();
             this.SettingsTabControl.ResumeLayout(false);
             this.LDDEnvPanel.ResumeLayout(false);
-            this.BuildSettingsTabPage.ResumeLayout(false);
+            this.EditorSettingsTabPage.ResumeLayout(false);
             this.BuildConfigsGroupBox.ResumeLayout(false);
             this.BuildCfgSplitContainer.Panel1.ResumeLayout(false);
             this.BuildCfgSplitContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.BuildCfgSplitContainer)).EndInit();
             this.BuildCfgSplitContainer.ResumeLayout(false);
+            this.tableLayoutPanel1.ResumeLayout(false);
             this.BuildCfgEditLayout.ResumeLayout(false);
             this.BuildCfgEditLayout.PerformLayout();
             this.ResumeLayout(false);
@@ -480,9 +491,9 @@
         private Localization.LocalizableString LddExeNotFound;
         private System.Windows.Forms.TabControl SettingsTabControl;
         private System.Windows.Forms.TabPage LDDEnvPanel;
-        private System.Windows.Forms.TabPage BuildSettingsTabPage;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TabPage EditorSettingsTabPage;
+        private System.Windows.Forms.Label BuildCfgPathLabel;
+        private System.Windows.Forms.Label BuildCfgNameLabel;
         private System.Windows.Forms.CheckBox BuildCfg_OverwriteChk;
         private System.Windows.Forms.CheckBox BuildCfg_Lod0Chk;
         private Controls.BrowseTextBox BuildCfg_PathBox;
@@ -497,5 +508,6 @@
         private System.Windows.Forms.TableLayoutPanel BuildCfgEditLayout;
         private System.Windows.Forms.ColumnHeader BuildCfgNameColumn;
         private Localization.LocalizableString AppDataDbNotFound;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
     }
 }

@@ -47,15 +47,13 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         protected override void OnHandleCreated(EventArgs e)
         {
-            
             base.OnHandleCreated(e);
         }
 
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            //MultiInstanceManager.MainWindow = this;
-            //MultiInstanceManager.CheckInstances();
+            MultiInstanceManager.Initialize(this);
 
             InitializeProjectManager();
             menuStrip1.Enabled = false;
@@ -227,14 +225,11 @@ namespace LDDModder.BrickEditor.UI.Windows
             UpdateMenuItemStates();
             RebuildRecentFilesMenu();
 
-            if (SettingsManager.AppInstanceID == 0)
+            Task.Factory.StartNew(() =>
             {
-                Task.Factory.StartNew(() =>
-                {
-                    Thread.Sleep(200);
-                    Invoke(new MethodInvoker(CheckCanRecoverProject));
-                });
-            }
+                Thread.Sleep(200);
+                Invoke(new MethodInvoker(CheckCanRecoverProject));
+            });
         }
 
         #endregion
@@ -299,7 +294,7 @@ namespace LDDModder.BrickEditor.UI.Windows
             }
             catch (Exception ex)
             {
-                ErrorMessageBox.Show(this, 
+                MessageBoxEX.ShowDetails(this, 
                     Messages.Error_OpeningProject, 
                     Messages.Caption_OpeningProject, ex.ToString());
                 exceptionThrown = true;
@@ -309,14 +304,14 @@ namespace LDDModder.BrickEditor.UI.Windows
             {
                 loadedProject.ProjectPath = projectFilePath;
                 loadedProject.ProjectWorkingDir = tmpProjectDir;
-                SettingsManager.Current.LastOpenProject = new RecentFileInfo(loadedProject, true);
+                SettingsManager.AddOpenedFile(loadedProject);
                 SettingsManager.AddRecentProject(loadedProject);
                 LoadPartProject(loadedProject);
                 RebuildRecentFilesMenu();
             }
             else if (!exceptionThrown)
             {
-                ErrorMessageBox.Show(this,
+                MessageBoxEX.ShowDetails(this,
                     Messages.Error_OpeningProject,
                     Messages.Caption_OpeningProject, "Invalid or corrupted project file. Missing \"project.xml\" file.");
             }
@@ -335,7 +330,7 @@ namespace LDDModder.BrickEditor.UI.Windows
             }
             catch (Exception ex)
             {
-                ErrorMessageBox.Show(this,
+                MessageBoxEX.ShowDetails(this,
                     Messages.Error_OpeningProject,
                     Messages.Caption_OpeningProject, ex.ToString());
                 
@@ -367,7 +362,7 @@ namespace LDDModder.BrickEditor.UI.Windows
                 }
                 catch
                 {
-                    ErrorMessageBox.Show(this,
+                    MessageBoxEX.ShowDetails(this,
                         Messages.Error_OpeningFile, //TODO: change
                         Messages.Caption_OpeningProject,
                         "File is not an LDD Primitive."); //TODO: translate
@@ -392,7 +387,7 @@ namespace LDDModder.BrickEditor.UI.Windows
 
             if (meshFiles.Length == 0)
             {
-                ErrorMessageBox.Show(this,
+                MessageBoxEX.ShowDetails(this,
                     Messages.Error_OpeningFile, //TODO: change
                     Messages.Caption_OpeningProject,
                     "No mesh file found."); //TODO: translate
@@ -406,13 +401,12 @@ namespace LDDModder.BrickEditor.UI.Windows
             {
                 string tmpProjectDir = GetTemporaryWorkingDir();
                 project.SaveExtracted(tmpProjectDir);
-                SettingsManager.Current.LastOpenProject = new RecentFileInfo(project, true);
-                SettingsManager.SaveSettings();
+                SettingsManager.AddOpenedFile(project);
                 LoadPartProject(project);
             }
             catch (Exception ex)
             {
-                ErrorMessageBox.Show(this,
+                MessageBoxEX.ShowDetails(this,
                     Messages.Error_CreatingProject,
                     Messages.Caption_OpeningProject, ex.ToString());
             }
@@ -459,7 +453,7 @@ namespace LDDModder.BrickEditor.UI.Windows
                     Task.Factory.StartNew(() => FileHelper.DeleteFileOrFolder(workingDirPath, true, true));
                 }
 
-                SettingsManager.Current.LastOpenProject = null;
+                SettingsManager.RemoveOpenedFile(CurrentProject);
                 SettingsManager.SaveSettings();
 
                 ProjectManager.CloseCurrentProject();
@@ -515,20 +509,37 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         private void CheckCanRecoverProject()
         {
-            if (SettingsManager.Current.LastOpenProject != null)
+            if (SettingsManager.Current.OpenedProjects.Count > 0)
             {
-                var fileInfo = SettingsManager.Current.LastOpenProject;
-                //project was not correctly closed
-                if (Directory.Exists(fileInfo.WorkingDirectory))
+
+                foreach(var fileInfo in SettingsManager.Current.OpenedProjects.ToArray())
                 {
-                    if (MessageBox.Show("Do you want to recover the project?","", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    //project was not correctly closed
+                    if (Directory.Exists(fileInfo.WorkingDirectory))
                     {
-                        OpenPartProjectDirectory(fileInfo.WorkingDirectory);
+                        if (MultiInstanceManager.InstanceCount > 1)
+                        {
+                            bool isOpenInOtherInstance = MultiInstanceManager.CheckFileIsOpen(fileInfo.WorkingDirectory);
+                            if (isOpenInOtherInstance)
+                                return;
+                        }
+
+                        if (MessageBoxEX.Show(this,
+                            Messages.Message_RecoverProject,
+                            Messages.Caption_RecoverLastProject, 
+                            MessageBoxButtons.YesNo) == DialogResult.Yes)
+                        {
+                            OpenPartProjectDirectory(fileInfo.WorkingDirectory);
+                        }
+                        else
+                        {
+                            SettingsManager.RemoveOpenedFile(fileInfo);
+                            Task.Factory.StartNew(() => FileHelper.DeleteFileOrFolder(fileInfo.WorkingDirectory, true, true));
+                        }
+                        break;
                     }
                     else
-                    {
-                        Task.Factory.StartNew(() => FileHelper.DeleteFileOrFolder(fileInfo.WorkingDirectory, true, true));
-                    }
+                        SettingsManager.RemoveOpenedFile(fileInfo);
                 }
             }
         }
@@ -623,6 +634,14 @@ namespace LDDModder.BrickEditor.UI.Windows
             return DockPanelControl;
         }
 
+        public bool IsFileOpen(string filepath)
+        {
+            if (ProjectManager.IsProjectOpen)
+            {
+                return ProjectManager.CurrentProject.ProjectWorkingDir == filepath;
+            }
+            return false;
+        }
 
         protected override void WndProc(ref Message m)
         {

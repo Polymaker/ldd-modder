@@ -22,11 +22,11 @@ namespace LDDModder.BrickEditor.Settings
 
         //[JsonProperty("viewport.default")]
         //public ViewportDisplaySettings ViewportSettings { get; set; }
-        //[JsonProperty("file.history")]
-        //public List<RecentFileInfo> OpenedProjects { get; set; }
+        [JsonProperty("file.opened")]
+        public List<RecentFileInfo> OpenedProjects { get; set; }
 
-        [JsonProperty("currentProjectPath")]
-        public RecentFileInfo LastOpenProject { get; set; }
+        //[JsonProperty("currentProjectPath")]
+        //public RecentFileInfo LastOpenProject { get; set; }
 
         [JsonProperty("file.history")]
         public List<RecentFileInfo> RecentProjectFiles { get; set; }
@@ -41,6 +41,7 @@ namespace LDDModder.BrickEditor.Settings
         {
             RecentProjectFiles = new List<RecentFileInfo>();
             BuildSettings = new ProjectBuildSettings();
+            OpenedProjects = new List<RecentFileInfo>();
             AutoSaveInterval = -1;
             //ViewportSettings = new ViewportDisplaySettings()
             //{

@@ -126,7 +126,7 @@ Some features will not work properly.</value>
     <value>Save project</value>
   </data>
   <data name="Message_RecoverProject" xml:space="preserve">
-    <value>TODO</value>
+    <value>The app did not close correctly, do you want to recover the project?</value>
   </data>
   <data name="Message_FileGenerationError" xml:space="preserve">
     <value>Could not generate LDD part files.
@@ -173,5 +173,17 @@ Do you want to delete anyway?</value>
   </data>
   <data name="Message_InitializingResources" xml:space="preserve">
     <value>Initializing Resources</value>
+  </data>
+  <data name="Message_LddFilesGenerated" xml:space="preserve">
+    <value>Files generated successfully.</value>
+  </data>
+  <data name="Message_ConfirmOverwritePartFiles" xml:space="preserve">
+    <value>The files for this part already exists.
+Are-you sure you want to overwrite  them?
+
+*You can remove this confirmation in the settings.</value>
+  </data>
+  <data name="Caption_RecoverLastProject" xml:space="preserve">
+    <value>Recover last session</value>
   </data>
 </root>
