@@ -27,5 +27,10 @@ namespace LDDModder
         {
             return Math.Abs(value) * Math.Sign(sign);
         }
+
+        public static float ToRadian(float degrees)
+        {
+            return degrees * (float)Math.PI / 180f;
+        }
     }
 }

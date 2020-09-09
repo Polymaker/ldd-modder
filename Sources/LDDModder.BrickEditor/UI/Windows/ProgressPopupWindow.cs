@@ -63,5 +63,32 @@ namespace LDDModder.BrickEditor.UI.Windows
             base.OnPaint(e);
             e.Graphics.DrawRectangle(Pens.Black, 0, 0, Width - 1, Height - 1);
         }
+
+        public void UpdateProgress(int current, int max)
+        {
+            if (InvokeRequired)
+            {
+                BeginInvoke((Action)(() => UpdateProgress(current, max)));
+                return;
+            }
+
+            if (max > 0)
+            {
+                if (progressBar1.Style != ProgressBarStyle.Continuous)
+                    progressBar1.Style = ProgressBarStyle.Continuous;
+
+                if (progressBar1.Maximum != max)
+                {
+                    if (progressBar1.Value > max)
+                        progressBar1.Value = current;
+                    progressBar1.Maximum = max;
+                }
+
+                if (progressBar1.Value != current)
+                    progressBar1.Value = current;
+            }
+            else if (progressBar1.Style != ProgressBarStyle.Marquee)
+                progressBar1.Style = ProgressBarStyle.Marquee;
+        }
     }
 }

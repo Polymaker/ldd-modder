@@ -72,7 +72,10 @@ namespace LDDModder.BrickEditor.Rendering
 
             UIShader.Use();
             UIShader.Opacity.Set(1f);
+        }
 
+        public static void InitializeBuffers()
+        {
             VAO = new VertexArray();
             VBO = new Buffer<VertVT>();
             VAO.Bind();
@@ -109,7 +112,6 @@ namespace LDDModder.BrickEditor.Rendering
                 -1.0f, 1.0f);
 
             TextRenderer.ProjectionMatrix = TextMatrix;
-            
         }
 
         public static void DrawSprite(Texture2D texture, Vector4 destination, SpriteBounds spriteBounds)

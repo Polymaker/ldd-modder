@@ -534,6 +534,44 @@ namespace LDDModder.BrickEditor.Rendering
             }
         }
 
+        private static int[] PointLightDistances;
+        private static float[] PointLightLinearValues;
+        private static float[] PointLightQuadraticValues;
+
+        public static Vector2 CalculateLightComponents(float viewDistance)
+        {
+            if (PointLightDistances == null)
+            {
+                PointLightDistances = new int[] { 7, 20, 13, 32, 50, 65, 100, 160, 200, 325, 600, 3250 };
+                PointLightLinearValues = new float[] { 0.7f, 0.35f, 0.22f, 0.14f, 0.09f, 0.07f, 0.045f, 0.027f, 0.022f, 0.014f, 0.007f, 0.0014f };
+                PointLightQuadraticValues = new float[] { 1.8f, 0.44f, .2f, .07f, .032f, .017f, .0075f, .0028f, .0019f, .0007f, .0002f, .000007f };
+            }
+
+            Vector2 GetComponents(int index)
+            {
+                return new Vector2(PointLightLinearValues[index], PointLightQuadraticValues[index]);
+            }
+
+            for (int i = 0; i < PointLightDistances.Length - 1; i++)
+            {
+                int distFrom = PointLightDistances[i];
+                int distTo = PointLightDistances[i + 1];
+
+                if (viewDistance > distTo)
+                    continue;
+
+                var compFrom = GetComponents(i);
+                var compTo = GetComponents(i + 1);
+
+                float distT = (viewDistance - distFrom) / (distTo - distFrom);
+                distT = MathHelper.Clamp(distT, 0, 1);
+
+                return Vector2.Lerp(compFrom, compTo, distT);
+            }
+
+            return GetComponents(11);
+        }
+
         #region Default Materials and Colors (TODO: maybe put this elsewhere)
 
 

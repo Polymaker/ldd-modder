@@ -33,6 +33,8 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         protected FlagManager FlagManager { get; }
 
+        private bool IsInitializing;
+
         public BrickEditorWindow()
         {
             InitializeComponent();
@@ -62,6 +64,8 @@ namespace LDDModder.BrickEditor.UI.Windows
         protected override void OnShown(EventArgs e)
         {
             base.OnShown(e);
+
+            IsInitializing = true;
 
             Task.Factory.StartNew(() =>
             {
@@ -136,13 +140,28 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         private void InitializePanels()
         {
+            WaitPopup.UpdateProgress(0, 10);
+
             NavigationPanel = new NavigationPanel(ProjectManager);
+            WaitPopup.UpdateProgress(1, 10);
+
             ViewportPanel = new ViewportPanel(ProjectManager);
+            WaitPopup.UpdateProgress(2, 10);
+
             ValidationPanel = new ValidationPanel(ProjectManager);
+            WaitPopup.UpdateProgress(3, 10);
+
             PropertiesPanel = new PartPropertiesPanel(ProjectManager);
+            WaitPopup.UpdateProgress(4, 10);
+
             DetailPanel = new ElementDetailPanel(ProjectManager);
+            WaitPopup.UpdateProgress(5, 10);
+
             StudConnectionPanel = new StudConnectionPanel(ProjectManager);
+            WaitPopup.UpdateProgress(6, 10);
+
             ConnectionPanel = new ConnectionEditorPanel(ProjectManager);
+            WaitPopup.UpdateProgress(7, 10);
 
             ViewportPanel.Show(DockPanelControl, DockState.Document);
 
@@ -150,12 +169,16 @@ namespace LDDModder.BrickEditor.UI.Windows
 
             ViewportPanel.Activate();
 
+            WaitPopup.UpdateProgress(8, 10);
+
             DockPanelControl.DockLeftPortion = 250;
 
             NavigationPanel.Show(DockPanelControl, DockState.DockLeft);
 
             DockPanelControl.DockWindows[DockState.DockBottom].BringToFront();
             DockPanelControl.DockBottomPortion = 250;
+
+            WaitPopup.UpdateProgress(9, 10);
 
             PropertiesPanel.Show(DockPanelControl, DockState.DockBottom);
 
@@ -166,6 +189,8 @@ namespace LDDModder.BrickEditor.UI.Windows
             ValidationPanel.Show(PropertiesPanel.Pane, null);
 
             PropertiesPanel.Activate();
+
+            WaitPopup.UpdateProgress(10, 10);
 
             foreach (IDockContent dockPanel in DockPanelControl.Contents)
             {
@@ -208,6 +233,7 @@ namespace LDDModder.BrickEditor.UI.Windows
         private void InitializeAfterShown()
         {
             WaitPopup.Message = Messages.Message_InitializingResources;
+            WaitPopup.UpdateProgress(0, 0);
             Application.DoEvents();
 
             var documentPanels = DockPanelControl.Contents.OfType<ProjectDocumentPanel>().ToList();
@@ -218,12 +244,28 @@ namespace LDDModder.BrickEditor.UI.Windows
                 documentPanel.DefferedInitialization();
             }
 
+            Task.Factory.StartNew(() =>
+            {
+                ViewportPanel.InitGlResourcesAsync();
+                BeginInvoke(new MethodInvoker(OnInitializationFinished));
+            });
+        }
+
+        private void OnInitializationFinished()
+        {
             menuStrip1.Enabled = true;
             WaitPopup.Hide();
 
             LoadAndValidateSettings();
             UpdateMenuItemStates();
             RebuildRecentFilesMenu();
+
+            var documentPanels = DockPanelControl.Contents.OfType<ProjectDocumentPanel>().ToList();
+
+            foreach (var documentPanel in documentPanels)
+                documentPanel.OnInitializationFinished();
+
+            IsInitializing = false;
 
             Task.Factory.StartNew(() =>
             {
@@ -557,6 +599,12 @@ namespace LDDModder.BrickEditor.UI.Windows
         
         private void BrickEditorWindow_FormClosing(object sender, FormClosingEventArgs e)
         {
+            if (IsInitializing)
+            {
+                e.Cancel = true;
+                return;
+            }
+
             if (CurrentProject != null)
             {
                 e.Cancel = true;

@@ -67,6 +67,16 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         }
 
+        public virtual async Task InitializeAsync()
+        {
+            await Task.Delay(0);
+        }
+
+        public virtual void OnInitializationFinished()
+        {
+
+        }
+
         protected override void OnClosed(EventArgs e)
         {
             DettachProjectManager();

@@ -31,6 +31,13 @@ namespace LDDModder.BrickEditor.Rendering
 
         public static PartialModel CylinderModel { get; private set; }
 
+        public static List<PartialModel> LoadedModels { get; private set; }
+
+        static ModelManager()
+        {
+            LoadedModels = new List<PartialModel>();
+        }
+
         public static void InitializeResources()
         {
             GeneralMeshBuffer = new IndexedVertexBuffer<VertVN>();
@@ -60,6 +67,12 @@ namespace LDDModder.BrickEditor.Rendering
             BarFemaleModel = AppendPartialMesh(loadedMesh);
 
             InitializeBoundingBoxBuffer();
+        }
+
+        public static void InitializeBuffers()
+        {
+            GeneralMeshBuffer.CreateBuffers();
+            BoundingBoxBufffer.CreateBuffers();
         }
 
         private static void InitializeBoundingBoxBuffer()
@@ -93,14 +106,17 @@ namespace LDDModder.BrickEditor.Rendering
             int curVert = GeneralMeshBuffer.VertexCount;
             GeneralMeshBuffer.LoadModelVertices(mesh, true);
             int idxCount = GeneralMeshBuffer.IndexCount - curIdx;
-            var vertices = GeneralMeshBuffer.VertexBuffer.Content.Skip(curVert);
+            var vertices = GeneralMeshBuffer.GetVertices().Skip(curVert);
+            var vertexPositions = vertices.Select(x => x.Position).ToList();
 
-            var bounding = BBox.FromVertices(vertices.Select(x => x.Position));
+            var bounding = BBox.FromVertices(vertexPositions);
 
             var model = new PartialModel(GeneralMeshBuffer, curIdx, curVert, idxCount, primitiveType);
-
-            model.LoadVertices();
-            model.CalculateBoundingBox();
+            model.BoundingBox = bounding;
+            model.Vertices = vertexPositions;
+            LoadedModels.Add(model);
+            //model.LoadVertices();
+            //model.CalculateBoundingBox();
             return model;
         }
 
@@ -126,7 +142,7 @@ namespace LDDModder.BrickEditor.Rendering
             TechnicPinFemaleModel = null;
             BarFemaleModel = null;
             CylinderModel = null;
-
+            LoadedModels.Clear();
         }
     }
 }

@@ -23,6 +23,7 @@ using LDDModder.BrickEditor.ProjectHandling;
 using LDDModder.BrickEditor.UI.Windows;
 using LDDModder.BrickEditor.ProjectHandling.ViewInterfaces;
 using System.Threading.Tasks;
+using OpenTK.Platform;
 
 namespace LDDModder.BrickEditor.UI.Panels
 {
@@ -32,6 +33,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         private bool IsClosing;
 
         private GLControl glControl1;
+        private GraphicsContext ResourceContext;
 
         private List<SurfaceMeshBuffer> SurfaceModels;
 
@@ -80,6 +82,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void CreateGLControl()
         {
+            
             glControl1 = new GLControl(new GraphicsMode(32, 24, 2, 8));
             glControl1.BackColor = Color.FromArgb(204, 204, 204);
             Controls.Add(glControl1);
@@ -113,27 +116,60 @@ namespace LDDModder.BrickEditor.UI.Panels
             mainForm.Deactivate += MainForm_Deactivate;
         }
 
-        
+
         #region Initialization
+
+        private bool GlContextCreated = false;
+        private IWindowInfo GlWindowInfo;
 
         public override void DefferedInitialization()
         {
-            bool initSuccess = false;
-
             try
             {
-                InitializeGlEnvironment();
-                initSuccess = true;
+                GraphicsContext.ShareContexts = true;
+                CreateGLControl();
+                GlWindowInfo = OpenTK.Platform.Utilities.CreateWindowsWindowInfo(Handle);
+                ResourceContext = new GraphicsContext(new GraphicsMode(32, 24, 2, 8), GlWindowInfo);
+                ResourceContext.MakeCurrent(null);
+                GlContextCreated = true;
             }
             catch (Exception ex)
             {
                 MessageBoxEX.ShowDetails(this, "An error occured while initializing GL view.", "Error", ex.ToString());
             }
+        }
 
-            if (initSuccess)
+        public void InitGlResourcesAsync()
+        {
+            ResourceContext.MakeCurrent(GlWindowInfo);
+
+            TextureManager.InitializeResources();
+            UIRenderHelper.InitializeResources();
+            RenderHelper.InitializeResources();
+            ModelManager.InitializeResources();
+
+            SetupUIElements();
+
+            InputManager = new InputManager();
+
+            CameraManipulator = new CameraManipulator(new Camera());
+            CameraManipulator.Initialize(new Vector3(5), Vector3.Zero);
+
+            InitializeSelectionGizmo();
+            SetupSceneLights();
+        }
+
+        public override void OnInitializationFinished()
+        {
+            if (GlContextCreated)
+            {
+                glControl1.MakeCurrent();
+
+                ModelManager.InitializeBuffers();
+                UIRenderHelper.InitializeBuffers();
+                UpdateGLViewport();
                 LoopController.Start();
-            else
-                ViewInitialized = false;
+            }
 
             SelectCurrentGizmoOptions();
         }
@@ -166,26 +202,6 @@ namespace LDDModder.BrickEditor.UI.Panels
             ProjectManager.CollisionsVisibilityChanged += ProjectManager_ModelsVisibilityChanged;
             ProjectManager.ConnectionsVisibilityChanged += ProjectManager_ModelsVisibilityChanged;
             ProjectManager.PartRenderModeChanged += ProjectManager_PartRenderModeChanged;
-        }
-
-        private void InitializeGlEnvironment()
-        {
-            CreateGLControl();
-
-            InitializeGlResources();
-
-            SetupUIElements();
-
-            InputManager = new InputManager();
-
-            CameraManipulator = new CameraManipulator(new Camera());
-            CameraManipulator.Initialize(new Vector3(5), Vector3.Zero);
-
-            InitializeSelectionGizmo();
-            SetupSceneLights();
-
-            UpdateGLViewport();
-
         }
 
         private UIButton SelectGizmoButton;
@@ -269,16 +285,37 @@ namespace LDDModder.BrickEditor.UI.Panels
             SelectionGizmo.DisplayStyleChanged += SelectionGizmo_DisplayStyleChanged;
         }
 
-        private void InitializeGlResources()
+        private void CalculateLight(ref LightInfo light, Vector3 lightDir, BBox sceneBounds, 
+            float lightConeAngle = 50f, float lightFalloffScale = 4f)
         {
-            //TODO: Find a way to reduce load on main thread
-            TextureManager.InitializeResources();
-            Application.DoEvents();
-            UIRenderHelper.InitializeResources();
-            Application.DoEvents();
-            RenderHelper.InitializeResources();
-            Application.DoEvents();
-            ModelManager.InitializeResources();
+            lightDir = lightDir.Normalized();
+            var boxVerts = sceneBounds.GetCorners();
+            var ray = new Ray(sceneBounds.Center + lightDir * 2, lightDir * -1);
+
+            var lightMatrix = Matrix4.LookAt(ray.Origin, sceneBounds.Center, Vector3.UnitY);
+
+            Vector2 minPos = Vector2.Zero;
+            Vector2 maxPos = Vector2.Zero;
+            float viewDistance = 0;
+
+            foreach (var vert in boxVerts)
+            {
+                var tp = Vector3.TransformPosition(vert, lightMatrix);
+                minPos = Vector2.ComponentMin(tp.Xy, minPos);
+                maxPos = Vector2.ComponentMax(tp.Xy, maxPos);
+                viewDistance = Math.Min(viewDistance, tp.Z);
+            }
+            viewDistance = Math.Abs(viewDistance);
+
+            var maxDiag = Math.Max(maxPos.X - minPos.X, maxPos.Y - minPos.Y);
+            var lightDist = (maxDiag * 0.5f) / (float)Math.Tan(MathHelper.ToRadian(lightConeAngle / 2f));
+            lightDist = Math.Max(lightDist, 3f);
+            light.Position = sceneBounds.Center + (lightDir * lightDist);
+            var distFromCenter = Vector3.Distance(sceneBounds.Center, light.Position);
+            viewDistance += distFromCenter;
+            var lightComponents = RenderHelper.CalculateLightComponents(viewDistance * lightFalloffScale);
+            light.Linear = lightComponents.X;
+            light.Quadratic = lightComponents.Y;
         }
 
         private void SetupSceneLights()
@@ -287,73 +324,48 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             var sceneBounds = GetSceneBoundingBox();
 
-            var center = sceneBounds.Center;
-            var ltbCorner = new Vector3(sceneBounds.Left, sceneBounds.Top, sceneBounds.Back);
-            var ltfCorner = new Vector3(sceneBounds.Left, sceneBounds.Top, sceneBounds.Front);
-            var rtfCorner = new Vector3(sceneBounds.Right, sceneBounds.Top, sceneBounds.Front);
-            var rtbCorner = new Vector3(sceneBounds.Right, sceneBounds.Top, sceneBounds.Back);
+            var ambiantLight = new LightInfo()
+            {
+                Ambient = new Vector3(0.7f),
+                Diffuse = new Vector3(0.2f),
+                Specular = new Vector3(0.2f),
+                Constant = 1f,
+            };
+            CalculateLight(ref ambiantLight, new Vector3(1,1,1), sceneBounds, 30, 10f);
 
-            var keyPos = ((ltfCorner + rtfCorner) / 2f);
-            keyPos.Y = keyPos.Y / 2f;
-            //keyPos += ((keyPos - sceneBounds.Center).Normalized() * 8f);
-            keyPos += new Vector3(0, 1, 1).Normalized() * 8;
-            //keyPos.Y = Math.Max(keyPos.Y, 4);
-
-            var backPos = ((ltbCorner + ltfCorner) / 2f)/* + ((ltbCorner - sceneBounds.Center).Normalized() * 5f)*/;
-            //backPos += ((backPos - sceneBounds.Center).Normalized() * 8f);
-            backPos.Y = backPos.Y / 2f;
-            backPos += new Vector3(-1, 1, 0).Normalized() * 8;
-            //backPos.Y = Math.Max(backPos.Y, 4);
-
-            var fillPos = ((rtfCorner + rtbCorner) / 2f)/* + ((ltbCorner - sceneBounds.Center).Normalized() * 5f)*/;
-            //fillPos += ((fillPos - sceneBounds.Center).Normalized() * 8f);
-            fillPos.Y = fillPos.Y / 2f;
-            fillPos += new Vector3(1, 1, 0).Normalized() * 8;
-            //fillPos.Y = Math.Max(fillPos.Y, 4);
-
+            var keyLight = new LightInfo()
+            {
+                Ambient = new Vector3(0.1f),
+                Diffuse = new Vector3(0.7f),
+                Specular = new Vector3(0.8f),
+                Constant = 1f,
+            };
+            CalculateLight(ref keyLight, new Vector3(0, 0.75f, 1), sceneBounds);
+            
+            var fillLight = new LightInfo()
+            {
+                Ambient = new Vector3(0.1f),
+                Diffuse = new Vector3(0.6f),
+                Specular = new Vector3(0.3f),
+                Constant = 1f,
+            };
+            CalculateLight(ref fillLight, new Vector3(1, 0.75f, 0), sceneBounds);
+            
+            var backLight = new LightInfo()
+            {
+                Ambient = new Vector3(0.1f),
+                Diffuse = new Vector3(0.6f),
+                Specular = new Vector3(0.3f),
+                Constant = 1f,
+            };
+            CalculateLight(ref backLight, new Vector3(-1, 0.75f, 0), sceneBounds);
 
             SceneLights = new List<LightInfo>()
             {
-                //Ambiant Light
-                new LightInfo {
-                    Position = new Vector3(10,50,10),
-                    Ambient = new Vector3(0.7f),
-                    Diffuse = new Vector3(0.2f),
-                    Specular = new Vector3(0.2f),
-                    Constant = 1f,
-                    Linear = 0.007f,
-                    Quadratic = 0.0002f
-                },
-                //Key Light
-                new LightInfo {
-                    Position = keyPos,
-                    Ambient = new Vector3(0.1f),
-                    Diffuse = new Vector3(0.8f),
-                    Specular = new Vector3(1f),
-                    Constant = 1f,
-                    Linear = 0.07f,
-                    Quadratic = 0.017f
-                },
-                //Fill Light
-                new LightInfo {
-                    Position = fillPos,
-                    Ambient = new Vector3(0.1f),
-                    Diffuse = new Vector3(0.6f),
-                    Specular = new Vector3(0.3f),
-                    Constant = 1f,
-                    Linear = 0.07f,
-                    Quadratic = 0.017f
-                },
-                //Back Light
-                new LightInfo {
-                    Position = backPos,
-                    Ambient = new Vector3(0.1f),
-                    Diffuse = new Vector3(0.6f),
-                    Specular = new Vector3(0.3f),
-                    Constant = 1f,
-                    Linear = 0.07f,
-                    Quadratic = 0.017f
-                },
+                ambiantLight,
+                keyLight,
+                fillLight,
+                backLight,
             };
 
             RenderHelper.ModelShader.Lights.Set(SceneLights.ToArray());
@@ -750,6 +762,12 @@ namespace LDDModder.BrickEditor.UI.Panels
             ModelManager.ReleaseResources();
             TextureManager.ReleaseResources();
             SelectionGizmo = null;
+
+            if (ResourceContext != null)
+            {
+                ResourceContext.Dispose();
+                ResourceContext = null;
+            }
         }
 
         #region Project Handling
