@@ -1,4 +1,6 @@
 ﻿using HtmlAgilityPack;
+using ICSharpCode.SharpZipLib.GZip;
+using LDDModder.IO;
 using LDDModder.LDD;
 using LDDModder.LDD.Files;
 using LDDModder.LDD.Primitives;
@@ -27,6 +29,8 @@ namespace LDDModder.PaletteMaker.DB
         public string InventoriesCsvFile { get; set; }
 
         public string InventoryPartsCsvFile { get; set; }
+
+        public string DownloadDirectory { get; set; }
 
         public RebrickableDataImporter(SQLiteConnection connection, LDDEnvironment environment, CancellationToken cancellationToken) : base(connection, environment, cancellationToken)
         {
@@ -260,22 +264,29 @@ namespace LDDModder.PaletteMaker.DB
 
             try
             {
-                if (string.IsNullOrEmpty(InventoriesCsvFile) || string.IsNullOrEmpty(InventoryPartsCsvFile))
-                {
-                    NotifyIndefiniteProgress("Downloading rebrickable csv files...");
-                    tmpDownloadDir = FileHelper.GetTempDirectory();
-                    DownloadRebrickableCsvFiles(RbDatabaseFile.Inventories | RbDatabaseFile.InventoryParts, tmpDownloadDir);
-                    InventoriesCsvFile = GetDatabaseFileName(RbDatabaseFile.Inventories, tmpDownloadDir);
-                    InventoryPartsCsvFile = GetDatabaseFileName(RbDatabaseFile.InventoryParts, tmpDownloadDir);
-                }
+                //if (!string.IsNullOrEmpty(InventoriesCsvFile) && !File.Exists(InventoriesCsvFile))
+                //    InventoriesCsvFile = string.Empty;
 
-                if (!File.Exists(InventoriesCsvFile) || !File.Exists(InventoryPartsCsvFile))
-                    return;
+                //if (!string.IsNullOrEmpty(InventoryPartsCsvFile) && !File.Exists(InventoryPartsCsvFile))
+                //    InventoryPartsCsvFile = string.Empty;
 
-                var inventoryCsv = IO.CsvFile.Read(InventoriesCsvFile, IO.CsvFile.Separator.Comma);
+                //if (string.IsNullOrEmpty(InventoriesCsvFile) || string.IsNullOrEmpty(InventoryPartsCsvFile))
+                //{
+                //    NotifyIndefiniteProgress("Downloading rebrickable csv files...");
+                //    tmpDownloadDir = FileHelper.GetTempDirectory();
+                //    Directory.CreateDirectory(tmpDownloadDir);
+                //    DownloadRebrickableCsvFiles(RbDatabaseFile.Inventories | RbDatabaseFile.InventoryParts, tmpDownloadDir);
+                //    InventoriesCsvFile = GetDatabaseFileName(RbDatabaseFile.Inventories, tmpDownloadDir);
+                //    InventoryPartsCsvFile = GetDatabaseFileName(RbDatabaseFile.InventoryParts, tmpDownloadDir);
+                //}
+
+                //if (!File.Exists(InventoriesCsvFile) || !File.Exists(InventoryPartsCsvFile))
+                //    return;
+
+                var inventoryCsv = GetRebrickableCsvFile(RbDatabaseFile.Inventories);
                 inventoryCsv.Rows[0].IsHeader = true;
 
-                var partsCsv = IO.CsvFile.Read(InventoryPartsCsvFile, IO.CsvFile.Separator.Comma);
+                var partsCsv = GetRebrickableCsvFile(RbDatabaseFile.InventoryParts);
                 partsCsv.Rows[0].IsHeader = true;
 
                 var existingSetIDs = new List<string>();
@@ -349,14 +360,15 @@ namespace LDDModder.PaletteMaker.DB
 
             try
             {
-                if (string.IsNullOrEmpty(PartsCsvFile) || string.IsNullOrEmpty(RelationshipsCsvFile))
-                {
-                    NotifyIndefiniteProgress("Downloading rebrickable csv files...");
-                    tmpDownloadDir = FileHelper.GetTempDirectory();
-                    DownloadRebrickableCsvFiles(RbDatabaseFile.Parts | RbDatabaseFile.PartRelationships, tmpDownloadDir);
-                    PartsCsvFile = GetDatabaseFileName(RbDatabaseFile.Parts, tmpDownloadDir);
-                    RelationshipsCsvFile = GetDatabaseFileName(RbDatabaseFile.PartRelationships, tmpDownloadDir);
-                }
+                //if (string.IsNullOrEmpty(PartsCsvFile) || string.IsNullOrEmpty(RelationshipsCsvFile))
+                //{
+                //    NotifyIndefiniteProgress("Downloading rebrickable csv files...");
+                //    tmpDownloadDir = FileHelper.GetTempDirectory();
+                //    Directory.CreateDirectory(tmpDownloadDir);
+                //    DownloadRebrickableCsvFiles(RbDatabaseFile.Parts | RbDatabaseFile.PartRelationships, tmpDownloadDir);
+                //    PartsCsvFile = GetDatabaseFileName(RbDatabaseFile.Parts, tmpDownloadDir);
+                //    RelationshipsCsvFile = GetDatabaseFileName(RbDatabaseFile.PartRelationships, tmpDownloadDir);
+                //}
 
                 if (!IsCancellationRequested)
                     ImportRebrickableParts();
@@ -374,13 +386,18 @@ namespace LDDModder.PaletteMaker.DB
         public static Regex IsPrintOrPatternRegex = new Regex("(?<=\\d[a-d]?)(p|pb|pr|ps|px|pat)\\d", RegexOptions.Compiled);
         public static Regex IsAssemblyRegex = new Regex("c\\d\\d[a-c]?$", RegexOptions.Compiled);
 
-        private void ImportRebrickableParts()
+        public void ImportRebrickableParts()
         {
-            if (!File.Exists(PartsCsvFile))
+            NotifyBeginStep("Importing rebrickable parts");
+
+            var partCsv = GetRebrickableCsvFile(RbDatabaseFile.Parts);
+            if (partCsv == null)
+            {
+                NotifyProgressStatus("Could not retrieve parts file.");
                 return;
+            }
 
             NotifyProgressStatus("Reading parts from file...");
-            var partCsv = IO.CsvFile.Read(PartsCsvFile, IO.CsvFile.Separator.Comma);
             partCsv.Rows[0].IsHeader = true;
 
             using (var trans = Connection.BeginTransaction())
@@ -417,24 +434,24 @@ namespace LDDModder.PaletteMaker.DB
                     string partName = row[1];
                     int? category = string.IsNullOrEmpty(row[2]) ? default(int?) : int.Parse(row[2]);
 
+                    if (category == 17 || category == 58)//non-lego and stickers
+                        continue;
+
                     string parentPartID = null;
                     bool isPrintOrPattern = false;
                     bool isAssembly = IsAssemblyRegex.IsMatch(partID);
 
-                    if (!(category == 17 || category == 58))//non-lego and stickers
+                    var match = IsPrintOrPatternRegex.Match(partID);
+                    isPrintOrPattern = match.Success;
+
+                    if (isPrintOrPattern)
                     {
-                        var match = IsPrintOrPatternRegex.Match(partID);
-                        isPrintOrPattern = match.Success;
+                        parentPartID = partID.Substring(0, match.Index);
 
-                        if (isPrintOrPattern)
+                        if (IsAssemblyRegex.IsMatch(partID) && !IsAssemblyRegex.IsMatch(parentPartID))
                         {
-                            parentPartID = partID.Substring(0, match.Index);
-
-                            if (IsAssemblyRegex.IsMatch(partID) && !IsAssemblyRegex.IsMatch(parentPartID))
-                            {
-                                parentPartID += partID.Substring(IsAssemblyRegex.Match(partID).Index);
-                                isAssembly = true;
-                            }
+                            parentPartID += partID.Substring(IsAssemblyRegex.Match(partID).Index);
+                            isAssembly = true;
                         }
                     }
 
@@ -447,13 +464,18 @@ namespace LDDModder.PaletteMaker.DB
             }
         }
 
-        private void ImportRebrickableRelationships()
+        public void ImportRebrickableRelationships()
         {
-            if (!File.Exists(RelationshipsCsvFile))
+            NotifyBeginStep("Importing rebrickable part relationships");
+
+            var relationsCsv = GetRebrickableCsvFile(RbDatabaseFile.PartRelationships);
+            if (relationsCsv == null)
+            {
+                NotifyProgressStatus("Could not retrieve relationships file.");
                 return;
+            }
 
             NotifyProgressStatus("Reading relationships from file...");
-            var relationsCsv = IO.CsvFile.Read(RelationshipsCsvFile, IO.CsvFile.Separator.Comma);
             relationsCsv.Rows[0].IsHeader = true;
 
             using (var trans = Connection.BeginTransaction())
@@ -488,13 +510,30 @@ namespace LDDModder.PaletteMaker.DB
                 cmd.Parameters.Clear();
                 cmd.CommandText = "";
                 trans.Commit();
+
             }
         }
 
-        public const string PARTS_FILENAME = "parts.csv";
-
-        public const string RELATIONSHIPS_FILENAME = "part_relationships.csv";
-
+        private CsvFile ReadRebrickableCsvFile(string filepath)
+        {
+            string fileExt = Path.GetExtension(filepath).ToLower();
+            if (fileExt == ".csv")
+                return CsvFile.Read(filepath);
+            else if (fileExt == ".gz")
+            {
+                using(var fs = File.OpenRead(filepath))
+                using (var gzipStream = new GZipInputStream(fs))
+                {
+                    using(var memStream = new MemoryStream())
+                    {
+                        gzipStream.CopyTo(memStream);
+                        memStream.Position = 0;
+                        return CsvFile.Read(memStream);
+                    }
+                }
+            }
+            return null;
+        }
 
         private static Dictionary<RbDatabaseFile, DbFileInfo> DatabaseFileLinks = new Dictionary<RbDatabaseFile, DbFileInfo>();
 
@@ -513,12 +552,15 @@ namespace LDDModder.PaletteMaker.DB
 
             var htmlDoc = web.Load("https://rebrickable.com/downloads/");
 
-            var downloadLinkNodes = htmlDoc.DocumentNode.SelectNodes("//a[contains(., \".csv\")]");
+            var downloadLinkNodes = htmlDoc.DocumentNode.SelectNodes("//a[contains(., \".csv\")]").ToList();
+
             var downloadLinks = new List<Tuple<string, string>>();
 
             foreach (var linkNode in downloadLinkNodes)
             {
                 string fileName = Path.GetFileNameWithoutExtension(linkNode.InnerText);
+                if (fileName.Contains(".csv"))
+                    fileName = Path.GetFileNameWithoutExtension(fileName);
 
                 if (Enum.TryParse(fileName.Replace("_", string.Empty), true, out RbDatabaseFile fileType))
                 {
@@ -526,22 +568,57 @@ namespace LDDModder.PaletteMaker.DB
                     {
                         FileType = fileType,
                         DownloadUrl = linkNode.Attributes["href"].Value,
-                        FileName = fileName + ".csv"
+                        FileName = linkNode.InnerText.Trim()
                     };
                    
                 }
             }
         }
 
-        public static string GetDatabaseFileName(RbDatabaseFile databaseFile, string destinationFolder)
+        public static string GetDatabaseFileName(RbDatabaseFile databaseFile)
         {
             if (DatabaseFileLinks.Count == 0)
                 FetchRebrickableDownloadLinks();
 
             if (DatabaseFileLinks.ContainsKey(databaseFile))
-                return Path.Combine(destinationFolder, DatabaseFileLinks[databaseFile].FileName);
+                return DatabaseFileLinks[databaseFile].FileName;
 
             return string.Empty;
+        }
+
+        public CsvFile GetRebrickableCsvFile(RbDatabaseFile csvFile)
+        {
+            string filename = GetDatabaseFileName(csvFile);
+
+            if (string.IsNullOrEmpty(filename))
+                return null;
+
+
+            if (!string.IsNullOrEmpty(DownloadDirectory))
+            {
+                string fullPath = Path.Combine(DownloadDirectory, filename);
+                if (!File.Exists(fullPath))
+                    DownloadRebrickableCsvFiles(csvFile, DownloadDirectory);
+
+                if (File.Exists(fullPath))
+                    return ReadRebrickableCsvFile(fullPath);
+            }
+            else
+            {
+                var tmpFolder = FileHelper.GetTempDirectory();
+                try
+                {
+                    string fullPath = Path.Combine(tmpFolder, filename);
+                    DownloadRebrickableCsvFiles(csvFile, tmpFolder);
+                    return ReadRebrickableCsvFile(fullPath);
+                }
+                finally
+                {
+                    Task.Factory.StartNew(() => FileHelper.DeleteFileOrFolder(tmpFolder, true, true));
+                }
+            }
+
+            return null;
         }
 
         public void DownloadRebrickableCsvFiles(RbDatabaseFile databaseFiles, string destinationFolder)
@@ -549,7 +626,8 @@ namespace LDDModder.PaletteMaker.DB
             if (DatabaseFileLinks.Count == 0)
                 FetchRebrickableDownloadLinks();
 
-            var downloadTasks = new List<Task>();
+            
+            Directory.CreateDirectory(destinationFolder);
 
             using (var wc = new WebClient())
             {
@@ -558,18 +636,16 @@ namespace LDDModder.PaletteMaker.DB
                     if (databaseFiles.HasFlag(dbFileInfo.FileType))
                     {
                         string destinationPath = Path.Combine(destinationFolder, dbFileInfo.FileName);
+                        NotifyProgressStatus($"Downloading file {dbFileInfo.FileName}...");
                         var downloadTask = wc.DownloadFileTaskAsync(dbFileInfo.DownloadUrl, destinationPath);
-                        downloadTasks.Add(downloadTask);
+                        downloadTask.Wait(CancellationToken);
+                        if (CancellationToken.IsCancellationRequested)
+                            break;
+                        //downloadTasks.Add(downloadTask);
                     }
-                }
-
-                foreach(var downloadTask in downloadTasks)
-                {
-                    downloadTask.Wait(CancellationToken);
-                    if (CancellationToken.IsCancellationRequested)
-                        break;
                 }
             }
         }
+
     }
 }

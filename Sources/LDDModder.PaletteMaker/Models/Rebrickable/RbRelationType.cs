@@ -11,6 +11,8 @@ namespace LDDModder.PaletteMaker.Models.Rebrickable
         Mold = 'M',
         Print = 'P',
         Alternate = 'A',
-        Pattern = 'T'
+        Pattern = 'T',
+        SubPart = 'B',
+        Pair = 'R'
     }
 }
