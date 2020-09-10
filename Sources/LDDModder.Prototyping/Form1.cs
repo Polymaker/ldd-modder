@@ -217,6 +217,13 @@ namespace LDDModder.Prototyping
 
         private void button1_Click(object sender, EventArgs e)
         {
+            var test = Primitive.Load(@"C:\Users\jwturner\Downloads\3001.xml");
+
+            
+        }
+
+        private void CheckCullings()
+        {
             LDD.LDDEnvironment.Initialize();
             if (!LDD.LDDEnvironment.IsInstalled)
                 return;
@@ -287,7 +294,6 @@ namespace LDDModder.Prototyping
 
                 }
             });
-            
         }
 
         /*

@@ -19,6 +19,8 @@ namespace LDDModder.LDD.Primitives
         public string Name { get; set; }
         public VersionInfo FileVersion { get; set; }
         public int PartVersion { get; set; }
+        public string Revision { get; set; }
+        public DateTime? ModifiedDate { get; set; }
 
         public Dictionary<string,string> ExtraAnnotations { get; }
 
@@ -59,100 +61,6 @@ namespace LDDModder.LDD.Primitives
                 return SubMaterials[surfaceIndex];
 
             return 0;
-        }
-
-        public XElement SerializeToXml()
-        {
-            var rootElem = new XElement("LEGOPrimitive",
-                new XAttribute("versionMajor", FileVersion.Major),
-                new XAttribute("versionMinor", FileVersion.Minor));
-            
-            var annotations = rootElem.AddElement("Annotations");
-
-            if (!Aliases.Contains(ID) && ID > 0)
-                Aliases.Add(ID);
-
-            if (Aliases.Any())
-                annotations.Add(new XElement("Annotation", new XAttribute("aliases", string.Join(";", Aliases))));
-
-            annotations.Add(new XElement("Annotation", new XAttribute("designname", Name)));
-
-            if (MainGroup != null)
-            {
-                annotations.Add(new XElement("Annotation", new XAttribute("maingroupid", MainGroup.ID)));
-                annotations.Add(new XElement("Annotation", new XAttribute("maingroupname", MainGroup.Name)));
-            }
-
-            if (Platform != null)
-            {
-                annotations.Add(new XElement("Annotation", new XAttribute("platformid", Platform.ID)));
-                annotations.Add(new XElement("Annotation", new XAttribute("platformname", Platform.Name)));
-            }
-
-            annotations.Add(new XElement("Annotation", new XAttribute("version", PartVersion)));
-
-            foreach (var extra in ExtraAnnotations)
-                annotations.Add(new XElement("Annotation", new XAttribute(extra.Key, extra.Value)));
-
-            if (Collisions.Any())
-                rootElem.Add(new XElement("Collision", Collisions.Select(x => x.SerializeToXml())));
-
-            if (Connectors.Any())
-                rootElem.Add(new XElement("Connectivity", Connectors.Select(x => x.SerializeToXml())));
-
-            if (FlexBones.Any())
-                rootElem.Add(new XElement("Flex", FlexBones.Select(x => x.SerializeToXml())));
-
-            if (PhysicsAttributes != null && !PhysicsAttributes.IsEmpty)
-                rootElem.Add(PhysicsAttributes.SerializeToXml());
-
-            if (Bounding != null)
-            {
-                var boundingElem = rootElem.AddElement("Bounding");
-                boundingElem.Add(Bounding.SerializeToXml("AABB"));
-            }
-
-            if (GeometryBounding != null)
-            {
-                var boundingElem = rootElem.AddElement("GeometryBounding");
-                boundingElem.Add(GeometryBounding.SerializeToXml("AABB"));
-            }
-
-            if (SubMaterials != null)
-            {
-                var decorationElem = rootElem.AddElement("Decoration");
-                decorationElem.Add(new XAttribute("faces", SubMaterials.Length));
-                decorationElem.Add(new XAttribute("subMaterialRedirectLookupTable", string.Join(",", SubMaterials)));
-            }
-
-            if (DefaultOrientation != null)
-                rootElem.Add(new XElement("DefaultOrientation", DefaultOrientation.ToXmlAttributes()));
-
-            if (DefaultCamera != null)
-                rootElem.Add(XmlHelper.DefaultSerialize(DefaultCamera, "DefaultCamera"));
-
-            foreach (var elem in rootElem.Descendants("Custom2DField"))
-            {
-                int depth = elem.AncestorsAndSelf().Count();
-                elem.Value = elem.Value.Indent(depth, "  ");
-                elem.Value += StringExtensions.Tab(depth - 1, "  "); //fixes the closing tag indentation
-            }
-
-            if (ExtraElements != null)
-            {
-                foreach (var elem in ExtraElements)
-                {
-                    if (elem.Parent != null)
-                    {
-                        var parentElem = rootElem.Descendants().FirstOrDefault(x => x.Name.LocalName == elem.Parent.Name.LocalName);
-                        //if (parentElem != null)
-                        //    parentElem.Add(elem.)
-                    }
-                    else
-                        rootElem.Add(elem);
-                }
-            }
-            return rootElem;
         }
 
         public static Primitive Load(string filepath)
@@ -204,13 +112,17 @@ namespace LDDModder.LDD.Primitives
 
         #region XML Element Loading
 
-        const string SECTION_ANNOTATIONS = "Annotations";
-        const string SECTION_COLLISION = "Collision";
-        const string SECTION_CONNECTIVITY = "Connectivity";
-        const string SECTION_PHYSICSATTRIBUTES = "PhysicsAttributes";
+        public const string SECTION_ANNOTATIONS = "Annotations";
+        public const string SECTION_COLLISION = "Collision";
+        public const string SECTION_CONNECTIVITY = "Connectivity";
+        public const string SECTION_PHYSICSATTRIBUTES = "PhysicsAttributes";
+        public const string SECTION_BOUNDING = "Bounding";
+        public const string SECTION_GEOMETRYBOUNDING = "GeometryBounding";
 
         private void ReadPrimitiveSection(XElement element)
         {
+            bool isElementHandled = true;
+
             switch (element.Name.LocalName)
             {
                 case SECTION_ANNOTATIONS:
@@ -236,23 +148,36 @@ namespace LDDModder.LDD.Primitives
                     PhysicsAttributes = XmlHelper.DefaultDeserialize<PhysicsAttributes>(element);
                     break;
 
-                case "Bounding":
+                case SECTION_BOUNDING:
                     Bounding = new BoundingBox();
                     Bounding.LoadFromXml(element.Element("AABB"));
 
                     break;
 
-                case "GeometryBounding":
+                case SECTION_GEOMETRYBOUNDING:
                     GeometryBounding = new BoundingBox();
                     GeometryBounding.LoadFromXml(element.Element("AABB"));
                     break;
 
+                case "Color": // V2 Only
+                    {
+                        int surfaceCount = element.ReadAttribute<int>("faces");
+                        SubMaterials = new int[surfaceCount];
+                        break;
+                    }
+
                 case "Decoration":
-                    int surfaceCount = element.ReadAttribute<int>("faces");
-                    SubMaterials = new int[surfaceCount];
-                    var values = element.ReadAttribute<string>("subMaterialRedirectLookupTable").Split(',');
-                    for (int i = 0; i < surfaceCount; i++)
-                        SubMaterials[i] = int.Parse(values[i]);
+                    if (FileVersion.Major == 1)
+                    {
+                        int surfaceCount = element.ReadAttribute<int>("faces");
+                        SubMaterials = new int[surfaceCount];
+                        var values = element.ReadAttribute<string>("subMaterialRedirectLookupTable").Split(',');
+                        for (int i = 0; i < surfaceCount; i++)
+                            SubMaterials[i] = int.Parse(values[i]);
+                    }
+                    else
+                        isElementHandled = false;
+
                     break;
 
                 case "Flex":
@@ -272,11 +197,14 @@ namespace LDDModder.LDD.Primitives
                 //    break;
 
                 default:
-                    //if (ExtraElements == null)
-                    //    ExtraElements = new List<XElement>();
-                    var clonedElem = XElement.Parse(element.ToString());
-                    ExtraElements.Add(clonedElem);
+                    isElementHandled = false;
                     break;
+            }
+
+            if (!isElementHandled)
+            {
+                var clonedElem = XElement.Parse(element.ToString());
+                ExtraElements.Add(clonedElem);
             }
         }
 
@@ -322,10 +250,146 @@ namespace LDDModder.LDD.Primitives
                         Platform = new Platform();
                     Platform.Name = value;
                     break;
+                case "revision":
+                    Revision = value;
+                    break;
+                case "modifiedDate":
+                    if (DateTime.TryParse(value, out DateTime modifDate))
+                        ModifiedDate = modifDate;
+                    break;
                 default:
                     ExtraAnnotations.Add(annotationName, value);
                     break;
             }
+        }
+
+        #endregion
+
+        #region XML 
+
+        public XElement SerializeToXml()
+        {
+            var rootElem = new XElement("LEGOPrimitive",
+                new XAttribute("versionMajor", FileVersion.Major),
+                new XAttribute("versionMinor", FileVersion.Minor));
+
+            rootElem.Add(SerializeAnnotations());
+
+            if (Collisions.Any())
+                rootElem.Add(new XElement("Collision", Collisions.Select(x => x.SerializeToXml())));
+
+            if (Connectors.Any())
+                rootElem.Add(new XElement("Connectivity", Connectors.Select(x => x.SerializeToXml())));
+
+            if (FlexBones.Any())
+                rootElem.Add(new XElement("Flex", FlexBones.Select(x => x.SerializeToXml())));
+
+            if (PhysicsAttributes != null && !PhysicsAttributes.IsEmpty)
+                rootElem.Add(PhysicsAttributes.SerializeToXml());
+
+            if (Bounding != null)
+            {
+                var boundingElem = rootElem.AddElement("Bounding");
+                boundingElem.Add(Bounding.SerializeToXml("AABB"));
+            }
+
+            if (GeometryBounding != null)
+            {
+                var boundingElem = rootElem.AddElement("GeometryBounding");
+                boundingElem.Add(GeometryBounding.SerializeToXml("AABB"));
+            }
+
+            if (FileVersion.Major > 1)
+            {
+                var decorationElem = rootElem.AddElement("Color");
+                decorationElem.Add(new XAttribute("faces", SubMaterials?.Length ?? 0));
+                //decorationElem.Add(new XAttribute("subMaterialRedirectLookupTable", string.Join(",", SubMaterials)));
+            }
+            else if (SubMaterials != null)
+            {
+                var decorationElem = rootElem.AddElement("Decoration");
+                decorationElem.Add(new XAttribute("faces", SubMaterials.Length));
+                decorationElem.Add(new XAttribute("subMaterialRedirectLookupTable", string.Join(",", SubMaterials)));
+            }
+
+            if (DefaultOrientation != null)
+                rootElem.Add(new XElement("DefaultOrientation", DefaultOrientation.ToXmlAttributes()));
+
+            if (DefaultCamera != null)
+                rootElem.Add(XmlHelper.DefaultSerialize(DefaultCamera, "DefaultCamera"));
+
+            foreach (var elem in rootElem.Descendants("Custom2DField"))
+            {
+                int depth = elem.AncestorsAndSelf().Count();
+                elem.Value = elem.Value.Indent(depth, "  ");
+                elem.Value += StringExtensions.Tab(depth - 1, "  "); //fixes the closing tag indentation
+            }
+
+            if (ExtraElements != null)
+            {
+                foreach (var elem in ExtraElements)
+                {
+                    if (elem.Parent != null)
+                    {
+                        var parentElem = rootElem.Descendants().FirstOrDefault(x => x.Name.LocalName == elem.Parent.Name.LocalName);
+                        //if (parentElem != null)
+                        //    parentElem.Add(elem.)
+                    }
+                    else
+                        rootElem.Add(elem);
+                }
+            }
+            return rootElem;
+        }
+
+        private XElement SerializeAnnotations()
+        {
+            var annotations = new XElement("Annotations");
+
+            void addAnnotation(string name, object value)
+            {
+                annotations.Add(new XElement("Annotation", new XAttribute(name, value)));
+            }
+
+            //if (!Aliases.Contains(ID) && ID > 0)
+            //    Aliases.Add(ID);
+
+            var aliasTmp = Aliases.ToList();
+            if (!aliasTmp.Contains(ID))
+                aliasTmp.Add(ID);
+
+            if (aliasTmp.Any())
+                addAnnotation("aliases", string.Join(";", aliasTmp));
+
+            addAnnotation("designname", Name);
+
+            if (MainGroup != null)
+            {
+                addAnnotation("maingroupid", MainGroup.ID);
+                if (FileVersion.Major == 1)
+                    addAnnotation("maingroupname", MainGroup.Name);
+            }
+
+            if (Platform != null)
+            {
+                addAnnotation("platformid", Platform.ID);
+                if (FileVersion.Major == 1)
+                    addAnnotation("platformname", Platform.Name);
+            }
+
+            if (PartVersion > 0)
+                addAnnotation("version", PartVersion);
+
+            if (FileVersion.Major > 1 && !string.IsNullOrEmpty(Revision))
+                addAnnotation("revision", Revision);
+
+            if (ModifiedDate.HasValue && FileVersion.Major == 2)
+                addAnnotation("modifiedDate", ModifiedDate);
+
+            foreach (var extra in ExtraAnnotations)
+                addAnnotation(extra.Key, extra.Value);
+
+            return annotations;
         }
 
         #endregion
