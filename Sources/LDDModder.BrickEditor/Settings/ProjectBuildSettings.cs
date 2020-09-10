@@ -52,7 +52,7 @@ namespace LDDModder.BrickEditor.Settings
                 };
             }
 
-            LDD.OutputPath = "$(LddAppData)\\db\\";
+            LDD.OutputPath = "$(LddAppData)\\db\\Primitives";
             LDD.Name = Messages.BuildConfig_LDD;
             LDD.InternalFlag = 1;
             LDD.LOD0Subdirectory = true;
