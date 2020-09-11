@@ -75,31 +75,8 @@ namespace LDDModder.BrickEditor.UI.Panels
             UIElements = new List<UIElement>();
             ShowIcon = false;
             
-            SelectionInfoPanel.BringToFront();
             SelectionInfoPanel.Visible = false;
             BonesDropDownMenu.Visible = false;
-        }
-
-        private void CreateGLControl()
-        {
-            
-            glControl1 = new GLControl(new GraphicsMode(32, 24, 2, 8));
-            glControl1.BackColor = Color.FromArgb(204, 204, 204);
-            Controls.Add(glControl1);
-            glControl1.Dock = DockStyle.Fill;
-            glControl1.BringToFront();
-            glControl1.MouseEnter += GlControl_MouseEnter;
-            glControl1.MouseLeave += GlControl_MouseLeave;
-            glControl1.MouseMove += GlControl_MouseMove;
-            glControl1.GotFocus += GlControl1_GotFocus;
-            glControl1.LostFocus += GlControl1_LostFocus;
-            glControl1.MouseDown += GlControl1_MouseDown;
-
-
-            LoopController = new LoopController(glControl1);
-            LoopController.TargetRenderFrequency = 40;
-            LoopController.RenderFrame += LoopController_RenderFrame;
-            LoopController.UpdateFrame += LoopController_UpdateFrame;
         }
 
         protected override void OnLoad(EventArgs e)
@@ -138,6 +115,31 @@ namespace LDDModder.BrickEditor.UI.Panels
                 MessageBoxEX.ShowDetails(this, "An error occured while initializing GL view.", "Error", ex.ToString());
             }
         }
+
+
+        private void CreateGLControl()
+        {
+
+            glControl1 = new GLControl(new GraphicsMode(32, 24, 2, 8));
+            glControl1.BackColor = Color.FromArgb(204, 204, 204);
+            Controls.Add(glControl1);
+            glControl1.Dock = DockStyle.Fill;
+            glControl1.BringToFront();
+            glControl1.MouseEnter += GlControl_MouseEnter;
+            glControl1.MouseLeave += GlControl_MouseLeave;
+            glControl1.MouseMove += GlControl_MouseMove;
+            glControl1.GotFocus += GlControl1_GotFocus;
+            glControl1.LostFocus += GlControl1_LostFocus;
+            glControl1.MouseDown += GlControl1_MouseDown;
+
+            LoopController = new LoopController(glControl1);
+            LoopController.TargetRenderFrequency = 40;
+            LoopController.RenderFrame += LoopController_RenderFrame;
+            LoopController.UpdateFrame += LoopController_UpdateFrame;
+
+            SelectionInfoPanel.BringToFront();
+        }
+
 
         public void InitGlResourcesAsync()
         {

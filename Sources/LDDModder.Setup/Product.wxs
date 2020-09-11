@@ -2,7 +2,7 @@
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   <?include $(sys.CURRENTDIR)\Variables.wxi?>
   
-	<Product Id="*" Name="$(var.ProductName)" Language="1033" Version="1.0.4.0" 
+	<Product Id="*" Name="$(var.ProductName)" Language="1033" Version="1.0.5.0" 
            Manufacturer="Polymaker" UpgradeCode="0b4b59f2-f635-4904-b051-7873899bf21b">
 		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
 
