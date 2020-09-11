@@ -41,7 +41,8 @@ namespace LDDModder.Modding.Editing
 
         public void SetSize(Vector3 size)
         {
-            SetSize((Vector3d)size);
+            var sizeD = (Vector3d)size;
+            SetSize(sizeD.Rounded(6));
         }
 
         public abstract void SetSize(Vector3d size);

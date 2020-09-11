@@ -348,4 +348,22 @@
   <data name="Label_Bone" xml:space="preserve">
     <value>Jointure</value>
   </data>
+  <data name="BONES_ID_GAP" xml:space="preserve">
+    <value>Écart de numérotation d'armatures (ID manquant: {0})</value>
+  </data>
+  <data name="BONES_DUPLICATE_IDS" xml:space="preserve">
+    <value>Doublons d'identifiants d'os ({0})</value>
+  </data>
+  <data name="BONE_NO_BOUNDING" xml:space="preserve">
+    <value>Le cadre de délimitation n'est pas défini.</value>
+  </data>
+  <data name="BONE_NOT_LINKED" xml:space="preserve">
+    <value>L'os "{name}" n'est pas lié.</value>
+  </data>
+  <data name="BONE_CONNECTION_NOT_SET" xml:space="preserve">
+    <value>Les connexions 'Flex' ne sont pas définies.</value>
+  </data>
+  <data name="BONE_MULTIPLE_LINKS" xml:space="preserve">
+    <value>L'os "{nom}" est référencé par plusieurs os.</value>
+  </data>
 </root>

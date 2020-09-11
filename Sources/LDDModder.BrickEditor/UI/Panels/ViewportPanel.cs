@@ -21,24 +21,23 @@ using LDDModder.BrickEditor.Rendering.Gizmos;
 using LDDModder.BrickEditor.Rendering.UI;
 using LDDModder.BrickEditor.ProjectHandling;
 using LDDModder.BrickEditor.UI.Windows;
+using LDDModder.BrickEditor.ProjectHandling.ViewInterfaces;
+using System.Threading.Tasks;
+using OpenTK.Platform;
 
 namespace LDDModder.BrickEditor.UI.Panels
 {
-    public partial class ViewportPanel : ProjectDocumentPanel
+    public partial class ViewportPanel : ProjectDocumentPanel, IViewportWindow
     {
         private bool ViewInitialized;
         private bool IsClosing;
 
         private GLControl glControl1;
-
-        private Texture2D CheckboardTexture;
-        private Texture2D SelectionIcons;
-
-        private GridShaderProgram GridShader;
+        private GraphicsContext ResourceContext;
 
         private List<SurfaceMeshBuffer> SurfaceModels;
-        private List<CollisionModel> CollisionModels;
-        private List<ConnectionModel> ConnectionModels;
+
+        private ThreadSafeList<PartElementModel> LoadedModels;
 
         private List<UIElement> UIElements;
 
@@ -50,36 +49,40 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private LoopController LoopController;
 
+        private List<LightInfo> SceneLights;
+
         public ViewportPanel()
         {
             InitializeComponent();
-            SurfaceModels = new List<SurfaceMeshBuffer>();
-            CollisionModels = new List<CollisionModel>();
-            ConnectionModels = new List<ConnectionModel>();
-            UIElements = new List<UIElement>();
+            //InitializeView();
         }
 
         public ViewportPanel(ProjectManager projectManager) : base(projectManager)
         {
+            projectManager.ViewportWindow = this;
             InitializeComponent();
-            //CloseButtonVisible = false;
-            //CloseButton = false;
+            //InitializeView();
+        }
+
+        private void InitializeView()
+        {
             DockAreas = DockAreas.Document;
             AllowEndUserDocking = false;
             CloseButton = false;
             CloseButtonVisible = false;
             SurfaceModels = new List<SurfaceMeshBuffer>();
-            CollisionModels = new List<CollisionModel>();
-            ConnectionModels = new List<ConnectionModel>();
+            LoadedModels = new ThreadSafeList<PartElementModel>();
             UIElements = new List<UIElement>();
             ShowIcon = false;
-            CreateGLControl();
+            
             SelectionInfoPanel.BringToFront();
             SelectionInfoPanel.Visible = false;
+            BonesDropDownMenu.Visible = false;
         }
 
         private void CreateGLControl()
         {
+            
             glControl1 = new GLControl(new GraphicsMode(32, 24, 2, 8));
             glControl1.BackColor = Color.FromArgb(204, 204, 204);
             Controls.Add(glControl1);
@@ -103,67 +106,80 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             base.OnLoad(e);
 
-            visualStudioToolStripExtender1.SetStyle(toolStrip1,
-                VisualStudioToolStripExtender.VsVersion.Vs2015,
-                DockPanel.Theme);
-
-            bool initSuccess = true;
-
-            try 
-            {
-                InitializeBase();
-            }
-            catch (Exception ex)
-            {
-                initSuccess = false;
-                ErrorMessageBox.Show(this, "An error occured while initializing GL view.", "Error", ex.ToString());
-            }
-
-            if (!initSuccess)
-                return;
-
-            UpdateGLViewport();
+            InitializeView();
 
             InitializeMenus();
-
-            LoopController.Start();
+            UpdateDocumentTitle();
 
             var mainForm = DockPanel.FindForm();
             mainForm.Activated += MainForm_Activated;
             mainForm.Deactivate += MainForm_Deactivate;
-
-            UpdateDocumentTitle();
-
-            ProjectManager.ProjectModified += ProjectManager_ProjectModified;
-            ProjectManager.PartModelsVisibilityChanged += ProjectManager_ModelsVisibilityChanged;
-            ProjectManager.CollisionsVisibilityChanged += ProjectManager_ModelsVisibilityChanged;
-            ProjectManager.ConnectionsVisibilityChanged += ProjectManager_ModelsVisibilityChanged;
-            ProjectManager.PartRenderModeChanged += ProjectManager_PartRenderModeChanged;
         }
 
-        
 
         #region Initialization
 
-        private void InitializeBase()
+        private bool GlContextCreated = false;
+        private IWindowInfo GlWindowInfo;
+
+        public override void DefferedInitialization()
         {
+            try
+            {
+                GraphicsContext.ShareContexts = true;
+                CreateGLControl();
+                GlWindowInfo = OpenTK.Platform.Utilities.CreateWindowsWindowInfo(Handle);
+                ResourceContext = new GraphicsContext(new GraphicsMode(32, 24, 2, 8), GlWindowInfo);
+                ResourceContext.MakeCurrent(null);
+                GlContextCreated = true;
+            }
+            catch (Exception ex)
+            {
+                MessageBoxEX.ShowDetails(this, "An error occured while initializing GL view.", "Error", ex.ToString());
+            }
+        }
+
+        public void InitGlResourcesAsync()
+        {
+            ResourceContext.MakeCurrent(GlWindowInfo);
+
+            TextureManager.InitializeResources();
+            UIRenderHelper.InitializeResources();
+            RenderHelper.InitializeResources();
+            ModelManager.InitializeResources();
+
+            SetupUIElements();
+
             InputManager = new InputManager();
 
-            //Camera = new Camera();
             CameraManipulator = new CameraManipulator(new Camera());
             CameraManipulator.Initialize(new Vector3(5), Vector3.Zero);
-            //CameraManipulator.RotationButton = MouseButton.Right;
-
-            InitializeTextures();
-            InitializeUI();
-
-            InitializeShaders();
 
             InitializeSelectionGizmo();
+            SetupSceneLights();
+        }
+
+        public override void OnInitializationFinished()
+        {
+            if (GlContextCreated)
+            {
+                glControl1.MakeCurrent();
+
+                ModelManager.InitializeBuffers();
+                UIRenderHelper.InitializeBuffers();
+                UpdateGLViewport();
+                LoopController.Start();
+            }
+
+            SelectCurrentGizmoOptions();
         }
 
         private void InitializeMenus()
         {
+            visualStudioToolStripExtender1.SetStyle(toolStrip1,
+                VisualStudioToolStripExtender.VsVersion.Vs2015,
+                DockPanel.Theme);
+
             globalToolStripMenuItem.Tag = OrientationMode.Global.ToString();
             localToolStripMenuItem.Tag = OrientationMode.Local.ToString();
 
@@ -174,29 +190,18 @@ namespace LDDModder.BrickEditor.UI.Panels
             activeElementToolStripMenuItem.Tag = PivotPointMode.ActiveElement.ToString();
 
             DisplayMenuDropDown.DropDown.Closing += DisplayDropDown_Closing;
-
-            SelectCurrentGizmoOptions();
+            
+            UpdateToolbarMenu();
         }
 
-        private void InitializeTextures()
+        protected override void InitializeProjectManager(ProjectManager projectManager)
         {
-            TextureManager.InitializeResources();
-
-            var checkboardImage = (Bitmap)Bitmap.FromStream(System.Reflection.Assembly.GetExecutingAssembly()
-                .GetManifestResourceStream("LDDModder.BrickEditor.Resources.Textures.DefaultTexture.png"));
-
-            BitmapTexture.CreateCompatible(checkboardImage, out CheckboardTexture, 1);
-            CheckboardTexture.LoadBitmap(checkboardImage, 0);
-            CheckboardTexture.SetFilter(TextureMinFilter.Linear, TextureMagFilter.Linear);
-            CheckboardTexture.SetWrapMode(TextureWrapMode.Repeat);
-
-            var selectionIconsImage = (Bitmap)Bitmap.FromStream(System.Reflection.Assembly.GetExecutingAssembly()
-                .GetManifestResourceStream("LDDModder.BrickEditor.Resources.Textures.SelectionIcons.png"));
-
-            BitmapTexture.CreateCompatible(selectionIconsImage, out SelectionIcons, 1);
-            SelectionIcons.LoadBitmap(selectionIconsImage, 0);
-            SelectionIcons.SetFilter(TextureMinFilter.Linear, TextureMagFilter.Linear);
-            SelectionIcons.SetWrapMode(TextureWrapMode.Clamp);
+            base.InitializeProjectManager(projectManager);
+            ProjectManager.ProjectModified += ProjectManager_ProjectModified;
+            ProjectManager.PartModelsVisibilityChanged += ProjectManager_ModelsVisibilityChanged;
+            ProjectManager.CollisionsVisibilityChanged += ProjectManager_ModelsVisibilityChanged;
+            ProjectManager.ConnectionsVisibilityChanged += ProjectManager_ModelsVisibilityChanged;
+            ProjectManager.PartRenderModeChanged += ProjectManager_PartRenderModeChanged;
         }
 
         private UIButton SelectGizmoButton;
@@ -204,7 +209,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         private UIButton RotateGizmoButton;
         private UIButton ScaleGizmoButton;
 
-        private void InitializeUI()
+        private void SetupUIElements()
         {
             int buttonSpacing = 2;
 
@@ -212,7 +217,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             SelectGizmoButton = new UIButton()
             {
-                Texture = SelectionIcons,
+                Texture = TextureManager.SelectionIcons,
                 NormalSprite =      new SpriteBounds(0,0,0.25f,0.25f),
                 OverSprite =        new SpriteBounds(0, 0.25f, 0.25f, 0.25f),
                 SelectedSprite =    new SpriteBounds(0, 0.5f, 0.25f, 0.25f),
@@ -223,7 +228,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             MoveGizmoButton = new UIButton()
             {
-                Texture = SelectionIcons,
+                Texture = TextureManager.SelectionIcons,
                 NormalSprite =      new SpriteBounds(0.25f, 0, 0.25f, 0.25f),
                 OverSprite =        new SpriteBounds(0.25f, 0.25f, 0.25f, 0.25f),
                 SelectedSprite =    new SpriteBounds(0.25f, 0.5f, 0.25f, 0.25f),
@@ -233,7 +238,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             RotateGizmoButton = new UIButton()
             {
-                Texture = SelectionIcons,
+                Texture = TextureManager.SelectionIcons,
                 NormalSprite =      new SpriteBounds(0.5f, 0, 0.25f, 0.25f),
                 OverSprite =        new SpriteBounds(0.5f, 0.25f, 0.25f, 0.25f),
                 SelectedSprite =    new SpriteBounds(0.5f, 0.5f, 0.25f, 0.25f),
@@ -243,7 +248,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             ScaleGizmoButton = new UIButton()
             {
-                Texture = SelectionIcons,
+                Texture = TextureManager.SelectionIcons,
                 NormalSprite =      new SpriteBounds(0.75f, 0, 0.25f, 0.25f),
                 OverSprite =        new SpriteBounds(0.75f, 0.25f, 0.25f, 0.25f),
                 SelectedSprite =    new SpriteBounds(0.75f, 0.5f, 0.25f, 0.25f),
@@ -251,6 +256,13 @@ namespace LDDModder.BrickEditor.UI.Panels
             };
             ScaleGizmoButton.Clicked += ScaleGizmoButton_Clicked;
             UIElements.Add(ScaleGizmoButton);
+            //var viewSize = new Vector2(glControl1.Width, glControl1.Height);
+            //UIElements.Add(new UIPanel()
+            //{
+            //    Texture = SelectionIcons,
+            //    TextureRect = new SpriteBounds(0, 0.75f, 0.25f, 0.25f),
+            //    Bounds = new Vector4(viewSize.X - 30, 0, 30, 30)
+            //});
 
             var gizmoButtons = new UIButton[] { SelectGizmoButton, MoveGizmoButton, RotateGizmoButton, ScaleGizmoButton };
 
@@ -273,75 +285,101 @@ namespace LDDModder.BrickEditor.UI.Panels
             SelectionGizmo.DisplayStyleChanged += SelectionGizmo_DisplayStyleChanged;
         }
 
-        private void InitializeShaders()
+        private void CalculateLight(ref LightInfo light, Vector3 lightDir, BBox sceneBounds, 
+            float lightConeAngle = 50f, float lightFalloffScale = 4f)
         {
-            GridShader = ProgramFactory.Create<GridShaderProgram>();
-            GridShader.Use();
+            lightDir = lightDir.Normalized();
+            var boxVerts = sceneBounds.GetCorners();
+            var ray = new Ray(sceneBounds.Center + lightDir * 2, lightDir * -1);
 
-            GridShader.MajorGridLine.Set(new GridShaderProgram.GridLineInfo()
+            var lightMatrix = Matrix4.LookAt(ray.Origin, sceneBounds.Center, Vector3.UnitY);
+
+            Vector2 minPos = Vector2.Zero;
+            Vector2 maxPos = Vector2.Zero;
+            float viewDistance = 0;
+
+            foreach (var vert in boxVerts)
             {
-                Color = new Color4(1, 1, 1, 0.8f),
-                Spacing = 0.8f,
-                Thickness = 1f,
-                OffCenter = true
-            });
+                var tp = Vector3.TransformPosition(vert, lightMatrix);
+                minPos = Vector2.ComponentMin(tp.Xy, minPos);
+                maxPos = Vector2.ComponentMax(tp.Xy, maxPos);
+                viewDistance = Math.Min(viewDistance, tp.Z);
+            }
+            viewDistance = Math.Abs(viewDistance);
 
-            GridShader.MinorGridLine.Set(new GridShaderProgram.GridLineInfo()
-            {
-                Color = new Color4(0.8f, 0.6f, 0.6f, 0.8f),
-                Spacing = 0.4f,
-                Thickness = 0.75f,
-                OffCenter = false
-            });
+            var maxDiag = Math.Max(maxPos.X - minPos.X, maxPos.Y - minPos.Y);
+            var lightDist = (maxDiag * 0.5f) / (float)Math.Tan(MathHelper.ToRadian(lightConeAngle / 2f));
+            lightDist = Math.Max(lightDist, 3f);
+            light.Position = sceneBounds.Center + (lightDir * lightDist);
+            var distFromCenter = Vector3.Distance(sceneBounds.Center, light.Position);
+            viewDistance += distFromCenter;
+            var lightComponents = RenderHelper.CalculateLightComponents(viewDistance * lightFalloffScale);
+            light.Linear = lightComponents.X;
+            light.Quadratic = lightComponents.Y;
+        }
 
-            UIRenderHelper.InitializeResources();
-            RenderHelper.InitializeResources();
-            ModelManager.InitializeResources();
-
+        private void SetupSceneLights()
+        {
             RenderHelper.ModelShader.Use();
 
-            var lights = new LightInfo[]
+            var sceneBounds = GetSceneBoundingBox();
+
+            var ambiantLight = new LightInfo()
             {
-                //Key Light
-                new LightInfo {
-                    Position = new Vector3(10, 10, 10),
-                    Ambient = new Vector3(0.3f),
-                    Diffuse = new Vector3(0.8f),
-                    Specular = new Vector3(1f),
-                    Constant = 1f,
-                    Linear = 0.07f,
-                    Quadratic = 0.017f
-                },
-                //Fill Light
-                new LightInfo {
-                    Position = new Vector3(-10, 6, 10),
-                    Ambient = new Vector3(0.2f),
-                    Diffuse = new Vector3(0.6f),
-                    Specular = new Vector3(0.8f),
-                    Constant = 1f,
-                    Linear = 0.07f,
-                    Quadratic = 0.017f
-                },
-                //Back Light
-                new LightInfo {
-                    Position = new Vector3(3, 10, -10),
-                    Ambient = new Vector3(0.4f),
-                    Diffuse = new Vector3(0.7f),
-                    Specular = new Vector3(0.7f),
-                    Constant = 1f,
-                    Linear = 0.045f,
-                    Quadratic = 0.075f
-                },
+                Ambient = new Vector3(0.7f),
+                Diffuse = new Vector3(0.2f),
+                Specular = new Vector3(0.2f),
+                Constant = 1f,
+            };
+            CalculateLight(ref ambiantLight, new Vector3(1,1,1), sceneBounds, 30, 10f);
+
+            var keyLight = new LightInfo()
+            {
+                Ambient = new Vector3(0.1f),
+                Diffuse = new Vector3(0.7f),
+                Specular = new Vector3(0.8f),
+                Constant = 1f,
+            };
+            CalculateLight(ref keyLight, new Vector3(0, 0.75f, 1), sceneBounds);
+            
+            var fillLight = new LightInfo()
+            {
+                Ambient = new Vector3(0.1f),
+                Diffuse = new Vector3(0.6f),
+                Specular = new Vector3(0.3f),
+                Constant = 1f,
+            };
+            CalculateLight(ref fillLight, new Vector3(1, 0.75f, 0), sceneBounds);
+            
+            var backLight = new LightInfo()
+            {
+                Ambient = new Vector3(0.1f),
+                Diffuse = new Vector3(0.6f),
+                Specular = new Vector3(0.3f),
+                Constant = 1f,
+            };
+            CalculateLight(ref backLight, new Vector3(-1, 0.75f, 0), sceneBounds);
+
+            SceneLights = new List<LightInfo>()
+            {
+                ambiantLight,
+                keyLight,
+                fillLight,
+                backLight,
             };
 
-            RenderHelper.ModelShader.Lights.Set(lights);
-            RenderHelper.ModelShader.LightCount.Set(lights.Length);
+            RenderHelper.ModelShader.Lights.Set(SceneLights.ToArray());
+            RenderHelper.ModelShader.LightCount.Set(SceneLights.Count);
             RenderHelper.ModelShader.UseTexture.Set(false);
-
-
         }
 
         #endregion
+
+        public void StopRenderingLoop()
+        {
+            if (LoopController.IsRunning)
+                LoopController.Stop();
+        }
 
         #region Render Loop
 
@@ -369,11 +407,11 @@ namespace LDDModder.BrickEditor.UI.Panels
             if (ProjectManager.ShowPartModels)
                 DrawPartModels();
 
-            if (ProjectManager.ShowCollisions && CollisionModels.Any())
-                DrawCollisions();
-
-            if (ProjectManager.ShowConnections && ConnectionModels.Any())
-                DrawConnections();
+            foreach (var model in LoadedModels)
+            {
+                if (model.Visible)
+                    model.RenderModel(Camera);
+            }
 
             if (UIRenderHelper.TextRenderer.DrawingPrimitives.Any())
             {
@@ -381,9 +419,16 @@ namespace LDDModder.BrickEditor.UI.Panels
                 UIRenderHelper.TextRenderer.Draw();
                 UIRenderHelper.TextRenderer.DisableShader();
             }
-            
 
             DrawGrid();
+
+            //if (SceneLights != null)
+            //{
+            //    foreach (var light in SceneLights)
+            //    {
+            //        RenderHelper.DrawGizmoAxes(Matrix4.CreateTranslation(light.Position), 0.5f, false);
+            //    }
+            //}
 
             GL.UseProgram(0);
 
@@ -392,50 +437,32 @@ namespace LDDModder.BrickEditor.UI.Panels
                 GL.Clear(ClearBufferMask.DepthBufferBit);
                 SelectionGizmo.Render(Camera);
             }
+
             
             GL.UseProgram(0);
-        }
-
-        private void DrawConnections()
-        {
-            GL.Disable(EnableCap.Texture2D);
-
-            foreach (var connModel in ConnectionModels.Where(x => x.Visible))
-                connModel.RenderModel(Camera);
-            //var orderedModels = ConnectionModels.OrderByDescending(x => Camera.DistanceFromCamera(x.Transform));
-
-            //foreach (var connModel in orderedModels.Where(x => x.Visible))
-            //    connModel.RenderModel(Camera);
-        }
-
-        private void DrawCollisions()
-        {
-            GL.Disable(EnableCap.Texture2D);
-
-            foreach (var colModel in CollisionModels.Where(x => x.Visible))
-                colModel.RenderModel(Camera);
+            
         }
 
         private void DrawPartModels()
         {
             GL.Enable(EnableCap.Texture2D);
 
-            RenderHelper.BindModelTexture(CheckboardTexture, TextureUnit.Texture4);
+            RenderHelper.BindModelTexture(TextureManager.Checkerboard, TextureUnit.Texture4);
 
             foreach (var surfaceModel in SurfaceModels)
                 surfaceModel.Render(Camera, ProjectManager.PartRenderMode);
 
             RenderHelper.UnbindModelTexture();
-            CheckboardTexture.Bind(TextureUnit.Texture0);
+            TextureManager.Checkerboard.Bind(TextureUnit.Texture0);
             GL.Disable(EnableCap.Texture2D);
         }
 
         private void DrawGrid()
         {
-            GridShader.Use();
-            GridShader.MVMatrix.Set(Camera.GetViewMatrix());
-            GridShader.PMatrix.Set(Camera.GetProjectionMatrix());
-            GridShader.FadeDistance.Set(Camera.IsPerspective ? 20f : 0f);
+            RenderHelper.GridShader.Use();
+            RenderHelper.GridShader.MVMatrix.Set(Camera.GetViewMatrix());
+            RenderHelper.GridShader.PMatrix.Set(Camera.GetProjectionMatrix());
+            RenderHelper.GridShader.FadeDistance.Set(Camera.IsPerspective ? 20f : 0f);
             GL.DepthMask(false);
             GL.Begin(PrimitiveType.Quads);
             GL.Vertex3(-40, 0, -40);
@@ -450,7 +477,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void RenderUI()
         {
-            var viewSize = new Vector2(glControl1.Width, glControl1.Height);
+            //var viewSize = new Vector2(glControl1.Width, glControl1.Height);
 
             GL.Disable(EnableCap.DepthTest);
 
@@ -465,6 +492,9 @@ namespace LDDModder.BrickEditor.UI.Panels
             foreach (var elem in UIElements)
                 elem.Draw();
 
+            if (CurrentProject != null && CurrentProject.Flexible)
+                DrawBoneNames();
+
 
             if (AvgRenderFPS == 0)
                 AvgRenderFPS = LoopController.RenderFrequency;
@@ -474,24 +504,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             UIRenderHelper.DrawText($"Render FPS: {AvgRenderFPS:0}", UIRenderHelper.NormalFont, Color.White, new Vector2(10, 10));
 
             if (SelectionGizmo.IsEditing)
-            {
-                //UIRenderHelper.DrawText("Hold Ctrl to snap", Color.Black, new Vector2(10, UIRenderHelper.ViewSize.Y - 20));
-
-                string amountStr = "";
-                if (SelectionGizmo.DisplayStyle == GizmoStyle.Rotation)
-                {
-                    float degrees = (SelectionGizmo.TransformedAmount / (float)Math.PI) * 180f;
-                    amountStr = $"Rotation: {degrees:0.##}°";
-                }
-                else if (SelectionGizmo.DisplayStyle == GizmoStyle.Scaling)
-                {
-                    amountStr = $"Scaling: {SelectionGizmo.TransformedAmount:0.##}";
-                }
-                else if (SelectionGizmo.DisplayStyle == GizmoStyle.Translation)
-                    amountStr = $"Translation: {SelectionGizmo.TransformedAmount:0.##}";
-
-                UIRenderHelper.DrawText(amountStr, UIRenderHelper.NormalFont, Color.Black, new Vector2(10, UIRenderHelper.ViewSize.Y - 20));
-            }
+                DrawGizmoStatus();
 
             if (CurrentProject != null)
             {
@@ -501,6 +514,41 @@ namespace LDDModder.BrickEditor.UI.Panels
             }
             
             UIRenderHelper.RenderElements();
+        }
+
+        private void DrawBoneNames()
+        {
+            var boneModels = LoadedModels.OfType<BoneModel>().ToList();
+
+            foreach (var bone in boneModels)
+            {
+                var rootPos = bone.Transform.ExtractTranslation();
+                var tipPos = rootPos + Vector3.TransformVector(new Vector3(bone.BoneLength, 0, 0), bone.Transform);
+                var avgPos = (rootPos + tipPos) / 2f;
+                var screenPos = Camera.WorldPointToScreen(avgPos);
+                //screenPos.X += 10;
+                //screenPos.Y -= 10;
+                UIRenderHelper.DrawShadowText(bone.Element.Name,
+                    UIRenderHelper.NormalFont, Color.White, screenPos);
+            }
+        }
+
+        private void DrawGizmoStatus()
+        {
+            string amountStr = "";
+            if (SelectionGizmo.DisplayStyle == GizmoStyle.Rotation)
+            {
+                float degrees = (SelectionGizmo.TransformedAmount / (float)Math.PI) * 180f;
+                amountStr = $"Rotation: {degrees:0.##}°";
+            }
+            else if (SelectionGizmo.DisplayStyle == GizmoStyle.Scaling)
+            {
+                amountStr = $"Scaling: {SelectionGizmo.TransformedAmount:0.##}";
+            }
+            else if (SelectionGizmo.DisplayStyle == GizmoStyle.Translation)
+                amountStr = $"Translation: {SelectionGizmo.TransformedAmount:0.##}";
+
+            UIRenderHelper.DrawText(amountStr, UIRenderHelper.NormalFont, Color.Black, new Vector2(10, UIRenderHelper.ViewSize.Y - 20));
         }
 
         private void LoopController_RenderFrame()
@@ -590,8 +638,20 @@ namespace LDDModder.BrickEditor.UI.Panels
                         PerformRaySelection(ray);
                     }
                 }
-                
             }
+
+            try
+            {
+                //TODO: improve access to LoadedModels list to prevent collection changed exceptions
+                var boneModels = LoadedModels.OfType<BoneModel>().ToList();
+                if (boneModels.Any(x => x.IsLengthDirty))
+                {
+                    foreach (var boneModel in boneModels)
+                        boneModel.CalculateBoneLength();
+                }
+            }
+            catch { }
+            
         }
 
         #endregion
@@ -606,7 +666,10 @@ namespace LDDModder.BrickEditor.UI.Panels
         private void SelectionGizmo_TransformFinished(object sender, EventArgs e)
         {
             ProjectManager.EndBatchChanges();
-            UpdateSelectionInfoPanel();
+            if (transformEditor1.Visible && transformEditor1.PhysicalElement == null)
+            {
+                UpdateSelectionInfoPanel();
+            }
         }
 
         private void SelectionGizmo_DisplayStyleChanged(object sender, EventArgs e)
@@ -693,16 +756,18 @@ namespace LDDModder.BrickEditor.UI.Panels
         private void DisposeGLResources()
         {
             UnloadModels();
-
+            SelectionGizmo.Dispose();
             UIRenderHelper.ReleaseResources();
             RenderHelper.ReleaseResources();
             ModelManager.ReleaseResources();
             TextureManager.ReleaseResources();
+            SelectionGizmo = null;
 
-            SelectionGizmo.Dispose();
-
-            GridShader.Dispose();
-            CheckboardTexture.Dispose();
+            if (ResourceContext != null)
+            {
+                ResourceContext.Dispose();
+                ResourceContext = null;
+            }
         }
 
         #region Project Handling
@@ -711,6 +776,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             base.OnProjectChanged();
             UpdateDocumentTitle();
+            UpdateToolbarMenu();
         }
 
         protected override void OnProjectLoaded(PartProject project)
@@ -720,7 +786,9 @@ namespace LDDModder.BrickEditor.UI.Panels
             RebuildSurfaceModels();
             RebuildCollisionModels();
             RebuildConnectionModels();
+            RebuildBoneModels();
             SetupDefaultCamera();
+            SetupSceneLights();
         }
 
         private void ProjectManager_ProjectModified(object sender, EventArgs e)
@@ -734,21 +802,21 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             surfModel.Material = new MaterialInfo
             {
-                Diffuse = new Vector4(0.6f, 0.6f, 0.6f, 1f),
+                Diffuse = new Vector4(0.7f, 0.7f, 0.7f, 1f),
                 Specular = new Vector3(1f),
-                Shininess = 6f
+                Shininess = 8f
             };
 
-            if (surface.SurfaceID > 0)
-            {
-                var matColor = Color4.FromHsv(new Vector4((surface.SurfaceID * 0.2f) % 1f, 0.9f, 0.8f, 1f));
-                surfModel.Material = new MaterialInfo
-                {
-                    Diffuse = new Vector4(matColor.R, matColor.G, matColor.B, surfModel.Material.Diffuse.W),
-                    Specular = new Vector3(1f),
-                    Shininess = 6f
-                };
-            }
+            //if (surface.SurfaceID > 0)
+            //{
+            //    var matColor = Color4.FromHsv(new Vector4((surface.SurfaceID * 0.2f) % 1f, 0.9f, 0.8f, 1f));
+            //    surfModel.Material = new MaterialInfo
+            //    {
+            //        Diffuse = new Vector4(matColor.R, matColor.G, matColor.B, surfModel.Material.Diffuse.W),
+            //        Specular = new Vector3(1f),
+            //        Shininess = 6f
+            //    };
+            //}
 
             surfModel.RebuildPartModels();
             SurfaceModels.Add(surfModel);
@@ -759,11 +827,13 @@ namespace LDDModder.BrickEditor.UI.Panels
             base.OnProjectClosed();
             SelectionGizmo.Deactivate();
             UnloadModels();
+            SetupSceneLights();
         }
 
         private bool SurfaceMeshesChanged;
         private bool CollisionsChanged;
         private bool ConnectionsChanged;
+        private bool BonesChanged;
 
         protected override void OnElementCollectionChanged(ElementCollectionChangedEventArgs e)
         {
@@ -783,17 +853,27 @@ namespace LDDModder.BrickEditor.UI.Panels
             {
                 ConnectionsChanged = true;
             }
+            else if (e.ElementType == typeof(PartBone))
+            {
+                BonesChanged = true;
+            }
         }
 
         protected override void OnElementPropertyChanged(ElementValueChangedEventArgs e)
         {
             base.OnElementPropertyChanged(e);
 
-            if (e.Element is PartProperties && (
-                e.PropertyName == nameof(PartProperties.ID) ||
-                e.PropertyName == nameof(PartProperties.Description)))
+            if (e.Element is PartProperties)
             {
-                UpdateDocumentTitle();
+                if (e.PropertyName == nameof(PartProperties.ID) ||
+                    e.PropertyName == nameof(PartProperties.Description))
+                {
+                    UpdateDocumentTitle();
+                }
+                else if (e.PropertyName == nameof(PartProperties.Flexible))
+                {
+                    BonesDropDownMenu.Visible = CurrentProject.Flexible;
+                }
             }
         }
 
@@ -810,9 +890,13 @@ namespace LDDModder.BrickEditor.UI.Panels
             if (ConnectionsChanged)
                 RebuildConnectionModels();
 
+            if (BonesChanged)
+                RebuildBoneModels();
+
             SurfaceMeshesChanged = false;
             CollisionsChanged = false;
             ConnectionsChanged = false;
+            BonesChanged = false;
         }
 
         #endregion
@@ -834,7 +918,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
                 foreach (var surface in CurrentProject.Surfaces)
                 {
-                    if (!SurfaceModels.Any(x=>x.Surface == surface))
+                    if (!SurfaceModels.Any(x => x.Surface == surface))
                     {
                         AddPartSurfaceModel(surface);
                     }
@@ -854,68 +938,114 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void RebuildCollisionModels()
         {
+            var existingModels = LoadedModels.OfType<CollisionModel>().ToList();
+
             if (ProjectManager.IsProjectOpen)
             {
                 var allCollisions = CurrentProject.GetAllElements<PartCollision>().ToList();
 
-                foreach (var colModel in CollisionModels.ToArray())
+                foreach (var colModel in existingModels)
                 {
                     if (!allCollisions.Contains(colModel.PartCollision))
                     {
                         colModel.Dispose();
-                        CollisionModels.Remove(colModel);
+                        LoadedModels.Remove(colModel);
                     }
                 }
 
                 foreach (var collision in allCollisions)
                 {
-                    if (!CollisionModels.Any(x => x.PartCollision == collision))
-                        CollisionModels.Add(new CollisionModel(collision));
+                    if (!existingModels.Any(x => x.PartCollision == collision))
+                        LoadedModels.Add(new CollisionModel(collision));
                 }
             }
-            else if (CollisionModels.Any())
+            else if (existingModels.Any())
             {
-                CollisionModels.ForEach(x => x.Dispose());
-                CollisionModels.Clear();
+                existingModels.ForEach(x =>
+                {
+                    x.Dispose();
+                    LoadedModels.Remove(x);
+                });
             }
         }
 
         private void RebuildConnectionModels()
         {
-            ConnectionModels.Clear();
+            var existingModels = LoadedModels.OfType<ConnectionModel>().ToList();
 
             if (ProjectManager.IsProjectOpen)
             {
                 var allConnections = CurrentProject.GetAllElements<PartConnection>().ToList();
 
-                foreach (var conModel in ConnectionModels.ToArray())
+                foreach (var conModel in existingModels)
                 {
                     if (!allConnections.Contains(conModel.Connection))
                     {
                         conModel.Dispose();
-                        ConnectionModels.Remove(conModel);
+                        LoadedModels.Remove(conModel);
                     }
                 }
 
                 foreach (var connection in allConnections)
                 {
-                    if (!ConnectionModels.Any(x => x.Connection == connection))
-                        ConnectionModels.Add(new ConnectionModel(connection));
+                    if (!existingModels.Any(x => x.Connection == connection))
+                        LoadedModels.Add(new ConnectionModel(connection));
                 }
             }
-            else if (ConnectionModels.Any())
+            else if (existingModels.Any())
             {
-                ConnectionModels.ForEach(x => x.Dispose());
-                ConnectionModels.Clear();
+                existingModels.ForEach(x =>
+                {
+                    x.Dispose();
+                    LoadedModels.Remove(x);
+                });
             }
         }
 
-        private void UnloadModels()
+        private void RebuildBoneModels()
+        {
+            var existingModels = LoadedModels.OfType<BoneModel>().ToList();
+
+            if (ProjectManager.IsProjectOpen)
+            {
+                var allBones = CurrentProject.GetAllElements<PartBone>().ToList();
+
+                foreach (var conModel in existingModels)
+                {
+                    if (!allBones.Contains(conModel.Bone))
+                    {
+                        conModel.Dispose();
+                        LoadedModels.Remove(conModel);
+                    }
+                }
+
+                foreach (var bone in allBones)
+                {
+                    if (!existingModels.Any(x => x.Bone == bone))
+                        LoadedModels.Add(new BoneModel(bone));
+                }
+            }
+            else if (existingModels.Any())
+            {
+                existingModels.ForEach(x =>
+                {
+                    x.Dispose();
+                    LoadedModels.Remove(x);
+                });
+            }
+        }
+
+        public void UnloadModels()
         {
             SurfaceModels.ForEach(x => x.Dispose());
+
+            foreach (var model in LoadedModels)
+                model.Dispose();
+            LoadedModels.Clear();
+
             SurfaceModels.Clear();
-            CollisionModels.Clear();
-            ConnectionModels.Clear();
+            //CollisionModels.Clear();
+            //ConnectionModels.Clear();
             GC.Collect();
         }
 
@@ -924,16 +1054,19 @@ namespace LDDModder.BrickEditor.UI.Panels
             foreach (var model in SurfaceModels.SelectMany(x => x.MeshModels))
                 yield return model;
 
-            foreach (var model in CollisionModels)
-                yield return model;
+            //foreach (var model in CollisionModels)
+            //    yield return model;
 
-            foreach (var model in ConnectionModels)
+            //foreach (var model in ConnectionModels)
+            //    yield return model;
+
+            foreach (var model in LoadedModels)
                 yield return model;
         }
 
         public IEnumerable<PartElementModel> GetVisibleModels()
         {
-            foreach(var model in GetAllElementModels())
+            foreach (var model in GetAllElementModels())
             {
                 var elementExt = model.Element.GetExtension<ModelElementExtension>();
                 if (elementExt?.IsVisible ?? model.Visible)
@@ -961,11 +1094,23 @@ namespace LDDModder.BrickEditor.UI.Panels
         protected override void OnElementSelectionChanged()
         {
             base.OnElementSelectionChanged();
+            if (CurrentProject == null)
+                return;
+
+            bool isFlexible = CurrentProject.Bones.Any();
 
             foreach (var model in GetAllElementModels())
-                model.IsSelected = ProjectManager.IsContainedInSelection(model.Element);
+            {
+                if (isFlexible && model.Element.Parent is IPhysicalElement)
+                {
+                    model.IsSelected = ProjectManager.IsSelected(model.Element);
+                }
+                else
+                    model.IsSelected = ProjectManager.IsContainedInSelection(model.Element);
+            }
 
             UpdateGizmoFromSelection();
+            UpdateSelectionInfoPanel();
         }
 
         private void UpdateGizmoFromSelection()
@@ -977,6 +1122,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             {
                 ScaleGizmoButton.Visible = true;
             }
+
             else if (ScaleGizmoButton.Visible)
             {
                 bool hideButton = selectedModels.Count > 0 || SelectionGizmo.DisplayStyle != GizmoStyle.Scaling;
@@ -1001,10 +1147,8 @@ namespace LDDModder.BrickEditor.UI.Panels
                 SelectionGizmo.Deactivate();
             }
 
-            UpdateSelectionInfoPanel();
+            
         }
-
-        private bool UpdatingInfo;
 
         private void UpdateSelectionInfoPanel()
         {
@@ -1020,75 +1164,26 @@ namespace LDDModder.BrickEditor.UI.Panels
             {
                 var activeObject = SelectionGizmo.ActiveElements.FirstOrDefault();
 
-                UpdatingInfo = true;
 
                 if (activeObject is PartElementModel elementModel && 
                     elementModel.Element is IPhysicalElement physicalElement)
                 {
-                    var transPos = physicalElement.Transform.Position.Rounded();
-                    var transRot = physicalElement.Transform.Rotation.Rounded();
-                    PosXNumBox.Value = transPos.X;
-                    PosYNumBox.Value = transPos.Y;
-                    PosZNumBox.Value = transPos.Z;
-                    RotXNumBox.Value = transRot.X;
-                    RotYNumBox.Value = transRot.Y;
-                    RotZNumBox.Value = transRot.Z;
+                    transformEditor1.BindPhysicalElement(physicalElement);
                 }
                 else
                 {
-                    var translation = activeObject.Transform.ExtractTranslation();
-                    var rotation = activeObject.Transform.ExtractRotation();
-                    var euler = LDDModder.Simple3D.Quaternion.ToEuler(rotation.ToLDD());
-                    PosXNumBox.Value = translation.X;
-                    PosYNumBox.Value = translation.Y;
-                    PosZNumBox.Value = translation.Z;
-                    RotXNumBox.Value = euler.X;
-                    RotYNumBox.Value = euler.Y;
-                    RotZNumBox.Value = euler.Z;
+                    transformEditor1.BindPhysicalElement(null);
+                    var lddTrans = ItemTransform.FromMatrix(activeObject.Transform.ToLDD());
+                    transformEditor1.Value = lddTrans;
                 }
-
-                UpdatingInfo = false;
             }
+            else
+                transformEditor1.BindPhysicalElement(null);
 
             SelectionInfoPanel.Visible = (activeObjectCount == 1);
 
         }
 
-        private void PositionNumBoxes_ValueChanged(object sender, EventArgs e)
-        {
-            if (UpdatingInfo)
-                return;
-
-            var activeObject = SelectionGizmo.ActiveElements.FirstOrDefault();
-            if (activeObject != null)
-            {
-                activeObject.BeginEditTransform();
-                var trans = Matrix4.CreateTranslation((float)PosXNumBox.Value, (float)PosYNumBox.Value, (float)PosZNumBox.Value);
-                var rot = activeObject.Transform.ExtractRotation();
-                activeObject.Transform = Matrix4.CreateFromQuaternion(rot) * trans;
-                activeObject.EndEditTransform(false);
-            }
-        }
-
-        private void RotationNumBoxes_ValueChanged(object sender, EventArgs e)
-        {
-            if (UpdatingInfo)
-                return;
-
-            var activeObject = SelectionGizmo.ActiveElements.FirstOrDefault();
-            if (activeObject != null)
-            {
-                activeObject.BeginEditTransform();
-                var trans = Matrix4.CreateTranslation(activeObject.Transform.ExtractTranslation()).ToMatrix4d();
-                var rot = LDDModder.Simple3D.Quaterniond.FromEuler(
-                    RotXNumBox.Value, 
-                    RotYNumBox.Value, 
-                    RotZNumBox.Value).ToGL();
-
-                activeObject.Transform = (Matrix4d.CreateFromQuaternion(rot) * trans).ToMatrix4();
-                activeObject.EndEditTransform(false);
-            }
-        }
 
         private void PerformRaySelection(Ray ray)
         {
@@ -1135,17 +1230,34 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void SetupDefaultCamera()
         {
-            if (CurrentProject != null && CurrentProject.DefaultOrientation != null)
-            {
+            SetCameraAlignment(CameraAlignment.Isometric);
 
+            //if (CurrentProject != null && CurrentProject.DefaultOrientation != null)
+            //{
+            //    var matrix = CurrentProject.DefaultOrientation.ToMatrix().ToGL().Inverted();
+            //    var newPos = Vector3.TransformPosition(Camera.Position, matrix);
+            //    var newUp = Vector3.TransformNormal(Camera.Up, matrix);
+            //    CameraManipulator.Initialize(newPos, CameraManipulator.Gimbal, newUp); 
+            //}
+            
+        }
+
+        public BBox GetSceneBoundingBox()
+        {
+            if (CurrentProject != null)
+            {
+                var modelMeshes = SurfaceModels.SelectMany(x => x.MeshModels);
+                if (modelMeshes.Any())
+                    return CalculateBoundingBox(modelMeshes);
             }
-            ResetCameraAlignment(CameraAlignment.Isometric);
+
+            return BBox.FromCenterSize(Vector3.Zero, new Vector3(1f));
         }
 
         private BBox CalculateBoundingBox(IEnumerable<ModelBase> modelMeshes)
         {
-            Vector3 minPos = new Vector3(99999f);
-            Vector3 maxPos = new Vector3(-99999f);
+            Vector3 minPos = new Vector3(float.MaxValue);
+            Vector3 maxPos = new Vector3(float.MinValue);
 
             foreach (var model in modelMeshes)
             {
@@ -1161,13 +1273,10 @@ namespace LDDModder.BrickEditor.UI.Panels
             return BBox.FromMinMax(minPos, maxPos);
         }
 
-        public void ResetCameraAlignment(CameraAlignment alignment)
+        private void CalculateCameraDirection(CameraAlignment alignment, out Vector3 cameraDirection, out Vector3 upVector)
         {
-            var visibleModels = GetAllElementModels().OfType<SurfaceModelMesh>();
-            var bounding = CalculateBoundingBox(visibleModels);
-
-            Vector3 cameraDirection = Vector3.Zero;
-            Vector3 upVector = Vector3.UnitY;
+            cameraDirection = Vector3.Zero;
+            upVector = Vector3.UnitY;
 
             switch (alignment)
             {
@@ -1195,40 +1304,51 @@ namespace LDDModder.BrickEditor.UI.Panels
                     upVector = Vector3.UnitZ;
                     break;
             }
+        }
+
+        public void SetCameraAlignment(CameraAlignment alignment)
+        {
+            CalculateCameraDirection(alignment, out Vector3 cameraDirection, out Vector3 upVector);
+            RepositionCamera(cameraDirection, upVector);
+        }
+
+        private void RepositionCamera(Vector3 cameraDirection, Vector3 upVector)
+        {
+            var visibleModels = GetAllElementModels().OfType<SurfaceModelMesh>();
+            var bounding = GetSceneBoundingBox();
 
             float distanceToTarget = 3f;
             Vector2 targetSize = new Vector2(2f);
 
+            CameraManipulator.Initialize(bounding.Center + cameraDirection *  3, bounding.Center, upVector);
+            var viewMatrix = CameraManipulator.Camera.GetViewMatrix();
+
+            if (!bounding.IsEmpty)
+            {
+                var corners = bounding.GetCorners();
+                for (int i = 0; i < corners.Length; i++)
+                {
+                    corners[i] = Vector3.TransformPosition(corners[i], viewMatrix);
+                }
+                var minX = corners.Min(v => v.X);
+                var maxX = corners.Max(v => v.X);
+
+                var minY = corners.Min(v => v.Y);
+                var maxY = corners.Max(v => v.Y);
+
+                targetSize = new Vector2(maxX - minX, maxY - minY);
+            }
+
             if (visibleModels.Any())
             {
-                var viewRay = new Ray(bounding.Center, cameraDirection);
+                var frontRay = new Ray(bounding.Center, cameraDirection);
+                var rightNormal = Vector3.Cross(cameraDirection, upVector);
+                var upNormal = Vector3.Cross(cameraDirection, rightNormal);
+                var topRay = new Ray(bounding.Center, upNormal);
+                var sideRay = new Ray(bounding.Center, rightNormal);
 
-                switch (alignment)
-                {
-                    case CameraAlignment.Isometric:
-                        targetSize = new Vector2(bounding.Size.Length);
-                        distanceToTarget = bounding.Extents.Length;
-                        break;
-                    case CameraAlignment.Front:
-                    case CameraAlignment.Back:
-                        targetSize = new Vector2(bounding.SizeX, bounding.SizeY);
-                        distanceToTarget = bounding.SizeZ / 2f;
-                        break;
-                    case CameraAlignment.Left:
-                    case CameraAlignment.Right:
-                        targetSize = new Vector2(bounding.SizeZ, bounding.SizeY);
-                        distanceToTarget = bounding.SizeX / 2f;
-                        break;
-                    case CameraAlignment.Top:
-                    case CameraAlignment.Bottom:
-                        targetSize = new Vector2(bounding.SizeX, bounding.SizeZ);
-                        distanceToTarget = bounding.SizeY / 2f;
-                        break;
-                }
-
-                if (Ray.IntersectsBox(viewRay, bounding, out float distance))
+                if (Ray.IntersectsBox(frontRay, bounding, out float distance))
                     distanceToTarget = Math.Abs(distance);
-
             }
 
             Camera.FitOrtographicSize(targetSize + new Vector2(0.1f));
@@ -1265,23 +1385,30 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void GlControl_MouseEnter(object sender, EventArgs e)
         {
-            InputManager.SetContainsMouse(true);
+            if (ViewInitialized && InputManager != null)
+                InputManager.SetContainsMouse(true);
         }
 
         private void GlControl_MouseLeave(object sender, EventArgs e)
         {
+            if (!ViewInitialized || InputManager == null)
+                return;
+
             InputManager.SetContainsMouse(false);
             foreach (var elem in UIElements)
                 elem.SetIsOver(false);
+
         }
 
         private void GlControl1_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
         {
+            if (!ViewInitialized || InputManager == null)
+                return;
+
             if (e.Button == MouseButtons.Left)
             {
                 if (glControl1.ContainsFocus && !InputManager.ContainsFocus)
                 {
-                    //Trace.WriteLine("GlControl1_GotFocus FIX");
                     InputManager.ContainsFocus = true;
                     glControl1.Focus();
                 }
@@ -1290,14 +1417,14 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void GlControl1_GotFocus(object sender, EventArgs e)
         {
-            //Trace.WriteLine("GlControl1_GotFocus");
-            InputManager.ContainsFocus = true;
+            if (ViewInitialized && InputManager != null)
+                InputManager.ContainsFocus = true;
         }
 
         private void GlControl1_LostFocus(object sender, EventArgs e)
         {
-            //Trace.WriteLine("GlControl1_LostFocus");
-            InputManager.ContainsFocus = false;
+            if (ViewInitialized && InputManager != null)
+                InputManager.ContainsFocus = false;
         }
 
         private void MainForm_Activated(object sender, EventArgs e)
@@ -1314,12 +1441,20 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void GlControl_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
         {
-            InputManager.ProcessMouseMove(e);
+            if (ViewInitialized && InputManager != null)
+                InputManager.ProcessMouseMove(e);
         }
 
         #endregion
 
         #region Toolbar Menu
+
+        private void UpdateToolbarMenu()
+        {
+            BonesDropDownMenu.Visible = CurrentProject?.Flexible ?? false;
+            MeshesMenu_CalculateOutlines.Enabled = ProjectManager.IsProjectOpen;
+            MeshesMenu_RemoveOutlines.Enabled = ProjectManager.IsProjectOpen;
+        }
 
         private void CameraMenu_ResetCamera_Click(object sender, EventArgs e)
         {
@@ -1337,7 +1472,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         private void CameraMenu_AlignTo_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
             var alignment = (CameraAlignment)Enum.Parse(typeof(CameraAlignment), e.ClickedItem.Tag as string);
-            ResetCameraAlignment(alignment);
+            SetCameraAlignment(alignment);
         }
 
         private void CameraMenu_Orthographic_CheckedChanged(object sender, EventArgs e)
@@ -1406,6 +1541,79 @@ namespace LDDModder.BrickEditor.UI.Panels
                 ProjectManager.PartRenderMode = MeshRenderMode.SolidWireframe;
         }
 
+        private void MeshesDropDownMenu_DropDownOpening(object sender, EventArgs e)
+        {
+            bool hasSelectedMeshes = false;
+            if (ProjectManager.IsProjectOpen)
+            {
+                hasSelectedMeshes = ProjectManager.GetSelectionHierarchy().OfType<ModelMeshReference>().Any();
+            }
+
+            MeshesMenu_Merge.Enabled = hasSelectedMeshes;
+            MeshesMenu_Separate.Enabled = hasSelectedMeshes;
+        }
+
+        private void MeshesMenu_Separate_Click(object sender, EventArgs e)
+        {
+            if (ProjectManager.IsProjectOpen)
+            {
+                ProjectManager.StartBatchChanges();
+                var selectedMeshes = ProjectManager.GetSelectionHierarchy().OfType<ModelMeshReference>().ToList();
+                foreach (var meshRef in selectedMeshes)
+                    ProjectManager.CurrentProject.SplitMeshSurfaces(meshRef);
+                ProjectManager.EndBatchChanges();
+            }
+        }
+
+        private void MeshesMenu_Merge_Click(object sender, EventArgs e)
+        {
+
+            if (ProjectManager.IsProjectOpen)
+            {
+                ProjectManager.StartBatchChanges();
+                var selectedMeshes = ProjectManager.GetSelectionHierarchy().OfType<ModelMeshReference>().ToList();
+                ProjectManager.CurrentProject.CombineMeshes(selectedMeshes);
+                ProjectManager.EndBatchChanges();
+            }
+        }
+
+        private void MeshesMenu_CalculateOutlines_Click(object sender, EventArgs e)
+        {
+            if (ProjectManager.IsProjectOpen)
+                CurrentProject.ComputeEdgeOutlines();
+        }
+
+        private void MeshesMenu_RemoveOutlines_Click(object sender, EventArgs e)
+        {
+            if (ProjectManager.IsProjectOpen)
+                CurrentProject.ClearEdgeOutlines();
+        }
+
+        private void Bones_CalcBounding_Click(object sender, EventArgs e)
+        {
+            if (CurrentProject != null)
+            {
+                ProjectManager.StartBatchChanges();
+                CurrentProject.CalculateBoneBoundingBoxes();
+                ProjectManager.EndBatchChanges();
+            }
+        }
+
+        private void Bones_RebuildConnections_Click(object sender, EventArgs e)
+        {
+            if (CurrentProject != null)
+            {
+                ProjectManager.StartBatchChanges();
+                CurrentProject.RebuildBoneConnections();
+                ProjectManager.EndBatchChanges();
+            }
+        }
+
+        private void Bones_CopyData_Click(object sender, EventArgs e)
+        {
+            ProjectManager.ShowCopyBoneDataDialog();
+        }
+
         #region Tranform Gizmo Settings
 
         private void GizmoOrientationMenu_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -1430,6 +1638,9 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void SelectCurrentGizmoOptions()
         {
+            if (SelectionGizmo == null)
+                return;
+
             foreach (ToolStripMenuItem item in GizmoOrientationMenu.DropDownItems)
             {
                 if (Enum.TryParse(item.Tag as string, out OrientationMode mode))
@@ -1451,68 +1662,120 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
-            if (ContainsFocus)
-            {
-                if (keyData == Keys.NumPad0)
-                {
-                    CameraMenu_ResetCamera.PerformClick();
-                    return true;
-                }
-                else if (keyData == Keys.NumPad7)
-                {
-                    AlignToMenu_Top.PerformClick();
-                    return true;
-                }
-                else if (keyData == Keys.NumPad1)
-                {
-                    AlignToMenu_Front.PerformClick();
-                    return true;
-                }
-                else if (keyData == Keys.NumPad3)
-                {
-                    AlignToMenu_Right.PerformClick();
-                    return true;
-                }
-                //else if (keyData == Keys.H)
-                //{
-                //    var selectedModels = ProjectManager.SelectedElements
-                //        .Select(x => x.GetExtension<ModelElementExtension>())
-                //        .Where(x => x != null).ToList();
+            //Trace.WriteLine($"ProcessCmdKey( keyData => {keyData} ({(int)keyData}))");
+            var normalKey = keyData & ~Keys.Control;
+            normalKey &= ~Keys.Shift;
+            normalKey &= ~Keys.Alt;
 
-                //    //bool newState = InputManager.is
-                //    if (selectedModels.Any())
-                //    {
-                //        selectedModels.ForEach(x => x.IsHidden = true);
-                //    }
-                //}
+            bool isControlPressed = (keyData & Keys.Control) != 0;
+            bool isShiftPressed = (keyData & Keys.Shift) != 0;
+            bool isAltPressed = (keyData & Keys.Alt) != 0;
+            //Trace.WriteLine($"normalKey=> {normalKey} isControlPressed => {isControlPressed}, Is3DViewFocused => {Is3DViewFocused}");
+            
+            if (Is3DViewFocused)
+            {
+                if (normalKey == Keys.NumPad0)
+                {
+                    SetCameraAlignment(CameraAlignment.Isometric);
+                    return true;
+                }
+                else if (normalKey == Keys.NumPad7)
+                {
+                    if (isControlPressed)
+                        SetCameraAlignment(CameraAlignment.Bottom);
+                    else
+                        SetCameraAlignment(CameraAlignment.Top);
+                    return true;
+                }
+                else if (normalKey == Keys.NumPad1)
+                {
+                    if (isControlPressed)
+                        SetCameraAlignment(CameraAlignment.Back);
+                    else
+                        SetCameraAlignment(CameraAlignment.Front);
+                    return true;
+                }
+                else if (normalKey == Keys.NumPad3)
+                {
+                    if (isControlPressed)
+                        SetCameraAlignment(CameraAlignment.Left);
+                    else
+                        SetCameraAlignment(CameraAlignment.Right);
+
+                    return true;
+                }
+                else if (normalKey == Keys.Delete && ProjectManager.IsProjectOpen)
+                {
+
+                    var selectedModelElements = GetSelectedModels(true)
+                        .Select(x => x.Element).ToList();
+
+                    if (selectedModelElements.Any())
+                    {
+                        ProjectManager.DeleteElements(selectedModelElements);
+                        return true;
+                    }
+                    
+                }
+                else if (normalKey == Keys.H && ProjectManager.IsProjectOpen)
+                {
+                    var allModels = GetAllElementModels().ToList();
+
+                    if (!isShiftPressed && !isAltPressed)
+                    {
+                        ProjectManager.HideSelectedElements();
+                        return true;
+                    }
+                    else if (isShiftPressed)
+                    {
+                        ProjectManager.HideUnselectedElements();
+                        return true;
+                    }
+                    else if (isAltPressed)
+                    {
+                        ProjectManager.UnhideEverything();
+                        return true;
+                    }
+                }
+                else if (normalKey == Keys.C && isControlPressed && ProjectManager.IsProjectOpen)
+                {
+                    ProjectManager.CopySelectedElementsToClipboard();
+                    return true;
+                }
+                else if (normalKey == Keys.V && isControlPressed && ProjectManager.IsProjectOpen)
+                {
+                    ProjectManager.HandlePasteFromClipboard();
+                    return true;
+                }
             }
 
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
         #endregion
+        
 
-        private void toolStripMenuItem1_Click(object sender, EventArgs e)
+        #region IViewportWindow
+
+        public void RebuildModels()
         {
-            if (ProjectManager.IsProjectOpen)
-            {
-                ProjectManager.StartBatchChanges();
-                var selectedMeshes = ProjectManager.GetSelectionHierarchy().OfType<ModelMeshReference>().ToList();
-                foreach (var meshRef in selectedMeshes)
-                    ProjectManager.CurrentProject.SplitMeshSurfaces(meshRef);
-                ProjectManager.EndBatchChanges();
-            }
+            RebuildCollisionModels();
+            RebuildConnectionModels();
+            RebuildBoneModels();
+            RebuildSurfaceModels();
         }
 
-        private void test2ToolStripMenuItem_Click(object sender, EventArgs e)
+        public void ForceRender()
         {
-            if (ProjectManager.IsProjectOpen)
-            {
-                ProjectManager.StartBatchChanges();
-                var selectedMeshes = ProjectManager.GetSelectionHierarchy().OfType<ModelMeshReference>().ToList();
-                ProjectManager.CurrentProject.CombineMeshes(selectedMeshes);
-                ProjectManager.EndBatchChanges();
-            }
+            if (!LoopController.IsRunning)
+                LoopController.ForceRender();
         }
+
+        public bool Is3DViewFocused => InputManager.ContainsFocus;
+
+
+        #endregion
+
+        
     }
 }

@@ -50,6 +50,12 @@ namespace LDDModder.BrickEditor.Rendering
         }
     }
 
+    public struct VertVBW : IVertexData
+    {
+        public Vector3 Position;
+        public float BoneWeight;
+    }
+
     public struct VertVT : IVertexData
     {
         public Vector3 Position;

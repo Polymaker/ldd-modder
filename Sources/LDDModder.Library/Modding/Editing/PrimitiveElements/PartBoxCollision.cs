@@ -45,7 +45,7 @@ namespace LDDModder.Modding.Editing
         public override XElement SerializeToXml()
         {
             var elem = base.SerializeToXml();
-            elem­.Add(new XElement("Size", Size.ToXmlAttributes()));
+            elem­.Add(new XElement("Size", Size.Rounded(6).ToXmlAttributes()));
             return elem;
         }
 
@@ -59,6 +59,7 @@ namespace LDDModder.Modding.Editing
                     sizeElem.ReadAttribute("Y", 0d),
                     sizeElem.ReadAttribute("Z", 0d)
                 );
+                //_Size = _Size.Rounded(6);
             }
             
         }

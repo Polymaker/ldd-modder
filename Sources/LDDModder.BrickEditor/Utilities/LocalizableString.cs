@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.ComponentModel.Design.Serialization;
 using System.Globalization;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace LDDModder.BrickEditor.Localization
 {
@@ -54,33 +55,57 @@ namespace LDDModder.BrickEditor.Localization
     {
         public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
         {
-            return base.CanConvertFrom(context, sourceType);
+            try
+            {
+                return base.CanConvertFrom(context, sourceType);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"CanConvertFrom =>\r\n" + ex.ToString());
+            }
+            return false;
         }
 
         public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
         {
-            if (destinationType == typeof(InstanceDescriptor))
+            try
             {
-                return true;
+                if (destinationType == typeof(InstanceDescriptor))
+                {
+                    return true;
+                }
+                return base.CanConvertTo(context, destinationType);
             }
-            return base.CanConvertTo(context, destinationType);
+            catch (Exception ex)
+            {
+                MessageBox.Show($"CanConvertTo =>\r\n" + ex.ToString());
+            }
+            return false;
         }
 
         public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
         {
-            if (destinationType == typeof(InstanceDescriptor))
+            try
             {
-                var defaultCtor = typeof(LocalizableString).GetConstructor(new Type[0]);
-                if (defaultCtor == null)
+                if (destinationType == typeof(InstanceDescriptor))
                 {
-                    defaultCtor = typeof(LocalizableString).GetConstructors()
-                        .OrderBy(x => x.GetParameters().Length).FirstOrDefault();
+                    var defaultCtor = typeof(LocalizableString).GetConstructor(new Type[0]);
+                    if (defaultCtor == null)
+                    {
+                        defaultCtor = typeof(LocalizableString).GetConstructors()
+                            .OrderBy(x => x.GetParameters().Length).FirstOrDefault();
+                    }
+                    return new InstanceDescriptor(defaultCtor, new object[0], false);
                 }
-                return new InstanceDescriptor(defaultCtor, new object[0], false);
-            }
-            
 
-            return base.ConvertTo(context, culture, value, destinationType);
+
+                return base.ConvertTo(context, culture, value, destinationType);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"ConvertTo =>\r\n" + ex.ToString());
+            }
+            return null;
         }
     }
 }

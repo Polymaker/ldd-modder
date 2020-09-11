@@ -8,10 +8,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LDDModder.LDD.Primitives.Connectors;
+using LDDModder.BrickEditor.UI.Controls;
 
 namespace LDDModder.BrickEditor.UI.Editors
 {
-    public partial class StudConnectionEditor : UserControl
+    public partial class StudConnectionEditor : ProjectAwareControl
     {
         [Browsable(false)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -44,14 +45,53 @@ namespace LDDModder.BrickEditor.UI.Editors
         {
             GridHeightBox.Value = StudConnector?.StudHeight ?? 1;
             GridWidthBox.Value = StudConnector?.StudWidth ?? 1;
+            GidSizeBox_ValueChanged(null, EventArgs.Empty);
         }
 
         private void ApplySizeButton_Click(object sender, EventArgs e)
         {
             if (StudConnector != null)
             {
-                StudConnector.StudHeight = (int)GridHeightBox.Value;
-                StudConnector.StudWidth = (int)GridWidthBox.Value;
+                int newWidth = (int)GridWidthBox.Value * 2;
+                int newHeight = (int)GridHeightBox.Value * 2;
+
+                if (ProjectManager != null)
+                {
+                    if (!ProjectManager.ValidateResizeStud(StudConnector, newWidth, newHeight))
+                    {
+                        GridHeightBox.Value = StudConnector.StudHeight;
+                        GridWidthBox.Value = StudConnector.StudWidth;
+                        return;
+                    }
+                }
+
+                ProjectManager?.StartBatchChanges();
+
+                StudConnector.Resize(newWidth, newHeight);
+
+                ProjectManager?.EndBatchChanges();
+            }
+        }
+
+        private void GidSizeBox_ValueChanged(object sender, EventArgs e)
+        {
+            if (StudConnector != null)
+            {
+                ApplySizeButton.Enabled = StudConnector.StudWidth != (int)GridWidthBox.Value || StudConnector.StudHeight != (int)GridHeightBox.Value;
+            }
+        }
+
+        private void GidSizeBox_BeginEdit(object sender, EventArgs e)
+        {
+            if (StudConnector != null)
+                ApplySizeButton.Enabled = true;
+        }
+
+        private void GidSizeBox_EndEdit(object sender, EventArgs e)
+        {
+            if (StudConnector != null)
+            {
+                ApplySizeButton.Enabled = StudConnector.StudWidth != (int)GridWidthBox.Value || StudConnector.StudHeight != (int)GridHeightBox.Value;
             }
         }
     }

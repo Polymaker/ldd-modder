@@ -15,6 +15,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
     public class ModelElementExtension : IElementExtender/* : INotifyPropertyChanged*/
     {
         public IProjectManager Manager { get; internal set; }
+        //public IProjectDocument Document { get; internal set; }
 
         public PartElement Element { get; }
 
@@ -48,8 +49,11 @@ namespace LDDModder.BrickEditor.ProjectHandling
             //protected set => _IsVisible = value;
         }
 
+        public bool IsVisibilityDirty => visbilityDirty;
+
         public bool HasInitialized { get; private set; }
 
+        public event EventHandler VisibileChanged;
         public event EventHandler VisibilityChanged;
 
         public ModelElementExtension(PartElement element)
@@ -67,6 +71,15 @@ namespace LDDModder.BrickEditor.ProjectHandling
                 visbilityDirty = true;
             }
         }
+
+        //internal void AssignDocument(IProjectDocument document)
+        //{
+        //    if (Document != document)
+        //    {
+        //        Document = document;
+        //        visbilityDirty = true;
+        //    }
+        //}
 
         public bool IsParentVisible()
         {
@@ -124,18 +137,27 @@ namespace LDDModder.BrickEditor.ProjectHandling
             return !isParentVisible || isHiddenByConfigs || isHiddenByParent;
         }
 
+        public void RefreshIfDirty()
+        {
+            if (visbilityDirty)
+                CalculateVisibility();
+        }
+
         public void CalculateVisibility()
         {
             if (Monitor.IsEntered(DrillDownLock))
                 Monitor.Wait(DrillDownLock);
 
             bool wasVisible = _IsVisible;
-
+            bool wasDirty = visbilityDirty;
             _IsVisible = !IsHidden && !IsHiddenOverride();
             
             visbilityDirty = false;
             //Debug.WriteLine($"{Element.Name} IsVisible {wasVisible} -> {_IsVisible}");
             if (_IsVisible != wasVisible)
+                VisibileChanged?.Invoke(this, EventArgs.Empty);
+
+            if (wasDirty)
                 VisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
 

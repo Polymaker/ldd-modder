@@ -17,15 +17,24 @@ namespace LDDModder.BrickEditor.Rendering
 
         public Buffer<int> IndexBuffer { get; protected set; }
 
-        public int IndexCount => (IndexBuffer != null && IndexBuffer.Initialized) ? IndexBuffer.ElementCount : 0;
+        public int IndexCount => (IndexBuffer != null && IndexBuffer.Initialized) ? IndexBuffer.ElementCount : TempIndices.Count;
 
         public Buffer<T> VertexBuffer { get; protected set; }
 
-        public int VertexCount => (VertexBuffer != null && VertexBuffer.Initialized) ? VertexBuffer.ElementCount : 0;
+        public int VertexCount => (VertexBuffer != null && VertexBuffer.Initialized) ? VertexBuffer.ElementCount : TempVertices.Count;
 
         public bool BufferInitialized { get; protected set; }
 
         public bool IsDisposed { get; protected set; }
+
+        private List<int> TempIndices;
+        private List<T> TempVertices;
+
+        public IndexedVertexBuffer()
+        {
+            TempIndices = new List<int>();
+            TempVertices = new List<T>();
+        }
 
         public void Bind()
         {
@@ -69,6 +78,14 @@ namespace LDDModder.BrickEditor.Rendering
                 Vao.Bind();
                 Vao.BindElementBuffer(IndexBuffer);
 
+                if (TempIndices.Count > 0)
+                    IndexBuffer.Init(BufferTarget.ElementArrayBuffer, TempIndices.ToArray());
+
+                if (TempVertices.Count > 0)
+                    VertexBuffer.Init(BufferTarget.ArrayBuffer, TempVertices.ToArray());
+
+                TempIndices.Clear();
+                TempVertices.Clear();
             }
         }
 
@@ -79,40 +96,77 @@ namespace LDDModder.BrickEditor.Rendering
                 IndexBuffer.Clear(BufferTarget.ElementArrayBuffer);
                 VertexBuffer.Clear(BufferTarget.ArrayBuffer);
             }
+            else
+            {
+                TempIndices.Clear();
+                TempVertices.Clear();
+            }
         }
 
         public void SetIndices(IEnumerable<int> indices)
         {
-            if (!BufferInitialized)
-                CreateBuffers();
-            IndexBuffer.Clear(BufferTarget.ElementArrayBuffer);
-            IndexBuffer.Init(BufferTarget.ElementArrayBuffer, indices.ToArray());
+            //if (!BufferInitialized)
+            //    CreateBuffers();
+
+            if (BufferInitialized)
+            {
+                IndexBuffer.Clear(BufferTarget.ElementArrayBuffer);
+                IndexBuffer.Init(BufferTarget.ElementArrayBuffer, indices.ToArray());
+            }
+            else
+            {
+                TempIndices = indices.ToList();
+            }
         }
 
         public void AppendIndices(IEnumerable<int> indices)
         {
-            if (!BufferInitialized)
-                CreateBuffers();
-            var currentIndices = IndexBuffer.Content;
-            IndexBuffer.Clear(BufferTarget.ElementArrayBuffer);
-            IndexBuffer.Init(BufferTarget.ElementArrayBuffer, currentIndices.Concat(indices).ToArray());
+            //if (!BufferInitialized)
+            //    CreateBuffers();
+
+            if (BufferInitialized)
+            {
+                var currentIndices = IndexBuffer.Content;
+                IndexBuffer.Clear(BufferTarget.ElementArrayBuffer);
+                IndexBuffer.Init(BufferTarget.ElementArrayBuffer, currentIndices.Concat(indices).ToArray());
+            }
+            else
+            {
+                TempIndices.AddRange(indices);
+            }
         }
 
         public void SetVertices(IEnumerable<T> vertices)
         {
-            if (!BufferInitialized)
-                CreateBuffers();
-            VertexBuffer.Clear(BufferTarget.ArrayBuffer);
-            VertexBuffer.Init(BufferTarget.ArrayBuffer, vertices.ToArray());
+            //if (!BufferInitialized)
+            //    CreateBuffers();
+
+            if (BufferInitialized)
+            {
+                VertexBuffer.Clear(BufferTarget.ArrayBuffer);
+                VertexBuffer.Init(BufferTarget.ArrayBuffer, vertices.ToArray());
+            }
+            else
+            {
+                TempVertices = vertices.ToList();
+            }
         }
 
         public void AppendVertices(IEnumerable<T> vertices)
         {
-            if (!BufferInitialized)
-                CreateBuffers();
-            var currentVerts = VertexBuffer.Content;
-            VertexBuffer.Clear(BufferTarget.ArrayBuffer);
-            VertexBuffer.Init(BufferTarget.ArrayBuffer, currentVerts.Concat(vertices).ToArray());
+            //if (!BufferInitialized)
+            //    CreateBuffers();
+
+            if (BufferInitialized)
+            {
+                var currentVerts = VertexBuffer.Content;
+                VertexBuffer.Clear(BufferTarget.ArrayBuffer);
+                VertexBuffer.Init(BufferTarget.ArrayBuffer, currentVerts.Concat(vertices).ToArray());
+            }
+            else
+            {
+                TempVertices.AddRange(vertices);
+            }
         }
 
         public void LoadModelVertices(Assimp.Mesh mesh, bool append = false)
@@ -149,7 +203,7 @@ namespace LDDModder.BrickEditor.Rendering
 
         public Vector3 GetVertex(int index)
         {
-            var vert = VertexBuffer.Content[index];
+            T vert = BufferInitialized ? VertexBuffer.Content[index] : TempVertices[index];
             if (vert is VertVN vn)
                 return vn.Position;
             else if (vert is VertVNT vnt)
@@ -159,28 +213,54 @@ namespace LDDModder.BrickEditor.Rendering
             return Vector3.Zero;
         }
 
+        public IEnumerable<int> GetIndices()
+        {
+            if (BufferInitialized)
+                return IndexBuffer.Content;
+            return TempIndices;
+        }
+
+        public IEnumerable<T> GetVertices()
+        {
+            if (BufferInitialized)
+                return VertexBuffer.Content;
+            return TempVertices;
+        }
+
         #region Draw Methods
 
         public void DrawElementsBaseVertex(PrimitiveType mode, int baseVertex, int count, int offset = 0)
         {
+            if (!BufferInitialized)
+                CreateBuffers();
+
             Vao.Bind();
             Vao.DrawElementsBaseVertex(mode, baseVertex, count, DrawElementsType.UnsignedInt, offset);
         }
 
         public void DrawElements(PrimitiveType drawMode = PrimitiveType.Triangles)
         {
+            if (!BufferInitialized)
+                CreateBuffers();
+
             Vao.Bind();
             Vao.DrawElements(drawMode, IndexBuffer.ElementCount);
         }
 
         public void DrawElements(PrimitiveType drawMode, int count)
         {
+            if (!BufferInitialized)
+                CreateBuffers();
+
             Vao.Bind();
             Vao.DrawElements(drawMode, count);
         }
 
         public void DrawArrays(PrimitiveType drawMode, int first, int count)
         {
+            if (!BufferInitialized)
+                CreateBuffers();
+
             Vao.Bind();
             Vao.DrawArrays(drawMode, first, count);
         }

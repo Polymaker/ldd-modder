@@ -66,7 +66,7 @@ namespace LDDModder.Modding.Editing
 
             var studsElem = elem.AddElement(nameof(ReferencedStuds));
             foreach (var stud in ReferencedStuds)
-                studsElem.Add(stud.SerializeToXml2());
+                studsElem.Add(stud.SerializeToXml());
             return elem;
         }
 

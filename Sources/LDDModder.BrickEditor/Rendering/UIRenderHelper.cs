@@ -45,22 +45,37 @@ namespace LDDModder.BrickEditor.Rendering
 
         public static void InitializeResources()
         {
+            var builderConfig = new QFontBuilderConfiguration(true)
+            {
+                ShadowConfig =
+                {
+                    BlurRadius = 2,
+                    BlurPasses = 1,
+                    Type = ShadowType.Blurred
+                },
+                TextGenerationRenderHint = TextGenerationRenderHint.ClearTypeGridFit,
+                Characters = CharacterSet.General | CharacterSet.Japanese | CharacterSet.Thai | CharacterSet.Cyrillic
+            };
 
             NormalFont = new QFont("C:\\Windows\\Fonts\\segoeui.ttf", 10,
-                new QFontBuilderConfiguration(true));
+                builderConfig);
 
             SmallFont = new QFont("C:\\Windows\\Fonts\\segoeui.ttf", 8,
-                new QFontBuilderConfiguration(true));
+                builderConfig);
 
             MonoFont = new QFont("C:\\Windows\\Fonts\\consola.ttf", 10,
-                new QFontBuilderConfiguration(true));
+                builderConfig);
 
             TextRenderer = new QFontDrawing();
+
             UIShader = ProgramFactory.Create<UIShaderProgram>();
 
             UIShader.Use();
             UIShader.Opacity.Set(1f);
+        }
 
+        public static void InitializeBuffers()
+        {
             VAO = new VertexArray();
             VBO = new Buffer<VertVT>();
             VAO.Bind();
@@ -97,7 +112,6 @@ namespace LDDModder.BrickEditor.Rendering
                 -1.0f, 1.0f);
 
             TextRenderer.ProjectionMatrix = TextMatrix;
-            
         }
 
         public static void DrawSprite(Texture2D texture, Vector4 destination, SpriteBounds spriteBounds)
@@ -172,16 +186,23 @@ namespace LDDModder.BrickEditor.Rendering
             return sprite;
         }
 
-        public static void DrawText(string text, QFont font, Vector4 color, Vector2 position)
-        {
-            var col = Color.FromArgb((byte)(color.W * 255),
-                (byte)(color.X * 255), (byte)(color.Y * 255), (byte)(color.Z * 255));
-            DrawText(text, font, col, new RectangleF(position.X, position.Y, 9999, 9999));
-        }
+        //public static void DrawText(string text, QFont font, Vector4 color, Vector2 position)
+        //{
+        //    var col = Color.FromArgb((byte)(color.W * 255),
+        //        (byte)(color.X * 255), (byte)(color.Y * 255), (byte)(color.Z * 255));
+        //    DrawText(text, font, col, new RectangleF(position.X, position.Y, 9999, 9999));
+        //}
 
         public static void DrawText(string text, QFont font, Color color, Vector2 position)
         {
             DrawText(text, font, color, new RectangleF(position.X, position.Y, 9999, 9999));
+        }
+
+        public static void DrawShadowText(string text, QFont font, Color color, Vector2 position)
+        {
+            var dpOpt = new QFontRenderOptions() { Colour = color, LockToPixel = false, DropShadowActive = true };
+            DrawText(text, font, new RectangleF(position.X, position.Y, 9999, 9999), 
+                StringAlignment.Near, StringAlignment.Near, dpOpt);
         }
 
         public static void DrawText(string text, QFont font, Vector4 color, Vector4 bounds,
@@ -203,6 +224,15 @@ namespace LDDModder.BrickEditor.Rendering
         public static void DrawText(string text, QFont font, Color color, RectangleF bounds,
             StringAlignment vAlign = StringAlignment.Near,
             StringAlignment hAlign = StringAlignment.Near)
+        {
+            var dpOpt = new QFontRenderOptions() { Colour = color, LockToPixel = true };
+            DrawText(text, font, bounds, vAlign, hAlign, dpOpt);
+        }
+
+        public static void DrawText(string text, QFont font, RectangleF bounds,
+            StringAlignment vAlign,
+            StringAlignment hAlign,
+            QFontRenderOptions options)
         {
 
             var textSize = font.Measure(text, bounds.Size, QFontAlignment.Left);
@@ -236,11 +266,11 @@ namespace LDDModder.BrickEditor.Rendering
 
             textPos.Y = ViewSize.Y - textPos.Y;
 
-            var dp = new QFontDrawingPrimitive(font, new QFontRenderOptions() { Colour = color, LockToPixel = true });
+            var dp = new QFontDrawingPrimitive(font, options);
             dp.Print(text, new Vector3(textPos.X, textPos.Y, 0f), bounds.Size, QFontAlignment.Left);
+
             TextRenderer.DrawingPrimitives.Add(dp);
         }
-
 
 
         public static void IntializeBeforeRender()

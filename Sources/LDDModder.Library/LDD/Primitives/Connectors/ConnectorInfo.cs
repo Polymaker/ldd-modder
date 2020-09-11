@@ -13,12 +13,21 @@ namespace LDDModder.LDD.Primitives.Connectors
         public string Description { get; set; }
         public List<int> ConnectsWith { get; set; } = new List<int>();
 
+        public static string MALE_LABEL = "Male";
+        public static string FEMALE_LABEL = "Female";
+
         public string SubTypeDisplayText
         {
             get
             {
                 if (string.IsNullOrEmpty(Description))
-                    return SubType.ToString();
+                {
+                    if (SubType % 2 == 0)
+                        return $"{SubType} ({FEMALE_LABEL})";
+                    else
+                        return $"{SubType} ({MALE_LABEL})";
+                    //return SubType.ToString();
+                }
                 return $"{SubType} - {Description}";
             }
         }

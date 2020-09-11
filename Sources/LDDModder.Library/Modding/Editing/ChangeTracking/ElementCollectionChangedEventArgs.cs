@@ -28,7 +28,9 @@ namespace LDDModder.Modding.Editing
             Collection = collection;
             Action = action;
             ChangedItems = changedItems.ToArray();
-            ElementType = ChangedItems[0].Element.GetElementType();
+            ElementType = CollectionExtensions.GetCollectionType(collection.GetType());
+            if (ElementType == null)
+                ElementType = ChangedItems[0].Element.GetElementType();
         }
 
         public IEnumerable<PartElement> GetElementHierarchy()

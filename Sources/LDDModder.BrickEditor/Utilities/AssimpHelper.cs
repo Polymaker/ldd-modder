@@ -8,6 +8,14 @@ namespace Assimp
 {
     public static class AssimpHelper
     {
+
+        public static int GetLevel(this Node node)
+        {
+            if (node.Parent != null)
+                return GetLevel(node.Parent) + 1;
+            return 0;
+        }
+
         public static Node GetMeshNode(this Scene scene, Mesh mesh)
         {
             int index = scene.Meshes.IndexOf(mesh);
@@ -45,8 +53,7 @@ namespace Assimp
 
         public static IEnumerable<Node> GetNodeHierarchy(this Node node)
         {
-            foreach (var child in node.Children)
-                yield return child;
+            return GetNodeHierarchy(node, false);
         }
 
         public static IEnumerable<Node> GetNodeHierarchy(this Node node, bool includeSelf)

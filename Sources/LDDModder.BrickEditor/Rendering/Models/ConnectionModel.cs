@@ -49,33 +49,6 @@ namespace LDDModder.BrickEditor.Rendering
             UpdateRenderingModel();
         }
 
-
-        protected override Matrix4 GetElementTransform()
-        {
-            var baseTransform = Connection.Transform.ToMatrixD().ToGL();
-
-            if (Connection.Parent is PartBone partBone)
-            {
-                ParentTransform = partBone.Transform.ToMatrix().ToGL();
-                baseTransform = baseTransform * partBone.Transform.ToMatrixD().ToGL();
-            }
-
-            return baseTransform.ToMatrix4();
-        }
-
-        protected override void ApplyTransformToElement(Matrix4 transform)
-        {
-            if (Connection.Parent is PartBone partBone)
-            {
-                var parentTrans = partBone.Transform.ToMatrixD().ToGL();
-                var localTrans = transform.ToMatrix4d() * parentTrans.Inverted();
-                //transform = localTrans.ToMatrix4();
-                Connection.Transform = ItemTransform.FromMatrix(localTrans.ToLDD());
-            }
-            else
-                base.ApplyTransformToElement(transform);
-        }
-
         protected override void OnElementPropertyChanged(ElementValueChangedEventArgs e)
         {
             base.OnElementPropertyChanged(e);
@@ -85,7 +58,6 @@ namespace LDDModder.BrickEditor.Rendering
                 case nameof(PartElement.ID):
                 case nameof(PartElement.Name):
                 case nameof(PartConnection.Transform):
-                case nameof(PartConnection.Comments):
                     break;
 
                 default:
@@ -236,7 +208,7 @@ namespace LDDModder.BrickEditor.Rendering
 
         private void RenderCustom2DField(Custom2DFieldConnector connector)
         {
-            RenderHelper.DrawStudConnector2(Transform, connector);
+            RenderHelper.DrawStudConnectorGrid(Transform, connector);
 
             var color = IsSelected ? new Vector4(1f) : new Vector4(0, 0, 0, 1);
             RenderHelper.DrawRectangle(Transform,

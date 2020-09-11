@@ -1,17 +1,24 @@
 ﻿using LDDModder.BrickEditor.Models.Navigation;
+using LDDModder.BrickEditor.ProjectHandling.ViewInterfaces;
 using LDDModder.BrickEditor.Rendering;
 using LDDModder.BrickEditor.Resources;
 using LDDModder.BrickEditor.Settings;
+using LDDModder.BrickEditor.UI.Windows;
 using LDDModder.LDD;
 using LDDModder.LDD.Parts;
+using LDDModder.LDD.Primitives.Collisions;
+using LDDModder.LDD.Primitives.Connectors;
 using LDDModder.Modding.Editing;
+using LDDModder.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Linq;
 
 namespace LDDModder.BrickEditor.ProjectHandling
 {
@@ -19,7 +26,6 @@ namespace LDDModder.BrickEditor.ProjectHandling
     {
         private List<PartElement> _SelectedElements;
         private List<ValidationMessage> _ValidationMessages;
-
         private long LastValidation;
         private long LastSavedChange;
 
@@ -48,6 +54,14 @@ namespace LDDModder.BrickEditor.ProjectHandling
         public IList<PartElement> SelectedElements => _SelectedElements.AsReadOnly();
 
         public ProjectTreeNodeCollection NavigationTreeNodes { get; private set; }
+
+        #region Windows
+
+        public IMainWindow MainWindow { get; set; }
+        public IViewportWindow ViewportWindow { get; set; }
+        public INavigationWindow NavigationWindow { get; set; }
+
+        #endregion
 
         #region Events
 
@@ -89,7 +103,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
             _SelectedElements = new List<PartElement>();
             _ValidationMessages = new List<ValidationMessage>();
             NavigationTreeNodes = new ProjectTreeNodeCollection(this);
-
+            
             UndoRedoManager = new UndoRedoManager(this);
             UndoRedoManager.BeginUndoRedo += UndoRedoManager_BeginUndoRedo;
             UndoRedoManager.EndUndoRedo += UndoRedoManager_EndUndoRedo;
@@ -110,10 +124,9 @@ namespace LDDModder.BrickEditor.ProjectHandling
                 PreventProjectChange = false;
 
                 CurrentProject = project;
-
+                
                 if (project != null)
                     AttachPartProject(project);
-
                 ProjectChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -127,6 +140,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
                 ProjectClosed?.Invoke(this, EventArgs.Empty);
 
                 CurrentProject = null;
+                UndoRedoManager.ClearHistory();
 
                 if (!PreventProjectChange)
                     ProjectChanged?.Invoke(this, EventArgs.Empty);
@@ -309,6 +323,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
         private bool _ShowCollisions;
         private bool _ShowConnections;
         private MeshRenderMode _PartRenderMode;
+        private bool BatchChangingVisibility;
 
         public bool ShowPartModels
         {
@@ -346,12 +361,15 @@ namespace LDDModder.BrickEditor.ProjectHandling
         {
             if (visible != ShowPartModels)
             {
+                Trace.WriteLine($"{nameof(SetPartModelsVisibility)}( visible => {visible} )");
+
                 _ShowPartModels = visible;
 
                 if (IsProjectOpen && IsProjectAttached)
                 {
                     //CurrentProject.ProjectProperties["ShowModels"] = visible.ToString();
                     InvalidateElementsVisibility(CurrentProject.Surfaces);
+                    RefreshAllNavigation();
                 }
 
                 PartModelsVisibilityChanged?.Invoke(this, EventArgs.Empty);
@@ -362,13 +380,14 @@ namespace LDDModder.BrickEditor.ProjectHandling
         {
             if (visible != ShowCollisions)
             {
+                Trace.WriteLine($"{nameof(SetCollisionsVisibility)}( visible => {visible} )");
+
                 _ShowCollisions = visible;
 
                 if (IsProjectOpen && IsProjectAttached)
                 {
-                    //CurrentProject.ProjectProperties["ShowCollisions"] = visible.ToString();
-                    InvalidateElementsVisibility(CurrentProject.Collisions);
-                    InvalidateElementsVisibility(CurrentProject.Bones);
+                    InvalidateElementsVisibility(CurrentProject.GetAllElements<PartCollision>());
+                    RefreshAllNavigation();
                 }
 
                 CollisionsVisibilityChanged?.Invoke(this, EventArgs.Empty);
@@ -379,13 +398,14 @@ namespace LDDModder.BrickEditor.ProjectHandling
         {
             if (visible != ShowConnections)
             {
+                Trace.WriteLine($"{nameof(SetConnectionsVisibility)}( visible => {visible} )");
+
                 _ShowConnections = visible;
 
                 if (IsProjectOpen && IsProjectAttached)
                 {
-                    //CurrentProject.ProjectProperties["ShowConnections"] = visible.ToString();
-                    InvalidateElementsVisibility(CurrentProject.Connections);
-                    InvalidateElementsVisibility(CurrentProject.Bones);
+                    InvalidateElementsVisibility(CurrentProject.GetAllElements<PartConnection>());
+                    RefreshAllNavigation();
                 }
 
                 ConnectionsVisibilityChanged?.Invoke(this, EventArgs.Empty);
@@ -397,16 +417,24 @@ namespace LDDModder.BrickEditor.ProjectHandling
             if (renderMode != _PartRenderMode)
             {
                 _PartRenderMode = renderMode;
-                if (IsProjectOpen && IsProjectAttached)
-                    //CurrentProject.ProjectProperties["PartRenderMode"] = renderMode.ToString();
                 PartRenderModeChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
         private void InvalidateElementsVisibility(IEnumerable<PartElement> elements)
         {
-            foreach (var elem in elements)
-                elem.GetExtension<ModelElementExtension>()?.InvalidateVisibility();
+            BatchChangingVisibility = true;
+            var elemExtensions = elements.Select(x => x.GetExtension<ModelElementExtension>()).ToList();
+            elemExtensions.RemoveAll(e => e == null);
+
+            foreach (var elemExt in elemExtensions)
+                elemExt.InvalidateVisibility();
+
+            foreach (var elemExt in elemExtensions)
+                elemExt.CalculateVisibility();
+
+            var test = elemExtensions.Where(x => x.IsVisibilityDirty);
+            BatchChangingVisibility = false;
         }
 
         #endregion
@@ -523,6 +551,13 @@ namespace LDDModder.BrickEditor.ProjectHandling
             UndoRedoManager.StartBatchChanges();
         }
 
+        public void StartBatchChanges(string description)
+        {
+            //TODO
+            Trace.WriteLine($"Executing: {description}");
+            UndoRedoManager.StartBatchChanges();
+        }
+
         public void EndBatchChanges()
         {
             UndoRedoManager.EndBatchChanges();
@@ -554,7 +589,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
         #endregion
 
-        #region Validation Handling
+        #region Part Validation Handling
 
         public bool IsValidatingProject { get; private set; }
 
@@ -592,11 +627,39 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
                 IsValidatingProject = false;
                 LastValidation = UndoRedoManager.CurrentChangeID;
-
+                
                 ValidationFinished?.Invoke(this, EventArgs.Empty);
-
             }
         }
+
+        #endregion
+
+        #region Editing Validation
+
+        public bool ValidateResizeStud(Custom2DFieldConnector connector, int newWidth, int newHeight)
+        {
+            //var connection = CurrentProject.GetAllElements<PartConnection>(x => x.Connector == connector).FirstOrDefault();
+            var studRefs = CurrentProject.GetAllElements<StudReference>(x => x.Connector == connector).ToList();
+            
+            if (studRefs.Any(x => x.FieldNode != null && (x.PositionX > newWidth || x.PositionY > newHeight)))
+            {
+                var dlgResult = MessageBox.Show(
+                    Messages.Message_ConfirmResizeStuds, 
+                    Messages.Caption_Confirmation, 
+                    MessageBoxButtons.YesNo);
+                return dlgResult == DialogResult.Yes;
+            }
+
+            return true;
+        }
+
+
+
+        #endregion
+
+        #region Element handling
+
+        
 
         #endregion
 
@@ -611,7 +674,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
         public event EventHandler<ProjectBuildEventArgs> GenerationFinished;
 
-        public PartWrapper GenerateLddFiles(bool generateOutlines = true)
+        public PartWrapper GenerateLddFiles()
         {
             if (!IsProjectOpen)
                 return null;
@@ -625,11 +688,6 @@ namespace LDDModder.BrickEditor.ProjectHandling
             try
             {
                 generatedPart = CurrentProject.GenerateLddPart();
-                if (generateOutlines)
-                    generatedPart.ComputeEdgeOutlines();
-                else
-                    generatedPart.ClearEdgeOutlines();
-
                 GenerationSuccessful = true;
             }
             catch (Exception ex)
@@ -688,17 +746,78 @@ namespace LDDModder.BrickEditor.ProjectHandling
             return result;
         }
 
+        public void SaveGeneratedPart(LDD.Parts.PartWrapper part, BuildConfiguration buildConfig)
+        {
+            string targetPath = buildConfig.OutputPath;
+
+            if (targetPath.Contains("$"))
+            {
+                targetPath = ExpandVariablePath(targetPath);
+            }
+
+            if (buildConfig.InternalFlag == BuildConfiguration.MANUAL_FLAG ||
+                string.IsNullOrEmpty(buildConfig.OutputPath))
+            {
+                using (var sfd = new SaveFileDialog())
+                {
+                    if (!string.IsNullOrEmpty(targetPath) &&
+                        FileHelper.IsValidDirectory(targetPath))
+                        sfd.InitialDirectory = targetPath;
+
+                    sfd.FileName = part.PartID.ToString();
+
+                    if (sfd.ShowDialog() != DialogResult.OK)
+                    {
+                        //show canceled message
+                        return;
+                    }
+
+                    targetPath = Path.GetDirectoryName(sfd.FileName);
+                }
+            }
+
+            string meshDirectory = targetPath;
+            if (buildConfig.LOD0Subdirectory)
+                meshDirectory = Path.Combine(targetPath, "LOD0");
+
+            bool filesExists = part.CheckFilesExists(targetPath, meshDirectory);
+
+            if (buildConfig.ConfirmOverwrite && filesExists)
+            {
+                var msgResult = MessageBoxEX.Show(MainWindow,
+                    Messages.Message_ConfirmOverwritePartFiles, 
+                    Messages.Caption_LddPartGeneration, MessageBoxButtons.YesNo);
+                if (msgResult != DialogResult.Yes)
+                    return;
+            }
+
+            part.SaveToDirectory(targetPath, meshDirectory);
+
+            var generatedFiles = new List<string>() { part.Filepath };
+            generatedFiles.AddRange(part.Surfaces.Select(s => s.Filepath));
+            //string parentDirectory = string.Empty;
+            //var dirInfo = new DirectoryInfo(targetPath);
+            //if (dirInfo.Parent != null)
+            //    parentDirectory = dirInfo.Parent.FullName;
+            for (int i = 0; i < generatedFiles.Count; i++)
+                generatedFiles[i] = generatedFiles[i].Replace(targetPath, string.Empty);
+
+            MessageBoxEX.ShowDetails(MainWindow, 
+                Messages.Message_LddFilesGenerated, 
+                Messages.Caption_LddPartGeneration, 
+                string.Join(Environment.NewLine, generatedFiles), 
+                MessageBoxButtons.OK, 
+                MessageBoxIcon.Information);
+        }
+
         #endregion
 
         #region Navigation Tree
 
-        //public ProjectElementNode GetElementTreeNode(PartElement element)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
         public void RebuildNavigationTree()
         {
+            foreach (var node in NavigationTreeNodes)
+                node.FreeObjects();
             NavigationTreeNodes.Clear();
 
             NavigationTreeNodes.Add(new ProjectCollectionNode(
@@ -722,6 +841,404 @@ namespace LDDModder.BrickEditor.ProjectHandling
                     ModelLocalizations.Label_Connections));
             }
         }
+
+        public void RefreshNavigationNode(ProjectTreeNode node)
+        {
+            if (!BatchChangingVisibility)
+                NavigationWindow?.RefreshNavigationNode(node);
+        }
+
+        public void RefreshAllNavigation()
+        {
+            NavigationWindow.RefreshAllNavigation();
+        }
+
+        #endregion
+
+        #region Editor Actions
+
+        #region Element Editing
+
+        public PartSurface AddSurface()
+        {
+            StartBatchChanges($"{nameof(AddSurface)}");
+            var newSurface = CurrentProject.AddSurface();
+            EndBatchChanges();
+
+            SelectElement(newSurface);
+
+            return newSurface;
+        }
+
+        public PartConnection AddConnection(ConnectorType type, PartBone parent)
+        {
+            if (CurrentProject == null)
+                return null;
+
+            StartBatchChanges($"{nameof(AddConnection)}( type => {type}, parent => {parent?.Name ?? "null"})");
+
+            var newConnection = PartConnection.Create(type);
+            if (parent != null)
+                parent.Connections.Add(newConnection);
+            else
+                CurrentProject.Connections.Add(newConnection);
+
+            EndBatchChanges();
+
+            if (!ShowConnections)
+                ShowConnections = true;
+
+            SelectElement(newConnection);
+
+            return newConnection;
+        }
+
+        public PartCollision AddCollision(CollisionType type, PartBone parent)
+        {
+            if (CurrentProject == null)
+                return null;
+
+            StartBatchChanges($"{nameof(AddCollision)}( type => {type}, parent => {parent?.Name ?? "null"})");
+
+            var newCollision = PartCollision.Create(type);
+            if (parent != null)
+                parent.Collisions.Add(newCollision);
+            else
+                CurrentProject.Collisions.Add(newCollision);
+
+            EndBatchChanges();
+
+            if (!ShowCollisions)
+                ShowCollisions = true;
+
+            SelectElement(newCollision);
+
+            return newCollision;
+        }
+
+        public PartElement DuplicateElement(PartElement element)
+        {
+            PartElement newElement = null;
+
+            StartBatchChanges($"{nameof(DuplicateElement)}( element => {element.Name} )");
+
+            if (element is PartConnection connection)
+            {
+                newElement = connection.Clone();
+                var collection = (element.Parent as PartBone)?.Connections ?? CurrentProject.Connections;
+                collection.Add(newElement);
+                CurrentProject.RenameElement(newElement, element.Name);
+                if (!ShowConnections)
+                    ShowConnections = true;
+            }
+            else if (element is PartCollision collision)
+            {
+                newElement = collision.Clone();
+                var collection = (element.Parent as PartBone)?.Collisions ?? CurrentProject.Collisions;
+                collection.Add(newElement);
+                CurrentProject.RenameElement(newElement, element.Name);
+                if (!ShowCollisions)
+                    ShowCollisions = true;
+            }
+
+            EndBatchChanges();
+
+            if (newElement != null)
+                SelectElement(newElement);
+
+
+            return newElement;
+        }
+
+        public void DeleteElements(IEnumerable<PartElement> elements)
+        {
+            var elemsToDelete = new List<PartElement>();
+
+            foreach (var elem in elements)
+            {
+                var dlgResult = ConfirmCanDelete(elem);
+
+                if (dlgResult == DialogResult.Cancel)
+                {
+                    elemsToDelete.Clear();
+                    break;
+                }
+
+                if (dlgResult == DialogResult.Yes)
+                    elemsToDelete.Add(elem);
+            }
+
+            if (elemsToDelete.Any())
+            {
+                StartBatchChanges(nameof(DeleteElements));
+                ClearSelection();
+
+                var removedElements = elemsToDelete.Where(x => x.TryRemove()).ToList();
+
+                if (removedElements.OfType<ModelMeshReference>().Any())
+                    CurrentProject.RemoveUnreferencedMeshes();
+
+                EndBatchChanges();
+            }
+        }
+
+        private DialogResult ConfirmCanDelete(PartElement element)
+        {
+            if (element is PartConnection conn)
+            {
+                if (conn.ConnectorType == ConnectorType.Custom2DField)
+                {
+                    var allStudRefs = CurrentProject.GetAllElements<StudReference>();
+                    if (allStudRefs.Any(x => x.ConnectionID == conn.ID))
+                    {
+                        return MessageBox.Show(
+                            string.Format(Messages.Message_ConfirmDeleteStudConnection, conn.Name), 
+                            Messages.Caption_DeleteConfirmation, 
+                            MessageBoxButtons.YesNoCancel);
+                    }
+                }
+                else if (conn.ConnectorType == ConnectorType.Ball || 
+                    conn.ConnectorType == ConnectorType.Fixed)
+                {
+                    if (CurrentProject.Bones.Any(x => 
+                        x.SourceConnectionID == conn.ID ||
+                        x.TargetConnectionID == conn.ID))
+                    {
+                        return MessageBox.Show(
+                            string.Format(Messages.Message_ConfirmDeleteBoneConnection, conn.Name), 
+                            Messages.Caption_DeleteConfirmation, 
+                            MessageBoxButtons.YesNoCancel);
+                    }
+                }
+            }
+            if (element is PartBone bone)
+            {
+
+
+
+            }
+            return DialogResult.Yes;
+        }
+
+        public void CopySelectedElementsToClipboard()
+        {
+            if (!IsProjectOpen)
+                return;
+
+            string clipboardText = string.Empty;
+            foreach (var elem in GetSelectionHierarchy())
+            {
+                if (elem is PartCollision collision)
+                {
+                    var colXml = collision.GenerateLDD().SerializeToXml();
+                    if (!string.IsNullOrEmpty(clipboardText))
+                        clipboardText += Environment.NewLine;
+                    clipboardText += colXml.ToString();
+                }
+                else if (elem is PartConnection connection)
+                {
+
+                    var colXml = connection.GenerateLDD().SerializeToXml();
+                    if (!string.IsNullOrEmpty(clipboardText))
+                        clipboardText += Environment.NewLine;
+                    clipboardText += colXml.ToString();
+                }
+            }
+
+            if (!string.IsNullOrEmpty(clipboardText))
+            {
+                Clipboard.SetText(clipboardText, TextDataFormat.Text);
+            }
+        }
+
+        public void HandlePasteFromClipboard()
+        {
+            if (!IsProjectOpen)
+                return;
+
+            var clipboardText = Clipboard.GetText(TextDataFormat.Text);
+            if (string.IsNullOrEmpty(clipboardText))
+                return;
+
+            clipboardText = $"<Root>{clipboardText}</Root>";
+            try
+            {
+                var tmpXml = XElement.Parse(clipboardText);
+                var pastedElements = new List<PartElement>();
+
+                foreach (var elem in tmpXml.Elements())
+                {
+                    var conn = Connector.DeserializeConnector(elem);
+                    if (conn != null)
+                    {
+                        var connElem = new PartConnection(conn);
+                        pastedElements.Add(connElem);
+                        continue;
+                    }
+
+                    var coll = Collision.DeserializeCollision(elem);
+                    if (coll != null)
+                    {
+                        var collElem = PartCollision.FromLDD(coll);
+                        pastedElements.Add(collElem);
+                        continue;
+                    }
+                }
+
+                if (pastedElements.Any())
+                {
+                    StartBatchChanges(nameof(HandlePasteFromClipboard));
+                    var newCollisions = pastedElements.OfType<PartCollision>();
+                    var newConnections = pastedElements.OfType<PartConnection>();
+
+                    if (newCollisions.Any() && !ShowCollisions)
+                        ShowCollisions = true;
+
+                    if (newConnections.Any() && !ShowConnections)
+                        ShowConnections = true;
+
+                    if (SelectedElement is PartBone selectedBone)
+                    {
+                        if (newCollisions.Any())
+                            selectedBone.Collisions.AddRange(newCollisions);
+                        if (newConnections.Any())
+                            selectedBone.Connections.AddRange(newConnections);
+                    }
+                    else
+                    {
+                        if (newCollisions.Any())
+                            CurrentProject.Collisions.AddRange(newCollisions);
+                        if (newConnections.Any())
+                            CurrentProject.Connections.AddRange(newConnections);
+                    }
+
+                    EndBatchChanges();
+
+                    SelectElements(pastedElements);
+                }
+                
+            }
+            catch { }
+        }
+
+        #endregion
+
+        #region Visibility Handling
+
+        public void SetElementHidden(PartElement element, bool hidden)
+        {
+            var elementExt = element.GetExtension<ModelElementExtension>();
+
+            if (elementExt != null && elementExt.IsHidden != hidden)
+            {
+                elementExt.IsHidden = hidden;
+                elementExt.CalculateVisibility();
+
+                UndoRedoManager.AddEditorAction(new HideElementAction(
+                    nameof(HideSelectedElements),
+                    new PartElement[] { element },
+                    hidden));
+            }
+        }
+
+        public void HideSelectedElements()
+        {
+            var hideableElements = SelectedElements.Where(x => x.GetExtension<ModelElementExtension>() != null);
+            var hiddenElems = new List<PartElement>();
+
+            foreach (var elem in hideableElements)
+            {
+                var elementExt = elem.GetExtension<ModelElementExtension>();
+                if (elementExt != null && !elementExt.IsHidden)
+                {
+                    hiddenElems.Add(elem);
+                    elementExt.IsHidden = true;
+                    elementExt.CalculateVisibility();
+                }
+            }
+
+            if (hiddenElems.Any())
+            {
+                UndoRedoManager.AddEditorAction(new HideElementAction(nameof(HideSelectedElements), hiddenElems, true));
+            }
+        }
+
+        public void HideUnselectedElements()
+        {
+            var selectedElements = SelectedElements.Select(x => x.GetExtension<ModelElementExtension>()).Where(x => x != null);
+            if (!selectedElements.Any(x => x.IsVisible))
+                return;
+
+            var hideableElements = CurrentProject.GetAllElements(x => x.GetExtension<ModelElementExtension>() != null);
+            var hiddenElems = new List<PartElement>();
+
+            foreach (var elem in hideableElements)
+            {
+                if (IsContainedInSelection(elem))
+                    continue;
+
+                if (elem.GetChildsHierarchy().Any(x => IsSelected(x)))
+                    continue;
+
+                var elementExt = elem.GetExtension<ModelElementExtension>();
+
+                if (elementExt != null && !elementExt.IsHidden)
+                {
+                    hiddenElems.Add(elem);
+                    elementExt.IsHidden = true;
+                    elementExt.CalculateVisibility();
+                }
+            }
+
+            if (hiddenElems.Any())
+            {
+                UndoRedoManager.AddEditorAction(new HideElementAction(nameof(HideSelectedElements), hiddenElems, true));
+            }
+        }
+
+        public void UnhideEverything()
+        {
+            var hideableElements = CurrentProject.GetAllElements(x => x.GetExtension<ModelElementExtension>() != null);
+            var hiddenElems = new List<PartElement>();
+
+            foreach (var elem in hideableElements)
+            {
+                var elementExt = elem.GetExtension<ModelElementExtension>();
+                if (elementExt != null && elementExt.IsHidden)
+                {
+                    hiddenElems.Add(elem);
+                    elementExt.IsHidden = false;
+                    elementExt.CalculateVisibility();
+                }
+            }
+
+            if (hiddenElems.Any())
+            {
+                UndoRedoManager.AddEditorAction(new HideElementAction(nameof(HideSelectedElements), hiddenElems, false));
+            }
+        }
+
+        #endregion
+
+        #region Dialogs
+
+        public void ShowCopyBoneDataDialog()
+        {
+            if (CurrentProject == null)
+                return;
+
+            Trace.WriteLine($"Executing: {nameof(ShowCopyBoneDataDialog)}");
+
+            using (var dlg = new BoneDataCopyDialog(this))
+            {
+                StartBatchChanges("BoneDataCopyDialog");
+                dlg.ShowDialog();
+                EndBatchChanges();
+            }
+        }
+
+        #endregion
+
 
         #endregion
     }

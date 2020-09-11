@@ -1,10 +1,5 @@
 ﻿using LDDModder.Simple3D;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 
 namespace LDDModder.LDD.Primitives.Connectors
@@ -15,7 +10,7 @@ namespace LDDModder.LDD.Primitives.Connectors
         private bool _StartCapped;
         private bool _EndCapped;
         private bool _Cylindrical;
-        private Vector3? _Spring;
+        private Vector3d? _Spring;
         private string _Tag;
 
         public override ConnectorType Type => ConnectorType.Slider;
@@ -44,7 +39,7 @@ namespace LDDModder.LDD.Primitives.Connectors
             set => SetPropertyValue(ref _Cylindrical, value);
         }
 
-        public Vector3? Spring
+        public Vector3d? Spring
         {
             get => _Spring;
             set => SetPropertyValue(ref _Spring, value);
@@ -61,19 +56,27 @@ namespace LDDModder.LDD.Primitives.Connectors
             element.AddNumberAttribute("length", Length);
 
             if (Cylindrical)
-                element.AddBooleanAttribute("cylindrical", Cylindrical);
+                element.AddBooleanAttribute("cylindrical", Cylindrical, 
+                    BooleanXmlRepresentation.OneZero);
 
             if (!string.IsNullOrEmpty(Tag))
                 element.Add(new XAttribute("tag", Tag));
 
-            element.AddBooleanAttribute("startCapped", StartCapped);
-            element.AddBooleanAttribute("endCapped", EndCapped);
+            element.AddBooleanAttribute("startCapped", StartCapped,
+                    BooleanXmlRepresentation.OneZero);
+
+            element.AddBooleanAttribute("endCapped", EndCapped,
+                    BooleanXmlRepresentation.OneZero);
 
             if (Spring.HasValue)
             {
                 element.Add(new XAttribute("spring", 
-                    string.Format(CultureInfo.InvariantCulture, "{0},{1},{2}", Spring.Value.X, Spring.Value.Y, Spring.Value.Z)
-                    ));
+                    string.Format(CultureInfo.InvariantCulture, "{0},{1},{2}", 
+                        Spring.Value.X, 
+                        Spring.Value.Y, 
+                        Spring.Value.Z)
+                    )
+                );
             }
         }
 
@@ -89,13 +92,28 @@ namespace LDDModder.LDD.Primitives.Connectors
             if (element.HasAttribute("spring", out XAttribute springAttr))
             {
                 var springValues = springAttr.Value.Split(',');
-                Spring = new Vector3(
-                    float.Parse(springValues[0].Trim(), CultureInfo.InvariantCulture),
-                    float.Parse(springValues[1].Trim(), CultureInfo.InvariantCulture),
-                    float.Parse(springValues[2].Trim(), CultureInfo.InvariantCulture));
+                Spring = new Vector3d(
+                    double.Parse(springValues[0].Trim(), CultureInfo.InvariantCulture),
+                    double.Parse(springValues[1].Trim(), CultureInfo.InvariantCulture),
+                    double.Parse(springValues[2].Trim(), CultureInfo.InvariantCulture));
             }
             else
                 Spring = null;
+        }
+
+        public override Connector Clone()
+        {
+            return new SliderConnector()
+            {
+                Cylindrical = Cylindrical,
+                EndCapped = EndCapped,
+                Length = Length,
+                Spring = Spring,
+                StartCapped = StartCapped,
+                Tag = Tag,
+                SubType = SubType,
+                Transform = Transform.Clone()
+            };
         }
     }
 }

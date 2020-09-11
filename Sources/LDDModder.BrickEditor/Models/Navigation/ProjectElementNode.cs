@@ -8,8 +8,6 @@ namespace LDDModder.BrickEditor.Models.Navigation
 {
     public class ProjectElementNode : ProjectTreeNode
     {
-        //public override PartProject Project => Element.Project;
-
         public PartElement Element { get; set; }
 
         public Type ElementType => Element?.GetElementType();
@@ -20,18 +18,44 @@ namespace LDDModder.BrickEditor.Models.Navigation
             NodeID = element.ID;
             if (string.IsNullOrEmpty(NodeID))
                 NodeID = element.GetHashCode().ToString();
+            Element.ParentChanged += Element_ParentChanged;
+
+            var modelExtension = GetElementExtension<ModelElementExtension>();
+            if (modelExtension != null)
+                modelExtension.VisibilityChanged += ModelExtension_VisibilityChanged;
         }
 
-        public ProjectElementNode(PartElement element, string text)
+        private void ModelExtension_VisibilityChanged(object sender, EventArgs e)
         {
-            Element = element;
-            NodeID = element.ID;
-            if (string.IsNullOrEmpty(NodeID))
-                NodeID = element.GetHashCode().ToString();
-            Text = text;
+            if (Element.Project != null)
+                Manager?.RefreshNavigationNode(this);
         }
 
-        
+        public T GetElementExtension<T>() where T : IElementExtender
+        {
+            return Element.GetExtension<T>();
+        }
+
+        public override void FreeObjects()
+        {
+            base.FreeObjects();
+
+            if (Element != null)
+            {
+                var modelExtension = GetElementExtension<ModelElementExtension>();
+                if (modelExtension != null)
+                    modelExtension.VisibilityChanged -= ModelExtension_VisibilityChanged;
+                Element.ParentChanged -= Element_ParentChanged;
+                Element = null;
+            }
+        }
+
+        private void Element_ParentChanged(object sender, EventArgs e)
+        {
+            var modelExt = Element.GetExtension<ModelElementExtension>();
+            modelExt.InvalidateVisibility();
+            UpdateVisibility();
+        }
 
         protected override void RebuildChildrens()
         {
@@ -135,6 +159,14 @@ namespace LDDModder.BrickEditor.Models.Navigation
         {
             if (Element is ModelMeshReference)
                 return true;
+
+            //if (Element.Project.Flexible)
+            {
+                if (Element is PartCollision || 
+                    Element is PartConnection)
+                    return true;
+            }
+            
             return base.CanDragDrop();
         }
 
@@ -153,35 +185,50 @@ namespace LDDModder.BrickEditor.Models.Navigation
                         return true;
                 }
             }
+            else if (ElementType == typeof(PartCollision) || ElementType == typeof(PartConnection))
+            {
+                if (node is ProjectElementNode elementNode)
+                {
+                    if (elementNode.Element is PartBone)
+                        return true;
+                }
+                else if (node is ElementCollectionNode collectionNode)
+                {
+                    if (collectionNode.CollectionType == ElementType)
+                        return true;
+                }
+            }
 
             return base.CanDropOn(node);
         }
 
         public override bool CanDropBefore(ProjectTreeNode node)
         {
+            var targetElement = (node as ProjectElementNode)?.Element;
+
             if (ElementType == typeof(ModelMeshReference))
-            {
-                if (node is ProjectElementNode elementNode)
-                {
-                    if (elementNode.Element is ModelMeshReference)
-                        return true;
-                }
-            }
+                return targetElement is ModelMeshReference;
+            else if (ElementType == typeof(PartCollision))
+                return targetElement is PartCollision;
+            else if (ElementType == typeof(PartConnection))
+                return targetElement is PartConnection;
             return base.CanDropBefore(node);
         }
 
         public override bool CanDropAfter(ProjectTreeNode node)
         {
-            if (ElementType == typeof(ModelMeshReference))
-            {
-                if (node is ProjectElementNode elementNode)
-                {
-                    if (elementNode.Element is ModelMeshReference)
-                        return true;
-                }
-            }
+            var targetElement = (node as ProjectElementNode)?.Element;
+
+            if(ElementType == typeof(ModelMeshReference))
+                return targetElement is ModelMeshReference;
+            else if (ElementType == typeof(PartCollision))
+                return targetElement is PartCollision;
+            else if (ElementType == typeof(PartConnection))
+                return targetElement is PartConnection;
+
             return base.CanDropAfter(node);
         }
+
 
         public override void UpdateVisibility()
         {

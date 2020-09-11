@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -10,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using LDDModder.BrickEditor.ProjectHandling;
 using LDDModder.BrickEditor.Resources;
+using LDDModder.BrickEditor.Utilities;
 using LDDModder.LDD.Data;
 using LDDModder.Modding.Editing;
 
@@ -26,7 +28,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             InitializeComponent();
         }
 
-        internal PartPropertiesPanel(ProjectManager projectManager) : base(projectManager)
+        public PartPropertiesPanel(ProjectManager projectManager) : base(projectManager)
         {
             InitializeComponent();
             CloseButtonVisible = false;
@@ -41,18 +43,39 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             base.OnLoad(e);
 
-            PlatformComboBox.DataSource = ResourceHelper.Platforms.ToList();
-            PlatformComboBox.ValueMember = "ID";
-            PlatformComboBox.DisplayMember = "Display";
+            if (ResourceHelper.IsResourceDataInitialized)
+            {
+                PlatformComboBox.DataSource = ResourceHelper.Platforms.ToList();
+                PlatformComboBox.ValueMember = "ID";
+                PlatformComboBox.DisplayMember = "Display";
+                Categories = ResourceHelper.Categories.ToList();
+                UpdateCategoriesCombobox();
+            }
+            else
+            {
+                ResourceHelper.ResourceDataInitialized += ResourceHelper_ResourceDataInitialized;
+            }
+
             PlatformComboBox.MouseWheel += ComboBox_MouseWheel;
-
-            Categories = ResourceHelper.Categories.ToList();
             CategoryComboBox.MouseWheel += ComboBox_MouseWheel;
-            int test = AliasesButtonBox.Height;
-
-            UpdateCategoriesCombobox();
+            
             InitializeAliasDropDown();
             UpdateControlBindings();
+        }
+
+        private void ResourceHelper_ResourceDataInitialized(object sender, EventArgs e)
+        {
+            ExecuteOnThread(() =>
+            {
+                PlatformComboBox.DataSource = ResourceHelper.Platforms.ToList();
+                PlatformComboBox.ValueMember = "ID";
+                PlatformComboBox.DisplayMember = "Display";
+
+                Categories = ResourceHelper.Categories.ToList();
+                UpdateCategoriesCombobox();
+            });
+            
+            ResourceHelper.ResourceDataInitialized -= ResourceHelper_ResourceDataInitialized;
         }
 
         private void UpdateCategoriesCombobox()
@@ -162,7 +185,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             if (CurrentProject != null && !InternalSet)
             {
                 var bounding = CurrentProject.CalculateBoundingBox();
-                BoundingEditor.Value = bounding;
+                BoundingEditor.Value = bounding.Rounded(6);
             }
         }
 
@@ -171,7 +194,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             if (CurrentProject != null && !InternalSet)
             {
                 var bounding = CurrentProject.CalculateBoundingBox();
-                GeomBoundingEditor.Value = bounding;
+                GeomBoundingEditor.Value = bounding.Rounded(6);
             }
         }
 
@@ -249,15 +272,56 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void PartPropertiesPanel_SizeChanged(object sender, EventArgs e)
         {
-            if (Width > Height && flowLayoutPanel1.FlowDirection == FlowDirection.TopDown)
-            {
-                flowLayoutPanel1.FlowDirection = FlowDirection.LeftToRight;
-                flowLayoutPanel1.PerformLayout();
-            }
-            else if (Width < Height && flowLayoutPanel1.FlowDirection == FlowDirection.LeftToRight)
+            if (Width <= collapsiblePanel1.Width + (collapsiblePanel1.Width * 0.33))
             {
                 flowLayoutPanel1.FlowDirection = FlowDirection.TopDown;
+                flowLayoutPanel1.WrapContents = false;
                 flowLayoutPanel1.PerformLayout();
+            }
+            else
+            {
+                flowLayoutPanel1.FlowDirection = FlowDirection.LeftToRight;
+                flowLayoutPanel1.WrapContents = true;
+                flowLayoutPanel1.PerformLayout();
+            }
+        }
+
+        private void FillInertiaTensor(Simple3D.Matrix3d matrix)
+        {
+            var matrixValues = matrix.ToArray();
+            string matrixStr = string.Join("; ", matrixValues);
+            InertiaTensorTextBox.Text = matrixStr;
+        }
+
+        private void InertiaTensorTextBox_Validated(object sender, EventArgs e)
+        {
+            if (CurrentProject == null)
+                return;
+
+            var matValues = InertiaTensorTextBox.Text.Split(';');
+            if (matValues.Length == 9)
+            {
+                var inertiaMatrix = new Simple3D.Matrix3d();
+                bool validValues = true;
+                for (int i = 0; i < 9; i++)
+                {
+                    if (NumberHelper.SmartTryParse(matValues[i], out double cellValue))
+                        inertiaMatrix[i] = cellValue;
+                    else
+                    {
+                        validValues = false;
+                        break;
+                    }
+                }
+
+                if (validValues)
+                {
+                    CurrentProject.PhysicsAttributes.InertiaTensor = inertiaMatrix;
+                }
+                else
+                {
+                    FillInertiaTensor(CurrentProject.PhysicsAttributes.InertiaTensor);
+                }
             }
         }
     }

@@ -33,6 +33,17 @@ namespace LDDModder.BrickEditor.Settings
         [JsonIgnore]
         public int InternalFlag { get; set; }
 
+        [JsonIgnore]
+        public bool IsInternalConfig => InternalFlag > 0;
+
+        [JsonIgnore]
+        public string UniqueID { get; set; }
+
+
+        public const int LDD_FLAG = 1;
+
+        public const int MANUAL_FLAG = 2;
+
         public bool ShouldSerializeName()
         {
             return InternalFlag == 0;
@@ -45,7 +56,29 @@ namespace LDDModder.BrickEditor.Settings
 
         public bool ShouldSerializeLOD0Subdirectory()
         {
-            return InternalFlag != 1;
+            return InternalFlag != LDD_FLAG;
+        }
+
+        public BuildConfiguration Clone()
+        {
+            return new BuildConfiguration()
+            {
+                Name = Name,
+                OutputPath = OutputPath,
+                LOD0Subdirectory = LOD0Subdirectory,
+                ConfirmOverwrite = ConfirmOverwrite,
+                InternalFlag = InternalFlag,
+                IsDefault = IsDefault,
+                UniqueID = UniqueID
+            };
+        }
+
+        public void GenerateUniqueID()
+        {
+            if (string.IsNullOrEmpty(UniqueID))
+            {
+                UniqueID = Guid.NewGuid().ToString();
+            }
         }
     }
 }

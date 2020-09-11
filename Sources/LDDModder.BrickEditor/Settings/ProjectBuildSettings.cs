@@ -20,13 +20,26 @@ namespace LDDModder.BrickEditor.Settings
         [JsonProperty("userDefined")]
         public List<BuildConfiguration> UserDefined { get; set; }
 
-        [JsonProperty("generateOutlines", DefaultValueHandling = DefaultValueHandling.Ignore), DefaultValue(true)]
-        public bool GenerateOutlines { get; set; }
+        [JsonProperty("default", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [DefaultValue("")]
+        public string DefaultConfigName { get; set; }
+
+        public BuildConfiguration DefaultConfiguration
+        {
+            get
+            {
+                if (DefaultConfigName == "ldd")
+                    return LDD;
+                if (DefaultConfigName == "manual")
+                    return Manual;
+
+                return UserDefined.FirstOrDefault(x => x.Name == DefaultConfigName);
+            }
+        }
 
         public ProjectBuildSettings()
         {
             UserDefined = new List<BuildConfiguration>();
-            GenerateOutlines = true;
         }
 
         public void InitializeDefaults()
@@ -39,10 +52,11 @@ namespace LDDModder.BrickEditor.Settings
                 };
             }
 
-            LDD.OutputPath = "$(LddAppData)\\db\\";
+            LDD.OutputPath = "$(LddAppData)\\db\\Primitives";
             LDD.Name = Messages.BuildConfig_LDD;
             LDD.InternalFlag = 1;
             LDD.LOD0Subdirectory = true;
+            LDD.GenerateUniqueID();
 
             if (Manual == null)
             {
@@ -56,11 +70,26 @@ namespace LDDModder.BrickEditor.Settings
             Manual.OutputPath = string.Empty;
             Manual.Name = Messages.BuildConfig_Browse;
             Manual.InternalFlag = 2;
+            Manual.GenerateUniqueID();
 
             if (UserDefined == null)
                 UserDefined = new List<BuildConfiguration>();
+
+
+            if (DefaultConfiguration != null)
+                DefaultConfiguration.IsDefault = true;
+            else
+                DefaultConfigName = string.Empty;
         }
 
-        
+        public IEnumerable<BuildConfiguration> GetAllConfigurations()
+        {
+            yield return LDD;
+
+            yield return Manual;
+
+            foreach (var cfg in UserDefined)
+                yield return cfg;
+        }
     }
 }

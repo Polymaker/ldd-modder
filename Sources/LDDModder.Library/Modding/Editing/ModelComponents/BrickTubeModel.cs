@@ -71,7 +71,7 @@ namespace LDDModder.Modding.Editing
                 elem.Add(new XComment("The following 4 studs are adjacent to the tube"));
                 var studsElem = elem.AddElement(nameof(AdjacentStuds));
                 foreach (var stud in AdjacentStuds)
-                    studsElem.Add(stud.SerializeToXml2());
+                    studsElem.Add(stud.SerializeToXml());
             }
             
             return elem;
@@ -118,8 +118,8 @@ namespace LDDModder.Modding.Editing
                 AdjacentStuds.Clear();
                 var custom2DField = tubeStud.Connector;
 
-                int posX = tubeStud.FieldNode.X;
-                int posY = tubeStud.FieldNode.Y;
+                int posX = tubeStud.PositionX;
+                int posY = tubeStud.PositionY;
                 int[] offsets = new int[] { -1, 1 };
 
                 for (int i = 0; i < 2; i++)

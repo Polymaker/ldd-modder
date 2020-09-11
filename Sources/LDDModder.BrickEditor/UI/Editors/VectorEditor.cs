@@ -55,7 +55,7 @@ namespace LDDModder.BrickEditor.UI.Editors
 
         protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified)
         {
-            height = tableLayoutPanel1.Height;
+            height = BoxesLayoutPanel.Height;
             if (width > 0)
             {
                 width = (int)Math.Floor(width / 3f) * 3;
@@ -71,6 +71,12 @@ namespace LDDModder.BrickEditor.UI.Editors
             _Value.Y = ValueY.Value;
             _Value.Z = ValueZ.Value;
             ValueChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void BoxesLayoutPanel_SizeChanged(object sender, EventArgs e)
+        {
+            if (BoxesLayoutPanel.Height != Height)
+                Height = BoxesLayoutPanel.Height;
         }
     }
 }

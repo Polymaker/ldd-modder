@@ -328,4 +328,22 @@
   <data name="Label_Bone" xml:space="preserve">
     <value>Bone</value>
   </data>
+  <data name="BONES_DUPLICATE_IDS" xml:space="preserve">
+    <value>Duplicate Bone IDs ({0})</value>
+  </data>
+  <data name="BONES_ID_GAP" xml:space="preserve">
+    <value>Bone ID numbering gap (missing ID: {0})</value>
+  </data>
+  <data name="BONE_NO_BOUNDING" xml:space="preserve">
+    <value>Bounding box is not defined.</value>
+  </data>
+  <data name="BONE_CONNECTION_NOT_SET" xml:space="preserve">
+    <value>'Flex' connections are not defined.</value>
+  </data>
+  <data name="BONE_NOT_LINKED" xml:space="preserve">
+    <value>Bone "{name}" is not linked.</value>
+  </data>
+  <data name="BONE_MULTIPLE_LINKS" xml:space="preserve">
+    <value>Bone "{name}" is referenced by multiple bones.</value>
+  </data>
 </root>

@@ -1,8 +1,11 @@
 ﻿using LDDModder.BrickEditor.ProjectHandling;
+using LDDModder.BrickEditor.ProjectHandling.ViewInterfaces;
 using LDDModder.BrickEditor.Resources;
 using LDDModder.BrickEditor.Settings;
 using LDDModder.BrickEditor.UI.Panels;
+using LDDModder.BrickEditor.Utilities;
 using LDDModder.LDD;
+using LDDModder.LDD.Parts;
 using LDDModder.Modding.Editing;
 using LDDModder.Utilities;
 using System;
@@ -21,7 +24,7 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace LDDModder.BrickEditor.UI.Windows
 {
-    public partial class BrickEditorWindow : Form
+    public partial class BrickEditorWindow : Form, IMainWindow
     {
 
         public ProjectManager ProjectManager { get; private set; }
@@ -30,7 +33,7 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         protected FlagManager FlagManager { get; }
 
-        //private string TemporaryFolder;
+        private bool IsInitializing;
 
         public BrickEditorWindow()
         {
@@ -44,40 +47,43 @@ namespace LDDModder.BrickEditor.UI.Windows
             Icon = Properties.Resources.BrickStudioIcon;
         }
 
+        protected override void OnHandleCreated(EventArgs e)
+        {
+            base.OnHandleCreated(e);
+        }
+
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+            MultiInstanceManager.Initialize(this);
 
-            ProjectManager = new ProjectManager();
-            ProjectManager.ProjectChanged += ProjectManager_ProjectChanged;
-            ProjectManager.UndoHistoryChanged += ProjectManager_UndoHistoryChanged;
-            ProjectManager.ValidationFinished += ProjectManager_ValidationFinished;
-            ProjectManager.GenerationFinished += ProjectManager_GenerationFinished;
-            ProjectManager.ElementPropertyChanged += ProjectManager_ElementPropertyChanged;
-
-            InitialCheckUp();
-
-            ResourceHelper.LoadPlatformsAndCategories();
-            ResourceHelper.LoadConnectors();
-
-            InitializePanels();
-            RebuildRecentFilesMenu();
-            UpdateMenuItemStates();
-            UpdateWindowTitle();
+            InitializeProjectManager();
+            menuStrip1.Enabled = false;
         }
 
         protected override void OnShown(EventArgs e)
         {
             base.OnShown(e);
 
+            IsInitializing = true;
+
+            Task.Factory.StartNew(() =>
+            {
+                ResourceHelper.LoadResources();
+            });
+            
+            UpdateMenuItemStates();
+            UpdateWindowTitle();
+
             Task.Factory.StartNew(() =>
             {
                 Thread.Sleep(200);
-                Invoke(new MethodInvoker(CheckCanRecoverProject));
+                BeginInvoke(new MethodInvoker(BeginLoadingUI));
             });
         }
+       
 
-        private void InitialCheckUp()
+        private void LoadAndValidateSettings()
         {
             SettingsManager.Initialize();
 
@@ -94,6 +100,11 @@ namespace LDDModder.BrickEditor.UI.Windows
                 {
                     Models.BrickListCache.Initialize();
                 });
+            }
+
+            if (!FlagManager.IsSet("OnLoadAsync"))
+            {
+                AutoSaveTimer.Interval = SettingsManager.Current.AutoSaveInterval * 1000;
             }
         }
 
@@ -123,36 +134,160 @@ namespace LDDModder.BrickEditor.UI.Windows
         public PartPropertiesPanel PropertiesPanel { get; private set; }
         public ElementDetailPanel DetailPanel { get; private set; }
         public StudConnectionPanel StudConnectionPanel { get; private set; }
+        public ConnectionEditorPanel ConnectionPanel { get; private set; }
+
+        public ProgressPopupWindow WaitPopup { get; private set; }
 
         private void InitializePanels()
         {
+            WaitPopup.UpdateProgress(0, 10);
+
             NavigationPanel = new NavigationPanel(ProjectManager);
+            WaitPopup.UpdateProgress(1, 10);
+
             ViewportPanel = new ViewportPanel(ProjectManager);
+            WaitPopup.UpdateProgress(2, 10);
+
             ValidationPanel = new ValidationPanel(ProjectManager);
+            WaitPopup.UpdateProgress(3, 10);
+
             PropertiesPanel = new PartPropertiesPanel(ProjectManager);
+            WaitPopup.UpdateProgress(4, 10);
+
             DetailPanel = new ElementDetailPanel(ProjectManager);
+            WaitPopup.UpdateProgress(5, 10);
+
             StudConnectionPanel = new StudConnectionPanel(ProjectManager);
+            WaitPopup.UpdateProgress(6, 10);
+
+            ConnectionPanel = new ConnectionEditorPanel(ProjectManager);
+            WaitPopup.UpdateProgress(7, 10);
 
             ViewportPanel.Show(DockPanelControl, DockState.Document);
+
             StudConnectionPanel.Show(DockPanelControl, DockState.Document);
+
             ViewportPanel.Activate();
 
+            WaitPopup.UpdateProgress(8, 10);
+
             DockPanelControl.DockLeftPortion = 250;
+
             NavigationPanel.Show(DockPanelControl, DockState.DockLeft);
 
             DockPanelControl.DockWindows[DockState.DockBottom].BringToFront();
-            DockPanelControl.DockBottomPortion = 230;
+            DockPanelControl.DockBottomPortion = 250;
+
+            WaitPopup.UpdateProgress(9, 10);
 
             PropertiesPanel.Show(DockPanelControl, DockState.DockBottom);
+
             DetailPanel.Show(PropertiesPanel.Pane, null);
+
+            ConnectionPanel.Show(PropertiesPanel.Pane, null);
+
             ValidationPanel.Show(PropertiesPanel.Pane, null);
 
             PropertiesPanel.Activate();
+
+            WaitPopup.UpdateProgress(10, 10);
+
+            foreach (IDockContent dockPanel in DockPanelControl.Contents)
+            {
+                if (dockPanel is ProjectDocumentPanel documentPanel)
+                    documentPanel.Enabled = false;
+            }
+        }
+
+        private void BeginLoadingUI()
+        {
+            WaitPopup = new ProgressPopupWindow();
+            WaitPopup.Message = Messages.Message_InitializingUI;
+            WaitPopup.Shown += OnInitializationPopupLoaded;
+            WaitPopup.ShowCenter(this);
+        }
+
+        private void OnInitializationPopupLoaded(object sender, EventArgs e)
+        {
+            Task.Factory.StartNew(() =>
+            {
+                Thread.Sleep(100);
+                BeginInvoke((Action)(() =>
+                {
+                    FlagManager.Set("OnLoadAsync");
+                    AutoSaveTimer.Interval = 500;
+                    AutoSaveTimer.Start();
+                    DockPanelControl.Layout += DockPanelControl_Layout;
+                    WaitPopup.Shown -= OnInitializationPopupLoaded;
+                    InitializePanels();
+                }));
+            });
+        }
+
+        private void DockPanelControl_Layout(object sender, LayoutEventArgs e)
+        {
+            AutoSaveTimer.Stop();
+            AutoSaveTimer.Start();
+        }
+
+        private void InitializeAfterShown()
+        {
+            WaitPopup.Message = Messages.Message_InitializingResources;
+            WaitPopup.UpdateProgress(0, 0);
+            Application.DoEvents();
+
+            var documentPanels = DockPanelControl.Contents.OfType<ProjectDocumentPanel>().ToList();
+
+            foreach (var documentPanel in documentPanels)
+            {
+                documentPanel.Enabled = true;
+                documentPanel.DefferedInitialization();
+            }
+
+            Task.Factory.StartNew(() =>
+            {
+                ViewportPanel.InitGlResourcesAsync();
+                BeginInvoke(new MethodInvoker(OnInitializationFinished));
+            });
+        }
+
+        private void OnInitializationFinished()
+        {
+            menuStrip1.Enabled = true;
+            WaitPopup.Hide();
+
+            LoadAndValidateSettings();
+            UpdateMenuItemStates();
+            RebuildRecentFilesMenu();
+
+            var documentPanels = DockPanelControl.Contents.OfType<ProjectDocumentPanel>().ToList();
+
+            foreach (var documentPanel in documentPanels)
+                documentPanel.OnInitializationFinished();
+
+            IsInitializing = false;
+
+            Task.Factory.StartNew(() =>
+            {
+                Thread.Sleep(200);
+                Invoke(new MethodInvoker(CheckCanRecoverProject));
+            });
         }
 
         #endregion
 
         #region Project Handling
+
+        private void InitializeProjectManager()
+        {
+            ProjectManager = new ProjectManager();
+            ProjectManager.MainWindow = this;
+            ProjectManager.ProjectChanged += ProjectManager_ProjectChanged;
+            ProjectManager.UndoHistoryChanged += ProjectManager_UndoHistoryChanged;
+            ProjectManager.ValidationFinished += ProjectManager_ValidationFinished;
+            ProjectManager.GenerationFinished += ProjectManager_GenerationFinished;
+            ProjectManager.ElementPropertyChanged += ProjectManager_ElementPropertyChanged;
+        }
 
         private void ProjectManager_ProjectChanged(object sender, EventArgs e)
         {
@@ -201,7 +336,7 @@ namespace LDDModder.BrickEditor.UI.Windows
             }
             catch (Exception ex)
             {
-                ErrorMessageBox.Show(this, 
+                MessageBoxEX.ShowDetails(this, 
                     Messages.Error_OpeningProject, 
                     Messages.Caption_OpeningProject, ex.ToString());
                 exceptionThrown = true;
@@ -211,14 +346,14 @@ namespace LDDModder.BrickEditor.UI.Windows
             {
                 loadedProject.ProjectPath = projectFilePath;
                 loadedProject.ProjectWorkingDir = tmpProjectDir;
-                SettingsManager.Current.LastOpenProject = new RecentFileInfo(loadedProject, true);
+                SettingsManager.AddOpenedFile(loadedProject);
                 SettingsManager.AddRecentProject(loadedProject);
                 LoadPartProject(loadedProject);
                 RebuildRecentFilesMenu();
             }
             else if (!exceptionThrown)
             {
-                ErrorMessageBox.Show(this,
+                MessageBoxEX.ShowDetails(this,
                     Messages.Error_OpeningProject,
                     Messages.Caption_OpeningProject, "Invalid or corrupted project file. Missing \"project.xml\" file.");
             }
@@ -237,7 +372,7 @@ namespace LDDModder.BrickEditor.UI.Windows
             }
             catch (Exception ex)
             {
-                ErrorMessageBox.Show(this,
+                MessageBoxEX.ShowDetails(this,
                     Messages.Error_OpeningProject,
                     Messages.Caption_OpeningProject, ex.ToString());
                 
@@ -247,19 +382,73 @@ namespace LDDModder.BrickEditor.UI.Windows
                 LoadPartProject(loadedProject);
         }
 
+        private void OpenPartFromFiles(string primitiveFilepath)
+        {
+
+            string filename = Path.GetFileNameWithoutExtension(primitiveFilepath);
+            string fileType = Path.GetExtension(primitiveFilepath);
+
+            if (!int.TryParse(filename, out int partID))
+            {
+                //TODO: Show message
+                return;
+            }
+
+            LDD.Primitives.Primitive primitive = null;
+            
+            if (fileType.ToLower() == ".xml")
+            {
+                try
+                {
+                    primitive = LDD.Primitives.Primitive.Load(primitiveFilepath);
+                }
+                catch
+                {
+                    MessageBoxEX.ShowDetails(this,
+                        Messages.Error_OpeningFile, //TODO: change
+                        Messages.Caption_OpeningProject,
+                        "File is not an LDD Primitive."); //TODO: translate
+
+                    return;
+                }
+            }
+            else if (fileType.ToLower().StartsWith(".g"))
+            {
+
+            }
+
+            string fileDir = Path.GetDirectoryName(primitiveFilepath);
+            string fileDirLod0 = Path.Combine(fileDir, "Lod0");
+
+            var meshFiles = Directory.GetFiles(fileDir, primitive.ID + ".g*");
+
+            if (meshFiles.Length == 0 && Directory.Exists(fileDirLod0))
+            {
+                meshFiles = Directory.GetFiles(fileDirLod0, primitive.ID + ".g*");
+            }
+
+            if (meshFiles.Length == 0)
+            {
+                MessageBoxEX.ShowDetails(this,
+                    Messages.Error_OpeningFile, //TODO: change
+                    Messages.Caption_OpeningProject,
+                    "No mesh file found."); //TODO: translate
+                return;
+            }
+        }
+
         private void LoadNewPartProject(PartProject project)
         {
             try
             {
                 string tmpProjectDir = GetTemporaryWorkingDir();
                 project.SaveExtracted(tmpProjectDir);
-                SettingsManager.Current.LastOpenProject = new RecentFileInfo(project, true);
-                SettingsManager.SaveSettings();
+                SettingsManager.AddOpenedFile(project);
                 LoadPartProject(project);
             }
             catch (Exception ex)
             {
-                ErrorMessageBox.Show(this,
+                MessageBoxEX.ShowDetails(this,
                     Messages.Error_CreatingProject,
                     Messages.Caption_OpeningProject, ex.ToString());
             }
@@ -300,12 +489,13 @@ namespace LDDModder.BrickEditor.UI.Windows
 
                 string workingDirPath = CurrentProject?.ProjectWorkingDir;
 
+                //Delete temporary project working directory
                 if (!string.IsNullOrEmpty(workingDirPath) && Directory.Exists(workingDirPath))
                 {
                     Task.Factory.StartNew(() => FileHelper.DeleteFileOrFolder(workingDirPath, true, true));
                 }
 
-                SettingsManager.Current.LastOpenProject = null;
+                SettingsManager.RemoveOpenedFile(CurrentProject);
                 SettingsManager.SaveSettings();
 
                 ProjectManager.CloseCurrentProject();
@@ -361,20 +551,37 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         private void CheckCanRecoverProject()
         {
-            if (SettingsManager.Current.LastOpenProject != null)
+            if (SettingsManager.Current.OpenedProjects.Count > 0)
             {
-                var fileInfo = SettingsManager.Current.LastOpenProject;
-                //project was not correctly closed
-                if (Directory.Exists(fileInfo.WorkingDirectory))
+
+                foreach(var fileInfo in SettingsManager.Current.OpenedProjects.ToArray())
                 {
-                    if (MessageBox.Show("Do you want to recover the project?","", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    //project was not correctly closed
+                    if (Directory.Exists(fileInfo.WorkingDirectory))
                     {
-                        OpenPartProjectDirectory(fileInfo.WorkingDirectory);
+                        if (MultiInstanceManager.InstanceCount > 1)
+                        {
+                            bool isOpenInOtherInstance = MultiInstanceManager.CheckFileIsOpen(fileInfo.WorkingDirectory);
+                            if (isOpenInOtherInstance)
+                                return;
+                        }
+
+                        if (MessageBoxEX.Show(this,
+                            Messages.Message_RecoverProject,
+                            Messages.Caption_RecoverLastProject, 
+                            MessageBoxButtons.YesNo) == DialogResult.Yes)
+                        {
+                            OpenPartProjectDirectory(fileInfo.WorkingDirectory);
+                        }
+                        else
+                        {
+                            SettingsManager.RemoveOpenedFile(fileInfo);
+                            Task.Factory.StartNew(() => FileHelper.DeleteFileOrFolder(fileInfo.WorkingDirectory, true, true));
+                        }
+                        break;
                     }
                     else
-                    {
-                        Task.Factory.StartNew(() => FileHelper.DeleteFileOrFolder(fileInfo.WorkingDirectory, true, true));
-                    }
+                        SettingsManager.RemoveOpenedFile(fileInfo);
                 }
             }
         }
@@ -383,49 +590,21 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         private void ImportMeshFile()
         {
-            using (var imd = new ImportModelsDialog())
+            using (var imd = new ImportModelsDialog(ProjectManager))
             {
-                imd.Project = CurrentProject;
                 imd.SelectFileOnStart = true;
-
-                if (imd.ShowDialog() == DialogResult.OK)
-                    ImportAssimpModel(imd);
+                imd.ShowDialog();
             }
-        }
-        
-        private void ImportAssimpModel(ImportModelsDialog imd)
-        {
-            ProjectManager.StartBatchChanges();
-
-            foreach (var model in imd.ModelsToImport)
-            {
-                var geom = Meshes.MeshConverter.AssimpToLdd(imd.SceneToImport, model.Mesh);
-                var surface = CurrentProject.Surfaces.FirstOrDefault(x => x.SurfaceID == model.SurfaceID);
-
-                if (surface == null)
-                {
-                    surface = new PartSurface(model.SurfaceID, CurrentProject.Surfaces.Max(x => x.SubMaterialIndex) + 1);
-                    CurrentProject.Surfaces.Add(surface);
-                }
-
-                var partModel = surface.Components.FirstOrDefault(x => x.ComponentType == ModelComponentType.Part);
-
-                if (partModel == null)
-                {
-                    partModel = new PartModel();
-                    surface.Components.Add(partModel);
-                }
-                
-                var modelMesh = CurrentProject.AddMeshGeometry(geom, model.Name);
-                partModel.Meshes.Add(new ModelMeshReference(modelMesh));
-
-            }
-
-            ProjectManager.EndBatchChanges();
         }
         
         private void BrickEditorWindow_FormClosing(object sender, FormClosingEventArgs e)
         {
+            if (IsInitializing)
+            {
+                e.Cancel = true;
+                return;
+            }
+
             if (CurrentProject != null)
             {
                 e.Cancel = true;
@@ -454,6 +633,9 @@ namespace LDDModder.BrickEditor.UI.Windows
             Debug.WriteLine($"TryCloseProjectAndExit at {DateTime.Now:HH:mm:ss.ff}");
             if (CloseCurrentProject())
             {
+                ViewportPanel.StopRenderingLoop();
+                ViewportPanel.UnloadModels();
+
                 //Application.DoEvents();
                 Task.Factory.StartNew(() =>
                 {
@@ -471,9 +653,48 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         private void AutoSaveTimer_Tick(object sender, EventArgs e)
         {
-            ProjectManager.SaveWorkingProject();
+            if (FlagManager.IsSet("OnLoadAsync"))
+            {
+                FlagManager.Unset("OnLoadAsync");
+                DockPanelControl.Layout += DockPanelControl_Layout;
+                AutoSaveTimer.Stop();
+
+                if (SettingsManager.HasInitialized)
+                    AutoSaveTimer.Interval = SettingsManager.Current.AutoSaveInterval * 1000;
+                else
+                    AutoSaveTimer.Interval = 15000;
+
+                Task.Factory.StartNew(() =>
+                {
+                    Thread.Sleep(200);
+                    BeginInvoke(new MethodInvoker(InitializeAfterShown));
+                });
+
+                return;
+            }
+
+            if (ProjectManager.IsProjectOpen)
+                ProjectManager.SaveWorkingProject();
         }
 
-        
+        public DockPanel GetDockPanelControl()
+        {
+            return DockPanelControl;
+        }
+
+        public bool IsFileOpen(string filepath)
+        {
+            if (ProjectManager.IsProjectOpen)
+            {
+                return ProjectManager.CurrentProject.ProjectWorkingDir == filepath;
+            }
+            return false;
+        }
+
+        protected override void WndProc(ref Message m)
+        {
+            if (!MultiInstanceManager.ProcessMessage(ref m))
+                base.WndProc(ref m);
+        }
     }
 }

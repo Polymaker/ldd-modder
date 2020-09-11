@@ -274,6 +274,7 @@
             // 
             resources.ApplyResources(this.InertiaTensorTextBox, "InertiaTensorTextBox");
             this.InertiaTensorTextBox.Name = "InertiaTensorTextBox";
+            this.InertiaTensorTextBox.Validated += new System.EventHandler(this.InertiaTensorTextBox_Validated);
             // 
             // LabelMass
             // 

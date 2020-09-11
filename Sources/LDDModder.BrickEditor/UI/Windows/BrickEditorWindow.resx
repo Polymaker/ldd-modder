@@ -142,7 +142,7 @@
     <value>DockPanelControl</value>
   </data>
   <data name="&gt;&gt;DockPanelControl.Type" xml:space="preserve">
-    <value>WeifenLuo.WinFormsUI.Docking.DockPanel, WeifenLuo.WinFormsUI.Docking, Version=3.0.4.0, Culture=neutral, PublicKeyToken=5cded1a1a0a7b481</value>
+    <value>WeifenLuo.WinFormsUI.Docking.DockPanel, WeifenLuo.WinFormsUI.Docking, Version=3.0.6.0, Culture=neutral, PublicKeyToken=5cded1a1a0a7b481</value>
   </data>
   <data name="&gt;&gt;DockPanelControl.Parent" xml:space="preserve">
     <value>$this</value>
@@ -173,6 +173,15 @@
   </data>
   <data name="File_CreateFromBrickMenu.Text" xml:space="preserve">
     <value>Create From Brick...</value>
+  </data>
+  <data name="FileMenu_OpenPartFiles.Size" type="System.Drawing.Size, System.Drawing">
+    <value>205, 22</value>
+  </data>
+  <data name="FileMenu_OpenPartFiles.Text" xml:space="preserve">
+    <value>Open Part Files...</value>
+  </data>
+  <data name="FileMenu_OpenPartFiles.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
   </data>
   <data name="toolStripSeparator2.Size" type="System.Drawing.Size, System.Drawing">
     <value>202, 6</value>
@@ -285,17 +294,14 @@
   <data name="Edit_GenerateFilesMenu.Text" xml:space="preserve">
     <value>Generate LDD Files</value>
   </data>
-  <data name="Edit_GenerateOutlines.Size" type="System.Drawing.Size, System.Drawing">
-    <value>191, 22</value>
-  </data>
-  <data name="Edit_GenerateOutlines.Text" xml:space="preserve">
-    <value>Generate Outlines</value>
-  </data>
   <data name="Edit_BatchBuild.Size" type="System.Drawing.Size, System.Drawing">
     <value>191, 22</value>
   </data>
   <data name="Edit_BatchBuild.Text" xml:space="preserve">
     <value>Batch Build...</value>
+  </data>
+  <data name="Edit_BatchBuild.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
   </data>
   <data name="editToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>39, 23</value>
@@ -400,19 +406,19 @@
     <value>vS2015LightTheme1</value>
   </data>
   <data name="&gt;&gt;vS2015LightTheme1.Type" xml:space="preserve">
-    <value>WeifenLuo.WinFormsUI.Docking.VS2015LightTheme, WeifenLuo.WinFormsUI.Docking.ThemeVS2015, Version=3.0.4.0, Culture=neutral, PublicKeyToken=5cded1a1a0a7b481</value>
+    <value>WeifenLuo.WinFormsUI.Docking.VS2015LightTheme, WeifenLuo.WinFormsUI.Docking.ThemeVS2015, Version=3.0.6.0, Culture=neutral, PublicKeyToken=5cded1a1a0a7b481</value>
   </data>
   <data name="&gt;&gt;vS2015DarkTheme1.Name" xml:space="preserve">
     <value>vS2015DarkTheme1</value>
   </data>
   <data name="&gt;&gt;vS2015DarkTheme1.Type" xml:space="preserve">
-    <value>WeifenLuo.WinFormsUI.Docking.VS2015DarkTheme, WeifenLuo.WinFormsUI.Docking.ThemeVS2015, Version=3.0.4.0, Culture=neutral, PublicKeyToken=5cded1a1a0a7b481</value>
+    <value>WeifenLuo.WinFormsUI.Docking.VS2015DarkTheme, WeifenLuo.WinFormsUI.Docking.ThemeVS2015, Version=3.0.6.0, Culture=neutral, PublicKeyToken=5cded1a1a0a7b481</value>
   </data>
   <data name="&gt;&gt;visualStudioToolStripExtender1.Name" xml:space="preserve">
     <value>visualStudioToolStripExtender1</value>
   </data>
   <data name="&gt;&gt;visualStudioToolStripExtender1.Type" xml:space="preserve">
-    <value>WeifenLuo.WinFormsUI.Docking.VisualStudioToolStripExtender, WeifenLuo.WinFormsUI.Docking, Version=3.0.4.0, Culture=neutral, PublicKeyToken=5cded1a1a0a7b481</value>
+    <value>WeifenLuo.WinFormsUI.Docking.VisualStudioToolStripExtender, WeifenLuo.WinFormsUI.Docking, Version=3.0.6.0, Culture=neutral, PublicKeyToken=5cded1a1a0a7b481</value>
   </data>
   <data name="&gt;&gt;fileToolStripMenuItem.Name" xml:space="preserve">
     <value>fileToolStripMenuItem</value>
@@ -430,6 +436,12 @@
     <value>File_CreateFromBrickMenu</value>
   </data>
   <data name="&gt;&gt;File_CreateFromBrickMenu.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;FileMenu_OpenPartFiles.Name" xml:space="preserve">
+    <value>FileMenu_OpenPartFiles</value>
+  </data>
+  <data name="&gt;&gt;FileMenu_OpenPartFiles.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;toolStripSeparator2.Name" xml:space="preserve">
@@ -528,12 +540,6 @@
   <data name="&gt;&gt;Edit_GenerateFilesMenu.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;Edit_GenerateOutlines.Name" xml:space="preserve">
-    <value>Edit_GenerateOutlines</value>
-  </data>
-  <data name="&gt;&gt;Edit_GenerateOutlines.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="&gt;&gt;Edit_BatchBuild.Name" xml:space="preserve">
     <value>Edit_BatchBuild</value>
   </data>
@@ -598,25 +604,25 @@
     <value>localizableStringList1</value>
   </data>
   <data name="&gt;&gt;localizableStringList1.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableStringList, Brick Studio, Version=1.0.3.16734, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableStringList, Brick Studio, Version=1.0.4.26341, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;StartLddText.Name" xml:space="preserve">
     <value>StartLddText</value>
   </data>
   <data name="&gt;&gt;StartLddText.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.3.16734, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.4.26341, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;RestartLddText.Name" xml:space="preserve">
     <value>RestartLddText</value>
   </data>
   <data name="&gt;&gt;RestartLddText.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.3.16734, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.4.26341, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;WindowTitle.Name" xml:space="preserve">
     <value>WindowTitle</value>
   </data>
   <data name="&gt;&gt;WindowTitle.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.3.16734, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.4.26341, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>BrickEditorWindow</value>

@@ -108,10 +108,17 @@ namespace LDDModder.BrickEditor.UI.Windows
             while (newBricks.Count > 0)
             {
                 var range = newBricks.Take(MAX_ADD).ToList();
+                var curScrollRow = BrickGridView.FirstDisplayedScrollingRowIndex;
 
                 BrickList.AddRange(range);
                 if (IsListFiltered)
                     FilteredBrickList.AddRange(range.Where(x => IsBrickVisible(x)));
+
+                if (curScrollRow >= 0 && curScrollRow != BrickGridView.FirstDisplayedScrollingRowIndex)
+                {
+                    //fix to prevent scrolling back to first row
+                    BrickGridView.FirstDisplayedScrollingRowIndex = curScrollRow;
+                }
 
                 newBricks.RemoveRange(0, range.Count);
 

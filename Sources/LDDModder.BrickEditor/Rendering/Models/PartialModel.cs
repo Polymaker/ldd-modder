@@ -84,9 +84,38 @@ namespace LDDModder.BrickEditor.Rendering.Models
             return !float.IsNaN(distance);
         }
 
+        public bool RayIntersectsV2(Ray ray, Matrix4 transform, out float distance)
+        {
+            var localRay = Ray.Transform(ray, transform.Inverted());
+
+            return RayIntersects(localRay, out distance);
+        }
+
         public void DrawElements()
         {
             VertexBuffer.DrawElementsBaseVertex(PrimitiveType, StartVertex, IndexCount, StartIndex * 4);
+        }
+
+        public void DrawModel(Matrix4 transform, MaterialInfo material, bool isSelected)
+        {
+            RenderHelper.BeginDrawModel(VertexBuffer, transform, material);
+            RenderHelper.ModelShader.IsSelected.Set(isSelected);
+            DrawElements();
+            RenderHelper.EndDrawModel(VertexBuffer);
+        }
+
+        public void DrawColored(Matrix4 transform, Vector4 color)
+        {
+            RenderHelper.BeginDrawColor(VertexBuffer, transform, color);
+            DrawElements();
+            RenderHelper.EndDrawColor(VertexBuffer);
+        }
+
+        public void DrawWireframe(Matrix4 transform, float thickness, Vector4 color)
+        {
+            RenderHelper.BeginDrawWireframe(VertexBuffer, transform, thickness, color);
+            DrawElements();
+            RenderHelper.EndDrawWireframe(VertexBuffer);
         }
     }
 }

@@ -22,12 +22,17 @@ namespace LDDModder.BrickEditor.Settings
 
         //[JsonProperty("viewport.default")]
         //public ViewportDisplaySettings ViewportSettings { get; set; }
+        [JsonProperty("file.opened")]
+        public List<RecentFileInfo> OpenedProjects { get; set; }
 
-        [JsonProperty("currentProjectPath")]
-        public RecentFileInfo LastOpenProject { get; set; }
+        //[JsonProperty("currentProjectPath")]
+        //public RecentFileInfo LastOpenProject { get; set; }
 
         [JsonProperty("file.history")]
         public List<RecentFileInfo> RecentProjectFiles { get; set; }
+
+        [JsonProperty("autosave.interval")]
+        public int AutoSaveInterval { get; set; }
 
         //[JsonProperty("Display")]
         //public DisplaySettings DisplaySettings { get; set; }
@@ -36,6 +41,8 @@ namespace LDDModder.BrickEditor.Settings
         {
             RecentProjectFiles = new List<RecentFileInfo>();
             BuildSettings = new ProjectBuildSettings();
+            OpenedProjects = new List<RecentFileInfo>();
+            AutoSaveInterval = -1;
             //ViewportSettings = new ViewportDisplaySettings()
             //{
             //    PartRenderMode = Rendering.MeshRenderMode.SolidWireframe,
@@ -48,7 +55,8 @@ namespace LDDModder.BrickEditor.Settings
             var settings = new AppSettings()
             {
                 LddApplicationDataPath = lddEnvironment?.ApplicationDataPath ?? string.Empty,
-                LddProgramFilesPath = lddEnvironment?.ProgramFilesPath ?? string.Empty
+                LddProgramFilesPath = lddEnvironment?.ProgramFilesPath ?? string.Empty,
+                AutoSaveInterval = 15
             };
             return settings;
         }
@@ -67,6 +75,9 @@ namespace LDDModder.BrickEditor.Settings
                 LddApplicationDataPath = installedEnv?.ApplicationDataPath ?? string.Empty;
                 LddProgramFilesPath = installedEnv?.ProgramFilesPath ?? string.Empty;
             }
+
+            if (AutoSaveInterval < 0)
+                AutoSaveInterval = 15;
 
             if (BuildSettings == null)
                 BuildSettings = new ProjectBuildSettings();

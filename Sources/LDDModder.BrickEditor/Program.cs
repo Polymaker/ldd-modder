@@ -1,5 +1,7 @@
-﻿using LDDModder.BrickEditor.UI;
+﻿using LDDModder.BrickEditor.Settings;
+using LDDModder.BrickEditor.UI;
 using LDDModder.BrickEditor.UI.Windows;
+using LDDModder.BrickEditor.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,11 +17,14 @@ namespace LDDModder.BrickEditor
         /// Point d'entrée principal de l'application.
         /// </summary>
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
-            //LDD.LDDEnvironment.Initialize();
+            //Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-CA");
+            
+            if (args != null && args.Length > 0)
+            {
 
-            //Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("fr-CA");
+            }
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

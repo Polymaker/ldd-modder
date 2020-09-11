@@ -70,6 +70,26 @@ namespace LDDModder.BrickEditor.Rendering
             return Ray.IntersectsBox(localRay, BoundingBox, out distance);
         }
 
+        public bool RayIntersectsGizmo(Ray ray, float axisLength, float axisThickness, out float distance)
+        {
+            var xBox = BBox.FromCenterSize(new Vector3(axisLength / 2f, 0, 0), new Vector3(axisLength, axisThickness, axisThickness));
+            var yBox = BBox.FromCenterSize(new Vector3(0, axisLength / 2f, 0), new Vector3(axisThickness, axisLength, axisThickness));
+            var zBox = BBox.FromCenterSize(new Vector3(0, 0, axisLength / 2f), new Vector3(axisThickness, axisThickness, axisLength));
+            distance = float.MaxValue;
+
+            var localRay = Ray.Transform(ray, Transform.Inverted());
+
+            float result;
+            if (Ray.IntersectsBox(localRay, xBox, out result) && result < distance)
+                distance = result;
+            if (Ray.IntersectsBox(localRay, yBox, out result) && result < distance)
+                distance = result;
+            if (Ray.IntersectsBox(localRay, zBox, out result) && result < distance)
+                distance = result;
+
+            return distance != float.MaxValue;
+        }
+
         public abstract bool RayIntersects(Ray ray, out float distance);
 
         public virtual BBox GetWorldBoundingBox()

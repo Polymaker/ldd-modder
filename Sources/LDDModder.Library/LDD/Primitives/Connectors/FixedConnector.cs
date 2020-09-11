@@ -42,5 +42,16 @@ namespace LDDModder.LDD.Primitives.Connectors
                 Axes = axes;
             Tag = element.ReadAttribute("tag", string.Empty);
         }
+
+        public override Connector Clone()
+        {
+            return new FixedConnector()
+            {
+                Axes = Axes,
+                Tag = Tag,
+                SubType = SubType,
+                Transform = Transform.Clone()
+            };
+        }
     }
 }

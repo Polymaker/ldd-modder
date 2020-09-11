@@ -16,9 +16,10 @@ namespace LDDModder.LDD.Primitives
         public BoundingBox Bounding { get; set; }
 
         /// <summary>
-        /// Item 1: Number of Connectivity elements (excluding types 99900X)
-        /// Item 2: The previous bone ID (the one it connects to)
-        /// Item 3: No clue
+        /// Bone connection information. Bones are connected by connectors (ball or fixed) of type 99900X.<br/>
+        /// Item 1: Index of the connection used from the current bone<br/>
+        /// Item 2: Target bone ID (generally the preceding ID)<br/>
+        /// Item 3: Index of the connection used in the target bone
         /// </summary>
         public Tuple<int,int,int> ConnectionCheck { get; set; }
 

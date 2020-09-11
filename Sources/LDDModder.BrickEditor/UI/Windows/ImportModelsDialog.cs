@@ -1,4 +1,5 @@
-﻿using LDDModder.Modding.Editing;
+﻿using LDDModder.BrickEditor.ProjectHandling;
+using LDDModder.Modding.Editing;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -8,12 +9,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Assimp;
+using LDDModder.Simple3D;
 
 namespace LDDModder.BrickEditor.UI.Windows
 {
     public partial class ImportModelsDialog : Form
     {
-        public PartProject Project { get; set; }
+        public ProjectManager ProjectManager { get; set; }
+
+        public PartProject Project => ProjectManager.CurrentProject;
 
         private Assimp.AssimpContext AssimpContext;
 
@@ -23,18 +28,23 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         public List<ImportModelInfo> ModelsToImport { get; private set; }
 
-        private List<SurfaceItem> SurfaceList;
+        public IEnumerable<ImportModelInfo> SelectedModels => ModelsToImport.Where(x => x.Selected);
+
+        private List<SurfaceItem> SurfaceList { get; }
 
         private bool HasInitialized { get; set; }
 
         public bool SelectFileOnStart { get; set; }
 
-        public ImportModelsDialog()
+        public ImportModelsDialog(ProjectManager projectManager)
         {
+            ProjectManager = projectManager;
             InitializeComponent();
             InitializeGridView();
             ModelsToImport = new List<ImportModelInfo>();
             SurfaceList = new List<SurfaceItem>();
+            WarningMessageLabel.Text = string.Empty;
+            progressBar1.Visible = false;
         }
 
         private void InitializeGridView()
@@ -62,7 +72,6 @@ namespace LDDModder.BrickEditor.UI.Windows
             if (SelectFileOnStart)
                 ShowSelectFileDialog();
         }
-
 
         private void FillModelsGridView()
         {
@@ -92,14 +101,162 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         private void ImportButton_Click(object sender, EventArgs e)
         {
-            ValidateSelection();
-
+            if (ValidateSelection())
+            {
+                ImportModels();
+                DialogResult = DialogResult.OK;
+            }
         }
 
-        private void ValidateSelection()
+        private void ImportModels()
         {
-            ModelsToImport.RemoveAll(x => !x.Selected);
-            DialogResult = DialogResult.OK;
+            ProjectManager.StartBatchChanges();
+            progressBar1.Style = ProgressBarStyle.Continuous;
+            progressBar1.Value = 0;
+            progressBar1.Maximum = SelectedModels.Count();
+
+            var bonesToImport = GetBoneMappings();
+
+            if (bonesToImport.Count > 0 && SelectedModels.Any(x => x.IsFlexible))
+            {
+                Project.Flexible = true;
+     
+                foreach (var boneMap in bonesToImport)
+                {
+                    var existing = Project.Bones.FirstOrDefault(x => x.BoneID == boneMap.AssimpID);
+
+                    if (existing == null)
+                        existing = new PartBone(boneMap.AssimpID);
+                    existing.Transform = boneMap.Transform;
+                    
+                    if (boneMap.ParentName != null)
+                    {
+                        var parentbone = bonesToImport.FirstOrDefault(x => x.Name == boneMap.ParentName);
+                        existing.TargetBoneID = parentbone.AssimpID;
+
+
+                    }
+
+                    if (existing.Project == null)
+                        Project.Bones.Add(existing);
+                }
+
+
+            }
+
+            foreach (var model in SelectedModels)
+            {
+                var geom = Meshes.MeshConverter.AssimpToLdd(SceneToImport, model.Mesh);
+                var surface = Project.Surfaces.FirstOrDefault(x => x.SurfaceID == model.SurfaceID);
+
+                if (surface == null)
+                {
+                    surface = new PartSurface(model.SurfaceID, Project.Surfaces.Max(x => x.SubMaterialIndex) + 1);
+                    Project.Surfaces.Add(surface);
+                }
+
+                var partModel = surface.Components.FirstOrDefault(x => x.ComponentType == ModelComponentType.Part);
+
+                if (partModel == null)
+                {
+                    partModel = new PartModel();
+                    surface.Components.Add(partModel);
+                }
+
+                var modelMesh = Project.AddMeshGeometry(geom, model.Name);
+                partModel.Meshes.Add(new ModelMeshReference(modelMesh));
+
+                progressBar1.Value += 1;
+            }
+
+            if (bonesToImport.Any())
+                Project.RebuildBoneConnections();
+
+            ProjectManager.EndBatchChanges();
+        }
+
+        private List<BoneMapping> GetBoneMappings()
+        {
+            var bones = new List<BoneMapping>();
+            var boneNames = SceneToImport.Meshes.SelectMany(x => x.Bones).Select(x => x.Name).Distinct().ToList();
+
+            if (!boneNames.Any())
+                return bones;
+
+            var boneNodes = Assimp.AssimpHelper.GetNodeHierarchy(SceneToImport.RootNode)
+                .Where(x => boneNames.Contains(x.Name))/*.OrderBy(x => x.GetLevel())*/.ToList();
+
+            //include last bone if no weight
+            if (boneNodes.LastOrDefault()?.ChildCount > 0)
+            {
+                var lastBone = boneNodes.Last();
+                if (lastBone.MeshCount == 0)
+                    boneNodes.Add(lastBone.Children[0]);
+            }
+
+            boneNames = boneNodes.Select(x => x.Name).ToList();//names in order
+
+            foreach (var boneNode in boneNodes)
+            {
+                //var meshBone = SceneToImport.Meshes.SelectMany(x => x.Bones).FirstOrDefault(x => x.Name == boneNode.Name);
+                //var pos1 = ItemTransform.FromMatrix(meshBone.OffsetMatrix.ToLDD());
+
+                string parentName = boneNode.Parent?.Name;
+                if (!boneNames.Contains(parentName))
+                    parentName = null;
+
+                var boneTransform = boneNode.GetFinalTransform().ToLDD();
+                //var yAxis = boneTransform.TransformNormal(Simple3D.Vector3.UnitY);
+                //boneTransform = Simple3D.Matrix4.FromAngleAxis((float)Math.PI * -0.5f, yAxis) * boneTransform;
+
+                var mapping = new BoneMapping()
+                {
+                    Name = boneNode.Name,
+                    ParentName = parentName,
+                    Transform = ItemTransform.FromMatrix(boneTransform),
+                    AssimpID = boneNames.IndexOf(boneNode.Name)
+                };
+                bones.Add(mapping);
+            }
+
+            //Adjust bone rotation for LDD
+            foreach (var bone in bones)
+            {
+                var target = bones.FirstOrDefault(x => x.ParentName == bone.Name);
+                if (target != null)
+                {
+                    var dir = (target.Transform.Position - bone.Transform.Position).Normalized();
+                    var angle = Simple3D.Vector3d.AngleBetween(Simple3D.Vector3d.UnitX, dir);
+                    var yAxis = Simple3D.Vector3d.Cross(Simple3D.Vector3d.UnitX, dir);
+                    var rot = Simple3D.Matrix4d.FromAngleAxis(angle, yAxis);
+                    bone.Transform.Rotation = Quaterniond.ToEuler(rot.ExtractRotation()) * (180d / Math.PI);
+                }
+                else if(bone.ParentName != null)
+                {
+                    var parent = bones.FirstOrDefault(x => x.Name == bone.ParentName);
+                    bone.Transform.Rotation = parent.Transform.Rotation;
+                }
+            }
+
+            return bones;
+        }
+
+        private bool ValidateSelection()
+        {
+            WarningMessageLabel.Text = string.Empty;
+            bool hasError = false;
+
+            if (SelectedModels.Any(x => x.IsFlexible))
+            {
+                var allFlexible = SelectedModels.All(x => x.IsFlexible);
+                if (!allFlexible)
+                {
+                    WarningMessageLabel.Text = WarningNotAllFlexible.Text;
+                    hasError = true;
+                }
+            }
+
+            return !hasError;
         }
 
         #region Classes
@@ -120,6 +277,7 @@ namespace LDDModder.BrickEditor.UI.Windows
             public int ID { get; set; }
             public string Name { get; set; }
             public int ExistingMeshes { get; set; }
+
             public SurfaceItem(int iD, string name)
             {
                 ID = iD;
@@ -127,14 +285,31 @@ namespace LDDModder.BrickEditor.UI.Windows
             }
         }
 
+        class BoneMapping
+        {
+            public string Name { get; set; }
+            public string ParentName { get; set; }
+            public ItemTransform Transform { get; set; }
+
+            public int AssimpID { get; set; }
+            public int LddID { get; set; }
+        }
+
         #endregion
 
         private void ModelsGridView_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
-            if (HasInitialized && ModelsGridView.Columns[e.ColumnIndex] == SurfaceColumn)
+            if (!HasInitialized)
+                return;
+
+            if (ModelsGridView.Columns[e.ColumnIndex] == SurfaceColumn)
             {
                 RebuildSurfaceList();
                 UpdateSurfaceComboBox();
+            }
+            else if (ModelsGridView.Columns[e.ColumnIndex] == SelectionColumn)
+            {
+                ValidateSelection();
             }
         }
 
@@ -203,7 +378,7 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         #endregion
 
-        private void browseTextBox1_BrowseButtonClicked(object sender, EventArgs e)
+        private void BrowseModelBox_BrowseButtonClicked(object sender, EventArgs e)
         {
             ShowSelectFileDialog();
         }
@@ -212,27 +387,32 @@ namespace LDDModder.BrickEditor.UI.Windows
         {
             using (var ofd = new OpenFileDialog())
             {
-                ofd.Filter = "Mesh files (*.dae, *.obj, *.stl)|*.dae;*.obj;*.stl|Wavefront (*.obj)|*.obj|Collada (*.dae)|*.dae|STL (*.stl)|*.stl|All files (*.*)|*.*";
-                if (!string.IsNullOrEmpty(browseTextBox1.Value))
-                    ofd.FileName = browseTextBox1.Value;
+                ofd.Filter = "Mesh files|*.dae;*.obj;*.stl|Wavefront|*.obj|Collada|*.dae|STL|*.stl|All files|*.*";
+                if (!string.IsNullOrEmpty(BrowseModelBox.Value))
+                    ofd.FileName = BrowseModelBox.Value;
 
                 if (ofd.ShowDialog() == DialogResult.OK)
                 {
                     try
                     {
-                        browseTextBox1.Value = ofd.FileName;
+                        BrowseModelBox.Value = ofd.FileName;
+                        progressBar1.Style = ProgressBarStyle.Marquee;
+                        progressBar1.Visible = true;
                         SceneToImport = AssimpContext.ImportFile(ofd.FileName, 
                             Assimp.PostProcessSteps.Triangulate | 
                             Assimp.PostProcessSteps.GenerateNormals | 
                             Assimp.PostProcessSteps.FlipUVs);
-
+                        
                         FillModelsGridView();
                     }
                     catch (Exception ex)
                     {
                         MessageBox.Show("Could not import file!");
                     }
-                    
+                    finally
+                    {
+                        progressBar1.Visible = false;
+                    }
                 }
             }
         }

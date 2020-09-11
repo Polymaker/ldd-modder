@@ -58,12 +58,6 @@ namespace LDDModder.LDD.Meshes
             public Vector3 P1;
             public Vector3 P2;
 
-            public SimpleEdge(Vector3 p1, Vector3 p2)
-            {
-                P1 = p1;
-                P2 = p2;
-            }
-
             public SimpleEdge(Edge edge)
             {
                 P1 = edge.P1.Position.Rounded();
@@ -417,11 +411,6 @@ namespace LDDModder.LDD.Meshes
                         var edgeCoords = ProjectTriangle(triangle, idxPos, vertEdges[0].Edge);
                         vertEdges[0].UsedInUnion = true;
 
-                        if (edgeCoords.Max(p => p.Y) < 0.013f)
-                        {
-
-                        }
-
                         for (int j = 0; j < 3; j++)
                         {
                             var reData = triangle.Indices[j].RoundEdgeData;
@@ -665,62 +654,5 @@ namespace LDDModder.LDD.Meshes
             return coords;
         }
 
-        private static Vector2[] GetTexCoordsForEdge(TriangleWrapper triangle, FaceEdge edge)
-        {
-            Vector3 axisP1 = edge.P1;
-            
-            if (edge.IsContained(triangle.Triangle))
-                axisP1 = triangle.Triangle.Edges.First(x => edge.Edge == x).P1.Position;
-            else
-                axisP1 = triangle.Triangle.ContainsVertex(edge.P1) ? edge.P1 : edge.P2;
-
-            axisP1 = triangle.FacePlane.ProjectPoint(axisP1);
-
-            var localPlane = new Plane(axisP1, triangle.Normal);
-
-
-            Vector3 yAxis = localPlane.ProjectVector(edge.PerpVec); //Flatten perpendicular vector to 2D plane
-
-            Vector2[] coords = new Vector2[3];
-
-            for (int i = 0; i < 3; i++)
-            {
-                var pos = localPlane.ProjectPoint2D(yAxis, triangle.Vertices[i].Position);
-                coords[i] = new Vector2(pos.Y, pos.X);
-            }
-
-            var minX = coords.Min(c => c.X);
-            for (int i = 0; i < 3; i++)
-                coords[i].X -= minX;
-
-            return coords;
-        }
-
-        //public class OutlinesParameters
-        //{
-        //    public float BreakAngle { get; set; } = 35f;
-        //    //public bool MergeVertices { get; set; } = true;
-        //}
-
-        //public static void GenerateOutlines(OutlinesParameters config, IEnumerable<Triangle> triangles)
-        public static void GenerateOutlines(float breakAngle, IEnumerable<Triangle> triangles)
-        {
-            float breakAngleRad = breakAngle / 180f * fPI;
-
-            var triangleList = triangles.Select(x => new TriangleWrapper(x)).ToList();
-
-            var edgeFaces = BuildEdgeFacesDictionary(triangleList);
-
-            var hardEdges = ComputeHardEdges(edgeFaces, breakAngle);
-
-            //var edgesPerVert = BuildVertexEdgesDictionary(hardEdges);
-
-            
-        }
-
-        //private class EdgeDictionary
-        //{
-
-        //}
     }
 }

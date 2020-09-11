@@ -100,6 +100,9 @@ namespace LDDModder.LDD.Primitives
             if (Connectors.Any())
                 rootElem.Add(new XElement("Connectivity", Connectors.Select(x => x.SerializeToXml())));
 
+            if (FlexBones.Any())
+                rootElem.Add(new XElement("Flex", FlexBones.Select(x => x.SerializeToXml())));
+
             if (PhysicsAttributes != null && !PhysicsAttributes.IsEmpty)
                 rootElem.Add(PhysicsAttributes.SerializeToXml());
 
@@ -121,9 +124,6 @@ namespace LDDModder.LDD.Primitives
                 decorationElem.Add(new XAttribute("faces", SubMaterials.Length));
                 decorationElem.Add(new XAttribute("subMaterialRedirectLookupTable", string.Join(",", SubMaterials)));
             }
-
-            if (FlexBones.Any())
-                rootElem.Add(new XElement("Flex", FlexBones.Select(x => x.SerializeToXml())));
 
             if (DefaultOrientation != null)
                 rootElem.Add(new XElement("DefaultOrientation", DefaultOrientation.ToXmlAttributes()));

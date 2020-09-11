@@ -26,6 +26,8 @@ namespace LDDModder.Modding.Editing
         private int _PartVersion;
         private bool _Decorated;
         private bool _Flexible;
+        private string _Authors;
+        private string _ChangeLog;
 
         public int PartID
         {
@@ -37,6 +39,18 @@ namespace LDDModder.Modding.Editing
         {
             get => _PartDescription;
             set => SetPropertyValue(ref _PartDescription, value);
+        }
+
+        public string Authors
+        {
+            get => _Authors;
+            set => SetPropertyValue(ref _Authors, value);
+        }
+
+        public string ChangeLog
+        {
+            get => _ChangeLog;
+            set => SetPropertyValue(ref _ChangeLog, value);
         }
 
         public List<int> Aliases
@@ -111,7 +125,14 @@ namespace LDDModder.Modding.Editing
             set => SetPropertyValue(ref _Flexible, value);
         }
 
-        public PartProperties(PartProject project)
+        private PartProperties()
+        {
+            Authors = string.Empty;
+            ChangeLog = string.Empty;
+            Description = string.Empty;
+        }
+
+        public PartProperties(PartProject project) : this()
         {
             _Project = project;
             Platform = new Platform(0, "None");
@@ -142,6 +163,12 @@ namespace LDDModder.Modding.Editing
             else
                 PrimitiveFileVersion = new VersionInfo(1, 0);
 
+            if (!string.IsNullOrWhiteSpace(Authors))
+                propsElem.Add(new XElement(nameof(Authors), Authors));
+
+            if (!string.IsNullOrWhiteSpace(ChangeLog))
+                propsElem.Add(new XElement(nameof(ChangeLog), ChangeLog));
+
             propsElem.Add(new XElement(nameof(Flexible), Flexible));
 
             propsElem.Add(new XElement(nameof(Decorated), Decorated));
@@ -156,10 +183,10 @@ namespace LDDModder.Modding.Editing
                 propsElem.Add(PhysicsAttributes.SerializeToXml());
 
             if (Bounding != null)
-                propsElem.Add(XmlHelper.DefaultSerialize(Bounding, nameof(Bounding)));
+                propsElem.Add(XmlHelper.DefaultSerialize(Bounding.Rounded(6), nameof(Bounding)));
 
             if (GeometryBounding != null)
-                propsElem.Add(XmlHelper.DefaultSerialize(GeometryBounding, nameof(GeometryBounding)));
+                propsElem.Add(XmlHelper.DefaultSerialize(GeometryBounding.Rounded(6), nameof(GeometryBounding)));
 
             if (DefaultOrientation != null)
                 propsElem.Add(DefaultOrientation.SerializeToXml(nameof(DefaultOrientation)));
@@ -186,6 +213,9 @@ namespace LDDModder.Modding.Editing
 
             Description = element.ReadElement(nameof(Description), string.Empty);
             PartVersion = element.ReadElement(nameof(PartVersion), 1);
+
+            Authors = element.ReadElement(nameof(Authors), string.Empty);
+            ChangeLog = element.ReadElement(nameof(ChangeLog), string.Empty);
 
             Decorated = element.ReadElement(nameof(Decorated), false);
             Flexible = element.ReadElement(nameof(Flexible), false);

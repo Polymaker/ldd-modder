@@ -38,6 +38,7 @@
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.File_NewProjectMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.File_CreateFromBrickMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.FileMenu_OpenPartFiles = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.File_OpenProjectMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.File_OpenRecentMenu = new System.Windows.Forms.ToolStripMenuItem();
@@ -54,7 +55,6 @@
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.Edit_ValidatePartMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.Edit_GenerateFilesMenu = new System.Windows.Forms.ToolStripMenuItem();
-            this.Edit_GenerateOutlines = new System.Windows.Forms.ToolStripMenuItem();
             this.Edit_BatchBuild = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ExportBrickMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -101,6 +101,7 @@
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.File_NewProjectMenu,
             this.File_CreateFromBrickMenu,
+            this.FileMenu_OpenPartFiles,
             this.toolStripSeparator2,
             this.File_OpenProjectMenu,
             this.File_OpenRecentMenu,
@@ -123,6 +124,12 @@
             this.File_CreateFromBrickMenu.Name = "File_CreateFromBrickMenu";
             resources.ApplyResources(this.File_CreateFromBrickMenu, "File_CreateFromBrickMenu");
             this.File_CreateFromBrickMenu.Click += new System.EventHandler(this.File_CreateFromBrickMenu_Click);
+            // 
+            // FileMenu_OpenPartFiles
+            // 
+            this.FileMenu_OpenPartFiles.Name = "FileMenu_OpenPartFiles";
+            resources.ApplyResources(this.FileMenu_OpenPartFiles, "FileMenu_OpenPartFiles");
+            this.FileMenu_OpenPartFiles.Click += new System.EventHandler(this.FileMenu_OpenPartFiles_Click);
             // 
             // toolStripSeparator2
             // 
@@ -179,7 +186,6 @@
             this.toolStripSeparator4,
             this.Edit_ValidatePartMenu,
             this.Edit_GenerateFilesMenu,
-            this.Edit_GenerateOutlines,
             this.Edit_BatchBuild});
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
             resources.ApplyResources(this.editToolStripMenuItem, "editToolStripMenuItem");
@@ -223,15 +229,6 @@
             this.Edit_GenerateFilesMenu.Name = "Edit_GenerateFilesMenu";
             resources.ApplyResources(this.Edit_GenerateFilesMenu, "Edit_GenerateFilesMenu");
             this.Edit_GenerateFilesMenu.Click += new System.EventHandler(this.Edit_GenerateFilesMenu_Click);
-            // 
-            // Edit_GenerateOutlines
-            // 
-            this.Edit_GenerateOutlines.Checked = true;
-            this.Edit_GenerateOutlines.CheckOnClick = true;
-            this.Edit_GenerateOutlines.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.Edit_GenerateOutlines.Name = "Edit_GenerateOutlines";
-            resources.ApplyResources(this.Edit_GenerateOutlines, "Edit_GenerateOutlines");
-            this.Edit_GenerateOutlines.CheckStateChanged += new System.EventHandler(this.Edit_GenerateOutlines_CheckStateChanged);
             // 
             // Edit_BatchBuild
             // 
@@ -369,8 +366,8 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
         private Localization.LocalizableString WindowTitle;
         private System.Windows.Forms.ToolStripComboBox BuildConfigComboBox;
-        private System.Windows.Forms.ToolStripMenuItem Edit_GenerateOutlines;
         private System.Windows.Forms.ToolStripMenuItem Edit_BatchBuild;
         public WeifenLuo.WinFormsUI.Docking.DockPanel DockPanelControl;
+        private System.Windows.Forms.ToolStripMenuItem FileMenu_OpenPartFiles;
     }
 }

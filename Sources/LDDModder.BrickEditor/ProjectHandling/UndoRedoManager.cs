@@ -10,6 +10,8 @@ namespace LDDModder.BrickEditor.ProjectHandling
     {
         public ProjectManager ProjectManager { get; }
 
+        //public ProjectDocument Document { get; private set; }
+
         public long CurrentChangeID { get; private set; }
 
         public int MaxHistory { get; set; }
@@ -41,7 +43,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
         public UndoRedoManager(ProjectManager projectManager)
         {
             ProjectManager = projectManager;
-            ProjectManager.ProjectChanged += ProjectManager_ProjectChanged;
+            //ProjectManager.ProjectChanged += ProjectManager_ProjectChanged;
             MaxHistory = 15;
 
             UndoHistory = new List<ChangeAction>();
@@ -49,7 +51,22 @@ namespace LDDModder.BrickEditor.ProjectHandling
             BatchChanges = new List<ChangeAction>();
         }
 
-        private void ProjectManager_ProjectChanged(object sender, EventArgs e)
+        //public UndoRedoManager(ProjectDocument document)
+        //{
+        //    Document = document;
+        //    MaxHistory = 15;
+
+        //    UndoHistory = new List<ChangeAction>();
+        //    RedoHistory = new List<ChangeAction>();
+        //    BatchChanges = new List<ChangeAction>();
+        //}
+
+        //private void ProjectManager_ProjectChanged(object sender, EventArgs e)
+        //{
+        //    ClearHistory();
+        //}
+
+        public void ClearHistory()
         {
             UndoHistory.Clear();
             RedoHistory.Clear();
@@ -152,6 +169,14 @@ namespace LDDModder.BrickEditor.ProjectHandling
                 combinedChanges.Add(prevColChange);
 
             return new BatchChangeAction(combinedChanges);
+        }
+
+        public void AddEditorAction(EditorAction action)
+        {
+            if (IsInBatch)
+                BatchChanges.Add(action);
+            else
+                AddAction(action);
         }
 
         private void AddAction(ChangeAction action)

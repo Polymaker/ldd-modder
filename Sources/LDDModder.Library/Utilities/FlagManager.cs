@@ -10,6 +10,8 @@ namespace LDDModder.Utilities
     {
         private Dictionary<string, bool> mFlags;
 
+        //TODO: implement multithreading read-write lock
+
         public bool Any { get { return mFlags.Values.Any(v => v); } }
 
         public bool All { get { return mFlags.Values.All(v => v); } }

@@ -35,15 +35,29 @@ namespace LDDModder.BrickEditor.UI.Panels
             ConnectorComboBox.ComboBox.DataSource = Connections;
             ConnectorComboBox.ComboBox.DisplayMember = "Name";
             ConnectorComboBox.ComboBox.ValueMember = "ID";
+            CloseButtonVisible = false;
+            studConnectionEditor1.AssignManager(ProjectManager);
         }
 
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
             FillSelectedConnector(false);
+            //studConnectionEditor1.GridEditor.DataChanged += GridEditor_DataChanged;
+            studConnectionEditor1.GridEditor.ConnectorSizeChanged += GridEditor_ConnectorSizeChanged;
         }
 
-        
+        private void GridEditor_ConnectorSizeChanged(object sender, EventArgs e)
+        {
+            if (DockState == WeifenLuo.WinFormsUI.Docking.DockState.Float)
+                ProjectManager.ViewportWindow.ForceRender();
+        }
+
+        //private void GridEditor_DataChanged(object sender, EventArgs e)
+        //{
+        //    if (DockState == WeifenLuo.WinFormsUI.Docking.DockState.Float)
+        //        ProjectManager.ViewportWindow.ForceRender();
+        //}
 
         protected override void OnProjectChanged()
         {
@@ -78,7 +92,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                 if (CurrentProject != null)
                 {
                     var studConnectors = CurrentProject.GetAllElements<PartConnection>(x =>
-                            x.ConnectorType == LDD.Primitives.Connectors.ConnectorType.Custom2DField);
+                            x.ConnectorType == ConnectorType.Custom2DField);
 
                     if (rebuild)
                         Connections.AddRange(studConnectors);
@@ -150,6 +164,24 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             
         }
-        
+
+        protected override void OnDockStateChanged(EventArgs e)
+        {
+            base.OnDockStateChanged(e);
+            if (DockState == WeifenLuo.WinFormsUI.Docking.DockState.Float)
+                CloseButtonVisible = true;
+            else
+                CloseButtonVisible = false;
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            if (DockState == WeifenLuo.WinFormsUI.Docking.DockState.Float)
+            {
+                e.Cancel = true;
+                Show(DockHandler.DockPanel, WeifenLuo.WinFormsUI.Docking.DockState.Document);
+            }
+            base.OnClosing(e);
+        }
     }
 }

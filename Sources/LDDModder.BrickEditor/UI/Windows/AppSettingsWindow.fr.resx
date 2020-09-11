@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -170,5 +170,59 @@
   </data>
   <data name="LddExeNotFound.Text" xml:space="preserve">
     <value>L'application LDD n'a pas été trouvée.</value>
+  </data>
+  <data name="DelBuildCfgBtn.Text" xml:space="preserve">
+    <value>Supprimer</value>
+  </data>
+  <data name="CancelBuildCfgBtn.Text" xml:space="preserve">
+    <value>Annuler</value>
+  </data>
+  <data name="BuildCfgPathLabel.Text" xml:space="preserve">
+    <value>Chemin sortie</value>
+  </data>
+  <data name="BuildCfgNameLabel.Text" xml:space="preserve">
+    <value>Nom</value>
+  </data>
+  <data name="BuildCfgNameColumn.Text" xml:space="preserve">
+    <value>Nom</value>
+  </data>
+  <data name="BuildCfg_PathBox.ButtonText" xml:space="preserve">
+    <value>Choisir</value>
+  </data>
+  <data name="BuildCfg_OverwriteChk.Text" xml:space="preserve">
+    <value>Confirmation lors de l'écrasement</value>
+  </data>
+  <data name="BuildCfg_Lod0Chk.Text" xml:space="preserve">
+    <value>Placer les modèles dans le répertoire LOD0</value>
+  </data>
+  <data name="AppDataPathTextBox.ButtonText" xml:space="preserve">
+    <value>...</value>
+  </data>
+  <data name="AddBuildCfgBtn.Text" xml:space="preserve">
+    <value>Ajouter</value>
+  </data>
+  <data name="SaveBuildCfgBtn.Text" xml:space="preserve">
+    <value>Enregistrer</value>
+  </data>
+  <data name="PrgmFilePathTextBox.ButtonText" xml:space="preserve">
+    <value>...</value>
+  </data>
+  <data name="UserCreationPathTextBox.ButtonText" xml:space="preserve">
+    <value>...</value>
+  </data>
+  <data name="BuildConfigsGroupBox.Text" xml:space="preserve">
+    <value>Configurations de génération</value>
+  </data>
+  <data name="EditorSettingsTabPage.Text" xml:space="preserve">
+    <value>Paramètres de l'éditeur</value>
+  </data>
+  <data name="FindEnvironmentButton.Text" xml:space="preserve">
+    <value>Recherche auto...</value>
+  </data>
+  <data name="LDDEnvPanel.Text" xml:space="preserve">
+    <value>Environnement LDD</value>
+  </data>
+  <data name="AppDataDbNotFound.Text" xml:space="preserve">
+    <value>Impossible de trouver les données de LDD.</value>
   </data>
 </root>

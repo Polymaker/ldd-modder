@@ -74,8 +74,25 @@ namespace LDDModder.BrickEditor.ProjectHandling
         {
             object objToAssign = Data.ChildProperty ?? Data.Element;
             var propInfo = objToAssign.GetType().GetProperty(Data.PropertyName);
+
             if (propInfo != null)
-                propInfo.SetValue(objToAssign, value);
+            {
+                if (Data.Index != null)
+                {
+                    //TODO: find a way to remove this hard-coded case
+                    if (Data.Index.Length == 2 && 
+                        objToAssign is LDD.Primitives.Connectors.Custom2DFieldConnector connector)
+                    {
+                        connector.SetValue(Data.Index[0], Data.Index[1], (LDD.Primitives.Connectors.Custom2DFieldValue)value);
+                        return;
+                    }
+                    var arrayObj = propInfo.GetValue(objToAssign) as Array;
+                    if (arrayObj != null)
+                        arrayObj.SetValue(value, Data.Index);
+                }
+                else
+                    propInfo.SetValue(objToAssign, value);
+            }
         }
 
         public override void Undo()
@@ -108,6 +125,73 @@ namespace LDDModder.BrickEditor.ProjectHandling
         {
             foreach (var action in Actions)
                 action.Redo();
+        }
+    }
+
+    public abstract class EditorAction : ChangeAction
+    {
+        public string ActionName { get; set; }
+
+        public EditorAction(string actionName)
+        {
+            ActionName = actionName;
+        }
+    }
+
+    public class HideElementAction : EditorAction
+    {
+        public PartElement[] AffectedElements { get; private set; }
+        //public IElementCollection[] AffectedCollections { get; private set; }
+        public bool HideState { get; private set; }
+
+        public HideElementAction(string actionName, IEnumerable<PartElement> elements, bool hideStatus) : base(actionName)
+        {
+            AffectedElements = elements.ToArray();
+            //AffectedCollections = new IElementCollection[0];
+            HideState = hideStatus;
+        }
+
+        //public HideElementAction(string actionName, IElementCollection[] affectedCollections, bool hideState) : base(actionName)
+        //{
+        //    AffectedCollections = affectedCollections;
+        //    AffectedElements = new PartElement[0];
+        //    HideState = hideState;
+        //}
+
+        public override void Undo()
+        {
+            foreach (var elem in AffectedElements)
+            {
+                var elementExt = elem.GetExtension<ModelElementExtension>();
+                if (elementExt != null)
+                {
+                    elementExt.IsHidden = !HideState;
+                    elementExt.CalculateVisibility();
+                }
+            }
+
+            //foreach (var collection in AffectedCollections)
+            //{
+            //    var elementExt = collection.Owner?.GetExtension<ModelElementExtension>();
+            //    if (elementExt != null)
+            //    {
+            //        elementExt.IsHidden = !HideState;
+            //        elementExt.CalculateVisibility();
+            //    }
+            //}
+        }
+
+        public override void Redo()
+        {
+            foreach (var elem in AffectedElements)
+            {
+                var elementExt = elem.GetExtension<ModelElementExtension>();
+                if (elementExt != null)
+                {
+                    elementExt.IsHidden = HideState;
+                    elementExt.CalculateVisibility();
+                }
+            }
         }
     }
 }

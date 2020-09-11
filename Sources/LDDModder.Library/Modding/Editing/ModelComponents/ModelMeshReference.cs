@@ -24,6 +24,10 @@ namespace LDDModder.Modding.Editing
         public int StartVertex { get; set; }
         public int VertexCount { get; set; }
 
+        public int RoundEdgeLayer { get; set; }
+
+        public List<Triangle> GeneratedTriangles { get; set; }
+
         public ItemTransform Transform
         {
             get => _Transform;
@@ -137,6 +141,20 @@ namespace LDDModder.Modding.Editing
             return modelGeometry;
         }
 
+        public void UpdateMeshOutlines(MeshGeometry geometry)
+        {
+            var modelMesh = GetModelMesh();
+            if (!modelMesh.IsModelLoaded)
+                modelMesh.LoadModel();
+
+            for (int i = 0; i < geometry.IndexCount; i++)
+            {
+                var origIndex = modelMesh.Geometry.Indices[i + StartIndex];
+                var newIndex = geometry.Indices[i];
+                origIndex.RoundEdgeData = newIndex.RoundEdgeData.Clone();
+            }
+        }
+
         public override XElement SerializeToXml()
         {
             var elem = SerializeToXmlBase(NODE_NAME);
@@ -152,7 +170,10 @@ namespace LDDModder.Modding.Editing
                 elem.AddNumberAttribute(nameof(StartVertex), StartVertex);
                 elem.AddNumberAttribute(nameof(VertexCount), VertexCount);
             }
-            
+
+            if (RoundEdgeLayer != 0)
+                elem.AddNumberAttribute(nameof(RoundEdgeLayer), RoundEdgeLayer);
+
             return elem;
         }
 
@@ -164,6 +185,7 @@ namespace LDDModder.Modding.Editing
             IndexCount  = element.ReadAttribute(nameof(IndexCount ), 0);
             StartVertex = element.ReadAttribute(nameof(StartVertex), 0);
             VertexCount = element.ReadAttribute(nameof(VertexCount), 0);
+            RoundEdgeLayer = element.ReadAttribute(nameof(RoundEdgeLayer), 0);
 
             if (element.HasElement(nameof(Transform), out XElement transElem))
                 Transform = ItemTransform.FromXml(transElem);

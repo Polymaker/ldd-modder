@@ -57,9 +57,9 @@ namespace LDDModder.LDD.Primitives.Connectors
             element.WriteAttribute("length", Length);
             element.WriteAttribute(
                 IsGrabbingRequired ? "requireGrabbing" : "grabbing", 
-                Grabbing, LinqXmlExtensions.BooleanXmlRepresentation.OneZero);
-            element.WriteAttribute("startCapped", StartCapped, LinqXmlExtensions.BooleanXmlRepresentation.OneZero);
-            element.WriteAttribute("endCapped", EndCapped, LinqXmlExtensions.BooleanXmlRepresentation.OneZero);
+                Grabbing, BooleanXmlRepresentation.OneZero);
+            element.WriteAttribute("startCapped", StartCapped, BooleanXmlRepresentation.OneZero);
+            element.WriteAttribute("endCapped", EndCapped, BooleanXmlRepresentation.OneZero);
         }
 
         public override void LoadFromXml(XElement element)
@@ -87,6 +87,20 @@ namespace LDDModder.LDD.Primitives.Connectors
 
             StartCapped = element.GetBoolAttribute("startCapped");
             EndCapped = element.GetBoolAttribute("endCapped");
+        }
+
+        public override Connector Clone()
+        {
+            return new AxelConnector()
+            {
+                EndCapped = EndCapped,
+                IsGrabbingRequired = IsGrabbingRequired,
+                Grabbing = Grabbing,
+                Length = Length,
+                StartCapped = StartCapped,
+                SubType = SubType,
+                Transform = Transform.Clone()
+            };
         }
     }
 }

@@ -33,5 +33,15 @@ namespace LDDModder.LDD.Primitives.Connectors
             if (!string.IsNullOrEmpty(FlexAttributes))
                 element.Add(new XAttribute("flexAttributes", FlexAttributes));
         }
+
+        public override Connector Clone()
+        {
+            return new BallConnector()
+            {
+                FlexAttributes = FlexAttributes,
+                SubType = SubType,
+                Transform = Transform.Clone()
+            };
+        }
     }
 }

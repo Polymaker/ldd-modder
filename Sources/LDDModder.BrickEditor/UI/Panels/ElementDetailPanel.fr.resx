@@ -126,17 +126,11 @@
   <data name="NameLabel.Text" xml:space="preserve">
     <value>Nom</value>
   </data>
-  <data name="CommentsLabel.Text" xml:space="preserve">
-    <value>Notes</value>
-  </data>
   <data name="CollisionSizeLabel.Text" xml:space="preserve">
     <value>Taille</value>
   </data>
   <data name="CollisionRadiusLabel.Text" xml:space="preserve">
     <value>Rayon</value>
-  </data>
-  <data name="ConnectionInfoTab.Text" xml:space="preserve">
-    <value>Paramètres de la connexion</value>
   </data>
   <data name="NoSelectionMsg.Text" xml:space="preserve">
     <value>Aucun élément sélectionné</value>

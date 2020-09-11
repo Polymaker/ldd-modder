@@ -8,6 +8,7 @@ using LDDModder.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -37,12 +38,6 @@ namespace LDDModder.Modding.Editing
         {
             get => Properties.Description;
             set => Properties.Description = value;
-        }
-
-        public string Comments
-        {
-            get => Properties.Comments;
-            set => Properties.Comments = value;
         }
 
         public List<int> Aliases => Properties.Aliases;
@@ -188,11 +183,18 @@ namespace LDDModder.Modding.Editing
         public static PartProject CreateFromLddPart(LDD.LDDEnvironment environment, int partID)
         {
             var lddPart = LDD.Parts.PartWrapper.LoadPart(environment, partID, true);
+            return CreateFromLddPart(lddPart);
+        }
+
+        public static PartProject CreateFromLddPart(LDD.Parts.PartWrapper lddPart)
+        {
+            int partID = lddPart.PartID;
 
             var project = new PartProject()
             {
                 IsLoading = true
             };
+
             project.SetBaseInfo(lddPart);
 
             int elementIndex = 0;
@@ -267,7 +269,7 @@ namespace LDDModder.Modding.Editing
                         else// if (cullingComp is BrickTubeModel brickTube)
                         {
                             Debug.WriteLine($"{cullingComp.ComponentType} has a replacement mesh!!!");
-                            
+
                             //cullingComp.Meshes
                             //    .Add(new ModelMeshReference(replacementMesh));
                         }
@@ -280,7 +282,7 @@ namespace LDDModder.Modding.Editing
 
             project.GenerateElementIDs(true);
             project.GenerateElementsNames();
-            project.LinkStudReferences();
+            project.LinkBonesAndStudReferences();
             project.IsLoading = false;
             return project;
         }
@@ -428,7 +430,7 @@ namespace LDDModder.Modding.Editing
                     ProjectProperties.Add(propElem.Name.LocalName, propElem.Value);
             }
 
-            LinkStudReferences();
+            LinkBonesAndStudReferences();
 
             IsLoading = false;
         }
@@ -575,6 +577,11 @@ namespace LDDModder.Modding.Editing
         public IEnumerable<T> GetAllElements<T>() where T : PartElement
         {
             return GetAllElements().OfType<T>();
+        }
+
+        public IEnumerable<PartElement> GetAllElements(Predicate<PartElement> predicate)
+        {
+            return GetAllElements().Where(x => predicate(x));
         }
 
         public IEnumerable<T> GetAllElements<T>(Predicate<T> predicate) where T : PartElement
@@ -852,16 +859,6 @@ namespace LDDModder.Modding.Editing
 
         #region Methods
 
-        public void UpdateConnectionIndexes()
-        {
-            var connectionIDs = new List<string>();
-            foreach (var conn in Connections)
-                connectionIDs.Add(conn.ID);
-
-            foreach (var studRef in GetAllElements<StudReference>())
-                studRef.ConnectionIndex = connectionIDs.IndexOf(studRef.ConnectionID);
-        }
-
         private void RenumberSurfaces()
         {
             int surfaceID = 0;
@@ -874,42 +871,106 @@ namespace LDDModder.Modding.Editing
             }
         }
 
-        private void LinkStudReferences()
+        private void UpdateStudReferencesIndices()
         {
-            foreach (var surf in Surfaces)
+            foreach (var studRef in GetAllElements<StudReference>())
             {
-                foreach (var comp in surf.Components.OfType<PartCullingModel>())
+                PartConnection linkedConnection = null;
+
+                if (!string.IsNullOrEmpty(studRef.ConnectionID))
                 {
-                    foreach (var studRef in comp.GetStudReferences())
+                    linkedConnection = Connections
+                        .FirstOrDefault(x => x.ID == studRef.ConnectionID);
+                }
+
+                if (linkedConnection == null &&
+                    studRef.ConnectionIndex != -1 &&
+                    studRef.ConnectionIndex < Connections.Count)
+                {
+                    linkedConnection = Connections[studRef.ConnectionIndex];
+                }
+
+                if (linkedConnection != null && linkedConnection.ConnectorType != ConnectorType.Custom2DField)
+                {
+                    Debug.WriteLine("Component references non Custom2DField connection!");
+                    linkedConnection = null;
+                }
+
+                if (linkedConnection == null &&
+                        (studRef.ConnectionIndex >= 0 || !string.IsNullOrEmpty(studRef.ConnectionID))
+                    )
+                {
+                    Debug.WriteLine("Could not find connection!");
+                }
+
+                studRef.ConnectionID = linkedConnection?.ID;
+
+                studRef.ConnectionIndex = linkedConnection != null ? Connections.IndexOf(linkedConnection) : -1;
+
+                if (studRef.Connector != null)
+                {
+                    if (studRef.PositionX >= 0 && studRef.PositionY >= 0)
                     {
-                        PartConnection linkedConnection = null;
-
-                        if (studRef.ConnectionIndex != -1 &&
-                            studRef.ConnectionIndex < Connections.Count)
-                        {
-                            if (Connections[studRef.ConnectionIndex].ConnectorType == ConnectorType.Custom2DField)
-                                linkedConnection = Connections[studRef.ConnectionIndex];
-                            else
-                                Debug.WriteLine("Component references non Custom2DField connection!");
-                        }
-
-                        if (linkedConnection == null && !string.IsNullOrEmpty(studRef.ConnectionID))
-                        {
-                            linkedConnection = Connections
-                                .FirstOrDefault(x => x.ID == studRef.ConnectionID);
-                        }
-
-                        if (studRef.ConnectionIndex >= 0 && linkedConnection == null)
-                        {
-                            Debug.WriteLine("Could not find connection!");
-                        }
-
-                        studRef.ConnectionID = linkedConnection?.ID;
-                        
-                        studRef.ConnectionIndex = linkedConnection != null ? Connections.IndexOf(linkedConnection) : -1;
+                        studRef.FieldIndex = studRef.Connector.PositionToIndex(studRef.PositionX, studRef.PositionY);
+                    }
+                    else if (studRef.FieldIndex >= 0)
+                    {
+                        var pos = studRef.Connector.IndexToPosition(studRef.FieldIndex);
+                        studRef.PositionX = pos.Item1;
+                        studRef.PositionY = pos.Item2;
                     }
                 }
+                else
+                    studRef.FieldIndex = -1;
             }
+        }
+
+        private void UpdateBoneReferencesIndices()
+        {
+            foreach (var bone in Bones)
+            {
+                if (bone.TargetBoneID < 0 /*|| bone.ConnectionIndex < 0*/)
+                    continue;
+
+                var prevBone = Bones.FirstOrDefault(x => x.BoneID == bone.TargetBoneID);
+                if (prevBone == null)
+                    continue;
+
+                PartConnection sourceConn = null, targetConn = null;
+
+                if (!string.IsNullOrEmpty(bone.SourceConnectionID))
+                    sourceConn = bone.Connections.FirstOrDefault(x => x.ID == bone.SourceConnectionID);
+
+                if (sourceConn == null && bone.SourceConnectionIndex >= 0
+                    && bone.SourceConnectionIndex < bone.Connections.Count)
+                    sourceConn = bone.Connections[bone.SourceConnectionIndex];
+
+                if (sourceConn != null)
+                {
+                    bone.SourceConnectionID = sourceConn.ID;
+                    bone.SourceConnectionIndex = bone.Connections.IndexOf(sourceConn);
+                }
+
+                if (!string.IsNullOrEmpty(bone.TargetConnectionID))
+                    targetConn = prevBone.Connections.FirstOrDefault(x => x.ID == bone.TargetConnectionID);
+
+                if (targetConn == null && bone.TargetConnectionIndex >= 0
+                    && bone.TargetConnectionIndex < prevBone.Connections.Count)
+                    targetConn = prevBone.Connections[bone.TargetConnectionIndex];
+
+                if (targetConn != null)
+                {
+                    bone.TargetConnectionID = targetConn.ID;
+                    bone.TargetConnectionIndex = prevBone.Connections.IndexOf(targetConn);
+                }
+            }
+        }
+
+        private void LinkBonesAndStudReferences()
+        {
+            UpdateStudReferencesIndices();
+
+            UpdateBoneReferencesIndices();
         }
 
         public MeshGeometry LoadModelMesh(ModelMesh modelMesh)
@@ -943,7 +1004,7 @@ namespace LDDModder.Modding.Editing
                     if (meshGeom != null)
                         vertices.AddRange(meshGeom.Vertices);
                 }
-                return BoundingBox.FromVertices(vertices);
+                return BoundingBox.FromVertices(vertices).Rounded();
             }
             finally
             {
@@ -1057,6 +1118,131 @@ namespace LDDModder.Modding.Editing
             RemoveUnreferencedMeshes();
         }
 
+
+
+        #endregion
+
+        #region Bones data handling
+
+        public void RebuildBoneConnections(float flexAmount = 0.06f)
+        {
+            if (Bones.Count == 0)
+                return;
+
+            foreach (var bone in Bones)
+            {
+                bone.Connections.RemoveAll(x => x.SubType >= 999000);
+                bone.TargetConnectionID = string.Empty;
+                bone.TargetConnectionIndex = -1;
+                bone.SourceConnectionID = string.Empty;
+                bone.SourceConnectionIndex = -1;
+            }
+
+            int lastBoneId = Bones.Max(x => x.BoneID);
+
+            int curConnType = 0;
+            int totalConnection = 0;
+            string flexAttributes = string.Format(CultureInfo.InvariantCulture, "-{0},{0},20,10,10", flexAmount);
+
+            foreach (var bone in Bones.OrderBy(x => x.BoneID))
+            {
+                foreach (var linkedBone in Bones.Where(x => x.TargetBoneID == bone.BoneID))
+                {
+                    PartConnection targetConn = PartConnection.Create(ConnectorType.Ball);
+
+                    if (linkedBone.BoneID == lastBoneId)
+                    {
+                        targetConn = PartConnection.Create(ConnectorType.Fixed);
+                        var fixConn = targetConn.GetConnector<FixedConnector>();
+                        fixConn.SubType = 999000 + curConnType;
+                    }
+                    else
+                    {
+                        targetConn = PartConnection.Create(ConnectorType.Ball);
+                        var ballConn = targetConn.GetConnector<BallConnector>();
+                        ballConn.SubType = 999000 + curConnType;
+                    }
+
+                    curConnType = (++curConnType) % 4;
+
+                    var posOffset = linkedBone.Transform.Position - bone.Transform.Position;
+                    posOffset = bone.Transform.ToMatrixD().Inverted().TransformVector(posOffset);
+                    targetConn.Transform.Position = posOffset;
+                    
+
+                    bone.Connections.Add(targetConn);
+                    RenameElement(targetConn, $"FlexConn{totalConnection++}");
+
+                    PartConnection sourceConn = null;
+                    if (linkedBone.BoneID == lastBoneId)
+                    {
+                        sourceConn = PartConnection.Create(ConnectorType.Fixed);
+                        var fixConn = sourceConn.GetConnector<FixedConnector>();
+                        fixConn.SubType = 999000 + curConnType;
+                    }
+                    else
+                    {
+                        sourceConn = PartConnection.Create(ConnectorType.Ball);
+                        var ballConn = sourceConn.GetConnector<BallConnector>();
+                        ballConn.SubType = 999000 + curConnType;
+                        ballConn.FlexAttributes = flexAttributes;
+                    }
+
+                    curConnType = (++curConnType) % 4;
+                    linkedBone.Connections.Add(sourceConn);
+                    RenameElement(sourceConn, $"FlexConn{totalConnection++}");
+
+                    linkedBone.TargetConnectionID = targetConn.ID;
+                    linkedBone.SourceConnectionID = sourceConn.ID;
+
+                }
+            }
+
+            UpdateBoneReferencesIndices();
+        }
+
+        public void CalculateBoneBoundingBoxes()
+        {
+            var meshRefs = Surfaces.SelectMany(x => x.GetAllMeshReferences()).ToList();
+            //var meshes = meshRefs.Select(x => x.ModelMesh).Distinct().ToList();
+            var unloadedMeshes = meshRefs.Select(x => x.ModelMesh).Where(x => !x.IsModelLoaded).Distinct().ToList();
+
+            var allVerts = new List<Vertex>();
+            foreach(var mesh in GetAllElements<ModelMeshReference>())
+                allVerts.AddRange(mesh.GetGeometry().Vertices);
+            allVerts = allVerts.Distinct().ToList();
+
+            foreach (var bone in Bones.OrderBy(x => x.BoneID))
+            {
+                var boneTrans = bone.Transform.ToMatrix().Inverted();
+                var verts = allVerts.Where(x => x.BoneWeights.Any(y => y.BoneID == bone.BoneID && y.Weight > 0.1f));
+
+                if (bone.PhysicsAttributes == null)
+                    bone.PhysicsAttributes = new PhysicsAttributes();
+
+                if (verts.Any())
+                {
+                    var vertPos = verts.Select(x => boneTrans.TransformPosition(x.Position)).ToList();
+                    var newBounds = BoundingBox.FromVertices(vertPos);
+                    newBounds.Round();
+                    bone.Bounding = newBounds;
+                    var physAttr = bone.PhysicsAttributes;
+                    physAttr.CenterOfMass = newBounds.Center;
+                }
+                else
+                {
+                    bone.Bounding = new BoundingBox(new Simple3D.Vector3d(-0.0001d), new Simple3D.Vector3d(0.0001d));
+                    var physAttr = bone.PhysicsAttributes;
+                    physAttr.CenterOfMass = Simple3D.Vector3d.Zero;
+                    physAttr.Mass = 0;
+                    physAttr.InertiaTensor = Simple3D.Matrix3d.Zero;
+                }
+            }
+
+            unloadedMeshes.ForEach(x => x.UnloadModel());
+        }
+
+
         #endregion
 
         #region Change tracking 
@@ -1078,9 +1264,10 @@ namespace LDDModder.Modding.Editing
             if (!IsLoading)
             {
                 if (ccea.Collection.ElementType == typeof(PartConnection) &&
-                    GetAllElements<PartCullingModel>().Any())
+                    ccea.ChangedElements.OfType<PartConnection>()
+                        .Any(x => x.ConnectorType == ConnectorType.Custom2DField))
                 {
-                    UpdateConnectionIndexes();
+                    UpdateStudReferencesIndices();
                 }
 
                 if (ccea.Collection.ElementType == typeof(PartSurface))
@@ -1174,6 +1361,25 @@ namespace LDDModder.Modding.Editing
             foreach (var coll in Collisions)
                 validationMessages.AddRange(coll.ValidateElement());
 
+            if (Bones.Any())
+            {
+                var duplicates = Bones.GroupBy(x => x.BoneID).Where(g => g.Count() > 1);
+                if (duplicates.Any())
+                {
+                    AddMessage("BONES_DUPLICATE_IDS", ValidationLevel.Error, 
+                        string.Join(", ", duplicates.Select(x => x.Key)));
+                }
+
+                for (int i = 0; i < Bones.Count; i++)
+                {
+                    if (!Bones.Any(x => x.BoneID == i))
+                    {
+                        AddMessage("BONES_ID_GAP", ValidationLevel.Error, i);
+                        break;
+                    }
+                }
+            }
+
             foreach (var bone in Bones)
                 validationMessages.AddRange(bone.ValidateElement());
 
@@ -1185,20 +1391,21 @@ namespace LDDModder.Modding.Editing
 
         public Primitive GeneratePrimitive()
         {
+            LinkBonesAndStudReferences();
+
             var primitive = new Primitive()
             {
                 ID = PartID,
                 Name = PartDescription,
-                Bounding = Bounding,
-                GeometryBounding = GeometryBounding,
+                Bounding = Bounding?.Rounded(6),
+                GeometryBounding = GeometryBounding?.Rounded(6),
                 DefaultCamera = DefaultCamera,
                 DefaultOrientation = DefaultOrientation?.ToLDD(),
                 MainGroup = MainGroup,
-                Platform= Platform,
+                Platform = Platform,
                 PhysicsAttributes = PhysicsAttributes,
                 PartVersion = PartVersion,
                 FileVersion = PrimitiveFileVersion,
-                //SubMaterials = Surfaces.Select(x => x.SubMaterialIndex).ToArray()
             };
 
             if (Surfaces.Count > 1)
@@ -1209,12 +1416,18 @@ namespace LDDModder.Modding.Editing
             if (Aliases.Any())
                 primitive.Aliases.AddRange(Aliases);
 
-            foreach (var conn in Connections)
-                primitive.Connectors.Add(conn.GenerateLDD());
+            if (!Flexible)
+            {
+                foreach (var conn in Connections)
+                    primitive.Connectors.Add(conn.GenerateLDD());
 
-            foreach (var coll in Collisions)
-                primitive.Collisions.Add(coll.GenerateLDD());
-            
+                foreach (var coll in Collisions)
+                    primitive.Collisions.Add(coll.GenerateLDD());
+            }
+
+            foreach (var bone in Bones)
+                primitive.FlexBones.Add(bone.GenerateLDD());
+
             return primitive;
         }
 
@@ -1235,17 +1448,58 @@ namespace LDDModder.Modding.Editing
             foreach (var surface in Surfaces)
             {
                 var surfaceMesh = surface.GenerateMeshFile();
+                var test = surfaceMesh.Geometry.CheckHasRoundEdgeData();
                 part.AddSurfaceMesh(surface.SurfaceID, surfaceMesh);
             }
 
             return part;
         }
 
-        public void ComputeEdgeOutlines()
+        public void ComputeEdgeOutlines(float breakAngle = 35f)
         {
-            var allMeshes = Surfaces.SelectMany(x => x.GetAllModelMeshes());
-            ShaderDataGenerator.ComputeEdgeOutlines(allMeshes.SelectMany(x => x.Geometry.Triangles));
+            var meshRefs = Surfaces.SelectMany(x => x.GetAllMeshReferences()).ToList();
+            var unloadedMeshes = meshRefs.Select(x => x.ModelMesh).Where(x => !x.IsModelLoaded).Distinct().ToList();
+
+            foreach (var layerGroup in meshRefs.GroupBy(x => x.RoundEdgeLayer))
+            {
+                var meshesGeoms = layerGroup.Select(x => new Tuple<ModelMeshReference, MeshGeometry>(x, x.GetGeometry(true))).ToList();
+
+                foreach (var mg in meshesGeoms)
+                    mg.Item2.ClearRoundEdgeData();
+
+                var triangles = meshesGeoms.SelectMany(x => x.Item2.Triangles);
+                //ShaderDataGenerator.ComputeEdgeOutlines(triangles, breakAngle);
+                OutlinesGenerator.GenerateOutlines(triangles, breakAngle);
+
+                foreach (var mg in meshesGeoms)
+                    mg.Item1.UpdateMeshOutlines(mg.Item2);
+            }
+
+            var models = meshRefs.Select(x => x.ModelMesh).Distinct().ToList();
+            models.ForEach(x => x.SaveFile());
+            unloadedMeshes.ForEach(x => x.UnloadModel());
         }
+
+        public void ClearEdgeOutlines()
+        {
+            var meshRefs = Surfaces.SelectMany(x => x.GetAllMeshReferences()).ToList();
+            var meshModels = meshRefs.Select(x => x.ModelMesh).Distinct().ToList();
+            var unloadedMeshes = meshModels.Where(x => !x.IsModelLoaded).ToList();
+
+            foreach (var model in meshModels)
+            {
+                if (!model.IsModelLoaded)
+                {
+                    if (!model.LoadModel())
+                        continue;
+                }
+                model.Geometry.ClearRoundEdgeData();
+                model.SaveFile();
+            }
+
+            unloadedMeshes.ForEach(x => x.UnloadModel());
+        }
+
 
         #endregion
     }

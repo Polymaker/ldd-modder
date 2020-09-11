@@ -77,27 +77,30 @@ vec3 CalcPointLight(LightInfo light, vec3 diffuseColor, vec3 normal, vec3 fragPo
     vec3 lightDir = normalize(light.Position - fragPos);
 	
     // diffuse shading
-    float diff = clamp(dot(normal, lightDir), 0, 1);
+    float diff = max(dot(normal, lightDir), 0.0); // clamp(dot(normal, lightDir), 0, 1);
 	
     // specular shading
     vec3 reflectDir = reflect(-lightDir, normal);
-    float spec = pow(clamp(dot(viewDir, reflectDir), 0, 1), Material.Shininess);
+    //float spec = pow(clamp(dot(viewDir, reflectDir), 0, 1), Material.Shininess);
+	float spec = pow(max(dot(viewDir, reflectDir), 0.0), Material.Shininess);
 	
     // attenuation
     float distance    = length(light.Position - fragPos);
     float attenuation = light.Constant + 
 		(light.Linear * distance) + 
 		(light.Quadratic * (distance * distance));
-	attenuation =  clamp(1.0 / (attenuation * 0.7), 0, 1);
-	
+	//attenuation =  clamp(1.0 / (attenuation * 0.7), 0, 1);
+	attenuation = 1.0 / attenuation;
     // combine results
     vec3 ambient  = light.Ambient  * diffuseColor;
     vec3 diffuse  = light.Diffuse  * diff * diffuseColor;
     vec3 specular = light.Specular * spec * Material.Specular;
-    ambient  *= min(0.5 + attenuation, 1.0);
+
+    ambient  *= attenuation;//min(0.5 + attenuation, 1.0);
     diffuse  *= attenuation;
     specular *= attenuation;
-    return (ambient + diffuse + specular);
+	
+	return (ambient + diffuse + specular);
 } 
 
 float getBrightness(vec3 color)
@@ -130,7 +133,7 @@ void main()
 		//baseColor.rgb = clamp(max(baseColor.rgb, baseBrightness * 0.5) * 1.15, vec3(0), vec3(1));
 	}
 	
-	vec3 finalColor = baseColor.rgb * 0.1;
+	vec3 finalColor = vec3(0); //baseColor.rgb * 0.1;
 	
 	if ( LightCount > 0)
 		finalColor += CalcPointLight(Lights[0], baseColor.rgb, norm, FragPos, viewDir);  

@@ -1,6 +1,6 @@
 ﻿namespace LDDModder.BrickEditor.UI.Windows
 {
-    partial class WaitPopup
+    partial class ProgressPopupWindow
     {
         /// <summary>
         /// Required designer variable.
@@ -39,7 +39,6 @@
             this.progressBar1.Location = new System.Drawing.Point(12, 12);
             this.progressBar1.Name = "progressBar1";
             this.progressBar1.Size = new System.Drawing.Size(171, 23);
-            this.progressBar1.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
             this.progressBar1.TabIndex = 0;
             // 
             // MessageLabel
@@ -52,7 +51,7 @@
             this.MessageLabel.TabIndex = 1;
             this.MessageLabel.Text = "label1";
             // 
-            // WaitPopup
+            // ProgressPopupWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -60,7 +59,7 @@
             this.Controls.Add(this.MessageLabel);
             this.Controls.Add(this.progressBar1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.Name = "WaitPopup";
+            this.Name = "ProgressPopupWindow";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;

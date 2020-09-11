@@ -21,6 +21,7 @@ namespace LDDModder.BrickEditor.Rendering
         public bool IsSelected { get; set; }
 
         protected bool IsApplyingTransform { get; set; }
+
         protected bool IsUpdatingTransform { get; set; }
 
         protected PartElementModel(PartElement element)
@@ -33,11 +34,45 @@ namespace LDDModder.BrickEditor.Rendering
             if (ModelExtension != null)
             {
                 Visible = ModelExtension.IsVisible;
-                ModelExtension.VisibilityChanged += Extender_VisibilityChanged;
+                ModelExtension.VisibileChanged += Extender_VisibileChanged;
+            }
+
+            Element.ParentChanging += Element_ParentChanging;
+            Element.ParentChanged += Element_ParentChanged;
+
+            Element_ParentChanged(null, EventArgs.Empty);
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+
+            if (ModelExtension != null)
+            {
+                ModelExtension.VisibileChanged -= Extender_VisibileChanged;
             }
         }
 
-        private void Extender_VisibilityChanged(object sender, EventArgs e)
+        private void Element_ParentChanging(object sender, EventArgs e)
+        {
+            if (Element.Parent is IPhysicalElement parentElem)
+                parentElem.TranformChanged -= ParentElem_TranformChanged;
+        }
+
+        private void Element_ParentChanged(object sender, EventArgs e)
+        {
+            if (Element.Parent is IPhysicalElement parentElem)
+                parentElem.TranformChanged += ParentElem_TranformChanged;
+
+            SetTransformFromElement();
+        }
+
+        private void ParentElem_TranformChanged(object sender, EventArgs e)
+        {
+            SetTransformFromElement();
+        }
+
+        private void Extender_VisibileChanged(object sender, EventArgs e)
         {
             var extender = Element.GetExtension<ModelElementExtension>();
             Visible = extender.IsVisible;
@@ -64,8 +99,19 @@ namespace LDDModder.BrickEditor.Rendering
         protected virtual void ApplyTransformToElement(Matrix4 transform)
         {
             IsApplyingTransform = true;
+
             if (Element is IPhysicalElement physicalElement)
-                physicalElement.Transform = ItemTransform.FromMatrix(transform.ToLDD());
+            {
+                if (Element.Parent is IPhysicalElement parentElem)
+                {
+                    var parentTrans = parentElem.Transform.ToMatrixD().ToGL();
+                    var localTrans = transform.ToMatrix4d() * parentTrans.Inverted();
+                    physicalElement.Transform = ItemTransform.FromMatrix(localTrans.ToLDD());
+                }
+                else
+                    physicalElement.Transform = ItemTransform.FromMatrix(transform.ToLDD());
+
+            }
             IsApplyingTransform = false;
         }
 
@@ -80,8 +126,15 @@ namespace LDDModder.BrickEditor.Rendering
         {
             if (Element is IPhysicalElement physicalElement)
             {
-                var baseTransform = physicalElement.Transform.ToMatrix().ToGL();
-                return baseTransform;
+                var baseTransform = physicalElement.Transform.ToMatrixD().ToGL();
+
+                if (Element.Parent is IPhysicalElement parentElem)
+                {
+                    var parentTransform = parentElem.Transform.ToMatrixD().ToGL();
+                    baseTransform = baseTransform * parentTransform;
+                }
+                
+                return baseTransform.ToMatrix4();
             }
             return Matrix4.Identity;
         }

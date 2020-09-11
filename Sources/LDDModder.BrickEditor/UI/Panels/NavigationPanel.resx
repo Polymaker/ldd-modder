@@ -313,7 +313,7 @@
     <value>3, 3, 3, 3</value>
   </data>
   <data name="ViewModeLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>33, 13</value>
+    <value>69, 13</value>
   </data>
   <data name="ViewModeLabel.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -571,42 +571,42 @@
     <value>LocalizedStrings</value>
   </data>
   <data name="&gt;&gt;LocalizedStrings.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableStringList, Brick Studio, Version=1.0.0.19048, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableStringList, Brick Studio, Version=1.0.4.18783, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;ViewModeAll.Name" xml:space="preserve">
     <value>ViewModeAll</value>
   </data>
   <data name="&gt;&gt;ViewModeAll.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.0.19048, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.4.18783, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;ViewModeBones.Name" xml:space="preserve">
     <value>ViewModeBones</value>
   </data>
   <data name="&gt;&gt;ViewModeBones.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.0.19048, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.4.18783, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;ViewModeCollisions.Name" xml:space="preserve">
     <value>ViewModeCollisions</value>
   </data>
   <data name="&gt;&gt;ViewModeCollisions.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.0.19048, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.4.18783, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;ViewModeConnections.Name" xml:space="preserve">
     <value>ViewModeConnections</value>
   </data>
   <data name="&gt;&gt;ViewModeConnections.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.0.19048, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.4.18783, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;ViewModeSurfaces.Name" xml:space="preserve">
     <value>ViewModeSurfaces</value>
   </data>
   <data name="&gt;&gt;ViewModeSurfaces.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.0.19048, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.4.18783, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>NavigationPanel</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Panels.ProjectDocumentPanel, Brick Studio, Version=1.0.0.19048, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Panels.ProjectDocumentPanel, Brick Studio, Version=1.0.4.18783, Culture=neutral, PublicKeyToken=null</value>
   </data>
 </root>

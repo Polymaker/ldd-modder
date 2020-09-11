@@ -62,6 +62,21 @@ namespace LDDModder.BrickEditor.UI.Panels
             ProjectManager = null;
         }
 
+        public virtual void DefferedInitialization()
+        {
+
+        }
+
+        public virtual async Task InitializeAsync()
+        {
+            await Task.Delay(0);
+        }
+
+        public virtual void OnInitializationFinished()
+        {
+
+        }
+
         protected override void OnClosed(EventArgs e)
         {
             DettachProjectManager();
@@ -91,8 +106,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void ProjectManager_ElementCollectionChanged(object sender, ElementCollectionChangedEventArgs e)
         {
-            //if (!(ProjectManager.IsExecutingBatchChanges || ProjectManager.IsExecutingUndoRedo))
-                OnElementCollectionChanged(e);
+            OnElementCollectionChanged(e);
         }
 
         protected virtual void OnElementCollectionChanged(ElementCollectionChangedEventArgs e)
@@ -115,19 +129,21 @@ namespace LDDModder.BrickEditor.UI.Panels
             OnElementPropertyChanged(e);
         }
 
+
         protected virtual void OnElementPropertyChanged(ElementValueChangedEventArgs e)
         {
 
         }
 
+
         private void ProjectManager_SelectionChanged(object sender, EventArgs e)
         {
-            OnElementSelectionChanged();
+            BeginInvokeOnce(OnElementSelectionChanged, nameof(OnElementSelectionChanged));
         }
 
         protected virtual void OnElementSelectionChanged()
         {
-
+            
         }
 
         private void ProjectManager_UndoHistoryChanged(object sender, EventArgs e)
@@ -150,6 +166,24 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             if (InvokeRequired)
                 BeginInvoke(action);
+            else
+                action();
+        }
+
+        protected void BeginInvokeOnce(Action action, string actionName)
+        {
+            if (InvokeRequired)
+            {
+                if (!FlagManager.IsSet($"Invoke{actionName}"))
+                {
+                    FlagManager.Set($"Invoke{actionName}");
+                    BeginInvoke((Action)(() =>
+                    {
+                        action();
+                        FlagManager.Unset($"Invoke{actionName}");
+                    }));
+                }
+            }
             else
                 action();
         }

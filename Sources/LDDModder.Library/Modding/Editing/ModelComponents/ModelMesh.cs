@@ -231,6 +231,20 @@ namespace LDDModder.Modding.Editing
             return FileFlag == 1;
         }
     
+        public void SaveFile()
+        {
+            if (Project?.IsLoadedFromDisk ?? false)
+            {
+                //bool wasLoaded = IsModelLoaded;
+                if (!IsModelLoaded)
+                    LoadModel();
+
+                var targetFilePath = Project.GetFileFullPath(FileName);
+                Geometry.Save(targetFilePath);
+                CheckFileExist();
+            }
+        }
+
         /// <summary>
         /// Soft delete
         /// </summary>
@@ -271,7 +285,38 @@ namespace LDDModder.Modding.Editing
                 TempDeleteFile();
             }
         }
-    
-        
+
+        public override List<ValidationMessage> ValidateElement()
+        {
+            var messages = new List<ValidationMessage>();
+
+            void AddMessage(string code, ValidationLevel level, params object[] args)
+            {
+                messages.Add(new ValidationMessage(this, code, level)
+                {
+                    MessageArguments = args
+                });
+            }
+
+            if (IsFlexible)
+            {
+                bool modelLoaded = IsModelLoaded;
+                if (LoadModel())
+                {
+                    var meshBoneIDs = Geometry.Vertices.SelectMany(x => x.BoneWeights.Select(b => b.BoneID)).Distinct();
+                    var existingBones = Project.Bones.Select(x => x.BoneID).Distinct();
+
+                    var missingBones = meshBoneIDs.Except(existingBones).ToList();
+
+                    if (missingBones.Any())
+                        AddMessage("MESH_MISSING_BONES", ValidationLevel.Error, missingBones);
+
+                    if (!modelLoaded)
+                        UnloadModel();
+                }
+            }
+
+            return messages;
+        }
     }
 }

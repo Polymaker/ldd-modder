@@ -16,6 +16,8 @@ namespace LDDModder.BrickEditor.Models.Navigation
         public string Text { get; set; }
 
         public IProjectManager Manager { get; set; }
+        //public IProjectDocument Document { get; set; }
+
 
         public ProjectTreeNode Parent { get; set; }
 
@@ -48,6 +50,13 @@ namespace LDDModder.BrickEditor.Models.Navigation
             Manager = node?.Manager;
         }
 
+        public virtual void FreeObjects()
+        {
+            foreach (var child in Nodes)
+                child.FreeObjects();
+            Manager = null;
+        }
+
         #region Children Handling
 
         protected bool nodesDirty;
@@ -77,6 +86,8 @@ namespace LDDModder.BrickEditor.Models.Navigation
 
         protected virtual void RebuildChildrens()
         {
+            foreach (var child in Nodes)
+                child.FreeObjects();
             Nodes.Clear();
         }
 

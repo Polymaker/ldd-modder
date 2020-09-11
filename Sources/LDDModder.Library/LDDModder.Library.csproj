@@ -114,6 +114,7 @@
     <Compile Include="LDD\Data\MaterialType.cs" />
     <Compile Include="LDD\LddDirectory.cs" />
     <Compile Include="LDD\LddLif.cs" />
+    <Compile Include="LDD\Meshes\OutlinesGenerator.cs" />
     <Compile Include="LDD\Models\Assembly.cs" />
     <Compile Include="LDD\Models\Bone.cs" />
     <Compile Include="LDD\Models\Brick.cs" />
@@ -180,6 +181,7 @@
     <Compile Include="LDD\Primitives\Connectors\ConnectorType.cs" />
     <Compile Include="LDD\Primitives\Connectors\Custom2DFieldConnector.cs" />
     <Compile Include="LDD\Primitives\Connectors\Custom2DFieldNode.cs" />
+    <Compile Include="LDD\Primitives\Connectors\Custom2DFieldValue.cs" />
     <Compile Include="LDD\Primitives\Connectors\FixedConnector.cs" />
     <Compile Include="LDD\Primitives\Connectors\GearConnector.cs" />
     <Compile Include="LDD\Primitives\Connectors\HingeConnector.cs" />
@@ -256,6 +258,7 @@
     <Compile Include="Utilities\MathHelper.cs" />
     <Compile Include="Utilities\SortableBindingList.cs" />
     <Compile Include="Utilities\StringUtils.cs" />
+    <Compile Include="Utilities\TaskHelper.cs" />
     <Compile Include="Utilities\ThreadSafeList.cs" />
   </ItemGroup>
   <ItemGroup />

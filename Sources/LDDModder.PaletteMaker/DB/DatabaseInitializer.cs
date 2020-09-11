@@ -3,6 +3,7 @@ using System.Threading;
 using LDDEnvironment = LDDModder.LDD.LDDEnvironment;
 using LDDModder.PaletteMaker.Models;
 using System;
+using System.IO;
 
 namespace LDDModder.PaletteMaker.DB
 {
@@ -13,10 +14,13 @@ namespace LDDModder.PaletteMaker.DB
         {
             LddPartsAndElements = 1,
             RebrickableBaseData = 2,
-            RebrickablePartsAndRelationships = 4,
-            RebrickableLddMappings = 8,
-            RebrickableSets = 16,
-            RebrickableSetParts = 32,
+            RebrickableParts = 4,
+            RebrickablePartRelationships = 8,
+            RebrickableLddMappings = 16,
+            RebrickablePartsAndRelationships = RebrickableParts | RebrickablePartRelationships,
+            RebrickableSets = 32,
+            RebrickableSetParts = 64,
+            RebrickableData = RebrickableBaseData | RebrickablePartsAndRelationships | RebrickableSets | RebrickableSetParts,
             All = LddPartsAndElements | RebrickableBaseData | RebrickablePartsAndRelationships | RebrickableLddMappings | RebrickableSets | RebrickableSetParts
         }
 
@@ -33,7 +37,12 @@ namespace LDDModder.PaletteMaker.DB
 
                 foreach (InitializationStep step in Enum.GetValues(typeof(InitializationStep)))
                 {
-                    if (step != InitializationStep.All && steps.HasFlag(step))
+                    if (step == InitializationStep.All ||
+                        step == InitializationStep.RebrickableData ||
+                        step == InitializationStep.RebrickablePartsAndRelationships)
+                        continue;
+
+                    if (steps.HasFlag(step))
                         totalSteps++;
                 }
 
@@ -50,23 +59,29 @@ namespace LDDModder.PaletteMaker.DB
                     return;
 
                 if (steps.HasFlag(InitializationStep.RebrickableBaseData) || 
+                    steps.HasFlag(InitializationStep.RebrickableParts) ||
                     steps.HasFlag(InitializationStep.RebrickablePartsAndRelationships) ||
                     steps.HasFlag(InitializationStep.RebrickableSets) ||
                     steps.HasFlag(InitializationStep.RebrickableSetParts))
                 {
                     var rbImporter = new RebrickableDataImporter(conn, LDDEnvironment.Current, cancellationToken);
                     rbImporter.ProgressHandler = progressHandler;
-                    rbImporter.InventoriesCsvFile = @"C:\Users\JWTurner\Downloads\inventories.csv";
-                    rbImporter.InventoryPartsCsvFile = @"C:\Users\JWTurner\Downloads\inventory_parts.csv";
-                    
+                    rbImporter.DownloadDirectory = Path.Combine(Settings.SettingsManager.AppDataFolder, "Downloads");
+
                     if (steps.HasFlag(InitializationStep.RebrickableBaseData))
                         rbImporter.ImportBaseData();
 
                     if (cancellationToken.IsCancellationRequested)
                         return;
 
-                    if (steps.HasFlag(InitializationStep.RebrickablePartsAndRelationships))
-                        rbImporter.ImportPartsAndRelationships();
+                    if (steps.HasFlag(InitializationStep.RebrickableParts))
+                        rbImporter.ImportRebrickableParts();
+
+                    if (cancellationToken.IsCancellationRequested)
+                        return;
+
+                    if (steps.HasFlag(InitializationStep.RebrickablePartRelationships))
+                        rbImporter.ImportRebrickableRelationships();
 
                     if (cancellationToken.IsCancellationRequested)
                         return;

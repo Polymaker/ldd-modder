@@ -42,5 +42,16 @@ namespace LDDModder.LDD.Primitives.Connectors
             if (element.TryReadAttribute("radius", out double radius))
                 Radius = radius;
         }
+
+        public override Connector Clone()
+        {
+            return new GearConnector()
+            {
+                Radius = Radius,
+                ToothCount = ToothCount,
+                SubType = SubType,
+                Transform = Transform.Clone()
+            };
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using BrightIdeasSoftware;
 using LDDModder.BrickEditor.Models.Navigation;
 using LDDModder.BrickEditor.ProjectHandling;
+using LDDModder.BrickEditor.ProjectHandling.ViewInterfaces;
 using LDDModder.BrickEditor.Resources;
 using LDDModder.Modding.Editing;
 using LDDModder.Utilities;
@@ -21,7 +22,7 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace LDDModder.BrickEditor.UI.Panels
 {
-    public partial class NavigationPanel : ProjectDocumentPanel
+    public partial class NavigationPanel : ProjectDocumentPanel, INavigationWindow
     {
         public enum NavigationViewMode
         {
@@ -64,21 +65,22 @@ namespace LDDModder.BrickEditor.UI.Panels
         public NavigationPanel(ProjectManager projectManager) : base (projectManager)
         {
             InitializeComponent();
-            
+            projectManager.NavigationWindow = this;
+
             CloseButtonVisible = false;
             CloseButton = false;
             ContextMenu_Delete.ShortcutKeys = Keys.Delete;
 
             DockAreas = DockAreas.DockLeft | DockAreas.DockRight | DockAreas.Float | DockAreas.Document;
-
-            InitializeNavigationImageList();
-            InitializeContextMenus();
-            InitializeNavigationTreeView();
         }
 
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+
+            InitializeNavigationImageList();
+            InitializeContextMenus();
+            InitializeNavigationTreeView();
             InitializeViewComboBox();
 
             //ViewModeLabel.Text = $"<{ModelLocalizations.Label_NoActiveProject}> ";
@@ -149,16 +151,15 @@ namespace LDDModder.BrickEditor.UI.Panels
                 return new ArrayList();
             };
 
-            ProjectTreeView.CellToolTipGetter += (col, model) =>
-            {
-                if (model is ProjectElementNode node)
-                {
-                    if (!string.IsNullOrEmpty(node.Element.Comments))
-                        return node.Element.Comments;
-                    //return node.Element.Name;
-                }
-                return string.Empty;
-            };
+            //ProjectTreeView.CellToolTipGetter += (col, model) =>
+            //{
+            //    if (model is ProjectElementNode node)
+            //    {
+               
+            //        //return node.Element.Name;
+            //    }
+            //    return string.Empty;
+            //};
 
             ProjectTreeView.DropSink = new NavigationDropHandler();
             ProjectTreeView.DragSource = new NavigationDragHandler();
@@ -178,7 +179,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
                 return string.Empty;
             };
-
+            
             ProjectTreeView.TreeColumnRenderer = new Controls.TreeRendererEx();
         }
 
@@ -409,14 +410,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                 {
                     var modelExt = elementNode.Element.GetExtension<ModelElementExtension>();
                     if (modelExt != null)
-                    {
-                        //Debug.WriteLine($"ProjectTreeView_CellClick {elementNode.Element.Name} IsHidden {modelExt.IsHidden} -> {!modelExt.IsHidden}");
-                        modelExt.IsHidden = !modelExt.IsHidden;
-                        
-                        ProjectTreeView.RefreshObject(elementNode);
-                        if (elementNode.Parent is ElementGroupNode)
-                            ProjectTreeView.RefreshObject(elementNode.Parent);
-                    }
+                        ProjectManager.SetElementHidden(elementNode.Element, !modelExt.IsHidden);
                 }
                 else if (e.Model is ElementCollectionNode elementColNode)
                 {
@@ -446,6 +440,34 @@ namespace LDDModder.BrickEditor.UI.Panels
                     //ProjectTreeView.RefreshObject(groupNode);
                 }
             }
+        }
+
+
+        public void RefreshNavigationNode(ProjectTreeNode node)
+        {
+            if (IsRefreshingAll)
+                return;
+
+            ExecuteOnThread(() =>
+            {
+                if (IsRefreshingAll)
+                    return;
+                ProjectTreeView.RefreshObject(node);
+            });
+        }
+
+        private bool IsRefreshingAll;
+
+        public void RefreshAllNavigation()
+        {
+            IsRefreshingAll = true;
+            ExecuteOnThread(() =>
+            {
+                
+                //if (ProjectTreeView.)
+                ProjectTreeView.Refresh();
+                IsRefreshingAll = false;
+            });
         }
 
         #endregion
@@ -537,20 +559,12 @@ namespace LDDModder.BrickEditor.UI.Panels
                 Enum.TryParse(connectionTypeStr, 
                 out LDD.Primitives.Connectors.ConnectorType connectorType))
             {
-                if (!ProjectManager.ShowConnections)
-                    ProjectManager.ShowConnections = true;
-
-                var newConnection = PartConnection.Create(connectorType);
-
                 var focusedBoneNode = GetFocusedParentElement<PartBone>();
 
-                if (focusedBoneNode != null)
-                    (focusedBoneNode.Element as PartBone).Connections.Add(newConnection);
-                else
-                    CurrentProject.Connections.Add(newConnection);
+                var newConnection = ProjectManager.AddConnection(connectorType, focusedBoneNode?.Element as PartBone);
 
-                ProjectManager.SelectElement(newConnection);
-                SelectElementNodeDelayed(newConnection);
+                if (newConnection != null)
+                    SelectElementNodeDelayed(newConnection);
             }
         }
 
@@ -561,20 +575,12 @@ namespace LDDModder.BrickEditor.UI.Panels
             if (!string.IsNullOrEmpty(collisionTypeStr) &&
                 Enum.TryParse(collisionTypeStr, out LDD.Primitives.Collisions.CollisionType collisionType))
             {
-                if (!ProjectManager.ShowCollisions)
-                    ProjectManager.ShowCollisions = true;
-
-                var newCollision = PartCollision.Create(collisionType, 0.4f);
-
                 var focusedBoneNode = GetFocusedParentElement<PartBone>();
 
-                if (focusedBoneNode != null)
-                    (focusedBoneNode.Element as PartBone).Collisions.Add(newCollision);
-                else
-                    CurrentProject.Collisions.Add(newCollision);
+                var newCollision = ProjectManager.AddCollision(collisionType, focusedBoneNode?.Element as PartBone);
 
-                ProjectManager.SelectElement(newCollision);
-                SelectElementNodeDelayed(newCollision);
+                if (newCollision != null)
+                    SelectElementNodeDelayed(newCollision);
             }
         }
 
@@ -582,8 +588,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             if (CurrentProject != null)
             {
-                var newSurface = CurrentProject.AddSurface();
-                ProjectManager.SelectElement(newSurface);
+                var newSurface = ProjectManager.AddSurface();
                 SelectElementNodeDelayed(newSurface);
             }
         }
@@ -638,14 +643,8 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             if (ProjectTreeView.SelectedObject is ProjectElementNode projectElementNode)
             {
-                switch (projectElementNode.Element)
-                {
-                    case PartCollision collision:
-                        var newCol = collision.Clone();
-                        CurrentProject.Collisions.Add(newCol);
-                        ProjectManager.SelectElement(newCol);
-                        break;
-                }
+                ProjectManager.DuplicateElement(projectElementNode.Element);
+
             }
         }
 
@@ -663,22 +662,12 @@ namespace LDDModder.BrickEditor.UI.Panels
             var elements = GetSelectedElements().ToList();
 
 
-            if (elements.Count > 1)
-            {
-                //TODO: show confirmation message when deleting more than one
-            }
 
-            ProjectManager.ClearSelection();
-
-            ProjectManager.StartBatchChanges();
-
-            var removedElements = elements.Where(x => x.TryRemove()).ToList();
-
-            if (removedElements.OfType<ModelMeshReference>().Any())
-                CurrentProject.RemoveUnreferencedMeshes();
-
-            ProjectManager.EndBatchChanges();
-
+            //if (elements.Count > 1)
+            //{
+            //    //TODO: show confirmation message when deleting more than one
+            //}
+            ProjectManager.DeleteElements(elements);
         }
 
         #endregion
@@ -699,21 +688,13 @@ namespace LDDModder.BrickEditor.UI.Panels
                         ProjectTreeView.Expand(surfaceNode);
                 }
             }
-
-            //string projectTitle = ProjectManager.GetProjectDisplayName();
-
-            //ViewModeLabel.Text = ProjectManager.IsProjectOpen ? projectTitle : $"<{projectTitle}> ";
-            
         }
 
         protected override void OnProjectElementsChanged()
         {
             base.OnProjectElementsChanged();
 
-            if (InvokeRequired)
-                BeginInvoke((Action)(() => RebuildNavigation(false)));
-            else
-                RebuildNavigation(false);
+            ExecuteOnThread(() => RebuildNavigation(false));
         }
 
         protected override void OnElementPropertyChanged(ElementValueChangedEventArgs e)
@@ -721,10 +702,11 @@ namespace LDDModder.BrickEditor.UI.Panels
             base.OnElementPropertyChanged(e);
             if (e.PropertyName == nameof(PartElement.Name))
             {
-                if (InvokeRequired)
-                    BeginInvoke((Action)(() => RefreshElementName(e.Element)));
-                else
-                    RefreshElementName(e.Element);
+                ExecuteOnThread(() => RefreshElementName(e.Element));
+            }
+            else if (e.PropertyName == nameof(PartProperties.Flexible) && e.Element is PartProperties)
+            {
+                ExecuteOnThread(() => RebuildNavigation(true));
             }
         }
 
@@ -872,7 +854,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                 {
                     int selectionLevel = selectedNodes.First().TreeLevel;
                     var parent = selectedNodes.First().Parent;
-
+                    
                     if (selectedNodes.All(x => x.CanDragDrop()/* && x.Level == selectionLevel*/))
                         return base.StartDrag(olv, button, item);
                 }
@@ -1012,78 +994,116 @@ namespace LDDModder.BrickEditor.UI.Panels
             if (e.DataObject is BrightIdeasSoftware.OLVDataObject dataObj)
             {
                 var elementNodes = dataObj.ModelObjects.OfType<ProjectElementNode>().ToList();
-                var elemType = elementNodes.FirstOrDefault()?.Element.GetType();
+                var targetNode = e.DropTargetItem.RowObject as ProjectTreeNode;
+                var targetElement = (targetNode as ProjectElementNode)?.Element;
+                var movedNodes = new List<ProjectElementNode>();
 
-                if (elementNodes.All(x => x.Element.GetType() == elemType))
+                ProjectManager.StartBatchChanges();
+
+                foreach (var elemTypeGroup in elementNodes.GroupBy(x => x.ElementType))
                 {
-                    if (elemType == typeof(ModelMeshReference))
+                    var draggedElement = elemTypeGroup.Select(x => x.Element).ToList();
+
+                    IElementCollection targetCollection = null;
+
+                    if (targetNode is ElementCollectionNode elemCollectionNode &&
+                        elemCollectionNode.CollectionType == elemTypeGroup.Key)
                     {
-                        var meshRefElems = elementNodes.Select(x => x.Element).OfType<ModelMeshReference>().ToList();
-                        var targetNode = e.DropTargetItem.RowObject as ProjectTreeNode;
-                        var targetElement = (targetNode as ProjectElementNode)?.Element;
-
-                        IElementCollection targetCollection = null;
-
-                        if (targetNode is ProjectElementNode targetElemNode)
+                        targetCollection = elemCollectionNode.Collection;
+                    }
+                    else if (elemTypeGroup.Key == typeof(ModelMeshReference) && 
+                        targetElement is SurfaceComponent surface)
+                    {
+                        targetCollection = surface.Meshes;
+                    }
+                    else if (targetElement is PartBone bone)
+                    {
+                        if (elemTypeGroup.Key == typeof(PartCollision))
                         {
-                            if (targetElemNode.Element is SurfaceComponent surfaceComponent)
-                            {
-                                targetCollection = surfaceComponent.Meshes;
-                            }
-                            else if (targetElemNode.Element is ModelMeshReference modelRef)
-                            {
-                                var parentComponent = modelRef.Parent as SurfaceComponent;
-                                targetCollection = parentComponent.Meshes;
-
-                                if (parentComponent is FemaleStudModel femaleStud &&
-                                    femaleStud.ReplacementMeshes.Contains(modelRef))
-                                {
-                                    targetCollection = femaleStud.ReplacementMeshes;
-                                }
-                            }
+                            targetCollection = bone.Collisions;
                         }
-                        else if (targetNode is ElementCollectionNode elemCollectionNode)
+                        else if (elemTypeGroup.Key == typeof(PartConnection))
                         {
-                            if (elemCollectionNode.CollectionType == elemType)
-                                targetCollection = elemCollectionNode.Collection;
+                            targetCollection = bone.Connections;
                         }
+                    }
+                    else if (targetElement.GetElementType() == elemTypeGroup.Key)
+                    {
+                        targetCollection = targetElement.GetParentCollection();
+                    }
 
-                        if (targetCollection != null)
+                    if (targetCollection != null)
+                    {
+                        using (FlagManager.UseFlag("DragDropping"))
                         {
-                            using (FlagManager.UseFlag("DragDropping"))
+                            if (targetElement != null && 
+                                (e.DropTargetLocation == DropTargetLocation.BelowItem || 
+                                e.DropTargetLocation == DropTargetLocation.AboveItem) &&
+                                targetCollection.Contains(targetElement))
                             {
-                                ProjectManager.StartBatchChanges();
+                                int targetIndex = targetCollection.IndexOf(targetElement);
 
-                                if (targetElement != null && e.DropTargetLocation == DropTargetLocation.AboveItem)
+                                if (e.DropTargetLocation == DropTargetLocation.AboveItem)
                                 {
-                                    int itemIndex = targetCollection.IndexOf(targetElement);
-                                    meshRefElems.ForEach(x => x.TryRemove());
-                                    targetCollection.InsertAllAt(itemIndex, meshRefElems);
-                                }
-                                else if (targetElement != null && e.DropTargetLocation == DropTargetLocation.BelowItem)
-                                {
-                                    int itemIndex = targetCollection.IndexOf(targetElement);
-                                    meshRefElems.ForEach(x => x.TryRemove());
-                                    targetCollection.InsertAllAt(itemIndex + 1, meshRefElems);
+                                    draggedElement.ForEach(x => x.TryRemove());
+                                    targetCollection.InsertAllAt(targetIndex, draggedElement);
                                 }
                                 else
                                 {
-                                    meshRefElems.ForEach(x => x.TryRemove());
-                                    targetCollection.AddRange(meshRefElems);
+                                    draggedElement.ForEach(x => x.TryRemove());
+                                    targetCollection.InsertAllAt(targetIndex + 1, draggedElement);
                                 }
-
-                                ProjectManager.EndBatchChanges();
+                            }
+                            else
+                            {
+                                draggedElement.ForEach(x => x.TryRemove());
+                                targetCollection.AddRange(draggedElement);
                             }
 
-                            SetSelectedNodes(elementNodes);
+                            movedNodes.AddRange(elemTypeGroup);    
                         }
                     }
                 }
+
+                ProjectManager.EndBatchChanges();
+
+                if (movedNodes.Any())
+                    SetSelectedNodes(movedNodes);
             }
         }
 
         #endregion
- 
+
+
+        protected override bool ProcessDialogKey(Keys keyData)
+        {
+            var normalKey = keyData & ~Keys.Control;
+            normalKey &= ~Keys.Shift;
+            normalKey &= ~Keys.Alt;
+
+            bool isControlPressed = (keyData & Keys.Control) != 0;
+            bool isShiftPressed = (keyData & Keys.Shift) != 0;
+            bool isAltPressed = (keyData & Keys.Alt) != 0;
+
+            if (ProjectTreeView.Focused)
+            {
+                if (ProjectManager.IsProjectOpen)
+                {
+                    if (normalKey == Keys.C && isControlPressed)
+                    {
+                        ProjectManager.CopySelectedElementsToClipboard();
+                        return true;
+                    }
+                    else if (normalKey == Keys.V && isControlPressed)
+                    {
+                        ProjectManager.HandlePasteFromClipboard();
+                        return true;
+                    }
+                }
+            }
+            
+            return base.ProcessDialogKey(keyData);
+        }
     }
 
 }

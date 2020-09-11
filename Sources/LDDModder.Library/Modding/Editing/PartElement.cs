@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 
@@ -18,10 +16,8 @@ namespace LDDModder.Modding.Editing
         internal PartProject _Project;
         private Dictionary<Type, IElementExtender> _Extenders;
 
-        [XmlAttribute]
         public string ID { get; set; }
         
-        [XmlAttribute]
         public string Name
         {
             get => _Name;
@@ -36,13 +32,6 @@ namespace LDDModder.Modding.Editing
                         _Name = value;
                 }
             }
-        }
-
-        [XmlElement]
-        public string Comments
-        {
-            get => _Comments;
-            set => SetPropertyValue(ref _Comments, value);
         }
 
         internal List<PartElement> OwnedElements { get; }
@@ -70,6 +59,9 @@ namespace LDDModder.Modding.Editing
 
         public event PropertyValueChangedEventHandler ExtendedPropertyChanged;
 
+        public event EventHandler ParentChanging;
+        public event EventHandler ParentChanged;
+
         public PartElement()
         {
             Collections = new List<IElementCollection>();
@@ -90,15 +82,32 @@ namespace LDDModder.Modding.Editing
 
         }
 
-        internal void AssignParent(PartElement parent)
+        private bool RemovingParent;
+
+
+        internal void BeginChangeParent(PartElement newParent)
         {
-            Parent = parent;
-            OnParentAssigned();
+            if (Parent == newParent || RemovingParent)
+                return;
+
+            ParentChanging?.Invoke(this, EventArgs.Empty);
+
+            if (Parent != null)
+            {
+                RemovingParent = true;
+                TryRemove();
+                RemovingParent = false;
+            }
         }
 
-        protected virtual void OnParentAssigned()
+        internal void AssignParent(PartElement parent)
         {
-
+            if (Parent != parent)
+            {
+                Parent = parent;
+                if (!RemovingParent)
+                    ParentChanged?.Invoke(this, EventArgs.Empty);
+            }
         }
 
         #endregion
@@ -120,9 +129,6 @@ namespace LDDModder.Modding.Editing
             if (!string.IsNullOrEmpty(Name))
                 elem.Add(new XAttribute("Name", Name));
 
-            if (!string.IsNullOrEmpty(Comments))
-                elem.Add(new XElement("Comments", Comments));
-
             return elem;
         }
 
@@ -133,9 +139,6 @@ namespace LDDModder.Modding.Editing
 
             if (element.HasAttribute("Name", out XAttribute nameAttr))
                 InternalSetName(nameAttr.Value);
-
-            if (element.HasElement("Comments", out XElement commentElem))
-                Comments = commentElem.Value;
         }
 
         #endregion
@@ -209,10 +212,7 @@ namespace LDDModder.Modding.Editing
             }
         }
 
-
-
         #endregion
-
 
         public T GetExtension<T>() where T : IElementExtender
         {
@@ -282,6 +282,18 @@ namespace LDDModder.Modding.Editing
                         return collection;
                 }
             }
+            else if (Project != null)
+            {
+                if (Project.Collisions.Contains(this))
+                    return Project.Collisions;
+                else if (Project.Connections.Contains(this))
+                    return Project.Connections;
+                else if (Project.Surfaces.Contains(this))
+                    return Project.Surfaces;
+                else if (Project.Bones.Contains(this))
+                    return Project.Bones;
+            }
+
             return null;
         }
 
@@ -335,22 +347,27 @@ namespace LDDModder.Modding.Editing
 
         public Type GetElementType()
         {
-            if (this is PartSurface)
-                return typeof(PartSurface);
-            else if (this is SurfaceComponent)
-                return typeof(SurfaceComponent);
-            else if (this is ModelMesh)
-                return typeof(ModelMesh);
-            else if (this is PartCollision)
-                return typeof(PartCollision);
-            else if (this is PartConnection)
-                return typeof(PartConnection);
-            else if (this is StudReference)
-                return typeof(StudReference);
-            else if (this is ModelMeshReference)
-                return typeof(ModelMeshReference);
 
-            return typeof(PartElement);
+            //if (this is PartSurface)
+            //    return typeof(PartSurface);
+            //else if (this is SurfaceComponent)
+            //    return typeof(SurfaceComponent);
+            //else if (this is ModelMesh)
+            //    return typeof(ModelMesh);
+            //else if (this is PartCollision)
+            //    return typeof(PartCollision);
+            //else if (this is PartConnection)
+            //    return typeof(PartConnection);
+            //else if (this is StudReference)
+            //    return typeof(StudReference);
+            //else if (this is ModelMeshReference)
+            //    return typeof(ModelMeshReference);
+            //return typeof(PartElement);
+
+            if (this is PartCollision)
+                return typeof(PartCollision);
+            return GetType();
+            
         }
 
         public string GetFullElementType()

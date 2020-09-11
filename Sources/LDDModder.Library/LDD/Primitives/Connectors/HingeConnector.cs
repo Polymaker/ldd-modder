@@ -54,6 +54,11 @@ namespace LDDModder.LDD.Primitives.Connectors
             set => SetPropertyValue(ref _Tag, value);
         }
 
+        public HingeConnector()
+        {
+            SubType = 2;
+        }
+
         protected override void SerializeBeforeTransform(XElement element)
         {
             element.AddBooleanAttribute("oriented", Oriented);
@@ -95,5 +100,20 @@ namespace LDDModder.LDD.Primitives.Connectors
             Tag = element.ReadAttribute("tag", string.Empty);
         }
 
+
+        public override Connector Clone()
+        {
+            return new HingeConnector()
+            {
+                Oriented = Oriented,
+                Tag = Tag,
+                FlipLimitMax = FlipLimitMax,
+                FlipLimitMin = FlipLimitMin,
+                LimitMax = LimitMax,
+                LimitMin = LimitMin,
+                SubType = SubType,
+                Transform = Transform.Clone()
+            };
+        }
     }
 }

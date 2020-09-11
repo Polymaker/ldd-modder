@@ -21,5 +21,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
         bool ShowConnections { get; }
 
         void RebuildNavigationTree();
+
+        void RefreshNavigationNode(ProjectTreeNode node);
     }
 }

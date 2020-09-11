@@ -146,58 +146,58 @@ namespace LDDModder.Simple3D
             {
                 switch (x)
                 {
+                    case 0:
+                        switch (y)
+                        {
+                            case 0:
+                                return A1;
+                            case 1:
+                                return A2;
+                            case 2:
+                                return A3;
+                            case 3:
+                                return A4;
+                            default:
+                                return 0d;
+                        }
                     case 1:
                         switch (y)
                         {
+                            case 0:
+                                return B1;
                             case 1:
-                                return A1;
+                                return B2;
                             case 2:
-                                return A2;
+                                return B3;
                             case 3:
-                                return A3;
-                            case 4:
-                                return A4;
+                                return B4;
                             default:
                                 return 0d;
                         }
                     case 2:
                         switch (y)
                         {
+                            case 0:
+                                return C1;
                             case 1:
-                                return B1;
+                                return C2;
                             case 2:
-                                return B2;
+                                return C3;
                             case 3:
-                                return B3;
-                            case 4:
-                                return B4;
+                                return C4;
                             default:
                                 return 0d;
                         }
                     case 3:
                         switch (y)
                         {
-                            case 1:
-                                return C1;
-                            case 2:
-                                return C2;
-                            case 3:
-                                return C3;
-                            case 4:
-                                return C4;
-                            default:
-                                return 0d;
-                        }
-                    case 4:
-                        switch (y)
-                        {
-                            case 1:
+                            case 0:
                                 return D1;
-                            case 2:
+                            case 1:
                                 return D2;
-                            case 3:
+                            case 2:
                                 return D3;
-                            case 4:
+                            case 3:
                                 return D4;
                             default:
                                 return 0d;
@@ -210,70 +210,70 @@ namespace LDDModder.Simple3D
             {
                 switch (x)
                 {
+                    case 0:
+                        switch (y)
+                        {
+                            case 0:
+                                A1 = value;
+                                break;
+                            case 1:
+                                A2 = value;
+                                break;
+                            case 2:
+                                A3 = value;
+                                break;
+                            case 3:
+                                A4 = value;
+                                break;
+                        }
+                        break;
                     case 1:
                         switch (y)
                         {
+                            case 0:
+                                B1 = value;
+                                break;
                             case 1:
-                                A1 = value;
+                                B2 = value;
                                 break;
                             case 2:
-                                A2 = value;
+                                B3 = value;
                                 break;
                             case 3:
-                                A3 = value;
-                                break;
-                            case 4:
-                                A4 = value;
+                                B4 = value;
                                 break;
                         }
                         break;
                     case 2:
                         switch (y)
                         {
+                            case 0:
+                                C1 = value;
+                                break;
                             case 1:
-                                B1 = value;
+                                C2 = value;
                                 break;
                             case 2:
-                                B2 = value;
+                                C3 = value;
                                 break;
                             case 3:
-                                B3 = value;
-                                break;
-                            case 4:
-                                B4 = value;
+                                C4 = value;
                                 break;
                         }
                         break;
                     case 3:
                         switch (y)
                         {
-                            case 1:
-                                C1 = value;
-                                break;
-                            case 2:
-                                C2 = value;
-                                break;
-                            case 3:
-                                C3 = value;
-                                break;
-                            case 4:
-                                C4 = value;
-                                break;
-                        }
-                        break;
-                    case 4:
-                        switch (y)
-                        {
-                            case 1:
+                            case 0:
                                 D1 = value;
                                 break;
-                            case 2:
+                            case 1:
                                 D2 = value;
                                 break;
-                            case 3:
+                            case 2:
                                 D3 = value;
                                 break;
-                            case 4:
+                            case 3:
                                 D4 = value;
                                 break;
                         }

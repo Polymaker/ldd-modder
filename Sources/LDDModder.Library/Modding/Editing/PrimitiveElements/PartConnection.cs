@@ -42,7 +42,14 @@ namespace LDDModder.Modding.Editing
         [XmlAttribute]
         public ConnectorType ConnectorType { get; set; }
 
-        public int SubType => Connector?.SubType ?? 0;
+        public int SubType
+        {
+            get => Connector?.SubType ?? 0;
+            set {
+                if (Connector != null) 
+                    Connector.SubType = value;
+            }
+        }
 
         public event EventHandler TranformChanged;
 
@@ -73,7 +80,7 @@ namespace LDDModder.Modding.Editing
                 //{
                 //    oldTransform.
                 //}
-                Trace.WriteLine("PartConnection.OnPropertyChanged: Transform");
+                //Trace.WriteLine("PartConnection.OnPropertyChanged: Transform");
                 TranformChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -109,9 +116,12 @@ namespace LDDModder.Modding.Editing
                     return;
                 }
 
-                var changeArgs = new ElementValueChangedEventArgs(this, 
-                    e.ChildObject, eventArgs.PropertyName, 
-                    eventArgs.OldValue, eventArgs.NewValue);
+                var changeArgs = new ElementValueChangedEventArgs(this,
+                    e.ChildObject, eventArgs.PropertyName,
+                    eventArgs.OldValue, eventArgs.NewValue)
+                {
+                    Index = eventArgs.Index
+                };
                 RaisePropertyValueChanged(changeArgs);
             }
         }
@@ -121,7 +131,10 @@ namespace LDDModder.Modding.Editing
             if (IsAssigningConnectorProperties)
                 return;
 
-            var changeArgs = new ElementValueChangedEventArgs(this, Connector, e.PropertyName, e.OldValue, e.NewValue);
+            var changeArgs = new ElementValueChangedEventArgs(this, Connector, e.PropertyName, e.OldValue, e.NewValue)
+            {
+                Index = e.Index
+            };
             RaisePropertyValueChanged(changeArgs);
         }
 
@@ -148,6 +161,13 @@ namespace LDDModder.Modding.Editing
         public T GetConnector<T>() where T : Connector
         {
             return _Connector as T;
+        }
+
+        public PartConnection Clone()
+        {
+            var connClone = Connector.Clone();
+            connClone.Transform = Transform.ToLDD();
+            return new PartConnection(connClone);
         }
 
         public Connector GenerateLDD()

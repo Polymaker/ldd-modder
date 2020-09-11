@@ -353,6 +353,9 @@ namespace LDDModder.LDD.Files
                 if (file.GetShaderDataFromOffset(index.REShaderOffset, out ROUNDEDGE_SHADER_DATA shaderData))
                 {
                     mesh.Indices[i].RoundEdgeData = new RoundEdgeData(shaderData.Coords.Take(6).ToArray());
+
+                    if (!mesh.HasRoundEdgeData && !mesh.Indices[i].RoundEdgeData.IsEmpty)
+                        mesh.HasRoundEdgeData = true;
                 }
             }
         }
