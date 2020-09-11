@@ -156,7 +156,7 @@ namespace LDDModder.PaletteMaker.DB
                 using (var trans = conn.BeginTransaction())
                 using (var cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = $"DELETE FROM {DbHelper.GetTableName<PartMapping>()} WHERE MatchLevel in (0, 1)";
+                    cmd.CommandText = $"DELETE FROM {DbHelper.GetTableName<PartMapping>()} WHERE MatchLevel <= 2";
                     cmd.ExecuteNonQuery();
 
                     DbHelper.InitializeInsertCommand<PartMapping>(cmd, x => new { x.RebrickableID, x.LegoID, x.MatchLevel, x.IsActive });
@@ -191,6 +191,12 @@ namespace LDDModder.PaletteMaker.DB
                         "INNER JOIN LddParts l on l.DesignID = substr(r.PartID, 1, length(r.PartID) - 1) " +
                         "WHERE  r.IsPrintOrPattern = 0 and r.IsAssembly = 0 and (r.PartID like '%a' or r.PartID like '%b' or r.PartID like '%c')";
                     cmd.ExecuteNonQuery(); // Insert possible alternates (e.g.: 3245a, 3245b -> 3245)
+
+                    cmd.CommandText = insertIntoSQL + " SELECT r.PartID, l.DesignID, 2, 1 FROM RbParts r " +
+                        "INNER JOIN LddParts l on l.DesignID = r.ParentPartID " +
+                        $"WHERE r.IsPrintOrPattern = 1 and r.PartID not in (select RebrickableID from {DbHelper.GetTableName<PartMapping>()})";
+                    cmd.ExecuteNonQuery(); // Insert prints
+
 
                     trans.Commit();
                 }
