@@ -1460,6 +1460,11 @@ namespace LDDModder.Modding.Editing
             var meshRefs = Surfaces.SelectMany(x => x.GetAllMeshReferences()).ToList();
             var unloadedMeshes = meshRefs.Select(x => x.ModelMesh).Where(x => !x.IsModelLoaded).Distinct().ToList();
 
+            if (GetAllElements<FemaleStudModel>().Any())
+            {
+
+            }
+
             foreach (var layerGroup in meshRefs.GroupBy(x => x.RoundEdgeLayer))
             {
                 var meshesGeoms = layerGroup.Select(x => new Tuple<ModelMeshReference, MeshGeometry>(x, x.GetGeometry(true))).ToList();
@@ -1467,12 +1472,35 @@ namespace LDDModder.Modding.Editing
                 foreach (var mg in meshesGeoms)
                     mg.Item2.ClearRoundEdgeData();
 
-                var triangles = meshesGeoms.SelectMany(x => x.Item2.Triangles);
-                //ShaderDataGenerator.ComputeEdgeOutlines(triangles, breakAngle);
-                OutlinesGenerator.GenerateOutlines(triangles, breakAngle);
+                if (meshesGeoms.Any(x => x.Item1.Parent is FemaleStudModel fsm && fsm.ReplacementMeshes.Any()))
+                {
+                    var nonFSM = meshesGeoms.Where(x => !(x.Item1.Parent is FemaleStudModel)).ToList();
+                    var baseFSM = meshesGeoms
+                        .Where(x => x.Item1.Parent is FemaleStudModel fsm && fsm.Meshes.Contains(x.Item1)).ToList();
 
-                foreach (var mg in meshesGeoms)
-                    mg.Item1.UpdateMeshOutlines(mg.Item2);
+                    var altFSM = meshesGeoms
+                        .Where(x => x.Item1.Parent is FemaleStudModel fsm && fsm.ReplacementMeshes.Contains(x.Item1)).ToList();
+
+                    var triangles = nonFSM.Concat(baseFSM).SelectMany(x => x.Item2.Triangles);
+                    OutlinesGenerator.GenerateOutlines(triangles, breakAngle);
+                    foreach (var mg in nonFSM.Concat(baseFSM))
+                        mg.Item1.UpdateMeshOutlines(mg.Item2);
+
+                    triangles = nonFSM.Concat(altFSM).SelectMany(x => x.Item2.Triangles);
+                    OutlinesGenerator.GenerateOutlines(triangles, breakAngle);
+                    foreach (var mg in altFSM)
+                        mg.Item1.UpdateMeshOutlines(mg.Item2);
+                }
+                else
+                {
+                    var triangles = meshesGeoms.SelectMany(x => x.Item2.Triangles);
+                    //ShaderDataGenerator.ComputeEdgeOutlines(triangles, breakAngle);
+                    OutlinesGenerator.GenerateOutlines(triangles, breakAngle);
+
+                    foreach (var mg in meshesGeoms)
+                        mg.Item1.UpdateMeshOutlines(mg.Item2);
+                }
+                
             }
 
             var models = meshRefs.Select(x => x.ModelMesh).Distinct().ToList();
