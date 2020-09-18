@@ -273,6 +273,12 @@
     <Compile Include="UI\Windows\BoneDataCopyDialog.Designer.cs">
       <DependentUpon>BoneDataCopyDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\Windows\BoneLinkDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Windows\BoneLinkDialog.Designer.cs">
+      <DependentUpon>BoneLinkDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\Windows\MessageBoxEX.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -535,6 +541,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Windows\BoneDataCopyDialog.resx">
       <DependentUpon>BoneDataCopyDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Windows\BoneLinkDialog.resx">
+      <DependentUpon>BoneLinkDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Windows\BrickEditorWindow.fr.resx">
       <DependentUpon>BrickEditorWindow.cs</DependentUpon>

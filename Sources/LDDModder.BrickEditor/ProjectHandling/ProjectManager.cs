@@ -13,6 +13,7 @@ using LDDModder.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -73,10 +74,17 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
         public event EventHandler ProjectModified;
 
+        /// <summary>
+        /// Raised when a collection in the project has changed.
+        /// </summary>
         public event EventHandler<ElementCollectionChangedEventArgs> ElementCollectionChanged;
 
         public event EventHandler<ElementValueChangedEventArgs> ElementPropertyChanged;
 
+        /// <summary>
+        /// Raised when one or more collections in the project has changed. <br/>
+        /// Raised only after a all changes are applied
+        /// </summary>
         public event EventHandler ProjectElementsChanged;
 
         #endregion
@@ -84,6 +92,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
         private bool ElementsChanged;
         private bool PreventProjectChange;
         private bool IsProjectAttached;
+        private bool PreventCollectionEvents;
 
         static ProjectManager()
         {
@@ -281,7 +290,8 @@ namespace LDDModder.BrickEditor.ProjectHandling
                     InitializeElementExtensions();
             }
 
-            ElementCollectionChanged?.Invoke(this, e);
+            if (!PreventCollectionEvents)
+                ElementCollectionChanged?.Invoke(this, e);
 
             UndoRedoManager.ProcessProjectElementsChanged(e);
 
@@ -293,7 +303,8 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
         private void Project_ElementPropertyChanged(object sender, ElementValueChangedEventArgs e)
         {
-            ElementPropertyChanged?.Invoke(this, e);
+            if (!PreventCollectionEvents)
+                ElementPropertyChanged?.Invoke(this, e);
 
             UndoRedoManager.ProcessElementPropertyChanged(e);
         }
@@ -560,8 +571,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
         public void EndBatchChanges()
         {
-            UndoRedoManager.EndBatchChanges();
-            if (ElementsChanged)
+            if (UndoRedoManager.EndBatchChanges() && ElementsChanged)
             {
                 ElementsChanged = false;
                 ProjectElementsChanged?.Invoke(this, EventArgs.Empty);
@@ -1121,6 +1131,111 @@ namespace LDDModder.BrickEditor.ProjectHandling
             catch { }
         }
 
+        public void ClearBoneConnections()
+        {
+            if (CurrentProject == null || !CurrentProject.Flexible)
+                return;
+            StartBatchChanges(nameof(ClearBoneConnections));
+            PreventCollectionEvents = true;
+            foreach (var bone in CurrentProject.Bones)
+            {
+                bone.Connections.RemoveAll(x => x.SubType >= 999000);
+                bone.TargetConnectionID = string.Empty;
+                bone.TargetConnectionIndex = -1;
+                bone.SourceConnectionID = string.Empty;
+                bone.SourceConnectionIndex = -1;
+            }
+
+            PreventCollectionEvents = false;
+            ViewportWindow.InvalidateBones();
+            EndBatchChanges();
+        }
+
+        public void RebuildBoneConnections(float flexAmount = 0.06f)
+        {
+            if (CurrentProject == null || !CurrentProject.Flexible)
+                return;
+
+            if (CurrentProject.Bones.Count == 0)
+                return;
+
+            StartBatchChanges(nameof(RebuildBoneConnections));
+            PreventCollectionEvents = true;
+            foreach (var bone in CurrentProject.Bones)
+            {
+                bone.Connections.RemoveAll(x => x.SubType >= 999000);
+                bone.TargetConnectionID = string.Empty;
+                bone.TargetConnectionIndex = -1;
+                bone.SourceConnectionID = string.Empty;
+                bone.SourceConnectionIndex = -1;
+            }
+
+            int lastBoneId = CurrentProject.Bones.Max(x => x.BoneID);
+
+            int curConnType = 0;
+            int totalConnection = 0;
+            string flexAttributes = string.Format(CultureInfo.InvariantCulture, "-{0},{0},20,10,10", flexAmount);
+
+            foreach (var bone in CurrentProject.Bones.OrderBy(x => x.BoneID))
+            {
+                foreach (var linkedBone in CurrentProject.Bones.Where(x => x.TargetBoneID == bone.BoneID))
+                {
+                    PartConnection targetConn = PartConnection.Create(ConnectorType.Ball);
+
+                    if (linkedBone.BoneID == lastBoneId)
+                    {
+                        targetConn = PartConnection.Create(ConnectorType.Fixed);
+                        var fixConn = targetConn.GetConnector<FixedConnector>();
+                        fixConn.SubType = 999000 + curConnType;
+                    }
+                    else
+                    {
+                        targetConn = PartConnection.Create(ConnectorType.Ball);
+                        var ballConn = targetConn.GetConnector<BallConnector>();
+                        ballConn.SubType = 999000 + curConnType;
+                    }
+
+                    curConnType = (++curConnType) % 4;
+
+                    var posOffset = linkedBone.Transform.Position - bone.Transform.Position;
+                    posOffset = bone.Transform.ToMatrixD().Inverted().TransformVector(posOffset);
+                    targetConn.Transform.Position = posOffset;
+
+                    bone.Connections.Add(targetConn);
+                    CurrentProject.RenameElement(targetConn, $"FlexConn{totalConnection++}");
+
+                    PartConnection sourceConn = null;
+                    if (linkedBone.BoneID == lastBoneId)
+                    {
+                        sourceConn = PartConnection.Create(ConnectorType.Fixed);
+                        var fixConn = sourceConn.GetConnector<FixedConnector>();
+                        fixConn.SubType = 999000 + curConnType;
+                    }
+                    else
+                    {
+                        sourceConn = PartConnection.Create(ConnectorType.Ball);
+                        var ballConn = sourceConn.GetConnector<BallConnector>();
+                        ballConn.SubType = 999000 + curConnType;
+                        ballConn.FlexAttributes = flexAttributes;
+                    }
+
+                    curConnType = (++curConnType) % 4;
+                    linkedBone.Connections.Add(sourceConn);
+                    CurrentProject.RenameElement(sourceConn, $"FlexConn{totalConnection++}");
+
+                    linkedBone.TargetConnectionID = targetConn.ID;
+                    linkedBone.SourceConnectionID = sourceConn.ID;
+
+                }
+            }
+            
+            CurrentProject.UpdateBoneReferencesIndices();
+
+            PreventCollectionEvents = false;
+            ViewportWindow.InvalidateBones();
+            EndBatchChanges();
+        }
+
         #endregion
 
         #region Visibility Handling
@@ -1231,13 +1346,29 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
             using (var dlg = new BoneDataCopyDialog(this))
             {
-                StartBatchChanges("BoneDataCopyDialog");
+                StartBatchChanges(nameof(BoneDataCopyDialog));
+                dlg.ShowDialog();
+                EndBatchChanges();
+            }
+        }
+
+        public void ShowLinkBonesDialog()
+        {
+            if (CurrentProject == null)
+                return;
+
+            Trace.WriteLine($"Executing: {nameof(ShowLinkBonesDialog)}");
+
+            using (var dlg = new BoneLinkDialog(this))
+            {
+                StartBatchChanges(nameof(BoneLinkDialog));
                 dlg.ShowDialog();
                 EndBatchChanges();
             }
         }
 
         #endregion
+
 
 
         #endregion

@@ -861,6 +861,12 @@ namespace LDDModder.BrickEditor.UI.Panels
             }
         }
 
+        public void InvalidateBones()
+        {
+            BonesChanged = true;
+            ConnectionsChanged = true;
+        }
+
         protected override void OnElementPropertyChanged(ElementValueChangedEventArgs e)
         {
             base.OnElementPropertyChanged(e);
@@ -1601,14 +1607,14 @@ namespace LDDModder.BrickEditor.UI.Panels
             }
         }
 
+        private void Bones_LinkBones_Click(object sender, EventArgs e)
+        {
+            ProjectManager.ShowLinkBonesDialog();
+        }
+
         private void Bones_RebuildConnections_Click(object sender, EventArgs e)
         {
-            if (CurrentProject != null)
-            {
-                ProjectManager.StartBatchChanges();
-                CurrentProject.RebuildBoneConnections();
-                ProjectManager.EndBatchChanges();
-            }
+            ProjectManager.RebuildBoneConnections();
         }
 
         private void Bones_CopyData_Click(object sender, EventArgs e)
@@ -1774,6 +1780,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         }
 
         public bool Is3DViewFocused => InputManager.ContainsFocus;
+
 
 
         #endregion

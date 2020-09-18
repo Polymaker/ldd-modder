@@ -145,6 +145,27 @@ namespace LDDModder.Modding.Editing
             PhysicsAttributes = new PhysicsAttributes();
         }
 
+        private void UnBindPhysicsAttributes()
+        {
+            if (PhysicsAttributes != null)
+                PhysicsAttributes.PropertyValueChanged -= PhysicsAttributes_PropertyValueChanged;
+        }
+
+        private void BindPhysicsAttributes()
+        {
+            if (PhysicsAttributes != null)
+                PhysicsAttributes.PropertyValueChanged += PhysicsAttributes_PropertyValueChanged;
+        }
+
+        private void PhysicsAttributes_PropertyValueChanged(object sender, System.ComponentModel.PropertyValueChangedEventArgs e)
+        {
+            var changeArgs = new ElementValueChangedEventArgs(this, PhysicsAttributes, e.PropertyName, e.OldValue, e.NewValue)
+            {
+                Index = e.Index
+            };
+            RaisePropertyValueChanged(changeArgs);
+        }
+
         public override XElement SerializeToXml()
         {
             var propsElem = SerializeToXmlBase("Properties");
@@ -220,6 +241,7 @@ namespace LDDModder.Modding.Editing
             Decorated = element.ReadElement(nameof(Decorated), false);
             Flexible = element.ReadElement(nameof(Flexible), false);
 
+            UnBindPhysicsAttributes();
             if (element.HasElement(nameof(PhysicsAttributes), out XElement pA))
             {
                 PhysicsAttributes = new PhysicsAttributes();
@@ -227,6 +249,7 @@ namespace LDDModder.Modding.Editing
             }
             else
                 PhysicsAttributes = new PhysicsAttributes();
+            BindPhysicsAttributes();
 
             if (element.HasElement(nameof(GeometryBounding), out XElement gb))
                 GeometryBounding = XmlHelper.DefaultDeserialize<BoundingBox>(gb);

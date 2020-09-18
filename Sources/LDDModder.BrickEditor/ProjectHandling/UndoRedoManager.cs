@@ -106,7 +106,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
             IsInBatch = true;
         }
 
-        public void EndBatchChanges()
+        public bool EndBatchChanges()
         {
             BatchNesting--;
             if (BatchNesting == 0)
@@ -116,7 +116,9 @@ namespace LDDModder.BrickEditor.ProjectHandling
                     AddAction(CombineBatchChanges(BatchChanges));
 
                 BatchChanges.Clear();
+                return true;
             }
+            return false;
         }
 
         private BatchChangeAction CombineBatchChanges(IEnumerable<ChangeAction> actions)

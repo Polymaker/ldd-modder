@@ -161,6 +161,8 @@ namespace LDDModder.BrickEditor.UI.Panels
                 var matrixValues = partProps.PhysicsAttributes.InertiaTensor.ToArray();
                 string matrixStr = string.Join("; ", matrixValues);
                 InertiaTensorTextBox.Text = matrixStr;
+
+                FrictionCheckBox.Checked = partProps.PhysicsAttributes.FrictionType == 1;
                 //string matrixValues = partProps.PhysicsAttributes.GetInertiaTensorString();
                 //InertiaTensorTextBox.Text = matrixValues.Replace(",", ", ");
             }
@@ -209,6 +211,12 @@ namespace LDDModder.BrickEditor.UI.Panels
                 CurrentProject.PartID = (int)PartIDTextBox.Value;
         }
 
+        private void FrictionCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (CurrentProject != null && !InternalSet)
+                CurrentProject.PhysicsAttributes.FrictionType = FrictionCheckBox.Checked ? 1 : 0;
+        }
+
         private void PlatformComboBox_SelectedValueChanged(object sender, EventArgs e)
         {
             if (CurrentProject != null && !InternalSet)
@@ -232,7 +240,8 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             if (e.Element == CurrentProject?.Properties)
             {
-                UpdateControlBindings();
+                BeginInvokeOnce(UpdateControlBindings, nameof(UpdateControlBindings));
+                //UpdateControlBindings();
             }
         }
 
@@ -324,5 +333,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                 }
             }
         }
+
+        
     }
 }

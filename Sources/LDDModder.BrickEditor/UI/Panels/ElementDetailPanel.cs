@@ -63,12 +63,26 @@ namespace LDDModder.BrickEditor.UI.Panels
             });
         }
 
+        private bool PartConnectionChanged;
+
         protected override void OnElementCollectionChanged(ElementCollectionChangedEventArgs e)
         {
             base.OnElementCollectionChanged(e);
 
             if (e.ElementType == typeof(PartConnection))
+                PartConnectionChanged = true;
+        }
+
+
+        protected override void OnProjectElementsChanged()
+        {
+            base.OnProjectElementsChanged();
+
+            if (PartConnectionChanged)
+            {
                 ExecuteOnThread(UpdateStudConnectorList);
+                PartConnectionChanged = false;
+            }
         }
 
         private void FillSelectionDetails(PartElement selection)

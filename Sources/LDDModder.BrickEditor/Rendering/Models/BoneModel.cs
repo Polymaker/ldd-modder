@@ -80,6 +80,8 @@ namespace LDDModder.BrickEditor.Rendering
             base.OnElementPropertyChanged(e);
             if (e.PropertyName == nameof(PartBone.Bounding))
                 UpdateBoundingBox();
+            else if (e.PropertyName == nameof(PartBone.TargetBoneID))
+                IsLengthDirty = true;
         }
 
         public override bool RayIntersects(Ray ray, out float distance)

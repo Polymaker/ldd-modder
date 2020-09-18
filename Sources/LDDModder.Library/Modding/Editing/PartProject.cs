@@ -925,7 +925,7 @@ namespace LDDModder.Modding.Editing
             }
         }
 
-        private void UpdateBoneReferencesIndices()
+        public void UpdateBoneReferencesIndices()
         {
             foreach (var bone in Bones)
             {
@@ -1123,6 +1123,18 @@ namespace LDDModder.Modding.Editing
         #endregion
 
         #region Bones data handling
+
+        public void ClearBoneConnections()
+        {
+            foreach (var bone in Bones)
+            {
+                bone.Connections.RemoveAll(x => x.SubType >= 999000);
+                bone.TargetConnectionID = string.Empty;
+                bone.TargetConnectionIndex = -1;
+                bone.SourceConnectionID = string.Empty;
+                bone.SourceConnectionIndex = -1;
+            }
+        }
 
         public void RebuildBoneConnections(float flexAmount = 0.06f)
         {

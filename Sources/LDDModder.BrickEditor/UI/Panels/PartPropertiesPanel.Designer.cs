@@ -226,7 +226,6 @@
             // 
             resources.ApplyResources(this.AliasesButtonBox, "AliasesButtonBox");
             this.AliasesButtonBox.AutoSizeButton = true;
-            this.AliasesButtonBox.ButtonText = "...";
             this.AliasesButtonBox.ButtonWidth = 26;
             this.AliasesButtonBox.Name = "AliasesButtonBox";
             this.AliasesButtonBox.ReadOnly = true;
@@ -302,6 +301,7 @@
             resources.ApplyResources(this.FrictionCheckBox, "FrictionCheckBox");
             this.FrictionCheckBox.Name = "FrictionCheckBox";
             this.FrictionCheckBox.UseVisualStyleBackColor = true;
+            this.FrictionCheckBox.CheckedChanged += new System.EventHandler(this.FrictionCheckBox_CheckedChanged);
             // 
             // flowLayoutPanel1
             // 

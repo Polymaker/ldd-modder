@@ -109,6 +109,11 @@ namespace LDDModder.BrickEditor.UI.Panels
             OnElementCollectionChanged(e);
         }
 
+        /// <summary>
+        /// Raised when a collection in the project has changed.
+        /// </summary>
+        /// <remarks>Not always invoked on main thread</remarks>
+        /// <param name="e"></param>
         protected virtual void OnElementCollectionChanged(ElementCollectionChangedEventArgs e)
         {
 
@@ -119,6 +124,11 @@ namespace LDDModder.BrickEditor.UI.Panels
             OnProjectElementsChanged();
         }
 
+        /// <summary>
+        /// Raised when one or more collections in the project has changed. <br/>
+        /// Raised only after a all changes are applied
+        /// </summary>
+        /// <remarks>Not always invoked on main thread</remarks>
         protected virtual void OnProjectElementsChanged()
         {
 
@@ -129,7 +139,10 @@ namespace LDDModder.BrickEditor.UI.Panels
             OnElementPropertyChanged(e);
         }
 
-
+        /// <summary>
+        /// Raised when a property of a project element has changed. <br/>
+        /// </summary>
+        /// <remarks>Not always invoked on main thread</remarks>
         protected virtual void OnElementPropertyChanged(ElementValueChangedEventArgs e)
         {
 
@@ -150,6 +163,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             OnProjectChangeApplied();
         }
+
 
         protected virtual void OnProjectChangeApplied()
         {

@@ -27,6 +27,8 @@ namespace LDDModder.Modding.Editing
 
         void InsertAllAt(int index, IEnumerable<PartElement> elements);
 
+        void SetIndex(int index, PartElement element);
+
         int IndexOf(PartElement element);
 
         void Remove(PartElement element);
@@ -297,6 +299,11 @@ namespace LDDModder.Modding.Editing
             }
         }
 
+        public void SetIndex(int index, PartElement element)
+        {
+            ReorderItem(element as T, index);
+        }
+
         public void ReorderItem(T item, int newIndex)
         {
             int curIndex = IndexOf(item);
@@ -339,7 +346,21 @@ namespace LDDModder.Modding.Editing
         {
             if (!(item is T))
                 return false;
+
             return InnerList.Contains(item);
+        }
+
+        public void Sort<TKey>(Func<T, TKey> keySelector)
+        {
+            var sorted = InnerList.OrderBy(keySelector).ToList();
+            var changes = new List<CollectionChangeItemInfo>();
+
+            for (int i = 0; i < Count; i++)
+                changes.Add(new CollectionChangeItemInfo(InnerList[i], i, sorted.IndexOf(InnerList[i])));
+
+            InnerList = sorted;
+
+            RaiseCollectionChanged(CollectionChangeAction.Refresh, changes);
         }
 
         public void CopyTo(T[] array, int arrayIndex)

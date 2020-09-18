@@ -49,6 +49,7 @@
             this.MeshesDropDownMenu = new System.Windows.Forms.ToolStripDropDownButton();
             this.MeshesMenu_CalculateOutlines = new System.Windows.Forms.ToolStripMenuItem();
             this.MeshesMenu_RemoveOutlines = new System.Windows.Forms.ToolStripMenuItem();
+            this.MeshesMenu_Separator1 = new System.Windows.Forms.ToolStripSeparator();
             this.MeshesMenu_Separate = new System.Windows.Forms.ToolStripMenuItem();
             this.MeshesMenu_Merge = new System.Windows.Forms.ToolStripMenuItem();
             this.BonesDropDownMenu = new System.Windows.Forms.ToolStripDropDownButton();
@@ -70,7 +71,7 @@
             this.visualStudioToolStripExtender1 = new WeifenLuo.WinFormsUI.Docking.VisualStudioToolStripExtender(this.components);
             this.SelectionInfoPanel = new System.Windows.Forms.Panel();
             this.transformEditor1 = new LDDModder.BrickEditor.UI.Controls.TransformEditor();
-            this.MeshesMenu_Separator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.Bones_LinkBones = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1.SuspendLayout();
             this.SelectionInfoPanel.SuspendLayout();
             this.SuspendLayout();
@@ -230,6 +231,11 @@
             resources.ApplyResources(this.MeshesMenu_RemoveOutlines, "MeshesMenu_RemoveOutlines");
             this.MeshesMenu_RemoveOutlines.Click += new System.EventHandler(this.MeshesMenu_RemoveOutlines_Click);
             // 
+            // MeshesMenu_Separator1
+            // 
+            this.MeshesMenu_Separator1.Name = "MeshesMenu_Separator1";
+            resources.ApplyResources(this.MeshesMenu_Separator1, "MeshesMenu_Separator1");
+            // 
             // MeshesMenu_Separate
             // 
             this.MeshesMenu_Separate.Name = "MeshesMenu_Separate";
@@ -246,6 +252,7 @@
             // 
             this.BonesDropDownMenu.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.BonesDropDownMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.Bones_LinkBones,
             this.Bones_RebuildConnections,
             this.Bones_CalcBounding,
             this.Bones_CopyData});
@@ -380,10 +387,11 @@
             this.transformEditor1.Name = "transformEditor1";
             this.transformEditor1.ViewLayout = LDDModder.BrickEditor.UI.Controls.TransformEditor.EditLayout.Vertical;
             // 
-            // MeshesMenu_Separator1
+            // Bones_LinkBones
             // 
-            this.MeshesMenu_Separator1.Name = "MeshesMenu_Separator1";
-            resources.ApplyResources(this.MeshesMenu_Separator1, "MeshesMenu_Separator1");
+            this.Bones_LinkBones.Name = "Bones_LinkBones";
+            resources.ApplyResources(this.Bones_LinkBones, "Bones_LinkBones");
+            this.Bones_LinkBones.Click += new System.EventHandler(this.Bones_LinkBones_Click);
             // 
             // ViewportPanel
             // 
@@ -444,5 +452,6 @@
         private System.Windows.Forms.ToolStripMenuItem MeshesMenu_CalculateOutlines;
         private System.Windows.Forms.ToolStripMenuItem MeshesMenu_RemoveOutlines;
         private System.Windows.Forms.ToolStripSeparator MeshesMenu_Separator1;
+        private System.Windows.Forms.ToolStripMenuItem Bones_LinkBones;
     }
 }

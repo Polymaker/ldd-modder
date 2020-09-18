@@ -170,7 +170,7 @@ namespace LDDModder.BrickEditor.UI.Windows
             }
 
             if (bonesToImport.Any())
-                Project.RebuildBoneConnections();
+                ProjectManager.RebuildBoneConnections();
 
             ProjectManager.EndBatchChanges();
         }

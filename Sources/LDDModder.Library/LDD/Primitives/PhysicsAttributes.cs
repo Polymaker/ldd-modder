@@ -1,22 +1,44 @@
-﻿using System.Globalization;
+﻿using System.ComponentModel;
+using System.Globalization;
 using System.Xml.Linq;
 using LDDModder.Serialization;
 using LDDModder.Simple3D;
 
 namespace LDDModder.LDD.Primitives
 {
-    public class PhysicsAttributes : IXmlObject
+    public class PhysicsAttributes : ChangeTrackingObject, IXmlObject
     {
-        public Matrix3d InertiaTensor { get; set; }
+        private Matrix3d _InertiaTensor;
+        private Vector3d _CenterOfMass;
+        private double _Mass;
+        private int _FrictionType;
 
-        public Vector3d CenterOfMass { get; set; }
+        public Matrix3d InertiaTensor
+        {
+            get => _InertiaTensor;
+            set => SetPropertyValue(ref _InertiaTensor, value);
+        }
 
-        public double Mass { get; set; }
+        public Vector3d CenterOfMass
+        {
+            get => _CenterOfMass;
+            set => SetPropertyValue(ref _CenterOfMass, value);
+        }
+
+        public double Mass
+        {
+            get => _Mass;
+            set => SetPropertyValue(ref _Mass, value);
+        }
 
         /// <summary>
         /// Always 0 or 1, so it may be a boolean
         /// </summary>
-        public int FrictionType { get; set; }
+        public int FrictionType
+        {
+            get => _FrictionType;
+            set => SetPropertyValue(ref _FrictionType, value);
+        }
 
         public bool IsEmpty => 
             InertiaTensor == Matrix3d.Zero && 

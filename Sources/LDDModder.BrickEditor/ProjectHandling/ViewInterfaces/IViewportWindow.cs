@@ -10,5 +10,6 @@ namespace LDDModder.BrickEditor.ProjectHandling.ViewInterfaces
     {
         void RebuildModels();
         void ForceRender();
+        void InvalidateBones();
     }
 }

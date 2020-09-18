@@ -622,20 +622,12 @@ namespace LDDModder.LDD.Meshes
                     if (edge.PrevEdge == null && GetBySharedVertex(edge, edge.P1, out HardEdge connectedEdge))
                     {
                         edge.PrevEdge = connectedEdge;
-                        if (!connectedEdge.P2.Equals(edge.P1))
-                        {
-
-                        }
                         connectedEdge.NextEdge = edge;
                     }
 
                     if (edge.NextEdge == null && GetBySharedVertex(edge, edge.P2, out connectedEdge))
                     {
                         edge.NextEdge = connectedEdge;
-                        if (!connectedEdge.P1.Equals(edge.P2))
-                        {
-
-                        }
                         connectedEdge.PrevEdge = edge;
                     }
                 }
