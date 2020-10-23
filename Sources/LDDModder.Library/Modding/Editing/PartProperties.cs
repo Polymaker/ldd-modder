@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
@@ -143,6 +144,38 @@ namespace LDDModder.Modding.Editing
             Bounding = new BoundingBox();
             GeometryBounding = new BoundingBox();
             PhysicsAttributes = new PhysicsAttributes();
+        }
+
+        public void Initialize(LDD.Parts.PartWrapper part)
+        {
+            PartID = part.PartID;
+            Description = part.Primitive.Name;
+            PartVersion = part.Primitive.PartVersion;
+            Decorated = part.IsDecorated;
+            Flexible = part.IsFlexible;
+            Aliases.AddRange(part.Primitive.Aliases);
+            if (Aliases.Contains(PartID))
+                Aliases.Remove(PartID);
+            Platform = part.Primitive.Platform;
+            MainGroup = part.Primitive.MainGroup;
+            PhysicsAttributes = part.Primitive.PhysicsAttributes;
+            GeometryBounding = part.Primitive.GeometryBounding;
+            Bounding = part.Primitive.Bounding;
+            if (part.Primitive.DefaultOrientation != null)
+                DefaultOrientation = ItemTransform.FromLDD(part.Primitive.DefaultOrientation);
+
+            if (part.Primitive.ExtraElements.Any())
+            {
+
+            }
+
+            if (!string.IsNullOrEmpty(part.Primitive.Comments))
+            {
+                var match = Regex.Match(part.Primitive.Comments, "Authors:(.+?)[\r\n]");
+                if (match.Success)
+                    Authors = match.Groups[1].Value;
+
+            }
         }
 
         private void UnBindPhysicsAttributes()

@@ -20,8 +20,6 @@ namespace LDDModder.BrickEditor.Settings
         [JsonProperty("build.configurations")]
         public ProjectBuildSettings BuildSettings { get; set; }
 
-        //[JsonProperty("viewport.default")]
-        //public ViewportDisplaySettings ViewportSettings { get; set; }
         [JsonProperty("file.opened")]
         public List<RecentFileInfo> OpenedProjects { get; set; }
 
@@ -34,8 +32,8 @@ namespace LDDModder.BrickEditor.Settings
         [JsonProperty("autosave.interval")]
         public int AutoSaveInterval { get; set; }
 
-        //[JsonProperty("Display")]
-        //public DisplaySettings DisplaySettings { get; set; }
+        [JsonProperty("username")]
+        public string Username { get; set; }
 
         public AppSettings()
         {
@@ -43,11 +41,6 @@ namespace LDDModder.BrickEditor.Settings
             BuildSettings = new ProjectBuildSettings();
             OpenedProjects = new List<RecentFileInfo>();
             AutoSaveInterval = -1;
-            //ViewportSettings = new ViewportDisplaySettings()
-            //{
-            //    PartRenderMode = Rendering.MeshRenderMode.SolidWireframe,
-            //    ShowPartModels = true
-            //};
         }
 
         public static AppSettings CreateDefault(LDD.LDDEnvironment lddEnvironment)

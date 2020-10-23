@@ -18,8 +18,6 @@ namespace LDDModder.BrickEditor.Rendering
 
         public bool IsHidden => ModelExtension?.IsHidden ?? false;
 
-        public bool IsSelected { get; set; }
-
         protected bool IsApplyingTransform { get; set; }
 
         protected bool IsUpdatingTransform { get; set; }

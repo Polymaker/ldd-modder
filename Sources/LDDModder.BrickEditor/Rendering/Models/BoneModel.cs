@@ -52,9 +52,9 @@ namespace LDDModder.BrickEditor.Rendering
         public void UpdateModelTransforms()
         {
             SphereTransform = Matrix4.CreateScale(0.2f);
-            float coneScale = (BoneLength - 0.10f);
+            float coneScale = (BoneLength - 0.05f);
             ConeTransform = Matrix4.CreateScale(0.4f, coneScale, 0.4f) *
-                Matrix4.CreateTranslation(0, 0.10f + (coneScale /2f), 0) *
+                Matrix4.CreateTranslation(0, 0.05f + (coneScale /2f), 0) *
                 Matrix4.CreateRotationZ((float)Math.PI * -0.5f);
         }
 
@@ -101,28 +101,15 @@ namespace LDDModder.BrickEditor.Rendering
             //return RayIntersectsBoundingBox(ray, out distance);
         }
 
-        public override void RenderModel(Camera camera)
+        public override void RenderModel(Camera camera, MeshRenderMode mode = MeshRenderMode.Solid)
         {
-            base.RenderModel(camera);
             var modelColor = new Vector4(1f, 0.6f, 0.1f, 1f);
             var wireColor = IsSelected ? RenderHelper.SelectionOutlineColor : RenderHelper.WireframeColor;
             var wireThickness = IsSelected ? 4f : 2f;
 
-            RenderHelper.RenderWithStencil(
-                () =>
-                {
-                    ModelManager.SphereModel.DrawColored(SphereTransform * Transform, modelColor);
-                    ModelManager.ConeModel.DrawColored(ConeTransform * Transform, modelColor);
-                },
-                () =>
-                {
-                    ModelManager.SphereModel.DrawWireframe(SphereTransform * Transform, wireThickness, wireColor);
-                    ModelManager.ConeModel.DrawWireframe(ConeTransform * Transform, wireThickness, wireColor);
-                });
-            
-            //RenderHelper.DrawGizmoAxes(Transform, 0.5f, IsSelected);
+            ModelManager.SphereModel.DrawOutlined(SphereTransform * Transform, modelColor, wireColor, wireThickness);
+            ModelManager.ConeModel.DrawOutlined(ConeTransform * Transform, modelColor, wireColor, wireThickness);
 
-            //RenderHelper.DrawLine(Transform, new Vector4(1, 1, 0, 1), new Vector3(0), new Vector3(1, 0, 0), 3);
 
             if (!BoneBounding.IsEmpty && IsSelected)
             {

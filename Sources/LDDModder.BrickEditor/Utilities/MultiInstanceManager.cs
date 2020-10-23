@@ -321,11 +321,11 @@ namespace LDDModder.BrickEditor.Utilities
 
             copyData = Marshal.PtrToStructure<COPYDATASTRUCT>(dataPtr);
 
-            if (copyData.lpData != messagePtr)
-            {
+            //if (copyData.lpData != messagePtr)
+            //{
 
-                MessageBox.Show("TEST");
-            }
+            //    MessageBox.Show("TEST");
+            //}
             Marshal.FreeHGlobal(dataPtr);
             Marshal.FreeHGlobal(messagePtr);
         }

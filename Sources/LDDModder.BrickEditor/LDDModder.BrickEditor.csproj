@@ -149,6 +149,7 @@
     <Compile Include="Models\BrickListInfo.cs" />
     <Compile Include="Models\Navigation\ElementCollectionNode.cs" />
     <Compile Include="Models\Navigation\ProjectTreeNode.cs" />
+    <Compile Include="Models\Navigation\VisibilityState.cs" />
     <Compile Include="ProjectHandling\ChangeAction.cs" />
     <Compile Include="Models\Navigation\ElementGroupNode.cs" />
     <Compile Include="Models\Navigation\ProjectElementNode.cs" />
@@ -161,6 +162,7 @@
     <Compile Include="Models\Navigation\ProjectTreeNodeCollection.cs" />
     <Compile Include="ProjectHandling\Extensions\FemaleStudModelExtension.cs" />
     <Compile Include="ProjectHandling\UndoRedoManager.cs" />
+    <Compile Include="ProjectHandling\ViewDisplayOptions.cs" />
     <Compile Include="ProjectHandling\ViewInterfaces\IMainWindow.cs" />
     <Compile Include="ProjectHandling\ViewInterfaces\INavigationWindow.cs" />
     <Compile Include="ProjectHandling\ViewInterfaces\IViewportWindow.cs" />
@@ -184,6 +186,7 @@
       <DependentUpon>Messages.resx</DependentUpon>
     </Compile>
     <Compile Include="Settings\BuildConfiguration.cs" />
+    <Compile Include="Settings\EditorSettings.cs" />
     <Compile Include="Settings\ProjectBuildSettings.cs" />
     <Compile Include="Settings\ViewportDisplaySettings.cs" />
     <Compile Include="UI\Controls\CollapsiblePanel.cs">
@@ -484,6 +487,9 @@
     <EmbeddedResource Include="UI\Editors\PartAliasesEditControl.resx">
       <DependentUpon>PartAliasesEditControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\Editors\TransformEditor.fr.resx">
+      <DependentUpon>TransformEditor.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\Editors\TransformEditor.resx">
       <DependentUpon>TransformEditor.cs</DependentUpon>
     </EmbeddedResource>
@@ -640,6 +646,7 @@
     <Content Include="Resources\Images\StatusError.png" />
     <Content Include="Resources\Images\StatusInfo.png" />
     <Content Include="Resources\Images\StatusWarning.png" />
+    <Content Include="Resources\Images\ToggleGridIcon.png" />
     <Content Include="Resources\Images\VisibleIcon.png" />
     <Content Include="Resources\Images\WireframeIcon.png" />
     <EmbeddedResource Include="Resources\Textures\StudConnectionGrid.png" />

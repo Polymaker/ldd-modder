@@ -81,7 +81,6 @@ namespace LDDModder.BrickEditor.UI.Windows
                 BeginInvoke(new MethodInvoker(BeginLoadingUI));
             });
         }
-       
 
         private void LoadAndValidateSettings()
         {

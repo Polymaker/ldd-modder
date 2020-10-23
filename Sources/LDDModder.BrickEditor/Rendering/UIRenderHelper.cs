@@ -205,6 +205,15 @@ namespace LDDModder.BrickEditor.Rendering
                 StringAlignment.Near, StringAlignment.Near, dpOpt);
         }
 
+        public static void DrawShadowText(string text, QFont font, Color color, Vector4 bounds,
+            StringAlignment vAlign = StringAlignment.Near,
+            StringAlignment hAlign = StringAlignment.Near)
+        {
+            var dpOpt = new QFontRenderOptions() { Colour = color, LockToPixel = false, DropShadowActive = true };
+            DrawText(text, font, new RectangleF(bounds.X, bounds.Y, bounds.Z, bounds.W),
+                vAlign, hAlign, dpOpt);
+        }
+
         public static void DrawText(string text, QFont font, Vector4 color, Vector4 bounds,
             StringAlignment vAlign = StringAlignment.Near,
             StringAlignment hAlign = StringAlignment.Near)

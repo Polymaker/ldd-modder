@@ -41,10 +41,62 @@ namespace LDDModder.BrickEditor.Rendering
             ColorShader = ProgramFactory.Create<ColorShaderProgram>();
             WireframeShader = ProgramFactory.Create<WireframeShaderProgram>();
             ModelShader = ProgramFactory.Create<ModelShaderProgram>();
+            ModelShader.Use();
+            ModelShader.LightCount.Set(0);
+            ModelShader.Lights.Set(new LightInfo[0]);
             WireframeShader2 = ProgramFactory.Create<WireframeShader2Program>();
             StudConnectionShader = ProgramFactory.Create<StudConnectionShaderProgram>();
             SimpleTextureShader = ProgramFactory.Create<SimpleTextureShaderProgram>();
             GridShader = ProgramFactory.Create<GridShaderProgram>();
+        }
+
+        public static void ReleaseResources()
+        {
+            if (ColorShader != null)
+            {
+                ColorShader.Dispose();
+                ColorShader = null;
+            }
+
+            if (WireframeShader != null)
+            {
+                WireframeShader.Dispose();
+                WireframeShader = null;
+            }
+
+            if (WireframeShader2 != null)
+            {
+                WireframeShader2.Dispose();
+                WireframeShader2 = null;
+            }
+
+            if (ModelShader != null)
+            {
+                ModelShader.Dispose();
+                ModelShader = null;
+            }
+
+            if (StudConnectionShader != null)
+            {
+                StudConnectionShader.Dispose();
+                StudConnectionShader = null;
+            }
+
+            if (SimpleTextureShader != null)
+            {
+                SimpleTextureShader.Dispose();
+                SimpleTextureShader = null;
+            }
+
+            if (GridShader != null)
+            {
+                GridShader.Dispose();
+                GridShader = null;
+            }
+        }
+
+        public static void SetupGridShader()
+        {
             GridShader.Use();
 
             GridShader.MajorGridLine.Set(new GridShaderProgram.GridLineInfo()
@@ -95,51 +147,6 @@ namespace LDDModder.BrickEditor.Rendering
             WireframeColor = new Vector4(0, 0, 0, 1f);
             WireframeColorAlt = new Vector4(0.85f, 0.85f, 0.85f, 1f);
             SelectionOutlineColor = new Vector4(1f);
-        }
-
-        public static void ReleaseResources()
-        {
-            if (ColorShader != null)
-            {
-                ColorShader.Dispose();
-                ColorShader = null;
-            }
-
-            if (WireframeShader != null)
-            {
-                WireframeShader.Dispose();
-                WireframeShader = null;
-            }
-
-            if (WireframeShader2 != null)
-            {
-                WireframeShader2.Dispose();
-                WireframeShader2 = null;
-            }
-
-            if (ModelShader != null)
-            {
-                ModelShader.Dispose();
-                ModelShader = null;
-            }
-
-            if (StudConnectionShader != null)
-            {
-                StudConnectionShader.Dispose();
-                StudConnectionShader = null;
-            }
-
-            if (SimpleTextureShader != null)
-            {
-                SimpleTextureShader.Dispose();
-                SimpleTextureShader = null;
-            }
-
-            if (GridShader != null)
-            {
-                GridShader.Dispose();
-                GridShader = null;
-            }
         }
 
         public static void InitializeMatrices(Camera camera)

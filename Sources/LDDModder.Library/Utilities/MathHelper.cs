@@ -32,5 +32,11 @@ namespace LDDModder
         {
             return degrees * (float)Math.PI / 180f;
         }
+
+        public static float Map(float value, float in1, float in2, float out1, float out2)
+        {
+            float t = (value - in1) / (in2 - in1);
+            return out1 + ((out2 - out1) * t);
+        }
     }
 }

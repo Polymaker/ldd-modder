@@ -269,28 +269,28 @@
     <value>Display</value>
   </data>
   <data name="MeshesMenu_CalculateOutlines.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>170, 22</value>
   </data>
   <data name="MeshesMenu_CalculateOutlines.Text" xml:space="preserve">
     <value>Calculate Outlines</value>
   </data>
   <data name="MeshesMenu_RemoveOutlines.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>170, 22</value>
   </data>
   <data name="MeshesMenu_RemoveOutlines.Text" xml:space="preserve">
     <value>Remove Outlines</value>
   </data>
   <data name="MeshesMenu_Separator1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>177, 6</value>
+    <value>167, 6</value>
   </data>
   <data name="MeshesMenu_Separate.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>170, 22</value>
   </data>
   <data name="MeshesMenu_Separate.Text" xml:space="preserve">
     <value>Separate Meshes</value>
   </data>
   <data name="MeshesMenu_Merge.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>170, 22</value>
   </data>
   <data name="MeshesMenu_Merge.Text" xml:space="preserve">
     <value>Merge Meshes</value>
@@ -428,6 +428,18 @@
     <value>Pivot point</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="ToggleGridButton.ImageScaling" type="System.Windows.Forms.ToolStripItemImageScaling, System.Windows.Forms">
+    <value>None</value>
+  </data>
+  <data name="ToggleGridButton.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
+    <value>Magenta</value>
+  </data>
+  <data name="ToggleGridButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>24, 24</value>
+  </data>
+  <data name="ToggleGridButton.Text" xml:space="preserve">
+    <value>Show / Hide Grid</value>
+  </data>
   <data name="ModelRenderMode1Button.ImageScaling" type="System.Windows.Forms.ToolStripItemImageScaling, System.Windows.Forms">
     <value>None</value>
   </data>
@@ -514,7 +526,7 @@
     <value>transformEditor1</value>
   </data>
   <data name="&gt;&gt;transformEditor1.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.TransformEditor, Brick Studio, Version=1.0.5.20174, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.TransformEditor, Brick Studio, Version=1.0.5.19556, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;transformEditor1.Parent" xml:space="preserve">
     <value>SelectionInfoPanel</value>
@@ -687,6 +699,12 @@
   <data name="&gt;&gt;BonesDropDownMenu.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripDropDownButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;Bones_LinkBones.Name" xml:space="preserve">
+    <value>Bones_LinkBones</value>
+  </data>
+  <data name="&gt;&gt;Bones_LinkBones.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;Bones_RebuildConnections.Name" xml:space="preserve">
     <value>Bones_RebuildConnections</value>
   </data>
@@ -759,6 +777,12 @@
   <data name="&gt;&gt;cursorToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;ToggleGridButton.Name" xml:space="preserve">
+    <value>ToggleGridButton</value>
+  </data>
+  <data name="&gt;&gt;ToggleGridButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;ModelRenderMode1Button.Name" xml:space="preserve">
     <value>ModelRenderMode1Button</value>
   </data>
@@ -783,16 +807,10 @@
   <data name="&gt;&gt;visualStudioToolStripExtender1.Type" xml:space="preserve">
     <value>WeifenLuo.WinFormsUI.Docking.VisualStudioToolStripExtender, WeifenLuo.WinFormsUI.Docking, Version=3.0.6.0, Culture=neutral, PublicKeyToken=5cded1a1a0a7b481</value>
   </data>
-  <data name="&gt;&gt;Bones_LinkBones.Name" xml:space="preserve">
-    <value>Bones_LinkBones</value>
-  </data>
-  <data name="&gt;&gt;Bones_LinkBones.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>ViewportPanel</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Panels.ProjectDocumentPanel, Brick Studio, Version=1.0.5.20174, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Panels.ProjectDocumentPanel, Brick Studio, Version=1.0.5.19556, Culture=neutral, PublicKeyToken=null</value>
   </data>
 </root>

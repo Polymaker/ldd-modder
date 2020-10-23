@@ -104,6 +104,9 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
                 if (Element is PartConnection)
                     return !Manager.ShowConnections;
+
+                //if (Element is PartBone)
+                //    return !Manager.ShowBones;
             }
 
             return false;

@@ -84,10 +84,8 @@ namespace LDDModder.BrickEditor.Rendering
             }
         }
 
-        public override void RenderModel(Camera camera)
+        public override void RenderModel(Camera camera, MeshRenderMode mode = MeshRenderMode.Solid)
         {
-            base.RenderModel(camera);
-
             if (CollisionType == CollisionType.Box)
                 DrawBoxCollision();
             else

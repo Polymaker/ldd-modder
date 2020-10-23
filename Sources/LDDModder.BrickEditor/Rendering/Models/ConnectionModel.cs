@@ -149,10 +149,8 @@ namespace LDDModder.BrickEditor.Rendering
             }
         }
 
-        public override void RenderModel(Camera camera)
+        public override void RenderModel(Camera camera, MeshRenderMode mode = MeshRenderMode.Solid)
         {
-            base.RenderModel(camera);
-
             switch (Connection.ConnectorType)
             {
                 case ConnectorType.Axel:

@@ -92,9 +92,9 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void ProjectManager_ProjectChanged(object sender, EventArgs e)
         {
-            OnProjectChanged();
             if (ProjectManager.CurrentProject != null)
                 OnProjectLoaded(ProjectManager.CurrentProject);
+            OnProjectChanged();
         }
 
         protected virtual void OnProjectChanged() { }

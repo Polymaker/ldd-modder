@@ -119,6 +119,8 @@ namespace LDDModder.BrickEditor.ProjectHandling
             UndoRedoManager.UndoHistoryChanged += UndoRedoManager_UndoHistoryChanged;
 
             _ShowPartModels = true;
+            _ShowGrid = true;
+            _ShowBones = true;
             _PartRenderMode = MeshRenderMode.SolidWireframe;
         }
 
@@ -330,11 +332,25 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
         #region Viewport Display Handling
 
+        private bool _ShowGrid;
+        private bool _ShowBones;
         private bool _ShowPartModels;
         private bool _ShowCollisions;
         private bool _ShowConnections;
         private MeshRenderMode _PartRenderMode;
         private bool BatchChangingVisibility;
+
+        public bool ShowGrid
+        {
+            get => _ShowGrid;
+            set => SetGridVisibility(value);
+        }
+
+        public bool ShowBones
+        {
+            get => _ShowBones;
+            set => SetBonesVisibility(value);
+        }
 
         public bool ShowPartModels
         {
@@ -360,6 +376,10 @@ namespace LDDModder.BrickEditor.ProjectHandling
             set => SetPartRenderMode(value);
         }
 
+        public event EventHandler GridVisibilityChanged;
+
+        public event EventHandler BonesVisibilityChanged;
+
         public event EventHandler PartModelsVisibilityChanged;
 
         public event EventHandler CollisionsVisibilityChanged;
@@ -367,6 +387,36 @@ namespace LDDModder.BrickEditor.ProjectHandling
         public event EventHandler ConnectionsVisibilityChanged;
 
         public event EventHandler PartRenderModeChanged;
+
+        private void SetGridVisibility(bool visible)
+        {
+            if (visible != _ShowGrid)
+            {
+                Trace.WriteLine($"{nameof(SetGridVisibility)}( visible => {visible} )");
+
+                _ShowGrid = visible;
+
+                GridVisibilityChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        private void SetBonesVisibility(bool visible)
+        {
+            if (visible != _ShowBones)
+            {
+                Trace.WriteLine($"{nameof(SetBonesVisibility)}( visible => {visible} )");
+
+                _ShowBones = visible;
+
+                //if (IsProjectOpen && IsProjectAttached)
+                //{
+                //    InvalidateElementsVisibility(CurrentProject.Bones);
+                //    RefreshAllNavigation();
+                //}
+
+                BonesVisibilityChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
 
         private void SetPartModelsVisibility(bool visible)
         {
@@ -1250,9 +1300,32 @@ namespace LDDModder.BrickEditor.ProjectHandling
                 elementExt.CalculateVisibility();
 
                 UndoRedoManager.AddEditorAction(new HideElementAction(
-                    nameof(HideSelectedElements),
+                    nameof(SetElementHidden),
                     new PartElement[] { element },
                     hidden));
+            }
+        }
+
+        public void SetElementsHidden(IEnumerable<PartElement> elements, bool hidden)
+        {
+            var changedElems = new List<PartElement>();
+
+            foreach (var elem in elements)
+            {
+                var elementExt = elem.GetExtension<ModelElementExtension>();
+
+
+                if (elementExt != null && elementExt.IsHidden != hidden)
+                {
+                    elementExt.IsHidden = hidden;
+                    changedElems.Add(elem);
+                    elementExt.CalculateVisibility();
+                }
+            }
+
+            if (changedElems.Any())
+            {
+                UndoRedoManager.AddEditorAction(new HideElementAction(nameof(SetElementsHidden), changedElems, hidden));
             }
         }
 
@@ -1275,6 +1348,28 @@ namespace LDDModder.BrickEditor.ProjectHandling
             if (hiddenElems.Any())
             {
                 UndoRedoManager.AddEditorAction(new HideElementAction(nameof(HideSelectedElements), hiddenElems, true));
+            }
+        }
+
+        public void UnhideSelectedElements()
+        {
+            var hideableElements = SelectedElements.Where(x => x.GetExtension<ModelElementExtension>() != null);
+            var changedElems = new List<PartElement>();
+
+            foreach (var elem in hideableElements)
+            {
+                var elementExt = elem.GetExtension<ModelElementExtension>();
+                if (elementExt != null && elementExt.IsHidden)
+                {
+                    changedElems.Add(elem);
+                    elementExt.IsHidden = false;
+                    elementExt.CalculateVisibility();
+                }
+            }
+
+            if (changedElems.Any())
+            {
+                UndoRedoManager.AddEditorAction(new HideElementAction(nameof(UnhideSelectedElements), changedElems, false));
             }
         }
 

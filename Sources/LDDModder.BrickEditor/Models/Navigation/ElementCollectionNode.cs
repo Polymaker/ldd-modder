@@ -37,21 +37,56 @@ namespace LDDModder.BrickEditor.Models.Navigation
             //    Nodes.Add(ProjectElementNode.CreateDefault(elem));
         }
 
-        public override void UpdateVisibility()
-        {
-            base.UpdateVisibility();
+        //public override void UpdateVisibilityIcon()
+        //{
+        //    base.UpdateVisibilityIcon();
 
+        //    var femaleModelExt = Element.GetExtension<FemaleStudModelExtension>();
+
+        //    if (femaleModelExt != null)
+        //    {
+        //        bool isAlternate = (Element as FemaleStudModel).ReplacementMeshes == Collection;
+        //        bool isVisible = isAlternate == femaleModelExt.ShowAlternateModels;
+
+        //        if (!femaleModelExt.IsVisible)
+        //            VisibilityImageKey = isVisible ? "NotVisible" : "Hidden2";
+        //        else
+        //            VisibilityImageKey = isVisible ? "Visible" : "Hidden";
+        //    }
+        //    else
+        //    {
+        //        //var childElems = Nodes.Select(x=> x.el)
+        //    }
+        //}
+
+        public override VisibilityState GetVisibilityState()
+        {
             var femaleModelExt = Element.GetExtension<FemaleStudModelExtension>();
+
             if (femaleModelExt != null)
             {
                 bool isAlternate = (Element as FemaleStudModel).ReplacementMeshes == Collection;
                 bool isVisible = isAlternate == femaleModelExt.ShowAlternateModels;
 
                 if (!femaleModelExt.IsVisible)
-                    VisibilityImageKey = isVisible ? "NotVisible" : "Hidden2";
+                    return isVisible ? VisibilityState.NotVisible : VisibilityState.HiddenNotVisible;
                 else
-                    VisibilityImageKey = isVisible ? "Visible" : "Hidden";
+                    return isVisible ? VisibilityState.Visible : VisibilityState.Hidden;
             }
+
+            return base.GetVisibilityState();
+        }
+
+        protected override bool CanToggleVisibilityCore()
+        {
+            var femaleModelExt = Element.GetExtension<FemaleStudModelExtension>();
+
+            return femaleModelExt != null/* && femaleModelExt.*/;
+        }
+
+        public override void ToggleVisibility()
+        {
+            base.ToggleVisibility();
         }
     }
 }

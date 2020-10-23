@@ -117,5 +117,22 @@ namespace LDDModder.BrickEditor.Rendering.Models
             DrawElements();
             RenderHelper.EndDrawWireframe(VertexBuffer);
         }
+
+        public void DrawOutlined(Matrix4 transform, Vector4 modelColor, Vector4 outlineColor, float outlineThickness)
+        {
+            RenderHelper.RenderWithStencil(
+                () =>
+                {
+                    RenderHelper.BeginDrawColor(VertexBuffer, transform, modelColor);
+                    DrawElements();
+                    RenderHelper.EndDrawColor(VertexBuffer);
+                },
+                () =>
+                {
+                    RenderHelper.BeginDrawWireframe(VertexBuffer, transform, outlineThickness, outlineColor);
+                    DrawElements();
+                    RenderHelper.EndDrawWireframe(VertexBuffer);
+                });
+        }
     }
 }

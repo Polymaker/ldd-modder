@@ -194,8 +194,7 @@ namespace LDDModder.Modding.Editing
             {
                 IsLoading = true
             };
-
-            project.SetBaseInfo(lddPart);
+            project.Properties.Initialize(lddPart);
 
             int elementIndex = 0;
             foreach (var collision in lddPart.Primitive.Collisions)
@@ -285,30 +284,6 @@ namespace LDDModder.Modding.Editing
             project.LinkBonesAndStudReferences();
             project.IsLoading = false;
             return project;
-        }
-
-        private void SetBaseInfo(LDD.Parts.PartWrapper lddPart)
-        {
-            PartID = lddPart.PartID;
-            PartDescription = lddPart.Primitive.Name;
-            PartVersion = lddPart.Primitive.PartVersion;
-            Decorated = lddPart.IsDecorated;
-            Flexible = lddPart.IsFlexible;
-            Aliases.AddRange(lddPart.Primitive.Aliases);
-            if (Aliases.Contains(PartID))
-                Aliases.Remove(PartID);
-            Platform = lddPart.Primitive.Platform;
-            MainGroup = lddPart.Primitive.MainGroup;
-            PhysicsAttributes = lddPart.Primitive.PhysicsAttributes;
-            GeometryBounding = lddPart.Primitive.GeometryBounding;
-            Bounding = lddPart.Primitive.Bounding;
-            if (lddPart.Primitive.DefaultOrientation != null)
-                DefaultOrientation = ItemTransform.FromLDD(lddPart.Primitive.DefaultOrientation);
-
-            if (lddPart.Primitive.ExtraElements.Any())
-            {
-
-            }
         }
 
         #endregion

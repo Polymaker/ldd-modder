@@ -44,6 +44,12 @@ namespace LDDModder.BrickEditor.Rendering
 
         public bool IsEditingTransform { get; private set; }
 
+        public float ZDepth { get; set; }
+
+        public bool IsSelectable { get; set; } = true;
+
+        public bool IsSelected { get; set; }
+
         public Vector3 Origin => Vector3.TransformPosition(Vector3.Zero, Transform);
 
         public event EventHandler VisibilityChanged;
@@ -112,7 +118,7 @@ namespace LDDModder.BrickEditor.Rendering
             VisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        public virtual void RenderModel(Camera camera)
+        public virtual void RenderModel(Camera camera, MeshRenderMode mode = MeshRenderMode.Solid)
         {
 
         }

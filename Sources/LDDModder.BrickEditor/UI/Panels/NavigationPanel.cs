@@ -173,7 +173,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             {
                 if (x is ProjectTreeNode projectNode)
                 {
-                    projectNode.UpdateVisibility();
+                    projectNode.UpdateVisibilityIcon();
                     return projectNode.VisibilityImageKey;
                 }
 
@@ -406,38 +406,13 @@ namespace LDDModder.BrickEditor.UI.Panels
             {
                 e.Handled = true;
 
-                if (e.Model is ProjectElementNode elementNode)
+                if (e.Model is ProjectTreeNode treeNode)
                 {
-                    var modelExt = elementNode.Element.GetExtension<ModelElementExtension>();
-                    if (modelExt != null)
-                        ProjectManager.SetElementHidden(elementNode.Element, !modelExt.IsHidden);
-                }
-                else if (e.Model is ElementCollectionNode elementColNode)
-                {
-                    var femaleStudExt = elementColNode.Element.GetExtension<FemaleStudModelExtension>();
-
-                    if (femaleStudExt != null)
+                    if (treeNode.CanToggleVisibility())
                     {
-                        femaleStudExt.ShowAlternateModels = !femaleStudExt.ShowAlternateModels;
-                        ProjectTreeView.RefreshObject(elementColNode.Parent);
+                        treeNode.ToggleVisibility();
+                        ProjectTreeView.RefreshObject(treeNode);
                     }
-                }
-                else if (e.Model is ProjectCollectionNode collectionNode)
-                {
-                    if (collectionNode.Collection == CurrentProject.Surfaces)
-                        ProjectManager.ShowPartModels = !ProjectManager.ShowPartModels;
-                    else if (collectionNode.Collection == CurrentProject.Collisions)
-                        ProjectManager.ShowCollisions = !ProjectManager.ShowCollisions;
-                    else if (collectionNode.Collection == CurrentProject.Connections)
-                        ProjectManager.ShowConnections = !ProjectManager.ShowConnections;
-
-                    ProjectTreeView.RefreshObject(collectionNode);
-                }
-                else if (e.Model is ElementGroupNode groupNode && groupNode.SupportsVisibility())
-                {
-
-                    //groupNode.ToggleVisibility();
-                    //ProjectTreeView.RefreshObject(groupNode);
                 }
             }
         }
@@ -1080,7 +1055,6 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         #endregion
 
-
         protected override bool ProcessDialogKey(Keys keyData)
         {
             var normalKey = keyData & ~Keys.Control;
@@ -1105,11 +1079,35 @@ namespace LDDModder.BrickEditor.UI.Panels
                         ProjectManager.HandlePasteFromClipboard();
                         return true;
                     }
+                    else if (normalKey == Keys.H)
+                    {
+                        if (!isShiftPressed && !isAltPressed && !isControlPressed)
+                        {
+                            ProjectManager.HideSelectedElements();
+                            return true;
+                        }
+                        else if (!isShiftPressed && !isAltPressed && isControlPressed)
+                        {
+                            ProjectManager.UnhideSelectedElements();
+                            return true;
+                        }
+                        else if (isShiftPressed)
+                        {
+                            ProjectManager.HideUnselectedElements();
+                            return true;
+                        }
+                        else if (isAltPressed)
+                        {
+                            ProjectManager.UnhideEverything();
+                            return true;
+                        }
+                    }
                 }
             }
             
             return base.ProcessDialogKey(keyData);
         }
+
     }
 
 }

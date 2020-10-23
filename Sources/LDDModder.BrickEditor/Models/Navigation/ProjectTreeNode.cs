@@ -180,9 +180,83 @@ namespace LDDModder.BrickEditor.Models.Navigation
 
         #endregion
 
-        public virtual void UpdateVisibility()
+        public virtual bool CanToggleVisibility()
+        {
+            return CanToggleVisibilityCore();
+        }
+
+        protected virtual bool CanToggleVisibilityCore()
+        {
+            return Nodes.Any(x => x.CanToggleVisibility());
+        }
+
+        public virtual VisibilityState GetVisibilityState()
+        {
+            if (!CanToggleVisibility())
+                return VisibilityState.Visible;
+
+            if (Nodes.Count == 0)
+                return VisibilityState.None;
+
+
+            var parentState = VisibilityState.Visible;
+
+            if (Parent is ProjectCollectionNode)
+                parentState = Parent.GetVisibilityState();
+
+            var parentIsHidden = parentState == VisibilityState.Hidden || parentState == VisibilityState.HiddenNotVisible;
+
+            var nodeStates = Nodes.Select(x => x.GetVisibilityState());
+            int hiddenCount = nodeStates.Count(x => x == VisibilityState.Hidden || x == VisibilityState.HiddenNotVisible);
+            int visibleCount = nodeStates.Count() - hiddenCount;
+
+
+            if (hiddenCount > visibleCount)
+            {
+                return /*parentIsHidden ? VisibilityState.HiddenNotVisible :  */VisibilityState.NotVisible;
+            }
+
+            return parentIsHidden ? VisibilityState.NotVisible : VisibilityState.Visible;
+        }
+
+        public virtual void ToggleVisibility()
+        {
+            if (CanToggleVisibility())
+            {
+                if (Nodes.All(x => x is ElementGroupNode) || Nodes.All(x => x is ProjectElementNode))
+                {
+                    var elements = GetChildHierarchy().OfType<ProjectElementNode>().Select(x => x.Element);
+
+                    var nodeStates = Nodes.Select(x => x.GetVisibilityState());
+                    int hiddenCount = nodeStates.Count(x => x == VisibilityState.Hidden || x == VisibilityState.HiddenNotVisible);
+                    int visibleCount = nodeStates.Count() - hiddenCount;
+
+                    bool hideElements = visibleCount > hiddenCount;
+
+                    Manager.SetElementsHidden(elements, hideElements);
+                }
+            }
+        }
+
+        public virtual void UpdateVisibilityIcon()
         {
             VisibilityImageKey = string.Empty;
+
+            switch (GetVisibilityState())
+            {
+                case VisibilityState.Visible:
+                    VisibilityImageKey = "Visible";
+                    break;
+                case VisibilityState.Hidden:
+                    VisibilityImageKey = "Hidden";
+                    break;
+                case VisibilityState.HiddenNotVisible:
+                    VisibilityImageKey = "Hidden2";
+                    break;
+                case VisibilityState.NotVisible:
+                    VisibilityImageKey = "NotVisible";
+                    break;
+            }
         }
 
         #region Drag & Drop

@@ -62,19 +62,49 @@ namespace LDDModder.BrickEditor.Models.Navigation
             }
         }
 
-        public override void UpdateVisibility()
+        public override VisibilityState GetVisibilityState()
         {
-            base.UpdateVisibility();
-            if (Manager != null)
-            {
-                if (Collection == Manager.CurrentProject.Surfaces)
-                    VisibilityImageKey = Manager.ShowPartModels ? "Visible" : "Hidden";
-                if (Collection == Manager.CurrentProject.Collisions)
-                    VisibilityImageKey = Manager.ShowCollisions ? "Visible" : "Hidden";
-                if (Collection == Manager.CurrentProject.Connections)
-                    VisibilityImageKey = Manager.ShowConnections ? "Visible" : "Hidden";
-            }
-            
+            if (Collection == Manager.CurrentProject.Surfaces)
+                return Manager.ShowPartModels ? VisibilityState.Visible : VisibilityState.Hidden;
+            if (Collection == Manager.CurrentProject.Collisions)
+                return Manager.ShowCollisions ? VisibilityState.Visible : VisibilityState.Hidden;
+            if (Collection == Manager.CurrentProject.Connections)
+                return Manager.ShowConnections ? VisibilityState.Visible : VisibilityState.Hidden;
+
+            return VisibilityState.None;
+        }
+
+        //public override void UpdateVisibilityIcon()
+        //{
+        //    base.UpdateVisibilityIcon();
+        //    if (Manager != null)
+        //    {
+        //        if (Collection == Manager.CurrentProject.Surfaces)
+        //            VisibilityImageKey = Manager.ShowPartModels ? "Visible" : "Hidden";
+        //        if (Collection == Manager.CurrentProject.Collisions)
+        //            VisibilityImageKey = Manager.ShowCollisions ? "Visible" : "Hidden";
+        //        if (Collection == Manager.CurrentProject.Connections)
+        //            VisibilityImageKey = Manager.ShowConnections ? "Visible" : "Hidden";
+        //        //if (Collection == Manager.CurrentProject.Bones)
+        //        //    VisibilityImageKey = Manager.ShowBones ? "Visible" : "Hidden";
+        //    }
+        //}
+
+        protected override bool CanToggleVisibilityCore()
+        {
+            return Collection == Manager.CurrentProject.Surfaces ||
+                Collection == Manager.CurrentProject.Collisions ||
+                Collection == Manager.CurrentProject.Connections;
+        }
+
+        public override void ToggleVisibility()
+        {
+            if (Collection == Manager.CurrentProject.Surfaces)
+                Manager.ShowPartModels = !Manager.ShowPartModels;
+            if (Collection == Manager.CurrentProject.Collisions)
+                Manager.ShowCollisions = !Manager.ShowCollisions;
+            if (Collection == Manager.CurrentProject.Connections)
+                Manager.ShowConnections = !Manager.ShowConnections;
         }
     }
 }

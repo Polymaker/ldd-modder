@@ -53,6 +53,7 @@
             this.MeshesMenu_Separate = new System.Windows.Forms.ToolStripMenuItem();
             this.MeshesMenu_Merge = new System.Windows.Forms.ToolStripMenuItem();
             this.BonesDropDownMenu = new System.Windows.Forms.ToolStripDropDownButton();
+            this.Bones_LinkBones = new System.Windows.Forms.ToolStripMenuItem();
             this.Bones_RebuildConnections = new System.Windows.Forms.ToolStripMenuItem();
             this.Bones_CalcBounding = new System.Windows.Forms.ToolStripMenuItem();
             this.Bones_CopyData = new System.Windows.Forms.ToolStripMenuItem();
@@ -65,13 +66,13 @@
             this.medianBoundingBoxToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.activeElementToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cursorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ToggleGridButton = new System.Windows.Forms.ToolStripButton();
             this.ModelRenderMode1Button = new System.Windows.Forms.ToolStripButton();
             this.ModelRenderMode2Button = new System.Windows.Forms.ToolStripButton();
             this.ModelRenderMode3Button = new System.Windows.Forms.ToolStripButton();
             this.visualStudioToolStripExtender1 = new WeifenLuo.WinFormsUI.Docking.VisualStudioToolStripExtender(this.components);
             this.SelectionInfoPanel = new System.Windows.Forms.Panel();
             this.transformEditor1 = new LDDModder.BrickEditor.UI.Controls.TransformEditor();
-            this.Bones_LinkBones = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1.SuspendLayout();
             this.SelectionInfoPanel.SuspendLayout();
             this.SuspendLayout();
@@ -86,6 +87,7 @@
             this.BonesDropDownMenu,
             this.GizmoOrientationMenu,
             this.GizmoPivotModeMenu,
+            this.ToggleGridButton,
             this.ModelRenderMode1Button,
             this.ModelRenderMode2Button,
             this.ModelRenderMode3Button});
@@ -259,6 +261,12 @@
             resources.ApplyResources(this.BonesDropDownMenu, "BonesDropDownMenu");
             this.BonesDropDownMenu.Name = "BonesDropDownMenu";
             // 
+            // Bones_LinkBones
+            // 
+            this.Bones_LinkBones.Name = "Bones_LinkBones";
+            resources.ApplyResources(this.Bones_LinkBones, "Bones_LinkBones");
+            this.Bones_LinkBones.Click += new System.EventHandler(this.Bones_LinkBones_Click);
+            // 
             // Bones_RebuildConnections
             // 
             this.Bones_RebuildConnections.Name = "Bones_RebuildConnections";
@@ -343,6 +351,18 @@
             this.cursorToolStripMenuItem.Name = "cursorToolStripMenuItem";
             resources.ApplyResources(this.cursorToolStripMenuItem, "cursorToolStripMenuItem");
             // 
+            // ToggleGridButton
+            // 
+            this.ToggleGridButton.Checked = true;
+            this.ToggleGridButton.CheckOnClick = true;
+            this.ToggleGridButton.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.ToggleGridButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.ToggleGridButton.Image = global::LDDModder.BrickEditor.Properties.Resources.ToggleGridIcon;
+            resources.ApplyResources(this.ToggleGridButton, "ToggleGridButton");
+            this.ToggleGridButton.Margin = new System.Windows.Forms.Padding(0, 1, 10, 2);
+            this.ToggleGridButton.Name = "ToggleGridButton";
+            this.ToggleGridButton.CheckedChanged += new System.EventHandler(this.ToggleGridButton_CheckedChanged);
+            // 
             // ModelRenderMode1Button
             // 
             this.ModelRenderMode1Button.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -386,12 +406,6 @@
             this.transformEditor1.ForeColor = System.Drawing.Color.White;
             this.transformEditor1.Name = "transformEditor1";
             this.transformEditor1.ViewLayout = LDDModder.BrickEditor.UI.Controls.TransformEditor.EditLayout.Vertical;
-            // 
-            // Bones_LinkBones
-            // 
-            this.Bones_LinkBones.Name = "Bones_LinkBones";
-            resources.ApplyResources(this.Bones_LinkBones, "Bones_LinkBones");
-            this.Bones_LinkBones.Click += new System.EventHandler(this.Bones_LinkBones_Click);
             // 
             // ViewportPanel
             // 
@@ -453,5 +467,6 @@
         private System.Windows.Forms.ToolStripMenuItem MeshesMenu_RemoveOutlines;
         private System.Windows.Forms.ToolStripSeparator MeshesMenu_Separator1;
         private System.Windows.Forms.ToolStripMenuItem Bones_LinkBones;
+        private System.Windows.Forms.ToolStripButton ToggleGridButton;
     }
 }

@@ -203,6 +203,16 @@ namespace LDDModder.BrickEditor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap ToggleGridIcon {
+            get {
+                object obj = ResourceManager.GetObject("ToggleGridIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap VisibleIcon {
             get {
                 object obj = ResourceManager.GetObject("VisibleIcon", resourceCulture);
