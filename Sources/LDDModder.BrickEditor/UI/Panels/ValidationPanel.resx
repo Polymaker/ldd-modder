@@ -144,19 +144,19 @@
     <value>Magenta</value>
   </data>
   <data name="ValidatePartButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>76, 22</value>
+    <value>76, 20</value>
   </data>
   <data name="ValidatePartButton.Text" xml:space="preserve">
     <value>Validate Part</value>
   </data>
   <data name="toolStripSeparator1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>6, 25</value>
+    <value>6, 23</value>
   </data>
   <data name="ToggleErrorsButton.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
     <value>Magenta</value>
   </data>
   <data name="ToggleErrorsButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>74, 22</value>
+    <value>74, 20</value>
   </data>
   <data name="ToggleErrorsButton.Text" xml:space="preserve">
     <value>{0} Errors</value>
@@ -165,7 +165,7 @@
     <value>Magenta</value>
   </data>
   <data name="ToggleWarningsButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>94, 22</value>
+    <value>94, 20</value>
   </data>
   <data name="ToggleWarningsButton.Text" xml:space="preserve">
     <value>{0} Warnings</value>
@@ -174,7 +174,7 @@
     <value>Magenta</value>
   </data>
   <data name="ToggleMessagesButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>95, 22</value>
+    <value>95, 20</value>
   </data>
   <data name="ToggleMessagesButton.Text" xml:space="preserve">
     <value>{0} Messages</value>
@@ -182,8 +182,12 @@
   <data name="toolStrip1.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 0</value>
   </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="toolStrip1.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
   <data name="toolStrip1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>516, 25</value>
+    <value>516, 29</value>
   </data>
   <data name="toolStrip1.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -202,6 +206,30 @@
   </data>
   <data name="&gt;&gt;toolStrip1.ZOrder" xml:space="preserve">
     <value>1</value>
+  </data>
+  <data name="ValidationMessageList.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="ValidationMessageList.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 29</value>
+  </data>
+  <data name="ValidationMessageList.Size" type="System.Drawing.Size, System.Drawing">
+    <value>516, 192</value>
+  </data>
+  <data name="ValidationMessageList.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;ValidationMessageList.Name" xml:space="preserve">
+    <value>ValidationMessageList</value>
+  </data>
+  <data name="&gt;&gt;ValidationMessageList.Type" xml:space="preserve">
+    <value>BrightIdeasSoftware.ObjectListView, ObjectListView, Version=2.9.1.1072, Culture=neutral, PublicKeyToken=b1c5bf581481bcd4</value>
+  </data>
+  <data name="&gt;&gt;ValidationMessageList.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;ValidationMessageList.ZOrder" xml:space="preserve">
+    <value>0</value>
   </data>
   <data name="ColumnMessageType.Width" type="System.Int32, mscorlib">
     <value>24</value>
@@ -226,31 +254,6 @@
   </data>
   <data name="ColumnMessageSource.Width" type="System.Int32, mscorlib">
     <value>116</value>
-  </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="ValidationMessageList.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="ValidationMessageList.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 25</value>
-  </data>
-  <data name="ValidationMessageList.Size" type="System.Drawing.Size, System.Drawing">
-    <value>516, 196</value>
-  </data>
-  <data name="ValidationMessageList.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;ValidationMessageList.Name" xml:space="preserve">
-    <value>ValidationMessageList</value>
-  </data>
-  <data name="&gt;&gt;ValidationMessageList.Type" xml:space="preserve">
-    <value>BrightIdeasSoftware.ObjectListView, ObjectListView, Version=2.9.1.1072, Culture=neutral, PublicKeyToken=b1c5bf581481bcd4</value>
-  </data>
-  <data name="&gt;&gt;ValidationMessageList.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;ValidationMessageList.ZOrder" xml:space="preserve">
-    <value>0</value>
   </data>
   <metadata name="localizableStringList1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>122, 17</value>
@@ -337,30 +340,30 @@
     <value>localizableStringList1</value>
   </data>
   <data name="&gt;&gt;localizableStringList1.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableStringList, Brick Studio, Version=1.0.0.31147, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableStringList, Brick Studio, Version=1.0.5.26100, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;ErrorCountText.Name" xml:space="preserve">
     <value>ErrorCountText</value>
   </data>
   <data name="&gt;&gt;ErrorCountText.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.0.31147, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.5.26100, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;WarningCountText.Name" xml:space="preserve">
     <value>WarningCountText</value>
   </data>
   <data name="&gt;&gt;WarningCountText.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.0.31147, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.5.26100, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;MessageCountText.Name" xml:space="preserve">
     <value>MessageCountText</value>
   </data>
   <data name="&gt;&gt;MessageCountText.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.0.31147, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.5.26100, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>ValidationPanel</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Panels.ProjectDocumentPanel, Brick Studio, Version=1.0.0.31147, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Panels.ProjectDocumentPanel, Brick Studio, Version=1.0.5.26100, Culture=neutral, PublicKeyToken=null</value>
   </data>
 </root>

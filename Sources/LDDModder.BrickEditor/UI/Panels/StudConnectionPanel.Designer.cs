@@ -44,6 +44,7 @@
             // 
             // SelectionToolStrip
             // 
+            this.SelectionToolStrip.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(249)))), ((int)(((byte)(250)))));
             this.SelectionToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.SelectionToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.CurrentSelectionLabel,

@@ -81,11 +81,17 @@ namespace LDDModder.BrickEditor.Models.Navigation
         {
             var femaleModelExt = Element.GetExtension<FemaleStudModelExtension>();
 
-            return femaleModelExt != null/* && femaleModelExt.*/;
+            return femaleModelExt != null;
         }
 
         public override void ToggleVisibility()
         {
+            var femaleModelExt = Element.GetExtension<FemaleStudModelExtension>();
+            if (femaleModelExt != null)
+            {
+                femaleModelExt.ShowAlternateModels = !femaleModelExt.ShowAlternateModels;
+                return;
+            }
             base.ToggleVisibility();
         }
     }

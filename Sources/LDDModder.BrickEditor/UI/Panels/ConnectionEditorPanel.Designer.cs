@@ -48,6 +48,7 @@
             this.AxesControlLabel = new LDDModder.BrickEditor.UI.Controls.ControlLabel();
             this.AxesNumberBox = new LDDModder.BrickEditor.UI.Controls.NumberTextBox();
             this.CapLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+            this.CylindricalCheckBox = new System.Windows.Forms.CheckBox();
             this.EndCappedCheckBox = new System.Windows.Forms.CheckBox();
             this.StartCappedCheckBox = new System.Windows.Forms.CheckBox();
             this.GrabbingLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
@@ -73,7 +74,6 @@
             this.TagControlLabel = new LDDModder.BrickEditor.UI.Controls.ControlLabel();
             this.TagTextBox = new System.Windows.Forms.TextBox();
             this.TransformEdit = new LDDModder.BrickEditor.UI.Controls.TransformEditor();
-            this.CylindricalCheckBox = new System.Windows.Forms.CheckBox();
             this.SelectionToolStrip.SuspendLayout();
             this.panel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
@@ -92,6 +92,7 @@
             // 
             // SelectionToolStrip
             // 
+            this.SelectionToolStrip.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(249)))), ((int)(((byte)(250)))));
             this.SelectionToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.SelectionToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.CurrentSelectionLabel,
@@ -230,6 +231,12 @@
             this.CapLayoutPanel.Controls.Add(this.EndCappedCheckBox, 1, 0);
             this.CapLayoutPanel.Controls.Add(this.StartCappedCheckBox, 0, 0);
             this.CapLayoutPanel.Name = "CapLayoutPanel";
+            // 
+            // CylindricalCheckBox
+            // 
+            resources.ApplyResources(this.CylindricalCheckBox, "CylindricalCheckBox");
+            this.CylindricalCheckBox.Name = "CylindricalCheckBox";
+            this.CylindricalCheckBox.UseVisualStyleBackColor = true;
             // 
             // EndCappedCheckBox
             // 
@@ -396,16 +403,11 @@
             resources.ApplyResources(this.TransformEdit, "TransformEdit");
             this.TransformEdit.Name = "TransformEdit";
             // 
-            // CylindricalCheckBox
-            // 
-            resources.ApplyResources(this.CylindricalCheckBox, "CylindricalCheckBox");
-            this.CylindricalCheckBox.Name = "CylindricalCheckBox";
-            this.CylindricalCheckBox.UseVisualStyleBackColor = true;
-            // 
             // ConnectionEditorPanel
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.White;
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.SelectionToolStrip);
             this.Name = "ConnectionEditorPanel";

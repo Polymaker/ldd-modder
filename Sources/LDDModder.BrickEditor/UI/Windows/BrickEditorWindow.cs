@@ -38,10 +38,16 @@ namespace LDDModder.BrickEditor.UI.Windows
         public BrickEditorWindow()
         {
             InitializeComponent();
+
+            DockPanelControl.Theme = new CustomDockTheme();
+
             visualStudioToolStripExtender1.SetStyle(menuStrip1, 
                 VisualStudioToolStripExtender.VsVersion.Vs2015,
                 DockPanelControl.Theme);
-            this.vS2015LightTheme1.Extender.DockPaneStripFactory = new VS2015DockPaneStripFactory();
+
+            DockPanelControl.Theme.Extender.DockPaneStripFactory = new VS2015DockPaneStripFactory();
+            DockPanelControl.Theme.Extender.DockPaneCaptionFactory = new VS2015DockPaneCaptionFactory();
+
             FlagManager = new FlagManager();
 
             Icon = Properties.Resources.BrickStudioIcon;
@@ -162,32 +168,42 @@ namespace LDDModder.BrickEditor.UI.Windows
             ConnectionPanel = new ConnectionEditorPanel(ProjectManager);
             WaitPopup.UpdateProgress(7, 10);
 
-            ViewportPanel.Show(DockPanelControl, DockState.Document);
+            if (!LoadUserLayout())
+            {
+                ViewportPanel.Show(DockPanelControl, DockState.Document);
 
-            StudConnectionPanel.Show(DockPanelControl, DockState.Document);
+                StudConnectionPanel.Show(DockPanelControl, DockState.Document);
 
-            ViewportPanel.Activate();
+                ViewportPanel.Activate();
 
-            WaitPopup.UpdateProgress(8, 10);
+                WaitPopup.UpdateProgress(8, 10);
 
-            DockPanelControl.DockLeftPortion = 250;
+                DockPanelControl.DockLeftPortion = 250;
 
-            NavigationPanel.Show(DockPanelControl, DockState.DockLeft);
+                NavigationPanel.Show(DockPanelControl, DockState.DockLeft);
 
-            DockPanelControl.DockWindows[DockState.DockBottom].BringToFront();
-            DockPanelControl.DockBottomPortion = 250;
+                DockPanelControl.DockWindows[DockState.DockBottom].BringToFront();
+                DockPanelControl.DockBottomPortion = 250;
 
-            WaitPopup.UpdateProgress(9, 10);
+                WaitPopup.UpdateProgress(9, 10);
 
-            PropertiesPanel.Show(DockPanelControl, DockState.DockBottom);
+                PropertiesPanel.Show(DockPanelControl, DockState.DockBottom);
 
-            DetailPanel.Show(PropertiesPanel.Pane, null);
+                DetailPanel.Show(PropertiesPanel.Pane, null);
 
-            ConnectionPanel.Show(PropertiesPanel.Pane, null);
+                ConnectionPanel.Show(PropertiesPanel.Pane, null);
 
-            ValidationPanel.Show(PropertiesPanel.Pane, null);
+                ValidationPanel.Show(PropertiesPanel.Pane, null);
+            }
 
-            PropertiesPanel.Activate();
+            if (PropertiesPanel.Pane == DetailPanel.Pane)
+            {
+                PropertiesPanel.Activate();
+            }
+            else
+            {
+                DetailPanel.Activate();
+            }
 
             WaitPopup.UpdateProgress(10, 10);
 
@@ -196,6 +212,50 @@ namespace LDDModder.BrickEditor.UI.Windows
                 if (dockPanel is ProjectDocumentPanel documentPanel)
                     documentPanel.Enabled = false;
             }
+        }
+
+        public void LayoutDockPanels()
+        {
+        }
+
+        private bool LoadUserLayout()
+        {
+            var layoutPath = Path.Combine(SettingsManager.AppDataFolder, "UserLayout.xml");
+
+            if (File.Exists(layoutPath))
+            {
+                try
+                {
+                    DockPanelControl.LoadFromXml(layoutPath, (string str) =>
+                    {
+                        switch (str)
+                        {
+                            case "LDDModder.BrickEditor.UI.Panels.ValidationPanel":
+                                return ValidationPanel;
+                            case "LDDModder.BrickEditor.UI.Panels.NavigationPanel":
+                                return NavigationPanel;
+                            case "LDDModder.BrickEditor.UI.Panels.ViewportPanel":
+                                return ViewportPanel;
+                            case "LDDModder.BrickEditor.UI.Panels.ConnectionEditorPanel":
+                                return ConnectionPanel;
+                            case "LDDModder.BrickEditor.UI.Panels.StudConnectionPanel":
+                                return StudConnectionPanel;
+                            case "LDDModder.BrickEditor.UI.Panels.ElementDetailPanel":
+                                return DetailPanel;
+                            case "LDDModder.BrickEditor.UI.Panels.PartPropertiesPanel":
+                                return PropertiesPanel;
+                        }
+                        return null;
+                    });
+                    return true;
+                }
+                catch
+                {
+
+                }
+                
+            }
+            return false;
         }
 
         private void BeginLoadingUI()
@@ -695,5 +755,7 @@ namespace LDDModder.BrickEditor.UI.Windows
             if (!MultiInstanceManager.ProcessMessage(ref m))
                 base.WndProc(ref m);
         }
+
+        
     }
 }

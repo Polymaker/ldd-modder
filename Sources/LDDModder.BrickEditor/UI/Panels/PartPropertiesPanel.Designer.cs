@@ -139,7 +139,6 @@
             // 
             // collapsiblePanel2.ContentPanel
             // 
-            this.collapsiblePanel2.ContentPanel.BackColor = System.Drawing.SystemColors.Control;
             this.collapsiblePanel2.ContentPanel.Controls.Add(this.tableLayoutPanel1);
             resources.ApplyResources(this.collapsiblePanel2.ContentPanel, "collapsiblePanel2.ContentPanel");
             this.collapsiblePanel2.ContentPanel.Name = "ContentPanel";
@@ -315,6 +314,7 @@
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.White;
             this.Controls.Add(this.flowLayoutPanel1);
             this.Name = "PartPropertiesPanel";
             this.SizeChanged += new System.EventHandler(this.PartPropertiesPanel_SizeChanged);

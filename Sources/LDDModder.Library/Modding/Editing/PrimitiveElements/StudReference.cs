@@ -26,7 +26,7 @@ namespace LDDModder.Modding.Editing
             set => SetPropertyValue(ref _ConnectionID, value);
         }
 
-        public int ConnectionIndex { get; set; } = -1;
+        public int ConnectionIndex { get; set; }
 
         public PartConnection Connection => GetLinkedConnection();
 
@@ -64,7 +64,9 @@ namespace LDDModder.Modding.Editing
             {
                 if (PositionX >= 0 && PositionY >= 0)
                     return Connector?.GetNode(PositionX, PositionY);
-                return Connector?.GetNode(FieldIndex);
+                if (FieldIndex >= 0)
+                    return Connector?.GetNode(FieldIndex);
+                return null;
             }
         }
 
@@ -95,19 +97,6 @@ namespace LDDModder.Modding.Editing
             PositionX = -1;
             PositionY = -1;
         }
-
-        //public StudReference(Custom2DFieldReference fieldReference)
-        //{
-        //    ConnectionIndex = fieldReference.ConnectorIndex;
-        //    FieldIndex = fieldReference.FieldIndices[0].Index;
-        //    Value1 = fieldReference.FieldIndices[0].Value2;
-        //    Value2 = fieldReference.FieldIndices[0].Value4;
-        //}
-
-        //internal void SetConnectionID(string id)
-        //{
-        //    _ConnectionID = id;
-        //}
 
         public PartConnection GetLinkedConnection()
         {

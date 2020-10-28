@@ -3,6 +3,8 @@ using LDDModder.Modding.Editing;
 using LDDModder.Utilities;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -31,6 +33,21 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             FlagManager = new FlagManager();
             InitializeProjectManager(projectManager);
+        }
+
+        protected override void OnDockStateChanged(EventArgs e)
+        {
+            base.OnDockStateChanged(e);
+
+            if (DockState == DockState.DockLeft || DockState == DockState.DockLeftAutoHide)
+            {
+                BackColor = Color.FromArgb(232, 236, 239);
+            }
+            else
+            {
+                BackColor = Color.White;
+            }
+
         }
 
         protected virtual void InitializeProjectManager(ProjectManager projectManager)
@@ -207,6 +224,19 @@ namespace LDDModder.BrickEditor.UI.Panels
             control.GetType().InvokeMember("DoubleBuffered",
                 BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic, null,
             control, new object[] { true });
+        }
+
+        private void InitializeComponent()
+        {
+            this.SuspendLayout();
+            // 
+            // ProjectDocumentPanel
+            // 
+            this.BackColor = System.Drawing.Color.White;
+            this.ClientSize = new System.Drawing.Size(279, 264);
+            this.Name = "ProjectDocumentPanel";
+            this.ResumeLayout(false);
+
         }
     }
 }

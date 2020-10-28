@@ -315,6 +315,18 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         #endregion
 
+        private void WindowMenu_SaveLayout_Click(object sender, EventArgs e)
+        {
+            var layoutPath = Path.Combine(SettingsManager.AppDataFolder, "UserLayout.xml");
+            DockPanelControl.SaveAsXml(layoutPath);
+        }
+
+        private void WindowMenu_ResetLayout_Click(object sender, EventArgs e)
+        {
+
+        }
+
+
         #region Build Configs & Project Compilation
 
         private List<BuildConfiguration> BuildConfigList;

@@ -42,15 +42,16 @@
             this.ColumnMessageDescription = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.ColumnMessageSource = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.localizableStringList1 = new LDDModder.BrickEditor.Localization.LocalizableStringList(this.components);
-            this.ErrorCountText = new LDDModder.BrickEditor.Localization.LocalizableString();
-            this.WarningCountText = new LDDModder.BrickEditor.Localization.LocalizableString();
-            this.MessageCountText = new LDDModder.BrickEditor.Localization.LocalizableString();
+            this.ErrorCountText = ((LDDModder.BrickEditor.Localization.LocalizableString)(new LDDModder.BrickEditor.Localization.LocalizableString()));
+            this.WarningCountText = ((LDDModder.BrickEditor.Localization.LocalizableString)(new LDDModder.BrickEditor.Localization.LocalizableString()));
+            this.MessageCountText = ((LDDModder.BrickEditor.Localization.LocalizableString)(new LDDModder.BrickEditor.Localization.LocalizableString()));
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ValidationMessageList)).BeginInit();
             this.SuspendLayout();
             // 
             // toolStrip1
             // 
+            this.toolStrip1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(249)))), ((int)(((byte)(250)))));
             this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ValidatePartButton,
@@ -112,6 +113,7 @@
             this.ValidationMessageList.AllColumns.Add(this.ColumnMessageCode);
             this.ValidationMessageList.AllColumns.Add(this.ColumnMessageDescription);
             this.ValidationMessageList.AllColumns.Add(this.ColumnMessageSource);
+            this.ValidationMessageList.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.ValidationMessageList.CellEditUseWholeCell = false;
             this.ValidationMessageList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.ColumnMessageType,

@@ -44,7 +44,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             Connections = new SortableBindingList<PartConnection>();
             SubTypeList = new SortableBindingList<ConnectorInfo>();
             SubTypeList.ApplySort("SubType", ListSortDirection.Ascending);
-
+            
             ElementsComboBox.ComboBox.DataSource = Connections;
             ElementsComboBox.ComboBox.DisplayMember = "Name";
             ElementsComboBox.ComboBox.ValueMember = "ID";
@@ -640,7 +640,8 @@ namespace LDDModder.BrickEditor.UI.Panels
                 }
                 else if (currentFlowBreak != null && ctrlBeforeTransform == null)
                     flowLayoutPanel1.SetFlowBreak(currentFlowBreak, false);
-
+                else if (currentFlowBreak != null && currentFlowBreak.Left > 50)
+                    flowLayoutPanel1.SetFlowBreak(currentFlowBreak, false);
             }
             else if (currentFlowBreak != null)
             {

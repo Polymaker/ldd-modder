@@ -33,7 +33,6 @@ namespace LDDModder.BrickEditor.UI.Panels
             Bones,
             Meshes
         }
-
         private class ViewModeInfo
         {
             public NavigationViewMode ViewMode { get; set; }
@@ -82,8 +81,6 @@ namespace LDDModder.BrickEditor.UI.Panels
             InitializeContextMenus();
             InitializeNavigationTreeView();
             InitializeViewComboBox();
-
-            //ViewModeLabel.Text = $"<{ModelLocalizations.Label_NoActiveProject}> ";
         }
 
         private void InitializeViewComboBox()

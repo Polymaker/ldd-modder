@@ -512,9 +512,9 @@ namespace LDDModder.BrickEditor.UI
 		{
 			if (base.Appearance == DockPane.AppearanceStyle.ToolWindow)
 			{
-				return MeasureHeight_ToolWindow();
+				return MeasureHeight_ToolWindow() + 4;
 			}
-			return MeasureHeight_Document();
+			return MeasureHeight_Document() + 2;
 		}
 
 		private int MeasureHeight_ToolWindow()
@@ -523,12 +523,15 @@ namespace LDDModder.BrickEditor.UI
 			{
 				return 0;
 			}
-			return Math.Max(TextFont.Height + ((PatchController.EnableHighDpi == true) ? DocumentIconGapBottom : 0), ToolWindowImageHeight + ToolWindowImageGapTop + ToolWindowImageGapBottom) + ToolWindowStripGapTop + ToolWindowStripGapBottom;
+			return Math.Max(TextFont.Height + ((PatchController.EnableHighDpi == true) ? DocumentIconGapBottom : 0), 
+                ToolWindowImageHeight + ToolWindowImageGapTop + ToolWindowImageGapBottom) + ToolWindowStripGapTop + ToolWindowStripGapBottom;
 		}
 
 		private int MeasureHeight_Document()
 		{
-			return Math.Max(TextFont.Height + DocumentTabGapTop + ((PatchController.EnableHighDpi == true) ? DocumentIconGapBottom : 0), ButtonOverflow.Height + DocumentButtonGapTop + DocumentButtonGapBottom) + DocumentStripGapBottom + DocumentStripGapTop;
+
+            
+			return Math.Max(TextFont.Height + DocumentTabGapTop + ((PatchController.EnableHighDpi == true) ? DocumentIconGapBottom : 0), DocumentIconHeight + DocumentButtonGapTop + DocumentButtonGapBottom) + DocumentStripGapBottom + DocumentStripGapTop;
 		}
 
 		protected override void OnPaint(PaintEventArgs e)

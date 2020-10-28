@@ -122,16 +122,16 @@
   </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="CurrentSelectionLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>50, 22</value>
+    <value>50, 20</value>
   </data>
   <data name="CurrentSelectionLabel.Text" xml:space="preserve">
     <value>Current:</value>
   </data>
   <data name="ElementsComboBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>150, 25</value>
+    <value>150, 23</value>
   </data>
   <data name="SyncSelectionCheckBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>101, 22</value>
+    <value>101, 20</value>
   </data>
   <data name="SyncSelectionCheckBox.Text" xml:space="preserve">
     <value>Sync selection</value>
@@ -155,7 +155,7 @@
     <value>Magenta</value>
   </data>
   <data name="AddConnectionDropDown.Size" type="System.Drawing.Size, System.Drawing">
-    <value>105, 22</value>
+    <value>105, 20</value>
   </data>
   <data name="AddConnectionDropDown.Text" xml:space="preserve">
     <value>Add connection</value>
@@ -163,8 +163,12 @@
   <data name="SelectionToolStrip.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 0</value>
   </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="SelectionToolStrip.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
   <data name="SelectionToolStrip.Size" type="System.Drawing.Size, System.Drawing">
-    <value>698, 25</value>
+    <value>698, 29</value>
   </data>
   <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="SelectionToolStrip.TabIndex" type="System.Int32, mscorlib">
@@ -218,7 +222,6 @@
   <data name="TypeValueLabel.Location" type="System.Drawing.Point, System.Drawing">
     <value>86, 0</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="TypeValueLabel.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>0, 3, 0, 3</value>
   </data>
@@ -250,7 +253,7 @@
     <value>0, 3, 3, 3</value>
   </data>
   <data name="ConnectionSubTypeCombo.Size" type="System.Drawing.Size, System.Drawing">
-    <value>231, 21</value>
+    <value>234, 21</value>
   </data>
   <data name="ConnectionSubTypeCombo.TabIndex" type="System.Int32, mscorlib">
     <value>5</value>
@@ -286,7 +289,7 @@
     <value>LengthBox</value>
   </data>
   <data name="&gt;&gt;LengthBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.4.24766, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.5.28985, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;LengthBox.Parent" xml:space="preserve">
     <value>LengthControlLabel</value>
@@ -325,7 +328,7 @@
     <value>True</value>
   </data>
   <data name="NameControlLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 0</value>
+    <value>3, 3</value>
   </data>
   <data name="NameControlLabel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>0, 0, 0, 0</value>
@@ -346,7 +349,7 @@
     <value>NameControlLabel</value>
   </data>
   <data name="&gt;&gt;NameControlLabel.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.ControlLabel, Brick Studio, Version=1.0.4.24766, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.ControlLabel, Brick Studio, Version=1.0.5.28985, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;NameControlLabel.Parent" xml:space="preserve">
     <value>flowLayoutPanel1</value>
@@ -355,7 +358,7 @@
     <value>0</value>
   </data>
   <data name="TypeControlLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 26</value>
+    <value>3, 29</value>
   </data>
   <data name="TypeControlLabel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>0, 0, 0, 0</value>
@@ -376,7 +379,7 @@
     <value>TypeControlLabel</value>
   </data>
   <data name="&gt;&gt;TypeControlLabel.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.ControlLabel, Brick Studio, Version=1.0.4.24766, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.ControlLabel, Brick Studio, Version=1.0.5.28985, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;TypeControlLabel.Parent" xml:space="preserve">
     <value>flowLayoutPanel1</value>
@@ -385,7 +388,7 @@
     <value>1</value>
   </data>
   <data name="SubtypeControlLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 45</value>
+    <value>3, 48</value>
   </data>
   <data name="SubtypeControlLabel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>0, 0, 0, 0</value>
@@ -406,7 +409,7 @@
     <value>SubtypeControlLabel</value>
   </data>
   <data name="&gt;&gt;SubtypeControlLabel.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.ControlLabel, Brick Studio, Version=1.0.4.24766, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.ControlLabel, Brick Studio, Version=1.0.5.28985, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;SubtypeControlLabel.Parent" xml:space="preserve">
     <value>flowLayoutPanel1</value>
@@ -415,7 +418,7 @@
     <value>2</value>
   </data>
   <data name="LengthControlLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 72</value>
+    <value>3, 75</value>
   </data>
   <data name="LengthControlLabel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>0, 0, 0, 0</value>
@@ -436,7 +439,7 @@
     <value>LengthControlLabel</value>
   </data>
   <data name="&gt;&gt;LengthControlLabel.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.ControlLabel, Brick Studio, Version=1.0.4.24766, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.ControlLabel, Brick Studio, Version=1.0.5.28985, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;LengthControlLabel.Parent" xml:space="preserve">
     <value>flowLayoutPanel1</value>
@@ -463,7 +466,7 @@
     <value>AxesNumberBox</value>
   </data>
   <data name="&gt;&gt;AxesNumberBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.4.24766, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.5.28985, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;AxesNumberBox.Parent" xml:space="preserve">
     <value>AxesControlLabel</value>
@@ -472,7 +475,7 @@
     <value>0</value>
   </data>
   <data name="AxesControlLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 98</value>
+    <value>3, 101</value>
   </data>
   <data name="AxesControlLabel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>0, 0, 0, 0</value>
@@ -493,7 +496,7 @@
     <value>AxesControlLabel</value>
   </data>
   <data name="&gt;&gt;AxesControlLabel.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.ControlLabel, Brick Studio, Version=1.0.4.24766, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.ControlLabel, Brick Studio, Version=1.0.5.28985, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;AxesControlLabel.Parent" xml:space="preserve">
     <value>flowLayoutPanel1</value>
@@ -619,7 +622,7 @@
     <value>2</value>
   </data>
   <data name="CapLayoutPanel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 124</value>
+    <value>3, 127</value>
   </data>
   <data name="CapLayoutPanel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>0, 0, 0, 0</value>
@@ -727,7 +730,7 @@
     <value>1</value>
   </data>
   <data name="GrabbingLayoutPanel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 170</value>
+    <value>3, 173</value>
   </data>
   <data name="GrabbingLayoutPanel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>0, 0, 0, 0</value>
@@ -775,7 +778,7 @@
     <value>SpringEditor</value>
   </data>
   <data name="&gt;&gt;SpringEditor.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Editors.VectorEditor, Brick Studio, Version=1.0.4.24766, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Editors.VectorEditor, Brick Studio, Version=1.0.5.28985, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;SpringEditor.Parent" xml:space="preserve">
     <value>SpringPanel</value>
@@ -784,7 +787,7 @@
     <value>0</value>
   </data>
   <data name="SpringPanel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 193</value>
+    <value>3, 196</value>
   </data>
   <data name="SpringPanel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>0, 0, 0, 0</value>
@@ -885,11 +888,14 @@
   <data name="&gt;&gt;ToothCountLabel.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
+  <data name="ToothNumBox.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Left, Right</value>
+  </data>
   <data name="ToothNumBox.Location" type="System.Drawing.Point, System.Drawing">
     <value>83, 3</value>
   </data>
   <data name="ToothNumBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>70, 20</value>
+    <value>74, 20</value>
   </data>
   <data name="ToothNumBox.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -901,7 +907,7 @@
     <value>ToothNumBox</value>
   </data>
   <data name="&gt;&gt;ToothNumBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.4.24766, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.5.28985, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;ToothNumBox.Parent" xml:space="preserve">
     <value>GearLayoutPanel</value>
@@ -909,11 +915,14 @@
   <data name="&gt;&gt;ToothNumBox.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
+  <data name="RadiusNumBox.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Left, Right</value>
+  </data>
   <data name="RadiusNumBox.Location" type="System.Drawing.Point, System.Drawing">
     <value>243, 3</value>
   </data>
   <data name="RadiusNumBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>70, 20</value>
+    <value>74, 20</value>
   </data>
   <data name="RadiusNumBox.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -925,7 +934,7 @@
     <value>RadiusNumBox</value>
   </data>
   <data name="&gt;&gt;RadiusNumBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.4.24766, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.5.28985, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;RadiusNumBox.Parent" xml:space="preserve">
     <value>GearLayoutPanel</value>
@@ -934,7 +943,7 @@
     <value>3</value>
   </data>
   <data name="GearLayoutPanel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>323, 0</value>
+    <value>323, 3</value>
   </data>
   <data name="GearLayoutPanel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>0, 0, 0, 0</value>
@@ -991,7 +1000,7 @@
     <value>LimitMinBox</value>
   </data>
   <data name="&gt;&gt;LimitMinBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.4.24766, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.5.28985, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;LimitMinBox.Parent" xml:space="preserve">
     <value>HingeLayoutPanel</value>
@@ -1114,7 +1123,7 @@
     <value>LimitMaxBox</value>
   </data>
   <data name="&gt;&gt;LimitMaxBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.4.24766, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.5.28985, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;LimitMaxBox.Parent" xml:space="preserve">
     <value>HingeLayoutPanel</value>
@@ -1138,7 +1147,7 @@
     <value>FlipLimitMaxBox</value>
   </data>
   <data name="&gt;&gt;FlipLimitMaxBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.4.24766, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.5.28985, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;FlipLimitMaxBox.Parent" xml:space="preserve">
     <value>HingeLayoutPanel</value>
@@ -1162,7 +1171,7 @@
     <value>FlipLimitMinBox</value>
   </data>
   <data name="&gt;&gt;FlipLimitMinBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.4.24766, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.5.28985, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;FlipLimitMinBox.Parent" xml:space="preserve">
     <value>HingeLayoutPanel</value>
@@ -1243,7 +1252,7 @@
     <value>8</value>
   </data>
   <data name="HingeLayoutPanel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>323, 26</value>
+    <value>323, 29</value>
   </data>
   <data name="HingeLayoutPanel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>0, 0, 0, 0</value>
@@ -1279,7 +1288,7 @@
     <value>0, 3, 3, 3</value>
   </data>
   <data name="TagTextBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>231, 20</value>
+    <value>234, 20</value>
   </data>
   <data name="TagTextBox.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
@@ -1297,7 +1306,7 @@
     <value>0</value>
   </data>
   <data name="TagControlLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>323, 94</value>
+    <value>323, 97</value>
   </data>
   <data name="TagControlLabel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>0, 0, 0, 0</value>
@@ -1318,7 +1327,7 @@
     <value>TagControlLabel</value>
   </data>
   <data name="&gt;&gt;TagControlLabel.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.ControlLabel, Brick Studio, Version=1.0.4.24766, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.ControlLabel, Brick Studio, Version=1.0.5.28985, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;TagControlLabel.Parent" xml:space="preserve">
     <value>flowLayoutPanel1</value>
@@ -1333,7 +1342,7 @@
     <value>GrowAndShrink</value>
   </data>
   <data name="TransformEdit.Location" type="System.Drawing.Point, System.Drawing">
-    <value>323, 123</value>
+    <value>323, 126</value>
   </data>
   <data name="TransformEdit.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>0, 3, 0, 0</value>
@@ -1348,7 +1357,7 @@
     <value>TransformEdit</value>
   </data>
   <data name="&gt;&gt;TransformEdit.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.TransformEditor, Brick Studio, Version=1.0.4.24766, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.TransformEditor, Brick Studio, Version=1.0.5.28985, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;TransformEdit.Parent" xml:space="preserve">
     <value>flowLayoutPanel1</value>
@@ -1366,10 +1375,10 @@
     <value>0, 0</value>
   </data>
   <data name="flowLayoutPanel1.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 0, 0, 0</value>
+    <value>3, 3, 0, 0</value>
   </data>
   <data name="flowLayoutPanel1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>698, 235</value>
+    <value>698, 231</value>
   </data>
   <data name="flowLayoutPanel1.TabIndex" type="System.Int32, mscorlib">
     <value>6</value>
@@ -1390,10 +1399,10 @@
     <value>Fill</value>
   </data>
   <data name="panel1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 25</value>
+    <value>0, 29</value>
   </data>
   <data name="panel1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>698, 235</value>
+    <value>698, 231</value>
   </data>
   <data name="panel1.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
@@ -1438,7 +1447,7 @@
     <value>SyncSelectionCheckBox</value>
   </data>
   <data name="&gt;&gt;SyncSelectionCheckBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.ToolStripCheckBox, Brick Studio, Version=1.0.4.24766, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.ToolStripCheckBox, Brick Studio, Version=1.0.5.28985, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;AddConnectionDropDown.Name" xml:space="preserve">
     <value>AddConnectionDropDown</value>
@@ -1450,6 +1459,6 @@
     <value>ConnectionEditorPanel</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Panels.ProjectDocumentPanel, Brick Studio, Version=1.0.4.24766, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Panels.ProjectDocumentPanel, Brick Studio, Version=1.0.5.28985, Culture=neutral, PublicKeyToken=null</value>
   </data>
 </root>
