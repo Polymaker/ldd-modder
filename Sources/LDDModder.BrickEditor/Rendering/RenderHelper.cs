@@ -132,7 +132,7 @@ namespace LDDModder.BrickEditor.Rendering
 
             MaleConnectorMaterial = new MaterialInfo
             {
-                Diffuse = new Vector4(0.05f, 0.05f, 0.95f, 1f),
+                Diffuse = new Vector4(0.25f, 0.25f, 0.95f, 1f),
                 Specular = new Vector3(1f),
                 Shininess = 2f
             };

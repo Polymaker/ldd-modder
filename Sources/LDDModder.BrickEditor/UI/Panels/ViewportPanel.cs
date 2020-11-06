@@ -220,7 +220,11 @@ namespace LDDModder.BrickEditor.UI.Panels
             ProjectManager.CollisionsVisibilityChanged += ProjectManager_ModelsVisibilityChanged;
             ProjectManager.ConnectionsVisibilityChanged += ProjectManager_ModelsVisibilityChanged;
             ProjectManager.PartRenderModeChanged += ProjectManager_PartRenderModeChanged;
+            ProjectManager.BonesVisibilityChanged += ProjectManager_ModelsVisibilityChanged;
+            projectManager.CursorVisibilityChanged += ProjectManager_ModelsVisibilityChanged;
         }
+
+        
 
         private UIButton SelectGizmoButton;
         private UIButton MoveGizmoButton;
@@ -342,7 +346,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             var offset = Vector3.Distance(sceneBounds.Center, light.Position) - Vector3.Distance(sceneBounds.Center, ray.Origin);
             viewDistance += offset;
 
-            var powerOffset = MathHelper.Map(sceneBounds.Size.Length, 0, 20f, 5f, 40f);
+            var powerOffset = MathHelper.Map(sceneBounds.Size.Length, 0, 25f, 5f, 40f);
             powerOffset = MathHelper.Clamp(powerOffset, 2, 40);
             var lightPower = powerOffset + (viewDistance / 0.10f);
 
@@ -360,18 +364,20 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             bool isFlatShape = sceneBounds.SizeY / 0.5f < ((sceneBounds.SizeX + sceneBounds.SizeZ) / 2f);
             bool isTallShape = sceneBounds.SizeY * 0.6f >= ((sceneBounds.SizeX + sceneBounds.SizeZ) / 2f);
+            //bool isTallerThanWidth = sceneBounds.SizeY * 0.6f >= sceneBounds.SizeX;
+            //bool isTallerThanDepth = sceneBounds.SizeY * 0.6f >= sceneBounds.SizeZ;
 
-            float heightOffset = isTallShape ? 0.5f : 0.75f;
-            float depthOffset = isFlatShape ? 0.5f : 1f;
+            float heightOffset = isTallShape ? 0.45f : 0.65f;
+            float depthOffset = isFlatShape ? 0.65f : 1f;
 
             var ambiantLight = new LightInfo()
             {
                 Ambient = new Vector3(0.5f),
-                Diffuse = new Vector3(0.05f),
-                Specular = new Vector3(0.05f),
+                Diffuse = new Vector3(0.01f),
+                Specular = new Vector3(0.01f),
                 Constant = 0.8f,
             };
-            CalculateLight(ref ambiantLight, new Vector3(1,1,1), sceneBounds, 25);
+            CalculateLight(ref ambiantLight, new Vector3(1,1,1), sceneBounds, 30);
 
             var keyLight = new LightInfo()
             {
@@ -393,9 +399,9 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             var backLight = new LightInfo()
             {
-                Ambient = new Vector3(0.1f),
+                Ambient = new Vector3(0.15f),
                 Diffuse = new Vector3(0.5f),
-                Specular = new Vector3(0.2f),
+                Specular = new Vector3(0.1f),
                 Constant = 1f,
             };
             CalculateLight(ref backLight, new Vector3(depthOffset * -0.6f, heightOffset * 0.75f, depthOffset * -0.4f), sceneBounds);
@@ -446,8 +452,6 @@ namespace LDDModder.BrickEditor.UI.Panels
                 DrawGrid(); // Draw grid a first time for transparent meshes/textures
 
             DrawSceneModels();
-
-            
 
             //if (CurrentProject?.Flexible == true && ProjectManager.ShowBones)
             //{
@@ -523,14 +527,14 @@ namespace LDDModder.BrickEditor.UI.Panels
             }
         }
 
-        private void DrawBones()
-        {
-            foreach (var model in LoadedModels.OfType<BoneModel>())
-            {
-                if (model.Visible)
-                    model.RenderModel(Camera);
-            }
-        }
+        //private void DrawBones()
+        //{
+        //    foreach (var model in LoadedModels.OfType<BoneModel>())
+        //    {
+        //        if (model.Visible)
+        //            model.RenderModel(Camera);
+        //    }
+        //}
 
         private void DebugDrawLights()
         {
@@ -906,13 +910,21 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             var surfModel = new SurfaceMeshBuffer(surface);
 
-            surfModel.Material = new MaterialInfo
+            var material = new MaterialInfo
             {
                 Diffuse = new Vector4(0.7f, 0.7f, 0.7f, 1f),
                 Specular = new Vector3(1f),
                 Shininess = 8f
             };
 
+            if (surface.SurfaceID > 0)
+            {
+                material.Shininess = 1f;
+                //material.Diffuse = new Vector4(0.4f, 0.4f, 0.4f, 1f);
+                material.Specular = new Vector3(0.4f, 0.4f, 0.4f);
+            }
+
+            surfModel.Material = material;
             //if (surface.SurfaceID > 0)
             //{
             //    var matColor = Color4.FromHsv(new Vector4((surface.SurfaceID * 0.2f) % 1f, 0.9f, 0.8f, 1f));
@@ -1172,41 +1184,17 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         public IEnumerable<PartElementModel> GetAllElementModels()
         {
-            //foreach (var model in SurfaceModels.SelectMany(x => x.MeshModels))
-            //    yield return model;
-
-            //foreach (var model in CollisionModels)
-            //    yield return model;
-
-            //foreach (var model in ConnectionModels)
-            //    yield return model;
-
-            //foreach (var model in LoadedModels)
-            //    yield return model;
-
             return LoadedModels.OfType<PartElementModel>();
         }
 
         public IEnumerable<ModelBase> GetVisibleModels()
         {
             return LoadedModels.Where(x => x.Visible);
-            //foreach (var model in GetAllElementModels())
-            //{
-            //    var elementExt = model.Element.GetExtension<ModelElementExtension>();
-            //    if (elementExt?.IsVisible ?? model.Visible)
-            //        yield return model;
-            //}
         }
 
         public IEnumerable<ModelBase> GetSelectedModels(bool onlyVisible = false)
         {
             var selectedModels = LoadedModels.Where(m => m.IsSelected && (!onlyVisible || m.Visible));
-            //IEnumerable<ModelBase> selectedModels = Enumerable.Empty<ModelBase>();
-
-            //if (onlyVisible)
-            //    selectedModels = GetVisibleModels().Where(x => x.IsSelected);
-            //else
-            //    selectedModels = LoadedModels.Where(x => x.IsSelected);
 
             return selectedModels
                 .OrderBy(x => x is PartElementModel pem ? 
@@ -1642,6 +1630,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         private void UpdateToolbarMenu()
         {
             BonesDropDownMenu.Visible = CurrentProject?.Flexible ?? false;
+            DisplayMenu_Bones.Visible = CurrentProject?.Flexible ?? false;
             MeshesMenu_CalculateOutlines.Enabled = ProjectManager.IsProjectOpen;
             MeshesMenu_RemoveOutlines.Enabled = ProjectManager.IsProjectOpen;
         }
@@ -1680,6 +1669,8 @@ namespace LDDModder.BrickEditor.UI.Panels
                 DisplayMenu_Collisions.Checked = ProjectManager.ShowCollisions;
                 DisplayMenu_Connections.Checked = ProjectManager.ShowConnections;
                 DisplayMenu_Meshes.Checked = ProjectManager.ShowPartModels;
+                DisplayMenu_Bones.Checked = ProjectManager.ShowBones;
+                DisplayMenu_3dCursor.Checked = ProjectManager.Show3dCursor;
                 UpdateGizmoFromSelection();
             }
         }
@@ -1714,7 +1705,14 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void DisplayMenu_3dCursor_CheckedChanged(object sender, EventArgs e)
         {
-            ProjectManager.Show3dCursor = DisplayMenu_3dCursor.Checked;
+            if (!FlagManager.IsSet("ModelsVisibilityChanged"))
+                ProjectManager.Show3dCursor = DisplayMenu_3dCursor.Checked;
+        }
+
+        private void DisplayMenu_Bones_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!FlagManager.IsSet("ModelsVisibilityChanged"))
+                ProjectManager.ShowBones = DisplayMenu_Bones.Checked;
         }
 
         private void DisplayDropDown_Closing(object sender, ToolStripDropDownClosingEventArgs e)
@@ -1952,7 +1950,6 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         #endregion
         
-
         #region IViewportWindow
 
         public void RebuildModels()

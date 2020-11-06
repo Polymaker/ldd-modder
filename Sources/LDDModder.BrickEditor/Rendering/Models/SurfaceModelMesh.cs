@@ -58,7 +58,7 @@ namespace LDDModder.BrickEditor.Rendering
                 }
             );
 
-            if (IsSelected)
+            if (IsSelected && !BoundingBox.IsEmpty)
             {
                 var selectionBox = BoundingBox;
                 selectionBox.Size += new Vector3(0.1f);

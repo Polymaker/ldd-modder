@@ -197,6 +197,15 @@ namespace LDDModder.BrickEditor.Rendering
 
                         RenderHelper.EndDrawWireframe(RenderingModel.VertexBuffer);
                     });
+
+                if (IsSelected && !BoundingBox.IsEmpty)
+                {
+                    var selectionBox = BoundingBox;
+                    selectionBox.Size += new Vector3(0.1f);
+                    RenderHelper.DrawBoundingBox(Transform,
+                        selectionBox,
+                        new Vector4(0f, 1f, 1f, 1f), 1.5f);
+                }
             }
             else
             {

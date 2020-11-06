@@ -31,6 +31,8 @@ namespace LDDModder.BrickEditor.Rendering
 
         public static PartialModel CylinderModel { get; private set; }
 
+        public static PartialModel CircleModel { get; private set; }
+
         public static List<PartialModel> LoadedModels { get; private set; }
 
         static ModelManager()
@@ -65,6 +67,8 @@ namespace LDDModder.BrickEditor.Rendering
 
             loadedMesh = ResourceHelper.GetResourceModel("Models.BarFemale.obj", "obj").Meshes[0];
             BarFemaleModel = AppendPartialMesh(loadedMesh);
+
+            CircleModel = GenerateCircleModel();
 
             InitializeBoundingBoxBuffer();
         }
@@ -120,6 +124,40 @@ namespace LDDModder.BrickEditor.Rendering
             return model;
         }
 
+        private static PartialModel GenerateCircleModel()
+        {
+            float stepAngle = (float)Math.PI * 2f / 32f;
+
+            var indices = new List<int>();
+            var vertices = new List<VertVN>();
+
+            //Cone vertices and indices
+            for (int i = 0; i < 32; i++)
+            {
+                var pt = new Vector3((float)Math.Cos(stepAngle * i), 0f, (float)Math.Sin(stepAngle * i)) * 0.5f;
+                vertices.Add(new VertVN(pt, pt.Normalized()));
+
+                indices.Add((i + 1) % 32); indices.Add(i); //indices.Add(32);
+            }
+
+            int curIdx = GeneralMeshBuffer.IndexCount;
+            int curVert = GeneralMeshBuffer.VertexCount;
+
+            GeneralMeshBuffer.AppendVertices(vertices);
+            GeneralMeshBuffer.AppendIndices(indices);
+
+            int idxCount = GeneralMeshBuffer.IndexCount - curIdx;
+            var vertexPositions = vertices.Select(x => x.Position).ToList();
+
+            var bounding = BBox.FromVertices(vertexPositions);
+
+            var model = new PartialModel(GeneralMeshBuffer, curIdx, curVert, idxCount, OpenTK.Graphics.OpenGL.PrimitiveType.Lines);
+            model.BoundingBox = bounding;
+            model.Vertices = vertexPositions;
+            LoadedModels.Add(model);
+            return model;
+        }
+
         public static void ReleaseResources()
         {
             if (GeneralMeshBuffer != null)
@@ -142,6 +180,7 @@ namespace LDDModder.BrickEditor.Rendering
             TechnicPinFemaleModel = null;
             BarFemaleModel = null;
             CylinderModel = null;
+            CircleModel = null;
             LoadedModels.Clear();
         }
     }
