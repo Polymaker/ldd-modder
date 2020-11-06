@@ -170,6 +170,7 @@
     <Compile Include="Rendering\GLResourceLoader.cs" />
     <Compile Include="Rendering\MeshRenderMode.cs" />
     <Compile Include="Rendering\Models\BoneModel.cs" />
+    <Compile Include="Rendering\Models\CursorModel.cs" />
     <Compile Include="Rendering\Models\EditorGridModel.cs" />
     <Compile Include="Rendering\Models\VertexArrayBuffer.cs" />
     <Compile Include="Rendering\BrickEditorScene.cs" />

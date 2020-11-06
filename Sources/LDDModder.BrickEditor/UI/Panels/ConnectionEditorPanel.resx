@@ -121,6 +121,35 @@
     <value>17, 17</value>
   </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="SelectionToolStrip.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="SelectionToolStrip.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="SelectionToolStrip.Size" type="System.Drawing.Size, System.Drawing">
+    <value>698, 29</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="SelectionToolStrip.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="SelectionToolStrip.Text" xml:space="preserve">
+    <value>toolStrip1</value>
+  </data>
+  <data name="&gt;&gt;SelectionToolStrip.Name" xml:space="preserve">
+    <value>SelectionToolStrip</value>
+  </data>
+  <data name="&gt;&gt;SelectionToolStrip.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;SelectionToolStrip.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;SelectionToolStrip.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
   <data name="CurrentSelectionLabel.Size" type="System.Drawing.Size, System.Drawing">
     <value>50, 20</value>
   </data>
@@ -159,35 +188,6 @@
   </data>
   <data name="AddConnectionDropDown.Text" xml:space="preserve">
     <value>Add connection</value>
-  </data>
-  <data name="SelectionToolStrip.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
-  </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="SelectionToolStrip.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 3, 3, 3</value>
-  </data>
-  <data name="SelectionToolStrip.Size" type="System.Drawing.Size, System.Drawing">
-    <value>698, 29</value>
-  </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="SelectionToolStrip.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
-  </data>
-  <data name="SelectionToolStrip.Text" xml:space="preserve">
-    <value>toolStrip1</value>
-  </data>
-  <data name="&gt;&gt;SelectionToolStrip.Name" xml:space="preserve">
-    <value>SelectionToolStrip</value>
-  </data>
-  <data name="&gt;&gt;SelectionToolStrip.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;SelectionToolStrip.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;SelectionToolStrip.ZOrder" xml:space="preserve">
-    <value>1</value>
   </data>
   <data name="SpringCheckBox.CheckAlign" type="System.Drawing.ContentAlignment, System.Drawing">
     <value>MiddleRight</value>
@@ -289,7 +289,7 @@
     <value>LengthBox</value>
   </data>
   <data name="&gt;&gt;LengthBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.5.28985, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.5.14343, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;LengthBox.Parent" xml:space="preserve">
     <value>LengthControlLabel</value>
@@ -304,7 +304,7 @@
     <value>0, 3, 3, 3</value>
   </data>
   <data name="ElementNameTextBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>120, 20</value>
+    <value>140, 20</value>
   </data>
   <data name="ElementNameTextBox.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -349,7 +349,7 @@
     <value>NameControlLabel</value>
   </data>
   <data name="&gt;&gt;NameControlLabel.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.ControlLabel, Brick Studio, Version=1.0.5.28985, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.ControlLabel, Brick Studio, Version=1.0.5.14343, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;NameControlLabel.Parent" xml:space="preserve">
     <value>flowLayoutPanel1</value>
@@ -379,7 +379,7 @@
     <value>TypeControlLabel</value>
   </data>
   <data name="&gt;&gt;TypeControlLabel.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.ControlLabel, Brick Studio, Version=1.0.5.28985, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.ControlLabel, Brick Studio, Version=1.0.5.14343, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;TypeControlLabel.Parent" xml:space="preserve">
     <value>flowLayoutPanel1</value>
@@ -409,7 +409,7 @@
     <value>SubtypeControlLabel</value>
   </data>
   <data name="&gt;&gt;SubtypeControlLabel.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.ControlLabel, Brick Studio, Version=1.0.5.28985, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.ControlLabel, Brick Studio, Version=1.0.5.14343, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;SubtypeControlLabel.Parent" xml:space="preserve">
     <value>flowLayoutPanel1</value>
@@ -439,7 +439,7 @@
     <value>LengthControlLabel</value>
   </data>
   <data name="&gt;&gt;LengthControlLabel.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.ControlLabel, Brick Studio, Version=1.0.5.28985, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.ControlLabel, Brick Studio, Version=1.0.5.14343, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;LengthControlLabel.Parent" xml:space="preserve">
     <value>flowLayoutPanel1</value>
@@ -447,26 +447,11 @@
   <data name="&gt;&gt;LengthControlLabel.ZOrder" xml:space="preserve">
     <value>3</value>
   </data>
-  <data name="AxesNumberBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>83, 3</value>
-  </data>
-  <data name="AxesNumberBox.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>0, 3, 3, 3</value>
-  </data>
-  <data name="AxesNumberBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>70, 20</value>
-  </data>
-  <data name="AxesNumberBox.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="AxesNumberBox.TextAlign" type="System.Windows.Forms.HorizontalAlignment, System.Windows.Forms">
-    <value>Right</value>
-  </data>
   <data name="&gt;&gt;AxesNumberBox.Name" xml:space="preserve">
     <value>AxesNumberBox</value>
   </data>
   <data name="&gt;&gt;AxesNumberBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.5.28985, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.5.14343, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;AxesNumberBox.Parent" xml:space="preserve">
     <value>AxesControlLabel</value>
@@ -496,7 +481,7 @@
     <value>AxesControlLabel</value>
   </data>
   <data name="&gt;&gt;AxesControlLabel.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.ControlLabel, Brick Studio, Version=1.0.5.28985, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.ControlLabel, Brick Studio, Version=1.0.5.14343, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;AxesControlLabel.Parent" xml:space="preserve">
     <value>flowLayoutPanel1</value>
@@ -512,6 +497,564 @@
   </data>
   <data name="CapLayoutPanel.ColumnCount" type="System.Int32, mscorlib">
     <value>2</value>
+  </data>
+  <data name="&gt;&gt;CylindricalCheckBox.Name" xml:space="preserve">
+    <value>CylindricalCheckBox</value>
+  </data>
+  <data name="&gt;&gt;CylindricalCheckBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;CylindricalCheckBox.Parent" xml:space="preserve">
+    <value>CapLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;CylindricalCheckBox.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;EndCappedCheckBox.Name" xml:space="preserve">
+    <value>EndCappedCheckBox</value>
+  </data>
+  <data name="&gt;&gt;EndCappedCheckBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;EndCappedCheckBox.Parent" xml:space="preserve">
+    <value>CapLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;EndCappedCheckBox.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;StartCappedCheckBox.Name" xml:space="preserve">
+    <value>StartCappedCheckBox</value>
+  </data>
+  <data name="&gt;&gt;StartCappedCheckBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;StartCappedCheckBox.Parent" xml:space="preserve">
+    <value>CapLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;StartCappedCheckBox.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="CapLayoutPanel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 127</value>
+  </data>
+  <data name="CapLayoutPanel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>0, 0, 0, 0</value>
+  </data>
+  <data name="CapLayoutPanel.MinimumSize" type="System.Drawing.Size, System.Drawing">
+    <value>320, 0</value>
+  </data>
+  <data name="CapLayoutPanel.RowCount" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="CapLayoutPanel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>320, 46</value>
+  </data>
+  <data name="CapLayoutPanel.TabIndex" type="System.Int32, mscorlib">
+    <value>12</value>
+  </data>
+  <data name="&gt;&gt;CapLayoutPanel.Name" xml:space="preserve">
+    <value>CapLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;CapLayoutPanel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;CapLayoutPanel.Parent" xml:space="preserve">
+    <value>flowLayoutPanel1</value>
+  </data>
+  <data name="&gt;&gt;CapLayoutPanel.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="CapLayoutPanel.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="CylindricalCheckBox" Row="1" RowSpan="1" Column="0" ColumnSpan="2" /&gt;&lt;Control Name="EndCappedCheckBox" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="StartCappedCheckBox" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="AutoSize,0,Percent,100" /&gt;&lt;Rows Styles="Percent,100,AutoSize,20" /&gt;&lt;/TableLayoutSettings&gt;</value>
+  </data>
+  <data name="GrabbingLayoutPanel.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="GrabbingLayoutPanel.AutoSizeMode" type="System.Windows.Forms.AutoSizeMode, System.Windows.Forms">
+    <value>GrowAndShrink</value>
+  </data>
+  <data name="GrabbingLayoutPanel.ColumnCount" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;GrabbingRequiredCheckBox.Name" xml:space="preserve">
+    <value>GrabbingRequiredCheckBox</value>
+  </data>
+  <data name="&gt;&gt;GrabbingRequiredCheckBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;GrabbingRequiredCheckBox.Parent" xml:space="preserve">
+    <value>GrabbingLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;GrabbingRequiredCheckBox.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;GrabbingCheckBox.Name" xml:space="preserve">
+    <value>GrabbingCheckBox</value>
+  </data>
+  <data name="&gt;&gt;GrabbingCheckBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;GrabbingCheckBox.Parent" xml:space="preserve">
+    <value>GrabbingLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;GrabbingCheckBox.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="GrabbingLayoutPanel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 173</value>
+  </data>
+  <data name="GrabbingLayoutPanel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>0, 0, 0, 0</value>
+  </data>
+  <data name="GrabbingLayoutPanel.MinimumSize" type="System.Drawing.Size, System.Drawing">
+    <value>320, 0</value>
+  </data>
+  <data name="GrabbingLayoutPanel.RowCount" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="GrabbingLayoutPanel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>320, 23</value>
+  </data>
+  <data name="GrabbingLayoutPanel.TabIndex" type="System.Int32, mscorlib">
+    <value>11</value>
+  </data>
+  <data name="&gt;&gt;GrabbingLayoutPanel.Name" xml:space="preserve">
+    <value>GrabbingLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;GrabbingLayoutPanel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;GrabbingLayoutPanel.Parent" xml:space="preserve">
+    <value>flowLayoutPanel1</value>
+  </data>
+  <data name="&gt;&gt;GrabbingLayoutPanel.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="GrabbingLayoutPanel.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="GrabbingRequiredCheckBox" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="GrabbingCheckBox" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="AutoSize,0,Percent,100" /&gt;&lt;Rows Styles="Percent,100" /&gt;&lt;/TableLayoutSettings&gt;</value>
+  </data>
+  <data name="&gt;&gt;SpringEditor.Name" xml:space="preserve">
+    <value>SpringEditor</value>
+  </data>
+  <data name="&gt;&gt;SpringEditor.Type" xml:space="preserve">
+    <value>LDDModder.BrickEditor.UI.Editors.VectorEditor, Brick Studio, Version=1.0.5.14343, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;SpringEditor.Parent" xml:space="preserve">
+    <value>SpringPanel</value>
+  </data>
+  <data name="&gt;&gt;SpringEditor.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="SpringPanel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 196</value>
+  </data>
+  <data name="SpringPanel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>0, 0, 0, 0</value>
+  </data>
+  <data name="SpringPanel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>320, 26</value>
+  </data>
+  <data name="SpringPanel.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="&gt;&gt;SpringPanel.Name" xml:space="preserve">
+    <value>SpringPanel</value>
+  </data>
+  <data name="&gt;&gt;SpringPanel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;SpringPanel.Parent" xml:space="preserve">
+    <value>flowLayoutPanel1</value>
+  </data>
+  <data name="&gt;&gt;SpringPanel.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="GearLayoutPanel.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="GearLayoutPanel.AutoSizeMode" type="System.Windows.Forms.AutoSizeMode, System.Windows.Forms">
+    <value>GrowAndShrink</value>
+  </data>
+  <data name="GearLayoutPanel.ColumnCount" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;RadiusLabel.Name" xml:space="preserve">
+    <value>RadiusLabel</value>
+  </data>
+  <data name="&gt;&gt;RadiusLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;RadiusLabel.Parent" xml:space="preserve">
+    <value>GearLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;RadiusLabel.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;ToothCountLabel.Name" xml:space="preserve">
+    <value>ToothCountLabel</value>
+  </data>
+  <data name="&gt;&gt;ToothCountLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ToothCountLabel.Parent" xml:space="preserve">
+    <value>GearLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;ToothCountLabel.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;ToothNumBox.Name" xml:space="preserve">
+    <value>ToothNumBox</value>
+  </data>
+  <data name="&gt;&gt;ToothNumBox.Type" xml:space="preserve">
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.5.14343, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;ToothNumBox.Parent" xml:space="preserve">
+    <value>GearLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;ToothNumBox.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;RadiusNumBox.Name" xml:space="preserve">
+    <value>RadiusNumBox</value>
+  </data>
+  <data name="&gt;&gt;RadiusNumBox.Type" xml:space="preserve">
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.5.14343, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;RadiusNumBox.Parent" xml:space="preserve">
+    <value>GearLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;RadiusNumBox.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="GearLayoutPanel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>323, 3</value>
+  </data>
+  <data name="GearLayoutPanel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>0, 0, 0, 0</value>
+  </data>
+  <data name="GearLayoutPanel.RowCount" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="GearLayoutPanel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>320, 26</value>
+  </data>
+  <data name="GearLayoutPanel.TabIndex" type="System.Int32, mscorlib">
+    <value>10</value>
+  </data>
+  <data name="&gt;&gt;GearLayoutPanel.Name" xml:space="preserve">
+    <value>GearLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;GearLayoutPanel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;GearLayoutPanel.Parent" xml:space="preserve">
+    <value>flowLayoutPanel1</value>
+  </data>
+  <data name="&gt;&gt;GearLayoutPanel.ZOrder" xml:space="preserve">
+    <value>8</value>
+  </data>
+  <data name="GearLayoutPanel.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="RadiusLabel" Row="0" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="ToothCountLabel" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="ToothNumBox" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="RadiusNumBox" Row="0" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,80,Absolute,80,Absolute,80,Absolute,80" /&gt;&lt;Rows Styles="Percent,100" /&gt;&lt;/TableLayoutSettings&gt;</value>
+  </data>
+  <data name="HingeLayoutPanel.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="HingeLayoutPanel.AutoSizeMode" type="System.Windows.Forms.AutoSizeMode, System.Windows.Forms">
+    <value>GrowAndShrink</value>
+  </data>
+  <data name="HingeLayoutPanel.ColumnCount" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;LimitMinBox.Name" xml:space="preserve">
+    <value>LimitMinBox</value>
+  </data>
+  <data name="&gt;&gt;LimitMinBox.Type" xml:space="preserve">
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.5.14343, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;LimitMinBox.Parent" xml:space="preserve">
+    <value>HingeLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;LimitMinBox.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;label1.Name" xml:space="preserve">
+    <value>label1</value>
+  </data>
+  <data name="&gt;&gt;label1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label1.Parent" xml:space="preserve">
+    <value>HingeLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;OrientedCheckBox.Name" xml:space="preserve">
+    <value>OrientedCheckBox</value>
+  </data>
+  <data name="&gt;&gt;OrientedCheckBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;OrientedCheckBox.Parent" xml:space="preserve">
+    <value>HingeLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;OrientedCheckBox.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;label2.Name" xml:space="preserve">
+    <value>label2</value>
+  </data>
+  <data name="&gt;&gt;label2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label2.Parent" xml:space="preserve">
+    <value>HingeLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;label2.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;LimitMaxBox.Name" xml:space="preserve">
+    <value>LimitMaxBox</value>
+  </data>
+  <data name="&gt;&gt;LimitMaxBox.Type" xml:space="preserve">
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.5.14343, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;LimitMaxBox.Parent" xml:space="preserve">
+    <value>HingeLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;LimitMaxBox.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;FlipLimitMaxBox.Name" xml:space="preserve">
+    <value>FlipLimitMaxBox</value>
+  </data>
+  <data name="&gt;&gt;FlipLimitMaxBox.Type" xml:space="preserve">
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.5.14343, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;FlipLimitMaxBox.Parent" xml:space="preserve">
+    <value>HingeLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;FlipLimitMaxBox.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="&gt;&gt;FlipLimitMinBox.Name" xml:space="preserve">
+    <value>FlipLimitMinBox</value>
+  </data>
+  <data name="&gt;&gt;FlipLimitMinBox.Type" xml:space="preserve">
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.5.14343, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;FlipLimitMinBox.Parent" xml:space="preserve">
+    <value>HingeLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;FlipLimitMinBox.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="&gt;&gt;label3.Name" xml:space="preserve">
+    <value>label3</value>
+  </data>
+  <data name="&gt;&gt;label3.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label3.Parent" xml:space="preserve">
+    <value>HingeLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;label3.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="&gt;&gt;label4.Name" xml:space="preserve">
+    <value>label4</value>
+  </data>
+  <data name="&gt;&gt;label4.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label4.Parent" xml:space="preserve">
+    <value>HingeLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;label4.ZOrder" xml:space="preserve">
+    <value>8</value>
+  </data>
+  <data name="HingeLayoutPanel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>323, 29</value>
+  </data>
+  <data name="HingeLayoutPanel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>0, 0, 0, 0</value>
+  </data>
+  <data name="HingeLayoutPanel.RowCount" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="HingeLayoutPanel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>320, 68</value>
+  </data>
+  <data name="HingeLayoutPanel.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;HingeLayoutPanel.Name" xml:space="preserve">
+    <value>HingeLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;HingeLayoutPanel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;HingeLayoutPanel.Parent" xml:space="preserve">
+    <value>flowLayoutPanel1</value>
+  </data>
+  <data name="&gt;&gt;HingeLayoutPanel.ZOrder" xml:space="preserve">
+    <value>9</value>
+  </data>
+  <data name="HingeLayoutPanel.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="LimitMinBox" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="label1" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="OrientedCheckBox" Row="0" RowSpan="1" Column="0" ColumnSpan="2" /&gt;&lt;Control Name="label2" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="LimitMaxBox" Row="2" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="FlipLimitMaxBox" Row="2" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;Control Name="FlipLimitMinBox" Row="2" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="label3" Row="0" RowSpan="2" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="label4" Row="0" RowSpan="2" Column="3" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,80,Absolute,80,Absolute,80,Absolute,80" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0,AutoSize,0,Absolute,20" /&gt;&lt;/TableLayoutSettings&gt;</value>
+  </data>
+  <data name="&gt;&gt;TagTextBox.Name" xml:space="preserve">
+    <value>TagTextBox</value>
+  </data>
+  <data name="&gt;&gt;TagTextBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;TagTextBox.Parent" xml:space="preserve">
+    <value>TagControlLabel</value>
+  </data>
+  <data name="&gt;&gt;TagTextBox.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="TagControlLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>323, 97</value>
+  </data>
+  <data name="TagControlLabel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>0, 0, 0, 0</value>
+  </data>
+  <data name="TagControlLabel.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 0, 0, 0</value>
+  </data>
+  <data name="TagControlLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>320, 26</value>
+  </data>
+  <data name="TagControlLabel.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="TagControlLabel.Text" xml:space="preserve">
+    <value>Tag</value>
+  </data>
+  <data name="&gt;&gt;TagControlLabel.Name" xml:space="preserve">
+    <value>TagControlLabel</value>
+  </data>
+  <data name="&gt;&gt;TagControlLabel.Type" xml:space="preserve">
+    <value>LDDModder.BrickEditor.UI.Controls.ControlLabel, Brick Studio, Version=1.0.5.14343, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;TagControlLabel.Parent" xml:space="preserve">
+    <value>flowLayoutPanel1</value>
+  </data>
+  <data name="&gt;&gt;TagControlLabel.ZOrder" xml:space="preserve">
+    <value>10</value>
+  </data>
+  <data name="TransformEdit.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="TransformEdit.AutoSizeMode" type="System.Windows.Forms.AutoSizeMode, System.Windows.Forms">
+    <value>GrowAndShrink</value>
+  </data>
+  <data name="TransformEdit.Location" type="System.Drawing.Point, System.Drawing">
+    <value>323, 126</value>
+  </data>
+  <data name="TransformEdit.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>0, 3, 0, 0</value>
+  </data>
+  <data name="TransformEdit.Size" type="System.Drawing.Size, System.Drawing">
+    <value>302, 68</value>
+  </data>
+  <data name="TransformEdit.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="&gt;&gt;TransformEdit.Name" xml:space="preserve">
+    <value>TransformEdit</value>
+  </data>
+  <data name="&gt;&gt;TransformEdit.Type" xml:space="preserve">
+    <value>LDDModder.BrickEditor.UI.Controls.TransformEditor, Brick Studio, Version=1.0.5.14343, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;TransformEdit.Parent" xml:space="preserve">
+    <value>flowLayoutPanel1</value>
+  </data>
+  <data name="&gt;&gt;TransformEdit.ZOrder" xml:space="preserve">
+    <value>11</value>
+  </data>
+  <data name="flowLayoutPanel1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="flowLayoutPanel1.FlowDirection" type="System.Windows.Forms.FlowDirection, System.Windows.Forms">
+    <value>TopDown</value>
+  </data>
+  <data name="flowLayoutPanel1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="flowLayoutPanel1.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 0, 0</value>
+  </data>
+  <data name="flowLayoutPanel1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>698, 231</value>
+  </data>
+  <data name="flowLayoutPanel1.TabIndex" type="System.Int32, mscorlib">
+    <value>6</value>
+  </data>
+  <data name="&gt;&gt;flowLayoutPanel1.Name" xml:space="preserve">
+    <value>flowLayoutPanel1</value>
+  </data>
+  <data name="&gt;&gt;flowLayoutPanel1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.FlowLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;flowLayoutPanel1.Parent" xml:space="preserve">
+    <value>panel1</value>
+  </data>
+  <data name="&gt;&gt;flowLayoutPanel1.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="panel1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="panel1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 29</value>
+  </data>
+  <data name="panel1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>698, 231</value>
+  </data>
+  <data name="panel1.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;panel1.Name" xml:space="preserve">
+    <value>panel1</value>
+  </data>
+  <data name="&gt;&gt;panel1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;panel1.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;panel1.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="AxesNumberBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>83, 3</value>
+  </data>
+  <data name="AxesNumberBox.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>0, 3, 3, 3</value>
+  </data>
+  <data name="AxesNumberBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>70, 20</value>
+  </data>
+  <data name="AxesNumberBox.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="AxesNumberBox.TextAlign" type="System.Windows.Forms.HorizontalAlignment, System.Windows.Forms">
+    <value>Right</value>
+  </data>
+  <data name="&gt;&gt;AxesNumberBox.Name" xml:space="preserve">
+    <value>AxesNumberBox</value>
+  </data>
+  <data name="&gt;&gt;AxesNumberBox.Type" xml:space="preserve">
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.5.14343, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;AxesNumberBox.Parent" xml:space="preserve">
+    <value>AxesControlLabel</value>
+  </data>
+  <data name="&gt;&gt;AxesNumberBox.ZOrder" xml:space="preserve">
+    <value>0</value>
   </data>
   <data name="CylindricalCheckBox.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -621,48 +1164,6 @@
   <data name="&gt;&gt;StartCappedCheckBox.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
-  <data name="CapLayoutPanel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 127</value>
-  </data>
-  <data name="CapLayoutPanel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>0, 0, 0, 0</value>
-  </data>
-  <data name="CapLayoutPanel.MinimumSize" type="System.Drawing.Size, System.Drawing">
-    <value>320, 0</value>
-  </data>
-  <data name="CapLayoutPanel.RowCount" type="System.Int32, mscorlib">
-    <value>2</value>
-  </data>
-  <data name="CapLayoutPanel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>320, 46</value>
-  </data>
-  <data name="CapLayoutPanel.TabIndex" type="System.Int32, mscorlib">
-    <value>12</value>
-  </data>
-  <data name="&gt;&gt;CapLayoutPanel.Name" xml:space="preserve">
-    <value>CapLayoutPanel</value>
-  </data>
-  <data name="&gt;&gt;CapLayoutPanel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;CapLayoutPanel.Parent" xml:space="preserve">
-    <value>flowLayoutPanel1</value>
-  </data>
-  <data name="&gt;&gt;CapLayoutPanel.ZOrder" xml:space="preserve">
-    <value>5</value>
-  </data>
-  <data name="CapLayoutPanel.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="CylindricalCheckBox" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="EndCappedCheckBox" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="StartCappedCheckBox" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="AutoSize,0,Percent,100" /&gt;&lt;Rows Styles="Percent,100,AutoSize,20" /&gt;&lt;/TableLayoutSettings&gt;</value>
-  </data>
-  <data name="GrabbingLayoutPanel.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="GrabbingLayoutPanel.AutoSizeMode" type="System.Windows.Forms.AutoSizeMode, System.Windows.Forms">
-    <value>GrowAndShrink</value>
-  </data>
-  <data name="GrabbingLayoutPanel.ColumnCount" type="System.Int32, mscorlib">
-    <value>2</value>
-  </data>
   <data name="GrabbingRequiredCheckBox.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -729,39 +1230,6 @@
   <data name="&gt;&gt;GrabbingCheckBox.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
-  <data name="GrabbingLayoutPanel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 173</value>
-  </data>
-  <data name="GrabbingLayoutPanel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>0, 0, 0, 0</value>
-  </data>
-  <data name="GrabbingLayoutPanel.MinimumSize" type="System.Drawing.Size, System.Drawing">
-    <value>320, 0</value>
-  </data>
-  <data name="GrabbingLayoutPanel.RowCount" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="GrabbingLayoutPanel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>320, 23</value>
-  </data>
-  <data name="GrabbingLayoutPanel.TabIndex" type="System.Int32, mscorlib">
-    <value>11</value>
-  </data>
-  <data name="&gt;&gt;GrabbingLayoutPanel.Name" xml:space="preserve">
-    <value>GrabbingLayoutPanel</value>
-  </data>
-  <data name="&gt;&gt;GrabbingLayoutPanel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;GrabbingLayoutPanel.Parent" xml:space="preserve">
-    <value>flowLayoutPanel1</value>
-  </data>
-  <data name="&gt;&gt;GrabbingLayoutPanel.ZOrder" xml:space="preserve">
-    <value>6</value>
-  </data>
-  <data name="GrabbingLayoutPanel.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="GrabbingRequiredCheckBox" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="GrabbingCheckBox" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="AutoSize,0,Percent,100" /&gt;&lt;Rows Styles="Percent,100" /&gt;&lt;/TableLayoutSettings&gt;</value>
-  </data>
   <data name="SpringEditor.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
@@ -778,46 +1246,13 @@
     <value>SpringEditor</value>
   </data>
   <data name="&gt;&gt;SpringEditor.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Editors.VectorEditor, Brick Studio, Version=1.0.5.28985, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Editors.VectorEditor, Brick Studio, Version=1.0.5.14343, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;SpringEditor.Parent" xml:space="preserve">
     <value>SpringPanel</value>
   </data>
   <data name="&gt;&gt;SpringEditor.ZOrder" xml:space="preserve">
     <value>0</value>
-  </data>
-  <data name="SpringPanel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 196</value>
-  </data>
-  <data name="SpringPanel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>0, 0, 0, 0</value>
-  </data>
-  <data name="SpringPanel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>320, 26</value>
-  </data>
-  <data name="SpringPanel.TabIndex" type="System.Int32, mscorlib">
-    <value>7</value>
-  </data>
-  <data name="&gt;&gt;SpringPanel.Name" xml:space="preserve">
-    <value>SpringPanel</value>
-  </data>
-  <data name="&gt;&gt;SpringPanel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;SpringPanel.Parent" xml:space="preserve">
-    <value>flowLayoutPanel1</value>
-  </data>
-  <data name="&gt;&gt;SpringPanel.ZOrder" xml:space="preserve">
-    <value>7</value>
-  </data>
-  <data name="GearLayoutPanel.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="GearLayoutPanel.AutoSizeMode" type="System.Windows.Forms.AutoSizeMode, System.Windows.Forms">
-    <value>GrowAndShrink</value>
-  </data>
-  <data name="GearLayoutPanel.ColumnCount" type="System.Int32, mscorlib">
-    <value>4</value>
   </data>
   <data name="RadiusLabel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Left</value>
@@ -907,7 +1342,7 @@
     <value>ToothNumBox</value>
   </data>
   <data name="&gt;&gt;ToothNumBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.5.28985, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.5.14343, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;ToothNumBox.Parent" xml:space="preserve">
     <value>GearLayoutPanel</value>
@@ -934,52 +1369,13 @@
     <value>RadiusNumBox</value>
   </data>
   <data name="&gt;&gt;RadiusNumBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.5.28985, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.5.14343, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;RadiusNumBox.Parent" xml:space="preserve">
     <value>GearLayoutPanel</value>
   </data>
   <data name="&gt;&gt;RadiusNumBox.ZOrder" xml:space="preserve">
     <value>3</value>
-  </data>
-  <data name="GearLayoutPanel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>323, 3</value>
-  </data>
-  <data name="GearLayoutPanel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>0, 0, 0, 0</value>
-  </data>
-  <data name="GearLayoutPanel.RowCount" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="GearLayoutPanel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>320, 26</value>
-  </data>
-  <data name="GearLayoutPanel.TabIndex" type="System.Int32, mscorlib">
-    <value>10</value>
-  </data>
-  <data name="&gt;&gt;GearLayoutPanel.Name" xml:space="preserve">
-    <value>GearLayoutPanel</value>
-  </data>
-  <data name="&gt;&gt;GearLayoutPanel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;GearLayoutPanel.Parent" xml:space="preserve">
-    <value>flowLayoutPanel1</value>
-  </data>
-  <data name="&gt;&gt;GearLayoutPanel.ZOrder" xml:space="preserve">
-    <value>8</value>
-  </data>
-  <data name="GearLayoutPanel.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="RadiusLabel" Row="0" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="ToothCountLabel" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="ToothNumBox" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="RadiusNumBox" Row="0" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,80,Absolute,80,Absolute,80,Absolute,80" /&gt;&lt;Rows Styles="Percent,100" /&gt;&lt;/TableLayoutSettings&gt;</value>
-  </data>
-  <data name="HingeLayoutPanel.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="HingeLayoutPanel.AutoSizeMode" type="System.Windows.Forms.AutoSizeMode, System.Windows.Forms">
-    <value>GrowAndShrink</value>
-  </data>
-  <data name="HingeLayoutPanel.ColumnCount" type="System.Int32, mscorlib">
-    <value>4</value>
   </data>
   <data name="LimitMinBox.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
@@ -1000,7 +1396,7 @@
     <value>LimitMinBox</value>
   </data>
   <data name="&gt;&gt;LimitMinBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.5.28985, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.5.14343, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;LimitMinBox.Parent" xml:space="preserve">
     <value>HingeLayoutPanel</value>
@@ -1054,7 +1450,7 @@
     <value>3, 3</value>
   </data>
   <data name="OrientedCheckBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>78, 17</value>
+    <value>100, 17</value>
   </data>
   <data name="OrientedCheckBox.TabIndex" type="System.Int32, mscorlib">
     <value>13</value>
@@ -1123,7 +1519,7 @@
     <value>LimitMaxBox</value>
   </data>
   <data name="&gt;&gt;LimitMaxBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.5.28985, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.5.14343, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;LimitMaxBox.Parent" xml:space="preserve">
     <value>HingeLayoutPanel</value>
@@ -1147,7 +1543,7 @@
     <value>FlipLimitMaxBox</value>
   </data>
   <data name="&gt;&gt;FlipLimitMaxBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.5.28985, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.5.14343, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;FlipLimitMaxBox.Parent" xml:space="preserve">
     <value>HingeLayoutPanel</value>
@@ -1171,7 +1567,7 @@
     <value>FlipLimitMinBox</value>
   </data>
   <data name="&gt;&gt;FlipLimitMinBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.5.28985, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.5.14343, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;FlipLimitMinBox.Parent" xml:space="preserve">
     <value>HingeLayoutPanel</value>
@@ -1251,36 +1647,6 @@
   <data name="&gt;&gt;label4.ZOrder" xml:space="preserve">
     <value>8</value>
   </data>
-  <data name="HingeLayoutPanel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>323, 29</value>
-  </data>
-  <data name="HingeLayoutPanel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>0, 0, 0, 0</value>
-  </data>
-  <data name="HingeLayoutPanel.RowCount" type="System.Int32, mscorlib">
-    <value>3</value>
-  </data>
-  <data name="HingeLayoutPanel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>320, 68</value>
-  </data>
-  <data name="HingeLayoutPanel.TabIndex" type="System.Int32, mscorlib">
-    <value>4</value>
-  </data>
-  <data name="&gt;&gt;HingeLayoutPanel.Name" xml:space="preserve">
-    <value>HingeLayoutPanel</value>
-  </data>
-  <data name="&gt;&gt;HingeLayoutPanel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;HingeLayoutPanel.Parent" xml:space="preserve">
-    <value>flowLayoutPanel1</value>
-  </data>
-  <data name="&gt;&gt;HingeLayoutPanel.ZOrder" xml:space="preserve">
-    <value>9</value>
-  </data>
-  <data name="HingeLayoutPanel.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="LimitMinBox" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="label1" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="OrientedCheckBox" Row="0" RowSpan="1" Column="0" ColumnSpan="2" /&gt;&lt;Control Name="label2" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="LimitMaxBox" Row="2" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="FlipLimitMaxBox" Row="2" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;Control Name="FlipLimitMinBox" Row="2" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="label3" Row="0" RowSpan="2" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="label4" Row="0" RowSpan="2" Column="3" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,80,Absolute,80,Absolute,80,Absolute,80" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0,AutoSize,0,Absolute,20" /&gt;&lt;/TableLayoutSettings&gt;</value>
-  </data>
   <data name="TagTextBox.Location" type="System.Drawing.Point, System.Drawing">
     <value>83, 3</value>
   </data>
@@ -1303,120 +1669,6 @@
     <value>TagControlLabel</value>
   </data>
   <data name="&gt;&gt;TagTextBox.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="TagControlLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>323, 97</value>
-  </data>
-  <data name="TagControlLabel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>0, 0, 0, 0</value>
-  </data>
-  <data name="TagControlLabel.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 0, 0, 0</value>
-  </data>
-  <data name="TagControlLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>320, 26</value>
-  </data>
-  <data name="TagControlLabel.TabIndex" type="System.Int32, mscorlib">
-    <value>7</value>
-  </data>
-  <data name="TagControlLabel.Text" xml:space="preserve">
-    <value>Tag</value>
-  </data>
-  <data name="&gt;&gt;TagControlLabel.Name" xml:space="preserve">
-    <value>TagControlLabel</value>
-  </data>
-  <data name="&gt;&gt;TagControlLabel.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.ControlLabel, Brick Studio, Version=1.0.5.28985, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;TagControlLabel.Parent" xml:space="preserve">
-    <value>flowLayoutPanel1</value>
-  </data>
-  <data name="&gt;&gt;TagControlLabel.ZOrder" xml:space="preserve">
-    <value>10</value>
-  </data>
-  <data name="TransformEdit.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="TransformEdit.AutoSizeMode" type="System.Windows.Forms.AutoSizeMode, System.Windows.Forms">
-    <value>GrowAndShrink</value>
-  </data>
-  <data name="TransformEdit.Location" type="System.Drawing.Point, System.Drawing">
-    <value>323, 126</value>
-  </data>
-  <data name="TransformEdit.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>0, 3, 0, 0</value>
-  </data>
-  <data name="TransformEdit.Size" type="System.Drawing.Size, System.Drawing">
-    <value>302, 68</value>
-  </data>
-  <data name="TransformEdit.TabIndex" type="System.Int32, mscorlib">
-    <value>8</value>
-  </data>
-  <data name="&gt;&gt;TransformEdit.Name" xml:space="preserve">
-    <value>TransformEdit</value>
-  </data>
-  <data name="&gt;&gt;TransformEdit.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.TransformEditor, Brick Studio, Version=1.0.5.28985, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;TransformEdit.Parent" xml:space="preserve">
-    <value>flowLayoutPanel1</value>
-  </data>
-  <data name="&gt;&gt;TransformEdit.ZOrder" xml:space="preserve">
-    <value>11</value>
-  </data>
-  <data name="flowLayoutPanel1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="flowLayoutPanel1.FlowDirection" type="System.Windows.Forms.FlowDirection, System.Windows.Forms">
-    <value>TopDown</value>
-  </data>
-  <data name="flowLayoutPanel1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
-  </data>
-  <data name="flowLayoutPanel1.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 3, 0, 0</value>
-  </data>
-  <data name="flowLayoutPanel1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>698, 231</value>
-  </data>
-  <data name="flowLayoutPanel1.TabIndex" type="System.Int32, mscorlib">
-    <value>6</value>
-  </data>
-  <data name="&gt;&gt;flowLayoutPanel1.Name" xml:space="preserve">
-    <value>flowLayoutPanel1</value>
-  </data>
-  <data name="&gt;&gt;flowLayoutPanel1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.FlowLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;flowLayoutPanel1.Parent" xml:space="preserve">
-    <value>panel1</value>
-  </data>
-  <data name="&gt;&gt;flowLayoutPanel1.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="panel1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="panel1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 29</value>
-  </data>
-  <data name="panel1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>698, 231</value>
-  </data>
-  <data name="panel1.TabIndex" type="System.Int32, mscorlib">
-    <value>4</value>
-  </data>
-  <data name="&gt;&gt;panel1.Name" xml:space="preserve">
-    <value>panel1</value>
-  </data>
-  <data name="&gt;&gt;panel1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;panel1.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;panel1.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
@@ -1447,7 +1699,7 @@
     <value>SyncSelectionCheckBox</value>
   </data>
   <data name="&gt;&gt;SyncSelectionCheckBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.ToolStripCheckBox, Brick Studio, Version=1.0.5.28985, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.ToolStripCheckBox, Brick Studio, Version=1.0.5.14343, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;AddConnectionDropDown.Name" xml:space="preserve">
     <value>AddConnectionDropDown</value>
@@ -1459,6 +1711,6 @@
     <value>ConnectionEditorPanel</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Panels.ProjectDocumentPanel, Brick Studio, Version=1.0.5.28985, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Panels.ProjectDocumentPanel, Brick Studio, Version=1.0.5.14343, Culture=neutral, PublicKeyToken=null</value>
   </data>
 </root>

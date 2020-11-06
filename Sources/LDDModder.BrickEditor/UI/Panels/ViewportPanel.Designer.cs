@@ -72,7 +72,8 @@
             this.ModelRenderMode3Button = new System.Windows.Forms.ToolStripButton();
             this.visualStudioToolStripExtender1 = new WeifenLuo.WinFormsUI.Docking.VisualStudioToolStripExtender(this.components);
             this.SelectionInfoPanel = new System.Windows.Forms.Panel();
-            this.transformEditor1 = new LDDModder.BrickEditor.UI.Controls.TransformEditor();
+            this.SelectionTransformEditor = new LDDModder.BrickEditor.UI.Controls.TransformEditor();
+            this.DisplayMenu_3dCursor = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1.SuspendLayout();
             this.SelectionInfoPanel.SuspendLayout();
             this.SuspendLayout();
@@ -182,7 +183,8 @@
             this.DisplayMenuDropDown.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.DisplayMenu_Meshes,
             this.DisplayMenu_Collisions,
-            this.DisplayMenu_Connections});
+            this.DisplayMenu_Connections,
+            this.DisplayMenu_3dCursor});
             resources.ApplyResources(this.DisplayMenuDropDown, "DisplayMenuDropDown");
             this.DisplayMenuDropDown.Name = "DisplayMenuDropDown";
             // 
@@ -397,16 +399,24 @@
             // SelectionInfoPanel
             // 
             resources.ApplyResources(this.SelectionInfoPanel, "SelectionInfoPanel");
-            this.SelectionInfoPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
-            this.SelectionInfoPanel.Controls.Add(this.transformEditor1);
+            this.SelectionInfoPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(105)))), ((int)(((byte)(90)))), ((int)(((byte)(100)))));
+            this.SelectionInfoPanel.Controls.Add(this.SelectionTransformEditor);
             this.SelectionInfoPanel.Name = "SelectionInfoPanel";
             // 
-            // transformEditor1
+            // SelectionTransformEditor
             // 
-            resources.ApplyResources(this.transformEditor1, "transformEditor1");
-            this.transformEditor1.ForeColor = System.Drawing.Color.White;
-            this.transformEditor1.Name = "transformEditor1";
-            this.transformEditor1.ViewLayout = LDDModder.BrickEditor.UI.Controls.TransformEditor.EditLayout.Vertical;
+            resources.ApplyResources(this.SelectionTransformEditor, "SelectionTransformEditor");
+            this.SelectionTransformEditor.ForeColor = System.Drawing.Color.White;
+            this.SelectionTransformEditor.Name = "SelectionTransformEditor";
+            this.SelectionTransformEditor.ViewLayout = LDDModder.BrickEditor.UI.Controls.TransformEditor.EditLayout.Vertical;
+            this.SelectionTransformEditor.ValueChanged += new System.EventHandler(this.SelectionTransformEditor_ValueChanged);
+            // 
+            // DisplayMenu_3dCursor
+            // 
+            this.DisplayMenu_3dCursor.CheckOnClick = true;
+            this.DisplayMenu_3dCursor.Name = "DisplayMenu_3dCursor";
+            resources.ApplyResources(this.DisplayMenu_3dCursor, "DisplayMenu_3dCursor");
+            this.DisplayMenu_3dCursor.CheckedChanged += new System.EventHandler(this.DisplayMenu_3dCursor_CheckedChanged);
             // 
             // ViewportPanel
             // 
@@ -463,11 +473,12 @@
         private System.Windows.Forms.ToolStripMenuItem Bones_RebuildConnections;
         private System.Windows.Forms.ToolStripMenuItem Bones_CalcBounding;
         private System.Windows.Forms.ToolStripMenuItem Bones_CopyData;
-        private Controls.TransformEditor transformEditor1;
+        private Controls.TransformEditor SelectionTransformEditor;
         private System.Windows.Forms.ToolStripMenuItem MeshesMenu_CalculateOutlines;
         private System.Windows.Forms.ToolStripMenuItem MeshesMenu_RemoveOutlines;
         private System.Windows.Forms.ToolStripSeparator MeshesMenu_Separator1;
         private System.Windows.Forms.ToolStripMenuItem Bones_LinkBones;
         private System.Windows.Forms.ToolStripButton ToggleGridButton;
+        private System.Windows.Forms.ToolStripMenuItem DisplayMenu_3dCursor;
     }
 }

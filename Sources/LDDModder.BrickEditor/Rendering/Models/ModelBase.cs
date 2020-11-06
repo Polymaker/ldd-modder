@@ -13,13 +13,16 @@ namespace LDDModder.BrickEditor.Rendering
 
         public bool Visible
         {
-            get => GetVisibleCore();
+            get => VisibleOverride() ?? _Visible;
             set
             {
-                if (value != _Visible)
+                if (_Visible != value)
                 {
                     _Visible = value;
-                    OnVisibilityChanged();
+                    var valueOverride = VisibleOverride();
+
+                    if (!valueOverride.HasValue || valueOverride.Value != value)
+                        OnVisibilityChanged();
                 }
             }
         }
@@ -49,6 +52,8 @@ namespace LDDModder.BrickEditor.Rendering
         public bool IsSelectable { get; set; } = true;
 
         public bool IsSelected { get; set; }
+
+        public int RenderLayer { get; set; }
 
         public Vector3 Origin => Vector3.TransformPosition(Vector3.Zero, Transform);
 
@@ -108,12 +113,12 @@ namespace LDDModder.BrickEditor.Rendering
 
         #endregion
 
-        protected virtual bool GetVisibleCore()
+        protected virtual bool? VisibleOverride()
         {
-            return _Visible;
+            return null;
         }
 
-        protected void OnVisibilityChanged()
+        protected virtual void OnVisibilityChanged()
         {
             VisibilityChanged?.Invoke(this, EventArgs.Empty);
         }

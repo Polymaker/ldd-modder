@@ -337,6 +337,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
         private bool _ShowPartModels;
         private bool _ShowCollisions;
         private bool _ShowConnections;
+        private bool _Show3dCursor;
         private MeshRenderMode _PartRenderMode;
         private bool BatchChangingVisibility;
 
@@ -370,6 +371,12 @@ namespace LDDModder.BrickEditor.ProjectHandling
             set => SetConnectionsVisibility(value);
         }
 
+        public bool Show3dCursor
+        {
+            get => _Show3dCursor;
+            set => Set3dCursorVisibility(value);
+        }
+
         public MeshRenderMode PartRenderMode
         {
             get => _PartRenderMode;
@@ -379,6 +386,8 @@ namespace LDDModder.BrickEditor.ProjectHandling
         public event EventHandler GridVisibilityChanged;
 
         public event EventHandler BonesVisibilityChanged;
+
+        public event EventHandler CursorVisibilityChanged;
 
         public event EventHandler PartModelsVisibilityChanged;
 
@@ -415,6 +424,18 @@ namespace LDDModder.BrickEditor.ProjectHandling
                 //}
 
                 BonesVisibilityChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        private void Set3dCursorVisibility(bool visible)
+        {
+            if (visible != _Show3dCursor)
+            {
+                Trace.WriteLine($"{nameof(Set3dCursorVisibility)}( visible => {visible} )");
+
+                _Show3dCursor = visible;
+
+                CursorVisibilityChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 

@@ -76,10 +76,13 @@ namespace LDDModder.BrickEditor.Rendering
             Visible = extender.IsVisible;
         }
 
-        protected override bool GetVisibleCore()
+        protected override bool? VisibleOverride()
         {
-            var extender = Element.GetExtension<ModelElementExtension>();
-            return extender?.IsVisible ?? base.GetVisibleCore();
+            var extender = Element?.GetExtension<ModelElementExtension>();
+            if (extender != null)
+                return extender.IsVisible;
+
+            return null;
         }
 
         protected override void OnTransformChanged()

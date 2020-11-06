@@ -67,10 +67,9 @@
             // BrowseModelBox
             // 
             this.BrowseModelBox.AutoSizeButton = true;
-            this.BrowseModelBox.ButtonText = "Select model...";
+            resources.ApplyResources(this.BrowseModelBox, "BrowseModelBox");
             this.BrowseModelBox.ButtonWidth = 87;
             this.tableLayoutPanel1.SetColumnSpan(this.BrowseModelBox, 4);
-            resources.ApplyResources(this.BrowseModelBox, "BrowseModelBox");
             this.BrowseModelBox.Name = "BrowseModelBox";
             this.BrowseModelBox.ReadOnly = true;
             this.BrowseModelBox.Value = "";
@@ -81,6 +80,7 @@
             this.ModelsGridView.AllowUserToAddRows = false;
             this.ModelsGridView.AllowUserToDeleteRows = false;
             this.ModelsGridView.AllowUserToResizeRows = false;
+            this.ModelsGridView.BackgroundColor = System.Drawing.SystemColors.Window;
             this.ModelsGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.ModelsGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.SelectionColumn,
@@ -187,6 +187,7 @@
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.SystemColors.Window;
             this.CancelButton = this.ReturnButton;
             this.Controls.Add(this.tableLayoutPanel1);
             this.MaximizeBox = false;

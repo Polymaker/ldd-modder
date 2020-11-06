@@ -235,6 +235,7 @@
             // CylindricalCheckBox
             // 
             resources.ApplyResources(this.CylindricalCheckBox, "CylindricalCheckBox");
+            this.CapLayoutPanel.SetColumnSpan(this.CylindricalCheckBox, 2);
             this.CylindricalCheckBox.Name = "CylindricalCheckBox";
             this.CylindricalCheckBox.UseVisualStyleBackColor = true;
             // 
