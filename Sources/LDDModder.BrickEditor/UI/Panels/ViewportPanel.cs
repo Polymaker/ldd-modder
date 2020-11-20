@@ -107,7 +107,9 @@ namespace LDDModder.BrickEditor.UI.Panels
             {
                 GraphicsContext.ShareContexts = true;
                 CreateGLControl();
-                GlWindowInfo = OpenTK.Platform.Utilities.CreateWindowsWindowInfo(Handle);
+
+                GlWindowInfo = OpenTKHelper.GetWindowInfo(Handle, false);
+             
                 ResourceContext = new GraphicsContext(new GraphicsMode(32, 24, 2, 8), GlWindowInfo);
                 ResourceContext.MakeCurrent(null);
                 GlContextCreated = true;
