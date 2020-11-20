@@ -66,6 +66,13 @@ namespace LDDModder.BrickEditor.Rendering
                     selectionBox,
                     new Vector4(0f, 1f, 1f, 1f), 1.5f);
             }
+
+            if (Surface.SurfaceID > 0)
+            {
+                RenderHelper.ModelShader.Use();
+                RenderHelper.ModelShader.UseTexture.Set(false);
+            }
+                
         }
 
         private void RenderPartialMesh(MeshRenderMode renderMode, SurfaceModelMesh model, MaterialInfo material)

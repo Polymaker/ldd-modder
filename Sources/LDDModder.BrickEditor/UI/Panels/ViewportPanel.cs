@@ -506,6 +506,8 @@ namespace LDDModder.BrickEditor.UI.Panels
                         model.RenderModel(Camera);
                 }
 
+                Draw3DTexts();
+
                 if (renderLayer.Key == 0 && ProjectManager.ShowGrid)
                     DrawGrid(); //Draw grid as second time 
             }
@@ -515,7 +517,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             TextureManager.Checkerboard.Bind(TextureUnit.Texture0);
             GL.Disable(EnableCap.Texture2D);
 
-            Draw3DTexts();
+            
         }
 
         private void Draw3DTexts()
