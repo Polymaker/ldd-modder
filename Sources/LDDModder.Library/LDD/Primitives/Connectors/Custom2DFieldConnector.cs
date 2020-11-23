@@ -312,11 +312,12 @@ namespace LDDModder.LDD.Primitives.Connectors
 
             var values = element.Value.Trim().Split(',').ToList();
             values.RemoveAll(x => string.IsNullOrWhiteSpace(x));
-
+            if (values.Count != expectedValueCount)
+                Console.WriteLine("Unexpected number of values!");
             //if (values.Count != expectedValueCount)
             //    throw new Exception("Unexpected number of values!");
-
-            for (int i = 0; i < values.Count; i++)
+            
+            for (int i = 0; i < expectedValueCount; i++)
             {
                 int rowIdx = (int)Math.Floor(i / (double)(Width + 1));
                 if (rowIdx > Height + 1)

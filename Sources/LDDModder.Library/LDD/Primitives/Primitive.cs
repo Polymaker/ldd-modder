@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
@@ -169,9 +170,16 @@ namespace LDDModder.LDD.Primitives
             var primitive = new Primitive();
             primitive.LoadFromXml(document);
 
-            if (stream is FileStream fs &&
-                int.TryParse(Path.GetFileNameWithoutExtension(fs.Name), out int primitiveID))
-                primitive.ID = primitiveID;
+            if (stream is FileStream fs)
+            {
+                string filename = Path.GetFileNameWithoutExtension(fs.Name);
+                var m = Regex.Match(filename, "^(\\d+)");
+                if (m.Success)
+                    primitive.ID = int.Parse(m.Groups[1].Value);
+            }
+            //if (stream is FileStream fs &&
+            //    int.TryParse(Path.GetFileNameWithoutExtension(fs.Name), out int primitiveID))
+            //    primitive.ID = primitiveID;
             
             return primitive;
         }
@@ -253,13 +261,21 @@ namespace LDDModder.LDD.Primitives
 
                 case "Decoration":
 
-                    if (FileVersion.Major == 1)
+                    if (FileVersion.Major == 1 && element.HasAttribute("faces"))
                     {
-                        int surfaceCount = element.ReadAttribute<int>("faces");
-                        SubMaterials = new int[surfaceCount];
-                        var values = element.ReadAttribute<string>("subMaterialRedirectLookupTable").Split(',');
-                        for (int i = 0; i < surfaceCount; i++)
-                            SubMaterials[i] = int.Parse(values[i]);
+                        try
+                        {
+                            int surfaceCount = element.ReadAttribute<int>("faces");
+                            SubMaterials = new int[surfaceCount];
+                            var values = element.ReadAttribute<string>("subMaterialRedirectLookupTable").Split(',');
+                            for (int i = 0; i < surfaceCount; i++)
+                                SubMaterials[i] = int.Parse(values[i]);
+                        }
+                        catch 
+                        {
+                            Console.WriteLine("invalid primitive version");
+                        }
+                        
                     }
                         
                     break;

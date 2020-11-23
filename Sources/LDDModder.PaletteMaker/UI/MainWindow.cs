@@ -106,7 +106,7 @@ namespace LDDModder.PaletteMaker.UI
                     SetInfo = RebrickableAPI.GetSet(textBox1.Text);
                     if (SetInfo != null)
                     {
-                        var setParts = RebrickableAPI.GetSetParts(SetInfo.SetNum).ToList();
+                        var setParts = RebrickableAPI.GetSetParts(SetInfo.SetNum, true).ToList();
                         BeginInvoke((Action)(() => LoadSetParts(setParts)));
                         //PalatteGenerator.CreatePaletteFromSet(DBFilePath, setInfo);
                     }

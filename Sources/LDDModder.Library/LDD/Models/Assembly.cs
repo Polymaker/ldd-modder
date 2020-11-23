@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
@@ -24,6 +25,8 @@ namespace LDDModder.LDD.Models
 
         public List<Brick> Bricks { get; set; }
 
+        public AssemblyScene Scene { get; set; }
+
         public Assembly()
         {
             Aliases = new List<int>();
@@ -43,9 +46,13 @@ namespace LDDModder.LDD.Models
             var primitive = new Assembly();
             primitive.LoadFromXml(document);
 
-            if (stream is FileStream fs &&
-                int.TryParse(Path.GetFileNameWithoutExtension(fs.Name), out int primitiveID))
-                primitive.ID = primitiveID;
+            if (stream is FileStream fs)
+            {
+                string filename = Path.GetFileNameWithoutExtension(fs.Name);
+                var m = Regex.Match(filename, "^(\\d+)");
+                if (m.Success)
+                    primitive.ID = int.Parse(m.Groups[1].Value);
+            }
 
             return primitive;
         }
@@ -122,7 +129,15 @@ namespace LDDModder.LDD.Models
                     Bricks.Add(brick);
                 }
             }
-
+            if (rootElem.HasElement("Scene", out XElement sceneElem))
+            {
+                foreach (var partElem in sceneElem.Descendants("Part"))
+                {
+                    var brick = new Brick();
+                    brick.LoadFromXml(partElem);
+                    Bricks.Add(brick);
+                }
+            }
             if (document.Root.HasAttribute("name"))
                 ID = document.Root.ReadAttribute("name", 0);
 

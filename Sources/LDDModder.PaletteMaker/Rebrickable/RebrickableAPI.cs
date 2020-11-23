@@ -67,9 +67,11 @@ namespace LDDModder.PaletteMaker.Rebrickable
             return GetRequestAllPages<Set>(request);
         }
 
-        public static IEnumerable<SetPart> GetSetParts(string setID)
+        public static IEnumerable<SetPart> GetSetParts(string setID, bool includeMinifigs = false)
         {
             var request = new RestRequest("lego/sets/{set_num}/parts/", Method.GET, DataFormat.Json);
+            if (includeMinifigs)
+                request.AddParameter("inc_minifig_parts", "1");
             request.AddUrlSegment("set_num", setID);
             return GetRequestAllPages<SetPart>(request);
         }

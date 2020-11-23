@@ -81,7 +81,7 @@ namespace LDDModder.PaletteMaker.UI
             try
             {
                 DatabaseInitializer.InitializeOrUpdateDatabase(databasePath,
-                    DatabaseInitializer.InitializationStep.RebrickableLddMappings, CTS.Token, this);
+                    DatabaseInitializer.InitializationStep.All, CTS.Token, this);
             }
             catch (Exception ex)
             {

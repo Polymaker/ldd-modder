@@ -29,6 +29,15 @@ namespace LDDModder.LDD.Models
                 Part = new Part();
                 Part.LoadFromXml(partElem);
             }
+            else
+            {
+                Part = new Part()
+                {
+                    DesignID = DesignID
+                };
+                if (element.TryReadAttribute("materialID", out int matId))
+                    Part.Materials.Add(matId);
+            }
         }
     }
 }
