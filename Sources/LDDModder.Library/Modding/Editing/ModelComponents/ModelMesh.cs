@@ -1,5 +1,6 @@
 ﻿using LDDModder.LDD.Meshes;
 using LDDModder.Serialization;
+using LDDModder.Simple3D;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -18,8 +19,17 @@ namespace LDDModder.Modding.Editing
 
         public MeshGeometry Geometry { get; set; }
 
+        //public List<Vector3> Positions { get; set; }
+        //public List<Vector3> Normals { get; set; }
+        //public List<Vector2> UVs { get; set; }
+        //public List<int> Indices { get; set; }
+        //public List<Tuple<int,int,float>> BoneWeights { get; set; }
+        //public List<Vector2> Outlines { get; set; }
+
         private string _FileName;
         private int FileFlag = 0;
+
+
 
         /// <summary>
         /// Filename used to "soft" delete the file.
@@ -137,10 +147,23 @@ namespace LDDModder.Modding.Editing
         public override XElement SerializeToXml()
         {
             var elem = SerializeToXmlBase(NODE_NAME);
-            elem.Add(new XAttribute(nameof(IsTextured), IsTextured));
-            elem.Add(new XAttribute(nameof(IsFlexible), IsFlexible));
-            if (!string.IsNullOrEmpty(FileName))
-                elem.Add(new XAttribute(nameof(FileName), FileName));
+
+            if (Project.FileVersion > 1)
+            {
+                if (!IsModelLoaded)
+                    LoadModel();
+                var xml = Geometry.ConvertToXml();
+                elem.Add(xml.Root.Attributes().ToArray());
+                elem.Add(xml.Root.Nodes().ToArray());
+            }
+            else
+            {
+                elem.Add(new XAttribute(nameof(IsTextured), IsTextured));
+                elem.Add(new XAttribute(nameof(IsFlexible), IsFlexible));
+                if (!string.IsNullOrEmpty(FileName))
+                    elem.Add(new XAttribute(nameof(FileName), FileName));
+
+            }
 
             return elem;
         }
@@ -231,18 +254,38 @@ namespace LDDModder.Modding.Editing
             return FileFlag == 1;
         }
     
-        public void SaveFile()
+        //public void SaveFile()
+        //{
+        //    if (Project?.IsLoadedFromDisk ?? false)
+        //    {
+        //        //bool wasLoaded = IsModelLoaded;
+        //        if (!IsModelLoaded)
+        //            LoadModel();
+
+        //        var targetFilePath = Project.GetFileFullPath(FileName);
+        //        Geometry.Save(targetFilePath);
+        //        var test = Path.ChangeExtension(targetFilePath, ".xml");
+        //        Geometry.SaveAsXml(test);
+        //        CheckFileExist();
+        //    }
+        //}
+
+        public void SaveGeometry()
         {
             if (Project?.IsLoadedFromDisk ?? false)
-            {
-                //bool wasLoaded = IsModelLoaded;
-                if (!IsModelLoaded)
-                    LoadModel();
+                SaveGeometry(Project.ProjectWorkingDir);
+        }
 
-                var targetFilePath = Project.GetFileFullPath(FileName);
-                Geometry.Save(targetFilePath);
-                CheckFileExist();
-            }
+        public void SaveGeometry(string filepath)
+        {
+            if (!IsModelLoaded)
+                LoadModel();
+
+            var targetFilePath = Path.Combine(filepath, FileName);
+            Geometry.Save(targetFilePath);
+            //var test = Path.ChangeExtension(targetFilePath, ".xml");
+            //Geometry.SaveAsXml(test);
+            CheckFileExist();
         }
 
         /// <summary>

@@ -24,6 +24,8 @@ namespace LDDModder.Modding.Editing
     {
         public const string ProjectFileName = "project.xml";
 
+        public const int CURRENT_VERSION = 2;
+
         #region Part Info
 
         public PartProperties Properties { get; }
@@ -137,6 +139,8 @@ namespace LDDModder.Modding.Editing
 
         public bool IsLoadedFromDisk => !string.IsNullOrEmpty(ProjectWorkingDir);
 
+        public int FileVersion { get; set; }
+
         #endregion
 
         #region Statistics properties
@@ -192,7 +196,8 @@ namespace LDDModder.Modding.Editing
 
             var project = new PartProject()
             {
-                IsLoading = true
+                IsLoading = true,
+                FileVersion = CURRENT_VERSION
             };
             project.Properties.Initialize(lddPart);
 
@@ -362,6 +367,10 @@ namespace LDDModder.Modding.Editing
             
             var rootElem = doc.Root;
 
+            FileVersion = 1;
+            if (rootElem.TryGetIntAttribute("Version", out int fileVersion))
+                FileVersion = fileVersion;
+
             if (rootElem.HasElement("Properties", out XElement propsElem))
                 Properties.LoadFromXml(propsElem);
 
@@ -428,10 +437,7 @@ namespace LDDModder.Modding.Editing
             Directory.CreateDirectory(meshDir);
 
             foreach (var mesh in Meshes)
-            {
-                string meshPath = Path.Combine(directory, mesh.FileName);
-                mesh.Geometry.Save(meshPath);
-            }
+                mesh.SaveGeometry(directory);
         }
 
         public static PartProject LoadFromDirectory(string directory)
@@ -475,12 +481,24 @@ namespace LDDModder.Modding.Editing
                     }
                     else if (mesh.IsModelLoaded)
                     {
+                        var xmlfilename = Path.ChangeExtension(mesh.FileName, "xml");
+
                         using (var ms = new MemoryStream())
                         {
                             //if (!mesh.IsModelLoaded && mesh.fi)
                             mesh.Geometry.Save(ms);
                             ms.Position = 0;
                             zipStream.PutNextEntry(new ZipEntry(mesh.FileName));
+                            ms.CopyTo(zipStream);
+                            zipStream.CloseEntry();
+                        }
+
+                        using (var ms = new MemoryStream())
+                        {
+                            //if (!mesh.IsModelLoaded && mesh.fi)
+                            mesh.Geometry.SaveAsXml(ms);
+                            ms.Position = 0;
+                            zipStream.PutNextEntry(new ZipEntry(xmlfilename));
                             ms.CopyTo(zipStream);
                             zipStream.CloseEntry();
                         }
@@ -578,6 +596,8 @@ namespace LDDModder.Modding.Editing
             {
                 var targetFilePath = GetFileFullPath(modelMesh.FileName);
                 geometry.Save(targetFilePath);
+                var test = Path.ChangeExtension(targetFilePath, ".xml");
+                geometry.SaveAsXml(test);
                 modelMesh.CheckFileExist();
             }
 
@@ -1491,7 +1511,7 @@ namespace LDDModder.Modding.Editing
             }
 
             var models = meshRefs.Select(x => x.ModelMesh).Distinct().ToList();
-            models.ForEach(x => x.SaveFile());
+            models.ForEach(x => x.SaveGeometry());
             unloadedMeshes.ForEach(x => x.UnloadModel());
         }
 
@@ -1509,7 +1529,7 @@ namespace LDDModder.Modding.Editing
                         continue;
                 }
                 model.Geometry.ClearRoundEdgeData();
-                model.SaveFile();
+                model.SaveGeometry();
             }
 
             unloadedMeshes.ForEach(x => x.UnloadModel());

@@ -11,7 +11,7 @@ namespace LDDModder.Modding.Editing
 {
     public abstract class PartElement
     {
-        private string _Comments;
+        //private string _Comments;
         private string _Name;
         internal PartProject _Project;
         private Dictionary<Type, IElementExtender> _Extenders;

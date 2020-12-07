@@ -201,6 +201,8 @@
     <Compile Include="Modding\Editing\Configuration\OutlineGroupParameters.cs" />
     <Compile Include="Modding\Editing\Extensions\ElementExtenderFactory.cs" />
     <Compile Include="Modding\Editing\Extensions\IElementExtender.cs" />
+    <Compile Include="Modding\Editing\Serializers\ProjectSerializerBase.cs" />
+    <Compile Include="Modding\Editing\Serializers\ProjectSerializerV1.cs" />
     <Compile Include="Modding\Editing\ValidationMessage.cs" />
     <Compile Include="Utilities\ChangeTrackingObject.cs" />
     <Compile Include="Utilities\Events\ForwardedEventArgs.cs" />
@@ -230,8 +232,6 @@
     <Compile Include="Modding\Editing\ModelComponents\PartModel.cs" />
     <Compile Include="Modding\Editing\ModelComponents\MaleStudModel.cs" />
     <Compile Include="Modding\Editing\ModelComponents\BrickTubeModel.cs" />
-    <Compile Include="Modding\Installing\PartInstaller.cs" />
-    <Compile Include="Modding\Installing\PartPackage.cs" />
     <Compile Include="Native\Shell32.cs" />
     <Compile Include="Serialization\IXmlObject.cs" />
     <Compile Include="Serialization\LinqXmlExtensions.cs" />

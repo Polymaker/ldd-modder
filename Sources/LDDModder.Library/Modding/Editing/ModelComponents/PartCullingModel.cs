@@ -12,7 +12,7 @@ namespace LDDModder.Modding.Editing
         //[System.Obsolete]
         //public string ConnectionID { get; set; }
 
-        public string LegacyConnectionID { get; private set; }
+        public string LegacyConnectionID { get; internal set; }
 
         public ElementCollection<StudReference> ReferencedStuds { get; private set; }
 
