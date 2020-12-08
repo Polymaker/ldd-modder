@@ -29,8 +29,6 @@ namespace LDDModder.Modding.Editing
         private string _FileName;
         private int FileFlag = 0;
 
-
-
         /// <summary>
         /// Filename used to "soft" delete the file.
         /// </summary>
@@ -174,6 +172,13 @@ namespace LDDModder.Modding.Editing
             IsTextured = element.ReadAttribute("IsTextured", false);
             IsFlexible = element.ReadAttribute("IsFlexible", false);
             _FileName = element.ReadAttribute("FileName", string.Empty);
+
+            if (element.HasElement("Positions"))
+            {
+                var fakeDoc = new XDocument();
+                fakeDoc.Add(new XElement("LddGeometry", element.Nodes().ToArray()));
+                Geometry = MeshGeometry.FromXml(fakeDoc);
+            }
         }
 
         public static ModelMesh FromXml(XElement element)
@@ -272,21 +277,35 @@ namespace LDDModder.Modding.Editing
 
         public void SaveGeometry()
         {
-            if (Project?.IsLoadedFromDisk ?? false)
-                SaveGeometry(Project.ProjectWorkingDir);
+            if (Geometry != null && (Project?.IsLoadedFromDisk ?? false))
+            {
+                var projectXml = Project.GetProjectXml();
+                var meshElem = projectXml.Descendants(NODE_NAME)
+                    .FirstOrDefault(e => e.ReadAttribute("ID", string.Empty) == ID);
+
+                if (meshElem != null)
+                {
+                    var newElem = SerializeToXml();
+                    meshElem.RemoveAll();
+                    meshElem.Add(newElem.Attributes().ToArray());
+                    meshElem.Add(newElem.Nodes().ToArray());
+                }
+            }
+            //if (Project?.IsLoadedFromDisk ?? false)
+            //    SaveGeometry(Project.ProjectWorkingDir);
         }
 
-        public void SaveGeometry(string filepath)
-        {
-            if (!IsModelLoaded)
-                LoadModel();
+        //public void SaveGeometry(string filepath)
+        //{
+        //    if (!IsModelLoaded)
+        //        LoadModel();
 
-            var targetFilePath = Path.Combine(filepath, FileName);
-            Geometry.Save(targetFilePath);
-            //var test = Path.ChangeExtension(targetFilePath, ".xml");
-            //Geometry.SaveAsXml(test);
-            CheckFileExist();
-        }
+        //    var targetFilePath = Path.Combine(filepath, FileName);
+        //    Geometry.Save(targetFilePath);
+        //    //var test = Path.ChangeExtension(targetFilePath, ".xml");
+        //    //Geometry.SaveAsXml(test);
+        //    CheckFileExist();
+        //}
 
         /// <summary>
         /// Soft delete

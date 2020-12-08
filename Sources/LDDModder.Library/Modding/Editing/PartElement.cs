@@ -44,16 +44,15 @@ namespace LDDModder.Modding.Editing
 
         internal bool IsLoading => Project?.IsLoading ?? false;
 
-        [XmlIgnore]
         public PartProject Project => _Project ?? Parent?.Project;
 
-        [XmlIgnore]
         public PartElement Parent { get; internal set; }
 
-        [XmlIgnore]
         public int HierarchyLevel => Parent == null ? 0 : Parent.HierarchyLevel + 1;
 
         internal bool IsInitializing { get; set; }
+
+        public bool IsDeleted { get; internal set; }
 
         public event EventHandler<ElementValueChangedEventArgs> PropertyChanged;
 
@@ -104,6 +103,10 @@ namespace LDDModder.Modding.Editing
         {
             if (Parent != parent)
             {
+                if (Parent != null && parent == null)
+                    IsDeleted = true;
+                else if (IsDeleted && parent != null)
+                    IsDeleted = false;
                 Parent = parent;
                 if (!RemovingParent)
                     ParentChanged?.Invoke(this, EventArgs.Empty);
@@ -128,6 +131,11 @@ namespace LDDModder.Modding.Editing
 
             if (!string.IsNullOrEmpty(Name))
                 elem.Add(new XAttribute("Name", Name));
+
+            //if (Project?.IsTemporaryFile ?? false && IsDeleted)
+            //{
+            //    elem.WriteAttribute("Deleted", IsDeleted, BooleanXmlRepresentation.TrueFalse);
+            //}
 
             return elem;
         }

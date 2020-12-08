@@ -396,11 +396,6 @@ namespace LDDModder.LDD.Meshes
                     {
                         bones.Value += string.Format(CultureInfo.InvariantCulture, 
                             "{0} {1} {2} ", i, bw.BoneID, bw.Weight);
-
-                        //var bone = bones.AddElement("BoneWeight");
-                        //bone.AddNumberAttribute("VertexIndex", i);
-                        //bone.AddNumberAttribute("BoneID", bw.BoneID);
-                        //bone.AddNumberAttribute("Weight", bw.Weight);
                     }
                 }
                 bones.Value = bones.Value.TrimEnd();
@@ -408,13 +403,10 @@ namespace LDDModder.LDD.Meshes
             
             if (CheckHasRoundEdgeData())
             {
+                //root.Add(new XComment("Format: Index{n}Coord{1,6}.X Index{n}Coord{1,6}.Y"));
                 var outlines = root.AddElement("Outlines");
                 var coords = Indices.SelectMany(x => x.RoundEdgeData.Coords.Take(6)).ToList();
                 outlines.Value = string.Join(" ", coords.Select(v => FormatVector2(v)));
-                //for (int i = 0; i < IndexCount; i++)
-                //{
-
-                //}
             }
 
             return doc;
@@ -435,6 +427,116 @@ namespace LDDModder.LDD.Meshes
             using (var fs = File.Open(filename, FileMode.Create))
                 SaveAsXml(fs);
         }
+
+        public static MeshGeometry FromXml(string filename)
+        {
+            using (var fs = File.OpenRead(filename))
+                return FromXml(fs);
+        }
+
+        public static MeshGeometry FromXml(Stream stream)
+        {
+            var doc = XDocument.Load(stream);
+            return doc != null ? FromXml(doc) : null;
+        }
+
+        public static MeshGeometry FromXml(XDocument document)
+        {
+            var geomElem = document.Element("LddGeometry");
+            if (geomElem == null)
+                return null;
+
+            if (geomElem.HasElement("Positions", out XElement posElem) &&
+                geomElem.HasElement("Normals", out XElement normElem) &&
+                geomElem.HasElement("Indices", out XElement indElem))
+            {
+                var positions = ParseVector3Array(posElem.Value);
+                var normals = ParseVector3Array(normElem.Value);
+                List<Vector2> uvs = null;
+                if (geomElem.HasElement("UVs", out XElement uvElem))
+                    uvs = ParseVector2Array(uvElem.Value);
+
+                var indices = indElem.Value.Split(' ').Select(v => int.Parse(v)).ToList();
+
+                var vertices = new List<Vertex>();
+                for (int i = 0; i < positions.Count; i++)
+                {
+                    vertices.Add(new Vertex(
+                        positions[i],
+                        normals[i],
+                        uvs?[i] ?? Vector2.Empty
+                        ));
+                }
+
+                if (geomElem.HasElement("BoneWeights", out XElement boneWeights))
+                {
+                    var bwValues = boneWeights.Value.Split(' ');
+                    for (int i = 0; i < bwValues.Length; i += 3)
+                    {
+                        int vIdx = int.Parse(bwValues[i]);
+                        int bID = int.Parse(bwValues[i + 1]);
+                        float weight = float.Parse(bwValues[i + 2], CultureInfo.InvariantCulture);
+                        vertices[vIdx].BoneWeights.Add(new BoneWeight(bID, weight));
+                    }
+                }
+
+                var geom = new MeshGeometry();
+                geom.SetVertices(vertices);
+
+                for (int i = 0; i < indices.Count; i += 3)
+                    geom.AddTriangleFromIndices(indices[i], indices[i + 1], indices[i + 2]);
+
+                if (geomElem.HasElement("Outlines", out XElement outlineElem))
+                {
+                    var outlineUVs = ParseVector2Array(outlineElem.Value);
+
+                    for (int i = 0; i < outlineUVs.Count; i += 6)
+                    {
+                        int iIdx = i / 6;
+                        var reData = new RoundEdgeData(outlineUVs.Skip(i).Take(6).ToArray());
+                        geom.Indices[iIdx].RoundEdgeData = reData;
+                    }
+                }
+
+                return geom;
+            }
+
+            return null;
+        }
+
+        static List<Vector3> ParseVector3Array(string value)
+        {
+            var values = value.Split(' ');
+            var result = new List<Vector3>();
+            for (int i = 0; i < values.Length; i += 3)
+            {
+                
+                result.Add(new Vector3
+                {
+                    X = float.Parse(values[i], CultureInfo.InvariantCulture),
+                    Y = float.Parse(values[i + 1], CultureInfo.InvariantCulture),
+                    Z = float.Parse(values[i + 2], CultureInfo.InvariantCulture)
+                });
+            }
+            return result;
+        }
+
+        static List<Vector2> ParseVector2Array(string value)
+        {
+            var values = value.Split(' ');
+            var result = new List<Vector2>();
+            for (int i = 0; i < values.Length; i += 2)
+            {
+
+                result.Add(new Vector2
+                {
+                    X = float.Parse(values[i], CultureInfo.InvariantCulture),
+                    Y = float.Parse(values[i + 1], CultureInfo.InvariantCulture)
+                });
+            }
+            return result;
+        }
+
 
         #endregion
 

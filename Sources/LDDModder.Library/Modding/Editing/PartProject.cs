@@ -137,7 +137,10 @@ namespace LDDModder.Modding.Editing
 
         public string ProjectWorkingDir { get; set; }
 
-        public bool IsLoadedFromDisk => !string.IsNullOrEmpty(ProjectWorkingDir);
+        public bool IsLoadedFromDisk => !string.IsNullOrEmpty(ProjectPath) || 
+            !string.IsNullOrEmpty(ProjectWorkingDir);
+
+        public bool IsTemporaryFile => !string.IsNullOrEmpty(ProjectWorkingDir);
 
         public int FileVersion { get; set; }
 
@@ -433,11 +436,11 @@ namespace LDDModder.Modding.Editing
             var projectXml = GenerateProjectXml();
             projectXml.Save(Path.Combine(directory, ProjectFileName));
 
-            string meshDir = Path.Combine(directory, "Meshes");
-            Directory.CreateDirectory(meshDir);
+            //string meshDir = Path.Combine(directory, "Meshes");
+            //Directory.CreateDirectory(meshDir);
 
-            foreach (var mesh in Meshes)
-                mesh.SaveGeometry(directory);
+            //foreach (var mesh in Meshes)
+            //    mesh.SaveGeometry(directory);
         }
 
         public static PartProject LoadFromDirectory(string directory)
@@ -592,14 +595,14 @@ namespace LDDModder.Modding.Editing
         {
             ModelMesh modelMesh = AddMeshGeometry(geometry, null, name);
 
-            if (IsLoadedFromDisk)
-            {
-                var targetFilePath = GetFileFullPath(modelMesh.FileName);
-                geometry.Save(targetFilePath);
-                var test = Path.ChangeExtension(targetFilePath, ".xml");
-                geometry.SaveAsXml(test);
-                modelMesh.CheckFileExist();
-            }
+            //if (IsLoadedFromDisk)
+            //{
+            //    var targetFilePath = GetFileFullPath(modelMesh.FileName);
+            //    geometry.Save(targetFilePath);
+            //    var test = Path.ChangeExtension(targetFilePath, ".xml");
+            //    geometry.SaveAsXml(test);
+            //    modelMesh.CheckFileExist();
+            //}
 
             return modelMesh;
         }
@@ -1113,8 +1116,6 @@ namespace LDDModder.Modding.Editing
             RemoveUnreferencedMeshes();
         }
 
-
-
         #endregion
 
         #region Bones data handling
@@ -1299,6 +1300,18 @@ namespace LDDModder.Modding.Editing
         #endregion
 
         #region Project File/Directory Handling
+
+        public XDocument GetProjectXml()
+        {
+            if (IsLoadedFromDisk)
+            {
+                if (IsTemporaryFile)
+                    return XDocument.Load(ProjectWorkingDir);
+                else
+                    return XDocument.Load(ProjectPath);
+            }
+            return null;
+        }
 
         public string GenerateMeshFileName(string meshName)
         {
