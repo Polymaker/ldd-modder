@@ -69,9 +69,15 @@ namespace LDDModder.Utilities
             return FileNameCleaner.Replace(fileName, string.Empty);
         }
 
-        public static string GetTempDirectory()
+        public static string GetTempDirectory(int nameLength = 8)
         {
-            return Path.Combine(Path.GetTempPath(), LDDModder.Utilities.StringUtils.GenerateUID(8));
+            return Path.Combine(Path.GetTempPath(), LDDModder.Utilities.StringUtils.GenerateUID(nameLength));
+        }
+
+        public static bool IsInTempFolder(string filepath)
+        {
+            filepath = Path.GetFileName(filepath).ToUpper();
+            return filepath.StartsWith(Path.GetTempPath().ToUpper());
         }
 
         public static bool DeleteFileOrFolder(string destination, bool permanent, bool silent)

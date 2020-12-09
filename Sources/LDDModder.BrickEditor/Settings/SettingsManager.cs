@@ -146,6 +146,25 @@ namespace LDDModder.BrickEditor.Settings
             SaveSettings(currentSettings);
         }
 
+        public static void CleanUpFilesHistory()
+        {
+            ReloadFilesHistory();
+
+            foreach (var fileinfo in Current.RecentProjectFiles.ToArray())
+            {
+                if (!File.Exists(fileinfo.ProjectFile))
+                    Current.RecentProjectFiles.Remove(fileinfo);
+            }
+
+            foreach (var fileinfo in Current.OpenedProjects.ToArray())
+            {
+                if (!File.Exists(fileinfo.TemporaryPath))
+                    Current.OpenedProjects.Remove(fileinfo);
+            }
+
+            SaveFilesHistory();
+        }
+
         public static void AddRecentProject(PartProject project, bool isSavedFile = false)
         {
             if (Current.RecentProjectFiles == null)
@@ -174,30 +193,74 @@ namespace LDDModder.BrickEditor.Settings
             SaveFilesHistory();
         }
 
-        public static void AddOpenedFile(PartProject project)
+        public static void AddRecentProject(RecentFileInfo fileInfo, bool moveToTop = false)
+        {
+            if (Current.RecentProjectFiles == null)
+                Current.RecentProjectFiles = new List<RecentFileInfo>();
+
+            ReloadFilesHistory();
+
+            if (moveToTop || !Current.RecentProjectFiles.Any(x => x.ProjectFile == fileInfo.ProjectFile))
+            {
+                Current.RecentProjectFiles.RemoveAll(x => x.ProjectFile == fileInfo.ProjectFile);
+                Current.RecentProjectFiles.Insert(0, fileInfo);
+            }
+
+            while (Current.RecentProjectFiles.Count > MaximumRecentFiles)
+                Current.RecentProjectFiles.RemoveAt(Current.RecentProjectFiles.Count - 1);
+
+            SaveFilesHistory();
+        }
+
+        //public static void AddOpenedFile(PartProject project, string temporaryPath)
+        //{
+        //    ReloadFilesHistory();
+        //    var fileInfo = new RecentFileInfo(project, temporaryPath);
+
+        //    if (!Current.OpenedProjects.Any(x => x.TemporaryPath == temporaryPath))
+        //    {
+        //        Current.OpenedProjects.Add(fileInfo);
+        //        SaveFilesHistory();
+        //    }
+        //}
+
+        public static void AddOpenedFile(RecentFileInfo fileInfo)
         {
             ReloadFilesHistory();
-            var fileInfo = new RecentFileInfo(project, true);
 
-            if (!Current.OpenedProjects.Any(x => x.WorkingDirectory == fileInfo.WorkingDirectory))
+            if (!Current.OpenedProjects.Any(x => x.TemporaryPath == fileInfo.TemporaryPath))
             {
                 Current.OpenedProjects.Add(fileInfo);
                 SaveFilesHistory();
             }
         }
 
-        public static void RemoveOpenedFile(PartProject project)
+        public static void UpdateOpenedFile(string tempPath, string projectPath)
         {
             ReloadFilesHistory();
-            Current.OpenedProjects.RemoveAll(x => x.WorkingDirectory == project?.ProjectWorkingDir);
-            SaveFilesHistory();
+            var openedProject = Current.OpenedProjects.FirstOrDefault(p => p.TemporaryPath == tempPath);
+
+            if (openedProject != null)
+            {
+                openedProject.ProjectFile = projectPath;
+                SaveFilesHistory();
+            }
         }
 
-        public static void RemoveOpenedFile(RecentFileInfo fileInfo)
+        public static void RemoveOpenedFile(string path)
         {
             ReloadFilesHistory();
-            Current.OpenedProjects.RemoveAll(x => x.WorkingDirectory == fileInfo.WorkingDirectory);
-            SaveFilesHistory();
+            int removed = Current.OpenedProjects.RemoveAll(x => x.TemporaryPath == path /*|| x.ProjectFile == path*/);
+            if (removed > 0)
+                SaveFilesHistory();
+        }
+
+        public static void RemoveRecentFile(string path)
+        {
+            ReloadFilesHistory();
+            int removed = Current.OpenedProjects.RemoveAll(x => x.ProjectFile == path);
+            if (removed > 0)
+                SaveFilesHistory();
         }
 
         #region Project Configuration

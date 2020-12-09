@@ -85,6 +85,10 @@ namespace LDDModder.Modding.Editing
 
         private void UpdateItemParent(PartElement item, bool adding, Action listAction)
         {
+            //bool wasDeleted = item.IsDeleted;
+            //bool isDeleting = item.Project != null && !adding;
+            //bool isUndeleting = wasDeleted && adding;
+
             if (_Project != null)
             {
                 item.AssignProject(adding ? Project : null);
@@ -96,6 +100,9 @@ namespace LDDModder.Modding.Editing
                 listAction();
                 item.AssignParent(adding ? Owner : null);
             }
+
+            //if (Project != null && (isDeleting || isUndeleting))
+            //    Project.UpdateDeletedStatus(item);
         }
 
 

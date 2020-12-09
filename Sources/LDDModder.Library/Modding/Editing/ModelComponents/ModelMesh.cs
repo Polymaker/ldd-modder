@@ -16,23 +16,15 @@ namespace LDDModder.Modding.Editing
     public class ModelMesh : PartElement
     {
         public const string NODE_NAME = "Mesh";
+        private MeshGeometry _Geometry;
 
-        public MeshGeometry Geometry { get; set; }
+        public MeshGeometry Geometry
+        {
+            get => _Geometry;
+            set => SetGeometry(value);
+        }
 
-        //public List<Vector3> Positions { get; set; }
-        //public List<Vector3> Normals { get; set; }
-        //public List<Vector2> UVs { get; set; }
-        //public List<int> Indices { get; set; }
-        //public List<Tuple<int,int,float>> BoneWeights { get; set; }
-        //public List<Vector2> Outlines { get; set; }
-
-        private string _FileName;
-        private int FileFlag = 0;
-
-        /// <summary>
-        /// Filename used to "soft" delete the file.
-        /// </summary>
-        private string TempFileName;
+        public bool GeometrySaved { get; private set; }
 
         #region Geometry Attributes
 
@@ -48,38 +40,13 @@ namespace LDDModder.Modding.Editing
 
         #endregion
 
-        public string FileName
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(_FileName) && Project != null && 
-                    !string.IsNullOrEmpty(Name))
-                {
-                    _FileName = Project.GenerateMeshFileName(Name);
-                }
-
-                return _FileName;
-            }
-        }
-
-        public string WorkingFilePath { get; private set; }
+        public string LegacyFilename { get; set; }
 
         public PartSurface Surface => (Parent as SurfaceComponent)?.Parent as PartSurface;
 
-        public bool MeshFileExists
-        {
-            get
-            {
-                if (FileFlag == 0)
-                    CheckFileExist();
-
-                return FileFlag == 1;
-            }
-        }
-
         public bool IsModelLoaded => Geometry != null;
 
-        public bool CanUnloadModel => MeshFileExists;
+        public bool CanUnloadModel => GeometrySaved;
 
         public ModelMesh()
         {
@@ -99,45 +66,15 @@ namespace LDDModder.Modding.Editing
             return Enumerable.Empty<ModelMeshReference>();
         }
 
-        protected override void OnAfterRename(string oldName, string newName)
+        private void SetGeometry(MeshGeometry geometry)
         {
-            base.OnAfterRename(oldName, newName);
-            FileFlag = 0;
-            WorkingFilePath = null;
-
-            if (Project != null)
+            if (_Geometry != geometry)
             {
-                string newMeshFileName = Project.GenerateMeshFileName(newName);
-
-                if (!string.IsNullOrEmpty(_FileName) && Project.FileExist(_FileName))
-                {
-                    string oldFilePath = Project.GetFileFullPath(_FileName);
-                    try
-                    {
-                        string newFilePath = Project.GetFileFullPath(newMeshFileName);
-                        File.Move(oldFilePath, newFilePath);
-                        WorkingFilePath = newFilePath;
-                        FileFlag = 1;
-                    }
-                    catch
-                    {
-                        Debug.WriteLine("Error: Could not rename mesh file!");
-
-                        //WorkingFilePath = oldFilePath;
-                        //FileFlag = 1;
-                    }
-                }
-
-                _FileName = newMeshFileName;
+                _Geometry = geometry;
+                if (geometry != null)
+                    GeometrySaved = false;
+                UpdateMeshProperties();
             }
-            else
-                _FileName = null;
-        }
-
-        public bool CanRename(string newName)
-        {
-            string newMeshFileName = Project.GenerateMeshFileName(newName);
-            return !Project.FileExist(newMeshFileName);
         }
 
         #region Xml Serialization
@@ -146,23 +83,28 @@ namespace LDDModder.Modding.Editing
         {
             var elem = SerializeToXmlBase(NODE_NAME);
 
-            if (Project.FileVersion > 1)
+            XElement geomElem = null;
+
+            if (IsModelLoaded)
             {
-                if (!IsModelLoaded)
-                    LoadModel();
-                var xml = Geometry.ConvertToXml();
-                elem.Add(xml.Root.Attributes().ToArray());
-                elem.Add(xml.Root.Nodes().ToArray());
+                geomElem = Geometry.ConvertToXml().Root;
+            }
+            else if (GeometrySaved)
+            {
+                geomElem = GetGeometryElementFromProjectFile();
+                return geomElem;
+            }
+
+            if (geomElem != null)
+            {
+                elem.Add(geomElem.Nodes().ToArray());
+                elem.Add(geomElem.Attributes().ToArray());
+                
             }
             else
             {
-                elem.Add(new XAttribute(nameof(IsTextured), IsTextured));
-                elem.Add(new XAttribute(nameof(IsFlexible), IsFlexible));
-                if (!string.IsNullOrEmpty(FileName))
-                    elem.Add(new XAttribute(nameof(FileName), FileName));
-
+                Trace.WriteLine("ERROR Geometry not loaded!");
             }
-
             return elem;
         }
 
@@ -171,13 +113,12 @@ namespace LDDModder.Modding.Editing
             base.LoadFromXml(element);
             IsTextured = element.ReadAttribute("IsTextured", false);
             IsFlexible = element.ReadAttribute("IsFlexible", false);
-            _FileName = element.ReadAttribute("FileName", string.Empty);
+            LegacyFilename = element.ReadAttribute("FileName", string.Empty);
 
             if (element.HasElement("Positions"))
             {
-                var fakeDoc = new XDocument();
-                fakeDoc.Add(new XElement("LddGeometry", element.Nodes().ToArray()));
-                Geometry = MeshGeometry.FromXml(fakeDoc);
+                _Geometry = GetGeometryFromElement(element);
+                GeometrySaved = _Geometry != null;
             }
         }
 
@@ -202,150 +143,60 @@ namespace LDDModder.Modding.Editing
             }
         }
 
-        public bool LoadModel()
+        public bool ReloadModelFromXml()
         {
-            if (Geometry == null && Project != null)
-                Project.LoadModelMesh(this);
+            var geomElem = GetGeometryElementFromProjectFile();
+            if (geomElem != null)
+            {
+                _Geometry = GetGeometryFromElement(geomElem);
+                GeometrySaved = _Geometry != null;
+            }
+
+            //if (Project == null)
+            //    return false;
+
+            //var projectXml = Project.GetProjectXml();
+            //var meshElem = projectXml.Descendants(NODE_NAME)
+            //    .FirstOrDefault(e => e.ReadAttribute("ID", string.Empty) == ID);
+            //if (meshElem != null)
+            //    LoadGeometry(meshElem);
+
+            ////if (Geometry == null && Project != null)
+            ////    Project.LoadModelMesh(this);
             return Geometry != null;
+        }
+
+        public XElement GetGeometryElementFromProjectFile()
+        {
+            var projectXml = Project?.GetProjectXml();
+            if (projectXml != null)
+            {
+                return projectXml.Descendants(NODE_NAME)
+                    .FirstOrDefault(e => e.ReadAttribute("ID", string.Empty) == ID);
+            }
+
+            return null;
+        }
+
+        private MeshGeometry GetGeometryFromElement(XElement element)
+        {
+            var fakeDoc = new XDocument();
+
+            fakeDoc.Add(new XElement("LddGeometry", element.Nodes().ToArray()));
+            fakeDoc.Root.Add(element.Attributes().ToArray());
+            return MeshGeometry.FromXml(fakeDoc); ;
         }
 
         public void UnloadModel()
         {
-            if (CanUnloadModel)
-                Geometry = null;
-        }
-
-        public bool CheckFileExist()
-        {
-            if (Project != null && 
-                Project.IsLoadedFromDisk && 
-                !string.IsNullOrEmpty(FileName))
+            if (CanUnloadModel && GeometrySaved)
             {
-                if (Project.FileExist(FileName))
-                {
-                    WorkingFilePath = Project.GetFileFullPath(FileName);
-                    FileFlag = 1;
-                }
-                else if (Project.FileExist(Project.GenerateMeshFileName(ID)))
-                {
-                    try
-                    {
-                        var tmpFileName = Project.GetFileFullPath(Project.GenerateMeshFileName(ID));
-                        WorkingFilePath = Project.GetFileFullPath(FileName);
-                        File.Move(tmpFileName, WorkingFilePath);
-                        FileFlag = 1;
-                    }
-                    catch
-                    {
-                        WorkingFilePath = null;
-                        FileFlag = 3;
-                    }
-                    
-                }
-                else
-                {
-                    WorkingFilePath = null;
-                    FileFlag = 2;
-                }
-            }
-            else
-            {
-                if (string.IsNullOrEmpty(TempFileName))
-                    WorkingFilePath = null;
-                FileFlag = 0;
-            }
-
-
-            return FileFlag == 1;
-        }
-    
-        //public void SaveFile()
-        //{
-        //    if (Project?.IsLoadedFromDisk ?? false)
-        //    {
-        //        //bool wasLoaded = IsModelLoaded;
-        //        if (!IsModelLoaded)
-        //            LoadModel();
-
-        //        var targetFilePath = Project.GetFileFullPath(FileName);
-        //        Geometry.Save(targetFilePath);
-        //        var test = Path.ChangeExtension(targetFilePath, ".xml");
-        //        Geometry.SaveAsXml(test);
-        //        CheckFileExist();
-        //    }
-        //}
-
-        public void SaveGeometry()
-        {
-            if (Geometry != null && (Project?.IsLoadedFromDisk ?? false))
-            {
-                var projectXml = Project.GetProjectXml();
-                var meshElem = projectXml.Descendants(NODE_NAME)
-                    .FirstOrDefault(e => e.ReadAttribute("ID", string.Empty) == ID);
-
-                if (meshElem != null)
-                {
-                    var newElem = SerializeToXml();
-                    meshElem.RemoveAll();
-                    meshElem.Add(newElem.Attributes().ToArray());
-                    meshElem.Add(newElem.Nodes().ToArray());
-                }
-            }
-            //if (Project?.IsLoadedFromDisk ?? false)
-            //    SaveGeometry(Project.ProjectWorkingDir);
-        }
-
-        //public void SaveGeometry(string filepath)
-        //{
-        //    if (!IsModelLoaded)
-        //        LoadModel();
-
-        //    var targetFilePath = Path.Combine(filepath, FileName);
-        //    Geometry.Save(targetFilePath);
-        //    //var test = Path.ChangeExtension(targetFilePath, ".xml");
-        //    //Geometry.SaveAsXml(test);
-        //    CheckFileExist();
-        //}
-
-        /// <summary>
-        /// Soft delete
-        /// </summary>
-        internal void TempDeleteFile()
-        {
-            if (Project != null && CheckFileExist())
-            {
-                TempFileName = Project.GenerateMeshFileName(ID);
-                TempFileName = Project.GetFileFullPath(TempFileName);
-                
-                try
-                {
-                    File.Move(WorkingFilePath, TempFileName);
-                }
-                catch
-                {
-                    Debug.WriteLine("Error: Could not rename mesh file!");
-                }
+                _Geometry = null;
             }
         }
-
-        protected override void OnProjectAssigned()
+        internal void MarkSaved(bool value)
         {
-            base.OnProjectAssigned();
-
-            if (Project != null && !string.IsNullOrEmpty(TempFileName))
-            {
-                if (string.IsNullOrEmpty(WorkingFilePath))
-                    WorkingFilePath = Project.GetFileFullPath(FileName);
-
-                File.Move(TempFileName, WorkingFilePath);
-
-                TempFileName = null;
-            }
-            else if (Project == null && MeshFileExists && 
-                string.IsNullOrEmpty(TempFileName))
-            {
-                TempDeleteFile();
-            }
+            GeometrySaved = value;
         }
 
         public override List<ValidationMessage> ValidateElement()
@@ -363,7 +214,7 @@ namespace LDDModder.Modding.Editing
             if (IsFlexible)
             {
                 bool modelLoaded = IsModelLoaded;
-                if (LoadModel())
+                if (ReloadModelFromXml())
                 {
                     var meshBoneIDs = Geometry.Vertices.SelectMany(x => x.BoneWeights.Select(b => b.BoneID)).Distinct();
                     var existingBones = Project.Bones.Select(x => x.BoneID).Distinct();

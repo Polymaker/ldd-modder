@@ -34,9 +34,14 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
         public UndoRedoManager UndoRedoManager { get; }
 
+        public string CurrentProjectPath { get; private set; }
+
+        public string TemporaryProjectPath { get; private set; }
+
         public bool IsProjectOpen => CurrentProject != null;
 
-        public bool IsNewProject => IsProjectOpen && string.IsNullOrEmpty(CurrentProject.ProjectPath);
+        //public bool IsNewProject => IsProjectOpen && string.IsNullOrEmpty(CurrentProject.ProjectPath);
+        public bool IsNewProject => IsProjectOpen && string.IsNullOrEmpty(CurrentProjectPath);
 
         public bool IsModified => LastSavedChange != UndoRedoManager.CurrentChangeID;
 
@@ -126,7 +131,8 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
         #region Project Loading/Closing
 
-        public void SetCurrentProject(PartProject project)
+
+        public void SetCurrentProject(PartProject project, string tempPath = null)
         {
             if (CurrentProject != project)
             {
@@ -135,7 +141,24 @@ namespace LDDModder.BrickEditor.ProjectHandling
                 PreventProjectChange = false;
 
                 CurrentProject = project;
-                
+                CurrentProjectPath = project.ProjectPath;
+
+                if (!string.IsNullOrEmpty(tempPath/*project.TemporaryProjectPath*/))
+                {
+                    LastSavedChange = -1;
+                    if (!File.Exists(tempPath))
+                        TemporaryProjectPath = tempPath;
+                }
+                //if (FileHelper.IsInTempFolder(project.ProjectPath))
+                //{
+                //    TemporaryProjectPath = project.ProjectPath;
+                //    //project.ProjectPath = string.Empty;
+                //}
+
+                SaveWorkingProject();
+
+                SettingsManager.AddOpenedFile(GetCurrentProjectInfo());
+
                 if (project != null)
                     AttachPartProject(project);
                 ProjectChanged?.Invoke(this, EventArgs.Empty);
@@ -146,6 +169,11 @@ namespace LDDModder.BrickEditor.ProjectHandling
         {
             if (CurrentProject != null)
             {
+                if (!string.IsNullOrEmpty(TemporaryProjectPath))
+                    DeleteTemporaryProject(TemporaryProjectPath);
+                else
+                    SettingsManager.RemoveOpenedFile(CurrentProjectPath);
+
                 DettachPartProject(CurrentProject);
 
                 ProjectClosed?.Invoke(this, EventArgs.Empty);
@@ -156,6 +184,20 @@ namespace LDDModder.BrickEditor.ProjectHandling
                 if (!PreventProjectChange)
                     ProjectChanged?.Invoke(this, EventArgs.Empty);
             }
+        }
+
+        public void DeleteTemporaryProject(string path)
+        {
+            string directoryPath = path;
+            if ((Path.GetFileName(path) ?? string.Empty) != string.Empty && File.Exists(path))
+                directoryPath = Path.GetDirectoryName(path);
+
+            if (Directory.Exists(directoryPath))
+            {
+                Task.Factory.StartNew(() => FileHelper.DeleteFileOrFolder(directoryPath, true, true));
+            }
+
+            SettingsManager.RemoveOpenedFile(path);
         }
 
         private void AttachPartProject(PartProject project)
@@ -183,6 +225,8 @@ namespace LDDModder.BrickEditor.ProjectHandling
             LastSavedChange = 0;
             LastValidation = -1;
             IsProjectAttached = false;
+            CurrentProjectPath = null;
+            TemporaryProjectPath = null;
         }
 
         #endregion
@@ -191,10 +235,19 @@ namespace LDDModder.BrickEditor.ProjectHandling
         {
             if (IsProjectOpen)
             {
+                string oldPath = CurrentProjectPath;
+
                 //SaveUserProperties();
-                CurrentProject.Save(targetPath);
-                CurrentProject.ProjectPath = targetPath;
+                CurrentProject.CleanUpAndSave(targetPath);
+
+                CurrentProjectPath = targetPath;
+                
                 LastSavedChange = UndoRedoManager.CurrentChangeID;
+
+                if (oldPath != CurrentProjectPath)
+                    SettingsManager.UpdateOpenedFile(TemporaryProjectPath, CurrentProjectPath);
+
+                SettingsManager.AddRecentProject(GetCurrentProjectInfo(), false);
                 ProjectModified?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -203,10 +256,28 @@ namespace LDDModder.BrickEditor.ProjectHandling
         {
             if (IsProjectOpen)
             {
-                //SaveUserProperties();
-                var projectXml = CurrentProject.GenerateProjectXml();
-                projectXml.Save(Path.Combine(CurrentProject.ProjectWorkingDir, PartProject.ProjectFileName));
+                if (string.IsNullOrEmpty(TemporaryProjectPath))
+                {
+                    string tempDir = FileHelper.GetTempDirectory(16);
+                    string tempFile = Path.Combine(tempDir, PartProject.ProjectFileName);
+                    TemporaryProjectPath = tempFile;
+                }
+                CurrentProject.ProjectPath = TemporaryProjectPath;
+                CurrentProject.Save(TemporaryProjectPath);
             }
+        }
+
+        public RecentFileInfo GetCurrentProjectInfo()
+        {
+            if (!IsProjectOpen)
+                return null;
+            return new RecentFileInfo()
+            {
+                PartID = CurrentProject.PartID,
+                PartName = CurrentProject.PartDescription,
+                ProjectFile = CurrentProjectPath,
+                TemporaryPath = TemporaryProjectPath
+            };
         }
 
         #region Project User Properties
@@ -1056,8 +1127,8 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
                 var removedElements = elemsToDelete.Where(x => x.TryRemove()).ToList();
 
-                if (removedElements.OfType<ModelMeshReference>().Any())
-                    CurrentProject.RemoveUnreferencedMeshes();
+                //if (removedElements.OfType<ModelMeshReference>().Any())
+                //    CurrentProject.RemoveUnreferencedMeshes();
 
                 EndBatchChanges();
             }

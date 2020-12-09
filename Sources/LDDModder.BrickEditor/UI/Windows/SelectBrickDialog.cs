@@ -26,6 +26,7 @@ namespace LDDModder.BrickEditor.UI.Windows
         private SortableBindingList<BrickInfo> FilteredBrickList { get; set; }
 
         private bool IsListFiltered;
+        private bool IsUpdatingList;
 
         private Task BrickLoadingTask;
 
@@ -109,7 +110,7 @@ namespace LDDModder.BrickEditor.UI.Windows
             {
                 var range = newBricks.Take(MAX_ADD).ToList();
                 var curScrollRow = BrickGridView.FirstDisplayedScrollingRowIndex;
-
+                IsUpdatingList = true;
                 BrickList.AddRange(range);
                 if (IsListFiltered)
                     FilteredBrickList.AddRange(range.Where(x => IsBrickVisible(x)));
@@ -120,6 +121,7 @@ namespace LDDModder.BrickEditor.UI.Windows
                     BrickGridView.FirstDisplayedScrollingRowIndex = curScrollRow;
                 }
 
+                IsUpdatingList = false;
                 newBricks.RemoveRange(0, range.Count);
 
                 if (onlyOnce)
@@ -128,7 +130,12 @@ namespace LDDModder.BrickEditor.UI.Windows
                 if (newBricks.Count > 0)
                     Application.DoEvents();
             }
+            
+        }
 
+        private bool IsLoadingBrickList()
+        {
+            return BrickLoadingTask != null && BrickLoadingTask.Status == TaskStatus.Running;
         }
 
         private void OnBrickLoadingFinished()
@@ -239,7 +246,6 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         #endregion
 
-
         private void BrickGridView_SelectionChanged(object sender, EventArgs e)
         {
             if (BrickGridView.SelectedRows.Count > 0 &&
@@ -247,7 +253,7 @@ namespace LDDModder.BrickEditor.UI.Windows
             {
                 SelectedBrick = brick;
             }
-            else
+            else if(!IsUpdatingList)
                 SelectedBrick = null;
 
             OpenButton.Enabled = SelectedBrick != null;
@@ -261,6 +267,12 @@ namespace LDDModder.BrickEditor.UI.Windows
                 SelectedBrick = brick;
                 DialogResult = DialogResult.OK;
             }
+        }
+
+        private void OpenButton_Click(object sender, EventArgs e)
+        {
+            if (SelectedBrick != null)
+                DialogResult = DialogResult.OK;
         }
 
         private const int EM_SETCUEBANNER = 0x1501;
@@ -314,11 +326,8 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         private void SelectBrickDialog_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (BrickLoadingTask != null && 
-                BrickLoadingTask.Status == TaskStatus.Running)
-            {
+            if (IsLoadingBrickList())
                 EndLoadingTask();
-            }
         }
     }
 }

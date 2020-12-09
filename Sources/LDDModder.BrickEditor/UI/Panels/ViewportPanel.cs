@@ -1763,6 +1763,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                 var selectedMeshes = ProjectManager.GetSelectionHierarchy().OfType<ModelMeshReference>().ToList();
                 foreach (var meshRef in selectedMeshes)
                     ProjectManager.CurrentProject.SplitMeshSurfaces(meshRef);
+                ProjectManager.CurrentProject.SaveMeshesToXml();
                 ProjectManager.EndBatchChanges();
             }
         }
@@ -1775,6 +1776,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                 ProjectManager.StartBatchChanges();
                 var selectedMeshes = ProjectManager.GetSelectionHierarchy().OfType<ModelMeshReference>().ToList();
                 ProjectManager.CurrentProject.CombineMeshes(selectedMeshes);
+                ProjectManager.CurrentProject.SaveMeshesToXml();
                 ProjectManager.EndBatchChanges();
             }
         }

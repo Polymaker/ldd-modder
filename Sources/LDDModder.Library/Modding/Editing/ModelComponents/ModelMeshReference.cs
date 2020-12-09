@@ -120,7 +120,7 @@ namespace LDDModder.Modding.Editing
             if (modelMesh != null)
             {
                 if (!modelMesh.IsModelLoaded)
-                    modelMesh.LoadModel();
+                    modelMesh.ReloadModelFromXml();
 
                 if (modelMesh.Geometry != null)
                 {
@@ -145,7 +145,7 @@ namespace LDDModder.Modding.Editing
         {
             var modelMesh = GetModelMesh();
             if (!modelMesh.IsModelLoaded)
-                modelMesh.LoadModel();
+                modelMesh.ReloadModelFromXml();
 
             for (int i = 0; i < geometry.IndexCount; i++)
             {

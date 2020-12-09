@@ -23,6 +23,7 @@ namespace LDDModder.Modding.Editing
     public class PartProject
     {
         public const string ProjectFileName = "project.xml";
+        public const string FILE_ROOT = "LDDPART";
 
         public const int CURRENT_VERSION = 2;
 
@@ -129,18 +130,17 @@ namespace LDDModder.Modding.Editing
         [XmlArray("Meshes")]
         public ElementCollection<ModelMesh> Meshes { get; }
 
+        //private List<PartElement> _DeletedElements;
+
+        //public IList<PartElement> DeletedElements => _DeletedElements.AsReadOnly();
+
         #endregion
 
         #region Project File Properties
 
         public string ProjectPath { get; set; }
 
-        public string ProjectWorkingDir { get; set; }
-
-        public bool IsLoadedFromDisk => !string.IsNullOrEmpty(ProjectPath) || 
-            !string.IsNullOrEmpty(ProjectWorkingDir);
-
-        public bool IsTemporaryFile => !string.IsNullOrEmpty(ProjectWorkingDir);
+        public bool IsLoadedFromDisk => !string.IsNullOrEmpty(ProjectPath);
 
         public int FileVersion { get; set; }
 
@@ -174,7 +174,7 @@ namespace LDDModder.Modding.Editing
             Collisions = new ElementCollection<PartCollision>(this);
             Bones = new ElementCollection<PartBone>(this);
             Meshes = new ElementCollection<ModelMesh>(this);
-
+            //_DeletedElements = new List<PartElement>();
             Properties = new PartProperties(this);
 
             ProjectProperties = new Dictionary<string, string>();
@@ -316,10 +316,12 @@ namespace LDDModder.Modding.Editing
 
         public XDocument GenerateProjectXml()
         {
-            var doc = new XDocument(new XElement("LDDPART"));
+            var doc = new XDocument(new XElement(FILE_ROOT));
 
             doc.Root.Add(Properties.SerializeToXml());
-            
+
+            doc.Root.AddNumberAttribute("Version", FileVersion);
+
             var surfacesElem = doc.Root.AddElement("ModelSurfaces");
             foreach (var surf in Surfaces)
                 surfacesElem.Add(surf.SerializeToXml());
@@ -424,130 +426,126 @@ namespace LDDModder.Modding.Editing
 
         #endregion
 
-        #region Read/Write from Directory
-
-        public void SaveExtracted(string directory, bool setWorkingDir = true)
-        {
-            directory = Path.GetFullPath(directory);
-            Directory.CreateDirectory(directory);
-            if (setWorkingDir)
-                ProjectWorkingDir = directory;
-
-            var projectXml = GenerateProjectXml();
-            projectXml.Save(Path.Combine(directory, ProjectFileName));
-
-            //string meshDir = Path.Combine(directory, "Meshes");
-            //Directory.CreateDirectory(meshDir);
-
-            //foreach (var mesh in Meshes)
-            //    mesh.SaveGeometry(directory);
-        }
-
-        public static PartProject LoadFromDirectory(string directory)
-        {
-            var doc = XDocument.Load(Path.Combine(directory, ProjectFileName));
-            var project = new PartProject
-            {
-                ProjectWorkingDir = directory
-            };
-            project.LoadFromXml(doc);
-            project.CheckFiles();
-            return project;
-        }
-
-        #endregion
-
-        #region Read/Write from zip
+        #region Read/Write
 
         public void Save(string filename)
         {
-            using (var fs = File.Open(filename, FileMode.Create))
-            using (var zipStream = new ZipOutputStream(fs))
-            {
-                zipStream.SetLevel(1);
-                
-                zipStream.PutNextEntry(new ZipEntry(ProjectFileName));
+            string directory = Path.GetDirectoryName(filename);
+            if (!Directory.Exists(directory))
+                Directory.CreateDirectory(directory);
 
-                var projectXml = GenerateProjectXml();
-
-                projectXml.Save(zipStream);
-
-                zipStream.CloseEntry();
-
-                foreach (var mesh in Meshes)
-                {
-                    if (mesh.MeshFileExists)
-                    {
-                        zipStream.PutNextEntry(new ZipEntry(mesh.FileName));
-                        using (var meshFs = File.OpenRead(mesh.WorkingFilePath))
-                            meshFs.CopyTo(zipStream);
-                    }
-                    else if (mesh.IsModelLoaded)
-                    {
-                        var xmlfilename = Path.ChangeExtension(mesh.FileName, "xml");
-
-                        using (var ms = new MemoryStream())
-                        {
-                            //if (!mesh.IsModelLoaded && mesh.fi)
-                            mesh.Geometry.Save(ms);
-                            ms.Position = 0;
-                            zipStream.PutNextEntry(new ZipEntry(mesh.FileName));
-                            ms.CopyTo(zipStream);
-                            zipStream.CloseEntry();
-                        }
-
-                        using (var ms = new MemoryStream())
-                        {
-                            //if (!mesh.IsModelLoaded && mesh.fi)
-                            mesh.Geometry.SaveAsXml(ms);
-                            ms.Position = 0;
-                            zipStream.PutNextEntry(new ZipEntry(xmlfilename));
-                            ms.CopyTo(zipStream);
-                            zipStream.CloseEntry();
-                        }
-                    }
-                }
-            }
-            
-            ProjectPath = filename;
+            var projectXml = GenerateProjectXml();
+            projectXml.Save(filename);
         }
 
-        public static PartProject ExtractAndOpen(Stream stream, string targetPath)
+        public void CleanUpAndSave(string filename)
         {
-            using (var zipFile = new ZipFile(stream))
+            string directory = Path.GetDirectoryName(filename);
+            if (!Directory.Exists(directory))
+                Directory.CreateDirectory(directory);
+
+            var projectXml = GenerateProjectXml();
+            foreach(var mesh in Meshes)
             {
-                if (zipFile.GetEntry(ProjectFileName) == null)
-                    return null;
-
-                foreach (ZipEntry entry in zipFile)
+                if (!mesh.GetReferences().Any())
                 {
-                    if (!entry.IsFile)
-                        continue;
-                    string fullPath = Path.Combine(targetPath, entry.Name);
-                    string dirName = Path.GetDirectoryName(fullPath);
-                    if (dirName.Length > 0)
-                        Directory.CreateDirectory(dirName);
-
-                    var buffer = new byte[4096];
-
-                    using (var zipStream = zipFile.GetInputStream(entry))
-                    using (Stream fsOutput = File.Create(fullPath))
-                    {
-                        zipStream.CopyTo(fsOutput, 4096);
-                    }
+                    var meshElem = projectXml.Descendants(ModelMesh.NODE_NAME)
+                        .FirstOrDefault(e => e.ReadAttribute("ID", string.Empty) == mesh.ID);
+                    if (meshElem != null)
+                        meshElem.Remove();
                 }
             }
+            projectXml.Save(filename);
+        }
 
-            string projectFilePath = Path.Combine(targetPath, ProjectFileName);
 
-            var projectXml = XDocument.Load(projectFilePath);
-            var project = new PartProject()
+        public static PartProject Open(string filepath)
+        {
+            PartProject project = null;
+
+            if (CheckIsZipFile(filepath))
             {
-                ProjectWorkingDir = targetPath
-            };
-            project.LoadFromXml(projectXml);
-            project.CheckFiles();
+                project = LegacyReadZip(filepath);
+            } 
+            else
+            {
+                var doc = XDocument.Load(filepath);
+                project = new PartProject();
+                project.LoadFromXml(doc);
+            }
+
+            if (project != null)
+            {
+                project.ProjectPath = filepath;
+                project.FileVersion = CURRENT_VERSION;
+                foreach (var mesh in project.Meshes)
+                    if (mesh.Geometry != null)
+                        mesh.MarkSaved(true);
+            }
+
             return project;
+        }
+
+        private static bool CheckIsZipFile(string filepath)
+        {
+            try
+            {
+                using (var zipFile = new ZipFile(filepath))
+                {
+                    if (zipFile.TestArchive(true))
+                        return true;
+                }
+            }
+            catch
+            {
+
+            }
+            return false;
+        }
+
+        private static PartProject LegacyReadZip(string filepath)
+        {
+            XDocument projectDoc = null;
+
+            using (var zipFile = new ZipFile(filepath))
+            {
+                var projectEntry = zipFile.GetEntry(ProjectFileName);
+
+                if (projectEntry == null)
+                    return null;
+
+                using (var zs = zipFile.GetInputStream(projectEntry))
+                    projectDoc = XDocument.Load(zs);
+
+                var project = new PartProject();
+                project.LoadFromXml(projectDoc);
+
+                foreach (var mesh in project.Meshes)
+                {
+                    string meshFilename = mesh.LegacyFilename;
+                    if (string.IsNullOrEmpty(meshFilename))
+                        meshFilename = "Meshes\\" + mesh.Name + ".geom";
+                    meshFilename = meshFilename.Replace("\\", "/");
+                    var meshEntry = zipFile.GetEntry(meshFilename);
+                    if (meshEntry != null)
+                    {
+                        using (var zipStream = zipFile.GetInputStream(meshEntry))
+                        using (var ms = new MemoryStream())//use memory stream to support stream seeking
+                        {
+                            zipStream.CopyTo(ms);
+                            ms.Position = 0;
+                            var geom = MeshGeometry.FromStream(ms);
+                            mesh.Geometry = geom;
+                        }
+                    }
+                    else
+                    {
+                        Trace.WriteLine($"Could not find mesh file: {mesh.Name}");
+                    }
+                }
+
+                return project;
+            }
         }
 
         #endregion
@@ -585,26 +583,10 @@ namespace LDDModder.Modding.Editing
             return GetAllElements().OfType<T>().Where(x => predicate(x));
         }
 
-        private void CheckFiles()
-        {
-            foreach (var mesh in Meshes)
-                mesh.CheckFileExist();
-        }
 
         public ModelMesh AddMeshGeometry(MeshGeometry geometry, string name = null)
         {
-            ModelMesh modelMesh = AddMeshGeometry(geometry, null, name);
-
-            //if (IsLoadedFromDisk)
-            //{
-            //    var targetFilePath = GetFileFullPath(modelMesh.FileName);
-            //    geometry.Save(targetFilePath);
-            //    var test = Path.ChangeExtension(targetFilePath, ".xml");
-            //    geometry.SaveAsXml(test);
-            //    modelMesh.CheckFileExist();
-            //}
-
-            return modelMesh;
+            return AddMeshGeometry(geometry, null, name);
         }
 
         private ModelMesh AddMeshGeometry(MeshGeometry geometry, string id, string name = null)
@@ -845,8 +827,7 @@ namespace LDDModder.Modding.Editing
                 if (meshRef.ModelMesh.GetReferences().Count() == 1 && 
                     !Meshes.Any(x => x.Name == elementName))
                 {
-                    if (meshRef.ModelMesh.CanRename(elementName))
-                        meshRef.ModelMesh.InternalSetName(elementName, true);
+                    meshRef.ModelMesh.InternalSetName(elementName, true);
                 }
             }
 
@@ -971,21 +952,21 @@ namespace LDDModder.Modding.Editing
             UpdateBoneReferencesIndices();
         }
 
-        public MeshGeometry LoadModelMesh(ModelMesh modelMesh)
-        {
-            if (IsLoadedFromDisk && modelMesh.Geometry == null &&  modelMesh.MeshFileExists)
-            {
-                try
-                {
-                    modelMesh.Geometry = MeshGeometry.FromFile(modelMesh.WorkingFilePath);
-                    modelMesh.UpdateMeshProperties();
-                    UpdateModelStatistics();
-                }
-                catch { }
-            }
+        //public MeshGeometry LoadModelMesh(ModelMesh modelMesh)
+        //{
+        //    if (IsLoadedFromDisk && modelMesh.Geometry == null &&  modelMesh.MeshFileExists)
+        //    {
+        //        try
+        //        {
+        //            modelMesh.Geometry = MeshGeometry.FromFile(modelMesh.WorkingFilePath);
+        //            modelMesh.UpdateMeshProperties();
+        //            UpdateModelStatistics();
+        //        }
+        //        catch { }
+        //    }
 
-            return modelMesh.Geometry;
-        }
+        //    return modelMesh.Geometry;
+        //}
 
         public BoundingBox CalculateBoundingBox()
         {
@@ -1052,7 +1033,7 @@ namespace LDDModder.Modding.Editing
             {
                 if (!allRefs.Any(x => x.MeshID == mesh.ID || x.ModelMesh == mesh))
                 {
-                    mesh.TempDeleteFile();
+                    //mesh.TempDeleteFile();
                     Meshes.Remove(mesh);
                 }
             }
@@ -1082,7 +1063,7 @@ namespace LDDModder.Modding.Editing
             }
 
             parentCollection.Remove(meshRef);
-            RemoveUnreferencedMeshes();
+            //RemoveUnreferencedMeshes();
 
             if (!wasLoaded && meshRef.ModelMesh.CanUnloadModel)
                 meshRef.ModelMesh.UnloadModel();
@@ -1113,7 +1094,34 @@ namespace LDDModder.Modding.Editing
             var newModel = AddMeshGeometry(finalGeom);
 
             parentCollection.Add(new ModelMeshReference(newModel));
-            RemoveUnreferencedMeshes();
+            //SaveMeshesToXml();
+            //RemoveUnreferencedMeshes();
+        }
+
+        public void SaveMeshesToXml()
+        {
+            if (!string.IsNullOrEmpty(ProjectPath))
+                SaveMeshesToXml(ProjectPath);
+        }
+
+        public void SaveMeshesToXml(string projectPath)
+        {
+            var doc = XDocument.Load(projectPath);
+
+            if (!doc.Root.HasElement(nameof(Meshes), out XElement meshesElem))
+                meshesElem = doc.Root.AddElement(nameof(Meshes));
+
+            meshesElem.RemoveAll();
+
+            foreach (var mesh in Meshes)
+            {
+                //var meshElem = meshesElem.Elements()
+                //    .FirstOrDefault(e => e.ReadAttribute("ID", string.Empty) == mesh.ID);
+                meshesElem.Add(mesh.SerializeToXml());
+                mesh.MarkSaved(true);
+            }
+
+            doc.Save(projectPath);
         }
 
         #endregion
@@ -1297,40 +1305,35 @@ namespace LDDModder.Modding.Editing
                 ElementPropertyChanged?.Invoke(this, pcea);
         }
 
+        //internal void UpdateDeletedStatus(PartElement element)
+        //{
+        //    if (element.IsDeleted && !_DeletedElements.Contains(element))
+        //    {
+        //        _DeletedElements.Add(element);
+        //    }
+        //    if (!element.IsDeleted && _DeletedElements.Contains(element))
+        //    {
+        //        _DeletedElements.Remove(element);
+        //    }
+        //}
+
         #endregion
 
         #region Project File/Directory Handling
+
+
 
         public XDocument GetProjectXml()
         {
             if (IsLoadedFromDisk)
             {
-                if (IsTemporaryFile)
-                    return XDocument.Load(ProjectWorkingDir);
-                else
+                try 
+                {
                     return XDocument.Load(ProjectPath);
+                }
+                catch { }
             }
             return null;
-        }
-
-        public string GenerateMeshFileName(string meshName)
-        {
-            meshName = FileHelper.GetSafeFileName(meshName);
-            return $"Meshes\\{meshName}.geom";
-        }
-
-        public string GetFileFullPath(string filename)
-        {
-            if (IsLoadedFromDisk)
-                return Path.Combine(ProjectWorkingDir, filename);
-            return null;
-        }
-
-        public bool FileExist(string filename)
-        {
-            if (IsLoadedFromDisk)
-                return File.Exists(GetFileFullPath(filename));
-            return false;
         }
 
         #endregion
@@ -1524,7 +1527,8 @@ namespace LDDModder.Modding.Editing
             }
 
             var models = meshRefs.Select(x => x.ModelMesh).Distinct().ToList();
-            models.ForEach(x => x.SaveGeometry());
+            SaveMeshesToXml();
+            //models.ForEach(x => x.SaveGeometry());
             unloadedMeshes.ForEach(x => x.UnloadModel());
         }
 
@@ -1538,13 +1542,13 @@ namespace LDDModder.Modding.Editing
             {
                 if (!model.IsModelLoaded)
                 {
-                    if (!model.LoadModel())
+                    if (!model.ReloadModelFromXml())
                         continue;
                 }
                 model.Geometry.ClearRoundEdgeData();
-                model.SaveGeometry();
+                //model.SaveGeometry();
             }
-
+            SaveMeshesToXml();
             unloadedMeshes.ForEach(x => x.UnloadModel());
         }
 

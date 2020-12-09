@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.CancelDialogButton = new System.Windows.Forms.Button();
             this.OpenButton = new System.Windows.Forms.Button();
@@ -83,7 +83,6 @@
             // OpenButton
             // 
             this.OpenButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.OpenButton.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.OpenButton.Enabled = false;
             this.OpenButton.Location = new System.Drawing.Point(469, 379);
             this.OpenButton.Name = "OpenButton";
@@ -91,6 +90,7 @@
             this.OpenButton.TabIndex = 1;
             this.OpenButton.Text = "Open";
             this.OpenButton.UseVisualStyleBackColor = true;
+            this.OpenButton.Click += new System.EventHandler(this.OpenButton_Click);
             // 
             // LoadingProgressBar
             // 
@@ -106,8 +106,8 @@
             this.BrickGridView.AllowUserToAddRows = false;
             this.BrickGridView.AllowUserToDeleteRows = false;
             this.BrickGridView.AllowUserToResizeRows = false;
-            dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(235)))), ((int)(((byte)(235)))), ((int)(((byte)(235)))));
-            this.BrickGridView.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(235)))), ((int)(((byte)(235)))), ((int)(((byte)(235)))));
+            this.BrickGridView.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle2;
             this.BrickGridView.BackgroundColor = System.Drawing.SystemColors.Window;
             this.BrickGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.BrickGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {

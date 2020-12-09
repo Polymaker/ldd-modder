@@ -259,6 +259,9 @@ namespace LDDModder.BrickEditor.Models
         {
             foreach (var brickInfo in Bricks)
             {
+                if (ct.IsCancellationRequested)
+                    break;
+
                 if (ChangedParts.Contains(brickInfo.PartId))
                     brickInfo.Validated = false;
             }

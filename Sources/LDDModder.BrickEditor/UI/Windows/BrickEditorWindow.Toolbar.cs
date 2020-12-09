@@ -45,7 +45,6 @@ namespace LDDModder.BrickEditor.UI.Windows
                 UpdateBuildConfigs();
             
         }
-
  
         #region File Menu
 

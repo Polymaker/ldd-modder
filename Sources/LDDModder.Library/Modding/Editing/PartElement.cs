@@ -52,7 +52,7 @@ namespace LDDModder.Modding.Editing
 
         internal bool IsInitializing { get; set; }
 
-        public bool IsDeleted { get; internal set; }
+        //public bool IsDeleted { get; internal set; }
 
         public event EventHandler<ElementValueChangedEventArgs> PropertyChanged;
 
@@ -103,10 +103,10 @@ namespace LDDModder.Modding.Editing
         {
             if (Parent != parent)
             {
-                if (Parent != null && parent == null)
-                    IsDeleted = true;
-                else if (IsDeleted && parent != null)
-                    IsDeleted = false;
+                //if (Parent != null && parent == null)
+                //    IsDeleted = true;
+                //else if (IsDeleted && parent != null)
+                //    IsDeleted = false;
                 Parent = parent;
                 if (!RemovingParent)
                     ParentChanged?.Invoke(this, EventArgs.Empty);
