@@ -188,6 +188,7 @@
     </Compile>
     <Compile Include="Settings\BuildConfiguration.cs" />
     <Compile Include="Settings\EditorSettings.cs" />
+    <Compile Include="Settings\LddSettings.cs" />
     <Compile Include="Settings\ProjectBuildSettings.cs" />
     <Compile Include="Settings\ViewportDisplaySettings.cs" />
     <Compile Include="UI\Controls\CollapsiblePanel.cs">
@@ -258,6 +259,12 @@
     </Compile>
     <Compile Include="UI\Panels\ElementDetailPanel.Designer.cs">
       <DependentUpon>ElementDetailPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Panels\ProjectInfoPanel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Panels\ProjectInfoPanel.Designer.cs">
+      <DependentUpon>ProjectInfoPanel.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\Panels\StudConnectionPanel.cs">
       <SubType>Form</SubType>
@@ -536,6 +543,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Panels\ProjectDocumentPanel.resx">
       <DependentUpon>ProjectDocumentPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Panels\ProjectInfoPanel.resx">
+      <DependentUpon>ProjectInfoPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Panels\StudConnectionPanel.resx">
       <DependentUpon>StudConnectionPanel.cs</DependentUpon>

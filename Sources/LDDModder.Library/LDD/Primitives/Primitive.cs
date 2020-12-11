@@ -211,7 +211,7 @@ namespace LDDModder.LDD.Primitives
             if (ID == 0 && Aliases.Any())
                 ID = Aliases.First();
 
-            Comments = (document.FirstNode as XComment)?.Value ?? string.Empty;
+            Comments = document.Nodes().OfType<XComment>().FirstOrDefault()?.Value ?? string.Empty;
         }
 
         #region XML Element Loading

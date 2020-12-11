@@ -2,6 +2,7 @@
 using LDDModder.Modding.Editing;
 using LDDModder.Utilities;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -22,8 +23,6 @@ namespace LDDModder.BrickEditor.Settings
         public static int MaximumRecentFiles { get; set; } = 10;
 
         public static bool HasInitialized { get; private set; }
-
-        public static int AppInstanceID { get; set; }
 
         static SettingsManager()
         {
@@ -49,7 +48,7 @@ namespace LDDModder.BrickEditor.Settings
             Current = LoadAppSettings();
 
             if (Current == null)
-                Current = AppSettings.CreateDefault();
+                Current = new AppSettings();
             
             Current.InitializeDefaultValues();
 
@@ -66,12 +65,45 @@ namespace LDDModder.BrickEditor.Settings
             {
                 try
                 {
-                    return JsonConvert.DeserializeObject<AppSettings>(File.ReadAllText(settingsPath));
+                    string jsonData = File.ReadAllText(settingsPath);
+                    var appSettings = JsonConvert.DeserializeObject<AppSettings>(jsonData);
+                    MigrateLagacyFormat(appSettings, jsonData);
+
+                    return appSettings;
                 }
                 catch { }
             }
 
             return null;
+        }
+
+        private static void MigrateLagacyFormat(AppSettings appSettings, string jsonData)
+        {
+            var jsonObj = JObject.Parse(jsonData);
+
+            var lddPrgmPath = jsonObj.Value<string>("ldd.programFilesPath");
+            if (!string.IsNullOrEmpty(lddPrgmPath) && string.IsNullOrEmpty(appSettings.LddSettings.ProgramFilesPath))
+                appSettings.LddSettings.ProgramFilesPath = lddPrgmPath;
+
+            var lddAppDataPath = jsonObj.Value<string>("ldd.appDataPath");
+            if (!string.IsNullOrEmpty(lddAppDataPath) && string.IsNullOrEmpty(appSettings.LddSettings.ApplicationDataPath))
+                appSettings.LddSettings.ApplicationDataPath = lddAppDataPath;
+
+            try
+            {
+                if (jsonObj.Property("build.configurations") != null)
+                {
+                    var buildSettings = jsonObj["build.configurations"].ToObject<ProjectBuildSettings>();
+                    if (buildSettings != null)
+                    {
+                        appSettings.BuildSettings = buildSettings;
+                    }
+                }
+            }
+            catch { }
+            
+            
+
         }
 
         public static void ReloadFilesHistory()
@@ -90,11 +122,11 @@ namespace LDDModder.BrickEditor.Settings
             if (LDDEnvironment.IsInstalled)
             {
                 sameAsInstalled = StringUtils.EqualsIC(
-                        Current.LddApplicationDataPath,
+                        Current.LddSettings.ApplicationDataPath,
                         LDDEnvironment.InstalledEnvironment.ApplicationDataPath
                     ) &&
                     StringUtils.EqualsIC(
-                        Current.LddProgramFilesPath,
+                        Current.LddSettings.ProgramFilesPath,
                         LDDEnvironment.InstalledEnvironment.ProgramFilesPath
                     );
             }
@@ -105,16 +137,18 @@ namespace LDDModder.BrickEditor.Settings
             {
                 if (LDDEnvironment.IsInstalled)
                 {
-                    if (string.IsNullOrEmpty(Current.LddProgramFilesPath))
-                        Current.LddProgramFilesPath = LDDEnvironment.InstalledEnvironment.ProgramFilesPath;
-                    if (string.IsNullOrEmpty(Current.LddApplicationDataPath))
-                        Current.LddApplicationDataPath = LDDEnvironment.InstalledEnvironment.ApplicationDataPath;
+                    if (string.IsNullOrEmpty(Current.LddSettings.ProgramFilesPath))
+                        Current.LddSettings.ProgramFilesPath = LDDEnvironment.InstalledEnvironment.ProgramFilesPath;
+                    if (string.IsNullOrEmpty(Current.LddSettings.ApplicationDataPath))
+                        Current.LddSettings.ApplicationDataPath = LDDEnvironment.InstalledEnvironment.ApplicationDataPath;
                 }
                 
-                if (!string.IsNullOrEmpty(Current.LddProgramFilesPath) || 
-                    !string.IsNullOrEmpty(Current.LddApplicationDataPath))
+                if (!string.IsNullOrEmpty(Current.LddSettings.ProgramFilesPath) || 
+                    !string.IsNullOrEmpty(Current.LddSettings.ApplicationDataPath))
                 {
-                    var custom = LDDEnvironment.Create(Current.LddProgramFilesPath, Current.LddApplicationDataPath);
+                    var custom = LDDEnvironment.Create(
+                        Current.LddSettings.ProgramFilesPath, 
+                        Current.LddSettings.ApplicationDataPath);
                     LDDEnvironment.SetOverride(custom);
                 }
                 else
@@ -141,6 +175,9 @@ namespace LDDModder.BrickEditor.Settings
             var currentSettings = LoadAppSettings();
             if (currentSettings == null)
                 return;
+
+            currentSettings.BuildSettings.InitializeDefaults();
+
             currentSettings.OpenedProjects = Current.OpenedProjects;
             currentSettings.RecentProjectFiles = Current.RecentProjectFiles;
             SaveSettings(currentSettings);
@@ -165,34 +202,6 @@ namespace LDDModder.BrickEditor.Settings
             SaveFilesHistory();
         }
 
-        public static void AddRecentProject(PartProject project, bool isSavedFile = false)
-        {
-            if (Current.RecentProjectFiles == null)
-                Current.RecentProjectFiles = new List<RecentFileInfo>();
-
-            ReloadFilesHistory();
-
-            if (isSavedFile && !Current.RecentProjectFiles.Any(x => x.ProjectFile == project.ProjectPath))
-            {
-                Current.RecentProjectFiles.Insert(0, new RecentFileInfo(project));
-
-                while (Current.RecentProjectFiles.Count > MaximumRecentFiles)
-                    Current.RecentProjectFiles.RemoveAt(Current.RecentProjectFiles.Count - 1);
-
-            }
-            else if (!isSavedFile)
-            {
-                Current.RecentProjectFiles.RemoveAll(x => x.ProjectFile == project.ProjectPath);
-                Current.RecentProjectFiles.Insert(0, new RecentFileInfo(project));
-
-                while (Current.RecentProjectFiles.Count > MaximumRecentFiles)
-                    Current.RecentProjectFiles.RemoveAt(Current.RecentProjectFiles.Count - 1);
-
-            }
-
-            SaveFilesHistory();
-        }
-
         public static void AddRecentProject(RecentFileInfo fileInfo, bool moveToTop = false)
         {
             if (Current.RecentProjectFiles == null)
@@ -202,6 +211,7 @@ namespace LDDModder.BrickEditor.Settings
 
             if (moveToTop || !Current.RecentProjectFiles.Any(x => x.ProjectFile == fileInfo.ProjectFile))
             {
+                fileInfo.TemporaryPath = string.Empty;
                 Current.RecentProjectFiles.RemoveAll(x => x.ProjectFile == fileInfo.ProjectFile);
                 Current.RecentProjectFiles.Insert(0, fileInfo);
             }
@@ -286,6 +296,6 @@ namespace LDDModder.BrickEditor.Settings
         #endregion
 
 
-        public static bool IsWorkspaceDefined => !string.IsNullOrEmpty(Current.ProjectWorkspace);
+        public static bool IsWorkspaceDefined => !string.IsNullOrEmpty(Current.EditorSettings?.ProjectWorkspace);
     }
 }

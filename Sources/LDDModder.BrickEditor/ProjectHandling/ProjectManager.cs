@@ -143,17 +143,12 @@ namespace LDDModder.BrickEditor.ProjectHandling
                 CurrentProject = project;
                 CurrentProjectPath = project.ProjectPath;
 
-                if (!string.IsNullOrEmpty(tempPath/*project.TemporaryProjectPath*/))
+                if (!string.IsNullOrEmpty(tempPath))
                 {
                     LastSavedChange = -1;
                     if (!File.Exists(tempPath))
                         TemporaryProjectPath = tempPath;
                 }
-                //if (FileHelper.IsInTempFolder(project.ProjectPath))
-                //{
-                //    TemporaryProjectPath = project.ProjectPath;
-                //    //project.ProjectPath = string.Empty;
-                //}
 
                 SaveWorkingProject();
 
@@ -161,6 +156,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
                 if (project != null)
                     AttachPartProject(project);
+
                 ProjectChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -886,7 +882,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
             {
                 if (!SettingsManager.IsWorkspaceDefined)
                     throw new ArgumentException("Workspace not defined!");
-                result = result.Replace("$(WorkspaceDir)", SettingsManager.Current.ProjectWorkspace);
+                result = result.Replace("$(WorkspaceDir)", SettingsManager.Current.EditorSettings.ProjectWorkspace);
             }
             if (result.Contains("$(PartID)"))
             {

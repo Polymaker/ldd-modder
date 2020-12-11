@@ -236,7 +236,7 @@ namespace LDDModder.BrickEditor.UI.Windows
                 if (!ValidateProgramPath(ref selectedDir))
                     MessageBox.Show(this, LddExeNotFound, this.Text, MessageBoxButtons.OK);
                 else
-                    SettingsManager.Current.LddProgramFilesPath = selectedDir;
+                    SettingsManager.Current.LddSettings.ProgramFilesPath = selectedDir;
             }
             if (!string.IsNullOrEmpty(AppDataPathTextBox.Value))
             {
@@ -244,7 +244,7 @@ namespace LDDModder.BrickEditor.UI.Windows
                 if (!ValidateAppDataPath(ref selectedDir))
                     MessageBox.Show(this, AppDataDbNotFound, this.Text, MessageBoxButtons.OK);
                 else
-                    SettingsManager.Current.LddApplicationDataPath = selectedDir;
+                    SettingsManager.Current.LddSettings.ApplicationDataPath = selectedDir;
             }
             SettingsManager.SaveSettings();
         }
@@ -546,6 +546,17 @@ namespace LDDModder.BrickEditor.UI.Windows
             BuildCfgNameColumn.Width = BuildConfigListView.Width - 3;
         }
 
+
+        #endregion
+
+        #region Editor settings
+
+        private void FillEditorSettings()
+        {
+            WorkspaceBrowseBox.DataBindings.Add(new Binding("Value",
+                    SettingsManager.Current, nameof(AppSettings.EditorSettings.ProjectWorkspace),
+                    true, DataSourceUpdateMode.OnPropertyChanged));
+        }
 
         #endregion
 

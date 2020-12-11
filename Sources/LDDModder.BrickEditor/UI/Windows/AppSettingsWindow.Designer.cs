@@ -34,6 +34,9 @@
             this.UserCreationPathLabel = new System.Windows.Forms.Label();
             this.PrgmFilePathLabel = new System.Windows.Forms.Label();
             this.AppDataPathLabel = new System.Windows.Forms.Label();
+            this.PrgmFilePathTextBox = new LDDModder.BrickEditor.UI.Controls.BrowseTextBox();
+            this.AppDataPathTextBox = new LDDModder.BrickEditor.UI.Controls.BrowseTextBox();
+            this.UserCreationPathTextBox = new LDDModder.BrickEditor.UI.Controls.BrowseTextBox();
             this.FindEnvironmentButton = new System.Windows.Forms.Button();
             this.LddPathsGroupBox = new System.Windows.Forms.GroupBox();
             this.LddDataGroupBox = new System.Windows.Forms.GroupBox();
@@ -51,6 +54,7 @@
             this.SettingsTabControl = new System.Windows.Forms.TabControl();
             this.LDDEnvPanel = new System.Windows.Forms.TabPage();
             this.EditorSettingsTabPage = new System.Windows.Forms.TabPage();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.BuildConfigsGroupBox = new System.Windows.Forms.GroupBox();
             this.BuildCfgSplitContainer = new System.Windows.Forms.SplitContainer();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
@@ -58,24 +62,28 @@
             this.AddBuildCfgBtn = new System.Windows.Forms.Button();
             this.BuildConfigListView = new System.Windows.Forms.ListView();
             this.BuildCfgNameColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.BuildCfgEditLayout = new System.Windows.Forms.TableLayoutPanel();
-            this.CancelBuildCfgBtn = new System.Windows.Forms.Button();
-            this.BuildCfg_OverwriteChk = new System.Windows.Forms.CheckBox();
-            this.SaveBuildCfgBtn = new System.Windows.Forms.Button();
-            this.BuildCfg_NameBox = new System.Windows.Forms.TextBox();
-            this.BuildCfg_Lod0Chk = new System.Windows.Forms.CheckBox();
-            this.BuildCfgNameLabel = new System.Windows.Forms.Label();
-            this.BuildCfgPathLabel = new System.Windows.Forms.Label();
-            this.PrgmFilePathTextBox = new LDDModder.BrickEditor.UI.Controls.BrowseTextBox();
-            this.AppDataPathTextBox = new LDDModder.BrickEditor.UI.Controls.BrowseTextBox();
-            this.UserCreationPathTextBox = new LDDModder.BrickEditor.UI.Controls.BrowseTextBox();
-            this.BuildCfg_PathBox = new LDDModder.BrickEditor.UI.Controls.BrowseTextBox();
             this.LifNotExtractedMessage = new LDDModder.BrickEditor.Localization.LocalizableString();
             this.LifExtractedMessage = new LDDModder.BrickEditor.Localization.LocalizableString();
             this.localizableStringList1 = new LDDModder.BrickEditor.Localization.LocalizableStringList(this.components);
             this.LifNotFoundMessage = new LDDModder.BrickEditor.Localization.LocalizableString();
             this.LddExeNotFound = new LDDModder.BrickEditor.Localization.LocalizableString();
             this.AppDataDbNotFound = new LDDModder.BrickEditor.Localization.LocalizableString();
+            this.UsernameLabel = new System.Windows.Forms.Label();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.WorkspaceBrowseBox = new LDDModder.BrickEditor.UI.Controls.BrowseTextBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.CancelBuildCfgBtn = new System.Windows.Forms.Button();
+            this.BuildCfg_OverwriteChk = new System.Windows.Forms.CheckBox();
+            this.SaveBuildCfgBtn = new System.Windows.Forms.Button();
+            this.BuildCfg_PathBox = new LDDModder.BrickEditor.UI.Controls.BrowseTextBox();
+            this.BuildCfg_NameBox = new System.Windows.Forms.TextBox();
+            this.BuildCfg_Lod0Chk = new System.Windows.Forms.CheckBox();
+            this.BuildCfgNameLabel = new System.Windows.Forms.Label();
+            this.BuildCfgPathLabel = new System.Windows.Forms.Label();
             this.LddPathsLayout.SuspendLayout();
             this.LddPathsGroupBox.SuspendLayout();
             this.LddDataGroupBox.SuspendLayout();
@@ -83,13 +91,14 @@
             this.SettingsTabControl.SuspendLayout();
             this.LDDEnvPanel.SuspendLayout();
             this.EditorSettingsTabPage.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.BuildConfigsGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.BuildCfgSplitContainer)).BeginInit();
             this.BuildCfgSplitContainer.Panel1.SuspendLayout();
             this.BuildCfgSplitContainer.Panel2.SuspendLayout();
             this.BuildCfgSplitContainer.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
-            this.BuildCfgEditLayout.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.SuspendLayout();
             // 
             // LddPathsLayout
@@ -118,6 +127,35 @@
             // 
             resources.ApplyResources(this.AppDataPathLabel, "AppDataPathLabel");
             this.AppDataPathLabel.Name = "AppDataPathLabel";
+            // 
+            // PrgmFilePathTextBox
+            // 
+            resources.ApplyResources(this.PrgmFilePathTextBox, "PrgmFilePathTextBox");
+            this.PrgmFilePathTextBox.AutoSizeButton = true;
+            this.PrgmFilePathTextBox.ButtonWidth = 26;
+            this.PrgmFilePathTextBox.Name = "PrgmFilePathTextBox";
+            this.PrgmFilePathTextBox.Value = "";
+            this.PrgmFilePathTextBox.BrowseButtonClicked += new System.EventHandler(this.PrgmFilePathTextBox_BrowseButtonClicked);
+            this.PrgmFilePathTextBox.ValueChanged += new System.EventHandler(this.LddPathTextBoxes_ValueChanged);
+            // 
+            // AppDataPathTextBox
+            // 
+            resources.ApplyResources(this.AppDataPathTextBox, "AppDataPathTextBox");
+            this.AppDataPathTextBox.AutoSizeButton = true;
+            this.AppDataPathTextBox.ButtonWidth = 26;
+            this.AppDataPathTextBox.Name = "AppDataPathTextBox";
+            this.AppDataPathTextBox.Value = "";
+            this.AppDataPathTextBox.BrowseButtonClicked += new System.EventHandler(this.PrgmFilePathTextBox_BrowseButtonClicked);
+            this.AppDataPathTextBox.ValueChanged += new System.EventHandler(this.LddPathTextBoxes_ValueChanged);
+            // 
+            // UserCreationPathTextBox
+            // 
+            resources.ApplyResources(this.UserCreationPathTextBox, "UserCreationPathTextBox");
+            this.UserCreationPathTextBox.AutoSizeButton = true;
+            this.UserCreationPathTextBox.ButtonWidth = 26;
+            this.UserCreationPathTextBox.Name = "UserCreationPathTextBox";
+            this.UserCreationPathTextBox.Value = "";
+            this.UserCreationPathTextBox.BrowseButtonClicked += new System.EventHandler(this.PrgmFilePathTextBox_BrowseButtonClicked);
             // 
             // FindEnvironmentButton
             // 
@@ -235,9 +273,24 @@
             // EditorSettingsTabPage
             // 
             this.EditorSettingsTabPage.Controls.Add(this.BuildConfigsGroupBox);
+            this.EditorSettingsTabPage.Controls.Add(this.groupBox1);
             resources.ApplyResources(this.EditorSettingsTabPage, "EditorSettingsTabPage");
             this.EditorSettingsTabPage.Name = "EditorSettingsTabPage";
             this.EditorSettingsTabPage.UseVisualStyleBackColor = true;
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.label6);
+            this.groupBox1.Controls.Add(this.label5);
+            this.groupBox1.Controls.Add(this.numericUpDown1);
+            this.groupBox1.Controls.Add(this.label4);
+            this.groupBox1.Controls.Add(this.UsernameLabel);
+            this.groupBox1.Controls.Add(this.textBox1);
+            this.groupBox1.Controls.Add(this.WorkspaceBrowseBox);
+            this.groupBox1.Controls.Add(this.label3);
+            resources.ApplyResources(this.groupBox1, "groupBox1");
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.TabStop = false;
             // 
             // BuildConfigsGroupBox
             // 
@@ -258,7 +311,14 @@
             // 
             // BuildCfgSplitContainer.Panel2
             // 
-            this.BuildCfgSplitContainer.Panel2.Controls.Add(this.BuildCfgEditLayout);
+            this.BuildCfgSplitContainer.Panel2.Controls.Add(this.CancelBuildCfgBtn);
+            this.BuildCfgSplitContainer.Panel2.Controls.Add(this.BuildCfg_OverwriteChk);
+            this.BuildCfgSplitContainer.Panel2.Controls.Add(this.SaveBuildCfgBtn);
+            this.BuildCfgSplitContainer.Panel2.Controls.Add(this.BuildCfg_PathBox);
+            this.BuildCfgSplitContainer.Panel2.Controls.Add(this.BuildCfg_NameBox);
+            this.BuildCfgSplitContainer.Panel2.Controls.Add(this.BuildCfg_Lod0Chk);
+            this.BuildCfgSplitContainer.Panel2.Controls.Add(this.BuildCfgNameLabel);
+            this.BuildCfgSplitContainer.Panel2.Controls.Add(this.BuildCfgPathLabel);
             // 
             // tableLayoutPanel1
             // 
@@ -302,107 +362,6 @@
             // 
             resources.ApplyResources(this.BuildCfgNameColumn, "BuildCfgNameColumn");
             // 
-            // BuildCfgEditLayout
-            // 
-            resources.ApplyResources(this.BuildCfgEditLayout, "BuildCfgEditLayout");
-            this.BuildCfgEditLayout.Controls.Add(this.CancelBuildCfgBtn, 2, 4);
-            this.BuildCfgEditLayout.Controls.Add(this.BuildCfg_OverwriteChk, 0, 3);
-            this.BuildCfgEditLayout.Controls.Add(this.SaveBuildCfgBtn, 1, 4);
-            this.BuildCfgEditLayout.Controls.Add(this.BuildCfg_PathBox, 1, 1);
-            this.BuildCfgEditLayout.Controls.Add(this.BuildCfg_NameBox, 1, 0);
-            this.BuildCfgEditLayout.Controls.Add(this.BuildCfg_Lod0Chk, 0, 2);
-            this.BuildCfgEditLayout.Controls.Add(this.BuildCfgNameLabel, 0, 0);
-            this.BuildCfgEditLayout.Controls.Add(this.BuildCfgPathLabel, 0, 1);
-            this.BuildCfgEditLayout.Name = "BuildCfgEditLayout";
-            // 
-            // CancelBuildCfgBtn
-            // 
-            resources.ApplyResources(this.CancelBuildCfgBtn, "CancelBuildCfgBtn");
-            this.CancelBuildCfgBtn.Name = "CancelBuildCfgBtn";
-            this.CancelBuildCfgBtn.UseVisualStyleBackColor = true;
-            this.CancelBuildCfgBtn.Click += new System.EventHandler(this.CancelBuildCfgBtn_Click);
-            // 
-            // BuildCfg_OverwriteChk
-            // 
-            resources.ApplyResources(this.BuildCfg_OverwriteChk, "BuildCfg_OverwriteChk");
-            this.BuildCfgEditLayout.SetColumnSpan(this.BuildCfg_OverwriteChk, 3);
-            this.BuildCfg_OverwriteChk.Name = "BuildCfg_OverwriteChk";
-            this.BuildCfg_OverwriteChk.UseVisualStyleBackColor = true;
-            this.BuildCfg_OverwriteChk.CheckedChanged += new System.EventHandler(this.BuildCfgProperty_ValueChanged);
-            // 
-            // SaveBuildCfgBtn
-            // 
-            resources.ApplyResources(this.SaveBuildCfgBtn, "SaveBuildCfgBtn");
-            this.SaveBuildCfgBtn.Name = "SaveBuildCfgBtn";
-            this.SaveBuildCfgBtn.UseVisualStyleBackColor = true;
-            this.SaveBuildCfgBtn.Click += new System.EventHandler(this.SaveBuildCfgBtn_Click);
-            // 
-            // BuildCfg_NameBox
-            // 
-            this.BuildCfgEditLayout.SetColumnSpan(this.BuildCfg_NameBox, 2);
-            resources.ApplyResources(this.BuildCfg_NameBox, "BuildCfg_NameBox");
-            this.BuildCfg_NameBox.Name = "BuildCfg_NameBox";
-            this.BuildCfg_NameBox.TextChanged += new System.EventHandler(this.BuildCfgProperty_ValueChanged);
-            // 
-            // BuildCfg_Lod0Chk
-            // 
-            resources.ApplyResources(this.BuildCfg_Lod0Chk, "BuildCfg_Lod0Chk");
-            this.BuildCfgEditLayout.SetColumnSpan(this.BuildCfg_Lod0Chk, 3);
-            this.BuildCfg_Lod0Chk.Name = "BuildCfg_Lod0Chk";
-            this.BuildCfg_Lod0Chk.UseVisualStyleBackColor = true;
-            this.BuildCfg_Lod0Chk.CheckedChanged += new System.EventHandler(this.BuildCfgProperty_ValueChanged);
-            // 
-            // BuildCfgNameLabel
-            // 
-            resources.ApplyResources(this.BuildCfgNameLabel, "BuildCfgNameLabel");
-            this.BuildCfgNameLabel.Name = "BuildCfgNameLabel";
-            // 
-            // BuildCfgPathLabel
-            // 
-            resources.ApplyResources(this.BuildCfgPathLabel, "BuildCfgPathLabel");
-            this.BuildCfgPathLabel.Name = "BuildCfgPathLabel";
-            // 
-            // PrgmFilePathTextBox
-            // 
-            resources.ApplyResources(this.PrgmFilePathTextBox, "PrgmFilePathTextBox");
-            this.PrgmFilePathTextBox.AutoSizeButton = true;
-            this.PrgmFilePathTextBox.ButtonWidth = 26;
-            this.PrgmFilePathTextBox.Name = "PrgmFilePathTextBox";
-            this.PrgmFilePathTextBox.Value = "";
-            this.PrgmFilePathTextBox.BrowseButtonClicked += new System.EventHandler(this.PrgmFilePathTextBox_BrowseButtonClicked);
-            this.PrgmFilePathTextBox.ValueChanged += new System.EventHandler(this.LddPathTextBoxes_ValueChanged);
-            // 
-            // AppDataPathTextBox
-            // 
-            resources.ApplyResources(this.AppDataPathTextBox, "AppDataPathTextBox");
-            this.AppDataPathTextBox.AutoSizeButton = true;
-            this.AppDataPathTextBox.ButtonWidth = 26;
-            this.AppDataPathTextBox.Name = "AppDataPathTextBox";
-            this.AppDataPathTextBox.Value = "";
-            this.AppDataPathTextBox.BrowseButtonClicked += new System.EventHandler(this.PrgmFilePathTextBox_BrowseButtonClicked);
-            this.AppDataPathTextBox.ValueChanged += new System.EventHandler(this.LddPathTextBoxes_ValueChanged);
-            // 
-            // UserCreationPathTextBox
-            // 
-            resources.ApplyResources(this.UserCreationPathTextBox, "UserCreationPathTextBox");
-            this.UserCreationPathTextBox.AutoSizeButton = true;
-            this.UserCreationPathTextBox.ButtonWidth = 26;
-            this.UserCreationPathTextBox.Name = "UserCreationPathTextBox";
-            this.UserCreationPathTextBox.Value = "";
-            this.UserCreationPathTextBox.BrowseButtonClicked += new System.EventHandler(this.PrgmFilePathTextBox_BrowseButtonClicked);
-            // 
-            // BuildCfg_PathBox
-            // 
-            resources.ApplyResources(this.BuildCfg_PathBox, "BuildCfg_PathBox");
-            this.BuildCfg_PathBox.AutoSizeButton = true;
-            this.BuildCfg_PathBox.ButtonWidth = 54;
-            this.BuildCfgEditLayout.SetColumnSpan(this.BuildCfg_PathBox, 2);
-            this.BuildCfg_PathBox.Name = "BuildCfg_PathBox";
-            this.BuildCfg_PathBox.ReadOnly = true;
-            this.BuildCfg_PathBox.Value = "";
-            this.BuildCfg_PathBox.BrowseButtonClicked += new System.EventHandler(this.BuildCfg_PathBox_BrowseButtonClicked);
-            this.BuildCfg_PathBox.ValueChanged += new System.EventHandler(this.BuildCfgProperty_ValueChanged);
-            // 
             // LifNotExtractedMessage
             // 
             resources.ApplyResources(this.LifNotExtractedMessage, "LifNotExtractedMessage");
@@ -432,6 +391,100 @@
             // 
             resources.ApplyResources(this.AppDataDbNotFound, "AppDataDbNotFound");
             // 
+            // UsernameLabel
+            // 
+            resources.ApplyResources(this.UsernameLabel, "UsernameLabel");
+            this.UsernameLabel.Name = "UsernameLabel";
+            // 
+            // textBox1
+            // 
+            resources.ApplyResources(this.textBox1, "textBox1");
+            this.textBox1.Name = "textBox1";
+            // 
+            // WorkspaceBrowseBox
+            // 
+            resources.ApplyResources(this.WorkspaceBrowseBox, "WorkspaceBrowseBox");
+            this.WorkspaceBrowseBox.Name = "WorkspaceBrowseBox";
+            this.WorkspaceBrowseBox.Value = "";
+            // 
+            // label3
+            // 
+            resources.ApplyResources(this.label3, "label3");
+            this.label3.Name = "label3";
+            // 
+            // label4
+            // 
+            resources.ApplyResources(this.label4, "label4");
+            this.label4.Name = "label4";
+            // 
+            // numericUpDown1
+            // 
+            resources.ApplyResources(this.numericUpDown1, "numericUpDown1");
+            this.numericUpDown1.Name = "numericUpDown1";
+            this.numericUpDown1.Value = new decimal(new int[] {
+            60,
+            0,
+            0,
+            0});
+            // 
+            // label5
+            // 
+            resources.ApplyResources(this.label5, "label5");
+            this.label5.Name = "label5";
+            // 
+            // label6
+            // 
+            resources.ApplyResources(this.label6, "label6");
+            this.label6.Name = "label6";
+            // 
+            // CancelBuildCfgBtn
+            // 
+            resources.ApplyResources(this.CancelBuildCfgBtn, "CancelBuildCfgBtn");
+            this.CancelBuildCfgBtn.Name = "CancelBuildCfgBtn";
+            this.CancelBuildCfgBtn.UseVisualStyleBackColor = true;
+            // 
+            // BuildCfg_OverwriteChk
+            // 
+            resources.ApplyResources(this.BuildCfg_OverwriteChk, "BuildCfg_OverwriteChk");
+            this.BuildCfg_OverwriteChk.Name = "BuildCfg_OverwriteChk";
+            this.BuildCfg_OverwriteChk.UseVisualStyleBackColor = true;
+            // 
+            // SaveBuildCfgBtn
+            // 
+            resources.ApplyResources(this.SaveBuildCfgBtn, "SaveBuildCfgBtn");
+            this.SaveBuildCfgBtn.Name = "SaveBuildCfgBtn";
+            this.SaveBuildCfgBtn.UseVisualStyleBackColor = true;
+            // 
+            // BuildCfg_PathBox
+            // 
+            resources.ApplyResources(this.BuildCfg_PathBox, "BuildCfg_PathBox");
+            this.BuildCfg_PathBox.AutoSizeButton = true;
+            this.BuildCfg_PathBox.ButtonWidth = 54;
+            this.BuildCfg_PathBox.Name = "BuildCfg_PathBox";
+            this.BuildCfg_PathBox.ReadOnly = true;
+            this.BuildCfg_PathBox.Value = "";
+            // 
+            // BuildCfg_NameBox
+            // 
+            resources.ApplyResources(this.BuildCfg_NameBox, "BuildCfg_NameBox");
+            this.BuildCfg_NameBox.Name = "BuildCfg_NameBox";
+            // 
+            // BuildCfg_Lod0Chk
+            // 
+            resources.ApplyResources(this.BuildCfg_Lod0Chk, "BuildCfg_Lod0Chk");
+            this.BuildCfg_Lod0Chk.Name = "BuildCfg_Lod0Chk";
+            this.BuildCfg_Lod0Chk.UseVisualStyleBackColor = true;
+            // 
+            // BuildCfgNameLabel
+            // 
+            resources.ApplyResources(this.BuildCfgNameLabel, "BuildCfgNameLabel");
+            this.BuildCfgNameLabel.Name = "BuildCfgNameLabel";
+            // 
+            // BuildCfgPathLabel
+            // 
+            resources.ApplyResources(this.BuildCfgPathLabel, "BuildCfgPathLabel");
+            this.BuildCfgPathLabel.Name = "BuildCfgPathLabel";
+            // 
             // AppSettingsWindow
             // 
             resources.ApplyResources(this, "$this");
@@ -449,14 +502,16 @@
             this.SettingsTabControl.ResumeLayout(false);
             this.LDDEnvPanel.ResumeLayout(false);
             this.EditorSettingsTabPage.ResumeLayout(false);
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.BuildConfigsGroupBox.ResumeLayout(false);
             this.BuildCfgSplitContainer.Panel1.ResumeLayout(false);
             this.BuildCfgSplitContainer.Panel2.ResumeLayout(false);
+            this.BuildCfgSplitContainer.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.BuildCfgSplitContainer)).EndInit();
             this.BuildCfgSplitContainer.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
-            this.BuildCfgEditLayout.ResumeLayout(false);
-            this.BuildCfgEditLayout.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -492,22 +547,30 @@
         private System.Windows.Forms.TabControl SettingsTabControl;
         private System.Windows.Forms.TabPage LDDEnvPanel;
         private System.Windows.Forms.TabPage EditorSettingsTabPage;
-        private System.Windows.Forms.Label BuildCfgPathLabel;
-        private System.Windows.Forms.Label BuildCfgNameLabel;
-        private System.Windows.Forms.CheckBox BuildCfg_OverwriteChk;
-        private System.Windows.Forms.CheckBox BuildCfg_Lod0Chk;
-        private Controls.BrowseTextBox BuildCfg_PathBox;
-        private System.Windows.Forms.TextBox BuildCfg_NameBox;
         private System.Windows.Forms.GroupBox BuildConfigsGroupBox;
         private System.Windows.Forms.SplitContainer BuildCfgSplitContainer;
         private System.Windows.Forms.ListView BuildConfigListView;
         private System.Windows.Forms.Button DelBuildCfgBtn;
         private System.Windows.Forms.Button AddBuildCfgBtn;
-        private System.Windows.Forms.Button CancelBuildCfgBtn;
-        private System.Windows.Forms.Button SaveBuildCfgBtn;
-        private System.Windows.Forms.TableLayoutPanel BuildCfgEditLayout;
         private System.Windows.Forms.ColumnHeader BuildCfgNameColumn;
         private Localization.LocalizableString AppDataDbNotFound;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.NumericUpDown numericUpDown1;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label UsernameLabel;
+        private System.Windows.Forms.TextBox textBox1;
+        private Controls.BrowseTextBox WorkspaceBrowseBox;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Button CancelBuildCfgBtn;
+        private System.Windows.Forms.CheckBox BuildCfg_OverwriteChk;
+        private System.Windows.Forms.Button SaveBuildCfgBtn;
+        private Controls.BrowseTextBox BuildCfg_PathBox;
+        private System.Windows.Forms.TextBox BuildCfg_NameBox;
+        private System.Windows.Forms.CheckBox BuildCfg_Lod0Chk;
+        private System.Windows.Forms.Label BuildCfgNameLabel;
+        private System.Windows.Forms.Label BuildCfgPathLabel;
     }
 }

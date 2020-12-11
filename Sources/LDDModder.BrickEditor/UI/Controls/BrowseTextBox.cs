@@ -59,6 +59,7 @@ namespace LDDModder.BrickEditor.UI.Controls
             }
         }
 
+        [Bindable(BindableSupport.Yes)]
         public string Value
         {
             get => _Value;

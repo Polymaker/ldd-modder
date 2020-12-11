@@ -109,7 +109,7 @@ namespace LDDModder.BrickEditor.UI.Windows
 
             if (!FlagManager.IsSet("OnLoadAsync"))
             {
-                AutoSaveTimer.Interval = SettingsManager.Current.AutoSaveInterval * 1000;
+                AutoSaveTimer.Interval = SettingsManager.Current.EditorSettings.BackupInterval * 1000;
             }
         }
 
@@ -548,7 +548,7 @@ namespace LDDModder.BrickEditor.UI.Windows
                     else
                     {
                         if (SettingsManager.IsWorkspaceDefined)
-                            sfd.InitialDirectory = SettingsManager.Current.ProjectWorkspace;
+                            sfd.InitialDirectory = SettingsManager.Current.EditorSettings.ProjectWorkspace;
 
                         if (project.PartID > 0)
                             sfd.FileName = $"{project.PartID}.lpp";
@@ -598,6 +598,7 @@ namespace LDDModder.BrickEditor.UI.Windows
                         }
 
                         bool projectRestored = false;
+
                         if (MessageBoxEX.Show(this,
                             Messages.Message_RecoverProject,
                             Messages.Caption_RecoverLastProject, 
@@ -609,7 +610,7 @@ namespace LDDModder.BrickEditor.UI.Windows
                                 loadedProject = PartProject.Open(fileInfo.TemporaryPath);
                                 loadedProject.ProjectPath = fileInfo.ProjectFile;
 
-                                if(LoadPartProject(loadedProject, fileInfo.TemporaryPath))
+                                if (LoadPartProject(loadedProject, fileInfo.TemporaryPath))
                                 {
                                     projectRestored = true;
                                     projectWasLoaded = true;
@@ -701,6 +702,7 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         private void AutoSaveTimer_Tick(object sender, EventArgs e)
         {
+            //Re-use (pre-use) of the timer to initialize UI
             if (FlagManager.IsSet("OnLoadAsync"))
             {
                 FlagManager.Unset("OnLoadAsync");
@@ -708,9 +710,9 @@ namespace LDDModder.BrickEditor.UI.Windows
                 AutoSaveTimer.Stop();
 
                 if (SettingsManager.HasInitialized)
-                    AutoSaveTimer.Interval = SettingsManager.Current.AutoSaveInterval * 1000;
+                    AutoSaveTimer.Interval = SettingsManager.Current.EditorSettings.BackupInterval * 1000;
                 else
-                    AutoSaveTimer.Interval = 15000;
+                    AutoSaveTimer.Interval = 60 * 1000;
 
                 Task.Factory.StartNew(() =>
                 {

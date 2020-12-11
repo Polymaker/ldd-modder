@@ -240,8 +240,9 @@ namespace LDDModder.Modding.Editing
                     meshSurf.SurfaceID,
                     lddPart.Primitive.GetSurfaceMaterialIndex(meshSurf.SurfaceID)
                 );
+
                 surfaceElement.ID = StringUtils.GenerateUUID($"Surface{surfaceID}", 8);
-                //surfaceElement.ID = StringUtils.GenerateUUID($"Part{partID}_Surface{surfaceElement.SurfaceID}", 8);
+
                 project.Surfaces.Add(surfaceElement);
 
                 var surfaceMesh = project.AddMeshGeometry(
@@ -286,6 +287,8 @@ namespace LDDModder.Modding.Editing
                     elementIndex++;
                 }
             }
+
+
 
             project.GenerateElementIDs(true);
             project.GenerateElementsNames();
@@ -582,7 +585,6 @@ namespace LDDModder.Modding.Editing
         {
             return GetAllElements().OfType<T>().Where(x => predicate(x));
         }
-
 
         public ModelMesh AddMeshGeometry(MeshGeometry geometry, string name = null)
         {
@@ -1450,6 +1452,25 @@ namespace LDDModder.Modding.Editing
 
             foreach (var bone in Bones)
                 primitive.FlexBones.Add(bone.GenerateLDD());
+
+            string comment = string.Empty;
+            void AppendComment(string value)
+            {
+                if (!string.IsNullOrEmpty(comment))
+                    comment += Environment.NewLine;
+                comment += value;
+            }
+
+            if (!string.IsNullOrEmpty(Properties.Authors))
+                AppendComment($"Created by: {Properties.Authors}");
+
+            if (!string.IsNullOrEmpty(Properties.OriginalPart))
+                AppendComment($"Created by: {Properties.OriginalPart}");
+
+            if (!string.IsNullOrEmpty(Properties.ChangeLog))
+                AppendComment($"Comments: {Properties.ChangeLog}");
+
+            primitive.Comments = comment;
 
             return primitive;
         }

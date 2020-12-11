@@ -3,6 +3,7 @@ using LDDModder.LDD.Primitives;
 using LDDModder.Serialization;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -28,6 +29,7 @@ namespace LDDModder.Modding.Editing
         private bool _Decorated;
         private bool _Flexible;
         private string _Authors;
+        private string _OriginalPart;
         private string _ChangeLog;
 
         public int PartID
@@ -46,6 +48,12 @@ namespace LDDModder.Modding.Editing
         {
             get => _Authors;
             set => SetPropertyValue(ref _Authors, value);
+        }
+
+        public string OriginalPart
+        {
+            get => _OriginalPart;
+            set => SetPropertyValue(ref _OriginalPart, value);
         }
 
         public string ChangeLog
@@ -170,11 +178,47 @@ namespace LDDModder.Modding.Editing
             }
 
             if (!string.IsNullOrEmpty(part.Primitive.Comments))
-            {
-                var match = Regex.Match(part.Primitive.Comments, "Authors:(.+?)[\r\n]");
-                if (match.Success)
-                    Authors = match.Groups[1].Value;
+                ParseComments(part.Primitive.Comments);
+        }
 
+        public void ParseComments(string comments)
+        {
+            ChangeLog = string.Empty;
+
+            bool IsMatch(string input, string pattern, out string result)
+            {
+                result = null;
+                var match = Regex.Match(input, pattern, RegexOptions.IgnoreCase);
+                if (match.Success && match.Groups.Count > 1)
+                    result = match.Groups[1].Value;
+                return match.Success;
+            }
+
+            using (var sr = new StringReader(comments))
+            {
+                string line;
+
+                while ((line = sr.ReadLine()) != null)
+                {
+                    if (IsMatch(line, "(?:created|updated|LDD).+?by\\s?:? (.+)", out string author))
+                    {
+                        Authors = author;
+                    }
+                    else if (IsMatch(line, "derived from\\s?:? (.+)", out string derivedFrom))
+                    {
+
+                    }
+                    else if (IsMatch(line, "orginal author\\s?:? (.+)", out string originalAuthor))
+                    {
+
+                    }
+                    else
+                    {
+                        if (!string.IsNullOrEmpty(ChangeLog))
+                            ChangeLog += Environment.NewLine;
+                        ChangeLog += line;
+                    }
+                }
             }
         }
 
@@ -217,12 +261,6 @@ namespace LDDModder.Modding.Editing
             else
                 PrimitiveFileVersion = new VersionInfo(1, 0);
 
-            if (!string.IsNullOrWhiteSpace(Authors))
-                propsElem.Add(new XElement(nameof(Authors), Authors));
-
-            if (!string.IsNullOrWhiteSpace(ChangeLog))
-                propsElem.Add(new XElement(nameof(ChangeLog), ChangeLog));
-
             propsElem.Add(new XElement(nameof(Flexible), Flexible));
 
             propsElem.Add(new XElement(nameof(Decorated), Decorated));
@@ -247,6 +285,15 @@ namespace LDDModder.Modding.Editing
 
             if (DefaultCamera != null)
                 propsElem.Add(XmlHelper.DefaultSerialize(DefaultCamera, nameof(DefaultCamera)));
+
+            if (!string.IsNullOrWhiteSpace(Authors))
+                propsElem.Add(new XElement(nameof(Authors), Authors));
+
+            if (!string.IsNullOrWhiteSpace(OriginalPart))
+                propsElem.Add(new XElement(nameof(OriginalPart), OriginalPart));
+
+            if (!string.IsNullOrWhiteSpace(ChangeLog))
+                propsElem.Add(new XElement(nameof(ChangeLog), ChangeLog));
 
             return propsElem;
         }

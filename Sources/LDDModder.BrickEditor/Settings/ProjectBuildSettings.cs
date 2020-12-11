@@ -24,10 +24,14 @@ namespace LDDModder.BrickEditor.Settings
         [DefaultValue("")]
         public string DefaultConfigName { get; set; }
 
+        [JsonIgnore]
         public BuildConfiguration DefaultConfiguration
         {
             get
             {
+                if (string.IsNullOrEmpty(DefaultConfigName))
+                    return null;
+
                 if (DefaultConfigName == "ldd")
                     return LDD;
                 if (DefaultConfigName == "manual")

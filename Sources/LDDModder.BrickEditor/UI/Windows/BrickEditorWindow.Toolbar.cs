@@ -71,10 +71,10 @@ namespace LDDModder.BrickEditor.UI.Windows
         {
             using (var ofd = new OpenFileDialog())
             {
-                if (!string.IsNullOrEmpty(SettingsManager.Current.ProjectWorkspace) &&
-                    Directory.Exists(SettingsManager.Current.ProjectWorkspace))
+                if (SettingsManager.IsWorkspaceDefined &&
+                    Directory.Exists(SettingsManager.Current.EditorSettings.ProjectWorkspace))
                 {
-                    ofd.InitialDirectory = SettingsManager.Current.ProjectWorkspace;
+                    ofd.InitialDirectory = SettingsManager.Current.EditorSettings.ProjectWorkspace;
                 }
 
                 ofd.Filter = "LDD Part Project (*.lpp)|*.lpp";
