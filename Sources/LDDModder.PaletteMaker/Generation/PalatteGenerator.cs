@@ -106,7 +106,11 @@ namespace LDDModder.PaletteMaker.Generation
                 Debug.WriteLine("Querying rebrickable....");
                 var newMappings = new List<Models.PartMapping>();
 
-                var partDetails = RebrickableAPI.GetPartsDetails(unmatchedParts.Select(x => x.PartID).Distinct()).ToList();
+                var partDetails = RebrickableAPI.Parts.GetParts(
+                    partNums: unmatchedParts.Select(x => x.PartID).Distinct(),
+                    includePartDetails: true
+                ).ToList();
+
                 foreach (var partDetail in partDetails)
                 {
                     if (partDetail.ExternalIds.LEGO?.Count > 0)
@@ -347,6 +351,7 @@ namespace LDDModder.PaletteMaker.Generation
                     Flag = 1,
                     IsAssembly = true
                 };
+
                 foreach (var assemPart in db.AssemblyParts.Where(x => x.AssemblyID == partWrapper.LddPartID))
                 {
                     var subPart = db.LddParts.FirstOrDefault(x => x.DesignID == assemPart.PartID);

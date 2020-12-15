@@ -1,7 +1,7 @@
 ﻿using LDDModder.PaletteMaker.Models;
 using LDDModder.PaletteMaker.Models.LDD;
 using LDDModder.PaletteMaker.Models.Rebrickable;
-using LDDModder.PaletteMaker.Settings;
+//using LDDModder.PaletteMaker.Settings;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -56,19 +56,23 @@ namespace LDDModder.PaletteMaker.DB
             Database.SetInitializer<PaletteDbContext>(null);
         }
 
-        public static PaletteDbContext CreateContext()
-        {
-            string databasePath = SettingsManager.GetFilePath(SettingsManager.DATABASE_FILENAME);
-            return new PaletteDbContext($"Data Source={databasePath}");
-        }
+        //public static PaletteDbContext CreateContext()
+        //{
+        //    string databasePath = SettingsManager.GetFilePath(SettingsManager.DATABASE_FILENAME);
+        //    return new PaletteDbContext($"Data Source={databasePath}");
+        //}
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
+            
             modelBuilder.Entity<RbPartRelation>()
                     .HasRequired(m => m.ParentPart)
                     .WithMany(t => t.Relationships)
                     .HasForeignKey(m => m.ParentPartID)
                     .WillCascadeOnDelete(false);
+
+            //modelBuilder.Entity<RbSet>().Property(m => m.InventoryDate)
+            //    .IsOptional();
         }
     }
 }

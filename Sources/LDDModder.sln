@@ -15,9 +15,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LDDModder.LifExtractor", "LDDModder.LifExtractor\LDDModder.LifExtractor.csproj", "{FE3028F1-F15F-4263-A169-77F00333D795}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LDDModder.PaletteMaker", "LDDModder.PaletteMaker\LDDModder.PaletteMaker.csproj", "{5492B62D-8941-4F76-AA02-2DB5C787AC57}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LDDModder.PaletteMakerOld", "LDDModder.PaletteMakerOld\LDDModder.PaletteMakerOld.csproj", "{5492B62D-8941-4F76-AA02-2DB5C787AC57}"
 EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "LDDModder.Setup", "LDDModder.Setup\LDDModder.Setup.wixproj", "{4C0BA321-D806-42EF-BCDA-597039A6C6D5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LDDModder.PaletteMaker", "LDDModder.PaletteMaker\LDDModder.PaletteMaker.csproj", "{153C52DC-2DBE-4327-BA55-3A6A2A88FC49}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -136,6 +138,24 @@ Global
 		{4C0BA321-D806-42EF-BCDA-597039A6C6D5}.Release|x64.ActiveCfg = Release|x86
 		{4C0BA321-D806-42EF-BCDA-597039A6C6D5}.Release|x86.ActiveCfg = Release|x86
 		{4C0BA321-D806-42EF-BCDA-597039A6C6D5}.Release|x86.Build.0 = Release|x86
+		{153C52DC-2DBE-4327-BA55-3A6A2A88FC49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{153C52DC-2DBE-4327-BA55-3A6A2A88FC49}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{153C52DC-2DBE-4327-BA55-3A6A2A88FC49}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{153C52DC-2DBE-4327-BA55-3A6A2A88FC49}.Debug|x64.Build.0 = Debug|Any CPU
+		{153C52DC-2DBE-4327-BA55-3A6A2A88FC49}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{153C52DC-2DBE-4327-BA55-3A6A2A88FC49}.Debug|x86.Build.0 = Debug|Any CPU
+		{153C52DC-2DBE-4327-BA55-3A6A2A88FC49}.PrepRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{153C52DC-2DBE-4327-BA55-3A6A2A88FC49}.PrepRelease|Any CPU.Build.0 = Release|Any CPU
+		{153C52DC-2DBE-4327-BA55-3A6A2A88FC49}.PrepRelease|x64.ActiveCfg = Release|Any CPU
+		{153C52DC-2DBE-4327-BA55-3A6A2A88FC49}.PrepRelease|x64.Build.0 = Release|Any CPU
+		{153C52DC-2DBE-4327-BA55-3A6A2A88FC49}.PrepRelease|x86.ActiveCfg = Release|Any CPU
+		{153C52DC-2DBE-4327-BA55-3A6A2A88FC49}.PrepRelease|x86.Build.0 = Release|Any CPU
+		{153C52DC-2DBE-4327-BA55-3A6A2A88FC49}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{153C52DC-2DBE-4327-BA55-3A6A2A88FC49}.Release|Any CPU.Build.0 = Release|Any CPU
+		{153C52DC-2DBE-4327-BA55-3A6A2A88FC49}.Release|x64.ActiveCfg = Release|Any CPU
+		{153C52DC-2DBE-4327-BA55-3A6A2A88FC49}.Release|x64.Build.0 = Release|Any CPU
+		{153C52DC-2DBE-4327-BA55-3A6A2A88FC49}.Release|x86.ActiveCfg = Release|Any CPU
+		{153C52DC-2DBE-4327-BA55-3A6A2A88FC49}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -145,9 +165,10 @@ Global
 		{5379F456-A474-4108-ACD8-3B179CF4D041} = {406BD71D-724C-4575-A7DD-982B1EC329AB}
 		{FE3028F1-F15F-4263-A169-77F00333D795} = {406BD71D-724C-4575-A7DD-982B1EC329AB}
 		{5492B62D-8941-4F76-AA02-2DB5C787AC57} = {406BD71D-724C-4575-A7DD-982B1EC329AB}
+		{153C52DC-2DBE-4327-BA55-3A6A2A88FC49} = {406BD71D-724C-4575-A7DD-982B1EC329AB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		RESX_SaveFilesImmediatelyUponChange = False
+		RESX_SaveFilesImmediatelyUponChange = True
 		SolutionGuid = {458206FC-7A4F-48CD-87ED-E84434A5C4CA}
 	EndGlobalSection
 EndGlobal

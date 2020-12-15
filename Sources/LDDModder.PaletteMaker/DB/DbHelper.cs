@@ -23,6 +23,16 @@ namespace LDDModder.PaletteMaker.DB
             return tableAttr?.Name ?? type.Name;
         }
 
+        public static string GetFieldName<T>(string propertyName)
+        {
+            var prop = typeof(T).GetProperty(propertyName);
+            if (prop == null)
+                return string.Empty;
+
+            var columnAttr = prop.GetCustomAttribute<System.ComponentModel.DataAnnotations.Schema.ColumnAttribute>();
+            return columnAttr?.Name ?? propertyName;
+        }
+
         public static void InitializeInsertCommand<T>(SQLiteCommand cmd)
         {
             cmd.Parameters.Clear();

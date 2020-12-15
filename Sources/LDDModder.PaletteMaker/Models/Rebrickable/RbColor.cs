@@ -19,6 +19,9 @@ namespace LDDModder.PaletteMaker.Models.Rebrickable
 
         public virtual ICollection<RbColorMatch> ColorMatches { get; set; }
 
+        [NotMapped]
+        public string ColorCode => $"#FF{RgbHex}";
+
         public RbColor()
         {
             ColorMatches = new List<RbColorMatch>();

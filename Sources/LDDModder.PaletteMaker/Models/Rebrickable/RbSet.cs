@@ -16,6 +16,7 @@ namespace LDDModder.PaletteMaker.Models.Rebrickable
 
         public int? ThemeID { get; set; }
 
+        //Bug with EntityFramework
         public System.DateTime? InventoryDate { get; set; }
 
         [ForeignKey("ThemeID")]

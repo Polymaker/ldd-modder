@@ -8,14 +8,17 @@ namespace LDDModder.PaletteMaker.DB
 {
     public interface IDbInitProgressHandler
     {
-        void OnInitImportTask(int totalSteps);
+        //void OnInitImportTask(int totalSteps);
 
-        void OnBeginStep(string stepName);
+        //void OnBeginStep(string stepName);
 
-        void OnReportIndefiniteProgress();
+        //void OnReportIndefiniteProgress();
 
-        void OnReportProgress(int currentRecord, int totalRecords);
+        void ReportProgressStep(string description);
+        void ReportProgressDetails(string description);
+        void ReportProgress(int currentRecord, int totalRecords);
+        void LogMessage(string message);
+        //void ReportIndefiniteProgress() => ReportProgress(-1, -1);
 
-        void OnReportProgressStatus(string statusText);
     }
 }

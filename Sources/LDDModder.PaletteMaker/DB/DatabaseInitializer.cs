@@ -24,87 +24,87 @@ namespace LDDModder.PaletteMaker.DB
             All = LddPartsAndElements | RebrickableBaseData | RebrickablePartsAndRelationships | RebrickableLddMappings | RebrickableSets | RebrickableSetParts
         }
 
-        public static void InitializeOrUpdateDatabase(string databasePath, 
-            InitializationStep steps, 
-            CancellationToken cancellationToken,
-            IDbInitProgressHandler progressHandler)
-        {
-            using (var conn = new SQLiteConnection($"Data Source={databasePath}"))
-            {
-                conn.Open();
+        //public static void InitializeOrUpdateDatabase(string databasePath, 
+        //    InitializationStep steps, 
+        //    CancellationToken cancellationToken,
+        //    IDbInitProgressHandler progressHandler)
+        //{
+        //    using (var conn = new SQLiteConnection($"Data Source={databasePath}"))
+        //    {
+        //        conn.Open();
 
-                int totalSteps = 0;
+        //        int totalSteps = 0;
 
-                foreach (InitializationStep step in Enum.GetValues(typeof(InitializationStep)))
-                {
-                    if (step == InitializationStep.All ||
-                        step == InitializationStep.RebrickableData ||
-                        step == InitializationStep.RebrickablePartsAndRelationships)
-                        continue;
+        //        foreach (InitializationStep step in Enum.GetValues(typeof(InitializationStep)))
+        //        {
+        //            if (step == InitializationStep.All ||
+        //                step == InitializationStep.RebrickableData ||
+        //                step == InitializationStep.RebrickablePartsAndRelationships)
+        //                continue;
 
-                    if (steps.HasFlag(step))
-                        totalSteps++;
-                }
+        //            if (steps.HasFlag(step))
+        //                totalSteps++;
+        //        }
 
-                progressHandler?.OnInitImportTask(totalSteps);
+        //        progressHandler?.OnInitImportTask(totalSteps);
 
-                if (steps.HasFlag(InitializationStep.LddPartsAndElements))
-                {
-                    var lddImporter = new LddDataImporter(conn, LDDEnvironment.Current, cancellationToken);
-                    lddImporter.ProgressHandler = progressHandler;
-                    lddImporter.ImportAllData();
-                }
+        //        if (steps.HasFlag(InitializationStep.LddPartsAndElements))
+        //        {
+        //            var lddImporter = new LddDataImporter(conn, LDDEnvironment.Current, cancellationToken);
+        //            lddImporter.ProgressHandler = progressHandler;
+        //            lddImporter.ImportAllData();
+        //        }
 
-                if (cancellationToken.IsCancellationRequested)
-                    return;
+        //        if (cancellationToken.IsCancellationRequested)
+        //            return;
 
-                if (steps.HasFlag(InitializationStep.RebrickableBaseData) || 
-                    steps.HasFlag(InitializationStep.RebrickableParts) ||
-                    steps.HasFlag(InitializationStep.RebrickablePartsAndRelationships) ||
-                    steps.HasFlag(InitializationStep.RebrickableSets) ||
-                    steps.HasFlag(InitializationStep.RebrickableSetParts))
-                {
-                    var rbImporter = new RebrickableDataImporter(conn, LDDEnvironment.Current, cancellationToken);
-                    rbImporter.ProgressHandler = progressHandler;
-                    rbImporter.DownloadDirectory = Path.Combine(Settings.SettingsManager.AppDataFolder, "Downloads");
+        //        if (steps.HasFlag(InitializationStep.RebrickableBaseData) || 
+        //            steps.HasFlag(InitializationStep.RebrickableParts) ||
+        //            steps.HasFlag(InitializationStep.RebrickablePartsAndRelationships) ||
+        //            steps.HasFlag(InitializationStep.RebrickableSets) ||
+        //            steps.HasFlag(InitializationStep.RebrickableSetParts))
+        //        {
+        //            var rbImporter = new RebrickableDataImporter(conn, LDDEnvironment.Current, cancellationToken);
+        //            rbImporter.ProgressHandler = progressHandler;
+        //            //rbImporter.DownloadDirectory = Path.Combine(Settings.SettingsManager.AppDataFolder, "Downloads");
 
-                    if (steps.HasFlag(InitializationStep.RebrickableBaseData))
-                        rbImporter.ImportBaseData();
+        //            if (steps.HasFlag(InitializationStep.RebrickableBaseData))
+        //                rbImporter.ImportBaseData();
 
-                    if (cancellationToken.IsCancellationRequested)
-                        return;
+        //            if (cancellationToken.IsCancellationRequested)
+        //                return;
 
-                    if (steps.HasFlag(InitializationStep.RebrickableParts))
-                        rbImporter.ImportRebrickableParts();
+        //            if (steps.HasFlag(InitializationStep.RebrickableParts))
+        //                rbImporter.ImportRebrickableParts();
 
-                    if (cancellationToken.IsCancellationRequested)
-                        return;
+        //            if (cancellationToken.IsCancellationRequested)
+        //                return;
 
-                    if (steps.HasFlag(InitializationStep.RebrickablePartRelationships))
-                        rbImporter.ImportRebrickableRelationships();
+        //            if (steps.HasFlag(InitializationStep.RebrickablePartRelationships))
+        //                rbImporter.ImportRebrickableRelationships();
 
-                    if (cancellationToken.IsCancellationRequested)
-                        return;
+        //            if (cancellationToken.IsCancellationRequested)
+        //                return;
 
-                    if (steps.HasFlag(InitializationStep.RebrickableSets))
-                        rbImporter.ImportSets();
+        //            if (steps.HasFlag(InitializationStep.RebrickableSets))
+        //                rbImporter.ImportSets();
 
-                    if (cancellationToken.IsCancellationRequested)
-                        return;
+        //            if (cancellationToken.IsCancellationRequested)
+        //                return;
 
-                    if (steps.HasFlag(InitializationStep.RebrickableSetParts))
-                        rbImporter.ImportSetParts();
-                }
+        //            if (steps.HasFlag(InitializationStep.RebrickableSetParts))
+        //                rbImporter.ImportSetParts();
+        //        }
 
-                if (cancellationToken.IsCancellationRequested)
-                    return;
+        //        if (cancellationToken.IsCancellationRequested)
+        //            return;
 
-                if (steps.HasFlag(InitializationStep.RebrickableLddMappings))
-                    InitializeDefaultMappings(databasePath, progressHandler);
+        //        if (steps.HasFlag(InitializationStep.RebrickableLddMappings))
+        //            InitializeDefaultMappings(databasePath, progressHandler);
 
 
-            }
-        }
+        //    }
+        //}
 
         //public static void ImportBaseData(string databasePath, CancellationToken cancellationToken)
         //{
@@ -145,9 +145,9 @@ namespace LDDModder.PaletteMaker.DB
 
         public static void InitializeDefaultMappings(string databasePath, IDbInitProgressHandler progressHandler)
         {
-            progressHandler.OnBeginStep("Initializing Rebrickable to LDD mappings");
-            progressHandler.OnReportIndefiniteProgress();
-            progressHandler.OnReportProgressStatus(string.Empty);
+            progressHandler.ReportProgressStep("Initializing Rebrickable to LDD mappings");
+            progressHandler.ReportProgress(-1,-1);
+            progressHandler.ReportProgressDetails(string.Empty);
 
             using (var conn = new SQLiteConnection($"Data Source={databasePath}"))
             {

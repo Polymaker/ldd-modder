@@ -5,6 +5,7 @@ using System.Text;
 
 namespace LDDModder.PaletteMaker.Rebrickable
 {
+    [Flags]
     public enum RbDatabaseFile
     {
         Themes = 1,

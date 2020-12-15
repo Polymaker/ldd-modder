@@ -7,6 +7,8 @@ using LDDModder.LDD.Primitives;
 using LDDModder.PaletteMaker.Models.LDD;
 using LDDModder.PaletteMaker.Models.Rebrickable;
 using LDDModder.PaletteMaker.Rebrickable;
+using LDDModder.PaletteMaker.Rebrickable.Services;
+using LDDModder.PaletteMaker.Settings;
 using LDDModder.Utilities;
 using System;
 using System.Collections.Generic;
@@ -22,17 +24,10 @@ namespace LDDModder.PaletteMaker.DB
 {
     public class RebrickableDataImporter : DbInitializerModule
     {
-        public string PartsCsvFile { get; set; }
-
-        public string RelationshipsCsvFile { get; set; }
-
-        public string InventoriesCsvFile { get; set; }
-
-        public string InventoryPartsCsvFile { get; set; }
-
         public string DownloadDirectory { get; set; }
 
-        public RebrickableDataImporter(SQLiteConnection connection, LDDEnvironment environment, CancellationToken cancellationToken) : base(connection, environment, cancellationToken)
+        public RebrickableDataImporter(SQLiteConnection connection, LDDEnvironment environment, CancellationToken cancellationToken) 
+            : base(connection, environment, cancellationToken)
         {
 
         }
@@ -63,20 +58,6 @@ namespace LDDModder.PaletteMaker.DB
                 ImportPartsAndRelationships();
         }
 
-        public void ImportBaseData()
-        {
-            NotifyBeginStep("Importing misc. data (Colors, categories and themes)");
-
-            if (!IsCancellationRequested)
-                ImportColors();
-
-            if (!IsCancellationRequested)
-                ImportCategories();
-
-            if (!IsCancellationRequested)
-                ImportThemes();
-        }
-
         public void ImportColors()
         {
             using (var trans = Connection.BeginTransaction())
@@ -94,7 +75,9 @@ namespace LDDModder.PaletteMaker.DB
 
                 NotifyIndefiniteProgress("Downloading rebrickable colors...");
 
-                var colors = RebrickableAPI.GetAllColors().ToList();
+                //var dataService = new DataService(AppSettings.Current.RebrickableApiKey);
+                //var colors = RebrickableAPI.GetAllColors().ToList();
+                var colors = RebrickableAPI.Data.GetAllColors().ToList();
 
                 NotifyTaskStart("Importing colors...", colors.Count);
 
@@ -167,7 +150,10 @@ namespace LDDModder.PaletteMaker.DB
                 cmd.ExecuteNonQuery();
 
                 NotifyIndefiniteProgress("Downloading rebrickable categories...");
-                var categories = RebrickableAPI.GetAllCategories().ToList();
+                //var categories = RebrickableAPI.GetAllCategories().ToList();
+                //var dataService = new DataService(AppSettings.Current.RebrickableApiKey);
+                var categories = RebrickableAPI.Data.GetAllCategories().ToList();
+
                 NotifyTaskStart("Importing categories...", categories.Count);
 
                 DbHelper.InitializeInsertCommand<RbCategory>(cmd, x => new { x.ID, x.Name });
@@ -200,7 +186,10 @@ namespace LDDModder.PaletteMaker.DB
                 cmd.ExecuteNonQuery();
                 
                 NotifyIndefiniteProgress("Downloading rebrickable themes...");
-                var themes = RebrickableAPI.GetAllThemes().ToList();
+                //var themes = RebrickableAPI.GetAllThemes().ToList();
+                //var dataService = new DataService(AppSettings.Current.RebrickableApiKey);
+                var themes = RebrickableAPI.Data.GetAllThemes().ToList();
+
                 NotifyTaskStart("Importing themes...", themes.Count);
 
                 DbHelper.InitializeInsertCommand<RbTheme>(cmd, x => new { x.ID, x.Name, x.ParentThemeID });
@@ -231,14 +220,20 @@ namespace LDDModder.PaletteMaker.DB
             {
                 cmd.CommandText = $"DELETE FROM {DbHelper.GetTableName<RbSet>()}";
                 cmd.ExecuteNonQuery();
+                cmd.CommandText = $"DELETE FROM {DbHelper.GetTableName<RbSetPart>()}";
+                cmd.ExecuteNonQuery();
                 cmd.CommandText = $"DELETE FROM sqlite_sequence WHERE name='{DbHelper.GetTableName<RbSet>()}'";
+                cmd.ExecuteNonQuery();
+                cmd.CommandText = $"DELETE FROM sqlite_sequence WHERE name='{DbHelper.GetTableName<RbSetPart>()}'";
                 cmd.ExecuteNonQuery();
 
                 NotifyIndefiniteProgress("Downloading rebrickable sets...");
-                var sets = RebrickableAPI.GetSets(minYear:2018).ToList();
+                //var sets = RebrickableAPI.GetSets(minYear: 2018).ToList();
+                var setService = new SetService(AppSettings.Current.RebrickableApiKey);
+                var sets = setService.GetSets(minYear: 2018).ToList();
                 NotifyTaskStart("Importing sets...", sets.Count);
 
-                DbHelper.InitializeInsertCommand<RbSet>(cmd, x => new { x.SetID, x.Name, x.ThemeID, x.Year, x.InventoryDate });
+                DbHelper.InitializeInsertCommand<RbSet>(cmd, x => new { x.SetID, x.Name, x.ThemeID, x.Year/*, x.InventoryDate*/ });
 
                 int totalToProcess = sets.Count;
                 int totalProcessed = 0;
@@ -248,7 +243,7 @@ namespace LDDModder.PaletteMaker.DB
                     if (IsCancellationRequested)
                         break;
 
-                    DbHelper.InsertWithParameters(cmd, rbSet.SetNum, rbSet.Name, rbSet.ThemeId, rbSet.Year , DateTime.Now);
+                    DbHelper.InsertWithParameters(cmd, rbSet.SetNum, rbSet.Name, rbSet.ThemeId, rbSet.Year/*, DateTime.Now*/);
 
                     ReportProgress(++totalProcessed, totalToProcess);
                 }

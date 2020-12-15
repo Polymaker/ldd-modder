@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace LDDModder.PaletteMaker.Generation
 {
+    //Todo: rename class
     public class SetPartWrapper
     {
         public string PartID { get; set; }
@@ -17,6 +18,8 @@ namespace LDDModder.PaletteMaker.Generation
         public int Quantity { get; set; }
 
         public Models.Rebrickable.RbPart RbPart { get; set; }
+
+        public bool HasPrintOrPattern => RbPart?.IsPrintOrPattern ?? false;
 
         public PartMatchingFlags MatchingFlags { get; set; }
 

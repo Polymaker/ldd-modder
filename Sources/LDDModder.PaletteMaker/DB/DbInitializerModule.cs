@@ -31,34 +31,34 @@ namespace LDDModder.PaletteMaker.DB
 
         protected void NotifyIndefiniteProgress(string statusText)
         {
-            ProgressHandler?.OnReportIndefiniteProgress();
-            ProgressHandler?.OnReportProgressStatus(statusText);
+            ProgressHandler?.ReportProgress(-1, -1);
+            ProgressHandler?.ReportProgressStep(statusText);
         }
 
         protected void NotifyIndefiniteProgress()
         {
-            ProgressHandler?.OnReportIndefiniteProgress();
+            ProgressHandler?.ReportProgress(-1,-1);
         }
 
         protected void NotifyProgressStatus(string statusText)
         {
-            ProgressHandler?.OnReportProgressStatus(statusText);
+            ProgressHandler?.ReportProgressDetails(statusText);
         }
 
         protected void NotifyBeginStep(string stepName)
         {
-            ProgressHandler?.OnBeginStep(stepName);
+            ProgressHandler?.ReportProgressStep(stepName);
         }
 
         protected void NotifyTaskStart(string statusText, int totalRecords)
         {
-            ProgressHandler?.OnReportProgressStatus(statusText);
-            ProgressHandler?.OnReportProgress(0, totalRecords);
+            ProgressHandler?.ReportProgressStep(statusText);
+            ProgressHandler?.ReportProgress(0, totalRecords);
         }
 
         protected void ReportProgress(int currentRecord, int totalRecords)
         {
-            ProgressHandler?.OnReportProgress(currentRecord, totalRecords);
+            ProgressHandler?.ReportProgress(currentRecord, totalRecords);
         }
     }
 }

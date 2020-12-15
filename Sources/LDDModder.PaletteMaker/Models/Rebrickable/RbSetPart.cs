@@ -30,5 +30,8 @@ namespace LDDModder.PaletteMaker.Models.Rebrickable
         public int Quantity { get; set; }
 
         public bool IsSpare { get; set; }
+
+        [NotMapped]
+        public string CategoryName => Part?.Category?.Name;
     }
 }

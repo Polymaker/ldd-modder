@@ -55,7 +55,6 @@
             this.GrabbingRequiredCheckBox = new System.Windows.Forms.CheckBox();
             this.GrabbingCheckBox = new System.Windows.Forms.CheckBox();
             this.SpringPanel = new System.Windows.Forms.Panel();
-            this.SpringEditor = new LDDModder.BrickEditor.UI.Editors.VectorEditor();
             this.GearLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.RadiusLabel = new System.Windows.Forms.Label();
             this.ToothCountLabel = new System.Windows.Forms.Label();
@@ -73,6 +72,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.TagControlLabel = new LDDModder.BrickEditor.UI.Controls.ControlLabel();
             this.TagTextBox = new System.Windows.Forms.TextBox();
+            this.SpringEditor = new LDDModder.BrickEditor.UI.Editors.VectorEditor();
             this.TransformEdit = new LDDModder.BrickEditor.UI.Controls.TransformEditor();
             this.SelectionToolStrip.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -277,13 +277,6 @@
             resources.ApplyResources(this.SpringPanel, "SpringPanel");
             this.SpringPanel.Name = "SpringPanel";
             // 
-            // SpringEditor
-            // 
-            resources.ApplyResources(this.SpringEditor, "SpringEditor");
-            this.SpringEditor.Name = "SpringEditor";
-            this.SpringEditor.ValueChanged += new System.EventHandler(this.SpringEditor_ValueChanged);
-            this.SpringEditor.SizeChanged += new System.EventHandler(this.SpringEditor_SizeChanged);
-            // 
             // GearLayoutPanel
             // 
             resources.ApplyResources(this.GearLayoutPanel, "GearLayoutPanel");
@@ -398,6 +391,13 @@
             // 
             resources.ApplyResources(this.TagTextBox, "TagTextBox");
             this.TagTextBox.Name = "TagTextBox";
+            // 
+            // SpringEditor
+            // 
+            resources.ApplyResources(this.SpringEditor, "SpringEditor");
+            this.SpringEditor.Name = "SpringEditor";
+            this.SpringEditor.ValueChanged += new System.EventHandler(this.SpringEditor_ValueChanged);
+            this.SpringEditor.SizeChanged += new System.EventHandler(this.SpringEditor_SizeChanged);
             // 
             // TransformEdit
             // 

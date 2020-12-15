@@ -2,6 +2,7 @@
 using LDDModder.LDD.Files;
 using LDDModder.LDD.Primitives;
 using LDDModder.PaletteMaker.Models.LDD;
+using LDDModder.PaletteMaker.Resources;
 using LDDModder.Utilities;
 using System;
 using System.Collections.Generic;
@@ -15,9 +16,26 @@ namespace LDDModder.PaletteMaker.DB
 {
     public class LddDataImporter : DbInitializerModule
     {
-        public LddDataImporter(SQLiteConnection connection, LDDEnvironment environment, CancellationToken cancellationToken) : base(connection, environment, cancellationToken)
+        public LddDataImporter(SQLiteConnection connection, LDDEnvironment environment, CancellationToken cancellationToken) 
+            : base(connection, environment, cancellationToken)
         {
 
+        }
+
+        [Flags]
+        public enum LddDataType
+        {
+            PartsAndAssemblies = 1,
+            LegoElements = 2
+        }
+
+        public void ImportData(LddDataType dataType)
+        {
+            if (!IsCancellationRequested && dataType.HasFlag(LddDataType.PartsAndAssemblies))
+                ImportLddParts();
+
+            if (!IsCancellationRequested && dataType.HasFlag(LddDataType.LegoElements))
+                ImportLddElements();
         }
 
         public void ImportAllData()
@@ -31,9 +49,10 @@ namespace LDDModder.PaletteMaker.DB
 
         public void ImportLddParts()
         {
-            NotifyBeginStep("Importing LDD parts and elements");
+            NotifyBeginStep(Strings.DbImportStep_LddPartsAssemblies);
             NotifyIndefiniteProgress();
             NotifyProgressStatus("Clearing previous data...");
+
             using (var trans = Connection.BeginTransaction())
             using (var cmd = Connection.CreateCommand())
             {
@@ -51,7 +70,7 @@ namespace LDDModder.PaletteMaker.DB
                 //Extract Primitives and Assemblies if needed
                 if (!Environment.DatabaseExtracted)
                 {
-                    NotifyProgressStatus("Extracting primitives and assemblies from 'db.lif'");
+                    NotifyProgressStatus("Extracting primitives and assemblies...");
 
                     string dbLifPath = Environment.GetLifFilePath(LddLif.DB);
                     if (!File.Exists(dbLifPath))
@@ -165,6 +184,7 @@ namespace LDDModder.PaletteMaker.DB
             using (var trans = Connection.BeginTransaction())
             using (var mainCmd = Connection.CreateCommand())
             using (var subCmd = Connection.CreateCommand())
+            using (var updateCmd = Connection.CreateCommand())
             {
                 DbHelper.InitializeInsertCommand<LddPart>(mainCmd, x =>
                 new
@@ -184,6 +204,7 @@ namespace LDDModder.PaletteMaker.DB
                 });
 
                 int totalProcessed = 0;
+
                 foreach (var assemFile in assemblyFiles)
                 {
                     if (IsCancellationRequested)
@@ -201,22 +222,24 @@ namespace LDDModder.PaletteMaker.DB
 
                         if (assemInfo.Bricks.Any(x => x.DesignID == assemInfo.ID.ToString()))
                         {
-                            if (Path.GetFileNameWithoutExtension(assemFile) != assemID)
-                            {
-                                //assemID = Path.GetFileNameWithoutExtension(assemFile);
-                            }
+                            updateCmd.CommandText = $"UPDATE {DbHelper.GetTableName<LddPart>()} SET IsAssembly = 1 WHERE DesignID = '{assemInfo.ID}'";
+                            updateCmd.ExecuteNonQuery();
                         }
-
-                        DbHelper.InsertWithParameters(mainCmd,
-                            assemID,
-                            assemInfo.Name,
-                            string.Join(";", assemInfo.Aliases),
-                            true
-                        );
+                        else
+                        {
+                            DbHelper.InsertWithParameters(
+                                mainCmd,
+                                assemID,
+                                assemInfo.Name,
+                                string.Join(";", assemInfo.Aliases),
+                                true
+                            );
+                        }
 
                         foreach (var subPart in assemInfo.Bricks)
                         {
-                            DbHelper.InsertWithParameters(subCmd,
+                            DbHelper.InsertWithParameters(
+                                subCmd,
                                 assemInfo.ID.ToString(),
                                 subPart.Part?.DesignID ?? subPart.DesignID,
                                 string.Join(";", subPart.Part.Materials)
@@ -255,6 +278,7 @@ namespace LDDModder.PaletteMaker.DB
                     dbContext.LddElements.Where(x => x.Flag != 1)
                 );
             }
+
             var addedElements = new HashSet<string>();
 
             using (var trans = Connection.BeginTransaction())
@@ -281,7 +305,7 @@ namespace LDDModder.PaletteMaker.DB
             }
 
             int totalToProcess = lddPalette.Items.Count + manualLddElements.Count;
-            NotifyTaskStart("Importing LDD elements...", totalToProcess);
+            NotifyTaskStart(Strings.DbImportStep_ImportLddElements, totalToProcess);
 
             using (var trans = Connection.BeginTransaction())
             using (var elemCmd = Connection.CreateCommand())
