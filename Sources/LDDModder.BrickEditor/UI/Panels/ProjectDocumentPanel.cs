@@ -238,5 +238,10 @@ namespace LDDModder.BrickEditor.UI.Panels
             this.ResumeLayout(false);
 
         }
+
+        public virtual void ApplyLayoutArgs(string layoutArgs)
+        {
+
+        }
     }
 }

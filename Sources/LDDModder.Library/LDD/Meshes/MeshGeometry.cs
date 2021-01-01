@@ -459,6 +459,9 @@ namespace LDDModder.LDD.Meshes
                 var indices = indElem.Value.Split(' ').Select(v => int.Parse(v)).ToList();
 
                 var vertices = new List<Vertex>();
+                var triangles = new List<Triangle>();
+                var reCoords = new List<RoundEdgeData>();
+
                 for (int i = 0; i < positions.Count; i++)
                 {
                     vertices.Add(new Vertex(
@@ -480,23 +483,43 @@ namespace LDDModder.LDD.Meshes
                     }
                 }
 
-                var geom = new MeshGeometry();
-                geom.SetVertices(vertices);
-
-                for (int i = 0; i < indices.Count; i += 3)
-                    geom.AddTriangleFromIndices(indices[i], indices[i + 1], indices[i + 2]);
-
                 if (geomElem.HasElement("Outlines", out XElement outlineElem))
                 {
                     var outlineUVs = ParseVector2Array(outlineElem.Value);
+                    if (outlineUVs.Count % 6 != 0)
+                    {
+                        //problem
+                    }
 
                     for (int i = 0; i < outlineUVs.Count; i += 6)
                     {
-                        int iIdx = i / 6;
-                        var reData = new RoundEdgeData(outlineUVs.Skip(i).Take(6).ToArray());
-                        geom.Indices[iIdx].RoundEdgeData = reData;
+                        var reData = new RoundEdgeData();
+                        for (int j = 0; j < 6; j++)
+                            reData.Coords[j] = outlineUVs[i + j];
+
+                        reCoords.Add(reData);
                     }
                 }
+
+                for (int i = 0; i < indices.Count; i += 3)
+                {
+                    var tri = new Triangle(
+                        vertices[indices[i]],
+                        vertices[indices[i + 1]],
+                        vertices[indices[i + 2]]);
+                    triangles.Add(tri);
+
+                    for (int j = 0; j < 3; j++)
+                    {
+                        if (i + j >= reCoords.Count)
+                            break;
+                        tri.Indices[j].RoundEdgeData = reCoords[i + j];
+                    }
+                }
+
+                var geom = new MeshGeometry();
+                geom.SetVertices(vertices);
+                geom.SetTriangles(triangles);
 
                 return geom;
             }

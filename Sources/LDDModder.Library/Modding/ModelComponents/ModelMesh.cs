@@ -17,6 +17,7 @@ namespace LDDModder.Modding
     {
         public const string NODE_NAME = "Mesh";
         private MeshGeometry _Geometry;
+        private XElement GeomtryXml;
 
         public MeshGeometry Geometry
         {
@@ -117,8 +118,10 @@ namespace LDDModder.Modding
 
             if (element.HasElement("Positions"))
             {
-                _Geometry = GetGeometryFromElement(element);
-                GeometrySaved = _Geometry != null;
+                GeomtryXml = element;
+                GeometrySaved = true;
+                //_Geometry = GetGeometryFromElement(element);
+                //GeometrySaved = _Geometry != null;
             }
         }
 
@@ -145,13 +148,17 @@ namespace LDDModder.Modding
 
         public bool ReloadModelFromXml()
         {
-            var geomElem = GetGeometryElementFromProjectFile();
+            var geomElem = GeomtryXml;
+            if (geomElem == null)
+                GetGeometryElementFromProjectFile();
+
             if (geomElem != null)
             {
                 _Geometry = GetGeometryFromElement(geomElem);
                 GeometrySaved = _Geometry != null;
             }
-
+            if (GeomtryXml != null)
+                GeomtryXml = null;
             //if (Project == null)
             //    return false;
 
@@ -184,7 +191,7 @@ namespace LDDModder.Modding
 
             fakeDoc.Add(new XElement("LddGeometry", element.Nodes().ToArray()));
             fakeDoc.Root.Add(element.Attributes().ToArray());
-            return MeshGeometry.FromXml(fakeDoc); ;
+            return MeshGeometry.FromXml(fakeDoc);
         }
 
         public void UnloadModel()

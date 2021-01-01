@@ -40,12 +40,16 @@ namespace LDDModder.BrickEditor.UI.Panels
             DockAreas ^= WeifenLuo.WinFormsUI.Docking.DockAreas.Document;
 
             SetControlDoubleBuffered(tableLayoutPanel2);
+            SetControlDoubleBuffered(flowLayoutPanel1);
         }
 
         protected override void OnDockStateChanged(EventArgs e)
         {
             base.OnDockStateChanged(e);
 
+            if (DockState == WeifenLuo.WinFormsUI.Docking.DockState.Unknown ||
+                DockState == WeifenLuo.WinFormsUI.Docking.DockState.Hidden)
+                return;
 
             ForceAdjustFlowLayout();
         }
@@ -78,7 +82,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             base.OnShown(e);
             ForceAdjustFlowLayout();
-            flowLayoutPanel1.ScrollControlIntoView(collapsiblePanel2);
+            flowLayoutPanel1.ScrollControlIntoView(DescriptionPanel);
         }
 
         private void ResourceHelper_ResourceDataInitialized(object sender, EventArgs e)
@@ -343,17 +347,21 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void ForceAdjustFlowLayout()
         {
-            var panelStates = new Dictionary<string, bool>();
-            foreach (var panel in flowLayoutPanel1.Controls.OfType<CollapsiblePanel>())
+            using (FlagManager.UseFlag(nameof(ForceAdjustFlowLayout)))
             {
-                panelStates[panel.Name] = panel.Collapsed;
-                panel.Collapse();
-            }
-            AdjustFlowLayout();
+                var panelStates = new Dictionary<string, bool>();
+                foreach (var panel in flowLayoutPanel1.Controls.OfType<CollapsiblePanel>())
+                {
+                    panelStates[panel.Name] = panel.Collapsed;
+                    panel.Collapse();
+                }
+                AdjustFlowLayout();
 
-            foreach (var panel in flowLayoutPanel1.Controls.OfType<CollapsiblePanel>())
-            {
-                panel.SetCollapsed(panelStates[panel.Name]);
+                foreach (var panel in flowLayoutPanel1.Controls.OfType<CollapsiblePanel>())
+                {
+                    panel.SetCollapsed(panelStates[panel.Name]);
+                    panel.ForceAdjustHeight();
+                }
             }
         }
 
@@ -394,11 +402,50 @@ namespace LDDModder.BrickEditor.UI.Panels
                     panel.Width = desiredPanelWidth - panel.Margin.Horizontal;
             }
 
-
-            
-
             if (layoutChanged || force)
                 flowLayoutPanel1.PerformLayout();
+        }
+
+        protected override string GetPersistString()
+        {
+            var baseStr = base.GetPersistString();
+            var layoutArgs = new List<string>();
+
+            foreach (var panel in flowLayoutPanel1.Controls.OfType<CollapsiblePanel>())
+            {
+                layoutArgs.Add($"{panel.Name}.{nameof(CollapsiblePanel.Collapsed)}={panel.Collapsed}");
+            }
+
+            return baseStr + ":" + string.Join(";", layoutArgs);
+        }
+
+        public override void ApplyLayoutArgs(string layoutArgs)
+        {
+            base.ApplyLayoutArgs(layoutArgs);
+            var argList = layoutArgs.Split(';');
+
+
+            using (FlagManager.UseFlag(nameof(ApplyLayoutArgs)))
+            {
+                foreach (var panel in flowLayoutPanel1.Controls.OfType<CollapsiblePanel>())
+                {
+                    var panelArgs = argList.Where(x => x.StartsWith(panel.Name + "."));
+                    if (panelArgs.Any(x => x.Contains("Collapsed=True")))
+                        panel.SetCollapsed(true);
+                    else
+                        panel.SetCollapsed(false);
+                    panel.ForceAdjustHeight();
+                }
+                flowLayoutPanel1.PerformLayout();
+            }
+        }
+
+        private void Panels_CollapsedChanged(object sender, EventArgs e)
+        {
+            if (FlagManager.IsSet(nameof(ForceAdjustFlowLayout)) || 
+                FlagManager.IsSet(nameof(ApplyLayoutArgs)))
+                return;
+            AdjustFlowLayout();
         }
     }
 }

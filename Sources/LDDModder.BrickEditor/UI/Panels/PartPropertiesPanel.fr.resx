@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -126,15 +126,6 @@
   <data name="CalcGeomBoundingButton.Text" xml:space="preserve">
     <value>Calculer</value>
   </data>
-  <data name="collapsiblePanel1.Text" xml:space="preserve">
-    <value>Délimitations</value>
-  </data>
-  <data name="collapsiblePanel2.Text" xml:space="preserve">
-    <value>Description</value>
-  </data>
-  <data name="collapsiblePanel3.Text" xml:space="preserve">
-    <value>Propriétés physiques</value>
-  </data>
   <data name="LabelAliases.Text" xml:space="preserve">
     <value>Alias</value>
   </data>
@@ -167,5 +158,14 @@
   </data>
   <data name="LabelCategory.Text" xml:space="preserve">
     <value>Catégorie</value>
+  </data>
+  <data name="BoundingsPanel.Text" xml:space="preserve">
+    <value>Délimitations</value>
+  </data>
+  <data name="DescriptionPanel.Text" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="PhysicalPanel.Text" xml:space="preserve">
+    <value>Propriétés physiques</value>
   </data>
 </root>

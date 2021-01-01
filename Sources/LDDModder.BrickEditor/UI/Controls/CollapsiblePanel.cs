@@ -296,6 +296,11 @@ namespace LDDModder.BrickEditor.UI.Controls
             InternalSetHeight = false;
         }
 
+        public void ForceAdjustHeight()
+        {
+            AdjustPanelSize();
+        }
+
         internal void AdjustPanelToContent()
         {
             if (!Collapsed && AutoSizeHeight)

@@ -371,7 +371,7 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         private void WindowMenu_ResetLayout_Click(object sender, EventArgs e)
         {
-
+            LoadDefaultLayout();
         }
 
         private void HelpMenu_About_Click(object sender, EventArgs e)

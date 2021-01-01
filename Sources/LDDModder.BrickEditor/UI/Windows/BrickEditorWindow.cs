@@ -251,6 +251,49 @@ namespace LDDModder.BrickEditor.UI.Windows
             }
         }
 
+        private IDockContent DockContentLoadingHandler(string str)
+        {
+            var panels = DockPanels;
+
+            string panelClass = str;
+            string layoutArgs = null;
+
+            if (panelClass.Contains(":"))
+            {
+                panelClass = str.Substring(0, str.IndexOf(":"));
+                layoutArgs = str.Substring(str.IndexOf(":") + 1);
+            }
+
+            for (int i = 0; i < panels.Length; i++)
+            {
+                if (panels[i].GetType().FullName == panelClass)
+                {
+                    if (!string.IsNullOrEmpty(layoutArgs) && 
+                        panels[i] is ProjectDocumentPanel documentPanel)
+                    {
+                        Task.Factory.StartNew(() =>
+                        {
+                            Thread.Sleep(100);
+                            BeginInvoke((Action)(() =>
+                            {
+                                documentPanel.ApplyLayoutArgs(layoutArgs);
+                            }));
+                        });
+                        //EventHandler shownHandler = null;
+                        //shownHandler = (e, s) =>
+                        //{
+                        //    documentPanel.ApplyLayoutArgs(layoutArgs);
+                        //    documentPanel.Shown -= shownHandler;
+                        //};
+                        //documentPanel.Shown += shownHandler;
+                    }
+
+                    return panels[i];
+                }
+            }
+            return null;
+        }
+
         private bool LoadCustomLayout(UserUILayout layout)
         {
             if (!File.Exists(layout.Path))
@@ -269,16 +312,7 @@ namespace LDDModder.BrickEditor.UI.Windows
 
             try
             {
-                DockPanelControl.LoadFromXml(layout.Path, (string str) =>
-                {
-                    var panels = DockPanels;
-                    for (int i = 0; i < panels.Length; i++)
-                    {
-                        if (panels[i].GetType().FullName == str)
-                            return panels[i];
-                    }
-                    return null;
-                });
+                DockPanelControl.LoadFromXml(layout.Path, DockContentLoadingHandler);
                 return true;
             }
             catch (Exception ex)
@@ -288,16 +322,7 @@ namespace LDDModder.BrickEditor.UI.Windows
 
             if (tmpMs != null)
             {
-                DockPanelControl.LoadFromXml(tmpMs, (string str) =>
-                {
-                    var panels = DockPanels;
-                    for (int i = 0; i < panels.Length; i++)
-                    {
-                        if (panels[i].GetType().FullName == str)
-                            return panels[i];
-                    }
-                    return null;
-                });
+                DockPanelControl.LoadFromXml(tmpMs, DockContentLoadingHandler);
             }
 
             return false;
