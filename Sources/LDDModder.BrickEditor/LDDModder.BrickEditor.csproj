@@ -150,6 +150,7 @@
     <Compile Include="Models\Navigation\ElementCollectionNode.cs" />
     <Compile Include="Models\Navigation\ProjectTreeNode.cs" />
     <Compile Include="Models\Navigation\VisibilityState.cs" />
+    <Compile Include="Native\Kernel32.cs" />
     <Compile Include="ProjectHandling\ChangeAction.cs" />
     <Compile Include="Models\Navigation\ElementGroupNode.cs" />
     <Compile Include="Models\Navigation\ProjectElementNode.cs" />
@@ -610,8 +611,14 @@
     <EmbeddedResource Include="UI\Panels\ViewportPanel.resx">
       <DependentUpon>ViewportPanel.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\Settings\DisplaySettingsPanel.fr.resx">
+      <DependentUpon>DisplaySettingsPanel.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\Settings\DisplaySettingsPanel.resx">
       <DependentUpon>DisplaySettingsPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Settings\EditorSettingsPanel.fr.resx">
+      <DependentUpon>EditorSettingsPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Settings\EditorSettingsPanel.resx">
       <DependentUpon>EditorSettingsPanel.cs</DependentUpon>
@@ -718,6 +725,16 @@
     <EmbeddedResource Include="..\..\Documentation\Primitive connectors.xml">
       <Link>Resources\Data\Primitive connectors.xml</Link>
     </EmbeddedResource>
+    <ContentWithTargetPath Include="..\packages\SharpFont.Dependencies.2.6\bin\msvc10\x64\freetype6.dll">
+      <Link>lib\x64\freetype6.dll</Link>
+      <TargetPath>runtimes\win-x64\native\freetype6.dll</TargetPath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </ContentWithTargetPath>
+    <ContentWithTargetPath Include="..\packages\SharpFont.Dependencies.2.6\bin\msvc10\x86\freetype6.dll">
+      <Link>lib\x86\freetype6.dll</Link>
+      <TargetPath>runtimes\win-x86\native\freetype6.dll</TargetPath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </ContentWithTargetPath>
     <Content Include="Resources\BrickStudioIcon.ico" />
     <Content Include="Resources\Images\DecorationSurfaceIcon.png" />
     <Content Include="Resources\Images\GizmoOrientationIcon.png" />

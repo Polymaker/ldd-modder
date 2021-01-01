@@ -149,10 +149,24 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             ResourceContext.MakeCurrent(GlWindowInfo);
 
-            TextureManager.InitializeResources();
-            UIRenderHelper.InitializeResources();
-            RenderHelper.InitializeResources();
-            ModelManager.InitializeResources();
+            try
+            {
+                TextureManager.InitializeResources();
+                UIRenderHelper.InitializeResources();
+                RenderHelper.InitializeResources();
+                ModelManager.InitializeResources();
+            }
+            catch(Exception ex)
+            {
+                BeginInvoke((Action)(() =>
+                {
+                    MessageBoxEX.ShowException(this, "", "", ex);
+                }));
+                
+                GlContextCreated = false;
+                return;
+            }
+            
 
             SetupUIElements();
 

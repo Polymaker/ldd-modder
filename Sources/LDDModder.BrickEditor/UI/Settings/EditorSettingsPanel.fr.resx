@@ -117,55 +117,61 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AppDataDbNotFound.Text" xml:space="preserve">
-    <value>Impossible de trouver les données de LDD.</value>
+  <data name="AddBuildCfgBtn.Text" xml:space="preserve">
+    <value>Ajouter</value>
   </data>
-  <data name="AppDataPathLabel.Text" xml:space="preserve">
-    <value>Chemin AppData:</value>
+  <data name="BuildCfgNameColumn.Text" xml:space="preserve">
+    <value>Nom</value>
   </data>
-  <data name="AppDataPathTextBox.ButtonText" xml:space="preserve">
-    <value>...</value>
+  <data name="BuildCfgNameLabel.Text" xml:space="preserve">
+    <value>Nom</value>
   </data>
-  <data name="AssetsInfoLabel.Text" xml:space="preserve">
-    <value>* L'extraction de ce contenu est facultatif.</value>
+  <data name="BuildCfg_PathBox.ButtonText" xml:space="preserve">
+    <value>Parcourir</value>
   </data>
-  <data name="DbInfoLabel.Text" xml:space="preserve">
-    <value>* L'extraction de ce contenu est nécessaire pour charger des briques personnalisées dans LDD.</value>
+  <data name="WorkspaceBrowseBox.ButtonText" xml:space="preserve">
+    <value>Parcourir</value>
   </data>
-  <data name="ExtractAssetsButton.Text" xml:space="preserve">
-    <value>Extraire</value>
+  <data name="UsernameLabel.Text" xml:space="preserve">
+    <value>Pseudonyme</value>
   </data>
-  <data name="ExtractDBButton.Text" xml:space="preserve">
-    <value>Extraire</value>
+  <data name="SaveBuildCfgBtn.Text" xml:space="preserve">
+    <value>Enregistrer</value>
   </data>
-  <data name="FindEnvironmentButton.Text" xml:space="preserve">
-    <value>Recherche auto...</value>
+  <data name="BuildCfg_OverwriteChk.Text" xml:space="preserve">
+    <value>Confirmation lors de l'écrasement</value>
   </data>
-  <data name="LddDataGroupBox.Text" xml:space="preserve">
-    <value>Données LDD</value>
+  <data name="BuildCfg_Lod0Chk.Text" xml:space="preserve">
+    <value>Placer les modèles dans le répertoire LOD0</value>
   </data>
-  <data name="LddExeNotFound.Text" xml:space="preserve">
-    <value>L'application LDD n'a pas été trouvée.</value>
+  <data name="BuildCfgPathLabel.Text" xml:space="preserve">
+    <value>Chemin de sortie</value>
   </data>
-  <data name="LddPathsGroupBox.Text" xml:space="preserve">
-    <value>Chemins LDD</value>
+  <data name="CancelBuildCfgBtn.Text" xml:space="preserve">
+    <value>Annuler</value>
   </data>
-  <data name="LifExtractedMessage.Text" xml:space="preserve">
-    <value>LIF extrait</value>
+  <data name="DelBuildCfgBtn.Text" xml:space="preserve">
+    <value>Supprimer</value>
   </data>
-  <data name="LifNotExtractedMessage.Text" xml:space="preserve">
-    <value>LIF non-extrait</value>
+  <data name="groupBox1.Text" xml:space="preserve">
+    <value>Configuration générale</value>
   </data>
-  <data name="LifNotFoundMessage.Text" xml:space="preserve">
-    <value>LIF non-trouvé</value>
+  <data name="label6.Text" xml:space="preserve">
+    <value>Intervalle de sauvegarde</value>
   </data>
-  <data name="PrgmFilePathLabel.Text" xml:space="preserve">
-    <value>Chemin d'installation:</value>
+  <data name="label5.Text" xml:space="preserve">
+    <value>secondes</value>
   </data>
-  <data name="PrgmFilePathTextBox.ButtonText" xml:space="preserve">
-    <value>...</value>
+  <data name="label4.Text" xml:space="preserve">
+    <value>* Optionnel</value>
+  </data>
+  <data name="label3.Text" xml:space="preserve">
+    <value>Espace de travail</value>
+  </data>
+  <data name="BuildConfigsGroupBox.Text" xml:space="preserve">
+    <value>Préréglages de sortie</value>
   </data>
   <data name="$this.Title" xml:space="preserve">
-    <value>Environnement LDD</value>
+    <value>Paramètres de l'éditeur</value>
   </data>
 </root>

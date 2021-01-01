@@ -1,4 +1,5 @@
-﻿using LDDModder.BrickEditor.Rendering.Shaders;
+﻿using LDDModder.BrickEditor.Native;
+using LDDModder.BrickEditor.Rendering.Shaders;
 using LDDModder.BrickEditor.Rendering.UI;
 using ObjectTK.Buffers;
 using ObjectTK.Shaders;
@@ -10,7 +11,9 @@ using QuickFont.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -43,8 +46,63 @@ namespace LDDModder.BrickEditor.Rendering
             VertexList = new List<VertVT>();
         }
 
+        public static bool Use64bitFreetype6 { get; private set; }
+        public static bool Freetype6Loaded { get; private set; }
+
+        public static bool LoadFreetype6()
+        {
+            string currentPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
+            string x64dllPath = Path.Combine(currentPath, "runtimes\\win-x64\\native", "freetype6.dll");
+            string x86dllPath = Path.Combine(currentPath, "runtimes\\win-x86\\native", "freetype6.dll");
+
+            string dllToUsePath = Path.Combine(currentPath, "freetype6.dll");
+            Freetype6Loaded = false;
+            Use64bitFreetype6 = false;
+            IntPtr libPtr = IntPtr.Zero;
+            try
+            {
+                libPtr = Kernel32.LoadLibrary(x64dllPath);
+                Freetype6Loaded = libPtr != IntPtr.Zero;
+                Use64bitFreetype6 = Freetype6Loaded;
+            }
+            catch {}
+            finally
+            {
+                if (libPtr != IntPtr.Zero)
+                    Kernel32.FreeLibrary(libPtr);
+            }
+
+            if (!Freetype6Loaded)
+            {
+                try
+                {
+                    libPtr = Kernel32.LoadLibrary(x86dllPath);
+                    Freetype6Loaded = libPtr != IntPtr.Zero;
+                }
+                catch {}
+                finally
+                {
+                    if (libPtr != IntPtr.Zero)
+                        Kernel32.FreeLibrary(libPtr);
+                }
+            }
+
+            if (Freetype6Loaded)
+            {
+                if (File.Exists(dllToUsePath))
+                    File.Delete(dllToUsePath);
+
+                File.Copy(Use64bitFreetype6 ? x64dllPath : x86dllPath, dllToUsePath);
+            }
+
+            return Freetype6Loaded;
+        }
+
         public static void InitializeResources()
         {
+            LoadFreetype6();
+
             var builderConfig = new QFontBuilderConfiguration(true)
             {
                 ShadowConfig =

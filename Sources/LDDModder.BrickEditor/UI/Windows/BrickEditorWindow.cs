@@ -404,6 +404,8 @@ namespace LDDModder.BrickEditor.UI.Windows
                 documentPanel.DefferedInitialization();
             }
 
+            
+
             Task.Factory.StartNew(() =>
             {
                 ViewportPanel.InitGlResourcesAsync();

@@ -56,11 +56,13 @@
     <Error Text="The WiX Toolset v3.11 (or newer) build tools must be installed to build this project. To download the WiX Toolset, see http://wixtoolset.org/releases/" />
   </Target>
   <PropertyGroup>
-    <PreBuildEvent>del %2a.msi</PreBuildEvent>
-  </PropertyGroup>
-  <PropertyGroup>
     <PostBuildEvent>rename !(TargetPath) "LDDModder.Setup.$(PlatformName).msi"
 xcopy "$(TargetDir)LDDModder.Setup.$(PlatformName).msi" "$(ProjectDir)bin\$(ConfigurationName)\"</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>del %2a.msi
+cd "$(ProjectDir)bin\$(ConfigurationName)\"
+del "LDDModder.Setup.$(PlatformName).msi"</PreBuildEvent>
   </PropertyGroup>
   <!--
 	To modify your build process, add your task inside one of the targets below and uncomment it.

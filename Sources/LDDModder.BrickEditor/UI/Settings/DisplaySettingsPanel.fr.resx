@@ -117,55 +117,20 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AppDataDbNotFound.Text" xml:space="preserve">
-    <value>Impossible de trouver les données de LDD.</value>
+  <data name="groupBox1.Text" xml:space="preserve">
+    <value>Disposition des fenêtres</value>
   </data>
-  <data name="AppDataPathLabel.Text" xml:space="preserve">
-    <value>Chemin AppData:</value>
+  <data name="groupBox2.Text" xml:space="preserve">
+    <value>Couleurs</value>
   </data>
-  <data name="AppDataPathTextBox.ButtonText" xml:space="preserve">
-    <value>...</value>
+  <data name="label1.Text" xml:space="preserve">
+    <value>Ce menu n'est pas terminé
+Vous pouvez les modifier manuellement ou les supprimer directement.</value>
   </data>
-  <data name="AssetsInfoLabel.Text" xml:space="preserve">
-    <value>* L'extraction de ce contenu est facultatif.</value>
+  <data name="label2.Text" xml:space="preserve">
+    <value>* Le nom d'affichage est défini dans le XML par l'attribut 'Name'</value>
   </data>
-  <data name="DbInfoLabel.Text" xml:space="preserve">
-    <value>* L'extraction de ce contenu est nécessaire pour charger des briques personnalisées dans LDD.</value>
-  </data>
-  <data name="ExtractAssetsButton.Text" xml:space="preserve">
-    <value>Extraire</value>
-  </data>
-  <data name="ExtractDBButton.Text" xml:space="preserve">
-    <value>Extraire</value>
-  </data>
-  <data name="FindEnvironmentButton.Text" xml:space="preserve">
-    <value>Recherche auto...</value>
-  </data>
-  <data name="LddDataGroupBox.Text" xml:space="preserve">
-    <value>Données LDD</value>
-  </data>
-  <data name="LddExeNotFound.Text" xml:space="preserve">
-    <value>L'application LDD n'a pas été trouvée.</value>
-  </data>
-  <data name="LddPathsGroupBox.Text" xml:space="preserve">
-    <value>Chemins LDD</value>
-  </data>
-  <data name="LifExtractedMessage.Text" xml:space="preserve">
-    <value>LIF extrait</value>
-  </data>
-  <data name="LifNotExtractedMessage.Text" xml:space="preserve">
-    <value>LIF non-extrait</value>
-  </data>
-  <data name="LifNotFoundMessage.Text" xml:space="preserve">
-    <value>LIF non-trouvé</value>
-  </data>
-  <data name="PrgmFilePathLabel.Text" xml:space="preserve">
-    <value>Chemin d'installation:</value>
-  </data>
-  <data name="PrgmFilePathTextBox.ButtonText" xml:space="preserve">
-    <value>...</value>
-  </data>
-  <data name="$this.Title" xml:space="preserve">
-    <value>Environnement LDD</value>
+  <data name="linkLabel1.Text" xml:space="preserve">
+    <value>Cliquez pour ouvrir le dossier des dispositions utilisateur</value>
   </data>
 </root>

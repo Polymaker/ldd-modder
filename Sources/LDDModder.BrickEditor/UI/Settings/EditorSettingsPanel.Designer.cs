@@ -130,7 +130,7 @@
             // tableLayoutPanel2
             // 
             resources.ApplyResources(this.tableLayoutPanel2, "tableLayoutPanel2");
-            this.tableLayoutPanel2.Controls.Add(this.SaveBuildCfgBtn, 1, 4);
+            this.tableLayoutPanel2.Controls.Add(this.SaveBuildCfgBtn, 0, 4);
             this.tableLayoutPanel2.Controls.Add(this.CancelBuildCfgBtn, 2, 4);
             this.tableLayoutPanel2.Controls.Add(this.BuildCfg_NameBox, 1, 0);
             this.tableLayoutPanel2.Controls.Add(this.BuildCfg_OverwriteChk, 0, 3);
@@ -143,6 +143,7 @@
             // SaveBuildCfgBtn
             // 
             resources.ApplyResources(this.SaveBuildCfgBtn, "SaveBuildCfgBtn");
+            this.tableLayoutPanel2.SetColumnSpan(this.SaveBuildCfgBtn, 2);
             this.SaveBuildCfgBtn.Name = "SaveBuildCfgBtn";
             this.SaveBuildCfgBtn.UseVisualStyleBackColor = true;
             this.SaveBuildCfgBtn.Click += new System.EventHandler(this.SaveBuildCfgBtn_Click);
@@ -163,6 +164,7 @@
             // 
             // BuildCfg_OverwriteChk
             // 
+            this.BuildCfg_OverwriteChk.AutoEllipsis = true;
             resources.ApplyResources(this.BuildCfg_OverwriteChk, "BuildCfg_OverwriteChk");
             this.tableLayoutPanel2.SetColumnSpan(this.BuildCfg_OverwriteChk, 3);
             this.BuildCfg_OverwriteChk.Name = "BuildCfg_OverwriteChk";
@@ -188,6 +190,7 @@
             // 
             // BuildCfg_Lod0Chk
             // 
+            this.BuildCfg_Lod0Chk.AutoEllipsis = true;
             resources.ApplyResources(this.BuildCfg_Lod0Chk, "BuildCfg_Lod0Chk");
             this.tableLayoutPanel2.SetColumnSpan(this.BuildCfg_Lod0Chk, 3);
             this.BuildCfg_Lod0Chk.Name = "BuildCfg_Lod0Chk";

@@ -373,10 +373,10 @@
     <value>NoControl</value>
   </data>
   <data name="BuildCfg_OverwriteChk.Location" type="System.Drawing.Point, System.Drawing">
-    <value>20, 78</value>
+    <value>15, 78</value>
   </data>
   <data name="BuildCfg_OverwriteChk.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>20, 3, 3, 3</value>
+    <value>15, 3, 3, 3</value>
   </data>
   <data name="BuildCfg_OverwriteChk.Size" type="System.Drawing.Size, System.Drawing">
     <value>165, 17</value>
@@ -418,7 +418,7 @@
     <value>BuildCfg_PathBox</value>
   </data>
   <data name="&gt;&gt;BuildCfg_PathBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.BrowseTextBox, Brick Studio, Version=1.0.5.15822, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.BrowseTextBox, Brick Studio, Version=1.0.5.30684, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;BuildCfg_PathBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel2</value>
@@ -466,10 +466,10 @@
     <value>NoControl</value>
   </data>
   <data name="BuildCfg_Lod0Chk.Location" type="System.Drawing.Point, System.Drawing">
-    <value>20, 55</value>
+    <value>15, 55</value>
   </data>
   <data name="BuildCfg_Lod0Chk.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>20, 3, 3, 3</value>
+    <value>15, 3, 3, 3</value>
   </data>
   <data name="BuildCfg_Lod0Chk.Size" type="System.Drawing.Size, System.Drawing">
     <value>177, 17</value>
@@ -553,7 +553,7 @@
     <value>0</value>
   </data>
   <data name="tableLayoutPanel2.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="SaveBuildCfgBtn" Row="4" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="CancelBuildCfgBtn" Row="4" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="BuildCfg_NameBox" Row="0" RowSpan="1" Column="1" ColumnSpan="2" /&gt;&lt;Control Name="BuildCfg_OverwriteChk" Row="3" RowSpan="1" Column="0" ColumnSpan="3" /&gt;&lt;Control Name="BuildCfg_PathBox" Row="1" RowSpan="1" Column="1" ColumnSpan="2" /&gt;&lt;Control Name="BuildCfgNameLabel" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="BuildCfg_Lod0Chk" Row="2" RowSpan="1" Column="0" ColumnSpan="3" /&gt;&lt;Control Name="BuildCfgPathLabel" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,90,Percent,100,AutoSize,101" /&gt;&lt;Rows Styles="AutoSize,50,AutoSize,50,AutoSize,20,AutoSize,20,Absolute,20" /&gt;&lt;/TableLayoutSettings&gt;</value>
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="SaveBuildCfgBtn" Row="4" RowSpan="1" Column="0" ColumnSpan="2" /&gt;&lt;Control Name="CancelBuildCfgBtn" Row="4" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="BuildCfg_NameBox" Row="0" RowSpan="1" Column="1" ColumnSpan="2" /&gt;&lt;Control Name="BuildCfg_OverwriteChk" Row="3" RowSpan="1" Column="0" ColumnSpan="3" /&gt;&lt;Control Name="BuildCfg_PathBox" Row="1" RowSpan="1" Column="1" ColumnSpan="2" /&gt;&lt;Control Name="BuildCfgNameLabel" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="BuildCfg_Lod0Chk" Row="2" RowSpan="1" Column="0" ColumnSpan="3" /&gt;&lt;Control Name="BuildCfgPathLabel" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,90,Percent,100,AutoSize,101" /&gt;&lt;Rows Styles="AutoSize,50,AutoSize,50,AutoSize,20,AutoSize,20,Absolute,20" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <data name="&gt;&gt;BuildCfgSplitContainer.Panel2.Name" xml:space="preserve">
     <value>BuildCfgSplitContainer.Panel2</value>
@@ -615,23 +615,23 @@
   <data name="groupBox1.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
   </data>
-  <data name="label6.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
   <data name="label6.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
   <data name="label6.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 75</value>
+    <value>6, 70</value>
   </data>
   <data name="label6.Size" type="System.Drawing.Size, System.Drawing">
-    <value>81, 13</value>
+    <value>100, 26</value>
   </data>
   <data name="label6.TabIndex" type="System.Int32, mscorlib">
     <value>11</value>
   </data>
   <data name="label6.Text" xml:space="preserve">
     <value>Backup interval</value>
+  </data>
+  <data name="label6.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
   </data>
   <data name="&gt;&gt;label6.Name" xml:space="preserve">
     <value>label6</value>
@@ -799,7 +799,7 @@
     <value>WorkspaceBrowseBox</value>
   </data>
   <data name="&gt;&gt;WorkspaceBrowseBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.BrowseTextBox, Brick Studio, Version=1.0.5.15822, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.BrowseTextBox, Brick Studio, Version=1.0.5.30684, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;WorkspaceBrowseBox.Parent" xml:space="preserve">
     <value>groupBox1</value>
@@ -807,23 +807,23 @@
   <data name="&gt;&gt;WorkspaceBrowseBox.ZOrder" xml:space="preserve">
     <value>6</value>
   </data>
-  <data name="label3.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
   <data name="label3.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
   <data name="label3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 48</value>
+    <value>6, 42</value>
   </data>
   <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>95, 13</value>
+    <value>100, 26</value>
   </data>
   <data name="label3.TabIndex" type="System.Int32, mscorlib">
     <value>7</value>
   </data>
   <data name="label3.Text" xml:space="preserve">
     <value>Project workspace</value>
+  </data>
+  <data name="label3.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
   </data>
   <data name="&gt;&gt;label3.Name" xml:space="preserve">
     <value>label3</value>
@@ -883,6 +883,6 @@
     <value>EditorSettingsPanel</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Settings.SettingsPanelBase, Brick Studio, Version=1.0.5.15822, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Settings.SettingsPanelBase, Brick Studio, Version=1.0.5.30684, Culture=neutral, PublicKeyToken=null</value>
   </data>
 </root>
