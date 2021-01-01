@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LDDModder.Modding.Editing;
+using LDDModder.Modding;
 
 namespace LDDModder.BrickEditor.ProjectHandling
 {

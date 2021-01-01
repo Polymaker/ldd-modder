@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace LDDModder.BrickEditor.Settings
 {
-    public class EditorSettings
+    public class EditorSettings : ISettingsClass
     {
         [JsonProperty("workspaceFolder")]
         public string ProjectWorkspace { get; set; }

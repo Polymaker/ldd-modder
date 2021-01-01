@@ -1,4 +1,4 @@
-﻿using LDDModder.Modding.Editing;
+﻿using LDDModder.Modding;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

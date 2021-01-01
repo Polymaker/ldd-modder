@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LDDModder.BrickEditor.ProjectHandling;
-using LDDModder.Modding.Editing;
+using LDDModder.Modding;
 using LDDModder.Utilities;
 
 namespace LDDModder.BrickEditor.UI.Controls

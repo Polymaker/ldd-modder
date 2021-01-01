@@ -20,6 +20,8 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
         public bool HistoryLimitExceeded { get; private set; }
 
+        public bool ProjectIsModified { get; private set; }
+
         private List<ChangeAction> UndoHistory { get; }
 
         private List<ChangeAction> RedoHistory { get; }
@@ -51,52 +53,31 @@ namespace LDDModder.BrickEditor.ProjectHandling
             BatchChanges = new List<ChangeAction>();
         }
 
-        //public UndoRedoManager(ProjectDocument document)
-        //{
-        //    Document = document;
-        //    MaxHistory = 15;
-
-        //    UndoHistory = new List<ChangeAction>();
-        //    RedoHistory = new List<ChangeAction>();
-        //    BatchChanges = new List<ChangeAction>();
-        //}
-
-        //private void ProjectManager_ProjectChanged(object sender, EventArgs e)
-        //{
-        //    ClearHistory();
-        //}
-
         public void ClearHistory()
         {
             UndoHistory.Clear();
             RedoHistory.Clear();
             HistoryLimitExceeded = false;
+            ProjectIsModified = false;
             CurrentChangeID = 0;
         }
 
-        internal void ProcessProjectElementsChanged(Modding.Editing.ElementCollectionChangedEventArgs e)
+        internal void ProcessProjectElementsChanged(Modding.ElementCollectionChangedEventArgs e)
         {
             if (ExecutingUndoRedo)
                 return;
 
             var action = new CollectionChangeAction(e);
-
-            if (IsInBatch)
-                BatchChanges.Add(action);
-            else
-                AddAction(action);
+            AddActionCore(action);
         }
 
-        internal void ProcessElementPropertyChanged(Modding.Editing.ElementValueChangedEventArgs e)
+        internal void ProcessElementPropertyChanged(Modding.ElementValueChangedEventArgs e)
         {
             if (ExecutingUndoRedo)
                 return;
 
             var action = new PropertyChangeAction(e);
-            if (IsInBatch)
-                BatchChanges.Add(action);
-            else
-                AddAction(action);
+            AddActionCore(action);
         }
 
 
@@ -139,7 +120,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
                             //var currElements = colChange.Data.AddedElements.Concat(colChange.Data.RemovedElements);
                             
                             prevColChange = new CollectionChangeAction(
-                                new Modding.Editing.ElementCollectionChangedEventArgs(
+                                new Modding.ElementCollectionChangedEventArgs(
                                     colChange.Data.Collection, colChange.Data.Action,
                                     prevColChange.Data.ChangedItems.Concat(colChange.Data.ChangedItems)
                                     ));
@@ -175,15 +156,37 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
         public void AddEditorAction(EditorAction action)
         {
+            AddActionCore(action);
+        }
+
+        private void AddActionCore(ChangeAction action)
+        {
+            bool createdBatch = false;
+
+            if (!ProjectIsModified && !(action is EditorAction))
+            {
+                ProjectIsModified = true;
+                if (!IsInBatch)
+                {
+                    StartBatchChanges();
+                    createdBatch = true;
+                }
+                ProjectManager.CurrentProject.ProjectInfo.LastModification = DateTime.Now;
+            }
+
             if (IsInBatch)
                 BatchChanges.Add(action);
             else
                 AddAction(action);
+
+            if (createdBatch)
+                EndBatchChanges();
         }
 
         private void AddAction(ChangeAction action)
         {
             RedoHistory.Clear();
+
             UndoHistory.Add(action);
             action.ChangeID = ++CurrentChangeID;
 

@@ -1,5 +1,5 @@
 ﻿using LDDModder.LDD;
-using LDDModder.Modding.Editing;
+using LDDModder.Modding;
 using LDDModder.Utilities;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace LDDModder.BrickEditor.Settings
 {
@@ -24,10 +25,13 @@ namespace LDDModder.BrickEditor.Settings
 
         public static bool HasInitialized { get; private set; }
 
+        public static Version CurrentAppVersion { get; private set; } 
+
         static SettingsManager()
         {
             AppDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             AppDataFolder = Path.Combine(AppDataFolder, "LDDModder", "BrickEditor");
+            CurrentAppVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
         }
 
         public static void Initialize()
@@ -45,7 +49,7 @@ namespace LDDModder.BrickEditor.Settings
 
         public static void LoadSettings()
         {
-            Current = LoadAppSettings();
+            Current = ReadAppSettings();
 
             if (Current == null)
                 Current = new AppSettings();
@@ -57,7 +61,7 @@ namespace LDDModder.BrickEditor.Settings
             SaveSettings();
         }
 
-        public static AppSettings LoadAppSettings()
+        public static AppSettings ReadAppSettings()
         {
             string settingsPath = Path.Combine(AppDataFolder, AppSettingsFileName);
 
@@ -108,7 +112,7 @@ namespace LDDModder.BrickEditor.Settings
 
         public static void ReloadFilesHistory()
         {
-            var currentSettings = LoadAppSettings();
+            var currentSettings = ReadAppSettings();
             if (currentSettings == null)
                 return;
             Current.RecentProjectFiles = currentSettings.RecentProjectFiles;
@@ -172,11 +176,12 @@ namespace LDDModder.BrickEditor.Settings
 
         public static void SaveFilesHistory()
         {
-            var currentSettings = LoadAppSettings();
+            var currentSettings = ReadAppSettings();
             if (currentSettings == null)
                 return;
 
-            currentSettings.BuildSettings.InitializeDefaults();
+            //Required to initialize some internal flags that affect serialization
+            currentSettings.InitializeDefaultValues();
 
             currentSettings.OpenedProjects = Current.OpenedProjects;
             currentSettings.RecentProjectFiles = Current.RecentProjectFiles;
@@ -211,7 +216,7 @@ namespace LDDModder.BrickEditor.Settings
 
             if (moveToTop || !Current.RecentProjectFiles.Any(x => x.ProjectFile == fileInfo.ProjectFile))
             {
-                fileInfo.TemporaryPath = string.Empty;
+                fileInfo.TemporaryPath = null;
                 Current.RecentProjectFiles.RemoveAll(x => x.ProjectFile == fileInfo.ProjectFile);
                 Current.RecentProjectFiles.Insert(0, fileInfo);
             }
@@ -272,6 +277,120 @@ namespace LDDModder.BrickEditor.Settings
             if (removed > 0)
                 SaveFilesHistory();
         }
+
+        #region User UI Layouts
+
+        public static IEnumerable<UserUILayout> GetUserUILayouts()
+        {
+            string layoutDir = Path.Combine(AppDataFolder, "layouts");
+            if (!Directory.Exists(layoutDir))
+                yield break;
+            
+            foreach (string filepath in Directory.GetFiles(layoutDir, "*.xml"))
+            {
+                string layoutName = Path.GetFileNameWithoutExtension(filepath);
+                string appVersion = string.Empty;
+                bool isValidLayout = false;
+                try
+                {
+                    var xmlDoc = XDocument.Load(filepath);
+                    isValidLayout = true;
+                    if (xmlDoc.Root.HasAttribute(nameof(UserUILayout.Name), out XAttribute nameAttr))
+                        layoutName = nameAttr.Value;
+                    if (xmlDoc.Root.HasAttribute(nameof(UserUILayout.AppVersion), out XAttribute versionAttr))
+                        appVersion = versionAttr.Value;
+                }
+                catch { }
+
+                if (isValidLayout)
+                {
+                    yield return new UserUILayout()
+                    {
+                        Name = layoutName,
+                        Path = filepath,
+                        AppVersion = appVersion
+                    };
+                }
+            }
+        }
+
+        public static UserUILayout SaveUILayout(WeifenLuo.WinFormsUI.Docking.DockPanel dockPanel, string layoutName)
+        {
+            string layoutDir = Path.Combine(AppDataFolder, "layouts");
+            if (!Directory.Exists(layoutDir))
+                Directory.CreateDirectory(layoutDir);
+
+            string filename = FileHelper.GetSafeFileName(layoutName) + ".xml";
+            filename = Path.Combine(layoutDir, filename);
+            dockPanel.SaveAsXml(filename, Encoding.UTF8);
+
+            var layoutInfo = new UserUILayout()
+            {
+                Name = layoutName,
+                Path = filename,
+                AppVersion = $"{CurrentAppVersion.Major}.{CurrentAppVersion.Minor}.{CurrentAppVersion.Build}"
+            };
+
+            var doc = XDocument.Load(filename);
+            
+            doc.Root.Add(new XAttribute(nameof(UserUILayout.Name), layoutInfo.Name));
+            doc.Root.Add(new XAttribute(nameof(UserUILayout.AppVersion), layoutInfo.AppVersion));
+            doc.Save(filename);
+
+            return layoutInfo;
+        }
+
+        public static void SaveCurrentUILayout(WeifenLuo.WinFormsUI.Docking.DockPanel dockPanel)
+        {
+            string filename = "currentLayout.xml";
+            filename = Path.Combine(AppDataFolder, filename);
+            dockPanel.SaveAsXml(filename);
+
+            var doc = XDocument.Load(filename);
+
+            doc.Root.Add(new XAttribute(nameof(UserUILayout.AppVersion), 
+                $"{CurrentAppVersion.Major}.{CurrentAppVersion.Minor}.{CurrentAppVersion.Build}"));
+            doc.Save(filename);
+
+        }
+
+        public static UserUILayout GetSavedUserLayout()
+        {
+            string filename = "currentLayout.xml";
+            filename = Path.Combine(AppDataFolder, filename);
+            if (!File.Exists(filename))
+                return null;
+
+            string appVersion = string.Empty;
+            bool isValidLayout = false;
+            try
+            {
+                var xmlDoc = XDocument.Load(filename);
+                isValidLayout = true;
+                if (xmlDoc.Root.HasAttribute(nameof(UserUILayout.AppVersion), out XAttribute versionAttr))
+                    appVersion = versionAttr.Value;
+            }
+            catch { }
+
+            if (isValidLayout)
+            {
+                return new UserUILayout()
+                {
+                    Path = filename,
+                    AppVersion = appVersion
+                };
+            }
+
+            return null;
+        }
+
+        public static void DeleteUILayout(UserUILayout layout)
+        {
+            if (!string.IsNullOrEmpty(layout.Path) && File.Exists(layout.Path))
+                File.Delete(layout.Path);
+        }
+
+        #endregion
 
         #region Project Configuration
 

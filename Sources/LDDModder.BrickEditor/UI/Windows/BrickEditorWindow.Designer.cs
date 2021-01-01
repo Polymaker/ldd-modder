@@ -64,6 +64,9 @@
             this.Tools_SettingsMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.WindowMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.WindowMenu_SaveLayout = new System.Windows.Forms.ToolStripMenuItem();
+            this.WindowMenu_ApplyLayout = new System.Windows.Forms.ToolStripMenuItem();
+            this.WindowMenu_ManageLayouts = new System.Windows.Forms.ToolStripMenuItem();
+            this.WindowMenu_ResetLayout = new System.Windows.Forms.ToolStripMenuItem();
             this.SelectedBuildLabel = new System.Windows.Forms.ToolStripLabel();
             this.BuildConfigComboBox = new System.Windows.Forms.ToolStripComboBox();
             this.AutoSaveTimer = new System.Windows.Forms.Timer(this.components);
@@ -71,7 +74,8 @@
             this.StartLddText = new LDDModder.BrickEditor.Localization.LocalizableString();
             this.RestartLddText = new LDDModder.BrickEditor.Localization.LocalizableString();
             this.WindowTitle = new LDDModder.BrickEditor.Localization.LocalizableString();
-            this.WindowMenu_ResetLayout = new System.Windows.Forms.ToolStripMenuItem();
+            this.HelpMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.HelpMenu_About = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -96,6 +100,7 @@
             this.editToolStripMenuItem,
             this.ToolsMenuItem,
             this.WindowMenuItem,
+            this.HelpMenuItem,
             this.SelectedBuildLabel,
             this.BuildConfigComboBox});
             resources.ApplyResources(this.menuStrip1, "menuStrip1");
@@ -284,6 +289,8 @@
             // 
             this.WindowMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.WindowMenu_SaveLayout,
+            this.WindowMenu_ApplyLayout,
+            this.WindowMenu_ManageLayouts,
             this.WindowMenu_ResetLayout});
             this.WindowMenuItem.Name = "WindowMenuItem";
             resources.ApplyResources(this.WindowMenuItem, "WindowMenuItem");
@@ -293,6 +300,23 @@
             this.WindowMenu_SaveLayout.Name = "WindowMenu_SaveLayout";
             resources.ApplyResources(this.WindowMenu_SaveLayout, "WindowMenu_SaveLayout");
             this.WindowMenu_SaveLayout.Click += new System.EventHandler(this.WindowMenu_SaveLayout_Click);
+            // 
+            // WindowMenu_ApplyLayout
+            // 
+            this.WindowMenu_ApplyLayout.Name = "WindowMenu_ApplyLayout";
+            resources.ApplyResources(this.WindowMenu_ApplyLayout, "WindowMenu_ApplyLayout");
+            // 
+            // WindowMenu_ManageLayouts
+            // 
+            this.WindowMenu_ManageLayouts.Name = "WindowMenu_ManageLayouts";
+            resources.ApplyResources(this.WindowMenu_ManageLayouts, "WindowMenu_ManageLayouts");
+            this.WindowMenu_ManageLayouts.Click += new System.EventHandler(this.WindowMenu_ManageLayouts_Click);
+            // 
+            // WindowMenu_ResetLayout
+            // 
+            this.WindowMenu_ResetLayout.Name = "WindowMenu_ResetLayout";
+            resources.ApplyResources(this.WindowMenu_ResetLayout, "WindowMenu_ResetLayout");
+            this.WindowMenu_ResetLayout.Click += new System.EventHandler(this.WindowMenu_ResetLayout_Click);
             // 
             // SelectedBuildLabel
             // 
@@ -331,11 +355,18 @@
             // 
             resources.ApplyResources(this.WindowTitle, "WindowTitle");
             // 
-            // WindowMenu_ResetLayout
+            // HelpMenuItem
             // 
-            this.WindowMenu_ResetLayout.Name = "WindowMenu_ResetLayout";
-            resources.ApplyResources(this.WindowMenu_ResetLayout, "WindowMenu_ResetLayout");
-            this.WindowMenu_ResetLayout.Click += new System.EventHandler(this.WindowMenu_ResetLayout_Click);
+            this.HelpMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.HelpMenu_About});
+            this.HelpMenuItem.Name = "HelpMenuItem";
+            resources.ApplyResources(this.HelpMenuItem, "HelpMenuItem");
+            // 
+            // HelpMenu_About
+            // 
+            this.HelpMenu_About.Name = "HelpMenu_About";
+            resources.ApplyResources(this.HelpMenu_About, "HelpMenu_About");
+            this.HelpMenu_About.Click += new System.EventHandler(this.HelpMenu_About_Click);
             // 
             // BrickEditorWindow
             // 
@@ -397,5 +428,9 @@
         private System.Windows.Forms.ToolStripMenuItem WindowMenuItem;
         private System.Windows.Forms.ToolStripMenuItem WindowMenu_SaveLayout;
         private System.Windows.Forms.ToolStripMenuItem WindowMenu_ResetLayout;
+        private System.Windows.Forms.ToolStripMenuItem WindowMenu_ApplyLayout;
+        private System.Windows.Forms.ToolStripMenuItem WindowMenu_ManageLayouts;
+        private System.Windows.Forms.ToolStripMenuItem HelpMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem HelpMenu_About;
     }
 }

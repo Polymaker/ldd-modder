@@ -3,7 +3,8 @@ using LDDModder.BrickEditor.Models.Navigation;
 using LDDModder.BrickEditor.ProjectHandling;
 using LDDModder.BrickEditor.ProjectHandling.ViewInterfaces;
 using LDDModder.BrickEditor.Resources;
-using LDDModder.Modding.Editing;
+using LDDModder.Modding;
+using LDDModder.Modding;
 using LDDModder.Utilities;
 using System;
 using System.Collections;
@@ -704,17 +705,26 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             IEnumerable<PartElement> GetTopLevelElems(ProjectTreeNode treeNode)
             {
+
                 if (treeNode is ProjectElementNode eNode)
-                    yield return eNode.Element;
-                else
                 {
-                    foreach (var node in treeNode.Nodes)
+                    bool skipElem = false;
+                    if (eNode.Element is PartBone bone && !ProjectManager.ShowBones)
+                        skipElem = true;
+
+                    if (!skipElem)
                     {
-                        foreach (var subNode in GetTopLevelElems(node))
-                            yield return subNode;
+                        yield return eNode.Element;
+                        yield break;
                     }
+
                 }
-                
+
+                foreach (var node in treeNode.Nodes)
+                {
+                    foreach (var subNode in GetTopLevelElems(node))
+                        yield return subNode;
+                }
             }
 
             var result = selectedNodes.SelectMany(x => GetTopLevelElems(x));

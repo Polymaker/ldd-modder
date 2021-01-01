@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace LDDModder.BrickEditor.Settings
 {
-    public class LddSettings
+    public class LddSettings : ISettingsClass
     {
         [JsonProperty("programFilesPath")]
         public string ProgramFilesPath { get; set; }

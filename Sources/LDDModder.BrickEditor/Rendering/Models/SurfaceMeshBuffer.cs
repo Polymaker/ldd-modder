@@ -1,6 +1,6 @@
 ﻿using LDDModder.BrickEditor.Rendering.Shaders;
 using LDDModder.LDD.Meshes;
-using LDDModder.Modding.Editing;
+using LDDModder.Modding;
 using OpenTK;
 using System;
 using System.Collections.Generic;

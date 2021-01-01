@@ -136,6 +136,9 @@
   <data name="HiddenIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\images\hiddenicon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="ldd_editor_x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\images\ldd editor x64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="MainSurfaceIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\images\mainsurfaceicon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>

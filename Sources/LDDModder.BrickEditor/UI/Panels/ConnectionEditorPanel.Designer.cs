@@ -71,6 +71,8 @@
             this.FlipLimitMinBox = new LDDModder.BrickEditor.UI.Controls.NumberTextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
+            this.FlexControlLabel = new LDDModder.BrickEditor.UI.Controls.ControlLabel();
+            this.FlexTextBox = new System.Windows.Forms.TextBox();
             this.TagControlLabel = new LDDModder.BrickEditor.UI.Controls.ControlLabel();
             this.TagTextBox = new System.Windows.Forms.TextBox();
             this.TransformEdit = new LDDModder.BrickEditor.UI.Controls.TransformEditor();
@@ -87,6 +89,7 @@
             this.SpringPanel.SuspendLayout();
             this.GearLayoutPanel.SuspendLayout();
             this.HingeLayoutPanel.SuspendLayout();
+            this.FlexControlLabel.SuspendLayout();
             this.TagControlLabel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -177,6 +180,7 @@
             this.flowLayoutPanel1.Controls.Add(this.SpringPanel);
             this.flowLayoutPanel1.Controls.Add(this.GearLayoutPanel);
             this.flowLayoutPanel1.Controls.Add(this.HingeLayoutPanel);
+            this.flowLayoutPanel1.Controls.Add(this.FlexControlLabel);
             this.flowLayoutPanel1.Controls.Add(this.TagControlLabel);
             this.flowLayoutPanel1.Controls.Add(this.TransformEdit);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
@@ -387,6 +391,20 @@
             this.label4.Name = "label4";
             this.HingeLayoutPanel.SetRowSpan(this.label4, 2);
             // 
+            // FlexControlLabel
+            // 
+            this.FlexControlLabel.Controls.Add(this.FlexTextBox);
+            this.FlexControlLabel.LabelWidth = 80;
+            resources.ApplyResources(this.FlexControlLabel, "FlexControlLabel");
+            this.FlexControlLabel.Name = "FlexControlLabel";
+            // 
+            // FlexTextBox
+            // 
+            resources.ApplyResources(this.FlexTextBox, "FlexTextBox");
+            this.FlexTextBox.Name = "FlexTextBox";
+            this.FlexTextBox.Validating += new System.ComponentModel.CancelEventHandler(this.FlexTextBox_Validating);
+            this.FlexTextBox.Validated += new System.EventHandler(this.FlexTextBox_Validated);
+            // 
             // TagControlLabel
             // 
             this.TagControlLabel.Controls.Add(this.TagTextBox);
@@ -435,6 +453,8 @@
             this.GearLayoutPanel.PerformLayout();
             this.HingeLayoutPanel.ResumeLayout(false);
             this.HingeLayoutPanel.PerformLayout();
+            this.FlexControlLabel.ResumeLayout(false);
+            this.FlexControlLabel.PerformLayout();
             this.TagControlLabel.ResumeLayout(false);
             this.TagControlLabel.PerformLayout();
             this.ResumeLayout(false);
@@ -489,5 +509,7 @@
         private System.Windows.Forms.CheckBox EndCappedCheckBox;
         private System.Windows.Forms.CheckBox StartCappedCheckBox;
         private System.Windows.Forms.CheckBox CylindricalCheckBox;
+        private Controls.ControlLabel FlexControlLabel;
+        private System.Windows.Forms.TextBox FlexTextBox;
     }
 }

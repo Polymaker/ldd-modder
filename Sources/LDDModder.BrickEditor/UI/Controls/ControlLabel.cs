@@ -74,7 +74,7 @@ namespace LDDModder.BrickEditor.UI.Controls
             {
                 if (_AutoSizeHeight != value)
                 {
-                    AdjustSize(0, false, _AutoSizeHeight, AdjustSpecified.AutoHeight);
+                    AdjustSize(0, false, value, AdjustSpecified.AutoHeight);
                     //_AutoSizeHeight = value;
                     //AdjustControlSize();
                 }
@@ -89,7 +89,7 @@ namespace LDDModder.BrickEditor.UI.Controls
             {
                 if (_AutoSizeWidth != value)
                 {
-                    AdjustSize(0, _AutoSizeHeight, false, AdjustSpecified.AutoWidth);
+                    AdjustSize(0, value, false, AdjustSpecified.AutoWidth);
                     //_AutoSizeWidth = value;
                     //AdjustControlSize();
                 }
@@ -155,6 +155,16 @@ namespace LDDModder.BrickEditor.UI.Controls
             LabelMinSize = TextRenderer.MeasureText(textToMeasure, Font, testSize, GetLabelFormatFlags());
             if (LabelWidth > 0)
                 LabelMinSize.Width = LabelWidth;
+        }
+
+        public int CalculateLabelWidth()
+        {
+            string textToMeasure = string.IsNullOrEmpty(Text) ? DefaultText : Text;
+            var testSize = new Size(999999, Height);
+            testSize.Width -= Padding.Left;
+
+            var labelSize = TextRenderer.MeasureText(textToMeasure, Font, testSize, GetLabelFormatFlags());
+            return labelSize.Width;
         }
 
         private void UpdateLabelBounds()

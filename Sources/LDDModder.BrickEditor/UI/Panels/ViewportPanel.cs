@@ -1,6 +1,6 @@
 ﻿using LDDModder.BrickEditor.Rendering;
 using LDDModder.BrickEditor.Rendering.Shaders;
-using LDDModder.Modding.Editing;
+using LDDModder.Modding;
 using ObjectTK.Shaders;
 using OpenTK;
 using OpenTK.Graphics;
@@ -359,7 +359,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void SetupSceneLights()
         {
-            RenderHelper.ModelShader.Use();
+            
 
             var sceneBounds = GetSceneBoundingBox();
 
@@ -415,7 +415,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                 fillLight,
                 backLight,
             };
-
+            RenderHelper.ModelShader.Use();
             RenderHelper.ModelShader.Lights.Set(SceneLights.ToArray());
             RenderHelper.ModelShader.LightCount.Set(SceneLights.Count);
             RenderHelper.ModelShader.UseTexture.Set(false);
@@ -956,6 +956,8 @@ namespace LDDModder.BrickEditor.UI.Panels
         private bool CollisionsChanged;
         private bool ConnectionsChanged;
         private bool BonesChanged;
+        private bool PatternsChanged;
+        private bool ModelsMoved;
 
         protected override void OnElementCollectionChanged(ElementCollectionChangedEventArgs e)
         {
@@ -978,6 +980,10 @@ namespace LDDModder.BrickEditor.UI.Panels
             else if (e.ElementType == typeof(PartBone))
             {
                 BonesChanged = true;
+            }
+            else if (e.ElementType == typeof(ClonePattern))
+            {
+                PatternsChanged = true;
             }
         }
 
@@ -1003,6 +1009,10 @@ namespace LDDModder.BrickEditor.UI.Panels
                     BonesDropDownMenu.Visible = CurrentProject.Flexible;
                 }
             }
+            if (e.PropertyName == nameof(ITransformableElement.Transform))
+            {
+                ModelsMoved = true;
+            }
         }
 
         protected override void OnProjectChangeApplied()
@@ -1021,10 +1031,18 @@ namespace LDDModder.BrickEditor.UI.Panels
             if (BonesChanged)
                 RebuildBoneModels();
 
+            if (PatternsChanged)
+                RebuildPatternModels();
+            
+            if (ModelsMoved)
+                SetupSceneLights();
+
             SurfaceMeshesChanged = false;
             CollisionsChanged = false;
             ConnectionsChanged = false;
             BonesChanged = false;
+            PatternsChanged = false;
+            ModelsMoved = false;
         }
 
         #endregion
@@ -1160,6 +1178,44 @@ namespace LDDModder.BrickEditor.UI.Panels
                             RenderLayer = 1
                         });
                     }
+                }
+            }
+            else if (existingModels.Any())
+            {
+                existingModels.ForEach(x =>
+                {
+                    x.Dispose();
+                    LoadedModels.Remove(x);
+                });
+            }
+        }
+
+        private void RebuildPatternModels()
+        {
+            var existingModels = LoadedModels.OfType<ClonePatternModel>().ToList();
+            if (ProjectManager.IsProjectOpen)
+            {
+                var allPatterns = CurrentProject.GetAllElements<ClonePattern>().ToList();
+
+                foreach (var patternModel in existingModels)
+                {
+                    if (!allPatterns.Contains(patternModel.ClonePattern))
+                    {
+                        patternModel.Dispose();
+                        LoadedModels.Remove(patternModel);
+                    }
+                }
+
+                foreach (var pattern in allPatterns)
+                {
+                    var patternModel = existingModels.FirstOrDefault(x => x.ClonePattern == pattern);
+                    if (patternModel == null)
+                    {
+                        patternModel = new ClonePatternModel(pattern);
+                        LoadedModels.Add(patternModel);
+                    }
+                    var elemModels = LoadedModels.OfType<PartElementModel>().Where(x => pattern.Elements.Contains(x.Element));
+                    patternModel.SetElementModels(elemModels);
                 }
             }
             else if (existingModels.Any())
@@ -1426,14 +1482,18 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         public BBox GetSceneBoundingBox()
         {
-            if (CurrentProject != null)
+            if (CurrentProject != null && LoadedModels.Any())
             {
-                var modelMeshes = SurfaceModels.SelectMany(x => x.MeshModels);
-                if (modelMeshes.Any())
-                    return CalculateBoundingBox(modelMeshes);
+                var bbox = CalculateBoundingBox(LoadedModels);
+                if (!bbox.IsEmpty)
+                    return bbox;
+                //var modelMeshes = SurfaceModels.SelectMany(x => x.MeshModels);
+                //if (modelMeshes.Any())
+                //    return CalculateBoundingBox(modelMeshes);
+                
             }
 
-            return BBox.FromCenterSize(Vector3.Zero, new Vector3(1f));
+            return BBox.FromCenterSize(Vector3.Zero, new Vector3(2f));
         }
 
         private BBox CalculateBoundingBox(IEnumerable<ModelBase> modelMeshes)
@@ -1443,8 +1503,8 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             foreach (var model in modelMeshes)
             {
-                if (!(model is SurfaceModelMesh))
-                    continue;
+                //if (!(model is SurfaceModelMesh))
+                //    continue;
 
                 var worldBounding = model.GetWorldBoundingBox();
                 
@@ -1949,6 +2009,11 @@ namespace LDDModder.BrickEditor.UI.Panels
                     ProjectManager.HandlePasteFromClipboard();
                     return true;
                 }
+                else if (normalKey == Keys.A && isControlPressed && ProjectManager.IsProjectOpen)
+                {
+                    ProjectManager.SelectAllVisible();
+                    return true;
+                }
             }
 
             return base.ProcessCmdKey(ref msg, keyData);
@@ -1964,6 +2029,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             RebuildConnectionModels();
             RebuildBoneModels();
             RebuildSurfaceModels();
+            RebuildPatternModels();
         }
 
         public void ForceRender()
@@ -1973,11 +2039,6 @@ namespace LDDModder.BrickEditor.UI.Panels
         }
 
         public bool Is3DViewFocused => InputManager.ContainsFocus;
-
-
-
-
-
 
         #endregion
 

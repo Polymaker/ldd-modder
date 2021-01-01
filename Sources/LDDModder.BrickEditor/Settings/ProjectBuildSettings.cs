@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace LDDModder.BrickEditor.Settings
 {
-    public class ProjectBuildSettings
+    public class ProjectBuildSettings : ISettingsClass
     {
         [JsonProperty("ldd")]
         public BuildConfiguration LDD { get; set; }
@@ -88,9 +88,11 @@ namespace LDDModder.BrickEditor.Settings
 
         public IEnumerable<BuildConfiguration> GetAllConfigurations()
         {
-            yield return LDD;
+            if (LDD != null)
+                yield return LDD;
 
-            yield return Manual;
+            if (Manual != null)
+                yield return Manual;
 
             foreach (var cfg in UserDefined)
                 yield return cfg;

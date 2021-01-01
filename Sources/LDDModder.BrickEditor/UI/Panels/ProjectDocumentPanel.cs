@@ -1,5 +1,5 @@
 ﻿using LDDModder.BrickEditor.ProjectHandling;
-using LDDModder.Modding.Editing;
+using LDDModder.Modding;
 using LDDModder.Utilities;
 using System;
 using System.Collections.Generic;

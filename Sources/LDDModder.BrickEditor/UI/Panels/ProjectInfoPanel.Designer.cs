@@ -28,121 +28,125 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.label1 = new System.Windows.Forms.Label();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ProjectInfoPanel));
             this.CreatedByBox = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.OriginatedFromBox = new System.Windows.Forms.TextBox();
+            this.OriginalAuthorBox = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.CommentBox = new System.Windows.Forms.TextBox();
-            this.tableLayoutPanel1.SuspendLayout();
+            this.DerivedFromCombo = new System.Windows.Forms.ComboBox();
+            this.OriginalAuthorLabel = new LDDModder.BrickEditor.UI.Controls.ControlLabel();
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.DerivedFromLabel = new LDDModder.BrickEditor.UI.Controls.ControlLabel();
+            this.CreatedByLabel = new LDDModder.BrickEditor.UI.Controls.ControlLabel();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.OriginalAuthorLabel.SuspendLayout();
+            this.flowLayoutPanel1.SuspendLayout();
+            this.DerivedFromLabel.SuspendLayout();
+            this.CreatedByLabel.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // tableLayoutPanel1
-            // 
-            this.tableLayoutPanel1.ColumnCount = 3;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 120F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Controls.Add(this.label1, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.CreatedByBox, 1, 0);
-            this.tableLayoutPanel1.Controls.Add(this.label2, 0, 1);
-            this.tableLayoutPanel1.Controls.Add(this.OriginatedFromBox, 1, 1);
-            this.tableLayoutPanel1.Controls.Add(this.label3, 0, 2);
-            this.tableLayoutPanel1.Controls.Add(this.CommentBox, 0, 3);
-            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
-            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 4;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(516, 299);
-            this.tableLayoutPanel1.TabIndex = 0;
-            // 
-            // label1
-            // 
-            this.label1.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(3, 6);
-            this.label1.Margin = new System.Windows.Forms.Padding(3);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(58, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Created by";
             // 
             // CreatedByBox
             // 
-            this.CreatedByBox.Location = new System.Drawing.Point(123, 3);
+            resources.ApplyResources(this.CreatedByBox, "CreatedByBox");
             this.CreatedByBox.Name = "CreatedByBox";
-            this.CreatedByBox.Size = new System.Drawing.Size(180, 20);
-            this.CreatedByBox.TabIndex = 1;
             // 
-            // label2
+            // OriginalAuthorBox
             // 
-            this.label2.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(3, 32);
-            this.label2.Margin = new System.Windows.Forms.Padding(3);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(78, 13);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "Originated from";
-            // 
-            // OriginatedFromBox
-            // 
-            this.OriginatedFromBox.Location = new System.Drawing.Point(123, 29);
-            this.OriginatedFromBox.Name = "OriginatedFromBox";
-            this.OriginatedFromBox.Size = new System.Drawing.Size(180, 20);
-            this.OriginatedFromBox.TabIndex = 3;
+            resources.ApplyResources(this.OriginalAuthorBox, "OriginalAuthorBox");
+            this.OriginalAuthorBox.Name = "OriginalAuthorBox";
             // 
             // label3
             // 
-            this.label3.AutoSize = true;
-            this.tableLayoutPanel1.SetColumnSpan(this.label3, 2);
-            this.label3.Location = new System.Drawing.Point(3, 58);
-            this.label3.Margin = new System.Windows.Forms.Padding(3, 6, 3, 3);
+            resources.ApplyResources(this.label3, "label3");
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(95, 13);
-            this.label3.TabIndex = 4;
-            this.label3.Text = "Notes && comments";
             // 
             // CommentBox
             // 
             this.CommentBox.AcceptsReturn = true;
             this.CommentBox.AcceptsTab = true;
-            this.tableLayoutPanel1.SetColumnSpan(this.CommentBox, 3);
-            this.CommentBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.CommentBox.Location = new System.Drawing.Point(3, 77);
-            this.CommentBox.Multiline = true;
+            resources.ApplyResources(this.CommentBox, "CommentBox");
             this.CommentBox.Name = "CommentBox";
-            this.CommentBox.Size = new System.Drawing.Size(510, 219);
-            this.CommentBox.TabIndex = 5;
+            // 
+            // DerivedFromCombo
+            // 
+            this.DerivedFromCombo.FormattingEnabled = true;
+            this.DerivedFromCombo.Items.AddRange(new object[] {
+            resources.GetString("DerivedFromCombo.Items")});
+            resources.ApplyResources(this.DerivedFromCombo, "DerivedFromCombo");
+            this.DerivedFromCombo.Name = "DerivedFromCombo";
+            this.DerivedFromCombo.TextChanged += new System.EventHandler(this.DerivedFromCombo_TextChanged);
+            // 
+            // OriginalAuthorLabel
+            // 
+            this.OriginalAuthorLabel.AutoSizeWidth = true;
+            this.OriginalAuthorLabel.Controls.Add(this.OriginalAuthorBox);
+            this.OriginalAuthorLabel.LabelWidth = 90;
+            resources.ApplyResources(this.OriginalAuthorLabel, "OriginalAuthorLabel");
+            this.OriginalAuthorLabel.Name = "OriginalAuthorLabel";
+            // 
+            // flowLayoutPanel1
+            // 
+            resources.ApplyResources(this.flowLayoutPanel1, "flowLayoutPanel1");
+            this.flowLayoutPanel1.Controls.Add(this.DerivedFromLabel);
+            this.flowLayoutPanel1.Controls.Add(this.OriginalAuthorLabel);
+            this.flowLayoutPanel1.Controls.Add(this.CreatedByLabel);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            // 
+            // DerivedFromLabel
+            // 
+            this.DerivedFromLabel.AutoSizeWidth = true;
+            this.DerivedFromLabel.Controls.Add(this.DerivedFromCombo);
+            this.DerivedFromLabel.LabelWidth = 90;
+            resources.ApplyResources(this.DerivedFromLabel, "DerivedFromLabel");
+            this.DerivedFromLabel.Name = "DerivedFromLabel";
+            // 
+            // CreatedByLabel
+            // 
+            this.CreatedByLabel.AutoSizeWidth = true;
+            this.CreatedByLabel.Controls.Add(this.CreatedByBox);
+            this.CreatedByLabel.LabelWidth = 90;
+            resources.ApplyResources(this.CreatedByLabel, "CreatedByLabel");
+            this.CreatedByLabel.Name = "CreatedByLabel";
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.CommentBox);
+            this.panel1.Controls.Add(this.label3);
+            resources.ApplyResources(this.panel1, "panel1");
+            this.panel1.Name = "panel1";
             // 
             // ProjectInfoPanel
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(516, 299);
-            this.Controls.Add(this.tableLayoutPanel1);
+            this.Controls.Add(this.panel1);
+            this.Controls.Add(this.flowLayoutPanel1);
             this.Name = "ProjectInfoPanel";
-            this.Text = "ProjectInfoPanel";
-            this.tableLayoutPanel1.ResumeLayout(false);
-            this.tableLayoutPanel1.PerformLayout();
+            this.OriginalAuthorLabel.ResumeLayout(false);
+            this.OriginalAuthorLabel.PerformLayout();
+            this.flowLayoutPanel1.ResumeLayout(false);
+            this.DerivedFromLabel.ResumeLayout(false);
+            this.CreatedByLabel.ResumeLayout(false);
+            this.CreatedByLabel.PerformLayout();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
-
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox CreatedByBox;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox OriginatedFromBox;
+        private System.Windows.Forms.TextBox OriginalAuthorBox;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox CommentBox;
+        private System.Windows.Forms.ComboBox DerivedFromCombo;
+        private Controls.ControlLabel OriginalAuthorLabel;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+        private Controls.ControlLabel DerivedFromLabel;
+        private Controls.ControlLabel CreatedByLabel;
+        private System.Windows.Forms.Panel panel1;
     }
 }

@@ -1,7 +1,8 @@
 ﻿using LDDModder.BrickEditor.ProjectHandling;
 using LDDModder.BrickEditor.Resources;
 using LDDModder.LDD.Primitives.Connectors;
-using LDDModder.Modding.Editing;
+using LDDModder.Modding;
+using LDDModder.Modding;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -409,7 +410,6 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         #endregion
 
-
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
             if (keyData == Keys.Escape)
@@ -423,6 +423,25 @@ namespace LDDModder.BrickEditor.UI.Panels
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
-        
+        //private void TestClonePatterns()
+        //{
+        //    //var elem = CurrentProject.Collisions.FirstOrDefault();
+        //    //if (elem != null)
+        //    //{
+        //    //    //var pattern = new LinearPattern();
+        //    //    //pattern.Elements.Add(elem);
+        //    //    //pattern.Direction = new Simple3D.Vector3(1,0,1).Normalized();
+        //    //    //pattern.Offset = 2f;
+        //    //    //pattern.Repetitions = 3;
+        //    //    var pattern = new CircularPattern();
+        //    //    pattern.Elements.Add(elem);
+        //    //    pattern.Axis = new Simple3D.Vector3(0, 0, 1).Normalized();
+        //    //    pattern.Repetitions = 6;
+        //    //    pattern.EqualSpacing = true;
+        //    //    pattern.Angle = (float)Math.PI * 2f;
+        //    //    CurrentProject.ClonePatterns.Add(pattern);
+        //    //    ProjectManager.ViewportWindow.RebuildModels();
+        //    //}
+        //}
     }
 }

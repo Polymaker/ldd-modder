@@ -8,7 +8,7 @@ using LDDModder.LDD;
 using LDDModder.LDD.Parts;
 using LDDModder.LDD.Primitives.Collisions;
 using LDDModder.LDD.Primitives.Connectors;
-using LDDModder.Modding.Editing;
+using LDDModder.Modding;
 using LDDModder.Utilities;
 using System;
 using System.Collections.Generic;
@@ -29,6 +29,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
         private List<ValidationMessage> _ValidationMessages;
         private long LastValidation;
         private long LastSavedChange;
+        private bool ProjectWasModified;
 
         public PartProject CurrentProject { get; private set; }
 
@@ -142,11 +143,12 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
                 CurrentProject = project;
                 CurrentProjectPath = project.ProjectPath;
+                ProjectWasModified = false;
 
                 if (!string.IsNullOrEmpty(tempPath))
                 {
                     LastSavedChange = -1;
-                    if (!File.Exists(tempPath))
+                    if (File.Exists(tempPath))
                         TemporaryProjectPath = tempPath;
                 }
 
@@ -176,7 +178,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
                 CurrentProject = null;
                 UndoRedoManager.ClearHistory();
-
+                ProjectWasModified = false;
                 if (!PreventProjectChange)
                     ProjectChanged?.Invoke(this, EventArgs.Empty);
             }
@@ -719,6 +721,12 @@ namespace LDDModder.BrickEditor.ProjectHandling
         private void UndoRedoManager_UndoHistoryChanged(object sender, EventArgs e)
         {
             ProjectModified?.Invoke(this, EventArgs.Empty);
+
+            if (IsModified && !ProjectWasModified)
+            {
+                ProjectWasModified = true;
+                //CurrentProject.ProjectInfo.LastModification = DateTime.Now;
+            }
         }
 
         private void UndoRedoManager_BeginUndoRedo(object sender, EventArgs e)
@@ -924,6 +932,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
                 }
             }
 
+            var targetDir = new DirectoryInfo(targetPath);
             string meshDirectory = targetPath;
             if (buildConfig.LOD0Subdirectory)
                 meshDirectory = Path.Combine(targetPath, "LOD0");
@@ -943,12 +952,15 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
             var generatedFiles = new List<string>() { part.Filepath };
             generatedFiles.AddRange(part.Surfaces.Select(s => s.Filepath));
-            //string parentDirectory = string.Empty;
-            //var dirInfo = new DirectoryInfo(targetPath);
-            //if (dirInfo.Parent != null)
-            //    parentDirectory = dirInfo.Parent.FullName;
-            for (int i = 0; i < generatedFiles.Count; i++)
-                generatedFiles[i] = generatedFiles[i].Replace(targetPath, string.Empty);
+
+            if (targetDir.Parent != null)
+            {
+                for (int i = 0; i < generatedFiles.Count; i++)
+                {
+                    generatedFiles[i] = generatedFiles[i].Substring(targetDir.Parent.FullName.Length);
+                }
+            }
+            
 
             MessageBoxEX.ShowDetails(MainWindow, 
                 Messages.Message_LddFilesGenerated, 
@@ -1514,6 +1526,27 @@ namespace LDDModder.BrickEditor.ProjectHandling
             {
                 UndoRedoManager.AddEditorAction(new HideElementAction(nameof(HideSelectedElements), hiddenElems, false));
             }
+        }
+
+        #endregion
+
+        #region Selection
+
+        public void SelectAllVisible()
+        {
+            var hideableElements = CurrentProject.GetAllElements(x => x.GetExtension<ModelElementExtension>() != null);
+            var elemsToSelect = new List<PartElement>();
+            foreach (var elem in CurrentProject.GetAllElements())
+            {
+                var elementExt = elem.GetExtension<ModelElementExtension>();
+                if (elementExt != null && elementExt.IsVisible)
+                {
+                    if (elem is PartBone && !ShowBones)
+                        continue;
+                    elemsToSelect.Add(elem);
+                }
+            }
+            SelectElements(elemsToSelect);
         }
 
         #endregion

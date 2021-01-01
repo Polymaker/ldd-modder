@@ -1,6 +1,7 @@
 ﻿using LDDModder.BrickEditor.Rendering.Models;
 using LDDModder.LDD.Primitives.Connectors;
-using LDDModder.Modding.Editing;
+using LDDModder.Modding;
+using LDDModder.Modding;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using QuickFont;
@@ -221,7 +222,6 @@ namespace LDDModder.BrickEditor.Rendering
             RenderHelper.DrawRectangle(Transform,
                 new Vector2(connector.StudWidth * 0.8f, connector.StudHeight * 0.8f),
                 color, 3f);
-
             
             using (OpenTKHelper.TempEnable(EnableCap.Texture2D))
             {

@@ -1,5 +1,7 @@
-﻿using LDDModder.BrickEditor.Settings;
+﻿using BrightIdeasSoftware;
+using LDDModder.BrickEditor.Settings;
 using LDDModder.BrickEditor.UI.Controls;
+using LDDModder.BrickEditor.UI.Settings;
 using LDDModder.LDD.Files;
 using LDDModder.Utilities;
 using System;
@@ -17,16 +19,45 @@ namespace LDDModder.BrickEditor.UI.Windows
 {
     public partial class AppSettingsWindow : Form
     {
-        private bool LoadingSettings;
         private FlagManager FlagManager;
+        private List<SettingsTabNode> SettingsTabPanels;
+        private SettingsTabNode CurrentTab;
+
+        public SettingTab StartupTab { get; set; }
+
         public enum SettingTab
         {
             LddEnvironment,
             EditorSettings,
+            LayoutSettings
             //ProjectSettings
         }
 
-        public SettingTab StartupTab { get; set; }
+        private class SettingsTabNode
+        {
+            public SettingTab Tab { get; set; }
+            public string Text { get; set; }
+            public SettingsPanelBase Panel { get; set; }
+
+            public SettingsTabNode()
+            {
+            }
+
+            public SettingsTabNode(SettingTab tab, string text)
+            {
+                Tab = tab;
+                Text = text;
+            }
+
+            public SettingsTabNode(SettingTab tab, SettingsPanelBase panel)
+            {
+                Tab = tab;
+                Panel = panel;
+                Text = panel.Title;
+            }
+        }
+
+        
 
         public AppSettingsWindow()
         {
@@ -42,533 +73,150 @@ namespace LDDModder.BrickEditor.UI.Windows
 
             if (DesignMode)
                 return;
-
-            AddBuildCfgBtn.Anchor = AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right;
-            DelBuildCfgBtn.Anchor = AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right;
-
-            switch (StartupTab)
-            {
-                case SettingTab.EditorSettings:
-                    SettingsTabControl.SelectedTab = EditorSettingsTabPage;
-                    break;
-            }
+            
+            InitializeSettingPanels();
+            InitializeSettingsList();
 
             LoadSettings();
         }
 
+        protected override void OnShown(EventArgs e)
+        {
+            base.OnShown(e);
+              ShowSettingTab(StartupTab);
+        }
+
+        private void InitializeSettingsList()
+        {
+            SettingsTabPanels = new List<SettingsTabNode>()
+            {
+                new SettingsTabNode(SettingTab.LddEnvironment, lddSettingsPanel1),
+                new SettingsTabNode(SettingTab.EditorSettings, editorSettingsPanel1),
+                new SettingsTabNode(SettingTab.LayoutSettings, displaySettingsPanel1)
+            };
+
+            CategoryListView.Columns.Add(new OLVColumn()
+            {
+                FillsFreeSpace = true,
+                AspectGetter = (item) => (item as SettingsTabNode).Text,
+                Groupable = false
+            });
+            CategoryListView.SetObjects(SettingsTabPanels);
+            CategoryListView.SelectedIndex = 0;
+
+
+        }
+
+        private void InitializeSettingPanels()
+        {
+            foreach (var panel in splitContainer1.Panel2.Controls.OfType<SettingsPanelBase>())
+            {
+                panel.Location = new Point(3, 3);
+                //panel.Width = splitContainer1.Panel2.Width - 6;
+                //panel.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+                panel.Dock = DockStyle.Top;
+                panel.AutoSizeMode = AutoSizeMode.GrowOnly;
+                panel.AutoSize = true;
+                panel.Visible = false;
+            }
+        }
+
+        private bool CanChangeTab()
+        {
+            if (CurrentTab?.Panel != null)
+            {
+                if (CurrentTab.Panel.HasSettingsChanged)
+                {
+                    //TODO: ask confirmation
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public bool ShowSettingTab(SettingTab tab)
+        {
+            using (FlagManager.UseFlag(nameof(ShowSettingTab)))
+            {
+                if (CurrentTab != null)
+                {
+                    if (CurrentTab.Panel?.HasSettingsChanged ?? false)
+                        return false;
+
+                    if (CurrentTab.Panel != null)
+                        CurrentTab.Panel.Visible = false;
+                }
+
+                CurrentTab = SettingsTabPanels.FirstOrDefault(x => x.Tab == tab);
+                if (CurrentTab != null)
+                {
+                    if (CurrentTab.Panel != null)
+                        CurrentTab.Panel.Visible = true;
+                    SelectTabInList(CurrentTab);
+                    return true;
+                }
+            }
+            return false;
+        }
+
         private void LoadSettings()
         {
-            FillLddSettings(LDD.LDDEnvironment.Current);
-            FillBuildSettingsList();
-            SaveBuildCfgBtn.Visible = false;
-            CancelBuildCfgBtn.Visible = false;
+            foreach (var panel in splitContainer1.Panel2.Controls.OfType<SettingsPanelBase>())
+                panel.FillSettings(SettingsManager.Current);
         }
 
-        #region LDD Settings
 
-        private void FillLddSettings(LDD.LDDEnvironment environment)
+        #region Settings Category List
+
+        private void SelectTabInList(SettingsTabNode tabNode)
         {
-            environment.CheckLifStatus();
-
-            LoadingSettings = true;
-
-            PrgmFilePathTextBox.Value = environment?.ProgramFilesPath;
-            AppDataPathTextBox.Value = environment?.ApplicationDataPath;
-            UserCreationPathTextBox.Value = environment?.UserCreationPath;
-
-            UpdateLifsStatus(environment);
-
-            LoadingSettings = false;
+            using (FlagManager.UseFlag(nameof(SelectTabInList)))
+            {
+                CategoryListView.SelectedObject = tabNode;
+            }
         }
 
-        private void UpdateLifsStatus(LDD.LDDEnvironment environment)
+        private void CategoryListView_SelectionChanged(object sender, EventArgs e)
         {
-            if (environment != null && environment.DirectoryExists(LDD.LddDirectory.ApplicationData))
-            {
-
-                DbStatusLabel.ForeColor = environment.DatabaseExtracted ? Color.Green : Color.Red;
-                DbStatusLabel.Text = environment.DatabaseExtracted ? LifExtractedMessage : LifNotExtractedMessage;
-                ExtractDBButton.Enabled = !environment.DatabaseExtracted;
-            }
-            else
-            {
-                DbStatusLabel.ForeColor = Color.Black;
-                DbStatusLabel.Text = LifNotFoundMessage;
-                ExtractDBButton.Enabled = false;
-            }
-
-            if (environment != null && environment.DirectoryExists(LDD.LddDirectory.ProgramFiles))
-            {
-                AssetsStatusLabel.ForeColor = environment.AssetsExtracted ? Color.Green : Color.Red;
-                AssetsStatusLabel.Text = environment.AssetsExtracted ? LifExtractedMessage : LifNotExtractedMessage;
-                ExtractAssetsButton.Enabled = !environment.AssetsExtracted;
-            }
-            else
-            {
-                AssetsStatusLabel.ForeColor = Color.Black;
-                AssetsStatusLabel.Text = LifNotFoundMessage;
-                ExtractAssetsButton.Enabled = false;
-            }
-
-        }
-
-        private void LddPathTextBoxes_ValueChanged(object sender, EventArgs e)
-        {
-            if (LoadingSettings)
+            if (FlagManager.IsSet(nameof(SelectTabInList)))
                 return;
-            var tmpEnv = new LDD.LDDEnvironment(PrgmFilePathTextBox.Value, AppDataPathTextBox.Value);
-            tmpEnv.CheckLifStatus();
-            UpdateLifsStatus(tmpEnv);
+
+            if (CategoryListView.SelectedObject is SettingsTabNode tabNode)
+            {
+                if (!ShowSettingTab(tabNode.Tab) && CurrentTab != null)
+                    SelectTabInList(CurrentTab);
+            }
+            else if (CurrentTab != null)
+                SelectTabInList(CurrentTab);
+        }
+
+        #endregion
+
+
+        private void SaveButton_Click(object sender, EventArgs e)
+        {
+            if (CurrentTab?.Panel != null)
+            {
+                if (CurrentTab.Panel.ValidateSettings())
+                {
+                    SettingsManager.LoadSettings();
+                    CurrentTab.Panel.ApplySettings(SettingsManager.Current);
+                    SettingsManager.SaveSettings();
+                }
+            }
         }
 
         private void CloseButton_Click(object sender, EventArgs e)
         {
-            DialogResult = DialogResult.OK;
-        }
-
-        private void ExtractDBButton_Click(object sender, EventArgs e)
-        {
-            ExtractLif(LDD.LddLif.DB);
-        }
-
-        private void ExtractAssetsButton_Click(object sender, EventArgs e)
-        {
-            ExtractLif(LDD.LddLif.Assets);
-        }
-
-        private void ExtractLif(LDD.LddLif lif)
-        {
-            try
+            if (CurrentTab?.Panel != null)
             {
-                var tmpEnv = new LDD.LDDEnvironment(PrgmFilePathTextBox.Value, AppDataPathTextBox.Value);
-                string lifFilePath = tmpEnv.GetLifFilePath(lif);
-                string lifFolderPath = tmpEnv.GetLifFolderPath(lif);
-                if (!string.IsNullOrEmpty(lifFilePath) && File.Exists(lifFilePath))
+                if (CurrentTab.Panel.HasSettingsChanged)
                 {
-
-                    using (var lifFile = LifFile.Open(lifFilePath))
-                        lifFile.ExtractTempTo(lifFolderPath);
+                   //TODO: ask confirmation
                 }
-                //LifFile.Open()
+                DialogResult = DialogResult.OK;
             }
-            catch { }
-        }
-
-        private void PrgmFilePathTextBox_BrowseButtonClicked(object sender, EventArgs e)
-        {
-            var sourceBox = sender as BrowseTextBox;
-
-            using (var fbd = new FolderBrowserDialog())
-            {
-                if (FileHelper.IsValidDirectory(sourceBox.Value, true))
-                    fbd.SelectedPath = sourceBox.Value;
-                else
-                {
-                    if (sourceBox == PrgmFilePathTextBox)
-                        fbd.SelectedPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
-                    else if (sourceBox == AppDataPathTextBox)
-                        fbd.SelectedPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-                }
-
-                if (fbd.ShowDialog() == DialogResult.OK)
-                {
-
-                    string selectedDir = fbd.SelectedPath;
-
-                    if (sourceBox == PrgmFilePathTextBox && !ValidateProgramPath(ref selectedDir))
-                    {
-                        MessageBox.Show(this, LddExeNotFound, this.Text, MessageBoxButtons.OK);
-                    }
-                    else
-                        sourceBox.Value = selectedDir;
-                }
-            }
-        }
-
-
-        private void FindEnvironmentButton_Click(object sender, EventArgs e)
-        {
-            var defaultEnv = LDD.LDDEnvironment.FindInstalledEnvironment();
-
-            if (defaultEnv != null)
-            {
-                defaultEnv.CheckLifStatus();
-                FillLddSettings(defaultEnv);
-            }
-            else
-                MessageBox.Show(this, LddExeNotFound, this.Text, MessageBoxButtons.OK);
-        }
-
-        private bool ValidateProgramPath(ref string programDir)
-        {
-            //string programDir = PrgmFilePathTextBox.Value;
-            if (!FileHelper.IsValidDirectory(programDir, true))
-                return false;
-
-            var dirInfo = new DirectoryInfo(programDir);
-            if (dirInfo.Name == "LEGO Company")
-                programDir = Path.Combine(programDir, "LEGO Digital Designer");
-
-            string exePath = Path.Combine(programDir, LDD.LDDEnvironment.EXE_NAME);
-
-            return File.Exists(exePath);
-        }
-
-        private bool ValidateAppDataPath(ref string appDataPath)
-        {
-            if (!FileHelper.IsValidDirectory(appDataPath, true))
-                return false;
-
-            var dirInfo = new DirectoryInfo(appDataPath);
-            if (dirInfo.Name == "LEGO Company")
-                appDataPath = Path.Combine(appDataPath, "LEGO Digital Designer");
-
-            string dbLif = Path.Combine(appDataPath, LDD.LDDEnvironment.DB_LIF);
-            string dbFolder = Path.Combine(appDataPath, Path.GetFileNameWithoutExtension(LDD.LDDEnvironment.DB_LIF));
-            return File.Exists(dbLif) || Directory.Exists(dbFolder);
-        }
-
-        private void SaveLddEnvironmentSettings()
-        {
-            if (!string.IsNullOrEmpty(PrgmFilePathTextBox.Value))
-            {
-                string selectedDir = PrgmFilePathTextBox.Value;
-                if (!ValidateProgramPath(ref selectedDir))
-                    MessageBox.Show(this, LddExeNotFound, this.Text, MessageBoxButtons.OK);
-                else
-                    SettingsManager.Current.LddSettings.ProgramFilesPath = selectedDir;
-            }
-            if (!string.IsNullOrEmpty(AppDataPathTextBox.Value))
-            {
-                string selectedDir = AppDataPathTextBox.Value;
-                if (!ValidateAppDataPath(ref selectedDir))
-                    MessageBox.Show(this, AppDataDbNotFound, this.Text, MessageBoxButtons.OK);
-                else
-                    SettingsManager.Current.LddSettings.ApplicationDataPath = selectedDir;
-            }
-            SettingsManager.SaveSettings();
-        }
-
-        #endregion
-
-        #region Build Settings
-
-        private BuildConfiguration SelectedBuildConfig;
-        private bool BuildConfigsShown;
-        private bool IsEditingConfig;
-
-        private void FillBuildSettingsList()
-        {
-            var buildConfigs = SettingsManager.GetBuildConfigurations();
-
-            using (FlagManager.UseFlag(nameof(FillBuildSettingsList)))
-            {
-                
-                BuildConfigListView.Items.Clear();
-
-                foreach (var config in buildConfigs)
-                {
-                    var lvi = new ListViewItem(config.Name)
-                    {
-                        Tag = config.Clone()
-                    };
-
-                    if (config.IsDefault)
-                        lvi.Text += "*";
-
-                    BuildConfigListView.Items.Add(lvi);
-                }
-            }
-
-            BuildConfiguration configToSelect = null;
-
-            if (SelectedBuildConfig != null)
-            {
-                configToSelect = buildConfigs.FirstOrDefault(c => c.UniqueID == SelectedBuildConfig.UniqueID);
-            }
-
-            configToSelect = configToSelect ?? buildConfigs.First(c => c.InternalFlag == 1);
-
-            SetSelectedBuildConfig(configToSelect, true);
-        }
-
-        private void SetSelectedBuildConfig(BuildConfiguration config, bool fillInterface = false)
-        {
-            using (FlagManager.UseFlag(nameof(SetSelectedBuildConfig)))
-            {
-                var listConfig = GetSelectedBuildConfigFromList();
-
-                SelectedBuildConfig = config;
-
-                if (listConfig != SelectedBuildConfig)
-                {
-                    BuildConfigListView.SelectedItems.Clear();
-
-                    if (SelectedBuildConfig != null)
-                    {
-                        foreach (ListViewItem lvi in BuildConfigListView.Items)
-                        {
-                            if (lvi.Tag is BuildConfiguration itemConfig)
-                            {
-                                if (itemConfig.UniqueID == config.UniqueID)
-                                {
-                                    lvi.Selected = true;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (fillInterface)
-                FillBuildConfigDetails(config);
-
-            UpdateDeleteButtonState();
-        }
-
-        private BuildConfiguration GetSelectedBuildConfigFromList()
-        {
-            if (BuildConfigListView.SelectedItems.Count == 1
-               && BuildConfigListView.SelectedItems[0].Tag is BuildConfiguration config)
-            {
-                return config;
-            }
-
-            return null;
-        }
-
-        private void BuildConfigListView_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (FlagManager.IsSet(nameof(FillBuildSettingsList)))
-                return;
-
-            if (FlagManager.IsSet(nameof(SetSelectedBuildConfig)))
-                return;
-
-            if (IsEditingConfig)
-            {
-                SetSelectedBuildConfig(SelectedBuildConfig, false);
-                return;
-            }
-
-            if (BuildConfigListView.SelectedItems.Count == 1
-                && BuildConfigListView.SelectedItems[0].Tag is BuildConfiguration config)
-            {
-                SetSelectedBuildConfig(config, true);
-            }
-
-            UpdateDeleteButtonState();
-        }
-
-        private void UpdateDeleteButtonState()
-        {
-            DelBuildCfgBtn.Enabled = SelectedBuildConfig != null && 
-                SelectedBuildConfig.InternalFlag == 0;
-        }
-
-        private void FillBuildConfigDetails(BuildConfiguration config)
-        {
-            using (FlagManager.UseFlag(nameof(FillBuildConfigDetails)))
-            {
-                BuildCfg_NameBox.DataBindings.Clear();
-                BuildCfg_PathBox.DataBindings.Clear();
-                BuildCfg_Lod0Chk.DataBindings.Clear();
-                BuildCfg_OverwriteChk.DataBindings.Clear();
-                bool isNewConfig = false;
-
-                if (SelectedBuildConfig != null && 
-                    string.IsNullOrEmpty(SelectedBuildConfig.UniqueID))
-                {
-                    SelectedBuildConfig.GenerateUniqueID();
-                    isNewConfig = true;
-                }
-
-                if (SelectedBuildConfig != null)
-                {
-                    BuildCfg_NameBox.DataBindings.Add(new Binding(
-                        "Text",
-                        SelectedBuildConfig,
-                        nameof(BuildConfiguration.Name),
-                        true,
-                        DataSourceUpdateMode.OnValidation
-                        )
-                    );
-
-                    BuildCfg_NameBox.Enabled = true;
-                    BuildCfg_NameBox.ReadOnly = SelectedBuildConfig.IsInternalConfig;
-                    if (!SelectedBuildConfig.IsInternalConfig)
-                    {
-                        BuildCfg_PathBox.DataBindings.Add(new Binding(
-                            "Value",
-                            SelectedBuildConfig,
-                            nameof(BuildConfiguration.OutputPath),
-                            true,
-                            DataSourceUpdateMode.OnValidation
-                            )
-                        );
-                    }
-
-                    BuildCfg_PathBox.Enabled = !SelectedBuildConfig.IsInternalConfig;
-
-                    BuildCfg_Lod0Chk.DataBindings.Add(new Binding(
-                        "Checked",
-                        SelectedBuildConfig,
-                        nameof(BuildConfiguration.LOD0Subdirectory),
-                        true,
-                        DataSourceUpdateMode.OnPropertyChanged
-                        )
-                    );
-
-                    BuildCfg_Lod0Chk.Enabled = SelectedBuildConfig.InternalFlag != 1;
-
-                    BuildCfg_OverwriteChk.DataBindings.Add(new Binding(
-                        "Checked",
-                        SelectedBuildConfig,
-                        nameof(BuildConfiguration.ConfirmOverwrite),
-                        true,
-                        DataSourceUpdateMode.OnPropertyChanged
-                        )
-                    );
-                    BuildCfg_OverwriteChk.Enabled = true;
-                }
-                else
-                {
-                    BuildCfg_NameBox.Enabled = false;
-                    BuildCfg_PathBox.Enabled = false;
-                    BuildCfg_Lod0Chk.Enabled = false;
-                    BuildCfg_OverwriteChk.Enabled = false;
-                }
-
-                SaveBuildCfgBtn.Visible = isNewConfig;
-                CancelBuildCfgBtn.Visible = isNewConfig;
-            }
-        }
-
-        private void BuildCfg_PathBox_BrowseButtonClicked(object sender, EventArgs e)
-        {
-            using (var fbd = new FolderBrowserDialog())
-            {
-                //if (!string.IsNullOrEmpty(BuildCfg_PathBox.Value) && Dire)
-                if (fbd.ShowDialog() == DialogResult.OK)
-                    BuildCfg_PathBox.Value = fbd.SelectedPath;
-            }
-        }
-
-        private void BuildCfgProperty_ValueChanged(object sender, EventArgs e)
-        {
-            if (FlagManager.IsSet(nameof(FillBuildConfigDetails)))
-                return;
-
-            if (!BuildConfigsShown)
-                return;
-
-            BeginEditBuildConfig();
-        }
-
-        private void SaveBuildCfgBtn_Click(object sender, EventArgs e)
-        {
-            var buildConfigs = SettingsManager.GetBuildConfigurations();
-            var existingCfg = buildConfigs.FirstOrDefault(c => c.UniqueID == SelectedBuildConfig.UniqueID);
-
-            if (existingCfg == null)
-            {
-                SettingsManager.Current.BuildSettings.UserDefined.Add(SelectedBuildConfig);
-            }
-            else
-            {
-                if (!existingCfg.IsInternalConfig)
-                {
-                    existingCfg.OutputPath = SelectedBuildConfig.OutputPath;
-                    existingCfg.Name = SelectedBuildConfig.Name;
-                }
-                existingCfg.LOD0Subdirectory = SelectedBuildConfig.LOD0Subdirectory;
-                existingCfg.ConfirmOverwrite = SelectedBuildConfig.ConfirmOverwrite;
-            }
-
-            SettingsManager.SaveSettings();
-            EndEditBuildConfig();
-            FillBuildSettingsList();
-        }
-
-        private void CancelBuildCfgBtn_Click(object sender, EventArgs e)
-        {
-            var buildConfigs = SettingsManager.GetBuildConfigurations();
-            var cfg = buildConfigs.FirstOrDefault(c => c.UniqueID == SelectedBuildConfig.UniqueID);
-            //if (cfg != null)
-            FillBuildConfigDetails(cfg);
-            EndEditBuildConfig();
-        }
-
-        private void BeginEditBuildConfig()
-        {
-            if (!IsEditingConfig)
-            {
-                IsEditingConfig = true;
-                SaveBuildCfgBtn.Visible = true;
-                CancelBuildCfgBtn.Visible = true;
-                AddBuildCfgBtn.Enabled = false;
-                DelBuildCfgBtn.Enabled = false;
-            }
-        }
-
-        private void EndEditBuildConfig()
-        {
-            if (IsEditingConfig)
-            {
-                IsEditingConfig = false;
-                SaveBuildCfgBtn.Visible = false;
-                CancelBuildCfgBtn.Visible = false;
-                AddBuildCfgBtn.Enabled = true;
-                DelBuildCfgBtn.Enabled = !(SelectedBuildConfig?.IsInternalConfig ?? false);
-            }
-        }
-
-        private void AddBuildCfgBtn_Click(object sender, EventArgs e)
-        {
-            var newConfig = new BuildConfiguration();
-            //newConfig.GenerateUniqueID();
-            FillBuildConfigDetails(newConfig);
-        }
-
-        private void DelBuildCfgBtn_Click(object sender, EventArgs e)
-        {
-            if (SelectedBuildConfig != null)
-            {
-                SettingsManager.Current.BuildSettings.UserDefined.RemoveAll(c => c.UniqueID == SelectedBuildConfig.UniqueID);
-                SettingsManager.SaveSettings();
-                FillBuildSettingsList();
-            }
-        }
-
-        private void BuildConfigListView_SizeChanged(object sender, EventArgs e)
-        {
-            BuildCfgNameColumn.Width = BuildConfigListView.Width - 3;
-        }
-
-
-        #endregion
-
-        #region Editor settings
-
-        private void FillEditorSettings()
-        {
-            WorkspaceBrowseBox.DataBindings.Add(new Binding("Value",
-                    SettingsManager.Current, nameof(AppSettings.EditorSettings.ProjectWorkspace),
-                    true, DataSourceUpdateMode.OnPropertyChanged));
-        }
-
-        #endregion
-
-        private void SaveButton_Click(object sender, EventArgs e)
-        {
-            SaveLddEnvironmentSettings();
-        }
-
-        private void SettingsTabControl_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (SettingsTabControl.SelectedTab == EditorSettingsTabPage)
-                BuildConfigsShown = true;
         }
     }
 }

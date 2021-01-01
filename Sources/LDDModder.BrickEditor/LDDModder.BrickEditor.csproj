@@ -170,6 +170,7 @@
     <Compile Include="Rendering\GLResourceLoader.cs" />
     <Compile Include="Rendering\MeshRenderMode.cs" />
     <Compile Include="Rendering\Models\BoneModel.cs" />
+    <Compile Include="Rendering\Models\ClonePatternModel.cs" />
     <Compile Include="Rendering\Models\CursorModel.cs" />
     <Compile Include="Rendering\Models\EditorGridModel.cs" />
     <Compile Include="Rendering\Models\VertexArrayBuffer.cs" />
@@ -188,8 +189,10 @@
     </Compile>
     <Compile Include="Settings\BuildConfiguration.cs" />
     <Compile Include="Settings\EditorSettings.cs" />
+    <Compile Include="Settings\ISettingsClass.cs" />
     <Compile Include="Settings\LddSettings.cs" />
     <Compile Include="Settings\ProjectBuildSettings.cs" />
+    <Compile Include="Settings\UserUILayout.cs" />
     <Compile Include="Settings\ViewportDisplaySettings.cs" />
     <Compile Include="UI\Controls\CollapsiblePanel.cs">
       <SubType>Component</SubType>
@@ -208,6 +211,12 @@
     </Compile>
     <Compile Include="UI\Controls\ProjectAwareControl.Designer.cs">
       <DependentUpon>ProjectAwareControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Dialogs\InputDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Dialogs\InputDialog.Designer.cs">
+      <DependentUpon>InputDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\DockPanel\CustomDockTheme.cs">
       <SubType>Component</SubType>
@@ -278,28 +287,58 @@
     <Compile Include="UI\DockPanel\VS2015DockPaneCaption.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="UI\Settings\DisplaySettingsPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Settings\DisplaySettingsPanel.Designer.cs">
+      <DependentUpon>DisplaySettingsPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Settings\EditorSettingsPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Settings\EditorSettingsPanel.Designer.cs">
+      <DependentUpon>EditorSettingsPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Settings\LddSettingsPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Settings\LddSettingsPanel.Designer.cs">
+      <DependentUpon>LddSettingsPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Settings\SettingsPanelBase.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Settings\SettingsPanelBase.Designer.cs">
+      <DependentUpon>SettingsPanelBase.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Windows\AboutWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Windows\AboutWindow.Designer.cs">
+      <DependentUpon>AboutWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\Windows\BatchBuildWindow.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="UI\Windows\BatchBuildWindow.Designer.cs">
       <DependentUpon>BatchBuildWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Windows\BoneDataCopyDialog.cs">
+    <Compile Include="UI\Dialogs\BoneDataCopyDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\Windows\BoneDataCopyDialog.Designer.cs">
+    <Compile Include="UI\Dialogs\BoneDataCopyDialog.Designer.cs">
       <DependentUpon>BoneDataCopyDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Windows\BoneLinkDialog.cs">
+    <Compile Include="UI\Dialogs\BoneLinkDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\Windows\BoneLinkDialog.Designer.cs">
+    <Compile Include="UI\Dialogs\BoneLinkDialog.Designer.cs">
       <DependentUpon>BoneLinkDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Windows\MessageBoxEX.cs">
+    <Compile Include="UI\Dialogs\MessageBoxEX.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\Windows\MessageBoxEX.Designer.cs">
+    <Compile Include="UI\Dialogs\MessageBoxEX.Designer.cs">
       <DependentUpon>MessageBoxEX.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\Windows\SelectOutputLocationWindow.cs">
@@ -446,10 +485,10 @@
     <Compile Include="UI\Windows\ExportPartModelWindow.Designer.cs">
       <DependentUpon>ExportPartModelWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Windows\ImportModelsDialog.cs">
+    <Compile Include="UI\Dialogs\ImportModelsDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\Windows\ImportModelsDialog.Designer.cs">
+    <Compile Include="UI\Dialogs\ImportModelsDialog.Designer.cs">
       <DependentUpon>ImportModelsDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\Windows\AppSettingsWindow.cs">
@@ -458,10 +497,10 @@
     <Compile Include="UI\Windows\AppSettingsWindow.Designer.cs">
       <DependentUpon>AppSettingsWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Windows\SelectBrickDialog.cs">
+    <Compile Include="UI\Dialogs\SelectBrickDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\Windows\SelectBrickDialog.Designer.cs">
+    <Compile Include="UI\Dialogs\SelectBrickDialog.Designer.cs">
       <DependentUpon>SelectBrickDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Utilities\AssimpHelper.cs" />
@@ -488,6 +527,15 @@
     <EmbeddedResource Include="Resources\ModelLocalizations.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ModelLocalizations.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Dialogs\InputDialog.fr.resx">
+      <DependentUpon>InputDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Dialogs\InputDialog.resx">
+      <DependentUpon>InputDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Dialogs\MessageBoxEX.fr.resx">
+      <DependentUpon>MessageBoxEX.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Editors\BoundingBoxEditor.resx">
       <DependentUpon>BoundingBoxEditor.cs</DependentUpon>
@@ -544,6 +592,9 @@
     <EmbeddedResource Include="UI\Panels\ProjectDocumentPanel.resx">
       <DependentUpon>ProjectDocumentPanel.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\Panels\ProjectInfoPanel.fr.resx">
+      <DependentUpon>ProjectInfoPanel.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\Panels\ProjectInfoPanel.resx">
       <DependentUpon>ProjectInfoPanel.cs</DependentUpon>
     </EmbeddedResource>
@@ -559,16 +610,31 @@
     <EmbeddedResource Include="UI\Panels\ViewportPanel.resx">
       <DependentUpon>ViewportPanel.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\Settings\DisplaySettingsPanel.resx">
+      <DependentUpon>DisplaySettingsPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Settings\EditorSettingsPanel.resx">
+      <DependentUpon>EditorSettingsPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Settings\LddSettingsPanel.fr.resx">
+      <DependentUpon>LddSettingsPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Settings\LddSettingsPanel.resx">
+      <DependentUpon>LddSettingsPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Windows\AboutWindow.resx">
+      <DependentUpon>AboutWindow.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\Windows\AppSettingsWindow.fr.resx">
       <DependentUpon>AppSettingsWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Windows\BatchBuildWindow.resx">
       <DependentUpon>BatchBuildWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Windows\BoneDataCopyDialog.resx">
+    <EmbeddedResource Include="UI\Dialogs\BoneDataCopyDialog.resx">
       <DependentUpon>BoneDataCopyDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Windows\BoneLinkDialog.resx">
+    <EmbeddedResource Include="UI\Dialogs\BoneLinkDialog.resx">
       <DependentUpon>BoneLinkDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Windows\BrickEditorWindow.fr.resx">
@@ -577,7 +643,7 @@
     <EmbeddedResource Include="UI\Windows\BrickEditorWindow.resx">
       <DependentUpon>BrickEditorWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Windows\MessageBoxEX.resx">
+    <EmbeddedResource Include="UI\Dialogs\MessageBoxEX.resx">
       <DependentUpon>MessageBoxEX.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Windows\ExportPartModelWindow.fr.resx">
@@ -586,13 +652,13 @@
     <EmbeddedResource Include="UI\Windows\ExportPartModelWindow.resx">
       <DependentUpon>ExportPartModelWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Windows\ImportModelsDialog.resx">
+    <EmbeddedResource Include="UI\Dialogs\ImportModelsDialog.resx">
       <DependentUpon>ImportModelsDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Windows\AppSettingsWindow.resx">
       <DependentUpon>AppSettingsWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Windows\SelectBrickDialog.resx">
+    <EmbeddedResource Include="UI\Dialogs\SelectBrickDialog.resx">
       <DependentUpon>SelectBrickDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Windows\SelectOutputLocationWindow.resx">
@@ -659,6 +725,7 @@
     <Content Include="Resources\Images\Hidden2Icon.png" />
     <Content Include="Resources\Images\HiddenIcon.png" />
     <Content Include="Resources\Images\HideModelsIcon.png" />
+    <Content Include="Resources\Images\ldd editor x64.png" />
     <Content Include="Resources\Images\MainSurfaceIcon.png" />
     <Content Include="Resources\Images\MaleStudIcon.png" />
     <Content Include="Resources\Images\MeshIcon.png" />

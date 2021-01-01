@@ -675,9 +675,27 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
             lock (SyncLock)
             {
                 DetachActiveElements();
-
-                foreach (var element in elements)
+                var elemList = elements.ToList();
+                if (elemList.Any(x => x is BoneModel))
                 {
+                    var boneModels = elemList.OfType<BoneModel>().ToList();
+                    foreach (var boneModel in boneModels)
+                    {
+                        if (elemList.Any(x =>
+                            x is PartElementModel elemModel &&
+                            elemModel.Element.Parent == boneModel.Element)
+                        )
+                        {
+                            elemList.Remove(boneModel);
+                        }
+                    }
+
+                }
+
+
+                foreach (var element in elemList)
+                {
+
                     EditedElements.Add(new TransformFollower(element));
                     element.TransformChanged += Element_TransformChanged;
                     element.VisibilityChanged += Element_VisibilityChanged;
@@ -802,7 +820,7 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
 
             foreach (var follower in EditedElements)
             {
-                follower.OriginalMatrix = follower.Element.Transform;
+                follower.OriginalMatrix = follower.Element.GetBaseTranform();
                 var currentTransform = follower.OriginalMatrix.ToMatrix4d();
 
                 var resultMatrix = currentTransform * gizmoTransInverted;
@@ -863,7 +881,7 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
             public TransformFollower(ITransformableElement model)
             {
                 Element = model;
-                OriginalMatrix = model.Transform;
+                OriginalMatrix = model.GetBaseTranform();
             }
 
             public void ApplyTransform(Matrix4 transform)

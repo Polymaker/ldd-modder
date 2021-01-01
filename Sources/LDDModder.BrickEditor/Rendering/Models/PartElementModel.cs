@@ -1,5 +1,6 @@
 ﻿using LDDModder.BrickEditor.ProjectHandling;
-using LDDModder.Modding.Editing;
+using LDDModder.Modding;
+using LDDModder.Modding;
 using OpenTK;
 using System;
 using System.Collections.Generic;
@@ -154,6 +155,14 @@ namespace LDDModder.BrickEditor.Rendering
         protected virtual void OnElementPropertyChanged(ElementValueChangedEventArgs e)
         {
 
+        }
+
+        public void RenderTransformed(Matrix4 transform, Camera camera, MeshRenderMode mode = MeshRenderMode.Solid)
+        {
+            var currentTransform = Transform;
+            SetTransform(transform, false);
+            RenderModel(camera, mode);
+            SetTransform(currentTransform, false);
         }
     }
 }

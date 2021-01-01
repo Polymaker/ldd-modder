@@ -10,9 +10,7 @@ namespace LDDModder.BrickEditor.Settings
         public Rendering.MeshRenderMode PartRenderMode { get; set; }
         [JsonProperty("collisions.visible")]
         public bool ShowCollisions { get; set; }
-        [JsonProperty("collisions.visible")]
+        [JsonProperty("connections.visible")]
         public bool ShowConnections { get; set; }
-        //[JsonProperty("collisions.visible")]
-        //public bool RestoreDefaultsOnProjectChange { get; set; }
     }
 }

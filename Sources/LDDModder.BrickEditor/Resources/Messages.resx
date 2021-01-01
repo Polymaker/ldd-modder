@@ -186,4 +186,16 @@ Are-you sure you want to overwrite  them?
   <data name="Caption_RecoverLastProject" xml:space="preserve">
     <value>Recover last session</value>
   </data>
+  <data name="Caption_Warning" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+  <data name="Message_SaveWindowLayout" xml:space="preserve">
+    <value>Layout Name:</value>
+  </data>
+  <data name="Caption_SaveWindowLayout" xml:space="preserve">
+    <value>Save Window Layout</value>
+  </data>
+  <data name="Message_LayoutNameAlreadyExist" xml:space="preserve">
+    <value>Layout name already exist.</value>
+  </data>
 </root>

@@ -1,4 +1,5 @@
-﻿using LDDModder.BrickEditor.ProjectHandling;
+﻿using LDDModder.BrickEditor.Native;
+using LDDModder.BrickEditor.ProjectHandling;
 using LDDModder.BrickEditor.ProjectHandling.ViewInterfaces;
 using LDDModder.BrickEditor.Resources;
 using LDDModder.BrickEditor.Settings;
@@ -6,7 +7,7 @@ using LDDModder.BrickEditor.UI.Panels;
 using LDDModder.BrickEditor.Utilities;
 using LDDModder.LDD;
 using LDDModder.LDD.Parts;
-using LDDModder.Modding.Editing;
+using LDDModder.Modding;
 using LDDModder.Utilities;
 using System;
 using System.Collections.Generic;
@@ -62,7 +63,9 @@ namespace LDDModder.BrickEditor.UI.Windows
         {
             base.OnLoad(e);
             MultiInstanceManager.Initialize(this);
+            SettingsManager.Initialize();
 
+            RestoreSavedPosition();
             InitializeProjectManager();
             menuStrip1.Enabled = false;
         }
@@ -86,6 +89,28 @@ namespace LDDModder.BrickEditor.UI.Windows
                 Thread.Sleep(200);
                 BeginInvoke(new MethodInvoker(BeginLoadingUI));
             });
+        }
+
+        private void RestoreSavedPosition()
+        {
+            if (SettingsManager.Current.DisplaySettings.LastPosition != default)
+            {
+                var savedBounds = SettingsManager.Current.DisplaySettings.LastPosition;
+                var tlCorner = SettingsManager.Current.DisplaySettings.LastPosition.Location;
+                var trCorner = new Point(savedBounds.Right, savedBounds.Top);
+                var blCorner = new Point(savedBounds.Left, savedBounds.Bottom);
+                var brCorner = new Point(savedBounds.Right, savedBounds.Bottom);
+                var corners = new Point[] { tlCorner, trCorner, blCorner, brCorner };
+
+                var screen = Screen.FromPoint(tlCorner);
+
+                if (screen != null && corners.Any(x => screen.Bounds.Contains(x)))
+                {
+                    Bounds = savedBounds;
+                    if (SettingsManager.Current.DisplaySettings.IsMaximized)
+                        WindowState = FormWindowState.Maximized;
+                }
+            }
         }
 
         private void LoadAndValidateSettings()
@@ -140,8 +165,20 @@ namespace LDDModder.BrickEditor.UI.Windows
         public ElementDetailPanel DetailPanel { get; private set; }
         public StudConnectionPanel StudConnectionPanel { get; private set; }
         public ConnectionEditorPanel ConnectionPanel { get; private set; }
-
+        public ProjectInfoPanel InfoPanel { get; private set; }
         public ProgressPopupWindow WaitPopup { get; private set; }
+
+        private IDockContent[] DockPanels => new IDockContent[]
+        {
+            NavigationPanel,
+            ViewportPanel,
+            ValidationPanel,
+            PropertiesPanel,
+            DetailPanel,
+            StudConnectionPanel,
+            ConnectionPanel,
+            InfoPanel
+        };
 
         private void InitializePanels()
         {
@@ -168,33 +205,22 @@ namespace LDDModder.BrickEditor.UI.Windows
             ConnectionPanel = new ConnectionEditorPanel(ProjectManager);
             WaitPopup.UpdateProgress(7, 10);
 
-            if (!LoadUserLayout())
-            {
-                ViewportPanel.Show(DockPanelControl, DockState.Document);
+            InfoPanel = new ProjectInfoPanel(ProjectManager);
+            WaitPopup.UpdateProgress(8, 10);
 
-                StudConnectionPanel.Show(DockPanelControl, DockState.Document);
+        }
 
-                ViewportPanel.Activate();
+        private void LayoutDockPanels()
+        {
+            var savedLayout = SettingsManager.GetSavedUserLayout();
+            if (!(savedLayout != null && LoadCustomLayout(savedLayout)))
+                LoadDefaultLayout();
 
-                WaitPopup.UpdateProgress(8, 10);
+            WaitPopup.UpdateProgress(9, 10);
 
-                DockPanelControl.DockLeftPortion = 250;
+            ValidateAllPanelsLoaded();
 
-                NavigationPanel.Show(DockPanelControl, DockState.DockLeft);
-
-                DockPanelControl.DockWindows[DockState.DockBottom].BringToFront();
-                DockPanelControl.DockBottomPortion = 250;
-
-                WaitPopup.UpdateProgress(9, 10);
-
-                PropertiesPanel.Show(DockPanelControl, DockState.DockBottom);
-
-                DetailPanel.Show(PropertiesPanel.Pane, null);
-
-                ConnectionPanel.Show(PropertiesPanel.Pane, null);
-
-                ValidationPanel.Show(PropertiesPanel.Pane, null);
-            }
+            WaitPopup.UpdateProgress(10, 10);
 
             if (PropertiesPanel.Pane == DetailPanel.Pane)
             {
@@ -205,8 +231,6 @@ namespace LDDModder.BrickEditor.UI.Windows
                 DetailPanel.Activate();
             }
 
-            WaitPopup.UpdateProgress(10, 10);
-
             foreach (IDockContent dockPanel in DockPanelControl.Contents)
             {
                 if (dockPanel is ProjectDocumentPanel documentPanel)
@@ -214,48 +238,98 @@ namespace LDDModder.BrickEditor.UI.Windows
             }
         }
 
-        public void LayoutDockPanels()
+        private void ValidateAllPanelsLoaded()
         {
+            var panels = DockPanels;
+            var loadedPanel = DockPanelControl.Contents.OfType<ProjectDocumentPanel>().ToList();
+            for (int i = 0; i < panels.Length; i++)
+            {
+                if (!loadedPanel.Contains(panels[i]))
+                {
+                    (panels[i] as DockContent).Show(PropertiesPanel.Pane, null);
+                }
+            }
         }
 
-        private bool LoadUserLayout()
+        private bool LoadCustomLayout(UserUILayout layout)
         {
-            var layoutPath = Path.Combine(SettingsManager.AppDataFolder, "UserLayout.xml");
+            if (!File.Exists(layout.Path))
+                return false;
 
-            if (File.Exists(layoutPath))
+            MemoryStream tmpMs = null;
+
+            if (DockPanelControl.Contents.Count > 0)
             {
-                try
-                {
-                    DockPanelControl.LoadFromXml(layoutPath, (string str) =>
-                    {
-                        switch (str)
-                        {
-                            case "LDDModder.BrickEditor.UI.Panels.ValidationPanel":
-                                return ValidationPanel;
-                            case "LDDModder.BrickEditor.UI.Panels.NavigationPanel":
-                                return NavigationPanel;
-                            case "LDDModder.BrickEditor.UI.Panels.ViewportPanel":
-                                return ViewportPanel;
-                            case "LDDModder.BrickEditor.UI.Panels.ConnectionEditorPanel":
-                                return ConnectionPanel;
-                            case "LDDModder.BrickEditor.UI.Panels.StudConnectionPanel":
-                                return StudConnectionPanel;
-                            case "LDDModder.BrickEditor.UI.Panels.ElementDetailPanel":
-                                return DetailPanel;
-                            case "LDDModder.BrickEditor.UI.Panels.PartPropertiesPanel":
-                                return PropertiesPanel;
-                        }
-                        return null;
-                    });
-                    return true;
-                }
-                catch
-                {
-
-                }
-                
+                tmpMs = new MemoryStream();
+                DockPanelControl.SaveAsXml(tmpMs, Encoding.UTF8);
             }
+
+            foreach (var content in DockPanelControl.Contents.ToArray())
+                content.DockHandler.DockPanel = null;
+
+            try
+            {
+                DockPanelControl.LoadFromXml(layout.Path, (string str) =>
+                {
+                    var panels = DockPanels;
+                    for (int i = 0; i < panels.Length; i++)
+                    {
+                        if (panels[i].GetType().FullName == str)
+                            return panels[i];
+                    }
+                    return null;
+                });
+                return true;
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            if (tmpMs != null)
+            {
+                DockPanelControl.LoadFromXml(tmpMs, (string str) =>
+                {
+                    var panels = DockPanels;
+                    for (int i = 0; i < panels.Length; i++)
+                    {
+                        if (panels[i].GetType().FullName == str)
+                            return panels[i];
+                    }
+                    return null;
+                });
+            }
+
             return false;
+        }
+
+        private void LoadDefaultLayout()
+        {
+            foreach (var content in DockPanelControl.Contents.ToArray())
+                content.DockHandler.DockPanel = null;
+
+            ViewportPanel.Show(DockPanelControl, DockState.Document);
+
+            StudConnectionPanel.Show(DockPanelControl, DockState.Document);
+
+            ViewportPanel.Activate();
+
+            DockPanelControl.DockLeftPortion = 250;
+
+            NavigationPanel.Show(DockPanelControl, DockState.DockLeft);
+
+            DockPanelControl.DockWindows[DockState.DockBottom].BringToFront();
+            DockPanelControl.DockBottomPortion = 250;
+
+            PropertiesPanel.Show(DockPanelControl, DockState.DockBottom);
+
+            DetailPanel.Show(PropertiesPanel.Pane, null);
+
+            ConnectionPanel.Show(PropertiesPanel.Pane, null);
+
+            ValidationPanel.Show(PropertiesPanel.Pane, null);
+
+            InfoPanel.Show(PropertiesPanel.Pane, null);
         }
 
         private void BeginLoadingUI()
@@ -279,14 +353,16 @@ namespace LDDModder.BrickEditor.UI.Windows
                     DockPanelControl.Layout += DockPanelControl_Layout;
                     WaitPopup.Shown -= OnInitializationPopupLoaded;
                     InitializePanels();
+                    LayoutDockPanels();
                 }));
             });
         }
 
         private void DockPanelControl_Layout(object sender, LayoutEventArgs e)
         {
-            AutoSaveTimer.Stop();
-            AutoSaveTimer.Start();
+            //What was that for???
+            //AutoSaveTimer.Stop();
+            //AutoSaveTimer.Start();
         }
 
         private void InitializeAfterShown()
@@ -317,6 +393,7 @@ namespace LDDModder.BrickEditor.UI.Windows
 
             LoadAndValidateSettings();
             UpdateMenuItemStates();
+            RebuildLayoutMenu();
             RebuildRecentFilesMenu();
 
             var documentPanels = DockPanelControl.Contents.OfType<ProjectDocumentPanel>().ToList();
@@ -654,6 +731,9 @@ namespace LDDModder.BrickEditor.UI.Windows
                 return;
             }
 
+
+            SaveCurrentUILayout();
+
             if (CurrentProject != null)
             {
                 e.Cancel = true;
@@ -746,6 +826,20 @@ namespace LDDModder.BrickEditor.UI.Windows
         {
             if (!MultiInstanceManager.ProcessMessage(ref m))
                 base.WndProc(ref m);
+        }
+
+        private void SaveCurrentUILayout()
+        {
+            SettingsManager.SaveCurrentUILayout(DockPanelControl);
+
+            User32.WINDOWPLACEMENT posInfo = default;
+            if (User32.GetWindowPlacement(Handle, ref posInfo))
+            {
+                SettingsManager.LoadSettings();
+                SettingsManager.Current.DisplaySettings.LastPosition = posInfo.NormalPosition;
+                SettingsManager.Current.DisplaySettings.IsMaximized = posInfo.ShowCmd.HasFlag(User32.ShowWindowCommands.Maximize);
+                SettingsManager.SaveSettings();
+            }
         }
 
         

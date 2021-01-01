@@ -1,5 +1,6 @@
 ﻿using LDDModder.BrickEditor.Models.Navigation;
-using LDDModder.Modding.Editing;
+using LDDModder.Modding;
+using LDDModder.Modding;
 using System;
 using System.Collections.Generic;
 using System.Linq;

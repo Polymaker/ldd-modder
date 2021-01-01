@@ -1,5 +1,5 @@
 ﻿using LDDModder.BrickEditor.Settings;
-using LDDModder.Modding.Editing;
+using LDDModder.Modding;
 using System;
 using System.IO;
 using System.Windows.Forms;
@@ -87,11 +87,6 @@ namespace LDDModder.BrickEditor.UI.Windows
         {
             using (var ofd = new OpenFileDialog())
             {
-                //if (!string.IsNullOrEmpty(SettingsManager.Current.ProjectWorkspace) &&
-                //    Directory.Exists(SettingsManager.Current.ProjectWorkspace))
-                //{
-                //    ofd.InitialDirectory = SettingsManager.Current.ProjectWorkspace;
-                //}
 
                 ofd.Filter = "LDD Primitive file|*.xml|LDD Mesh file|*.g|LDD Textured Mesh file|*.g*|All|*.xml;*.g;*.g*";
                 if (ofd.ShowDialog() == DialogResult.OK)
@@ -259,6 +254,7 @@ namespace LDDModder.BrickEditor.UI.Windows
             }
 
             UpdateMenuItemStates();
+            RebuildLayoutMenu();
         }
 
         private void ExportBrickMenuItem_Click(object sender, EventArgs e)
@@ -314,15 +310,74 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         #endregion
 
+        #region Window Menu
+
+
+        #endregion
+
+        private void RebuildLayoutMenu()
+        {
+            WindowMenu_ApplyLayout.DropDownItems.Clear();
+            var userLayouts = SettingsManager.GetUserUILayouts().ToList();
+            if (!userLayouts.Any())
+            {
+                WindowMenu_ApplyLayout.DropDownItems.Add(new ToolStripMenuItem
+                {
+                    Text = "No Saved Layouts",
+                    Enabled = false
+                });
+            }
+            else
+            {
+                foreach (var userLayout in userLayouts)
+                {
+                    var tsb = WindowMenu_ApplyLayout.DropDownItems.Add(userLayout.Name);
+                    tsb.Tag = userLayout;
+                    tsb.Click += ApplyLayoutMenu_ItemClick;
+                }
+            }
+        }
+
+        private void ApplyLayoutMenu_ItemClick(object sender, EventArgs e)
+        {
+            var tsmi = sender as ToolStripMenuItem;
+            if (tsmi.Tag is UserUILayout layout)
+            {
+                LoadCustomLayout(layout);
+            }
+        }
+
         private void WindowMenu_SaveLayout_Click(object sender, EventArgs e)
         {
-            var layoutPath = Path.Combine(SettingsManager.AppDataFolder, "UserLayout.xml");
-            DockPanelControl.SaveAsXml(layoutPath);
+            string layoutName = InputDialog.Show(Messages.Message_SaveWindowLayout, Messages.Caption_SaveWindowLayout);
+
+            if (!string.IsNullOrWhiteSpace(layoutName))
+            {
+                if (SettingsManager.GetUserUILayouts().Any(x => StringUtils.EqualsIC(x.Name, layoutName)))
+                {
+                    MessageBox.Show(Messages.Message_LayoutNameAlreadyExist, Messages.Caption_Warning, 
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+                SettingsManager.SaveUILayout(DockPanelControl, layoutName);
+                RebuildLayoutMenu();
+            }
+        }
+
+        private void WindowMenu_ManageLayouts_Click(object sender, EventArgs e)
+        {
+            ShowSettingsWindow(AppSettingsWindow.SettingTab.LayoutSettings);
         }
 
         private void WindowMenu_ResetLayout_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void HelpMenu_About_Click(object sender, EventArgs e)
+        {
+            using (var dlg = new AboutWindow())
+                dlg.ShowDialog(this);
         }
 
 
@@ -417,6 +472,8 @@ namespace LDDModder.BrickEditor.UI.Windows
         }
 
         #endregion
+
+
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {

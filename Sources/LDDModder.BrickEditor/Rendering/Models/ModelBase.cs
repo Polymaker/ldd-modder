@@ -30,12 +30,23 @@ namespace LDDModder.BrickEditor.Rendering
         public BBox BoundingBox { get; set; }
 
         private Matrix4 _Transform;
+        private Matrix4? _TemporaryTransform;
+        protected readonly object TransformLock = new object();
 
         public Matrix4 Transform
         {
-            get => _Transform;
+            get
+            {
+                lock (TransformLock)
+                {
+                    return _TemporaryTransform.HasValue ? _TemporaryTransform.Value : _Transform;
+                }
+                
+            }
             set
             {
+                if (_TemporaryTransform.HasValue)
+                    return;
                 if (value != _Transform)
                 {
                     _Transform = value;
@@ -44,6 +55,8 @@ namespace LDDModder.BrickEditor.Rendering
                 }
             }
         }
+
+
 
         public bool IsEditingTransform { get; private set; }
 
@@ -132,7 +145,7 @@ namespace LDDModder.BrickEditor.Rendering
 
         private Matrix4 OriginalTrans;
 
-        protected void SetTransform(Matrix4 transform, bool fireChange = true)
+        public void SetTransform(Matrix4 transform, bool fireChange = true)
         {
             if (_Transform != transform)
             {
@@ -142,9 +155,22 @@ namespace LDDModder.BrickEditor.Rendering
             }
         }
 
+        public Matrix4 GetBaseTranform()
+        {
+            return _Transform;
+        }
+
+        public void SetTemporaryTransform(Matrix4? transform)
+        {
+            lock (TransformLock)
+            {
+                _TemporaryTransform = transform;
+            }
+        }
+
         public void BeginEditTransform()
         {
-            OriginalTrans = Transform;
+            OriginalTrans = _Transform;
             IsEditingTransform = true;
             OnBeginEditTransform();
         }
