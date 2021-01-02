@@ -1,64 +1,60 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   <?include $(sys.CURRENTDIR)\Variables.wxi?>
-  
-	<Product Id="*" Name="$(var.ProductName)" Language="1033" Version="1.0.6.0" 
-           Manufacturer="Polymaker" UpgradeCode="0b4b59f2-f635-4904-b051-7873899bf21b">
-		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
-
-		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
-    <MediaTemplate EmbedCab="yes"/>
-
-    <Icon Id="InstallIcon.ico" SourceFile="$(var.LDDModder.BrickEditor.ProjectDir)Resources\BrickStudioIcon.ico"/>
+  <Product Id="*" Name="$(var.ProductName)" Language="1033" Version="1.0.6.0" Manufacturer="Polymaker"
+           UpgradeCode="0b4b59f2-f635-4904-b051-7873899bf21b">
+    <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <MediaTemplate EmbedCab="yes" />
+    
+    <Icon Id="InstallIcon.ico" SourceFile="$(var.LDDModder.BrickEditor.ProjectDir)Resources\BrickStudioIcon.ico" />
     <Property Id="ARPPRODUCTICON" Value="InstallIcon.ico" />
-
+    
     <Feature Id="ProductFeature" Title="LDD Brick Studio" Level="1">
       <ComponentGroupRef Id="BrickEditor.Binaries" />
       <ComponentGroupRef Id="BrickEditor.References" />
-      <ComponentGroupRef Id="BrickEditor.Resources.FR"/>
-      <ComponentRef Id="ApplicationShortcut" />
-      <ComponentRef Id="DesktopShortcut" />
-      <!--<Feature Id="" Title="" Level="1">
-        <ComponentGroupRef Id="BrickEditor.Resources.FR"/>
-      </Feature>-->
+      <ComponentGroupRef Id="BrickEditor.Resources.FR" />
+      <ComponentGroupRef Id="BrickEditor.Shortcuts" />
+      <ComponentRef Id="BrickEditor.FolderPermissions" />
+      <ComponentRef Id="BrickEditor.DeleteFreetype6" />
+      <ComponentRef Id="InstallFonts" />
+      <!--<ComponentRef Id="RegistryEntries" />-->
     </Feature>
     
     <Property Id="PLATFORM" Value="$(var.Platform)" />
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
     <WixVariable Id="WixUILicenseRtf" Value="$(var.SolutionDir)LICENSE.rtf" />
     <UIRef Id="WixUI_InstallDir" />
-	</Product>
-
-	<Fragment>
-		<Directory Id="TARGETDIR" Name="SourceDir">
-			<Directory Id="$(var.PlatformProgramFilesFolder)">
-				<Directory Id="INSTALLFOLDER" Name="LDD Modder" />
-			</Directory>
-      
-      <Directory Id="ProgramMenuFolder">
-        <Directory Id="ApplicationProgramsFolder" Name="LDD Modder"/>
-      </Directory>
-      
-      <Directory Id="DesktopFolder" Name="Desktop" />
-		</Directory>
-    
-	</Fragment>
-
+  </Product>
   <Fragment>
-    <DirectoryRef Id="FontsFolder">
-      <Component Id="InstallFonts" Guid="C958EB86-569B-4ABE-8663-4A6915EE6D07">
-        <File Id="segoeui.TTF" Source="..\..\Resources\Fonts\segoeui.ttf" TrueType="yes" />
-        <File Id="segoeuib.TTF" Source="..\..\Resources\Fonts\segoeuib.ttf" TrueType="yes" />
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="$(var.PlatformProgramFilesFolder)">
+        <Directory Id="INSTALLFOLDER" Name="LDD Modder" />
+      </Directory>
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ApplicationProgramsFolder" Name="LDD Modder" />
+      </Directory>
+      <Directory Id="DesktopFolder" Name="Desktop" />
+      <Directory  Id="FontsFolder">
+        <Component Id="InstallFonts" Guid="C958EB86-569B-4ABE-8663-4A6915EE6D07">
+          <File Id="segoeui.TTF" Source="..\..\Resources\Fonts\segoeui.ttf" TrueType="yes" />
+          <File Id="segoeuib.TTF" Source="..\..\Resources\Fonts\segoeuib.ttf" TrueType="yes" />
+        </Component>
+      </Directory >
+    </Directory>
+  </Fragment>
+  
+  <!--<Fragment>
+    <DirectoryRef Id="TARGETDIR">
+      <Component Id="RegistryEntries" Guid="E17462F6-5CC8-4D61-B925-A63590F79092">
+        <RegistryKey Root="HKLM"
+                     Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\[ProductCode]"
+              Action="createAndRemoveOnUninstall">
+          <RegistryValue Type="string" Name="ModifyPath" Value="MsiExec.exe /X[ProductCode]"/>
+          <RegistryValue Type="string" Name="UninstallString" Value="MsiExec.exe /X[ProductCode]"/>
+        </RegistryKey>
       </Component>
     </DirectoryRef>
-  </Fragment>
-
-	<!--<Fragment>
-		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
-			--><!-- TODO: Remove the comments around this Component element and the ComponentRef below in order to add resources to this installer. --><!--
-			--><!-- <Component Id="ProductComponent"> --><!--
-				--><!-- TODO: Insert files, registry keys, and other resources here. --><!--
-			--><!-- </Component> --><!--
-		</ComponentGroup>
-	</Fragment>-->
+  </Fragment>-->
+  
 </Wix>

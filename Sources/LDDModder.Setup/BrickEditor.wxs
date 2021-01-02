@@ -1,17 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
   
 	<Fragment>
     <?define BrickEditor.TargetDir=$(var.LDDModder.BrickEditor.TargetDir)?>
     <?define BrickEditor.Name="Brick Studio"?>
     <?define BrickEditor.Description="LDD Model Editor"?>
-    
+
     <DirectoryRef Id="INSTALLFOLDER">
       <Directory Id="dir777F6281BDA39BE4D21394C1207E9DD6" Name="Brick Studio">
+        <Component Id="BrickEditor.FolderPermissions" Guid="{7F4FBEB7-A9E1-4EC7-8EBE-1DF6C0302598}">
+          <CreateFolder>
+            <Permission  User="Everyone" GenericAll="yes" />
+          </CreateFolder>
+        </Component>
         <Directory Id="BrickEditor.Resources.FR" Name="fr" />
-        <!--<Directory Id="BrickEditor.libraries" Name="lib" />-->
       </Directory>
     </DirectoryRef>
+    
+    <Component Id="BrickEditor.DeleteFreetype6" Guid="{8720A739-AC41-49A2-82A2-E9178A98D8A3}" Directory="dir777F6281BDA39BE4D21394C1207E9DD6">
+      <RemoveFile Id="DeleteFreetype6" Name="freetype6.dll" On="uninstall" />
+    </Component>
   </Fragment>
   
   <Fragment>
@@ -31,8 +39,11 @@
       <Component Id="cmpF43EEFB36E7C45AEA7DCA72C85F9CB5D" Guid="{4B4E9F8B-23D4-48D4-9439-3ECA8DF737E0}">
         <File Id="fil4BB5099EC1E545489736DF7A5FE7D2CA" Source="$(var.SolutionDir)LICENSE.rtf" />
       </Component>
+      <!--<Component Id="BrickEditorCustom" Guid="{7F4FBEB7-A9E1-4EC7-8EBE-1DF6C0302598}">
+        <RemoveFile Id="PurgeAppFolder" Name="freetype6.dll" On="uninstall" />
+      </Component>-->
     </ComponentGroup>
-    
+
     
     <ComponentGroup Id="BrickEditor.References" Directory="dir777F6281BDA39BE4D21394C1207E9DD6">
       
@@ -91,7 +102,7 @@
           <Directory Id="dirDE676F8467C337A86CFEE59BACABF3C2" Name="native">
             <Component Id="cmp18BD1316715DE0299161DEE11E7DE014" Guid="{B4D85769-D250-4332-AE49-7DD7CD3E68EC}">
               <File Id="filDF243D4323E71789D9A7826B390A58DD" Source="$(var.BrickEditor.TargetDir)runtimes\win-x64\native\assimp.dll" />
-              <File Id="fil641569533A75D694E97A4AAE17D3400E" Source="$(var.BrickEditor.TargetDir)lib\freetype6_x64.dll" Name="freetype6.dll" />
+              <File Id="fil641569533A75D694E97A4AAE17D3400E" Source="$(var.BrickEditor.TargetDir)runtimes\win-x64\native\freetype6.dll" />
             </Component>
           </Directory>
         </Directory>
@@ -100,7 +111,7 @@
           <Directory Id="dir809EDC985557A74F80153E56DF596302" Name="native">
             <Component Id="cmp85072CD5430AA1158EBBB00E3E9A2DBB" Guid="{A1D6B0A5-54E4-43C7-9E24-6957041D6BB1}">
               <File Id="fil8D71BE96BA691404962D35E5DAD823B9" Source="$(var.BrickEditor.TargetDir)runtimes\win-x86\native\assimp.dll" />
-              <File Id="fil10F70E1BA6F843CAA6ABF07E9156E003" Source="$(var.BrickEditor.TargetDir)lib\freetype6_x86.dll" Name="freetype6.dll" />
+              <File Id="fil10F70E1BA6F843CAA6ABF07E9156E003" Source="$(var.BrickEditor.TargetDir)runtimes\win-x86\native\freetype6.dll" />
             </Component>
           </Directory>
         </Directory>
@@ -119,8 +130,26 @@
   </Fragment>
 
   <Fragment>
-    <DirectoryRef Id="ApplicationProgramsFolder">
-      <Component Id="ApplicationShortcut" Guid="0AE01D31-70E6-44AF-B92F-2F86F1258CFD">
+    <ComponentGroup Id="BrickEditor.Shortcuts">
+      <Component Id="ApplicationShortcut" Guid="0AE01D31-70E6-44AF-B92F-2F86F1258CFD" Directory="ApplicationProgramsFolder">
+        <Shortcut Id="ApplicationStartMenuShortcut"
+                  Name="$(var.BrickEditor.Name)" Description="$(var.BrickEditor.Description)"
+                  Target="[dir777F6281BDA39BE4D21394C1207E9DD6]Brick Studio.exe"
+                  WorkingDirectory="dir777F6281BDA39BE4D21394C1207E9DD6"/>
+        <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall"/>
+        <RegistryValue Root="HKCU" Key="Software\LDDModder\BrickStudio" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+      </Component>
+      <Component Id="DesktopShortcut" Guid="7C1ED4FE-C189-4B05-8EAB-02B44276E3A6" Directory="DesktopFolder">
+        <Shortcut Id="ApplicationDesktopShortcut" Directory="DesktopFolder"
+             Name="$(var.BrickEditor.Name)" Description="$(var.BrickEditor.Description)"
+                  Target="[dir777F6281BDA39BE4D21394C1207E9DD6]Brick Studio.exe"
+                  WorkingDirectory="dir777F6281BDA39BE4D21394C1207E9DD6" />
+        <RegistryValue Root="HKCU" Key="Software\LDDModder\BrickStudio" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+      </Component>
+    </ComponentGroup>
+    
+    <!--<DirectoryRef Id="ApplicationProgramsFolder">
+      <Component Id="ApplicationShortcut" Guid="0AE01D31-70E6-44AF-B92F-2F86F1258CFD" >
         <Shortcut Id="ApplicationStartMenuShortcut"
                   Name="$(var.BrickEditor.Name)" Description="$(var.BrickEditor.Description)" 
                   Target="[dir777F6281BDA39BE4D21394C1207E9DD6]Brick Studio.exe"
@@ -129,7 +158,6 @@
         <RegistryValue Root="HKCU" Key="Software\LDDModder\BrickStudio" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
       </Component>
     </DirectoryRef>
-
     <DirectoryRef Id="DesktopFolder">
       <Component Id="DesktopShortcut" Guid="7C1ED4FE-C189-4B05-8EAB-02B44276E3A6">
         <Shortcut Id="ApplicationDesktopShortcut" Directory="DesktopFolder"
@@ -138,6 +166,6 @@
                   WorkingDirectory="dir777F6281BDA39BE4D21394C1207E9DD6" />
         <RegistryValue Root="HKCU" Key="Software\LDDModder\BrickStudio" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
       </Component>
-    </DirectoryRef>
+    </DirectoryRef>-->
   </Fragment>
 </Wix>

@@ -109,6 +109,11 @@ namespace LDDModder.Utilities
             }
         }
 
+        public static bool CopyFile(string filepath, string destination, bool silent)
+        {
+            return CopyFiles(new string[] { filepath }, destination, silent);
+        }
+
         public static bool CopyFiles(IEnumerable<string> items, string destination, bool silent)
         {
             try

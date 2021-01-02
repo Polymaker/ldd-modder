@@ -1,6 +1,7 @@
 ﻿using LDDModder.BrickEditor.Native;
 using LDDModder.BrickEditor.Rendering.Shaders;
 using LDDModder.BrickEditor.Rendering.UI;
+using LDDModder.Utilities;
 using ObjectTK.Buffers;
 using ObjectTK.Shaders;
 using ObjectTK.Textures;
@@ -55,15 +56,20 @@ namespace LDDModder.BrickEditor.Rendering
                 return true;
 
             string currentPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-
-            string x64dllPath = Path.Combine(currentPath, "runtimes\\win-x64\\native", "freetype6.dll");
-            string x86dllPath = Path.Combine(currentPath, "runtimes\\win-x86\\native", "freetype6.dll");
-
             string dllToUsePath = Path.Combine(currentPath, "freetype6.dll");
+
+            if (!System.Diagnostics.Debugger.IsAttached && File.Exists(dllToUsePath))
+            {
+                Freetype6Loaded = true;
+                return Freetype6Loaded;
+            }
 
             Freetype6Loaded = false;
             Use64bitFreetype6 = false;
             IntPtr libPtr = IntPtr.Zero;
+            
+            string x64dllPath = Path.Combine(currentPath, "runtimes\\win-x64\\native", "freetype6.dll");
+            string x86dllPath = Path.Combine(currentPath, "runtimes\\win-x86\\native", "freetype6.dll");
 
             try
             {
@@ -95,10 +101,16 @@ namespace LDDModder.BrickEditor.Rendering
 
             if (Freetype6Loaded)
             {
-                if (File.Exists(dllToUsePath))
-                    File.Delete(dllToUsePath);
-
-                File.Copy(Use64bitFreetype6 ? x64dllPath : x86dllPath, dllToUsePath);
+                try
+                {
+                    if (File.Exists(dllToUsePath))
+                    {
+                        if (!FileHelper.DeleteFileOrFolder(dllToUsePath, true, true))
+                            FileHelper.DeleteFileOrFolder(dllToUsePath, true, false);
+                    }
+                    FileHelper.CopyFile(Use64bitFreetype6 ? x64dllPath : x86dllPath, dllToUsePath, false);
+                }
+                catch { }
             }
 
             return Freetype6Loaded;
