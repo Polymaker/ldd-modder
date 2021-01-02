@@ -6,7 +6,7 @@
     <Content ID="0" PersistString="LDDModder.BrickEditor.UI.Panels.ViewportPanel" AutoHidePortion="0.25" IsHidden="False" IsFloat="False" />
     <Content ID="1" PersistString="LDDModder.BrickEditor.UI.Panels.StudConnectionPanel" AutoHidePortion="0.25" IsHidden="False" IsFloat="False" />
     <Content ID="2" PersistString="LDDModder.BrickEditor.UI.Panels.NavigationPanel" AutoHidePortion="0.25" IsHidden="False" IsFloat="False" />
-    <Content ID="3" PersistString="LDDModder.BrickEditor.UI.Panels.PartPropertiesPanel" AutoHidePortion="250" IsHidden="False" IsFloat="False" />
+    <Content ID="3" PersistString="LDDModder.BrickEditor.UI.Panels.PartPropertiesPanel:DescriptionPanel.Collapsed=False;PhysicalPanel.Collapsed=False;BoundingsPanel.Collapsed=False" AutoHidePortion="250" IsHidden="False" IsFloat="False" />
     <Content ID="4" PersistString="LDDModder.BrickEditor.UI.Panels.ElementDetailPanel" AutoHidePortion="250" IsHidden="False" IsFloat="False" />
     <Content ID="5" PersistString="LDDModder.BrickEditor.UI.Panels.ConnectionEditorPanel" AutoHidePortion="250" IsHidden="False" IsFloat="False" />
     <Content ID="6" PersistString="LDDModder.BrickEditor.UI.Panels.ValidationPanel" AutoHidePortion="250" IsHidden="False" IsFloat="False" />
