@@ -91,7 +91,7 @@
           <Directory Id="dirDE676F8467C337A86CFEE59BACABF3C2" Name="native">
             <Component Id="cmp18BD1316715DE0299161DEE11E7DE014" Guid="{B4D85769-D250-4332-AE49-7DD7CD3E68EC}">
               <File Id="filDF243D4323E71789D9A7826B390A58DD" Source="$(var.BrickEditor.TargetDir)runtimes\win-x64\native\assimp.dll" />
-              <File Id="fil641569533A75D694E97A4AAE17D3400E" Source="$(var.BrickEditor.TargetDir)lib\freetype6_x64.dll" Name="freetype6.dll" />
+              <File Id="fil641569533A75D694E97A4AAE17D3400E" Source="$(var.BrickEditor.TargetDir)runtimes\win-x64\native\freetype6.dll" />
             </Component>
           </Directory>
         </Directory>
@@ -100,7 +100,7 @@
           <Directory Id="dir809EDC985557A74F80153E56DF596302" Name="native">
             <Component Id="cmp85072CD5430AA1158EBBB00E3E9A2DBB" Guid="{A1D6B0A5-54E4-43C7-9E24-6957041D6BB1}">
               <File Id="fil8D71BE96BA691404962D35E5DAD823B9" Source="$(var.BrickEditor.TargetDir)runtimes\win-x86\native\assimp.dll" />
-              <File Id="fil10F70E1BA6F843CAA6ABF07E9156E003" Source="$(var.BrickEditor.TargetDir)lib\freetype6_x86.dll" Name="freetype6.dll" />
+              <File Id="fil10F70E1BA6F843CAA6ABF07E9156E003" Source="$(var.BrickEditor.TargetDir)runtimes\win-x86\native\freetype6.dll" />
             </Component>
           </Directory>
         </Directory>
