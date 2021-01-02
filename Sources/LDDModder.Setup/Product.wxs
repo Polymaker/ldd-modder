@@ -6,6 +6,7 @@
     <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
     <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
     <MediaTemplate EmbedCab="yes" />
+    
     <Icon Id="InstallIcon.ico" SourceFile="$(var.LDDModder.BrickEditor.ProjectDir)Resources\BrickStudioIcon.ico" />
     <Property Id="ARPPRODUCTICON" Value="InstallIcon.ico" />
     
@@ -50,7 +51,7 @@
                      Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\[ProductCode]"
               Action="createAndRemoveOnUninstall">
           <RegistryValue Type="string" Name="ModifyPath" Value="MsiExec.exe /X[ProductCode]"/>
-          <RegistryValue Type="string" Name="UninstallString" Value="MsiExec.exe /I[ProductCode]"/>
+          <RegistryValue Type="string" Name="UninstallString" Value="MsiExec.exe /X[ProductCode]"/>
         </RegistryKey>
       </Component>
     </DirectoryRef>
