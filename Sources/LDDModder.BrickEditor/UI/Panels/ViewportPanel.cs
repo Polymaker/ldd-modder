@@ -1421,7 +1421,8 @@ namespace LDDModder.BrickEditor.UI.Panels
                 {
                     if (!model.IsSelectable)
                         continue;
-
+                    if (model is BoneModel && !ProjectManager.ShowBones)
+                        continue;
                     if (model.RayIntersectsBoundingBox(ray, out float boxDist))
                     {
                         if (model.RayIntersects(ray, out float triangleDist))
