@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
@@ -23,6 +24,8 @@ namespace LDDModder.LDD.Primitives
         public Dictionary<string,string> ExtraAnnotations { get; }
 
         public List<XElement> ExtraElements { get; private set; }
+
+        public string Comments { get; set; }
 
         public Platform Platform { get; set; }
         public MainGroup MainGroup { get; set; }
@@ -167,9 +170,16 @@ namespace LDDModder.LDD.Primitives
             var primitive = new Primitive();
             primitive.LoadFromXml(document);
 
-            if (stream is FileStream fs &&
-                int.TryParse(Path.GetFileNameWithoutExtension(fs.Name), out int primitiveID))
-                primitive.ID = primitiveID;
+            if (stream is FileStream fs)
+            {
+                string filename = Path.GetFileNameWithoutExtension(fs.Name);
+                var m = Regex.Match(filename, "^(\\d+)");
+                if (m.Success)
+                    primitive.ID = int.Parse(m.Groups[1].Value);
+            }
+            //if (stream is FileStream fs &&
+            //    int.TryParse(Path.GetFileNameWithoutExtension(fs.Name), out int primitiveID))
+            //    primitive.ID = primitiveID;
             
             return primitive;
         }
@@ -200,6 +210,8 @@ namespace LDDModder.LDD.Primitives
 
             if (ID == 0 && Aliases.Any())
                 ID = Aliases.First();
+
+            Comments = document.Nodes().OfType<XComment>().FirstOrDefault()?.Value ?? string.Empty;
         }
 
         #region XML Element Loading
@@ -248,11 +260,24 @@ namespace LDDModder.LDD.Primitives
                     break;
 
                 case "Decoration":
-                    int surfaceCount = element.ReadAttribute<int>("faces");
-                    SubMaterials = new int[surfaceCount];
-                    var values = element.ReadAttribute<string>("subMaterialRedirectLookupTable").Split(',');
-                    for (int i = 0; i < surfaceCount; i++)
-                        SubMaterials[i] = int.Parse(values[i]);
+
+                    if (FileVersion.Major == 1 && element.HasAttribute("faces"))
+                    {
+                        try
+                        {
+                            int surfaceCount = element.ReadAttribute<int>("faces");
+                            SubMaterials = new int[surfaceCount];
+                            var values = element.ReadAttribute<string>("subMaterialRedirectLookupTable").Split(',');
+                            for (int i = 0; i < surfaceCount; i++)
+                                SubMaterials[i] = int.Parse(values[i]);
+                        }
+                        catch 
+                        {
+                            Console.WriteLine("invalid primitive version");
+                        }
+                        
+                    }
+                        
                     break;
 
                 case "Flex":
@@ -330,21 +355,28 @@ namespace LDDModder.LDD.Primitives
 
         #endregion
 
-        public void Save(string filename)
+        private XDocument GenerateXmlDocument()
         {
             var doc = new XDocument(SerializeToXml())
             {
                 Declaration = new XDeclaration("1.0", "UTF-8", "no")
             };
+
+            if (!string.IsNullOrEmpty(Comments))
+                doc.AddFirst(new XComment(Comments));
+
+            return doc;
+        }
+
+        public void Save(string filename)
+        {
+            var doc = GenerateXmlDocument();
             doc.Save(filename);
         }
 
         public void Save(Stream stream)
         {
-            var doc = new XDocument(SerializeToXml())
-            {
-                Declaration = new XDeclaration("1.0", "UTF-8", "no")
-            };
+            var doc = GenerateXmlDocument();
             doc.Save(stream);
         }
     }

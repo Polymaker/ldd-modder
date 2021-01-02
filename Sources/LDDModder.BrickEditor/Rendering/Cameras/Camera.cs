@@ -328,6 +328,11 @@ namespace LDDModder.BrickEditor.Rendering
             return Math.Max(value1, value2);
         }
 
+        /// <summary>
+        /// Returns the forward distance (depth) of a point relative to the camera
+        /// </summary>
+        /// <param name="worldPos"></param>
+        /// <returns></returns>
         public float GetDistanceFromCamera(Vector3 worldPos)
         {
             var posOffset = worldPos - Position;
@@ -339,6 +344,21 @@ namespace LDDModder.BrickEditor.Rendering
 
             //distance from camera is equal to adjacent side on the triangle formed by camera, specified pos and a point along camera foward axis
             return (float)Math.Cos(angleFromFwrd) * posOffset.Length;
+        }
+
+        public float GetUIScaleRatio(Vector3 position)
+        {
+            var distFromCamera = GetDistanceFromCamera(position);
+            var viewSize = GetViewSize(distFromCamera);
+            return viewSize.Y / Viewport.Height;
+        }
+
+        public float GetScaledUISize(Vector3 position, float size)
+        {
+            var distFromCamera = GetDistanceFromCamera(position);
+            var viewSize = GetViewSize(distFromCamera);
+            var uiScale = viewSize.Y / Viewport.Height;
+            return size * uiScale;
         }
 
         public void FitOrtographicSize(Vector2 size)
@@ -359,10 +379,5 @@ namespace LDDModder.BrickEditor.Rendering
 
         #endregion
 
-        public float DistanceFromCamera(Matrix4 transform)
-        {
-            var pos = Vector3.TransformPosition(Vector3.Zero, transform);
-            return Vector3.Distance(pos, Position);
-        }
     }
 }

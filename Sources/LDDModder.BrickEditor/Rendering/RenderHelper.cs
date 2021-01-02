@@ -41,60 +41,13 @@ namespace LDDModder.BrickEditor.Rendering
             ColorShader = ProgramFactory.Create<ColorShaderProgram>();
             WireframeShader = ProgramFactory.Create<WireframeShaderProgram>();
             ModelShader = ProgramFactory.Create<ModelShaderProgram>();
+            ModelShader.Use();
+            ModelShader.LightCount.Set(0);
+            ModelShader.Lights.Set(new LightInfo[0]);
             WireframeShader2 = ProgramFactory.Create<WireframeShader2Program>();
             StudConnectionShader = ProgramFactory.Create<StudConnectionShaderProgram>();
             SimpleTextureShader = ProgramFactory.Create<SimpleTextureShaderProgram>();
             GridShader = ProgramFactory.Create<GridShaderProgram>();
-            GridShader.Use();
-
-            GridShader.MajorGridLine.Set(new GridShaderProgram.GridLineInfo()
-            {
-                Color = new Color4(1, 1, 1, 0.8f),
-                Spacing = 0.8f,
-                Thickness = 1f,
-                OffCenter = true
-            });
-
-            GridShader.MinorGridLine.Set(new GridShaderProgram.GridLineInfo()
-            {
-                Color = new Color4(0.8f, 0.6f, 0.6f, 0.8f),
-                Spacing = 0.4f,
-                Thickness = 0.75f,
-                OffCenter = false
-            });
-
-
-            CollisionMaterial = new MaterialInfo
-            {
-                Diffuse = new Vector4(1f, 0.05f, 0.05f, 1f),
-                Specular = new Vector3(1f),
-                Shininess = 2f
-            };
-
-            ConnectionMaterial = new MaterialInfo
-            {
-                Diffuse = new Vector4(0.95f, 0.95f, 0.05f, 1f),
-                Specular = new Vector3(1f),
-                Shininess = 2f
-            };
-
-            MaleConnectorMaterial = new MaterialInfo
-            {
-                Diffuse = new Vector4(0.05f, 0.05f, 0.95f, 1f),
-                Specular = new Vector3(1f),
-                Shininess = 2f
-            };
-
-            FemaleConnectorMaterial = new MaterialInfo
-            {
-                Diffuse = new Vector4(0.05f, 0.95f, 0.05f, 1f),
-                Specular = new Vector3(1f),
-                Shininess = 2f
-            };
-
-            WireframeColor = new Vector4(0, 0, 0, 1f);
-            WireframeColorAlt = new Vector4(0.85f, 0.85f, 0.85f, 1f);
-            SelectionOutlineColor = new Vector4(1f);
         }
 
         public static void ReleaseResources()
@@ -142,6 +95,60 @@ namespace LDDModder.BrickEditor.Rendering
             }
         }
 
+        public static void SetupGridShader()
+        {
+            GridShader.Use();
+
+            GridShader.MajorGridLine.Set(new GridShaderProgram.GridLineInfo()
+            {
+                Color = new Color4(1, 1, 1, 0.8f),
+                Spacing = 0.8f,
+                Thickness = 1f,
+                OffCenter = true
+            });
+
+            GridShader.MinorGridLine.Set(new GridShaderProgram.GridLineInfo()
+            {
+                Color = new Color4(0.8f, 0.6f, 0.6f, 0.8f),
+                Spacing = 0.4f,
+                Thickness = 0.75f,
+                OffCenter = false
+            });
+
+
+            CollisionMaterial = new MaterialInfo
+            {
+                Diffuse = new Vector4(1f, 0.05f, 0.05f, 1f),
+                Specular = new Vector3(1f),
+                Shininess = 2f
+            };
+
+            ConnectionMaterial = new MaterialInfo
+            {
+                Diffuse = new Vector4(0.95f, 0.95f, 0.05f, 1f),
+                Specular = new Vector3(1f),
+                Shininess = 2f
+            };
+
+            MaleConnectorMaterial = new MaterialInfo
+            {
+                Diffuse = new Vector4(0.25f, 0.25f, 0.95f, 1f),
+                Specular = new Vector3(1f),
+                Shininess = 2f
+            };
+
+            FemaleConnectorMaterial = new MaterialInfo
+            {
+                Diffuse = new Vector4(0.05f, 0.95f, 0.05f, 1f),
+                Specular = new Vector3(1f),
+                Shininess = 2f
+            };
+
+            WireframeColor = new Vector4(0, 0, 0, 1f);
+            WireframeColorAlt = new Vector4(0.85f, 0.85f, 0.85f, 1f);
+            SelectionOutlineColor = new Vector4(1f);
+        }
+
         public static void InitializeMatrices(Camera camera)
         {
             var viewMatrix = camera.GetViewMatrix();
@@ -172,8 +179,12 @@ namespace LDDModder.BrickEditor.Rendering
             SimpleTextureShader.ViewMatrix.Set(viewMatrix);
             SimpleTextureShader.Projection.Set(projection);
 
-            UIRenderHelper.TextRenderer.ProjectionMatrix = projection;
-            UIRenderHelper.TextRenderer.DrawingPrimitives.Clear();
+            if (UIRenderHelper.Freetype6Loaded)
+            {
+                UIRenderHelper.TextRenderer.ProjectionMatrix = projection;
+                UIRenderHelper.TextRenderer.DrawingPrimitives.Clear();
+            }
+            
             TextViewMatrix = viewMatrix;
 
             GL.UseProgram(0);

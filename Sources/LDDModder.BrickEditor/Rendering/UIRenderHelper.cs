@@ -1,5 +1,7 @@
-﻿using LDDModder.BrickEditor.Rendering.Shaders;
+﻿using LDDModder.BrickEditor.Native;
+using LDDModder.BrickEditor.Rendering.Shaders;
 using LDDModder.BrickEditor.Rendering.UI;
+using LDDModder.Utilities;
 using ObjectTK.Buffers;
 using ObjectTK.Shaders;
 using ObjectTK.Textures;
@@ -10,7 +12,9 @@ using QuickFont.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -43,30 +47,103 @@ namespace LDDModder.BrickEditor.Rendering
             VertexList = new List<VertVT>();
         }
 
+        public static bool Use64bitFreetype6 { get; private set; }
+        public static bool Freetype6Loaded { get; private set; }
+
+        public static bool LoadFreetype6()
+        {
+            if (Freetype6Loaded)
+                return true;
+
+            string currentPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            string dllToUsePath = Path.Combine(currentPath, "freetype6.dll");
+
+            if (!System.Diagnostics.Debugger.IsAttached && File.Exists(dllToUsePath))
+            {
+                Freetype6Loaded = true;
+                return Freetype6Loaded;
+            }
+
+            Freetype6Loaded = false;
+            Use64bitFreetype6 = false;
+            IntPtr libPtr = IntPtr.Zero;
+            
+            string x64dllPath = Path.Combine(currentPath, "runtimes\\win-x64\\native", "freetype6.dll");
+            string x86dllPath = Path.Combine(currentPath, "runtimes\\win-x86\\native", "freetype6.dll");
+
+            try
+            {
+                libPtr = Kernel32.LoadLibrary(x64dllPath);
+                Freetype6Loaded = libPtr != IntPtr.Zero;
+                Use64bitFreetype6 = Freetype6Loaded;
+            }
+            catch {}
+            finally
+            {
+                if (libPtr != IntPtr.Zero)
+                    Kernel32.FreeLibrary(libPtr);
+            }
+
+            if (!Freetype6Loaded)
+            {
+                try
+                {
+                    libPtr = Kernel32.LoadLibrary(x86dllPath);
+                    Freetype6Loaded = libPtr != IntPtr.Zero;
+                }
+                catch {}
+                finally
+                {
+                    if (libPtr != IntPtr.Zero)
+                        Kernel32.FreeLibrary(libPtr);
+                }
+            }
+
+            if (Freetype6Loaded)
+            {
+                try
+                {
+                    if (File.Exists(dllToUsePath))
+                    {
+                        if (!FileHelper.DeleteFileOrFolder(dllToUsePath, true, true))
+                            FileHelper.DeleteFileOrFolder(dllToUsePath, true, false);
+                    }
+                    FileHelper.CopyFile(Use64bitFreetype6 ? x64dllPath : x86dllPath, dllToUsePath, false);
+                }
+                catch { }
+            }
+
+            return Freetype6Loaded;
+        }
+
         public static void InitializeResources()
         {
-            var builderConfig = new QFontBuilderConfiguration(true)
+            if (Freetype6Loaded)
             {
-                ShadowConfig =
+                var builderConfig = new QFontBuilderConfiguration(true)
+                {
+                    ShadowConfig =
                 {
                     BlurRadius = 2,
                     BlurPasses = 1,
                     Type = ShadowType.Blurred
                 },
-                TextGenerationRenderHint = TextGenerationRenderHint.ClearTypeGridFit,
-                Characters = CharacterSet.General | CharacterSet.Japanese | CharacterSet.Thai | CharacterSet.Cyrillic
-            };
+                    TextGenerationRenderHint = TextGenerationRenderHint.ClearTypeGridFit,
+                    Characters = CharacterSet.General | CharacterSet.Japanese | CharacterSet.Thai | CharacterSet.Cyrillic
+                };
 
-            NormalFont = new QFont("C:\\Windows\\Fonts\\segoeui.ttf", 10,
-                builderConfig);
+                NormalFont = new QFont("C:\\Windows\\Fonts\\segoeui.ttf", 10,
+                    builderConfig);
 
-            SmallFont = new QFont("C:\\Windows\\Fonts\\segoeui.ttf", 8,
-                builderConfig);
+                SmallFont = new QFont("C:\\Windows\\Fonts\\segoeui.ttf", 8,
+                    builderConfig);
 
-            MonoFont = new QFont("C:\\Windows\\Fonts\\consola.ttf", 10,
-                builderConfig);
+                MonoFont = new QFont("C:\\Windows\\Fonts\\consola.ttf", 10,
+                    builderConfig);
 
-            TextRenderer = new QFontDrawing();
+                TextRenderer = new QFontDrawing();
+            }
+            
 
             UIShader = ProgramFactory.Create<UIShaderProgram>();
 
@@ -85,22 +162,23 @@ namespace LDDModder.BrickEditor.Rendering
 
         public static void ReleaseResources()
         {
-            VBO.Dispose();
-            VAO.Dispose();
+            VBO?.Dispose();
+            VAO?.Dispose();
 
-            NormalFont.Dispose();
-            SmallFont.Dispose();
-            TextRenderer.Dispose();
-            UIShader.Dispose();
+            NormalFont?.Dispose();
+            SmallFont?.Dispose();
+            TextRenderer?.Dispose();
+            UIShader?.Dispose();
 
-            NormalFont.Dispose();
-            SmallFont.Dispose();
-            MonoFont.Dispose();
+            NormalFont?.Dispose();
+            SmallFont?.Dispose();
+            MonoFont?.Dispose();
         }
 
         public static void InitializeMatrices(Camera camera)
         {
             ViewSize = new Vector2(camera.Viewport.Width, camera.Viewport.Height);
+
             ProjectionMatrix = Matrix4.CreateOrthographicOffCenter(
                 0, camera.Viewport.Width, 
                 camera.Viewport.Height, 0, 
@@ -111,7 +189,11 @@ namespace LDDModder.BrickEditor.Rendering
                 0, camera.Viewport.Height, 
                 -1.0f, 1.0f);
 
-            TextRenderer.ProjectionMatrix = TextMatrix;
+            if (Freetype6Loaded)
+            {
+                TextRenderer.ProjectionMatrix = TextMatrix;
+            }
+           
         }
 
         public static void DrawSprite(Texture2D texture, Vector4 destination, SpriteBounds spriteBounds)
@@ -205,6 +287,15 @@ namespace LDDModder.BrickEditor.Rendering
                 StringAlignment.Near, StringAlignment.Near, dpOpt);
         }
 
+        public static void DrawShadowText(string text, QFont font, Color color, Vector4 bounds,
+            StringAlignment vAlign = StringAlignment.Near,
+            StringAlignment hAlign = StringAlignment.Near)
+        {
+            var dpOpt = new QFontRenderOptions() { Colour = color, LockToPixel = false, DropShadowActive = true };
+            DrawText(text, font, new RectangleF(bounds.X, bounds.Y, bounds.Z, bounds.W),
+                vAlign, hAlign, dpOpt);
+        }
+
         public static void DrawText(string text, QFont font, Vector4 color, Vector4 bounds,
             StringAlignment vAlign = StringAlignment.Near,
             StringAlignment hAlign = StringAlignment.Near)
@@ -234,6 +325,8 @@ namespace LDDModder.BrickEditor.Rendering
             StringAlignment hAlign,
             QFontRenderOptions options)
         {
+            if (!Freetype6Loaded)
+                return;
 
             var textSize = font.Measure(text, bounds.Size, QFontAlignment.Left);
             textSize.Height += 2;
@@ -275,8 +368,12 @@ namespace LDDModder.BrickEditor.Rendering
 
         public static void IntializeBeforeRender()
         {
-            TextRenderer.DrawingPrimitives.Clear();
-            TextRenderer.ProjectionMatrix = TextMatrix;
+            if (Freetype6Loaded)
+            {
+                TextRenderer.DrawingPrimitives.Clear();
+                TextRenderer.ProjectionMatrix = TextMatrix;
+            }
+            
             VBO.Clear(OpenTK.Graphics.OpenGL.BufferTarget.ArrayBuffer);
             SpritesToRender.Clear();
             VertexList.Clear();
@@ -302,9 +399,12 @@ namespace LDDModder.BrickEditor.Rendering
                 }
             }
 
-            TextRenderer.RefreshBuffers();
-            TextRenderer.Draw();
-            TextRenderer.DisableShader();
+            if (Freetype6Loaded)
+            {
+                TextRenderer.RefreshBuffers();
+                TextRenderer.Draw();
+                TextRenderer.DisableShader();
+            }
         }
 
         public class SpriteElement

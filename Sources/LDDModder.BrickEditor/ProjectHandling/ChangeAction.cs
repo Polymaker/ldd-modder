@@ -1,4 +1,4 @@
-﻿using LDDModder.Modding.Editing;
+﻿using LDDModder.Modding;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,6 +44,11 @@ namespace LDDModder.BrickEditor.ProjectHandling
                 foreach (var item in Data.ChangedItems)
                     Data.Collection.Insert(item.NewIndex, item.Element);
             }
+            else if (Data.Action == System.ComponentModel.CollectionChangeAction.Refresh)
+            {
+                foreach (var item in Data.ChangedItems)
+                    Data.Collection.SetIndex(item.NewIndex, item.Element);
+            }
         }
 
         public override void Undo()
@@ -57,6 +62,11 @@ namespace LDDModder.BrickEditor.ProjectHandling
             {
                 foreach (var item in Data.AddedElements)
                     Data.Collection.Remove(item);
+            }
+            else if (Data.Action == System.ComponentModel.CollectionChangeAction.Refresh)
+            {
+                foreach (var item in Data.ChangedItems)
+                    Data.Collection.SetIndex(item.OldIndex, item.Element);
             }
         }
     }

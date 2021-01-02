@@ -206,4 +206,24 @@ Voulez-vous vraiment les écraser?
   <data name="Caption_RecoverLastProject" xml:space="preserve">
     <value>Récupération de la session</value>
   </data>
+  <data name="Caption_Warning" xml:space="preserve">
+    <value>Avertissement</value>
+  </data>
+  <data name="Message_SaveWindowLayout" xml:space="preserve">
+    <value>Nom de la disposition:</value>
+  </data>
+  <data name="Caption_SaveWindowLayout" xml:space="preserve">
+    <value>Enregistrer la disposition de la fenêtre</value>
+  </data>
+  <data name="Message_LayoutNameAlreadyExist" xml:space="preserve">
+    <value>Le nom de la mise en page existe déjà.</value>
+  </data>
+  <data name="Caption_UnexpectedError" xml:space="preserve">
+    <value>Erreur inattendue</value>
+  </data>
+  <data name="Message_CouldNotLoadFreetype6" xml:space="preserve">
+    <value>La librairie «freetype6.dll» n'a pas pu être chargée.
+Cette librairie est utilisée pour dessiner du texte dans OpenGL.
+L'application peut toujours fonctionner mais aucun texte ne sera affiché dans la vue 3D.</value>
+  </data>
 </root>

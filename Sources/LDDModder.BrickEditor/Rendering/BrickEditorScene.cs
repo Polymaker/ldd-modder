@@ -1,4 +1,5 @@
 ﻿using LDDModder.BrickEditor.Rendering.UI;
+using LDDModder.Modding;
 using OpenTK;
 using System;
 using System.Collections.Generic;
@@ -55,7 +56,7 @@ namespace LDDModder.BrickEditor.Rendering
 
         #region Model Management
 
-        public PartElementModel GetElementModel(Modding.Editing.PartElement element)
+        public PartElementModel GetElementModel(PartElement element)
         {
             return Models.OfType<PartElementModel>().FirstOrDefault(x => x.Element == element);
         }

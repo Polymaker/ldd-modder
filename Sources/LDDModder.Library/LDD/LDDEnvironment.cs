@@ -329,5 +329,11 @@ namespace LDDModder.LDD
         {
             return GetLddSubdirectoryInfo(LddDirectory.ApplicationData, subfolder);
         }
+
+        public bool IsEqual(LDDEnvironment other)
+        {
+            return ProgramFilesPath.Equals(other.ProgramFilesPath, StringComparison.InvariantCultureIgnoreCase)
+                && ApplicationDataPath.Equals(other.ApplicationDataPath, StringComparison.InvariantCultureIgnoreCase);
+        }
     }
 }

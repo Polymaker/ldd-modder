@@ -8,11 +8,12 @@ using LDDModder.LDD;
 using LDDModder.LDD.Parts;
 using LDDModder.LDD.Primitives.Collisions;
 using LDDModder.LDD.Primitives.Connectors;
-using LDDModder.Modding.Editing;
+using LDDModder.Modding;
 using LDDModder.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -28,14 +29,20 @@ namespace LDDModder.BrickEditor.ProjectHandling
         private List<ValidationMessage> _ValidationMessages;
         private long LastValidation;
         private long LastSavedChange;
+        private bool ProjectWasModified;
 
         public PartProject CurrentProject { get; private set; }
 
         public UndoRedoManager UndoRedoManager { get; }
 
+        public string CurrentProjectPath { get; private set; }
+
+        public string TemporaryProjectPath { get; private set; }
+
         public bool IsProjectOpen => CurrentProject != null;
 
-        public bool IsNewProject => IsProjectOpen && string.IsNullOrEmpty(CurrentProject.ProjectPath);
+        //public bool IsNewProject => IsProjectOpen && string.IsNullOrEmpty(CurrentProject.ProjectPath);
+        public bool IsNewProject => IsProjectOpen && string.IsNullOrEmpty(CurrentProjectPath);
 
         public bool IsModified => LastSavedChange != UndoRedoManager.CurrentChangeID;
 
@@ -73,10 +80,17 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
         public event EventHandler ProjectModified;
 
+        /// <summary>
+        /// Raised when a collection in the project has changed.
+        /// </summary>
         public event EventHandler<ElementCollectionChangedEventArgs> ElementCollectionChanged;
 
         public event EventHandler<ElementValueChangedEventArgs> ElementPropertyChanged;
 
+        /// <summary>
+        /// Raised when one or more collections in the project has changed. <br/>
+        /// Raised only after a all changes are applied
+        /// </summary>
         public event EventHandler ProjectElementsChanged;
 
         #endregion
@@ -84,6 +98,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
         private bool ElementsChanged;
         private bool PreventProjectChange;
         private bool IsProjectAttached;
+        private bool PreventCollectionEvents;
 
         static ProjectManager()
         {
@@ -110,12 +125,15 @@ namespace LDDModder.BrickEditor.ProjectHandling
             UndoRedoManager.UndoHistoryChanged += UndoRedoManager_UndoHistoryChanged;
 
             _ShowPartModels = true;
+            _ShowGrid = true;
+            _ShowBones = true;
             _PartRenderMode = MeshRenderMode.SolidWireframe;
         }
 
         #region Project Loading/Closing
 
-        public void SetCurrentProject(PartProject project)
+
+        public void SetCurrentProject(PartProject project, string tempPath = null)
         {
             if (CurrentProject != project)
             {
@@ -124,9 +142,23 @@ namespace LDDModder.BrickEditor.ProjectHandling
                 PreventProjectChange = false;
 
                 CurrentProject = project;
-                
+                CurrentProjectPath = project.ProjectPath;
+                ProjectWasModified = false;
+
+                if (!string.IsNullOrEmpty(tempPath))
+                {
+                    LastSavedChange = -1;
+                    if (File.Exists(tempPath))
+                        TemporaryProjectPath = tempPath;
+                }
+
+                SaveWorkingProject();
+
+                SettingsManager.AddOpenedFile(GetCurrentProjectInfo());
+
                 if (project != null)
                     AttachPartProject(project);
+
                 ProjectChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -135,16 +167,35 @@ namespace LDDModder.BrickEditor.ProjectHandling
         {
             if (CurrentProject != null)
             {
+                if (!string.IsNullOrEmpty(TemporaryProjectPath))
+                    DeleteTemporaryProject(TemporaryProjectPath);
+                else
+                    SettingsManager.RemoveOpenedFile(CurrentProjectPath);
+
                 DettachPartProject(CurrentProject);
 
                 ProjectClosed?.Invoke(this, EventArgs.Empty);
 
                 CurrentProject = null;
                 UndoRedoManager.ClearHistory();
-
+                ProjectWasModified = false;
                 if (!PreventProjectChange)
                     ProjectChanged?.Invoke(this, EventArgs.Empty);
             }
+        }
+
+        public void DeleteTemporaryProject(string path)
+        {
+            string directoryPath = path;
+            if ((Path.GetFileName(path) ?? string.Empty) != string.Empty && File.Exists(path))
+                directoryPath = Path.GetDirectoryName(path);
+
+            if (Directory.Exists(directoryPath))
+            {
+                Task.Factory.StartNew(() => FileHelper.DeleteFileOrFolder(directoryPath, true, true));
+            }
+
+            SettingsManager.RemoveOpenedFile(path);
         }
 
         private void AttachPartProject(PartProject project)
@@ -172,6 +223,8 @@ namespace LDDModder.BrickEditor.ProjectHandling
             LastSavedChange = 0;
             LastValidation = -1;
             IsProjectAttached = false;
+            CurrentProjectPath = null;
+            TemporaryProjectPath = null;
         }
 
         #endregion
@@ -180,10 +233,19 @@ namespace LDDModder.BrickEditor.ProjectHandling
         {
             if (IsProjectOpen)
             {
+                string oldPath = CurrentProjectPath;
+
                 //SaveUserProperties();
-                CurrentProject.Save(targetPath);
-                CurrentProject.ProjectPath = targetPath;
+                CurrentProject.CleanUpAndSave(targetPath);
+
+                CurrentProjectPath = targetPath;
+                
                 LastSavedChange = UndoRedoManager.CurrentChangeID;
+
+                if (oldPath != CurrentProjectPath)
+                    SettingsManager.UpdateOpenedFile(TemporaryProjectPath, CurrentProjectPath);
+
+                SettingsManager.AddRecentProject(GetCurrentProjectInfo(), false);
                 ProjectModified?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -192,10 +254,28 @@ namespace LDDModder.BrickEditor.ProjectHandling
         {
             if (IsProjectOpen)
             {
-                //SaveUserProperties();
-                var projectXml = CurrentProject.GenerateProjectXml();
-                projectXml.Save(Path.Combine(CurrentProject.ProjectWorkingDir, PartProject.ProjectFileName));
+                if (string.IsNullOrEmpty(TemporaryProjectPath))
+                {
+                    string tempDir = FileHelper.GetTempDirectory(16);
+                    string tempFile = Path.Combine(tempDir, PartProject.ProjectFileName);
+                    TemporaryProjectPath = tempFile;
+                }
+                CurrentProject.ProjectPath = TemporaryProjectPath;
+                CurrentProject.Save(TemporaryProjectPath);
             }
+        }
+
+        public RecentFileInfo GetCurrentProjectInfo()
+        {
+            if (!IsProjectOpen)
+                return null;
+            return new RecentFileInfo()
+            {
+                PartID = CurrentProject.PartID,
+                PartName = CurrentProject.PartDescription,
+                ProjectFile = CurrentProjectPath,
+                TemporaryPath = TemporaryProjectPath
+            };
         }
 
         #region Project User Properties
@@ -281,7 +361,8 @@ namespace LDDModder.BrickEditor.ProjectHandling
                     InitializeElementExtensions();
             }
 
-            ElementCollectionChanged?.Invoke(this, e);
+            if (!PreventCollectionEvents)
+                ElementCollectionChanged?.Invoke(this, e);
 
             UndoRedoManager.ProcessProjectElementsChanged(e);
 
@@ -293,7 +374,8 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
         private void Project_ElementPropertyChanged(object sender, ElementValueChangedEventArgs e)
         {
-            ElementPropertyChanged?.Invoke(this, e);
+            if (!PreventCollectionEvents)
+                ElementPropertyChanged?.Invoke(this, e);
 
             UndoRedoManager.ProcessElementPropertyChanged(e);
         }
@@ -319,11 +401,26 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
         #region Viewport Display Handling
 
+        private bool _ShowGrid;
+        private bool _ShowBones;
         private bool _ShowPartModels;
         private bool _ShowCollisions;
         private bool _ShowConnections;
+        private bool _Show3dCursor;
         private MeshRenderMode _PartRenderMode;
         private bool BatchChangingVisibility;
+
+        public bool ShowGrid
+        {
+            get => _ShowGrid;
+            set => SetGridVisibility(value);
+        }
+
+        public bool ShowBones
+        {
+            get => _ShowBones;
+            set => SetBonesVisibility(value);
+        }
 
         public bool ShowPartModels
         {
@@ -343,11 +440,23 @@ namespace LDDModder.BrickEditor.ProjectHandling
             set => SetConnectionsVisibility(value);
         }
 
+        public bool Show3dCursor
+        {
+            get => _Show3dCursor;
+            set => Set3dCursorVisibility(value);
+        }
+
         public MeshRenderMode PartRenderMode
         {
             get => _PartRenderMode;
             set => SetPartRenderMode(value);
         }
+
+        public event EventHandler GridVisibilityChanged;
+
+        public event EventHandler BonesVisibilityChanged;
+
+        public event EventHandler CursorVisibilityChanged;
 
         public event EventHandler PartModelsVisibilityChanged;
 
@@ -356,6 +465,48 @@ namespace LDDModder.BrickEditor.ProjectHandling
         public event EventHandler ConnectionsVisibilityChanged;
 
         public event EventHandler PartRenderModeChanged;
+
+        private void SetGridVisibility(bool visible)
+        {
+            if (visible != _ShowGrid)
+            {
+                Trace.WriteLine($"{nameof(SetGridVisibility)}( visible => {visible} )");
+
+                _ShowGrid = visible;
+
+                GridVisibilityChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        private void SetBonesVisibility(bool visible)
+        {
+            if (visible != _ShowBones)
+            {
+                Trace.WriteLine($"{nameof(SetBonesVisibility)}( visible => {visible} )");
+
+                _ShowBones = visible;
+
+                //if (IsProjectOpen && IsProjectAttached)
+                //{
+                //    InvalidateElementsVisibility(CurrentProject.Bones);
+                //    RefreshAllNavigation();
+                //}
+
+                BonesVisibilityChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        private void Set3dCursorVisibility(bool visible)
+        {
+            if (visible != _Show3dCursor)
+            {
+                Trace.WriteLine($"{nameof(Set3dCursorVisibility)}( visible => {visible} )");
+
+                _Show3dCursor = visible;
+
+                CursorVisibilityChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
 
         private void SetPartModelsVisibility(bool visible)
         {
@@ -560,8 +711,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
         public void EndBatchChanges()
         {
-            UndoRedoManager.EndBatchChanges();
-            if (ElementsChanged)
+            if (UndoRedoManager.EndBatchChanges() && ElementsChanged)
             {
                 ElementsChanged = false;
                 ProjectElementsChanged?.Invoke(this, EventArgs.Empty);
@@ -571,6 +721,12 @@ namespace LDDModder.BrickEditor.ProjectHandling
         private void UndoRedoManager_UndoHistoryChanged(object sender, EventArgs e)
         {
             ProjectModified?.Invoke(this, EventArgs.Empty);
+
+            if (IsModified && !ProjectWasModified)
+            {
+                ProjectWasModified = true;
+                //CurrentProject.ProjectInfo.LastModification = DateTime.Now;
+            }
         }
 
         private void UndoRedoManager_BeginUndoRedo(object sender, EventArgs e)
@@ -734,7 +890,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
             {
                 if (!SettingsManager.IsWorkspaceDefined)
                     throw new ArgumentException("Workspace not defined!");
-                result = result.Replace("$(WorkspaceDir)", SettingsManager.Current.ProjectWorkspace);
+                result = result.Replace("$(WorkspaceDir)", SettingsManager.Current.EditorSettings.ProjectWorkspace);
             }
             if (result.Contains("$(PartID)"))
             {
@@ -776,6 +932,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
                 }
             }
 
+            var targetDir = new DirectoryInfo(targetPath);
             string meshDirectory = targetPath;
             if (buildConfig.LOD0Subdirectory)
                 meshDirectory = Path.Combine(targetPath, "LOD0");
@@ -795,12 +952,15 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
             var generatedFiles = new List<string>() { part.Filepath };
             generatedFiles.AddRange(part.Surfaces.Select(s => s.Filepath));
-            //string parentDirectory = string.Empty;
-            //var dirInfo = new DirectoryInfo(targetPath);
-            //if (dirInfo.Parent != null)
-            //    parentDirectory = dirInfo.Parent.FullName;
-            for (int i = 0; i < generatedFiles.Count; i++)
-                generatedFiles[i] = generatedFiles[i].Replace(targetPath, string.Empty);
+
+            if (targetDir.Parent != null)
+            {
+                for (int i = 0; i < generatedFiles.Count; i++)
+                {
+                    generatedFiles[i] = generatedFiles[i].Substring(targetDir.Parent.FullName.Length);
+                }
+            }
+            
 
             MessageBoxEX.ShowDetails(MainWindow, 
                 Messages.Message_LddFilesGenerated, 
@@ -975,8 +1135,8 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
                 var removedElements = elemsToDelete.Where(x => x.TryRemove()).ToList();
 
-                if (removedElements.OfType<ModelMeshReference>().Any())
-                    CurrentProject.RemoveUnreferencedMeshes();
+                //if (removedElements.OfType<ModelMeshReference>().Any())
+                //    CurrentProject.RemoveUnreferencedMeshes();
 
                 EndBatchChanges();
             }
@@ -1121,6 +1281,111 @@ namespace LDDModder.BrickEditor.ProjectHandling
             catch { }
         }
 
+        public void ClearBoneConnections()
+        {
+            if (CurrentProject == null || !CurrentProject.Flexible)
+                return;
+            StartBatchChanges(nameof(ClearBoneConnections));
+            PreventCollectionEvents = true;
+            foreach (var bone in CurrentProject.Bones)
+            {
+                bone.Connections.RemoveAll(x => x.SubType >= 999000);
+                bone.TargetConnectionID = string.Empty;
+                bone.TargetConnectionIndex = -1;
+                bone.SourceConnectionID = string.Empty;
+                bone.SourceConnectionIndex = -1;
+            }
+
+            PreventCollectionEvents = false;
+            ViewportWindow.InvalidateBones();
+            EndBatchChanges();
+        }
+
+        public void RebuildBoneConnections(float flexAmount = 0.06f)
+        {
+            if (CurrentProject == null || !CurrentProject.Flexible)
+                return;
+
+            if (CurrentProject.Bones.Count == 0)
+                return;
+
+            StartBatchChanges(nameof(RebuildBoneConnections));
+            PreventCollectionEvents = true;
+            foreach (var bone in CurrentProject.Bones)
+            {
+                bone.Connections.RemoveAll(x => x.SubType >= 999000);
+                bone.TargetConnectionID = string.Empty;
+                bone.TargetConnectionIndex = -1;
+                bone.SourceConnectionID = string.Empty;
+                bone.SourceConnectionIndex = -1;
+            }
+
+            int lastBoneId = CurrentProject.Bones.Max(x => x.BoneID);
+
+            int curConnType = 0;
+            int totalConnection = 0;
+            string flexAttributes = string.Format(CultureInfo.InvariantCulture, "-{0},{0},20,10,10", flexAmount);
+
+            foreach (var bone in CurrentProject.Bones.OrderBy(x => x.BoneID))
+            {
+                foreach (var linkedBone in CurrentProject.Bones.Where(x => x.TargetBoneID == bone.BoneID))
+                {
+                    PartConnection targetConn = PartConnection.Create(ConnectorType.Ball);
+
+                    if (linkedBone.BoneID == lastBoneId)
+                    {
+                        targetConn = PartConnection.Create(ConnectorType.Fixed);
+                        var fixConn = targetConn.GetConnector<FixedConnector>();
+                        fixConn.SubType = 999000 + curConnType;
+                    }
+                    else
+                    {
+                        targetConn = PartConnection.Create(ConnectorType.Ball);
+                        var ballConn = targetConn.GetConnector<BallConnector>();
+                        ballConn.SubType = 999000 + curConnType;
+                    }
+
+                    curConnType = (++curConnType) % 4;
+
+                    var posOffset = linkedBone.Transform.Position - bone.Transform.Position;
+                    posOffset = bone.Transform.ToMatrixD().Inverted().TransformVector(posOffset);
+                    targetConn.Transform.Position = posOffset;
+
+                    bone.Connections.Add(targetConn);
+                    CurrentProject.RenameElement(targetConn, $"FlexConn{totalConnection++}");
+
+                    PartConnection sourceConn = null;
+                    if (linkedBone.BoneID == lastBoneId)
+                    {
+                        sourceConn = PartConnection.Create(ConnectorType.Fixed);
+                        var fixConn = sourceConn.GetConnector<FixedConnector>();
+                        fixConn.SubType = 999000 + curConnType;
+                    }
+                    else
+                    {
+                        sourceConn = PartConnection.Create(ConnectorType.Ball);
+                        var ballConn = sourceConn.GetConnector<BallConnector>();
+                        ballConn.SubType = 999000 + curConnType;
+                        ballConn.FlexAttributes = flexAttributes;
+                    }
+
+                    curConnType = (++curConnType) % 4;
+                    linkedBone.Connections.Add(sourceConn);
+                    CurrentProject.RenameElement(sourceConn, $"FlexConn{totalConnection++}");
+
+                    linkedBone.TargetConnectionID = targetConn.ID;
+                    linkedBone.SourceConnectionID = sourceConn.ID;
+
+                }
+            }
+            
+            CurrentProject.UpdateBoneReferencesIndices();
+
+            PreventCollectionEvents = false;
+            ViewportWindow.InvalidateBones();
+            EndBatchChanges();
+        }
+
         #endregion
 
         #region Visibility Handling
@@ -1135,9 +1400,32 @@ namespace LDDModder.BrickEditor.ProjectHandling
                 elementExt.CalculateVisibility();
 
                 UndoRedoManager.AddEditorAction(new HideElementAction(
-                    nameof(HideSelectedElements),
+                    nameof(SetElementHidden),
                     new PartElement[] { element },
                     hidden));
+            }
+        }
+
+        public void SetElementsHidden(IEnumerable<PartElement> elements, bool hidden)
+        {
+            var changedElems = new List<PartElement>();
+
+            foreach (var elem in elements)
+            {
+                var elementExt = elem.GetExtension<ModelElementExtension>();
+
+
+                if (elementExt != null && elementExt.IsHidden != hidden)
+                {
+                    elementExt.IsHidden = hidden;
+                    changedElems.Add(elem);
+                    elementExt.CalculateVisibility();
+                }
+            }
+
+            if (changedElems.Any())
+            {
+                UndoRedoManager.AddEditorAction(new HideElementAction(nameof(SetElementsHidden), changedElems, hidden));
             }
         }
 
@@ -1160,6 +1448,28 @@ namespace LDDModder.BrickEditor.ProjectHandling
             if (hiddenElems.Any())
             {
                 UndoRedoManager.AddEditorAction(new HideElementAction(nameof(HideSelectedElements), hiddenElems, true));
+            }
+        }
+
+        public void UnhideSelectedElements()
+        {
+            var hideableElements = SelectedElements.Where(x => x.GetExtension<ModelElementExtension>() != null);
+            var changedElems = new List<PartElement>();
+
+            foreach (var elem in hideableElements)
+            {
+                var elementExt = elem.GetExtension<ModelElementExtension>();
+                if (elementExt != null && elementExt.IsHidden)
+                {
+                    changedElems.Add(elem);
+                    elementExt.IsHidden = false;
+                    elementExt.CalculateVisibility();
+                }
+            }
+
+            if (changedElems.Any())
+            {
+                UndoRedoManager.AddEditorAction(new HideElementAction(nameof(UnhideSelectedElements), changedElems, false));
             }
         }
 
@@ -1220,6 +1530,27 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
         #endregion
 
+        #region Selection
+
+        public void SelectAllVisible()
+        {
+            var hideableElements = CurrentProject.GetAllElements(x => x.GetExtension<ModelElementExtension>() != null);
+            var elemsToSelect = new List<PartElement>();
+            foreach (var elem in CurrentProject.GetAllElements())
+            {
+                var elementExt = elem.GetExtension<ModelElementExtension>();
+                if (elementExt != null && elementExt.IsVisible)
+                {
+                    if (elem is PartBone && !ShowBones)
+                        continue;
+                    elemsToSelect.Add(elem);
+                }
+            }
+            SelectElements(elemsToSelect);
+        }
+
+        #endregion
+
         #region Dialogs
 
         public void ShowCopyBoneDataDialog()
@@ -1231,13 +1562,29 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
             using (var dlg = new BoneDataCopyDialog(this))
             {
-                StartBatchChanges("BoneDataCopyDialog");
+                StartBatchChanges(nameof(BoneDataCopyDialog));
+                dlg.ShowDialog();
+                EndBatchChanges();
+            }
+        }
+
+        public void ShowLinkBonesDialog()
+        {
+            if (CurrentProject == null)
+                return;
+
+            Trace.WriteLine($"Executing: {nameof(ShowLinkBonesDialog)}");
+
+            using (var dlg = new BoneLinkDialog(this))
+            {
+                StartBatchChanges(nameof(BoneLinkDialog));
                 dlg.ShowDialog();
                 EndBatchChanges();
             }
         }
 
         #endregion
+
 
 
         #endregion

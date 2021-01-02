@@ -82,8 +82,10 @@ vec3 CalcPointLight(LightInfo light, vec3 diffuseColor, vec3 normal, vec3 fragPo
     // specular shading
     vec3 reflectDir = reflect(-lightDir, normal);
     //float spec = pow(clamp(dot(viewDir, reflectDir), 0, 1), Material.Shininess);
-	float spec = pow(max(dot(viewDir, reflectDir), 0.0), Material.Shininess);
-	
+	float spec = 0;
+	if (Material.Shininess > 0)
+		spec = pow(max(dot(viewDir, reflectDir), 0.0), Material.Shininess);
+
     // attenuation
     float distance    = length(light.Position - fragPos);
     float attenuation = light.Constant + 

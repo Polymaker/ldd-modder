@@ -2,7 +2,7 @@
 using LDDModder.BrickEditor.Resources;
 using LDDModder.LDD.Meshes;
 using LDDModder.LDD.Parts;
-using LDDModder.Modding.Editing;
+using LDDModder.Modding;
 using System;
 using System.Collections.Generic;
 using System.Linq;

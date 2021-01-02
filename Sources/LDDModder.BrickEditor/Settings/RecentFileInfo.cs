@@ -1,4 +1,4 @@
-﻿using LDDModder.Modding.Editing;
+﻿using LDDModder.Modding;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -17,7 +17,7 @@ namespace LDDModder.BrickEditor.Settings
         [JsonProperty]
         public string ProjectFile { get; set; }
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public string WorkingDirectory { get; set; }
+        public string TemporaryPath { get; set; }
 
         public RecentFileInfo() { }
 
@@ -27,8 +27,16 @@ namespace LDDModder.BrickEditor.Settings
             PartName = project.PartDescription;
             ProjectFile = project.ProjectPath;
 
-            if (includeWorkingDir)
-                WorkingDirectory = project.ProjectWorkingDir;
+            //if (includeWorkingDir)
+            //    WorkingDirectory = project.TemporaryProjectPath;
+        }
+
+        public RecentFileInfo(PartProject project, string temporaryPath)
+        {
+            PartID = project.PartID;
+            PartName = project.PartDescription;
+            ProjectFile = project.ProjectPath;
+            TemporaryPath = temporaryPath;
         }
     }
 }

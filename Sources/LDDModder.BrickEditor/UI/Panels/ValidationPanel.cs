@@ -1,6 +1,6 @@
 ﻿using LDDModder.BrickEditor.ProjectHandling;
 using LDDModder.BrickEditor.Resources;
-using LDDModder.Modding.Editing;
+using LDDModder.Modding;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

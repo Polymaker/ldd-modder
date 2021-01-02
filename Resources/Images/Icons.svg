@@ -18,7 +18,7 @@
    inkscape:version="0.92.3 (2405546, 2018-03-11)"
    sodipodi:docname="Icons.svg"
    enable-background="new"
-   inkscape:export-filename="D:\Programming\C#\ldd-modder\Sources\LDDModder.BrickEditor\Resources\Images\GizmoPivotPointIcon.png"
+   inkscape:export-filename="D:\Programming\C#\ldd-modder\Sources\LDDModder.BrickEditor\Resources\Images\ToggleGridIcon.png"
    inkscape:export-xdpi="60.000004"
    inkscape:export-ydpi="60.000004">
   <defs
@@ -236,18 +236,18 @@
      borderopacity="1.0"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:zoom="4"
-     inkscape:cx="-36.800902"
-     inkscape:cy="41.369157"
+     inkscape:zoom="22.627417"
+     inkscape:cx="17.806135"
+     inkscape:cy="12.770214"
      inkscape:document-units="px"
-     inkscape:current-layer="layer16"
-     showgrid="false"
+     inkscape:current-layer="layer14"
+     showgrid="true"
      units="px"
      inkscape:pagecheckerboard="false"
      inkscape:window-width="1369"
      inkscape:window-height="889"
-     inkscape:window-x="664"
-     inkscape:window-y="317"
+     inkscape:window-x="988"
+     inkscape:window-y="440"
      inkscape:window-maximized="0"
      inkscape:snap-grids="true">
     <inkscape:grid
@@ -263,7 +263,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -669,7 +669,7 @@
      inkscape:groupmode="layer"
      id="layer16"
      inkscape:label="Gizmo Pivot"
-     style="display:inline">
+     style="display:none">
     <path
        style="fill:none;stroke:#7a7a7a;stroke-width:0.5291667;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="M 0.26458333,3.175 V 0.26458333 H 3.175"
@@ -719,6 +719,41 @@
        style="display:inline;fill:none;stroke:#000000;stroke-width:0.5291667;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="M 4.2333333,2.6458333 V 1.0583334"
        id="path4740-9-6-5"
+       inkscape:connector-curvature="0" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer14"
+     inkscape:label="Grid">
+    <path
+       style="fill:none;stroke:#cc9999;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 2.1166665,1.5e-7 0,8.46666615"
+       id="path924-4-5"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:none;stroke:#cc9999;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 6.3499998,1.5e-7 V 8.4666665"
+       id="path924-7"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:none;stroke:#cc9999;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 0,6.35 H 8.4666664"
+       id="path924-4"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:none;stroke:#cc9999;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 0,2.1166666 H 8.4666666"
+       id="path924"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:none;stroke:#ff1742;stroke-width:0.52916667;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+       d="M 0,4.2333333 H 8.4666666"
+       id="path920"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:none;stroke:#288fff;stroke-width:0.52916667;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+       d="M 4.2333333,0 V 8.4666666"
+       id="path922"
        inkscape:connector-curvature="0" />
   </g>
 </svg>

@@ -3,7 +3,8 @@ using LDDModder.BrickEditor.Models.Navigation;
 using LDDModder.BrickEditor.ProjectHandling;
 using LDDModder.BrickEditor.ProjectHandling.ViewInterfaces;
 using LDDModder.BrickEditor.Resources;
-using LDDModder.Modding.Editing;
+using LDDModder.Modding;
+using LDDModder.Modding;
 using LDDModder.Utilities;
 using System;
 using System.Collections;
@@ -33,7 +34,6 @@ namespace LDDModder.BrickEditor.UI.Panels
             Bones,
             Meshes
         }
-
         private class ViewModeInfo
         {
             public NavigationViewMode ViewMode { get; set; }
@@ -82,8 +82,6 @@ namespace LDDModder.BrickEditor.UI.Panels
             InitializeContextMenus();
             InitializeNavigationTreeView();
             InitializeViewComboBox();
-
-            //ViewModeLabel.Text = $"<{ModelLocalizations.Label_NoActiveProject}> ";
         }
 
         private void InitializeViewComboBox()
@@ -173,7 +171,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             {
                 if (x is ProjectTreeNode projectNode)
                 {
-                    projectNode.UpdateVisibility();
+                    projectNode.UpdateVisibilityIcon();
                     return projectNode.VisibilityImageKey;
                 }
 
@@ -406,38 +404,13 @@ namespace LDDModder.BrickEditor.UI.Panels
             {
                 e.Handled = true;
 
-                if (e.Model is ProjectElementNode elementNode)
+                if (e.Model is ProjectTreeNode treeNode)
                 {
-                    var modelExt = elementNode.Element.GetExtension<ModelElementExtension>();
-                    if (modelExt != null)
-                        ProjectManager.SetElementHidden(elementNode.Element, !modelExt.IsHidden);
-                }
-                else if (e.Model is ElementCollectionNode elementColNode)
-                {
-                    var femaleStudExt = elementColNode.Element.GetExtension<FemaleStudModelExtension>();
-
-                    if (femaleStudExt != null)
+                    if (treeNode.CanToggleVisibility())
                     {
-                        femaleStudExt.ShowAlternateModels = !femaleStudExt.ShowAlternateModels;
-                        ProjectTreeView.RefreshObject(elementColNode.Parent);
+                        treeNode.ToggleVisibility();
+                        ProjectTreeView.RefreshObject(treeNode);
                     }
-                }
-                else if (e.Model is ProjectCollectionNode collectionNode)
-                {
-                    if (collectionNode.Collection == CurrentProject.Surfaces)
-                        ProjectManager.ShowPartModels = !ProjectManager.ShowPartModels;
-                    else if (collectionNode.Collection == CurrentProject.Collisions)
-                        ProjectManager.ShowCollisions = !ProjectManager.ShowCollisions;
-                    else if (collectionNode.Collection == CurrentProject.Connections)
-                        ProjectManager.ShowConnections = !ProjectManager.ShowConnections;
-
-                    ProjectTreeView.RefreshObject(collectionNode);
-                }
-                else if (e.Model is ElementGroupNode groupNode && groupNode.SupportsVisibility())
-                {
-
-                    //groupNode.ToggleVisibility();
-                    //ProjectTreeView.RefreshObject(groupNode);
                 }
             }
         }
@@ -694,19 +667,25 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             base.OnProjectElementsChanged();
 
-            ExecuteOnThread(() => RebuildNavigation(false));
+            BeginInvokeOnce(() => RebuildNavigation(false), nameof(RebuildNavigation));
+            //ExecuteOnThread(() => RebuildNavigation(false));
         }
 
         protected override void OnElementPropertyChanged(ElementValueChangedEventArgs e)
         {
             base.OnElementPropertyChanged(e);
+
             if (e.PropertyName == nameof(PartElement.Name))
             {
-                ExecuteOnThread(() => RefreshElementName(e.Element));
+                if (ProjectManager.IsExecutingBatchChanges)
+                    return;
+                BeginInvokeOnce(() => RefreshElementName(e.Element), nameof(RefreshElementName));
+                //ExecuteOnThread(() => RefreshElementName(e.Element));
             }
             else if (e.PropertyName == nameof(PartProperties.Flexible) && e.Element is PartProperties)
             {
-                ExecuteOnThread(() => RebuildNavigation(true));
+                BeginInvokeOnce(() => RebuildNavigation(true), nameof(RebuildNavigation));
+                //ExecuteOnThread(() => RebuildNavigation(true));
             }
         }
 
@@ -726,17 +705,26 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             IEnumerable<PartElement> GetTopLevelElems(ProjectTreeNode treeNode)
             {
+
                 if (treeNode is ProjectElementNode eNode)
-                    yield return eNode.Element;
-                else
                 {
-                    foreach (var node in treeNode.Nodes)
+                    bool skipElem = false;
+                    if (eNode.Element is PartBone bone && !ProjectManager.ShowBones)
+                        skipElem = true;
+
+                    if (!skipElem)
                     {
-                        foreach (var subNode in GetTopLevelElems(node))
-                            yield return subNode;
+                        yield return eNode.Element;
+                        yield break;
                     }
+
                 }
-                
+
+                foreach (var node in treeNode.Nodes)
+                {
+                    foreach (var subNode in GetTopLevelElems(node))
+                        yield return subNode;
+                }
             }
 
             var result = selectedNodes.SelectMany(x => GetTopLevelElems(x));
@@ -1074,7 +1062,6 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         #endregion
 
-
         protected override bool ProcessDialogKey(Keys keyData)
         {
             var normalKey = keyData & ~Keys.Control;
@@ -1099,11 +1086,35 @@ namespace LDDModder.BrickEditor.UI.Panels
                         ProjectManager.HandlePasteFromClipboard();
                         return true;
                     }
+                    else if (normalKey == Keys.H)
+                    {
+                        if (!isShiftPressed && !isAltPressed && !isControlPressed)
+                        {
+                            ProjectManager.HideSelectedElements();
+                            return true;
+                        }
+                        else if (!isShiftPressed && !isAltPressed && isControlPressed)
+                        {
+                            ProjectManager.UnhideSelectedElements();
+                            return true;
+                        }
+                        else if (isShiftPressed)
+                        {
+                            ProjectManager.HideUnselectedElements();
+                            return true;
+                        }
+                        else if (isAltPressed)
+                        {
+                            ProjectManager.UnhideEverything();
+                            return true;
+                        }
+                    }
                 }
             }
             
             return base.ProcessDialogKey(keyData);
         }
+
     }
 
 }

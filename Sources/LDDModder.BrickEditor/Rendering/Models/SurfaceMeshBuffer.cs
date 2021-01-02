@@ -1,6 +1,6 @@
 ﻿using LDDModder.BrickEditor.Rendering.Shaders;
 using LDDModder.LDD.Meshes;
-using LDDModder.Modding.Editing;
+using LDDModder.Modding;
 using OpenTK;
 using System;
 using System.Collections.Generic;
@@ -56,11 +56,11 @@ namespace LDDModder.BrickEditor.Rendering
             {
                 foreach (var meshRef in surfComp.Meshes)
                 {
-                    if (!meshRef.ModelMesh.CheckFileExist())
-                    {
-                        Debug.WriteLine($"Error: Could not load model: {meshRef.ModelMesh.FileName}");
-                        continue;
-                    }
+                    //if (!meshRef.ModelMesh.CheckFileExist())
+                    //{
+                    //    Debug.WriteLine($"Error: Could not load model: {meshRef.ModelMesh.FileName}");
+                    //    continue;
+                    //}
 
                     var addedModel = AddMeshGeometry(meshRef, indices, vertices);
 
@@ -72,11 +72,6 @@ namespace LDDModder.BrickEditor.Rendering
                 {
                     foreach (var meshRef in femaleStud.ReplacementMeshes)
                     {
-                        if (!meshRef.ModelMesh.CheckFileExist())
-                        {
-                            Debug.WriteLine($"Error: Could not load model: {meshRef.ModelMesh.FileName}");
-                            continue;
-                        }
 
                         var addedModel = AddMeshGeometry(meshRef, indices, vertices);
                         addedModel.IsReplacementModel = true;

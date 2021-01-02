@@ -247,6 +247,19 @@ namespace System.Collections.Generic
             }
         }
 
+        public T[] ToArray()
+        {
+            _Lock.EnterReadLock();
+            try
+            {
+                return _Items.ToArray();
+            }
+            finally
+            {
+                _Lock.ExitReadLock();
+            }
+        }
+
         #region LinQ & Helper functions
 
         public void ForEach(Action<T> predicate)

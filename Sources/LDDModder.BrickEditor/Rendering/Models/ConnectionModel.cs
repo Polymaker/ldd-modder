@@ -1,6 +1,7 @@
 ﻿using LDDModder.BrickEditor.Rendering.Models;
 using LDDModder.LDD.Primitives.Connectors;
-using LDDModder.Modding.Editing;
+using LDDModder.Modding;
+using LDDModder.Modding;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using QuickFont;
@@ -149,10 +150,8 @@ namespace LDDModder.BrickEditor.Rendering
             }
         }
 
-        public override void RenderModel(Camera camera)
+        public override void RenderModel(Camera camera, MeshRenderMode mode = MeshRenderMode.Solid)
         {
-            base.RenderModel(camera);
-
             switch (Connection.ConnectorType)
             {
                 case ConnectorType.Axel:
@@ -199,6 +198,15 @@ namespace LDDModder.BrickEditor.Rendering
 
                         RenderHelper.EndDrawWireframe(RenderingModel.VertexBuffer);
                     });
+
+                if (IsSelected && !BoundingBox.IsEmpty)
+                {
+                    var selectionBox = BoundingBox;
+                    selectionBox.Size += new Vector3(0.1f);
+                    RenderHelper.DrawBoundingBox(Transform,
+                        selectionBox,
+                        new Vector4(0f, 1f, 1f, 1f), 1.5f);
+                }
             }
             else
             {
@@ -214,7 +222,6 @@ namespace LDDModder.BrickEditor.Rendering
             RenderHelper.DrawRectangle(Transform,
                 new Vector2(connector.StudWidth * 0.8f, connector.StudHeight * 0.8f),
                 color, 3f);
-
             
             using (OpenTKHelper.TempEnable(EnableCap.Texture2D))
             {

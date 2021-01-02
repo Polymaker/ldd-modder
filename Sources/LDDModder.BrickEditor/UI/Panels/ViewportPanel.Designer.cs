@@ -46,12 +46,16 @@
             this.DisplayMenu_Meshes = new System.Windows.Forms.ToolStripMenuItem();
             this.DisplayMenu_Collisions = new System.Windows.Forms.ToolStripMenuItem();
             this.DisplayMenu_Connections = new System.Windows.Forms.ToolStripMenuItem();
+            this.DisplayMenu_3dCursor = new System.Windows.Forms.ToolStripMenuItem();
+            this.DisplayMenu_Bones = new System.Windows.Forms.ToolStripMenuItem();
             this.MeshesDropDownMenu = new System.Windows.Forms.ToolStripDropDownButton();
             this.MeshesMenu_CalculateOutlines = new System.Windows.Forms.ToolStripMenuItem();
             this.MeshesMenu_RemoveOutlines = new System.Windows.Forms.ToolStripMenuItem();
+            this.MeshesMenu_Separator1 = new System.Windows.Forms.ToolStripSeparator();
             this.MeshesMenu_Separate = new System.Windows.Forms.ToolStripMenuItem();
             this.MeshesMenu_Merge = new System.Windows.Forms.ToolStripMenuItem();
             this.BonesDropDownMenu = new System.Windows.Forms.ToolStripDropDownButton();
+            this.Bones_LinkBones = new System.Windows.Forms.ToolStripMenuItem();
             this.Bones_RebuildConnections = new System.Windows.Forms.ToolStripMenuItem();
             this.Bones_CalcBounding = new System.Windows.Forms.ToolStripMenuItem();
             this.Bones_CopyData = new System.Windows.Forms.ToolStripMenuItem();
@@ -64,19 +68,20 @@
             this.medianBoundingBoxToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.activeElementToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cursorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ToggleGridButton = new System.Windows.Forms.ToolStripButton();
             this.ModelRenderMode1Button = new System.Windows.Forms.ToolStripButton();
             this.ModelRenderMode2Button = new System.Windows.Forms.ToolStripButton();
             this.ModelRenderMode3Button = new System.Windows.Forms.ToolStripButton();
             this.visualStudioToolStripExtender1 = new WeifenLuo.WinFormsUI.Docking.VisualStudioToolStripExtender(this.components);
             this.SelectionInfoPanel = new System.Windows.Forms.Panel();
-            this.transformEditor1 = new LDDModder.BrickEditor.UI.Controls.TransformEditor();
-            this.MeshesMenu_Separator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.SelectionTransformEditor = new LDDModder.BrickEditor.UI.Controls.TransformEditor();
             this.toolStrip1.SuspendLayout();
             this.SelectionInfoPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // toolStrip1
             // 
+            this.toolStrip1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(249)))), ((int)(((byte)(250)))));
             this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.CameraMenuDropDown,
@@ -85,6 +90,7 @@
             this.BonesDropDownMenu,
             this.GizmoOrientationMenu,
             this.GizmoPivotModeMenu,
+            this.ToggleGridButton,
             this.ModelRenderMode1Button,
             this.ModelRenderMode2Button,
             this.ModelRenderMode3Button});
@@ -178,7 +184,9 @@
             this.DisplayMenuDropDown.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.DisplayMenu_Meshes,
             this.DisplayMenu_Collisions,
-            this.DisplayMenu_Connections});
+            this.DisplayMenu_Connections,
+            this.DisplayMenu_3dCursor,
+            this.DisplayMenu_Bones});
             resources.ApplyResources(this.DisplayMenuDropDown, "DisplayMenuDropDown");
             this.DisplayMenuDropDown.Name = "DisplayMenuDropDown";
             // 
@@ -205,6 +213,22 @@
             resources.ApplyResources(this.DisplayMenu_Connections, "DisplayMenu_Connections");
             this.DisplayMenu_Connections.CheckedChanged += new System.EventHandler(this.DisplayMenu_Connections_CheckedChanged);
             // 
+            // DisplayMenu_3dCursor
+            // 
+            this.DisplayMenu_3dCursor.CheckOnClick = true;
+            this.DisplayMenu_3dCursor.Name = "DisplayMenu_3dCursor";
+            resources.ApplyResources(this.DisplayMenu_3dCursor, "DisplayMenu_3dCursor");
+            this.DisplayMenu_3dCursor.CheckedChanged += new System.EventHandler(this.DisplayMenu_3dCursor_CheckedChanged);
+            // 
+            // DisplayMenu_Bones
+            // 
+            this.DisplayMenu_Bones.Checked = true;
+            this.DisplayMenu_Bones.CheckOnClick = true;
+            this.DisplayMenu_Bones.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.DisplayMenu_Bones.Name = "DisplayMenu_Bones";
+            resources.ApplyResources(this.DisplayMenu_Bones, "DisplayMenu_Bones");
+            this.DisplayMenu_Bones.CheckedChanged += new System.EventHandler(this.DisplayMenu_Bones_CheckedChanged);
+            // 
             // MeshesDropDownMenu
             // 
             this.MeshesDropDownMenu.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
@@ -230,6 +254,11 @@
             resources.ApplyResources(this.MeshesMenu_RemoveOutlines, "MeshesMenu_RemoveOutlines");
             this.MeshesMenu_RemoveOutlines.Click += new System.EventHandler(this.MeshesMenu_RemoveOutlines_Click);
             // 
+            // MeshesMenu_Separator1
+            // 
+            this.MeshesMenu_Separator1.Name = "MeshesMenu_Separator1";
+            resources.ApplyResources(this.MeshesMenu_Separator1, "MeshesMenu_Separator1");
+            // 
             // MeshesMenu_Separate
             // 
             this.MeshesMenu_Separate.Name = "MeshesMenu_Separate";
@@ -246,11 +275,18 @@
             // 
             this.BonesDropDownMenu.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.BonesDropDownMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.Bones_LinkBones,
             this.Bones_RebuildConnections,
             this.Bones_CalcBounding,
             this.Bones_CopyData});
             resources.ApplyResources(this.BonesDropDownMenu, "BonesDropDownMenu");
             this.BonesDropDownMenu.Name = "BonesDropDownMenu";
+            // 
+            // Bones_LinkBones
+            // 
+            this.Bones_LinkBones.Name = "Bones_LinkBones";
+            resources.ApplyResources(this.Bones_LinkBones, "Bones_LinkBones");
+            this.Bones_LinkBones.Click += new System.EventHandler(this.Bones_LinkBones_Click);
             // 
             // Bones_RebuildConnections
             // 
@@ -336,6 +372,18 @@
             this.cursorToolStripMenuItem.Name = "cursorToolStripMenuItem";
             resources.ApplyResources(this.cursorToolStripMenuItem, "cursorToolStripMenuItem");
             // 
+            // ToggleGridButton
+            // 
+            this.ToggleGridButton.Checked = true;
+            this.ToggleGridButton.CheckOnClick = true;
+            this.ToggleGridButton.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.ToggleGridButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.ToggleGridButton.Image = global::LDDModder.BrickEditor.Properties.Resources.ToggleGridIcon;
+            resources.ApplyResources(this.ToggleGridButton, "ToggleGridButton");
+            this.ToggleGridButton.Margin = new System.Windows.Forms.Padding(0, 1, 10, 2);
+            this.ToggleGridButton.Name = "ToggleGridButton";
+            this.ToggleGridButton.CheckedChanged += new System.EventHandler(this.ToggleGridButton_CheckedChanged);
+            // 
             // ModelRenderMode1Button
             // 
             this.ModelRenderMode1Button.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -369,21 +417,17 @@
             // SelectionInfoPanel
             // 
             resources.ApplyResources(this.SelectionInfoPanel, "SelectionInfoPanel");
-            this.SelectionInfoPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
-            this.SelectionInfoPanel.Controls.Add(this.transformEditor1);
+            this.SelectionInfoPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(105)))), ((int)(((byte)(90)))), ((int)(((byte)(100)))));
+            this.SelectionInfoPanel.Controls.Add(this.SelectionTransformEditor);
             this.SelectionInfoPanel.Name = "SelectionInfoPanel";
             // 
-            // transformEditor1
+            // SelectionTransformEditor
             // 
-            resources.ApplyResources(this.transformEditor1, "transformEditor1");
-            this.transformEditor1.ForeColor = System.Drawing.Color.White;
-            this.transformEditor1.Name = "transformEditor1";
-            this.transformEditor1.ViewLayout = LDDModder.BrickEditor.UI.Controls.TransformEditor.EditLayout.Vertical;
-            // 
-            // MeshesMenu_Separator1
-            // 
-            this.MeshesMenu_Separator1.Name = "MeshesMenu_Separator1";
-            resources.ApplyResources(this.MeshesMenu_Separator1, "MeshesMenu_Separator1");
+            resources.ApplyResources(this.SelectionTransformEditor, "SelectionTransformEditor");
+            this.SelectionTransformEditor.ForeColor = System.Drawing.Color.White;
+            this.SelectionTransformEditor.Name = "SelectionTransformEditor";
+            this.SelectionTransformEditor.ViewLayout = LDDModder.BrickEditor.UI.Controls.TransformEditor.EditLayout.Vertical;
+            this.SelectionTransformEditor.ValueChanged += new System.EventHandler(this.SelectionTransformEditor_ValueChanged);
             // 
             // ViewportPanel
             // 
@@ -440,9 +484,13 @@
         private System.Windows.Forms.ToolStripMenuItem Bones_RebuildConnections;
         private System.Windows.Forms.ToolStripMenuItem Bones_CalcBounding;
         private System.Windows.Forms.ToolStripMenuItem Bones_CopyData;
-        private Controls.TransformEditor transformEditor1;
+        private Controls.TransformEditor SelectionTransformEditor;
         private System.Windows.Forms.ToolStripMenuItem MeshesMenu_CalculateOutlines;
         private System.Windows.Forms.ToolStripMenuItem MeshesMenu_RemoveOutlines;
         private System.Windows.Forms.ToolStripSeparator MeshesMenu_Separator1;
+        private System.Windows.Forms.ToolStripMenuItem Bones_LinkBones;
+        private System.Windows.Forms.ToolStripButton ToggleGridButton;
+        private System.Windows.Forms.ToolStripMenuItem DisplayMenu_3dCursor;
+        private System.Windows.Forms.ToolStripMenuItem DisplayMenu_Bones;
     }
 }

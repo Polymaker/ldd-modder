@@ -1,6 +1,6 @@
 ﻿using LDDModder.BrickEditor.Rendering;
 using LDDModder.BrickEditor.Rendering.Shaders;
-using LDDModder.Modding.Editing;
+using LDDModder.Modding;
 using ObjectTK.Shaders;
 using OpenTK;
 using OpenTK.Graphics;
@@ -24,6 +24,7 @@ using LDDModder.BrickEditor.UI.Windows;
 using LDDModder.BrickEditor.ProjectHandling.ViewInterfaces;
 using System.Threading.Tasks;
 using OpenTK.Platform;
+using LDDModder.BrickEditor.Rendering.Models;
 
 namespace LDDModder.BrickEditor.UI.Panels
 {
@@ -37,7 +38,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private List<SurfaceMeshBuffer> SurfaceModels;
 
-        private ThreadSafeList<PartElementModel> LoadedModels;
+        private ThreadSafeList<ModelBase> LoadedModels;
 
         private List<UIElement> UIElements;
 
@@ -46,6 +47,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         private Camera Camera => CameraManipulator.Camera;
 
         private TransformGizmo SelectionGizmo;
+        private CursorModel CursorModel;
 
         private LoopController LoopController;
 
@@ -71,7 +73,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             CloseButton = false;
             CloseButtonVisible = false;
             SurfaceModels = new List<SurfaceMeshBuffer>();
-            LoadedModels = new ThreadSafeList<PartElementModel>();
+            LoadedModels = new ThreadSafeList<ModelBase>();
             UIElements = new List<UIElement>();
             ShowIcon = false;
             
@@ -105,7 +107,9 @@ namespace LDDModder.BrickEditor.UI.Panels
             {
                 GraphicsContext.ShareContexts = true;
                 CreateGLControl();
-                GlWindowInfo = OpenTK.Platform.Utilities.CreateWindowsWindowInfo(Handle);
+
+                GlWindowInfo = OpenTKHelper.GetWindowInfo(Handle, false);
+             
                 ResourceContext = new GraphicsContext(new GraphicsMode(32, 24, 2, 8), GlWindowInfo);
                 ResourceContext.MakeCurrent(null);
                 GlContextCreated = true;
@@ -145,10 +149,27 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             ResourceContext.MakeCurrent(GlWindowInfo);
 
-            TextureManager.InitializeResources();
-            UIRenderHelper.InitializeResources();
-            RenderHelper.InitializeResources();
-            ModelManager.InitializeResources();
+            try
+            {
+                //if (!UIRenderHelper.LoadFreetype6())
+                //    throw new Exception("Could not load freetype6.dll");
+
+                TextureManager.InitializeResources();
+                UIRenderHelper.InitializeResources();
+                RenderHelper.InitializeResources();
+                ModelManager.InitializeResources();
+            }
+            catch(Exception ex)
+            {
+                BeginInvoke((Action)(() =>
+                {
+                    MessageBoxEX.ShowException(this, ex.Message, Messages.Caption_UnexpectedError, ex);
+                }));
+                
+                GlContextCreated = false;
+                return;
+            }
+            
 
             SetupUIElements();
 
@@ -158,7 +179,6 @@ namespace LDDModder.BrickEditor.UI.Panels
             CameraManipulator.Initialize(new Vector3(5), Vector3.Zero);
 
             InitializeSelectionGizmo();
-            SetupSceneLights();
         }
 
         public override void OnInitializationFinished()
@@ -169,11 +189,26 @@ namespace LDDModder.BrickEditor.UI.Panels
 
                 ModelManager.InitializeBuffers();
                 UIRenderHelper.InitializeBuffers();
+                RenderHelper.SetupGridShader();
+
                 UpdateGLViewport();
+
+                InitializeInputManager();
+
+                SetupSceneLights();
+
                 LoopController.Start();
             }
 
             SelectCurrentGizmoOptions();
+        }
+
+        private void InitializeInputManager()
+        {
+            bool isMouseOver = glControl1.ClientRectangle.Contains(PointToClient(Control.MousePosition));
+
+            InputManager.SetContainsMouse(isMouseOver);
+            InputManager.ContainsFocus = ContainsFocus;
         }
 
         private void InitializeMenus()
@@ -204,7 +239,11 @@ namespace LDDModder.BrickEditor.UI.Panels
             ProjectManager.CollisionsVisibilityChanged += ProjectManager_ModelsVisibilityChanged;
             ProjectManager.ConnectionsVisibilityChanged += ProjectManager_ModelsVisibilityChanged;
             ProjectManager.PartRenderModeChanged += ProjectManager_PartRenderModeChanged;
+            ProjectManager.BonesVisibilityChanged += ProjectManager_ModelsVisibilityChanged;
+            projectManager.CursorVisibilityChanged += ProjectManager_ModelsVisibilityChanged;
         }
+
+        
 
         private UIButton SelectGizmoButton;
         private UIButton MoveGizmoButton;
@@ -285,82 +324,106 @@ namespace LDDModder.BrickEditor.UI.Panels
             SelectionGizmo.TransformFinishing += SelectionGizmo_TransformFinishing;
             SelectionGizmo.TransformFinished += SelectionGizmo_TransformFinished;
             SelectionGizmo.DisplayStyleChanged += SelectionGizmo_DisplayStyleChanged;
+
+            CursorModel = new CursorModel()
+            {
+                RenderLayer = 3
+            };
+            SelectionGizmo.CursorModel = CursorModel;
         }
 
         private void CalculateLight(ref LightInfo light, Vector3 lightDir, BBox sceneBounds, 
-            float lightConeAngle = 50f, float lightFalloffScale = 4f)
+            float lightConeAngle = 50f)
         {
             lightDir = lightDir.Normalized();
             var boxVerts = sceneBounds.GetCorners();
-            var ray = new Ray(sceneBounds.Center + lightDir * 2, lightDir * -1);
+            var ray = new Ray(sceneBounds.Center + lightDir * sceneBounds.Size.Length, lightDir * -1);
 
             var lightMatrix = Matrix4.LookAt(ray.Origin, sceneBounds.Center, Vector3.UnitY);
 
             Vector2 minPos = Vector2.Zero;
             Vector2 maxPos = Vector2.Zero;
             float viewDistance = 0;
+            float maxDist = float.MinValue;
+            float minDist = float.MaxValue;
 
             foreach (var vert in boxVerts)
             {
                 var tp = Vector3.TransformPosition(vert, lightMatrix);
                 minPos = Vector2.ComponentMin(tp.Xy, minPos);
                 maxPos = Vector2.ComponentMax(tp.Xy, maxPos);
-                viewDistance = Math.Min(viewDistance, tp.Z);
+                maxDist = Math.Max(maxDist, tp.Z * -1f);
+                minDist = Math.Min(minDist, tp.Z * -1f);
             }
-            viewDistance = Math.Abs(viewDistance);
+
+            viewDistance = Math.Abs((maxDist * 0.35f + minDist * 0.75f));
 
             var maxDiag = Math.Max(maxPos.X - minPos.X, maxPos.Y - minPos.Y);
             var lightDist = (maxDiag * 0.5f) / (float)Math.Tan(MathHelper.ToRadian(lightConeAngle / 2f));
-            lightDist = Math.Max(lightDist, 3f);
+            lightDist = Math.Max(lightDist, 4f);
             light.Position = sceneBounds.Center + (lightDir * lightDist);
-            var distFromCenter = Vector3.Distance(sceneBounds.Center, light.Position);
-            viewDistance += distFromCenter;
-            var lightComponents = RenderHelper.CalculateLightComponents(viewDistance * lightFalloffScale);
+            var offset = Vector3.Distance(sceneBounds.Center, light.Position) - Vector3.Distance(sceneBounds.Center, ray.Origin);
+            viewDistance += offset;
+
+            var powerOffset = MathHelper.Map(sceneBounds.Size.Length, 0, 25f, 5f, 40f);
+            powerOffset = MathHelper.Clamp(powerOffset, 2, 40);
+            var lightPower = powerOffset + (viewDistance / 0.10f);
+
+            var lightComponents = RenderHelper.CalculateLightComponents(lightPower);
             light.Linear = lightComponents.X;
             light.Quadratic = lightComponents.Y;
         }
 
         private void SetupSceneLights()
         {
-            RenderHelper.ModelShader.Use();
+            
 
             var sceneBounds = GetSceneBoundingBox();
 
+
+            bool isFlatShape = sceneBounds.SizeY / 0.5f < ((sceneBounds.SizeX + sceneBounds.SizeZ) / 2f);
+            bool isTallShape = sceneBounds.SizeY * 0.6f >= ((sceneBounds.SizeX + sceneBounds.SizeZ) / 2f);
+            //bool isTallerThanWidth = sceneBounds.SizeY * 0.6f >= sceneBounds.SizeX;
+            //bool isTallerThanDepth = sceneBounds.SizeY * 0.6f >= sceneBounds.SizeZ;
+
+            float heightOffset = isTallShape ? 0.45f : 0.65f;
+            float depthOffset = isFlatShape ? 0.65f : 1f;
+
             var ambiantLight = new LightInfo()
             {
-                Ambient = new Vector3(0.7f),
-                Diffuse = new Vector3(0.2f),
-                Specular = new Vector3(0.2f),
-                Constant = 1f,
+                Ambient = new Vector3(0.5f),
+                Diffuse = new Vector3(0.01f),
+                Specular = new Vector3(0.01f),
+                Constant = 0.8f,
             };
-            CalculateLight(ref ambiantLight, new Vector3(1,1,1), sceneBounds, 30, 10f);
+            CalculateLight(ref ambiantLight, new Vector3(1,1,1), sceneBounds, 30);
 
             var keyLight = new LightInfo()
             {
                 Ambient = new Vector3(0.1f),
                 Diffuse = new Vector3(0.7f),
-                Specular = new Vector3(0.8f),
+                Specular = new Vector3(0.2f),
                 Constant = 1f,
             };
-            CalculateLight(ref keyLight, new Vector3(0, 0.75f, 1), sceneBounds);
-            
+            CalculateLight(ref keyLight, new Vector3(0, heightOffset, depthOffset), sceneBounds);
+
             var fillLight = new LightInfo()
             {
                 Ambient = new Vector3(0.1f),
                 Diffuse = new Vector3(0.6f),
-                Specular = new Vector3(0.3f),
+                Specular = new Vector3(0.2f),
                 Constant = 1f,
             };
-            CalculateLight(ref fillLight, new Vector3(1, 0.75f, 0), sceneBounds);
-            
+            CalculateLight(ref fillLight, new Vector3(depthOffset, heightOffset, 0), sceneBounds);
+
             var backLight = new LightInfo()
             {
-                Ambient = new Vector3(0.1f),
-                Diffuse = new Vector3(0.6f),
-                Specular = new Vector3(0.3f),
+                Ambient = new Vector3(0.15f),
+                Diffuse = new Vector3(0.5f),
+                Specular = new Vector3(0.1f),
                 Constant = 1f,
             };
-            CalculateLight(ref backLight, new Vector3(-1, 0.75f, 0), sceneBounds);
+            CalculateLight(ref backLight, new Vector3(depthOffset * -0.6f, heightOffset * 0.75f, depthOffset * -0.4f), sceneBounds);
 
             SceneLights = new List<LightInfo>()
             {
@@ -369,7 +432,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                 fillLight,
                 backLight,
             };
-
+            RenderHelper.ModelShader.Use();
             RenderHelper.ModelShader.Lights.Set(SceneLights.ToArray());
             RenderHelper.ModelShader.LightCount.Set(SceneLights.Count);
             RenderHelper.ModelShader.UseTexture.Set(false);
@@ -403,36 +466,21 @@ namespace LDDModder.BrickEditor.UI.Panels
             GL.LoadMatrix(ref viewMatrix);
 
             RenderHelper.InitializeMatrices(Camera);
+ 
+            if(ProjectManager.ShowGrid)
+                DrawGrid(); // Draw grid a first time for transparent meshes/textures
 
-            DrawGrid();
+            DrawSceneModels();
 
-            if (ProjectManager.ShowPartModels)
-                DrawPartModels();
-
-            foreach (var model in LoadedModels)
-            {
-                if (model.Visible)
-                    model.RenderModel(Camera);
-            }
-
-            if (UIRenderHelper.TextRenderer.DrawingPrimitives.Any())
-            {
-                UIRenderHelper.TextRenderer.RefreshBuffers();
-                UIRenderHelper.TextRenderer.Draw();
-                UIRenderHelper.TextRenderer.DisableShader();
-            }
-
-            DrawGrid();
-
-            //if (SceneLights != null)
+            //if (CurrentProject?.Flexible == true && ProjectManager.ShowBones)
             //{
-            //    foreach (var light in SceneLights)
-            //    {
-            //        RenderHelper.DrawGizmoAxes(Matrix4.CreateTranslation(light.Position), 0.5f, false);
-            //    }
+            //    GL.Clear(ClearBufferMask.DepthBufferBit);
+            //    DrawBones();
             //}
 
             GL.UseProgram(0);
+
+            //DebugDrawLights();
 
             if (SelectionGizmo.Visible)
             {
@@ -440,23 +488,84 @@ namespace LDDModder.BrickEditor.UI.Panels
                 SelectionGizmo.Render(Camera);
             }
 
-            
             GL.UseProgram(0);
             
         }
 
-        private void DrawPartModels()
+        private void DrawSceneModels()
         {
             GL.Enable(EnableCap.Texture2D);
 
             RenderHelper.BindModelTexture(TextureManager.Checkerboard, TextureUnit.Texture4);
 
-            foreach (var surfaceModel in SurfaceModels)
-                surfaceModel.Render(Camera, ProjectManager.PartRenderMode);
+            int lastLayer = 0;
+
+            foreach(var renderLayer in LoadedModels
+                .GroupBy(x => x.RenderLayer).OrderBy(g => g.Key))
+            {
+                if (renderLayer.Key != lastLayer)
+                {
+                    GL.Clear(ClearBufferMask.DepthBufferBit);
+                    lastLayer = renderLayer.Key;
+                }
+
+                foreach (var model in renderLayer.OrderBy(x => x.ZDepth))
+                {
+                    if (!model.Visible)
+                        continue;
+
+                    if (model is BoneModel && !ProjectManager.ShowBones)
+                        continue;
+
+                    if (model is SurfaceModelMesh)
+                        model.RenderModel(Camera, ProjectManager.PartRenderMode);
+                    else
+                        model.RenderModel(Camera);
+                }
+
+                Draw3DTexts();
+
+                if (renderLayer.Key == 0 && ProjectManager.ShowGrid)
+                    DrawGrid(); //Draw grid as second time 
+            }
+            
 
             RenderHelper.UnbindModelTexture();
             TextureManager.Checkerboard.Bind(TextureUnit.Texture0);
             GL.Disable(EnableCap.Texture2D);
+
+            
+        }
+
+        private void Draw3DTexts()
+        {
+            if (UIRenderHelper.Freetype6Loaded && UIRenderHelper.TextRenderer.DrawingPrimitives.Any())
+            {
+                UIRenderHelper.TextRenderer.RefreshBuffers();
+                UIRenderHelper.TextRenderer.Draw();
+                UIRenderHelper.TextRenderer.DisableShader();
+                UIRenderHelper.TextRenderer.DrawingPrimitives.Clear();
+            }
+        }
+
+        //private void DrawBones()
+        //{
+        //    foreach (var model in LoadedModels.OfType<BoneModel>())
+        //    {
+        //        if (model.Visible)
+        //            model.RenderModel(Camera);
+        //    }
+        //}
+
+        private void DebugDrawLights()
+        {
+            if (SceneLights != null)
+            {
+                foreach (var light in SceneLights)
+                {
+                    RenderHelper.DrawGizmoAxes(Matrix4.CreateTranslation(light.Position), 0.5f, false);
+                }
+            }
         }
 
         private void DrawGrid()
@@ -494,7 +603,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             foreach (var elem in UIElements)
                 elem.Draw();
 
-            if (CurrentProject != null && CurrentProject.Flexible)
+            if (CurrentProject != null && CurrentProject.Flexible && ProjectManager.ShowBones)
                 DrawBoneNames();
 
 
@@ -503,7 +612,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             else
                 AvgRenderFPS = (AvgRenderFPS + LoopController.RenderFrequency) / 2d;
 
-            UIRenderHelper.DrawText($"Render FPS: {AvgRenderFPS:0}", UIRenderHelper.NormalFont, Color.White, new Vector2(10, 10));
+            //UIRenderHelper.DrawText($"Render FPS: {AvgRenderFPS:0}", UIRenderHelper.NormalFont, Color.White, new Vector2(10, 10));
 
             if (SelectionGizmo.IsEditing)
                 DrawGizmoStatus();
@@ -524,14 +633,18 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             foreach (var bone in boneModels)
             {
+                if (!bone.Visible)
+                    continue;
+
                 var rootPos = bone.Transform.ExtractTranslation();
                 var tipPos = rootPos + Vector3.TransformVector(new Vector3(bone.BoneLength, 0, 0), bone.Transform);
-                var avgPos = (rootPos + tipPos) / 2f;
-                var screenPos = Camera.WorldPointToScreen(avgPos);
-                //screenPos.X += 10;
-                //screenPos.Y -= 10;
+                var boneCenter = (rootPos + tipPos) / 2f;
+                var screenPos = Camera.WorldPointToScreen(boneCenter);
+                var boneBounds = new Vector4(screenPos.X - 30, screenPos.Y - 20, 60, 40);
+
                 UIRenderHelper.DrawShadowText(bone.Element.Name,
-                    UIRenderHelper.NormalFont, Color.White, screenPos);
+                    UIRenderHelper.NormalFont, Color.White, boneBounds,
+                    StringAlignment.Center, StringAlignment.Center);
             }
         }
 
@@ -642,15 +755,25 @@ namespace LDDModder.BrickEditor.UI.Panels
                 }
             }
 
+            var cameraProjection = Camera.GetProjectionMatrix();
+
+            foreach (var model in LoadedModels.ToArray())
+            {
+                var originPt = Vector3.TransformPosition(model.BoundingBox.Center, model.Transform);
+                var cameraPt = Camera.WorldPointToViewport(originPt);
+                model.ZDepth = cameraPt.Z * -1;
+            }
+
             try
             {
                 //TODO: improve access to LoadedModels list to prevent collection changed exceptions
-                var boneModels = LoadedModels.OfType<BoneModel>().ToList();
+                var boneModels = LoadedModels.ToArray().OfType<BoneModel>().ToList();
                 if (boneModels.Any(x => x.IsLengthDirty))
                 {
                     foreach (var boneModel in boneModels)
                         boneModel.CalculateBoneLength();
                 }
+                CursorModel.Visible = ProjectManager.Show3dCursor;
             }
             catch { }
             
@@ -668,7 +791,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         private void SelectionGizmo_TransformFinished(object sender, EventArgs e)
         {
             ProjectManager.EndBatchChanges();
-            if (transformEditor1.Visible && transformEditor1.PhysicalElement == null)
+            if (SelectionTransformEditor.Visible && SelectionTransformEditor.PhysicalElement == null)
             {
                 UpdateSelectionInfoPanel();
             }
@@ -758,12 +881,18 @@ namespace LDDModder.BrickEditor.UI.Panels
         private void DisposeGLResources()
         {
             UnloadModels();
-            SelectionGizmo.Dispose();
+            if (SelectionGizmo != null)
+                SelectionGizmo.Dispose();
+            if (CursorModel != null)
+                CursorModel.Dispose();
+
             UIRenderHelper.ReleaseResources();
             RenderHelper.ReleaseResources();
             ModelManager.ReleaseResources();
             TextureManager.ReleaseResources();
+
             SelectionGizmo = null;
+            CursorModel = null;
 
             if (ResourceContext != null)
             {
@@ -779,6 +908,8 @@ namespace LDDModder.BrickEditor.UI.Panels
             base.OnProjectChanged();
             UpdateDocumentTitle();
             UpdateToolbarMenu();
+
+            SetupSceneLights();
         }
 
         protected override void OnProjectLoaded(PartProject project)
@@ -790,7 +921,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             RebuildConnectionModels();
             RebuildBoneModels();
             SetupDefaultCamera();
-            SetupSceneLights();
+            LoadedModels.Add(CursorModel);
         }
 
         private void ProjectManager_ProjectModified(object sender, EventArgs e)
@@ -802,13 +933,21 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             var surfModel = new SurfaceMeshBuffer(surface);
 
-            surfModel.Material = new MaterialInfo
+            var material = new MaterialInfo
             {
                 Diffuse = new Vector4(0.7f, 0.7f, 0.7f, 1f),
                 Specular = new Vector3(1f),
                 Shininess = 8f
             };
 
+            if (surface.SurfaceID > 0)
+            {
+                material.Shininess = 1f;
+                //material.Diffuse = new Vector4(0.4f, 0.4f, 0.4f, 1f);
+                material.Specular = new Vector3(0.4f, 0.4f, 0.4f);
+            }
+
+            surfModel.Material = material;
             //if (surface.SurfaceID > 0)
             //{
             //    var matColor = Color4.FromHsv(new Vector4((surface.SurfaceID * 0.2f) % 1f, 0.9f, 0.8f, 1f));
@@ -829,13 +968,15 @@ namespace LDDModder.BrickEditor.UI.Panels
             base.OnProjectClosed();
             SelectionGizmo.Deactivate();
             UnloadModels();
-            SetupSceneLights();
+            //SetupSceneLights();
         }
 
         private bool SurfaceMeshesChanged;
         private bool CollisionsChanged;
         private bool ConnectionsChanged;
         private bool BonesChanged;
+        private bool PatternsChanged;
+        private bool ModelsMoved;
 
         protected override void OnElementCollectionChanged(ElementCollectionChangedEventArgs e)
         {
@@ -859,6 +1000,16 @@ namespace LDDModder.BrickEditor.UI.Panels
             {
                 BonesChanged = true;
             }
+            else if (e.ElementType == typeof(ClonePattern))
+            {
+                PatternsChanged = true;
+            }
+        }
+
+        public void InvalidateBones()
+        {
+            BonesChanged = true;
+            ConnectionsChanged = true;
         }
 
         protected override void OnElementPropertyChanged(ElementValueChangedEventArgs e)
@@ -876,6 +1027,10 @@ namespace LDDModder.BrickEditor.UI.Panels
                 {
                     BonesDropDownMenu.Visible = CurrentProject.Flexible;
                 }
+            }
+            if (e.PropertyName == nameof(ITransformableElement.Transform))
+            {
+                ModelsMoved = true;
             }
         }
 
@@ -895,10 +1050,18 @@ namespace LDDModder.BrickEditor.UI.Panels
             if (BonesChanged)
                 RebuildBoneModels();
 
+            if (PatternsChanged)
+                RebuildPatternModels();
+            
+            if (ModelsMoved)
+                SetupSceneLights();
+
             SurfaceMeshesChanged = false;
             CollisionsChanged = false;
             ConnectionsChanged = false;
             BonesChanged = false;
+            PatternsChanged = false;
+            ModelsMoved = false;
         }
 
         #endregion
@@ -907,6 +1070,8 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void RebuildSurfaceModels()
         {
+            LoadedModels.RemoveAll(x => x is SurfaceModelMesh);
+
             if (ProjectManager.IsProjectOpen)
             {
                 foreach (var surfaceModel in SurfaceModels.ToArray())
@@ -930,6 +1095,8 @@ namespace LDDModder.BrickEditor.UI.Panels
                         model.RebuildPartModels();
                     }
                 }
+
+                LoadedModels.AddRange(SurfaceModels.SelectMany(x => x.MeshModels));
             }
             else if (SurfaceModels.Any())
             {
@@ -1024,7 +1191,50 @@ namespace LDDModder.BrickEditor.UI.Panels
                 foreach (var bone in allBones)
                 {
                     if (!existingModels.Any(x => x.Bone == bone))
-                        LoadedModels.Add(new BoneModel(bone));
+                    {
+                        LoadedModels.Add(new BoneModel(bone)
+                        {
+                            RenderLayer = 1
+                        });
+                    }
+                }
+            }
+            else if (existingModels.Any())
+            {
+                existingModels.ForEach(x =>
+                {
+                    x.Dispose();
+                    LoadedModels.Remove(x);
+                });
+            }
+        }
+
+        private void RebuildPatternModels()
+        {
+            var existingModels = LoadedModels.OfType<ClonePatternModel>().ToList();
+            if (ProjectManager.IsProjectOpen)
+            {
+                var allPatterns = CurrentProject.GetAllElements<ClonePattern>().ToList();
+
+                foreach (var patternModel in existingModels)
+                {
+                    if (!allPatterns.Contains(patternModel.ClonePattern))
+                    {
+                        patternModel.Dispose();
+                        LoadedModels.Remove(patternModel);
+                    }
+                }
+
+                foreach (var pattern in allPatterns)
+                {
+                    var patternModel = existingModels.FirstOrDefault(x => x.ClonePattern == pattern);
+                    if (patternModel == null)
+                    {
+                        patternModel = new ClonePatternModel(pattern);
+                        LoadedModels.Add(patternModel);
+                    }
+                    var elemModels = LoadedModels.OfType<PartElementModel>().Where(x => pattern.Elements.Contains(x.Element));
+                    patternModel.SetElementModels(elemModels);
                 }
             }
             else if (existingModels.Any())
@@ -1053,37 +1263,27 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         public IEnumerable<PartElementModel> GetAllElementModels()
         {
-            foreach (var model in SurfaceModels.SelectMany(x => x.MeshModels))
-                yield return model;
-
-            //foreach (var model in CollisionModels)
-            //    yield return model;
-
-            //foreach (var model in ConnectionModels)
-            //    yield return model;
-
-            foreach (var model in LoadedModels)
-                yield return model;
+            return LoadedModels.OfType<PartElementModel>();
         }
 
-        public IEnumerable<PartElementModel> GetVisibleModels()
+        public IEnumerable<ModelBase> GetVisibleModels()
         {
-            foreach (var model in GetAllElementModels())
-            {
-                var elementExt = model.Element.GetExtension<ModelElementExtension>();
-                if (elementExt?.IsVisible ?? model.Visible)
-                    yield return model;
-            }
+            return LoadedModels.Where(x => x.Visible);
         }
 
-        public IEnumerable<PartElementModel> GetSelectedModels(bool onlyVisible = false)
+        public IEnumerable<ModelBase> GetSelectedModels(bool onlyVisible = false)
         {
-            IEnumerable<PartElementModel> selectedModels = Enumerable.Empty<PartElementModel>();
+            var selectedModels = LoadedModels.Where(m => m.IsSelected && (!onlyVisible || m.Visible));
 
-            if (onlyVisible)
-                selectedModels = GetVisibleModels().Where(x => x.IsSelected);
-            else
-                selectedModels = GetAllElementModels().Where(x => x.IsSelected);
+            return selectedModels
+                .OrderBy(x => x is PartElementModel pem ? 
+                ProjectManager.GetSelectionIndex(pem.Element) : 0);
+        }
+
+        public IEnumerable<PartElementModel> GetSelectedElementModels(bool onlyVisible = false)
+        {
+            var selectedModels = LoadedModels.OfType<PartElementModel>()
+                .Where(m => m.IsSelected && (!onlyVisible || m.Visible));
 
             return selectedModels
                 .OrderBy(x => ProjectManager.GetSelectionIndex(x.Element));
@@ -1148,8 +1348,6 @@ namespace LDDModder.BrickEditor.UI.Panels
             {
                 SelectionGizmo.Deactivate();
             }
-
-            
         }
 
         private void UpdateSelectionInfoPanel()
@@ -1159,70 +1357,127 @@ namespace LDDModder.BrickEditor.UI.Panels
                 BeginInvoke(new MethodInvoker(UpdateSelectionInfoPanel));
                 return;
             }
-            
-            int activeObjectCount = SelectionGizmo.ActiveElements.Count();
-
-            if (activeObjectCount == 1)
+            using (FlagManager.UseFlag(nameof(UpdateSelectionInfoPanel)))
             {
-                var activeObject = SelectionGizmo.ActiveElements.FirstOrDefault();
+                int activeObjectCount = SelectionGizmo.ActiveElements.Count();
 
-
-                if (activeObject is PartElementModel elementModel && 
-                    elementModel.Element is IPhysicalElement physicalElement)
+                if (activeObjectCount == 1)
                 {
-                    transformEditor1.BindPhysicalElement(physicalElement);
+                    var activeObject = SelectionGizmo.ActiveElements.FirstOrDefault();
+
+
+                    if (activeObject is PartElementModel elementModel &&
+                        elementModel.Element is IPhysicalElement physicalElement)
+                    {
+                        SelectionTransformEditor.BindPhysicalElement(physicalElement);
+                    }
+                    else
+                    {
+                        SelectionTransformEditor.BindPhysicalElement(null);
+                        var lddTrans = ItemTransform.FromMatrix(activeObject.Transform.ToLDD());
+                        SelectionTransformEditor.Value = lddTrans;
+                    }
                 }
                 else
-                {
-                    transformEditor1.BindPhysicalElement(null);
-                    var lddTrans = ItemTransform.FromMatrix(activeObject.Transform.ToLDD());
-                    transformEditor1.Value = lddTrans;
-                }
+                    SelectionTransformEditor.BindPhysicalElement(null);
+
+                SelectionInfoPanel.Visible = (activeObjectCount == 1);
             }
-            else
-                transformEditor1.BindPhysicalElement(null);
-
-            SelectionInfoPanel.Visible = (activeObjectCount == 1);
-
         }
 
+        private void SelectionTransformEditor_ValueChanged(object sender, EventArgs e)
+        {
+            if (FlagManager.IsSet(nameof(UpdateSelectionInfoPanel)))
+                return;
+
+            if (SelectionTransformEditor.PhysicalElement == null)
+            {
+                var activeObject = SelectionGizmo.ActiveElements.FirstOrDefault();
+                if (activeObject != null)
+                    activeObject.Transform = SelectionTransformEditor.Value.ToMatrix().ToGL();
+            }
+        }
 
         private void PerformRaySelection(Ray ray)
         {
             var visibleModels = GetVisibleModels();
+            var selectedModels = LoadedModels.Where(x => x.IsSelected).ToList();
+            bool nonElementModelSelected = false;
+
+            foreach(var model in selectedModels)
+            {
+                if (!(model is PartElementModel))
+                {
+                    model.IsSelected = false;
+                    nonElementModelSelected = true;
+                }
+            }
 
             if (ray != null && visibleModels.Any())
             {
-                var intersectingModels = new List<Tuple<PartElementModel, float>>();
+                var intersectingModels = new List<Tuple<ModelBase, float>>();
 
                 foreach (var model in visibleModels)
                 {
+                    if (!model.IsSelectable)
+                        continue;
+
                     if (model.RayIntersectsBoundingBox(ray, out float boxDist))
                     {
                         if (model.RayIntersects(ray, out float triangleDist))
                         {
-                            intersectingModels.Add(new Tuple<PartElementModel, float>(model, triangleDist));
+                            intersectingModels.Add(new Tuple<ModelBase, float>(model, triangleDist));
                         }
                     }
                 }
 
-                var closestHit = intersectingModels.OrderBy(x => x.Item2).FirstOrDefault();
-                var closestElement = closestHit?.Item1.Element;
+                int maxRenderLayer = intersectingModels.Any() ? 
+                    intersectingModels.Max(x => x.Item1.RenderLayer) : 0;
 
-                if (InputManager.IsControlDown())
+                var closestHit = intersectingModels
+                    .Where(x=>x.Item1.RenderLayer == maxRenderLayer)
+                    .OrderBy(x => x.Item2).FirstOrDefault();
+
+                //if (intersectingModels.Any(x => x.Item1 is BoneModel))
+                //{
+                //    closestHit = intersectingModels.Where(x => x.Item1 is BoneModel)
+                //        .OrderBy(x => x.Item2).FirstOrDefault();
+                //}
+
+                var closestModel = closestHit?.Item1;
+                var closestElement = (closestModel as PartElementModel)?.Element;
+
+                if (closestModel != null && closestElement == null)
                 {
-                    if (closestElement != null)
-                        ProjectManager.SetSelected(closestElement, !ProjectManager.IsSelected(closestElement));
+                    ProjectManager.ClearSelection();
+                    closestModel.IsSelected = true;
+                    nonElementModelSelected = true;
                 }
-                else if (InputManager.IsShiftDown())
+                else if(closestElement != null)
                 {
-                    if (closestElement != null)
+                    nonElementModelSelected = false;
+
+                    if (InputManager.IsControlDown())
+                    {
+                        ProjectManager.SetSelected(closestElement, !ProjectManager.IsSelected(closestElement));
+                    }
+                    else if (InputManager.IsShiftDown())
+                    {
                         ProjectManager.SetSelected(closestElement, true);
+                    }
+                    else if (closestElement != null)
+                    {
+                        ProjectManager.SelectElement(closestElement);
+                    }
                 }
                 else
-                {
-                    ProjectManager.SelectElement(closestElement);
-                }
+                    ProjectManager.ClearSelection();
+            }
+
+            if (nonElementModelSelected)
+            {
+                UpdateGizmoFromSelection();
+                UpdateSelectionInfoPanel();
             }
         }
 
@@ -1246,14 +1501,18 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         public BBox GetSceneBoundingBox()
         {
-            if (CurrentProject != null)
+            if (CurrentProject != null && LoadedModels.Any())
             {
-                var modelMeshes = SurfaceModels.SelectMany(x => x.MeshModels);
-                if (modelMeshes.Any())
-                    return CalculateBoundingBox(modelMeshes);
+                var bbox = CalculateBoundingBox(LoadedModels);
+                if (!bbox.IsEmpty)
+                    return bbox;
+                //var modelMeshes = SurfaceModels.SelectMany(x => x.MeshModels);
+                //if (modelMeshes.Any())
+                //    return CalculateBoundingBox(modelMeshes);
+                
             }
 
-            return BBox.FromCenterSize(Vector3.Zero, new Vector3(1f));
+            return BBox.FromCenterSize(Vector3.Zero, new Vector3(2f));
         }
 
         private BBox CalculateBoundingBox(IEnumerable<ModelBase> modelMeshes)
@@ -1263,8 +1522,8 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             foreach (var model in modelMeshes)
             {
-                if (!(model is SurfaceModelMesh))
-                    continue;
+                //if (!(model is SurfaceModelMesh))
+                //    continue;
 
                 var worldBounding = model.GetWorldBoundingBox();
                 
@@ -1316,7 +1575,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void RepositionCamera(Vector3 cameraDirection, Vector3 upVector)
         {
-            var visibleModels = GetAllElementModels().OfType<SurfaceModelMesh>();
+            var visibleModels = LoadedModels.OfType<SurfaceModelMesh>();
             var bounding = GetSceneBoundingBox();
 
             float distanceToTarget = 3f;
@@ -1454,6 +1713,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         private void UpdateToolbarMenu()
         {
             BonesDropDownMenu.Visible = CurrentProject?.Flexible ?? false;
+            DisplayMenu_Bones.Visible = CurrentProject?.Flexible ?? false;
             MeshesMenu_CalculateOutlines.Enabled = ProjectManager.IsProjectOpen;
             MeshesMenu_RemoveOutlines.Enabled = ProjectManager.IsProjectOpen;
         }
@@ -1492,6 +1752,8 @@ namespace LDDModder.BrickEditor.UI.Panels
                 DisplayMenu_Collisions.Checked = ProjectManager.ShowCollisions;
                 DisplayMenu_Connections.Checked = ProjectManager.ShowConnections;
                 DisplayMenu_Meshes.Checked = ProjectManager.ShowPartModels;
+                DisplayMenu_Bones.Checked = ProjectManager.ShowBones;
+                DisplayMenu_3dCursor.Checked = ProjectManager.Show3dCursor;
                 UpdateGizmoFromSelection();
             }
         }
@@ -1524,10 +1786,27 @@ namespace LDDModder.BrickEditor.UI.Panels
                 ProjectManager.ShowPartModels = DisplayMenu_Meshes.Checked;
         }
 
+        private void DisplayMenu_3dCursor_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!FlagManager.IsSet("ModelsVisibilityChanged"))
+                ProjectManager.Show3dCursor = DisplayMenu_3dCursor.Checked;
+        }
+
+        private void DisplayMenu_Bones_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!FlagManager.IsSet("ModelsVisibilityChanged"))
+                ProjectManager.ShowBones = DisplayMenu_Bones.Checked;
+        }
+
         private void DisplayDropDown_Closing(object sender, ToolStripDropDownClosingEventArgs e)
         {
             if (e.CloseReason == ToolStripDropDownCloseReason.ItemClicked)
                 e.Cancel = true;
+        }
+
+        private void ToggleGridButton_CheckedChanged(object sender, EventArgs e)
+        {
+            ProjectManager.ShowGrid = ToggleGridButton.Checked;
         }
 
         private void ModelRenderModeButton_Click(object sender, EventArgs e)
@@ -1563,6 +1842,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                 var selectedMeshes = ProjectManager.GetSelectionHierarchy().OfType<ModelMeshReference>().ToList();
                 foreach (var meshRef in selectedMeshes)
                     ProjectManager.CurrentProject.SplitMeshSurfaces(meshRef);
+                ProjectManager.CurrentProject.SaveMeshesToXml();
                 ProjectManager.EndBatchChanges();
             }
         }
@@ -1575,6 +1855,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                 ProjectManager.StartBatchChanges();
                 var selectedMeshes = ProjectManager.GetSelectionHierarchy().OfType<ModelMeshReference>().ToList();
                 ProjectManager.CurrentProject.CombineMeshes(selectedMeshes);
+                ProjectManager.CurrentProject.SaveMeshesToXml();
                 ProjectManager.EndBatchChanges();
             }
         }
@@ -1601,14 +1882,14 @@ namespace LDDModder.BrickEditor.UI.Panels
             }
         }
 
+        private void Bones_LinkBones_Click(object sender, EventArgs e)
+        {
+            ProjectManager.ShowLinkBonesDialog();
+        }
+
         private void Bones_RebuildConnections_Click(object sender, EventArgs e)
         {
-            if (CurrentProject != null)
-            {
-                ProjectManager.StartBatchChanges();
-                CurrentProject.RebuildBoneConnections();
-                ProjectManager.EndBatchChanges();
-            }
+            ProjectManager.RebuildBoneConnections();
         }
 
         private void Bones_CopyData_Click(object sender, EventArgs e)
@@ -1709,7 +1990,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                 else if (normalKey == Keys.Delete && ProjectManager.IsProjectOpen)
                 {
 
-                    var selectedModelElements = GetSelectedModels(true)
+                    var selectedModelElements = GetSelectedElementModels(true)
                         .Select(x => x.Element).ToList();
 
                     if (selectedModelElements.Any())
@@ -1721,8 +2002,6 @@ namespace LDDModder.BrickEditor.UI.Panels
                 }
                 else if (normalKey == Keys.H && ProjectManager.IsProjectOpen)
                 {
-                    var allModels = GetAllElementModels().ToList();
-
                     if (!isShiftPressed && !isAltPressed)
                     {
                         ProjectManager.HideSelectedElements();
@@ -1749,6 +2028,11 @@ namespace LDDModder.BrickEditor.UI.Panels
                     ProjectManager.HandlePasteFromClipboard();
                     return true;
                 }
+                else if (normalKey == Keys.A && isControlPressed && ProjectManager.IsProjectOpen)
+                {
+                    ProjectManager.SelectAllVisible();
+                    return true;
+                }
             }
 
             return base.ProcessCmdKey(ref msg, keyData);
@@ -1756,7 +2040,6 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         #endregion
         
-
         #region IViewportWindow
 
         public void RebuildModels()
@@ -1765,6 +2048,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             RebuildConnectionModels();
             RebuildBoneModels();
             RebuildSurfaceModels();
+            RebuildPatternModels();
         }
 
         public void ForceRender()
@@ -1774,7 +2058,6 @@ namespace LDDModder.BrickEditor.UI.Panels
         }
 
         public bool Is3DViewFocused => InputManager.ContainsFocus;
-
 
         #endregion
 

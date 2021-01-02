@@ -1,6 +1,7 @@
 ﻿using LDDModder.BrickEditor.ProjectHandling;
 using LDDModder.BrickEditor.Resources;
-using LDDModder.Modding.Editing;
+using LDDModder.Modding;
+using LDDModder.Modding;
 using System;
 using System.Linq;
 
@@ -54,7 +55,7 @@ namespace LDDModder.BrickEditor.Models.Navigation
         {
             var modelExt = Element.GetExtension<ModelElementExtension>();
             modelExt.InvalidateVisibility();
-            UpdateVisibility();
+            UpdateVisibilityIcon();
         }
 
         protected override void RebuildChildrens()
@@ -229,29 +230,58 @@ namespace LDDModder.BrickEditor.Models.Navigation
             return base.CanDropAfter(node);
         }
 
-
-        public override void UpdateVisibility()
+        protected override bool CanToggleVisibilityCore()
         {
-            base.UpdateVisibility();
+            var modelExt = Element.GetExtension<ModelElementExtension>();
+            return modelExt != null;
+        }
 
+        public override void ToggleVisibility()
+        {
+            var modelExt = Element.GetExtension<ModelElementExtension>();
+            if (modelExt != null)
+                Manager.SetElementHidden(Element, !modelExt.IsHidden);
+        }
+
+        public override VisibilityState GetVisibilityState()
+        {
             var modelExt = Element.GetExtension<ModelElementExtension>();
 
             if (modelExt != null)
             {
-
                 if (modelExt.Manager == null)
                     modelExt.AssignManager(Manager);
 
                 if (modelExt.IsHidden)
-                {
-                    VisibilityImageKey = modelExt.IsHiddenOverride() ? "Hidden2" : "Hidden";
-                }
-                else
-                {
-                    VisibilityImageKey = modelExt.IsVisible ? "Visible" : "NotVisible";
-                }
+                    return modelExt.IsHiddenOverride() ? VisibilityState.HiddenNotVisible : VisibilityState.Hidden;
+                return modelExt.IsVisible ? VisibilityState.Visible : VisibilityState.NotVisible;
             }
-            
+
+            return VisibilityState.None;
         }
+
+        //public override void UpdateVisibilityIcon()
+        //{
+        //    base.UpdateVisibilityIcon();
+
+        //    var modelExt = Element.GetExtension<ModelElementExtension>();
+
+        //    if (modelExt != null)
+        //    {
+
+        //        if (modelExt.Manager == null)
+        //            modelExt.AssignManager(Manager);
+
+        //        if (modelExt.IsHidden)
+        //        {
+        //            VisibilityImageKey = modelExt.IsHiddenOverride() ? "Hidden2" : "Hidden";
+        //        }
+        //        else
+        //        {
+        //            VisibilityImageKey = modelExt.IsVisible ? "Visible" : "NotVisible";
+        //        }
+        //    }
+            
+        //}
     }
 }

@@ -48,6 +48,7 @@
             this.AxesControlLabel = new LDDModder.BrickEditor.UI.Controls.ControlLabel();
             this.AxesNumberBox = new LDDModder.BrickEditor.UI.Controls.NumberTextBox();
             this.CapLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+            this.CylindricalCheckBox = new System.Windows.Forms.CheckBox();
             this.EndCappedCheckBox = new System.Windows.Forms.CheckBox();
             this.StartCappedCheckBox = new System.Windows.Forms.CheckBox();
             this.GrabbingLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
@@ -70,10 +71,11 @@
             this.FlipLimitMinBox = new LDDModder.BrickEditor.UI.Controls.NumberTextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
+            this.FlexControlLabel = new LDDModder.BrickEditor.UI.Controls.ControlLabel();
+            this.FlexTextBox = new System.Windows.Forms.TextBox();
             this.TagControlLabel = new LDDModder.BrickEditor.UI.Controls.ControlLabel();
             this.TagTextBox = new System.Windows.Forms.TextBox();
             this.TransformEdit = new LDDModder.BrickEditor.UI.Controls.TransformEditor();
-            this.CylindricalCheckBox = new System.Windows.Forms.CheckBox();
             this.SelectionToolStrip.SuspendLayout();
             this.panel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
@@ -87,11 +89,13 @@
             this.SpringPanel.SuspendLayout();
             this.GearLayoutPanel.SuspendLayout();
             this.HingeLayoutPanel.SuspendLayout();
+            this.FlexControlLabel.SuspendLayout();
             this.TagControlLabel.SuspendLayout();
             this.SuspendLayout();
             // 
             // SelectionToolStrip
             // 
+            this.SelectionToolStrip.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(249)))), ((int)(((byte)(250)))));
             this.SelectionToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.SelectionToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.CurrentSelectionLabel,
@@ -176,6 +180,7 @@
             this.flowLayoutPanel1.Controls.Add(this.SpringPanel);
             this.flowLayoutPanel1.Controls.Add(this.GearLayoutPanel);
             this.flowLayoutPanel1.Controls.Add(this.HingeLayoutPanel);
+            this.flowLayoutPanel1.Controls.Add(this.FlexControlLabel);
             this.flowLayoutPanel1.Controls.Add(this.TagControlLabel);
             this.flowLayoutPanel1.Controls.Add(this.TransformEdit);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
@@ -230,6 +235,13 @@
             this.CapLayoutPanel.Controls.Add(this.EndCappedCheckBox, 1, 0);
             this.CapLayoutPanel.Controls.Add(this.StartCappedCheckBox, 0, 0);
             this.CapLayoutPanel.Name = "CapLayoutPanel";
+            // 
+            // CylindricalCheckBox
+            // 
+            resources.ApplyResources(this.CylindricalCheckBox, "CylindricalCheckBox");
+            this.CapLayoutPanel.SetColumnSpan(this.CylindricalCheckBox, 2);
+            this.CylindricalCheckBox.Name = "CylindricalCheckBox";
+            this.CylindricalCheckBox.UseVisualStyleBackColor = true;
             // 
             // EndCappedCheckBox
             // 
@@ -379,6 +391,20 @@
             this.label4.Name = "label4";
             this.HingeLayoutPanel.SetRowSpan(this.label4, 2);
             // 
+            // FlexControlLabel
+            // 
+            this.FlexControlLabel.Controls.Add(this.FlexTextBox);
+            this.FlexControlLabel.LabelWidth = 80;
+            resources.ApplyResources(this.FlexControlLabel, "FlexControlLabel");
+            this.FlexControlLabel.Name = "FlexControlLabel";
+            // 
+            // FlexTextBox
+            // 
+            resources.ApplyResources(this.FlexTextBox, "FlexTextBox");
+            this.FlexTextBox.Name = "FlexTextBox";
+            this.FlexTextBox.Validating += new System.ComponentModel.CancelEventHandler(this.FlexTextBox_Validating);
+            this.FlexTextBox.Validated += new System.EventHandler(this.FlexTextBox_Validated);
+            // 
             // TagControlLabel
             // 
             this.TagControlLabel.Controls.Add(this.TagTextBox);
@@ -396,16 +422,11 @@
             resources.ApplyResources(this.TransformEdit, "TransformEdit");
             this.TransformEdit.Name = "TransformEdit";
             // 
-            // CylindricalCheckBox
-            // 
-            resources.ApplyResources(this.CylindricalCheckBox, "CylindricalCheckBox");
-            this.CylindricalCheckBox.Name = "CylindricalCheckBox";
-            this.CylindricalCheckBox.UseVisualStyleBackColor = true;
-            // 
             // ConnectionEditorPanel
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.White;
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.SelectionToolStrip);
             this.Name = "ConnectionEditorPanel";
@@ -432,6 +453,8 @@
             this.GearLayoutPanel.PerformLayout();
             this.HingeLayoutPanel.ResumeLayout(false);
             this.HingeLayoutPanel.PerformLayout();
+            this.FlexControlLabel.ResumeLayout(false);
+            this.FlexControlLabel.PerformLayout();
             this.TagControlLabel.ResumeLayout(false);
             this.TagControlLabel.PerformLayout();
             this.ResumeLayout(false);
@@ -486,5 +509,7 @@
         private System.Windows.Forms.CheckBox EndCappedCheckBox;
         private System.Windows.Forms.CheckBox StartCappedCheckBox;
         private System.Windows.Forms.CheckBox CylindricalCheckBox;
+        private Controls.ControlLabel FlexControlLabel;
+        private System.Windows.Forms.TextBox FlexTextBox;
     }
 }

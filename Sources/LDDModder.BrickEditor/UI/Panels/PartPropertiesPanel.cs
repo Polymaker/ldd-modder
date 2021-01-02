@@ -11,9 +11,10 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using LDDModder.BrickEditor.ProjectHandling;
 using LDDModder.BrickEditor.Resources;
+using LDDModder.BrickEditor.UI.Controls;
 using LDDModder.BrickEditor.Utilities;
 using LDDModder.LDD.Data;
-using LDDModder.Modding.Editing;
+using LDDModder.Modding;
 
 namespace LDDModder.BrickEditor.UI.Panels
 {
@@ -21,7 +22,9 @@ namespace LDDModder.BrickEditor.UI.Panels
     {
         private bool InternalSet;
         private List<MainGroup> Categories;
-        
+
+        public int MinimumPanelWidth = 260;
+        public int MaximumPanelWidth = 350;
 
         public PartPropertiesPanel()
         {
@@ -37,6 +40,18 @@ namespace LDDModder.BrickEditor.UI.Panels
             DockAreas ^= WeifenLuo.WinFormsUI.Docking.DockAreas.Document;
 
             SetControlDoubleBuffered(tableLayoutPanel2);
+            SetControlDoubleBuffered(flowLayoutPanel1);
+        }
+
+        protected override void OnDockStateChanged(EventArgs e)
+        {
+            base.OnDockStateChanged(e);
+
+            if (DockState == WeifenLuo.WinFormsUI.Docking.DockState.Unknown ||
+                DockState == WeifenLuo.WinFormsUI.Docking.DockState.Hidden)
+                return;
+
+            ForceAdjustFlowLayout();
         }
 
         protected override void OnLoad(EventArgs e)
@@ -61,6 +76,13 @@ namespace LDDModder.BrickEditor.UI.Panels
             
             InitializeAliasDropDown();
             UpdateControlBindings();
+        }
+
+        protected override void OnShown(EventArgs e)
+        {
+            base.OnShown(e);
+            ForceAdjustFlowLayout();
+            flowLayoutPanel1.ScrollControlIntoView(DescriptionPanel);
         }
 
         private void ResourceHelper_ResourceDataInitialized(object sender, EventArgs e)
@@ -161,6 +183,8 @@ namespace LDDModder.BrickEditor.UI.Panels
                 var matrixValues = partProps.PhysicsAttributes.InertiaTensor.ToArray();
                 string matrixStr = string.Join("; ", matrixValues);
                 InertiaTensorTextBox.Text = matrixStr;
+
+                FrictionCheckBox.Checked = partProps.PhysicsAttributes.FrictionType == 1;
                 //string matrixValues = partProps.PhysicsAttributes.GetInertiaTensorString();
                 //InertiaTensorTextBox.Text = matrixValues.Replace(",", ", ");
             }
@@ -209,6 +233,12 @@ namespace LDDModder.BrickEditor.UI.Panels
                 CurrentProject.PartID = (int)PartIDTextBox.Value;
         }
 
+        private void FrictionCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (CurrentProject != null && !InternalSet)
+                CurrentProject.PhysicsAttributes.FrictionType = FrictionCheckBox.Checked ? 1 : 0;
+        }
+
         private void PlatformComboBox_SelectedValueChanged(object sender, EventArgs e)
         {
             if (CurrentProject != null && !InternalSet)
@@ -226,13 +256,14 @@ namespace LDDModder.BrickEditor.UI.Panels
                 CurrentProject.MainGroup = CategoryComboBox.SelectedItem as MainGroup;
         }
 
-        protected override void OnElementPropertyChanged(Modding.Editing.ElementValueChangedEventArgs e)
+        protected override void OnElementPropertyChanged(Modding.ElementValueChangedEventArgs e)
         {
             base.OnElementPropertyChanged(e);
 
             if (e.Element == CurrentProject?.Properties)
             {
-                UpdateControlBindings();
+                BeginInvokeOnce(UpdateControlBindings, nameof(UpdateControlBindings));
+                //UpdateControlBindings();
             }
         }
 
@@ -272,18 +303,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void PartPropertiesPanel_SizeChanged(object sender, EventArgs e)
         {
-            if (Width <= collapsiblePanel1.Width + (collapsiblePanel1.Width * 0.33))
-            {
-                flowLayoutPanel1.FlowDirection = FlowDirection.TopDown;
-                flowLayoutPanel1.WrapContents = false;
-                flowLayoutPanel1.PerformLayout();
-            }
-            else
-            {
-                flowLayoutPanel1.FlowDirection = FlowDirection.LeftToRight;
-                flowLayoutPanel1.WrapContents = true;
-                flowLayoutPanel1.PerformLayout();
-            }
+            AdjustFlowLayout();
         }
 
         private void FillInertiaTensor(Simple3D.Matrix3d matrix)
@@ -323,6 +343,109 @@ namespace LDDModder.BrickEditor.UI.Panels
                     FillInertiaTensor(CurrentProject.PhysicsAttributes.InertiaTensor);
                 }
             }
+        }
+
+        private void ForceAdjustFlowLayout()
+        {
+            using (FlagManager.UseFlag(nameof(ForceAdjustFlowLayout)))
+            {
+                var panelStates = new Dictionary<string, bool>();
+                foreach (var panel in flowLayoutPanel1.Controls.OfType<CollapsiblePanel>())
+                {
+                    panelStates[panel.Name] = panel.Collapsed;
+                    panel.Collapse();
+                }
+                AdjustFlowLayout();
+
+                foreach (var panel in flowLayoutPanel1.Controls.OfType<CollapsiblePanel>())
+                {
+                    panel.SetCollapsed(panelStates[panel.Name]);
+                    panel.ForceAdjustHeight();
+                }
+            }
+        }
+
+        private void AdjustFlowLayout(bool force = false)
+        {
+            bool vScrollVisible = flowLayoutPanel1.VerticalScroll.Visible;
+            int availableWidth = vScrollVisible ? Width - SystemInformation.VerticalScrollBarWidth : Width;
+            bool shouldWrap = availableWidth >= MinimumPanelWidth * 2;
+            
+            bool layoutChanged = false;
+
+            if (flowLayoutPanel1.WrapContents != shouldWrap)
+            {
+                flowLayoutPanel1.WrapContents = shouldWrap;
+                layoutChanged = true;
+            }
+
+            //if (flowLayoutPanel1.FlowDirection != FlowDirection.TopDown)
+            //{
+            //    flowLayoutPanel1.FlowDirection = FlowDirection.TopDown;
+            //    layoutChanged = true;
+            //}
+
+            int desiredPanelWidth = MinimumPanelWidth;
+
+            if (shouldWrap)
+            {
+                int maxColumns = (int)Math.Floor(availableWidth / (double)MinimumPanelWidth);
+                desiredPanelWidth = availableWidth / maxColumns;
+                desiredPanelWidth = Math.Max(desiredPanelWidth, MinimumPanelWidth);
+            }
+            else if (availableWidth > MinimumPanelWidth)
+                desiredPanelWidth = Math.Min(MaximumPanelWidth, availableWidth);
+
+            foreach (var panel in flowLayoutPanel1.Controls.OfType<CollapsiblePanel>())
+            {
+                if (desiredPanelWidth != panel.Width)
+                    panel.Width = desiredPanelWidth - panel.Margin.Horizontal;
+            }
+
+            if (layoutChanged || force)
+                flowLayoutPanel1.PerformLayout();
+        }
+
+        protected override string GetPersistString()
+        {
+            var baseStr = base.GetPersistString();
+            var layoutArgs = new List<string>();
+
+            foreach (var panel in flowLayoutPanel1.Controls.OfType<CollapsiblePanel>())
+            {
+                layoutArgs.Add($"{panel.Name}.{nameof(CollapsiblePanel.Collapsed)}={panel.Collapsed}");
+            }
+
+            return baseStr + ":" + string.Join(";", layoutArgs);
+        }
+
+        public override void ApplyLayoutArgs(string layoutArgs)
+        {
+            base.ApplyLayoutArgs(layoutArgs);
+            var argList = layoutArgs.Split(';');
+
+
+            using (FlagManager.UseFlag(nameof(ApplyLayoutArgs)))
+            {
+                foreach (var panel in flowLayoutPanel1.Controls.OfType<CollapsiblePanel>())
+                {
+                    var panelArgs = argList.Where(x => x.StartsWith(panel.Name + "."));
+                    if (panelArgs.Any(x => x.Contains("Collapsed=True")))
+                        panel.SetCollapsed(true);
+                    else
+                        panel.SetCollapsed(false);
+                    panel.ForceAdjustHeight();
+                }
+                flowLayoutPanel1.PerformLayout();
+            }
+        }
+
+        private void Panels_CollapsedChanged(object sender, EventArgs e)
+        {
+            if (FlagManager.IsSet(nameof(ForceAdjustFlowLayout)) || 
+                FlagManager.IsSet(nameof(ApplyLayoutArgs)))
+                return;
+            AdjustFlowLayout();
         }
     }
 }

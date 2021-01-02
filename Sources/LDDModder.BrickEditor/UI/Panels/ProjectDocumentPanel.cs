@@ -1,8 +1,10 @@
 ﻿using LDDModder.BrickEditor.ProjectHandling;
-using LDDModder.Modding.Editing;
+using LDDModder.Modding;
 using LDDModder.Utilities;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -31,6 +33,21 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             FlagManager = new FlagManager();
             InitializeProjectManager(projectManager);
+        }
+
+        protected override void OnDockStateChanged(EventArgs e)
+        {
+            base.OnDockStateChanged(e);
+
+            if (DockState == DockState.DockLeft || DockState == DockState.DockLeftAutoHide)
+            {
+                BackColor = Color.FromArgb(232, 236, 239);
+            }
+            else
+            {
+                BackColor = Color.White;
+            }
+
         }
 
         protected virtual void InitializeProjectManager(ProjectManager projectManager)
@@ -92,9 +109,9 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void ProjectManager_ProjectChanged(object sender, EventArgs e)
         {
-            OnProjectChanged();
             if (ProjectManager.CurrentProject != null)
                 OnProjectLoaded(ProjectManager.CurrentProject);
+            OnProjectChanged();
         }
 
         protected virtual void OnProjectChanged() { }
@@ -109,6 +126,11 @@ namespace LDDModder.BrickEditor.UI.Panels
             OnElementCollectionChanged(e);
         }
 
+        /// <summary>
+        /// Raised when a collection in the project has changed.
+        /// </summary>
+        /// <remarks>Not always invoked on main thread</remarks>
+        /// <param name="e"></param>
         protected virtual void OnElementCollectionChanged(ElementCollectionChangedEventArgs e)
         {
 
@@ -119,6 +141,11 @@ namespace LDDModder.BrickEditor.UI.Panels
             OnProjectElementsChanged();
         }
 
+        /// <summary>
+        /// Raised when one or more collections in the project has changed. <br/>
+        /// Raised only after a all changes are applied
+        /// </summary>
+        /// <remarks>Not always invoked on main thread</remarks>
         protected virtual void OnProjectElementsChanged()
         {
 
@@ -129,7 +156,10 @@ namespace LDDModder.BrickEditor.UI.Panels
             OnElementPropertyChanged(e);
         }
 
-
+        /// <summary>
+        /// Raised when a property of a project element has changed. <br/>
+        /// </summary>
+        /// <remarks>Not always invoked on main thread</remarks>
         protected virtual void OnElementPropertyChanged(ElementValueChangedEventArgs e)
         {
 
@@ -150,6 +180,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             OnProjectChangeApplied();
         }
+
 
         protected virtual void OnProjectChangeApplied()
         {
@@ -193,6 +224,24 @@ namespace LDDModder.BrickEditor.UI.Panels
             control.GetType().InvokeMember("DoubleBuffered",
                 BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic, null,
             control, new object[] { true });
+        }
+
+        private void InitializeComponent()
+        {
+            this.SuspendLayout();
+            // 
+            // ProjectDocumentPanel
+            // 
+            this.BackColor = System.Drawing.Color.White;
+            this.ClientSize = new System.Drawing.Size(279, 264);
+            this.Name = "ProjectDocumentPanel";
+            this.ResumeLayout(false);
+
+        }
+
+        public virtual void ApplyLayoutArgs(string layoutArgs)
+        {
+
         }
     }
 }

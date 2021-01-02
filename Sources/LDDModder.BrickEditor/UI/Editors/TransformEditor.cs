@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using LDDModder.Modding.Editing;
+using LDDModder.Modding;
 using LDDModder.Utilities;
 using System.Diagnostics;
 using LDDModder.Simple3D;

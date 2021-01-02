@@ -19,7 +19,7 @@ namespace LDDModder.BrickEditor.UI.Windows
     {
         private Assimp.AssimpContext AssimpContext;
 
-        public Modding.Editing.PartProject CurrentProject { get; set; }
+        public Modding.PartProject CurrentProject { get; set; }
 
         private Models.BrickInfo PartToExport;
 

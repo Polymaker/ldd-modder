@@ -220,12 +220,12 @@ namespace LDDModder.LDD.Primitives.Connectors
             }
 
             if (raiseChange)
-                RaisePropertyValueChanging(new PropertyValueChangingEventArgs(nameof(Values), oldValues, newValues));
+                OnPropertyValueChanging(new PropertyValueChangingEventArgs(nameof(Values), oldValues, newValues));
 
             _ValueArray = newValues;
 
             if (raiseChange)
-                RaisePropertyValueChanged(new PropertyValueChangedEventArgs(nameof(Values), oldValues, newValues));
+                OnPropertyValueChanged(new PropertyValueChangedEventArgs(nameof(Values), oldValues, newValues));
 
             RebuildNodes();
         }
@@ -273,14 +273,14 @@ namespace LDDModder.LDD.Primitives.Connectors
 
             var oldValue = _ValueArray;
 
-            RaisePropertyValueChanging(new PropertyValueChangingEventArgs(nameof(Values), oldValue, valuesArray));
+            OnPropertyValueChanging(new PropertyValueChangingEventArgs(nameof(Values), oldValue, valuesArray));
 
             _Width = newWidth - 1;
             _Height = newHeight - 1;
             _ValueArray = valuesArray;
             RebuildNodes();
 
-            RaisePropertyValueChanged(new PropertyValueChangedEventArgs(nameof(Values), oldValue, valuesArray));
+            OnPropertyValueChanged(new PropertyValueChangedEventArgs(nameof(Values), oldValue, valuesArray));
 
             if (sizeChanged)
                 SizeChanged?.Invoke(this, EventArgs.Empty);
@@ -312,11 +312,12 @@ namespace LDDModder.LDD.Primitives.Connectors
 
             var values = element.Value.Trim().Split(',').ToList();
             values.RemoveAll(x => string.IsNullOrWhiteSpace(x));
-
+            if (values.Count != expectedValueCount)
+                Console.WriteLine("Unexpected number of values!");
             //if (values.Count != expectedValueCount)
             //    throw new Exception("Unexpected number of values!");
-
-            for (int i = 0; i < values.Count; i++)
+            
+            for (int i = 0; i < expectedValueCount; i++)
             {
                 int rowIdx = (int)Math.Floor(i / (double)(Width + 1));
                 if (rowIdx > Height + 1)

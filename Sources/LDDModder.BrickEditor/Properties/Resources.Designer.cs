@@ -123,6 +123,16 @@ namespace LDDModder.BrickEditor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap ldd_editor_x64 {
+            get {
+                object obj = ResourceManager.GetObject("ldd_editor_x64", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap MainSurfaceIcon {
             get {
                 object obj = ResourceManager.GetObject("MainSurfaceIcon", resourceCulture);
@@ -196,6 +206,16 @@ namespace LDDModder.BrickEditor.Properties {
         internal static System.Drawing.Bitmap StatusWarning {
             get {
                 object obj = ResourceManager.GetObject("StatusWarning", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ToggleGridIcon {
+            get {
+                object obj = ResourceManager.GetObject("ToggleGridIcon", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

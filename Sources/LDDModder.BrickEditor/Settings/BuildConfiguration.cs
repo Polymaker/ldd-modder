@@ -80,5 +80,19 @@ namespace LDDModder.BrickEditor.Settings
                 UniqueID = Guid.NewGuid().ToString();
             }
         }
+
+        public void Update(BuildConfiguration configuration)
+        {
+            ConfirmOverwrite = configuration.ConfirmOverwrite;
+
+            if (InternalFlag != LDD_FLAG)
+                LOD0Subdirectory = configuration.LOD0Subdirectory;
+
+            if (!IsInternalConfig)
+            {
+                OutputPath = configuration.OutputPath;
+                Name = configuration.Name;
+            }
+        }
     }
 }

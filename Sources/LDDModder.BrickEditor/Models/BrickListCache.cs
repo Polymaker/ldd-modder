@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using LDDModder.BrickEditor.Settings;
@@ -258,6 +259,9 @@ namespace LDDModder.BrickEditor.Models
         {
             foreach (var brickInfo in Bricks)
             {
+                if (ct.IsCancellationRequested)
+                    break;
+
                 if (ChangedParts.Contains(brickInfo.PartId))
                     brickInfo.Validated = false;
             }
@@ -484,10 +488,20 @@ namespace LDDModder.BrickEditor.Models
 
         #endregion
 
+        static readonly Regex PartIdReg = new Regex("^(\\d+)", RegexOptions.Compiled);
+
         private static bool GetFilenamePartID(string path, out int partID)
         {
+            
             string filename = Path.GetFileNameWithoutExtension(path);
-            return int.TryParse(filename, out partID);
+            var m = PartIdReg.Match(filename);
+            if (m.Success)
+            {
+                partID = int.Parse(m.Groups[1].Value);
+                return true;
+            }
+            partID = -1;
+            return false;
         }
     }
 }

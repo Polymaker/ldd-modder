@@ -123,10 +123,10 @@
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="studConnectionEditor1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 25</value>
+    <value>0, 29</value>
   </data>
   <data name="studConnectionEditor1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>480, 312</value>
+    <value>480, 308</value>
   </data>
   <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="studConnectionEditor1.TabIndex" type="System.Int32, mscorlib">
@@ -136,7 +136,7 @@
     <value>studConnectionEditor1</value>
   </data>
   <data name="&gt;&gt;studConnectionEditor1.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Editors.StudConnectionEditor, Brick Studio, Version=1.0.3.19822, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Editors.StudConnectionEditor, Brick Studio, Version=1.0.5.27038, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;studConnectionEditor1.Parent" xml:space="preserve">
     <value>$this</value>
@@ -148,16 +148,16 @@
     <value>17, 17</value>
   </metadata>
   <data name="CurrentSelectionLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>50, 22</value>
+    <value>50, 20</value>
   </data>
   <data name="CurrentSelectionLabel.Text" xml:space="preserve">
     <value>Current:</value>
   </data>
   <data name="ConnectorComboBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>150, 25</value>
+    <value>150, 23</value>
   </data>
   <data name="SyncSelectionCheckBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>101, 22</value>
+    <value>101, 20</value>
   </data>
   <data name="SyncSelectionCheckBox.Text" xml:space="preserve">
     <value>Sync selection</value>
@@ -165,8 +165,11 @@
   <data name="SelectionToolStrip.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 0</value>
   </data>
+  <data name="SelectionToolStrip.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
   <data name="SelectionToolStrip.Size" type="System.Drawing.Size, System.Drawing">
-    <value>480, 25</value>
+    <value>480, 29</value>
   </data>
   <data name="SelectionToolStrip.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -214,12 +217,12 @@
     <value>SyncSelectionCheckBox</value>
   </data>
   <data name="&gt;&gt;SyncSelectionCheckBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.ToolStripCheckBox, Brick Studio, Version=1.0.3.19822, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.ToolStripCheckBox, Brick Studio, Version=1.0.5.27038, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>StudConnectionPanel</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Panels.ProjectDocumentPanel, Brick Studio, Version=1.0.3.19822, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Panels.ProjectDocumentPanel, Brick Studio, Version=1.0.5.27038, Culture=neutral, PublicKeyToken=null</value>
   </data>
 </root>

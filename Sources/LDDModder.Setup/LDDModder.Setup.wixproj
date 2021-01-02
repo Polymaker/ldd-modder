@@ -45,6 +45,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <WixExtension Include="WixUtilExtension">
+      <HintPath>$(WixExtDir)\WixUtilExtension.dll</HintPath>
+      <Name>WixUtilExtension</Name>
+    </WixExtension>
     <WixExtension Include="WixUIExtension">
       <HintPath>$(WixExtDir)\WixUIExtension.dll</HintPath>
       <Name>WixUIExtension</Name>
@@ -56,11 +60,13 @@
     <Error Text="The WiX Toolset v3.11 (or newer) build tools must be installed to build this project. To download the WiX Toolset, see http://wixtoolset.org/releases/" />
   </Target>
   <PropertyGroup>
-    <PreBuildEvent>del %2a.msi</PreBuildEvent>
+    <PostBuildEvent>rename !(TargetPath) "LDDModder.Setup.$(PlatformName).msi"
+xcopy "$(TargetDir)LDDModder.Setup.$(PlatformName).msi" "$(SolutionDir)..\Publish"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>rename !(TargetPath) "LDDModder.Setup.$(PlatformName).msi"
-xcopy "$(TargetDir)LDDModder.Setup.$(PlatformName).msi" "$(ProjectDir)bin\$(ConfigurationName)\"</PostBuildEvent>
+    <PreBuildEvent>del %2a.msi
+cd "$(SolutionDir)..\Publish\"
+del "LDDModder.Setup.$(PlatformName).msi"</PreBuildEvent>
   </PropertyGroup>
   <!--
 	To modify your build process, add your task inside one of the targets below and uncomment it.

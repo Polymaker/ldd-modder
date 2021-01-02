@@ -590,6 +590,30 @@ namespace LDDModder.Simple3D
 
         #region Functions
 
+        public static Matrix4d CreateRotationX(double angle)
+        {
+            double cos = Math.Cos(angle);
+            double sin = Math.Sin(angle);
+            Matrix4d result = Identity;
+            result.B2 = cos;
+            result.B3 = sin;
+            result.C2 = 0d - sin;
+            result.C3 = cos;
+            return result;
+        }
+
+        public static Matrix4d CreateRotationY(double angle)
+        {
+            double cos = Math.Cos(angle);
+            double sin = Math.Sin(angle);
+            Matrix4d result = Identity;
+            result.A1 = cos;
+            result.A3 = 0d - sin;
+            result.C1 = sin;
+            result.C3 = cos;
+            return result;
+        }
+
         public static Matrix4d FromQuaternion(Quaterniond q)
         {
             q.ToAxisAngle(out Vector3d axis, out double angle);
@@ -618,6 +642,18 @@ namespace LDDModder.Simple3D
             result.B2 = scale.Y;
             result.C3 = scale.Z;
             return result;
+        }
+
+        public static Matrix4d FromDirection(Vector3d direction, Vector3d frontAxis)
+        {
+            var angleDiff = Vector3d.AngleBetween(direction, frontAxis);
+
+            if (double.IsNaN(angleDiff) || Math.Abs(angleDiff) <= 0.001d)
+                return Identity;
+
+            var omega = Math.Acos(Vector3d.Dot(frontAxis, direction));
+
+            return FromAngleAxis(omega, Vector3d.Cross(frontAxis, direction));
         }
 
         public static Matrix4d LookAt(Vector3d eye, Vector3d target, Vector3d up)

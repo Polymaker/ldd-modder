@@ -1,5 +1,5 @@
 ﻿using LDDModder.LDD.Primitives.Collisions;
-using LDDModder.Modding.Editing;
+using LDDModder.Modding;
 using OpenTK;
 using System;
 using System.Collections.Generic;
@@ -84,10 +84,8 @@ namespace LDDModder.BrickEditor.Rendering
             }
         }
 
-        public override void RenderModel(Camera camera)
+        public override void RenderModel(Camera camera, MeshRenderMode mode = MeshRenderMode.Solid)
         {
-            base.RenderModel(camera);
-
             if (CollisionType == CollisionType.Box)
                 DrawBoxCollision();
             else

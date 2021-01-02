@@ -105,6 +105,8 @@ namespace LDDModder.LDD.Meshes
             return -1;
         }
 
+        
+
         public IEnumerator<VertexIndex> GetEnumerator()
         {
             return new IndexEnumerator(this);

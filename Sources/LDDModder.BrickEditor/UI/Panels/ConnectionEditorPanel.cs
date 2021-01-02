@@ -1,7 +1,7 @@
 ﻿using LDDModder.BrickEditor.ProjectHandling;
 using LDDModder.BrickEditor.Resources;
 using LDDModder.LDD.Primitives.Connectors;
-using LDDModder.Modding.Editing;
+using LDDModder.Modding;
 using LDDModder.Simple3D;
 using System;
 using System.Collections.Generic;
@@ -44,7 +44,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             Connections = new SortableBindingList<PartConnection>();
             SubTypeList = new SortableBindingList<ConnectorInfo>();
             SubTypeList.ApplySort("SubType", ListSortDirection.Ascending);
-
+            
             ElementsComboBox.ComboBox.DataSource = Connections;
             ElementsComboBox.ComboBox.DisplayMember = "Name";
             ElementsComboBox.ComboBox.ValueMember = "ID";
@@ -64,7 +64,8 @@ namespace LDDModder.BrickEditor.UI.Panels
                 new ControlConnType(SpringPanel, CylindricalCheckBox, ConnectorType.Slider),
                 new ControlConnType(AxesControlLabel, ConnectorType.Fixed),
                 new ControlConnType(GrabbingLayoutPanel, ConnectorType.Axel),
-                new ControlConnType(CapLayoutPanel, ConnectorType.Axel, ConnectorType.Slider)
+                new ControlConnType(CapLayoutPanel, ConnectorType.Axel, ConnectorType.Slider),
+                new ControlConnType(FlexControlLabel, ConnectorType.Ball)
             };
         }
 
@@ -228,6 +229,8 @@ namespace LDDModder.BrickEditor.UI.Panels
             {
                 if (SelectedElement.SubType != connInfo.SubType)
                     SelectedElement.SubType = connInfo.SubType;
+                if (SelectedElement.ConnectorType == ConnectorType.Ball)
+                    UpdateFlexEditorVisibility();
             }
         }
 
@@ -239,52 +242,60 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             public Control[] Controls { get; set; }
             public ConnectorType[] ConnectorTypes { get; set; }
+            public bool Visible { get; private set; }
 
             public ControlConnType(Control control, ConnectorType connectorType)
             {
                 Controls = new Control[] { control };
                 ConnectorTypes = new ConnectorType[] { connectorType };
+                Visible = true;
             }
 
             public ControlConnType(Control[] controls, params ConnectorType[] connectorTypes)
             {
                 Controls = controls;
                 ConnectorTypes = connectorTypes;
+                Visible = true;
             }
 
             public ControlConnType(Control control, params ConnectorType[] connectorTypes)
             {
                 Controls = new Control[] { control };
                 ConnectorTypes = connectorTypes;
+                Visible = true;
             }
 
             public ControlConnType(Control ctrl1, Control ctrl2, params ConnectorType[] connectorTypes)
             {
                 Controls = new Control[] { ctrl1, ctrl2 };
                 ConnectorTypes = connectorTypes;
+                Visible = true;
             }
 
             public ControlConnType(ConnectorType connectorType, params Control[] controls)
             {
                 Controls = controls;
                 ConnectorTypes = new ConnectorType[] { connectorType };
+                Visible = true;
             }
 
             public ControlConnType(ConnectorType type1, ConnectorType type2, params Control[] controls)
             {
                 Controls = controls;
                 ConnectorTypes = new ConnectorType[] { type1, type2 };
+                Visible = true;
             }
 
             public void UpdateVisibility(ConnectorType connectorType)
             {
-                bool isVisible = ConnectorTypes.Contains(connectorType);
+                Visible = ConnectorTypes.Contains(connectorType);
                 foreach (Control ctrl in Controls)
-                    ctrl.Visible = isVisible;
+                    ctrl.Visible = Visible;
             }
 
             public void SetVisibility(bool isVisible)
             {
+                Visible = isVisible;
                 foreach (Control ctrl in Controls)
                     ctrl.Visible = isVisible;
             }
@@ -304,7 +315,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                 }
 
                 SelectedElement = connection;
-
+                
                 if (SelectedElement != null)
                 {
                     ElementNameTextBox.Enabled = true;
@@ -319,7 +330,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                         DataSourceUpdateMode.OnValidation));
 
                     EditControlHelpers.ForEach(x => x.UpdateVisibility(SelectedElement.ConnectorType));
-
+                    
                     TransformEdit.BindPhysicalElement(connection);
 
                     switch (SelectedElement.ConnectorType)
@@ -451,6 +462,14 @@ namespace LDDModder.BrickEditor.UI.Panels
                                     DataSourceUpdateMode.OnPropertyChanged));
                             }
                             break;
+
+                        case ConnectorType.Ball:
+                            {
+                                UpdateFlexEditorVisibility();
+
+                                FillFlexValues();
+                            }
+                            break;
                     }
 
                     FillSubTypeComboBox(SelectedElement.ConnectorType);
@@ -467,11 +486,13 @@ namespace LDDModder.BrickEditor.UI.Panels
                 else
                 {
                     TypeValueLabel.Text = string.Empty;
+                    //FlexTextBox.Text = string.Empty;
                     EditControlHelpers.ForEach(x => x.SetVisibility(false));
                     ElementNameTextBox.Enabled = false;
                     ConnectionSubTypeCombo.Enabled = false;
                     TransformEdit.Enabled = false;
                     TransformEdit.BindPhysicalElement(null);
+
                     //HingeLayoutPanel.Visible = false;
                 }
 
@@ -497,6 +518,9 @@ namespace LDDModder.BrickEditor.UI.Panels
             {
                 if (e.PropertyName == nameof(PartConnection.SubType) && SelectedElement != null)
                     SetSubTypeComboValue(SelectedElement.SubType);
+
+                if (e.PropertyName == nameof(BallConnector.FlexAttributes) && SelectedElement != null)
+                    FillFlexValues();
 
                 foreach (Control ctrl in GetAllEditControl())
                 {
@@ -560,7 +584,6 @@ namespace LDDModder.BrickEditor.UI.Panels
             }
         }
 
-        
 
         private void UpdateSliderSpringValue()
         {
@@ -603,6 +626,92 @@ namespace LDDModder.BrickEditor.UI.Panels
             SpringPanel.Height = SpringEditor.Bottom + 3;
         }
 
+        private void UpdateFlexEditorVisibility()
+        {
+            var flexEditor = EditControlHelpers.First(x => x.Controls.Contains(FlexControlLabel));
+            if (SelectedElement.ConnectorType == ConnectorType.Ball)
+            {
+                if (!CurrentProject.Flexible && flexEditor.Visible)
+                    flexEditor.SetVisibility(false);
+                else
+                    flexEditor.SetVisibility(SelectedElement.SubType > 1000);
+            }
+            else if (flexEditor.Visible)
+                flexEditor.SetVisibility(false);
+        }
+
+        private string ValidateFlexValues()
+        {
+
+            return string.Empty;
+        }
+
+
+        private void FillFlexValues()
+        {
+            using (FlagManager.UseFlag(nameof(FillFlexValues)))
+            {
+                FlexTextBox.Text = string.Empty;
+                if (SelectedElement?.Connector is BallConnector ballConnector)
+                {
+                    if (!string.IsNullOrEmpty(ballConnector.FlexAttributes))
+                        FlexTextBox.Text = string.Join("; ", ballConnector.GetFlexValues());
+                }
+            }
+
+        }
+
+        private void FlexTextBox_Validating(object sender, CancelEventArgs e)
+        {
+            if (FlagManager.IsSet(nameof(FillFlexValues)))
+                return;
+
+            if (!string.IsNullOrEmpty(FlexTextBox.Text))
+            {
+                var matValues = FlexTextBox.Text.Split(';', ',');
+
+                if (matValues.Length != 5)
+                {
+                    MessageBox.Show("Invalid number of values");
+                    e.Cancel = true;
+                    return;
+                }
+                var invalidValues = new List<string>();
+                for (int i = 0; i < matValues.Length; i++)
+                {
+                    if (!Utilities.NumberHelper.SmartTryParse(matValues[i].Trim(), out _))
+                        invalidValues.Add(matValues[i]);
+                }
+                if (invalidValues.Any())
+                {
+                    MessageBox.Show($"Invalid values: {string.Join(", ", invalidValues)}");
+                    e.Cancel = true;
+                    return;
+                }
+            }
+        }
+
+        
+
+        private void FlexTextBox_Validated(object sender, EventArgs e)
+        {
+            if (FlagManager.IsSet(nameof(FillFlexValues)))
+                return;
+
+            if (!string.IsNullOrEmpty(FlexTextBox.Text))
+            {
+                var matValues = FlexTextBox.Text.Split(';', ',');
+                var values = new double[5];
+                for (int i = 0; i < matValues.Length; i++)
+                {
+                    if (Utilities.NumberHelper.SmartTryParse(matValues[i].Trim(), out double fV))
+                        values[i] = fV;
+                }
+
+                (SelectedElement.Connector as BallConnector).SetFlexValues(values);
+            }
+        }
+
         private void flowLayoutPanel1_Layout(object sender, LayoutEventArgs e)
         {
             AdjustFlowBreak();
@@ -640,12 +749,15 @@ namespace LDDModder.BrickEditor.UI.Panels
                 }
                 else if (currentFlowBreak != null && ctrlBeforeTransform == null)
                     flowLayoutPanel1.SetFlowBreak(currentFlowBreak, false);
-
+                else if (currentFlowBreak != null && currentFlowBreak.Left > 50)
+                    flowLayoutPanel1.SetFlowBreak(currentFlowBreak, false);
             }
             else if (currentFlowBreak != null)
             {
                 flowLayoutPanel1.SetFlowBreak(currentFlowBreak, false);
             }
         }
+
+        
     }
 }

@@ -44,6 +44,7 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.MainInfoTab = new System.Windows.Forms.TabPage();
             this.StudRefTab = new System.Windows.Forms.TabPage();
+            this.label1 = new System.Windows.Forms.Label();
             this.StudRefGridView = new System.Windows.Forms.DataGridView();
             this.ConnectionColumn = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.FieldIndexColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -57,7 +58,6 @@
             this.TopStudsLabel = new LDDModder.BrickEditor.Localization.LocalizableString();
             this.BottomStudsLabel = new LDDModder.BrickEditor.Localization.LocalizableString();
             this.NoConnectorRefLabel = new LDDModder.BrickEditor.Localization.LocalizableString();
-            this.label1 = new System.Windows.Forms.Label();
             this.PropertiesTableLayout.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.MainInfoTab.SuspendLayout();
@@ -158,6 +158,11 @@
             this.StudRefTab.Name = "StudRefTab";
             this.StudRefTab.UseVisualStyleBackColor = true;
             // 
+            // label1
+            // 
+            resources.ApplyResources(this.label1, "label1");
+            this.label1.Name = "label1";
+            // 
             // StudRefGridView
             // 
             resources.ApplyResources(this.StudRefGridView, "StudRefGridView");
@@ -179,23 +184,27 @@
             this.ConnectionColumn.DataPropertyName = "ConnectionID";
             resources.ApplyResources(this.ConnectionColumn, "ConnectionColumn");
             this.ConnectionColumn.Name = "ConnectionColumn";
+            this.ConnectionColumn.ReadOnly = true;
             // 
             // FieldIndexColumn
             // 
             this.FieldIndexColumn.DataPropertyName = "FieldIndex";
             resources.ApplyResources(this.FieldIndexColumn, "FieldIndexColumn");
             this.FieldIndexColumn.Name = "FieldIndexColumn";
+            this.FieldIndexColumn.ReadOnly = true;
             // 
             // FieldPositionColumn
             // 
             resources.ApplyResources(this.FieldPositionColumn, "FieldPositionColumn");
             this.FieldPositionColumn.Name = "FieldPositionColumn";
+            this.FieldPositionColumn.ReadOnly = true;
             // 
             // StudRefValue1Colunm
             // 
             this.StudRefValue1Colunm.DataPropertyName = "Value1";
             resources.ApplyResources(this.StudRefValue1Colunm, "StudRefValue1Colunm");
             this.StudRefValue1Colunm.Name = "StudRefValue1Colunm";
+            this.StudRefValue1Colunm.ReadOnly = true;
             this.StudRefValue1Colunm.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
             // StudRefValue2Colunm
@@ -203,12 +212,14 @@
             this.StudRefValue2Colunm.DataPropertyName = "Value2";
             resources.ApplyResources(this.StudRefValue2Colunm, "StudRefValue2Colunm");
             this.StudRefValue2Colunm.Name = "StudRefValue2Colunm";
+            this.StudRefValue2Colunm.ReadOnly = true;
             this.StudRefValue2Colunm.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
             // AdjStudColumn
             // 
             resources.ApplyResources(this.AdjStudColumn, "AdjStudColumn");
             this.AdjStudColumn.Name = "AdjStudColumn";
+            this.AdjStudColumn.ReadOnly = true;
             // 
             // localizableStringList1
             // 
@@ -239,15 +250,11 @@
             // 
             resources.ApplyResources(this.NoConnectorRefLabel, "NoConnectorRefLabel");
             // 
-            // label1
-            // 
-            resources.ApplyResources(this.label1, "label1");
-            this.label1.Name = "label1";
-            // 
             // ElementDetailPanel
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.White;
             this.Controls.Add(this.tabControl1);
             this.Name = "ElementDetailPanel";
             this.PropertiesTableLayout.ResumeLayout(false);

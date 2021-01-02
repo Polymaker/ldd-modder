@@ -5,10 +5,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace LDDModder.LDD.Meshes
 {
@@ -176,6 +178,7 @@ namespace LDDModder.LDD.Meshes
 
         #region Convertion From/To Stream
 
+
         public void Save(string filename)
         {
             string directory = Path.GetDirectoryName(filename);
@@ -338,6 +341,225 @@ namespace LDDModder.LDD.Meshes
             }
             return geom;
         }
+
+        #endregion
+
+        #region Xml Saving/Loading
+
+        string FormatVector3(Simple3D.Vector3 v)
+        {
+            return string.Format(CultureInfo.InvariantCulture, "{0} {1} {2}", v.X, v.Y, v.Z);
+        }
+        string FormatVector2(Simple3D.Vector2 v)
+        {
+            return string.Format(CultureInfo.InvariantCulture, "{0} {1}", v.X, v.Y);
+        }
+
+        public XDocument ConvertToXml()
+        {
+            var doc = new XDocument();
+            var root = new XElement("LddGeometry");
+            root.AddNumberAttribute("VertexCount", VertexCount);
+            root.AddNumberAttribute("IndexCount", IndexCount);
+            root.AddBooleanAttribute("IsTextured", IsTextured);
+            root.AddBooleanAttribute("IsFlexible", IsFlexible);
+            doc.Add(root);
+
+
+            //var vertices = root.AddElement("Vertices");
+            root.Add(new XComment("Format: X1 Y1 Z1 X2 Y2 Z2 X3 Y3 Z3 ..."));
+            var positions = root.AddElement("Positions");
+            positions.Value = string.Join(" ", Vertices.Select(v => FormatVector3(v.Position)));
+
+            root.Add(new XComment("Format: X1 Y1 Z1 X2 Y2 Z2 X3 Y3 Z3 ..."));
+            var normals = root.AddElement("Normals");
+            normals.Value = string.Join(" ", Vertices.Select(v => FormatVector3(v.Normal)));
+
+            if (IsTextured)
+            {
+                root.Add(new XComment("Format: X1 Y1 X2 Y2 X3 Y3 ..."));
+                var uvs = root.AddElement("UVs");
+                uvs.Value = string.Join(" ", Vertices.Select(v => FormatVector2(v.TexCoord)));
+            }
+            RebuildIndices();
+            var indices = root.AddElement("Indices");
+            indices.Value = string.Join(" ", Indices.Select(x => x.VIndex));
+
+            if (IsFlexible)
+            {
+                root.Add(new XComment("Format: VertexIndex BoneID Weight ..."));
+                var bones = root.AddElement("BoneWeights");
+                for (int i = 0; i < VertexCount; i++)
+                {
+                    var vert = Vertices[i];
+                    foreach (var bw in vert.BoneWeights)
+                    {
+                        bones.Value += string.Format(CultureInfo.InvariantCulture, 
+                            "{0} {1} {2} ", i, bw.BoneID, bw.Weight);
+                    }
+                }
+                bones.Value = bones.Value.TrimEnd();
+            }
+            
+            if (CheckHasRoundEdgeData())
+            {
+                //root.Add(new XComment("Format: Index{n}Coord{1,6}.X Index{n}Coord{1,6}.Y"));
+                var outlines = root.AddElement("Outlines");
+                var coords = Indices.SelectMany(x => x.RoundEdgeData.Coords.Take(6)).ToList();
+                outlines.Value = string.Join(" ", coords.Select(v => FormatVector2(v)));
+            }
+
+            return doc;
+        }
+
+        public void SaveAsXml(Stream stream)
+        {
+            var xmlDoc = ConvertToXml();
+            xmlDoc.Save(stream);
+        }
+
+        public void SaveAsXml(string filename)
+        {
+            string directory = Path.GetDirectoryName(filename);
+            if (!Directory.Exists(directory))
+                Directory.CreateDirectory(directory);
+
+            using (var fs = File.Open(filename, FileMode.Create))
+                SaveAsXml(fs);
+        }
+
+        public static MeshGeometry FromXml(string filename)
+        {
+            using (var fs = File.OpenRead(filename))
+                return FromXml(fs);
+        }
+
+        public static MeshGeometry FromXml(Stream stream)
+        {
+            var doc = XDocument.Load(stream);
+            return doc != null ? FromXml(doc) : null;
+        }
+
+        public static MeshGeometry FromXml(XDocument document)
+        {
+            var geomElem = document.Element("LddGeometry");
+            if (geomElem == null)
+                return null;
+
+            if (geomElem.HasElement("Positions", out XElement posElem) &&
+                geomElem.HasElement("Normals", out XElement normElem) &&
+                geomElem.HasElement("Indices", out XElement indElem))
+            {
+                var positions = ParseVector3Array(posElem.Value);
+                var normals = ParseVector3Array(normElem.Value);
+                List<Vector2> uvs = null;
+                if (geomElem.HasElement("UVs", out XElement uvElem))
+                    uvs = ParseVector2Array(uvElem.Value);
+
+                var indices = indElem.Value.Split(' ').Select(v => int.Parse(v)).ToList();
+
+                var vertices = new List<Vertex>();
+                var triangles = new List<Triangle>();
+                var reCoords = new List<RoundEdgeData>();
+
+                for (int i = 0; i < positions.Count; i++)
+                {
+                    vertices.Add(new Vertex(
+                        positions[i],
+                        normals[i],
+                        uvs?[i] ?? Vector2.Empty
+                        ));
+                }
+
+                if (geomElem.HasElement("BoneWeights", out XElement boneWeights))
+                {
+                    var bwValues = boneWeights.Value.Split(' ');
+                    for (int i = 0; i < bwValues.Length; i += 3)
+                    {
+                        int vIdx = int.Parse(bwValues[i]);
+                        int bID = int.Parse(bwValues[i + 1]);
+                        float weight = float.Parse(bwValues[i + 2], CultureInfo.InvariantCulture);
+                        vertices[vIdx].BoneWeights.Add(new BoneWeight(bID, weight));
+                    }
+                }
+
+                if (geomElem.HasElement("Outlines", out XElement outlineElem))
+                {
+                    var outlineUVs = ParseVector2Array(outlineElem.Value);
+                    if (outlineUVs.Count % 6 != 0)
+                    {
+                        //problem
+                    }
+
+                    for (int i = 0; i < outlineUVs.Count; i += 6)
+                    {
+                        var reData = new RoundEdgeData();
+                        for (int j = 0; j < 6; j++)
+                            reData.Coords[j] = outlineUVs[i + j];
+
+                        reCoords.Add(reData);
+                    }
+                }
+
+                for (int i = 0; i < indices.Count; i += 3)
+                {
+                    var tri = new Triangle(
+                        vertices[indices[i]],
+                        vertices[indices[i + 1]],
+                        vertices[indices[i + 2]]);
+                    triangles.Add(tri);
+
+                    for (int j = 0; j < 3; j++)
+                    {
+                        if (i + j >= reCoords.Count)
+                            break;
+                        tri.Indices[j].RoundEdgeData = reCoords[i + j];
+                    }
+                }
+
+                var geom = new MeshGeometry();
+                geom.SetVertices(vertices);
+                geom.SetTriangles(triangles);
+
+                return geom;
+            }
+
+            return null;
+        }
+
+        static List<Vector3> ParseVector3Array(string value)
+        {
+            var values = value.Split(' ');
+            var result = new List<Vector3>();
+            for (int i = 0; i < values.Length; i += 3)
+            {
+                
+                result.Add(new Vector3
+                {
+                    X = float.Parse(values[i], CultureInfo.InvariantCulture),
+                    Y = float.Parse(values[i + 1], CultureInfo.InvariantCulture),
+                    Z = float.Parse(values[i + 2], CultureInfo.InvariantCulture)
+                });
+            }
+            return result;
+        }
+
+        static List<Vector2> ParseVector2Array(string value)
+        {
+            var values = value.Split(' ');
+            var result = new List<Vector2>();
+            for (int i = 0; i < values.Length; i += 2)
+            {
+
+                result.Add(new Vector2
+                {
+                    X = float.Parse(values[i], CultureInfo.InvariantCulture),
+                    Y = float.Parse(values[i + 1], CultureInfo.InvariantCulture)
+                });
+            }
+            return result;
+        }
+
 
         #endregion
 

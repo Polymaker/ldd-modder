@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Platform;
 
 namespace OpenTK
 {
@@ -76,6 +77,37 @@ namespace OpenTK
                 else if (!Enable && WasEnabled)
                     GL.Enable(Flag);
             }
+        }
+
+        private static Type xplatui = Type.GetType("System.Windows.Forms.XplatUIX11, System.Windows.Forms");
+
+        public static IWindowInfo GetWindowInfo(IntPtr handle, bool isControl = false)
+        {
+            if (Configuration.RunningOnWindows)
+                return OpenTK.Platform.Utilities.CreateWindowsWindowInfo(handle);
+
+            if (Configuration.RunningOnMacOS)
+                return OpenTK.Platform.Utilities.CreateMacOSCarbonWindowInfo(handle, false, isControl);
+
+            if (Configuration.RunningOnSdl2)
+                return OpenTK.Platform.Utilities.CreateSdl2WindowInfo(handle);
+
+            if (Configuration.RunningOnX11)
+            {
+                try
+                {
+                    if (xplatui != null)
+                    {
+                        var display = (IntPtr)xplatui.GetField("DisplayHandle", BindingFlags.Static | BindingFlags.NonPublic).GetValue(null);
+                        var rootWindow = (IntPtr)xplatui.GetField("RootWindow", BindingFlags.Static | BindingFlags.NonPublic).GetValue(null);
+                        int screen = (int)xplatui.GetField("ScreenNo", BindingFlags.Static | BindingFlags.NonPublic).GetValue(null);
+                        return Utilities.CreateX11WindowInfo(display, screen, handle, rootWindow, IntPtr.Zero);
+                    }
+                }
+                catch { }
+            }
+
+            return null;
         }
     }
 }

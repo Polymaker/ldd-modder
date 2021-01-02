@@ -1,5 +1,6 @@
 ﻿using LDDModder.BrickEditor.Models.Navigation;
-using LDDModder.Modding.Editing;
+using LDDModder.Modding;
+using LDDModder.Modding;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,14 +15,20 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
         ProjectTreeNodeCollection NavigationTreeNodes { get; }
 
-        bool ShowPartModels { get; }
+        bool ShowPartModels { get; set; }
 
-        bool ShowCollisions { get; }
+        bool ShowCollisions { get; set; }
 
-        bool ShowConnections { get; }
+        bool ShowConnections { get; set; }
+
+        bool ShowBones { get; set; }
 
         void RebuildNavigationTree();
 
         void RefreshNavigationNode(ProjectTreeNode node);
+
+        void SetElementHidden(PartElement element, bool hidden);
+
+        void SetElementsHidden(IEnumerable<PartElement> elements, bool hidden);
     }
 }

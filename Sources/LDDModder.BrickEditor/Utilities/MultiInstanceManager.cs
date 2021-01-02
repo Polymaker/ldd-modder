@@ -193,7 +193,7 @@ namespace LDDModder.BrickEditor.Utilities
                 foreach (var appInstance in AppInstances)
                 {
                     string result = GetActionResult(appInstance, MSG_QUERY_FILE_OPEN, MSG_RETURN_FILE_OPEN, filepath);
-                    bool.TryParse(result, out isOpen);
+                    //bool.TryParse(result, out isOpen);
                     //Trace.WriteLine($"PID {appInstance.ProcessID} CheckFileIsOpen() => {isOpen}");
 
                     if (bool.TryParse(result, out isOpen) && isOpen)
@@ -321,11 +321,11 @@ namespace LDDModder.BrickEditor.Utilities
 
             copyData = Marshal.PtrToStructure<COPYDATASTRUCT>(dataPtr);
 
-            if (copyData.lpData != messagePtr)
-            {
+            //if (copyData.lpData != messagePtr)
+            //{
 
-                MessageBox.Show("TEST");
-            }
+            //    MessageBox.Show("TEST");
+            //}
             Marshal.FreeHGlobal(dataPtr);
             Marshal.FreeHGlobal(messagePtr);
         }

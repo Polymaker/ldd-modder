@@ -125,7 +125,7 @@
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="CameraMenu_ResetCamera.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>165, 22</value>
   </data>
   <data name="CameraMenu_ResetCamera.Text" xml:space="preserve">
     <value>Reset</value>
@@ -185,19 +185,19 @@
     <value>Left</value>
   </data>
   <data name="CameraMenu_AlignTo.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>165, 22</value>
   </data>
   <data name="CameraMenu_AlignTo.Text" xml:space="preserve">
     <value>Align to</value>
   </data>
   <data name="CameraMenu_LookAt.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>165, 22</value>
   </data>
   <data name="CameraMenu_LookAt.Text" xml:space="preserve">
     <value>Look at selection</value>
   </data>
   <data name="CameraMenu_Orthographic.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>165, 22</value>
   </data>
   <data name="CameraMenu_Orthographic.Text" xml:space="preserve">
     <value>Orthographic</value>
@@ -244,6 +244,18 @@
   <data name="DisplayMenu_Connections.Text" xml:space="preserve">
     <value>Connections</value>
   </data>
+  <data name="DisplayMenu_3dCursor.Size" type="System.Drawing.Size, System.Drawing">
+    <value>180, 22</value>
+  </data>
+  <data name="DisplayMenu_3dCursor.Text" xml:space="preserve">
+    <value>3D Cursor</value>
+  </data>
+  <data name="DisplayMenu_Bones.Size" type="System.Drawing.Size, System.Drawing">
+    <value>180, 22</value>
+  </data>
+  <data name="DisplayMenu_Bones.Text" xml:space="preserve">
+    <value>Bones</value>
+  </data>
   <data name="DisplayMenuDropDown.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
@@ -269,28 +281,28 @@
     <value>Display</value>
   </data>
   <data name="MeshesMenu_CalculateOutlines.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>170, 22</value>
   </data>
   <data name="MeshesMenu_CalculateOutlines.Text" xml:space="preserve">
     <value>Calculate Outlines</value>
   </data>
   <data name="MeshesMenu_RemoveOutlines.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>170, 22</value>
   </data>
   <data name="MeshesMenu_RemoveOutlines.Text" xml:space="preserve">
     <value>Remove Outlines</value>
   </data>
   <data name="MeshesMenu_Separator1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>177, 6</value>
+    <value>167, 6</value>
   </data>
   <data name="MeshesMenu_Separate.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>170, 22</value>
   </data>
   <data name="MeshesMenu_Separate.Text" xml:space="preserve">
     <value>Separate Meshes</value>
   </data>
   <data name="MeshesMenu_Merge.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>170, 22</value>
   </data>
   <data name="MeshesMenu_Merge.Text" xml:space="preserve">
     <value>Merge Meshes</value>
@@ -318,6 +330,12 @@
   </data>
   <data name="MeshesDropDownMenu.Text" xml:space="preserve">
     <value>Meshes</value>
+  </data>
+  <data name="Bones_LinkBones.Size" type="System.Drawing.Size, System.Drawing">
+    <value>212, 22</value>
+  </data>
+  <data name="Bones_LinkBones.Text" xml:space="preserve">
+    <value>Link bones...</value>
   </data>
   <data name="Bones_RebuildConnections.Size" type="System.Drawing.Size, System.Drawing">
     <value>212, 22</value>
@@ -422,6 +440,18 @@
     <value>Pivot point</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="ToggleGridButton.ImageScaling" type="System.Windows.Forms.ToolStripItemImageScaling, System.Windows.Forms">
+    <value>None</value>
+  </data>
+  <data name="ToggleGridButton.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
+    <value>Magenta</value>
+  </data>
+  <data name="ToggleGridButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>24, 24</value>
+  </data>
+  <data name="ToggleGridButton.Text" xml:space="preserve">
+    <value>Show / Hide Grid</value>
+  </data>
   <data name="ModelRenderMode1Button.ImageScaling" type="System.Windows.Forms.ToolStripItemImageScaling, System.Windows.Forms">
     <value>None</value>
   </data>
@@ -461,8 +491,11 @@
   <data name="toolStrip1.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 0</value>
   </data>
+  <data name="toolStrip1.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>0, 1, 1, 1</value>
+  </data>
   <data name="toolStrip1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>549, 27</value>
+    <value>549, 29</value>
   </data>
   <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="toolStrip1.TabIndex" type="System.Int32, mscorlib">
@@ -489,35 +522,35 @@
   <data name="SelectionInfoPanel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
   </data>
-  <data name="transformEditor1.AutoSize" type="System.Boolean, mscorlib">
+  <data name="SelectionTransformEditor.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
-  <data name="transformEditor1.AutoSizeMode" type="System.Windows.Forms.AutoSizeMode, System.Windows.Forms">
+  <data name="SelectionTransformEditor.AutoSizeMode" type="System.Windows.Forms.AutoSizeMode, System.Windows.Forms">
     <value>GrowAndShrink</value>
   </data>
-  <data name="transformEditor1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 3</value>
+  <data name="SelectionTransformEditor.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 4</value>
   </data>
-  <data name="transformEditor1.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="SelectionTransformEditor.Size" type="System.Drawing.Size, System.Drawing">
     <value>175, 88</value>
   </data>
-  <data name="transformEditor1.TabIndex" type="System.Int32, mscorlib">
+  <data name="SelectionTransformEditor.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
   </data>
-  <data name="&gt;&gt;transformEditor1.Name" xml:space="preserve">
-    <value>transformEditor1</value>
+  <data name="&gt;&gt;SelectionTransformEditor.Name" xml:space="preserve">
+    <value>SelectionTransformEditor</value>
   </data>
-  <data name="&gt;&gt;transformEditor1.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.TransformEditor, Brick Studio, Version=1.0.4.14792, Culture=neutral, PublicKeyToken=null</value>
+  <data name="&gt;&gt;SelectionTransformEditor.Type" xml:space="preserve">
+    <value>LDDModder.BrickEditor.UI.Controls.TransformEditor, Brick Studio, Version=1.0.5.25629, Culture=neutral, PublicKeyToken=null</value>
   </data>
-  <data name="&gt;&gt;transformEditor1.Parent" xml:space="preserve">
+  <data name="&gt;&gt;SelectionTransformEditor.Parent" xml:space="preserve">
     <value>SelectionInfoPanel</value>
   </data>
-  <data name="&gt;&gt;transformEditor1.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;SelectionTransformEditor.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
   <data name="SelectionInfoPanel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>369, 27</value>
+    <value>369, 29</value>
   </data>
   <data name="SelectionInfoPanel.Size" type="System.Drawing.Size, System.Drawing">
     <value>180, 95</value>
@@ -639,6 +672,18 @@
   <data name="&gt;&gt;DisplayMenu_Connections.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;DisplayMenu_3dCursor.Name" xml:space="preserve">
+    <value>DisplayMenu_3dCursor</value>
+  </data>
+  <data name="&gt;&gt;DisplayMenu_3dCursor.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;DisplayMenu_Bones.Name" xml:space="preserve">
+    <value>DisplayMenu_Bones</value>
+  </data>
+  <data name="&gt;&gt;DisplayMenu_Bones.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;MeshesDropDownMenu.Name" xml:space="preserve">
     <value>MeshesDropDownMenu</value>
   </data>
@@ -657,6 +702,12 @@
   <data name="&gt;&gt;MeshesMenu_RemoveOutlines.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;MeshesMenu_Separator1.Name" xml:space="preserve">
+    <value>MeshesMenu_Separator1</value>
+  </data>
+  <data name="&gt;&gt;MeshesMenu_Separator1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;MeshesMenu_Separate.Name" xml:space="preserve">
     <value>MeshesMenu_Separate</value>
   </data>
@@ -674,6 +725,12 @@
   </data>
   <data name="&gt;&gt;BonesDropDownMenu.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripDropDownButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;Bones_LinkBones.Name" xml:space="preserve">
+    <value>Bones_LinkBones</value>
+  </data>
+  <data name="&gt;&gt;Bones_LinkBones.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;Bones_RebuildConnections.Name" xml:space="preserve">
     <value>Bones_RebuildConnections</value>
@@ -747,6 +804,12 @@
   <data name="&gt;&gt;cursorToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;ToggleGridButton.Name" xml:space="preserve">
+    <value>ToggleGridButton</value>
+  </data>
+  <data name="&gt;&gt;ToggleGridButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;ModelRenderMode1Button.Name" xml:space="preserve">
     <value>ModelRenderMode1Button</value>
   </data>
@@ -771,16 +834,10 @@
   <data name="&gt;&gt;visualStudioToolStripExtender1.Type" xml:space="preserve">
     <value>WeifenLuo.WinFormsUI.Docking.VisualStudioToolStripExtender, WeifenLuo.WinFormsUI.Docking, Version=3.0.6.0, Culture=neutral, PublicKeyToken=5cded1a1a0a7b481</value>
   </data>
-  <data name="&gt;&gt;MeshesMenu_Separator1.Name" xml:space="preserve">
-    <value>MeshesMenu_Separator1</value>
-  </data>
-  <data name="&gt;&gt;MeshesMenu_Separator1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>ViewportPanel</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Panels.ProjectDocumentPanel, Brick Studio, Version=1.0.4.14792, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Panels.ProjectDocumentPanel, Brick Studio, Version=1.0.5.25629, Culture=neutral, PublicKeyToken=null</value>
   </data>
 </root>

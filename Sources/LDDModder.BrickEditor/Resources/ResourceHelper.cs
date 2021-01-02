@@ -87,6 +87,23 @@ namespace LDDModder.BrickEditor.Resources
             return stream;
         }
 
+        public static byte[] GetResourceBytes(string resourceName)
+        {
+            var stream = GetResourceStream(resourceName);
+            var ms = new MemoryStream();
+            stream.CopyTo(ms);
+            ms.Position = 0;
+            try
+            {
+                return ms.ToArray();
+            }
+            finally
+            {
+                ms.Dispose();
+                stream.Dispose();
+            }
+        }
+
         public static Bitmap GetResourceImage(string resourceName)
         {
             var stream = GetResourceStream(resourceName);

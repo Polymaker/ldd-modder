@@ -616,6 +616,18 @@ namespace LDDModder.Simple3D
             return result;
         }
 
+        public static Matrix4 FromDirection(Vector3 direction, Vector3 frontAxis)
+        {
+            var angleDiff = Vector3.AngleBetween(direction, frontAxis);
+
+            if (float.IsNaN(angleDiff) || Math.Abs(angleDiff) <= 0.001f)
+                return Identity;
+
+            var omega = (float)Math.Acos(Vector3.Dot(frontAxis, direction));
+            
+            return FromAngleAxis(omega, Vector3.Cross(frontAxis, direction));
+        }
+
         public static Matrix4 LookAt(Vector3 eye, Vector3 target, Vector3 up)
         {
             Vector3 z = (eye - target).Normalized();

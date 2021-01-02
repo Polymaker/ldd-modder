@@ -76,6 +76,8 @@
             this.ProjectTreeView.AllColumns.Add(this.olvColumnElement);
             this.ProjectTreeView.AllColumns.Add(this.olvColumnVisible);
             this.ProjectTreeView.AlternateRowBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(250)))), ((int)(((byte)(250)))));
+            this.ProjectTreeView.AutoArrange = false;
+            this.ProjectTreeView.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.ProjectTreeView.CellEditActivation = BrightIdeasSoftware.ObjectListView.CellEditActivateMode.DoubleClick;
             this.ProjectTreeView.CellEditUseWholeCell = false;
             this.ProjectTreeView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {

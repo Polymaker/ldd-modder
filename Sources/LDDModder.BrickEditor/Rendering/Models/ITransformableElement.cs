@@ -23,6 +23,8 @@ namespace LDDModder.BrickEditor.Rendering
 
         event EventHandler VisibilityChanged;
 
+        Matrix4 GetBaseTranform();
+
         void BeginEditTransform();
 
         void ApplyTransform(Matrix4 transform);

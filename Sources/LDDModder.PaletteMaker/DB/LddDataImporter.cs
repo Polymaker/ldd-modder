@@ -3,6 +3,7 @@ using LDDModder.LDD.Files;
 using LDDModder.LDD.Primitives;
 using LDDModder.PaletteMaker.Models.LDD;
 using LDDModder.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
@@ -143,7 +144,10 @@ namespace LDDModder.PaletteMaker.DB
                             subMaterialsStr,
                             false);
                     }
-                    catch { }
+                    catch (Exception ex)
+                    { 
+                    
+                    }
 
                     ReportProgress(++totalProcessed, primitivesFiles.Length);
                 }
@@ -188,14 +192,23 @@ namespace LDDModder.PaletteMaker.DB
                     try
                     {
                         var assemInfo = LDDModder.LDD.Models.Assembly.Load(assemFile);
+                        string assemID = assemInfo.ID.ToString();
 
                         //skip decomposed assemblies
                         if (assemInfo.Bricks.Count == 1 &&
                             assemInfo.ID.ToString() == assemInfo.Bricks[0].DesignID)
                             continue;
 
+                        if (assemInfo.Bricks.Any(x => x.DesignID == assemInfo.ID.ToString()))
+                        {
+                            if (Path.GetFileNameWithoutExtension(assemFile) != assemID)
+                            {
+                                //assemID = Path.GetFileNameWithoutExtension(assemFile);
+                            }
+                        }
+
                         DbHelper.InsertWithParameters(mainCmd,
-                            assemInfo.ID.ToString(),
+                            assemID,
                             assemInfo.Name,
                             string.Join(";", assemInfo.Aliases),
                             true
@@ -205,12 +218,15 @@ namespace LDDModder.PaletteMaker.DB
                         {
                             DbHelper.InsertWithParameters(subCmd,
                                 assemInfo.ID.ToString(),
-                                subPart.Part.DesignID,
+                                subPart.Part?.DesignID ?? subPart.DesignID,
                                 string.Join(";", subPart.Part.Materials)
                             );
                         }
                     }
-                    catch { }
+                    catch (Exception ex)
+                    {
+
+                    }
 
                     ReportProgress(++totalProcessed, assemblyFiles.Length);
                 }

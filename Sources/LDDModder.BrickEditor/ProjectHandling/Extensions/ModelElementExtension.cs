@@ -1,5 +1,6 @@
 ﻿using LDDModder.BrickEditor.ProjectHandling;
-using LDDModder.Modding.Editing;
+using LDDModder.Modding;
+using LDDModder.Modding;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -104,6 +105,9 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
                 if (Element is PartConnection)
                     return !Manager.ShowConnections;
+
+                //if (Element is PartBone)
+                //    return !Manager.ShowBones;
             }
 
             return false;

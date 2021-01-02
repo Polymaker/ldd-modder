@@ -199,12 +199,15 @@ namespace LDDModder.PaletteMaker.Generation
             {
                 string legoID = matches[0].LegoID;
                 var lddPart = db.LddParts.FirstOrDefault(x => x.DesignID == legoID);
-
+                if (lddPart == null)
+                {
+                    Debug.WriteLine($"could not find ldd part {lddPart.DesignID} but a mapping exists");
+                }
                 return lddPart;
             }
-            else
+            else if (matches.Count > 1)
             {
-                Debug.WriteLine("Multiple matches for part!");
+                Debug.WriteLine($"Multiple matches for part {partToFind.PartID} '{partToFind.Name}'!");
 
             }
 

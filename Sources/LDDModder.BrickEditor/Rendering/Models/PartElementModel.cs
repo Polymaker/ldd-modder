@@ -1,5 +1,6 @@
 ﻿using LDDModder.BrickEditor.ProjectHandling;
-using LDDModder.Modding.Editing;
+using LDDModder.Modding;
+using LDDModder.Modding;
 using OpenTK;
 using System;
 using System.Collections.Generic;
@@ -17,8 +18,6 @@ namespace LDDModder.BrickEditor.Rendering
         public ModelElementExtension ModelExtension { get; private set; }
 
         public bool IsHidden => ModelExtension?.IsHidden ?? false;
-
-        public bool IsSelected { get; set; }
 
         protected bool IsApplyingTransform { get; set; }
 
@@ -78,10 +77,13 @@ namespace LDDModder.BrickEditor.Rendering
             Visible = extender.IsVisible;
         }
 
-        protected override bool GetVisibleCore()
+        protected override bool? VisibleOverride()
         {
-            var extender = Element.GetExtension<ModelElementExtension>();
-            return extender?.IsVisible ?? base.GetVisibleCore();
+            var extender = Element?.GetExtension<ModelElementExtension>();
+            if (extender != null)
+                return extender.IsVisible;
+
+            return null;
         }
 
         protected override void OnTransformChanged()
@@ -153,6 +155,14 @@ namespace LDDModder.BrickEditor.Rendering
         protected virtual void OnElementPropertyChanged(ElementValueChangedEventArgs e)
         {
 
+        }
+
+        public void RenderTransformed(Matrix4 transform, Camera camera, MeshRenderMode mode = MeshRenderMode.Solid)
+        {
+            var currentTransform = Transform;
+            SetTransform(transform, false);
+            RenderModel(camera, mode);
+            SetTransform(currentTransform, false);
         }
     }
 }

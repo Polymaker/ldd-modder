@@ -9,79 +9,73 @@ namespace LDDModder.BrickEditor.Settings
 {
     public class AppSettings
     {
-        [JsonProperty("ldd.programFilesPath")]
-        public string LddProgramFilesPath { get; set; }
-        [JsonProperty("ldd.appDataPath")]
-        public string LddApplicationDataPath { get; set; }
+        [JsonProperty("lddEnvironment")]
+        public LddSettings LddSettings { get; set; }
 
-        [JsonProperty("workspace.folder")]
-        public string ProjectWorkspace { get; set; }
+        [JsonProperty("editorSettings")]
+        public EditorSettings EditorSettings { get; set; }
 
-        [JsonProperty("build.configurations")]
+        [JsonProperty("buildConfigurations")]
         public ProjectBuildSettings BuildSettings { get; set; }
 
-        //[JsonProperty("viewport.default")]
-        //public ViewportDisplaySettings ViewportSettings { get; set; }
+        [JsonProperty("displaySettings")]
+        public DisplaySettings DisplaySettings { get; set; }
+
         [JsonProperty("file.opened")]
         public List<RecentFileInfo> OpenedProjects { get; set; }
 
-        //[JsonProperty("currentProjectPath")]
-        //public RecentFileInfo LastOpenProject { get; set; }
-
         [JsonProperty("file.history")]
         public List<RecentFileInfo> RecentProjectFiles { get; set; }
-
-        [JsonProperty("autosave.interval")]
-        public int AutoSaveInterval { get; set; }
-
-        //[JsonProperty("Display")]
-        //public DisplaySettings DisplaySettings { get; set; }
 
         public AppSettings()
         {
             RecentProjectFiles = new List<RecentFileInfo>();
             BuildSettings = new ProjectBuildSettings();
+            EditorSettings = new EditorSettings();
+            LddSettings = new LddSettings();
+            DisplaySettings = new DisplaySettings();
             OpenedProjects = new List<RecentFileInfo>();
-            AutoSaveInterval = -1;
-            //ViewportSettings = new ViewportDisplaySettings()
-            //{
-            //    PartRenderMode = Rendering.MeshRenderMode.SolidWireframe,
-            //    ShowPartModels = true
-            //};
-        }
-
-        public static AppSettings CreateDefault(LDD.LDDEnvironment lddEnvironment)
-        {
-            var settings = new AppSettings()
-            {
-                LddApplicationDataPath = lddEnvironment?.ApplicationDataPath ?? string.Empty,
-                LddProgramFilesPath = lddEnvironment?.ProgramFilesPath ?? string.Empty,
-                AutoSaveInterval = 15
-            };
-            return settings;
-        }
-
-        public static AppSettings CreateDefault()
-        {
-            return CreateDefault(LDD.LDDEnvironment.InstalledEnvironment);
         }
 
         public void InitializeDefaultValues()
         {
-            if (string.IsNullOrEmpty(LddApplicationDataPath) ||
-                string.IsNullOrEmpty(LddProgramFilesPath))
-            {
-                var installedEnv = LDD.LDDEnvironment.InstalledEnvironment;
-                LddApplicationDataPath = installedEnv?.ApplicationDataPath ?? string.Empty;
-                LddProgramFilesPath = installedEnv?.ProgramFilesPath ?? string.Empty;
-            }
-
-            if (AutoSaveInterval < 0)
-                AutoSaveInterval = 15;
-
             if (BuildSettings == null)
                 BuildSettings = new ProjectBuildSettings();
+
             BuildSettings.InitializeDefaults();
+
+            if (EditorSettings == null)
+                EditorSettings = new EditorSettings();
+
+            EditorSettings.InitializeDefaults();
+
+            if (LddSettings == null)
+                LddSettings = new LddSettings();
+
+            LddSettings.InitializeDefaults();
+
+            if (DisplaySettings == null)
+                DisplaySettings = new DisplaySettings();
+
+            DisplaySettings.InitializeDefaults();
+        }
+
+        public IEnumerable<BuildConfiguration> GetBuildConfigurations()
+        {
+            if (BuildSettings == null)
+                yield break;
+
+            if (BuildSettings.LDD != null)
+                yield return BuildSettings.LDD;
+
+            if (BuildSettings.Manual != null)
+                yield return BuildSettings.Manual;
+            
+            foreach (var cfg in BuildSettings.UserDefined)
+            {
+                cfg.GenerateUniqueID();
+                yield return cfg;
+            }
         }
     }
 }

@@ -271,6 +271,12 @@ namespace System.Xml.Linq
                 result = elem.Value;
                 return true;
             }
+            else if (valueType == typeof(DateTime) && 
+                DateTime.TryParse(elem.Value, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dateVal))
+            {
+                result = dateVal;
+                return true;
+            }
             else if (valueType == typeof(bool))
             {
                 switch (elem.Value.Trim().ToLower())
