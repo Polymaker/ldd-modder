@@ -151,6 +151,9 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             try
             {
+                //if (!UIRenderHelper.LoadFreetype6())
+                //    throw new Exception("Could not load freetype6.dll");
+
                 TextureManager.InitializeResources();
                 UIRenderHelper.InitializeResources();
                 RenderHelper.InitializeResources();
@@ -160,7 +163,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             {
                 BeginInvoke((Action)(() =>
                 {
-                    MessageBoxEX.ShowException(this, "", "", ex);
+                    MessageBoxEX.ShowException(this, ex.Message, Messages.Caption_UnexpectedError, ex);
                 }));
                 
                 GlContextCreated = false;
@@ -536,7 +539,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void Draw3DTexts()
         {
-            if (UIRenderHelper.TextRenderer.DrawingPrimitives.Any())
+            if (UIRenderHelper.Freetype6Loaded && UIRenderHelper.TextRenderer.DrawingPrimitives.Any())
             {
                 UIRenderHelper.TextRenderer.RefreshBuffers();
                 UIRenderHelper.TextRenderer.Draw();
@@ -878,8 +881,10 @@ namespace LDDModder.BrickEditor.UI.Panels
         private void DisposeGLResources()
         {
             UnloadModels();
-            SelectionGizmo.Dispose();
-            CursorModel.Dispose();
+            if (SelectionGizmo != null)
+                SelectionGizmo.Dispose();
+            if (CursorModel != null)
+                CursorModel.Dispose();
 
             UIRenderHelper.ReleaseResources();
             RenderHelper.ReleaseResources();

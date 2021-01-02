@@ -28,6 +28,9 @@ namespace LDDModder.BrickEditor.UI.Settings
             base.FillSettings(settings);
             BuildSettings = settings.BuildSettings;
             EditorSettings = settings.EditorSettings;
+            UsernameTextbox.Text = EditorSettings.Username;
+            WorkspaceBrowseBox.Value = EditorSettings.ProjectWorkspace;
+            numericUpDown1.Value = EditorSettings.BackupInterval;
 
             FillBuildSettingsList();
         }
@@ -35,6 +38,8 @@ namespace LDDModder.BrickEditor.UI.Settings
         public override void ApplySettings(AppSettings settings)
         {
             base.ApplySettings(settings);
+            settings.EditorSettings.Username = UsernameTextbox.Text;
+            settings.EditorSettings.BackupInterval = (int)numericUpDown1.Value;
             settings.BuildSettings.LDD.Update(BuildSettings.LDD);
             settings.BuildSettings.Manual.Update(BuildSettings.Manual);
             settings.BuildSettings.UserDefined.Clear();

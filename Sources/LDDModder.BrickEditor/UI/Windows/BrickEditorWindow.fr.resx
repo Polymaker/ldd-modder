@@ -180,10 +180,25 @@
   <data name="SelectedBuildLabel.Text" xml:space="preserve">
     <value>Générer les fichiers dans:</value>
   </data>
-  <data name="Edit_GenerateOutlines.Text" xml:space="preserve">
-    <value>Générer les contours</value>
-  </data>
   <data name="WindowTitle.Text" xml:space="preserve">
     <value>LDD Brick Studio</value>
+  </data>
+  <data name="HelpMenu_About.Text" xml:space="preserve">
+    <value>À propos...</value>
+  </data>
+  <data name="WindowMenu_ApplyLayout.Text" xml:space="preserve">
+    <value>Appliquer la disposition</value>
+  </data>
+  <data name="WindowMenu_ManageLayouts.Text" xml:space="preserve">
+    <value>Gérer les dispositions</value>
+  </data>
+  <data name="WindowMenu_ResetLayout.Text" xml:space="preserve">
+    <value>Réinitialiser la disposition</value>
+  </data>
+  <data name="WindowMenu_SaveLayout.Text" xml:space="preserve">
+    <value>Enregistrer la disposition actuelle</value>
+  </data>
+  <data name="WindowMenuItem.Text" xml:space="preserve">
+    <value>Fenêtres</value>
   </data>
 </root>

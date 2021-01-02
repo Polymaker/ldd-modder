@@ -142,7 +142,7 @@
     <value>Tenseur d'inertie</value>
   </data>
   <data name="LabelPartID.Text" xml:space="preserve">
-    <value>ID</value>
+    <value># Pièce</value>
   </data>
   <data name="LabelPlatform.Text" xml:space="preserve">
     <value>Platforme</value>

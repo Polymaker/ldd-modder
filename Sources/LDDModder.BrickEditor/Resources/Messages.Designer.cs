@@ -169,6 +169,15 @@ namespace LDDModder.BrickEditor.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unexpected Error.
+        /// </summary>
+        internal static string Caption_UnexpectedError {
+            get {
+                return ResourceManager.GetString("Caption_UnexpectedError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Warning.
         /// </summary>
         internal static string Caption_Warning {
@@ -262,6 +271,17 @@ namespace LDDModder.BrickEditor.Resources {
         internal static string Message_ConfirmResizeStuds {
             get {
                 return ResourceManager.GetString("Message_ConfirmResizeStuds", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The library &apos;freetype6.dll&quot; could not be loaded.
+        ///This library is used to draw text in OpenGL.
+        ///The application can still work but no text will be displayed in the viewport..
+        /// </summary>
+        internal static string Message_CouldNotLoadFreetype6 {
+            get {
+                return ResourceManager.GetString("Message_CouldNotLoadFreetype6", resourceCulture);
             }
         }
         

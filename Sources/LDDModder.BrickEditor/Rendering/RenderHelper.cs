@@ -179,8 +179,12 @@ namespace LDDModder.BrickEditor.Rendering
             SimpleTextureShader.ViewMatrix.Set(viewMatrix);
             SimpleTextureShader.Projection.Set(projection);
 
-            UIRenderHelper.TextRenderer.ProjectionMatrix = projection;
-            UIRenderHelper.TextRenderer.DrawingPrimitives.Clear();
+            if (UIRenderHelper.Freetype6Loaded)
+            {
+                UIRenderHelper.TextRenderer.ProjectionMatrix = projection;
+                UIRenderHelper.TextRenderer.DrawingPrimitives.Clear();
+            }
+            
             TextViewMatrix = viewMatrix;
 
             GL.UseProgram(0);

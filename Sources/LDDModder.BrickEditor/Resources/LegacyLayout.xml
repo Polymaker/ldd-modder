@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--DockPanel configuration file. Author: Weifen Luo, all rights reserved.-->
+<!--!!! AUTOMATICALLY GENERATED FILE. DO NOT MODIFY !!!-->
+<DockPanel FormatVersion="1.0" DockLeftPortion="250" DockRightPortion="0.25" DockTopPortion="0.25" DockBottomPortion="288" ActiveDocumentPane="0" ActivePane="2" Name="legacy layout" AppVersion="1.0.5">
+  <Contents Count="8">
+    <Content ID="0" PersistString="LDDModder.BrickEditor.UI.Panels.ViewportPanel" AutoHidePortion="0.25" IsHidden="False" IsFloat="False" />
+    <Content ID="1" PersistString="LDDModder.BrickEditor.UI.Panels.StudConnectionPanel" AutoHidePortion="0.25" IsHidden="False" IsFloat="False" />
+    <Content ID="2" PersistString="LDDModder.BrickEditor.UI.Panels.NavigationPanel" AutoHidePortion="250" IsHidden="False" IsFloat="False" />
+    <Content ID="3" PersistString="LDDModder.BrickEditor.UI.Panels.PartPropertiesPanel" AutoHidePortion="250" IsHidden="False" IsFloat="False" />
+    <Content ID="4" PersistString="LDDModder.BrickEditor.UI.Panels.ElementDetailPanel" AutoHidePortion="250" IsHidden="False" IsFloat="False" />
+    <Content ID="5" PersistString="LDDModder.BrickEditor.UI.Panels.ConnectionEditorPanel" AutoHidePortion="250" IsHidden="False" IsFloat="False" />
+    <Content ID="6" PersistString="LDDModder.BrickEditor.UI.Panels.ValidationPanel" AutoHidePortion="250" IsHidden="False" IsFloat="False" />
+    <Content ID="7" PersistString="LDDModder.BrickEditor.UI.Panels.ProjectInfoPanel" AutoHidePortion="250" IsHidden="False" IsFloat="False" />
+  </Contents>
+  <Panes Count="3">
+    <Pane ID="0" DockState="Document" ActiveContent="0">
+      <Contents Count="2">
+        <Content ID="0" RefID="0" />
+        <Content ID="1" RefID="1" />
+      </Contents>
+    </Pane>
+    <Pane ID="1" DockState="DockLeft" ActiveContent="2">
+      <Contents Count="1">
+        <Content ID="0" RefID="2" />
+      </Contents>
+    </Pane>
+    <Pane ID="2" DockState="DockBottom" ActiveContent="3">
+      <Contents Count="5">
+        <Content ID="0" RefID="3" />
+        <Content ID="1" RefID="4" />
+        <Content ID="2" RefID="5" />
+        <Content ID="3" RefID="6" />
+        <Content ID="4" RefID="7" />
+      </Contents>
+    </Pane>
+  </Panes>
+  <DockWindows>
+    <DockWindow ID="0" DockState="Document" ZOrderIndex="1">
+      <NestedPanes Count="1">
+        <Pane ID="0" RefID="0" PrevPane="-1" Alignment="Right" Proportion="0.5" />
+      </NestedPanes>
+    </DockWindow>
+    <DockWindow ID="1" DockState="DockLeft" ZOrderIndex="3">
+      <NestedPanes Count="1">
+        <Pane ID="0" RefID="1" PrevPane="-1" Alignment="Bottom" Proportion="0.5" />
+      </NestedPanes>
+    </DockWindow>
+    <DockWindow ID="2" DockState="DockRight" ZOrderIndex="4">
+      <NestedPanes Count="0" />
+    </DockWindow>
+    <DockWindow ID="3" DockState="DockTop" ZOrderIndex="5">
+      <NestedPanes Count="0" />
+    </DockWindow>
+    <DockWindow ID="4" DockState="DockBottom" ZOrderIndex="2">
+      <NestedPanes Count="1">
+        <Pane ID="0" RefID="2" PrevPane="-1" Alignment="Right" Proportion="0.5" />
+      </NestedPanes>
+    </DockWindow>
+  </DockWindows>
+  <FloatWindows Count="0" />
+</DockPanel>

@@ -629,6 +629,9 @@
     <EmbeddedResource Include="UI\Settings\LddSettingsPanel.resx">
       <DependentUpon>LddSettingsPanel.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\Windows\AboutWindow.fr.resx">
+      <DependentUpon>AboutWindow.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\Windows\AboutWindow.resx">
       <DependentUpon>AboutWindow.cs</DependentUpon>
     </EmbeddedResource>
@@ -736,6 +739,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </ContentWithTargetPath>
     <Content Include="Resources\BrickStudioIcon.ico" />
+    <EmbeddedResource Include="Resources\DefaultLayout.xml" />
     <Content Include="Resources\Images\DecorationSurfaceIcon.png" />
     <Content Include="Resources\Images\GizmoOrientationIcon.png" />
     <Content Include="Resources\Images\GizmoPivotPointIcon.png" />

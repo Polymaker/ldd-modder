@@ -51,15 +51,20 @@ namespace LDDModder.BrickEditor.Rendering
 
         public static bool LoadFreetype6()
         {
+            if (Freetype6Loaded)
+                return true;
+
             string currentPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
             string x64dllPath = Path.Combine(currentPath, "runtimes\\win-x64\\native", "freetype6.dll");
             string x86dllPath = Path.Combine(currentPath, "runtimes\\win-x86\\native", "freetype6.dll");
 
             string dllToUsePath = Path.Combine(currentPath, "freetype6.dll");
+
             Freetype6Loaded = false;
             Use64bitFreetype6 = false;
             IntPtr libPtr = IntPtr.Zero;
+
             try
             {
                 libPtr = Kernel32.LoadLibrary(x64dllPath);
@@ -101,30 +106,32 @@ namespace LDDModder.BrickEditor.Rendering
 
         public static void InitializeResources()
         {
-            LoadFreetype6();
-
-            var builderConfig = new QFontBuilderConfiguration(true)
+            if (Freetype6Loaded)
             {
-                ShadowConfig =
+                var builderConfig = new QFontBuilderConfiguration(true)
+                {
+                    ShadowConfig =
                 {
                     BlurRadius = 2,
                     BlurPasses = 1,
                     Type = ShadowType.Blurred
                 },
-                TextGenerationRenderHint = TextGenerationRenderHint.ClearTypeGridFit,
-                Characters = CharacterSet.General | CharacterSet.Japanese | CharacterSet.Thai | CharacterSet.Cyrillic
-            };
+                    TextGenerationRenderHint = TextGenerationRenderHint.ClearTypeGridFit,
+                    Characters = CharacterSet.General | CharacterSet.Japanese | CharacterSet.Thai | CharacterSet.Cyrillic
+                };
 
-            NormalFont = new QFont("C:\\Windows\\Fonts\\segoeui.ttf", 10,
-                builderConfig);
+                NormalFont = new QFont("C:\\Windows\\Fonts\\segoeui.ttf", 10,
+                    builderConfig);
 
-            SmallFont = new QFont("C:\\Windows\\Fonts\\segoeui.ttf", 8,
-                builderConfig);
+                SmallFont = new QFont("C:\\Windows\\Fonts\\segoeui.ttf", 8,
+                    builderConfig);
 
-            MonoFont = new QFont("C:\\Windows\\Fonts\\consola.ttf", 10,
-                builderConfig);
+                MonoFont = new QFont("C:\\Windows\\Fonts\\consola.ttf", 10,
+                    builderConfig);
 
-            TextRenderer = new QFontDrawing();
+                TextRenderer = new QFontDrawing();
+            }
+            
 
             UIShader = ProgramFactory.Create<UIShaderProgram>();
 
@@ -143,22 +150,23 @@ namespace LDDModder.BrickEditor.Rendering
 
         public static void ReleaseResources()
         {
-            VBO.Dispose();
-            VAO.Dispose();
+            VBO?.Dispose();
+            VAO?.Dispose();
 
-            NormalFont.Dispose();
-            SmallFont.Dispose();
-            TextRenderer.Dispose();
-            UIShader.Dispose();
+            NormalFont?.Dispose();
+            SmallFont?.Dispose();
+            TextRenderer?.Dispose();
+            UIShader?.Dispose();
 
-            NormalFont.Dispose();
-            SmallFont.Dispose();
-            MonoFont.Dispose();
+            NormalFont?.Dispose();
+            SmallFont?.Dispose();
+            MonoFont?.Dispose();
         }
 
         public static void InitializeMatrices(Camera camera)
         {
             ViewSize = new Vector2(camera.Viewport.Width, camera.Viewport.Height);
+
             ProjectionMatrix = Matrix4.CreateOrthographicOffCenter(
                 0, camera.Viewport.Width, 
                 camera.Viewport.Height, 0, 
@@ -169,7 +177,11 @@ namespace LDDModder.BrickEditor.Rendering
                 0, camera.Viewport.Height, 
                 -1.0f, 1.0f);
 
-            TextRenderer.ProjectionMatrix = TextMatrix;
+            if (Freetype6Loaded)
+            {
+                TextRenderer.ProjectionMatrix = TextMatrix;
+            }
+           
         }
 
         public static void DrawSprite(Texture2D texture, Vector4 destination, SpriteBounds spriteBounds)
@@ -301,6 +313,8 @@ namespace LDDModder.BrickEditor.Rendering
             StringAlignment hAlign,
             QFontRenderOptions options)
         {
+            if (!Freetype6Loaded)
+                return;
 
             var textSize = font.Measure(text, bounds.Size, QFontAlignment.Left);
             textSize.Height += 2;
@@ -342,8 +356,12 @@ namespace LDDModder.BrickEditor.Rendering
 
         public static void IntializeBeforeRender()
         {
-            TextRenderer.DrawingPrimitives.Clear();
-            TextRenderer.ProjectionMatrix = TextMatrix;
+            if (Freetype6Loaded)
+            {
+                TextRenderer.DrawingPrimitives.Clear();
+                TextRenderer.ProjectionMatrix = TextMatrix;
+            }
+            
             VBO.Clear(OpenTK.Graphics.OpenGL.BufferTarget.ArrayBuffer);
             SpritesToRender.Clear();
             VertexList.Clear();
@@ -369,9 +387,12 @@ namespace LDDModder.BrickEditor.Rendering
                 }
             }
 
-            TextRenderer.RefreshBuffers();
-            TextRenderer.Draw();
-            TextRenderer.DisableShader();
+            if (Freetype6Loaded)
+            {
+                TextRenderer.RefreshBuffers();
+                TextRenderer.Draw();
+                TextRenderer.DisableShader();
+            }
         }
 
         public class SpriteElement

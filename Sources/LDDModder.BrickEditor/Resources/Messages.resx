@@ -198,4 +198,12 @@ Are-you sure you want to overwrite  them?
   <data name="Message_LayoutNameAlreadyExist" xml:space="preserve">
     <value>Layout name already exist.</value>
   </data>
+  <data name="Caption_UnexpectedError" xml:space="preserve">
+    <value>Unexpected Error</value>
+  </data>
+  <data name="Message_CouldNotLoadFreetype6" xml:space="preserve">
+    <value>The library 'freetype6.dll" could not be loaded.
+This library is used to draw text in OpenGL.
+The application can still work but no text will be displayed in the viewport.</value>
+  </data>
 </root>

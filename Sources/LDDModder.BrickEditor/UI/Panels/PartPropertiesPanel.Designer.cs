@@ -172,6 +172,7 @@
             // LabelPlatform
             // 
             resources.ApplyResources(this.LabelPlatform, "LabelPlatform");
+            this.tableLayoutPanel1.SetColumnSpan(this.LabelPlatform, 2);
             this.LabelPlatform.Name = "LabelPlatform";
             // 
             // DescriptionTextBox
@@ -212,6 +213,7 @@
             // LabelCategory
             // 
             resources.ApplyResources(this.LabelCategory, "LabelCategory");
+            this.tableLayoutPanel1.SetColumnSpan(this.LabelCategory, 2);
             this.LabelCategory.Name = "LabelCategory";
             // 
             // PlatformComboBox

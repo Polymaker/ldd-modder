@@ -117,55 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AddBuildCfgBtn.Text" xml:space="preserve">
-    <value>Ajouter</value>
-  </data>
-  <data name="BuildCfgNameColumn.Text" xml:space="preserve">
-    <value>Nom</value>
-  </data>
-  <data name="BuildCfgNameLabel.Text" xml:space="preserve">
-    <value>Nom</value>
-  </data>
-  <data name="UsernameLabel.Text" xml:space="preserve">
-    <value>Pseudonyme</value>
-  </data>
-  <data name="SaveBuildCfgBtn.Text" xml:space="preserve">
-    <value>Enregistrer</value>
-  </data>
-  <data name="BuildCfg_OverwriteChk.Text" xml:space="preserve">
-    <value>Confirmation lors de l'écrasement</value>
-  </data>
-  <data name="BuildCfg_Lod0Chk.Text" xml:space="preserve">
-    <value>Placer les modèles dans le répertoire LOD0</value>
-  </data>
-  <data name="BuildCfgPathLabel.Text" xml:space="preserve">
-    <value>Chemin de sortie</value>
-  </data>
-  <data name="CancelBuildCfgBtn.Text" xml:space="preserve">
-    <value>Annuler</value>
-  </data>
-  <data name="DelBuildCfgBtn.Text" xml:space="preserve">
-    <value>Supprimer</value>
-  </data>
-  <data name="groupBox1.Text" xml:space="preserve">
-    <value>Configuration générale</value>
-  </data>
-  <data name="label6.Text" xml:space="preserve">
-    <value>Intervalle de sauvegarde</value>
-  </data>
-  <data name="label5.Text" xml:space="preserve">
-    <value>secondes</value>
-  </data>
-  <data name="label4.Text" xml:space="preserve">
-    <value>* Optionnel</value>
-  </data>
-  <data name="label3.Text" xml:space="preserve">
-    <value>Espace de travail</value>
-  </data>
-  <data name="BuildConfigsGroupBox.Text" xml:space="preserve">
-    <value>Préréglages de sortie</value>
-  </data>
-  <data name="$this.Title" xml:space="preserve">
-    <value>Paramètres de l'éditeur</value>
+  <data name="$this.Text" xml:space="preserve">
+    <value>À propos</value>
   </data>
 </root>

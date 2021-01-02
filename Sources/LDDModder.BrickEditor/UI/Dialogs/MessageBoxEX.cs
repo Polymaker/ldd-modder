@@ -39,6 +39,31 @@ namespace LDDModder.BrickEditor.UI.Windows
             }
         }
 
+        protected override void OnShown(EventArgs e)
+        {
+            base.OnShown(e);
+
+            int borderHeight = Height - tableLayoutPanel1.Height;
+            int currentHeight = tableLayoutPanel1.Height;
+
+            int messageWidth = tableLayoutPanel1.Width - MessageTextLabel.Margin.Horizontal;
+            if (MessageIconBox.Visible)
+                messageWidth -= MessageIconBox.Width + MessageIconBox.Margin.Horizontal;
+
+            var minHeight = MessageTextLabel.GetPreferredSize(new Size(messageWidth ,9999)).Height + MessageTextLabel.Margin.Vertical;
+
+            if (MessageIconBox.Visible)
+                minHeight = Math.Max(minHeight, MessageIconBox.Height + MessageIconBox.Margin.Vertical);
+
+            if (ErrorDetailTextBox.Visible)
+                minHeight += 90 + ErrorDetailTextBox.Margin.Vertical;
+
+            minHeight += flowLayoutPanel1.Height + flowLayoutPanel1.Margin.Vertical;
+
+            //if (currentHeight < minHeight)
+                Height = minHeight + borderHeight;
+        }
+
         public void SetDialogButtons(MessageBoxButtons buttons, bool centered = true)
         {
             Option1Button.Visible = false;
@@ -147,8 +172,9 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         public void SetMessageIcon(MessageBoxIcon icon)
         {
-            MessageIconBox.Visible = (icon != MessageBoxIcon.None);
-            if (!MessageIconBox.Visible)
+            bool hasIcon = (icon != MessageBoxIcon.None);
+            MessageIconBox.Visible = hasIcon;
+            if (!hasIcon)
             {
                 tableLayoutPanel1.ColumnStyles[0].SizeType = SizeType.Absolute;
                 tableLayoutPanel1.ColumnStyles[0].Width = 0;

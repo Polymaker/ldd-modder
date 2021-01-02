@@ -205,7 +205,7 @@
     <value>BoundingEditor</value>
   </data>
   <data name="&gt;&gt;BoundingEditor.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.BoundingBoxEditor, Brick Studio, Version=1.0.5.30154, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.BoundingBoxEditor, Brick Studio, Version=1.0.6.35743, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;BoundingEditor.Parent" xml:space="preserve">
     <value>tableLayoutPanel2</value>
@@ -289,7 +289,7 @@
     <value>GeomBoundingEditor</value>
   </data>
   <data name="&gt;&gt;GeomBoundingEditor.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.BoundingBoxEditor, Brick Studio, Version=1.0.5.30154, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.BoundingBoxEditor, Brick Studio, Version=1.0.6.35743, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;GeomBoundingEditor.Parent" xml:space="preserve">
     <value>tableLayoutPanel2</value>
@@ -343,7 +343,7 @@
     <value>BoundingsPanel.ContentPanel</value>
   </data>
   <data name="&gt;&gt;BoundingsPanel.ContentPanel.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.CollapsiblePanel+CollapsiblePanelContainer, Brick Studio, Version=1.0.5.30154, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.CollapsiblePanel+CollapsiblePanelContainer, Brick Studio, Version=1.0.6.35743, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;BoundingsPanel.ContentPanel.Parent" xml:space="preserve">
     <value>BoundingsPanel</value>
@@ -367,7 +367,7 @@
     <value>BoundingsPanel</value>
   </data>
   <data name="&gt;&gt;BoundingsPanel.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.CollapsiblePanel, Brick Studio, Version=1.0.5.30154, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.CollapsiblePanel, Brick Studio, Version=1.0.6.35743, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;BoundingsPanel.Parent" xml:space="preserve">
     <value>flowLayoutPanel1</value>
@@ -391,7 +391,7 @@
     <value>True</value>
   </data>
   <data name="LabelAliases.Location" type="System.Drawing.Point, System.Drawing">
-    <value>154, 6</value>
+    <value>146, 6</value>
   </data>
   <data name="LabelAliases.Size" type="System.Drawing.Size, System.Drawing">
     <value>40, 13</value>
@@ -535,10 +535,10 @@
     <value>Top, Left, Right</value>
   </data>
   <data name="PartIDTextBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>83, 3</value>
+    <value>73, 3</value>
   </data>
   <data name="PartIDTextBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>58, 20</value>
+    <value>67, 20</value>
   </data>
   <data name="PartIDTextBox.TabIndex" type="System.Int32, mscorlib">
     <value>8</value>
@@ -547,7 +547,7 @@
     <value>PartIDTextBox</value>
   </data>
   <data name="&gt;&gt;PartIDTextBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.5.30154, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.6.35743, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;PartIDTextBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -658,10 +658,10 @@
     <value>False</value>
   </data>
   <data name="AliasesButtonBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>207, 3</value>
+    <value>192, 3</value>
   </data>
   <data name="AliasesButtonBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>90, 20</value>
+    <value>105, 20</value>
   </data>
   <data name="AliasesButtonBox.TabIndex" type="System.Int32, mscorlib">
     <value>9</value>
@@ -670,7 +670,7 @@
     <value>AliasesButtonBox</value>
   </data>
   <data name="&gt;&gt;AliasesButtonBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.BrowseTextBox, Brick Studio, Version=1.0.5.30154, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.BrowseTextBox, Brick Studio, Version=1.0.6.35743, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;AliasesButtonBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -709,7 +709,7 @@
     <value>0</value>
   </data>
   <data name="tableLayoutPanel1.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="LabelAliases" Row="0" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="LabelPlatform" Row="3" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="DescriptionTextBox" Row="2" RowSpan="1" Column="0" ColumnSpan="4" /&gt;&lt;Control Name="LabelPartID" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="CategoryComboBox" Row="6" RowSpan="1" Column="0" ColumnSpan="4" /&gt;&lt;Control Name="PartIDTextBox" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="LabelDescription" Row="1" RowSpan="1" Column="0" ColumnSpan="2" /&gt;&lt;Control Name="LabelCategory" Row="5" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="PlatformComboBox" Row="4" RowSpan="1" Column="0" ColumnSpan="4" /&gt;&lt;Control Name="AliasesButtonBox" Row="0" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,80,Percent,40,Absolute,60,Percent,60" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,Percent,100,AutoSize,0" /&gt;&lt;/TableLayoutSettings&gt;</value>
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="LabelAliases" Row="0" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="LabelPlatform" Row="3" RowSpan="1" Column="0" ColumnSpan="2" /&gt;&lt;Control Name="DescriptionTextBox" Row="2" RowSpan="1" Column="0" ColumnSpan="4" /&gt;&lt;Control Name="LabelPartID" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="CategoryComboBox" Row="6" RowSpan="1" Column="0" ColumnSpan="4" /&gt;&lt;Control Name="PartIDTextBox" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="LabelDescription" Row="1" RowSpan="1" Column="0" ColumnSpan="2" /&gt;&lt;Control Name="LabelCategory" Row="5" RowSpan="1" Column="0" ColumnSpan="2" /&gt;&lt;Control Name="PlatformComboBox" Row="4" RowSpan="1" Column="0" ColumnSpan="4" /&gt;&lt;Control Name="AliasesButtonBox" Row="0" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,70,Percent,40,AutoSize,0,Percent,60" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,Percent,100,AutoSize,0" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <data name="DescriptionPanel.ContentPanel.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 23</value>
@@ -724,7 +724,7 @@
     <value>DescriptionPanel.ContentPanel</value>
   </data>
   <data name="&gt;&gt;DescriptionPanel.ContentPanel.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.CollapsiblePanel+CollapsiblePanelContainer, Brick Studio, Version=1.0.5.30154, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.CollapsiblePanel+CollapsiblePanelContainer, Brick Studio, Version=1.0.6.35743, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;DescriptionPanel.ContentPanel.Parent" xml:space="preserve">
     <value>DescriptionPanel</value>
@@ -748,7 +748,7 @@
     <value>DescriptionPanel</value>
   </data>
   <data name="&gt;&gt;DescriptionPanel.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.CollapsiblePanel, Brick Studio, Version=1.0.5.30154, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.CollapsiblePanel, Brick Studio, Version=1.0.6.35743, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;DescriptionPanel.Parent" xml:space="preserve">
     <value>flowLayoutPanel1</value>
@@ -764,6 +764,180 @@
   </data>
   <data name="tableLayoutPanel3.ColumnCount" type="System.Int32, mscorlib">
     <value>2</value>
+  </data>
+  <data name="&gt;&gt;LabelInertiaTensor.Name" xml:space="preserve">
+    <value>LabelInertiaTensor</value>
+  </data>
+  <data name="&gt;&gt;LabelInertiaTensor.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;LabelInertiaTensor.Parent" xml:space="preserve">
+    <value>tableLayoutPanel3</value>
+  </data>
+  <data name="&gt;&gt;LabelInertiaTensor.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;LabelCenterOfMass.Name" xml:space="preserve">
+    <value>LabelCenterOfMass</value>
+  </data>
+  <data name="&gt;&gt;LabelCenterOfMass.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;LabelCenterOfMass.Parent" xml:space="preserve">
+    <value>tableLayoutPanel3</value>
+  </data>
+  <data name="&gt;&gt;LabelCenterOfMass.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;InertiaTensorTextBox.Name" xml:space="preserve">
+    <value>InertiaTensorTextBox</value>
+  </data>
+  <data name="&gt;&gt;InertiaTensorTextBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;InertiaTensorTextBox.Parent" xml:space="preserve">
+    <value>tableLayoutPanel3</value>
+  </data>
+  <data name="&gt;&gt;InertiaTensorTextBox.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;LabelMass.Name" xml:space="preserve">
+    <value>LabelMass</value>
+  </data>
+  <data name="&gt;&gt;LabelMass.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;LabelMass.Parent" xml:space="preserve">
+    <value>tableLayoutPanel3</value>
+  </data>
+  <data name="&gt;&gt;LabelMass.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;CenterOfMassEditor.Name" xml:space="preserve">
+    <value>CenterOfMassEditor</value>
+  </data>
+  <data name="&gt;&gt;CenterOfMassEditor.Type" xml:space="preserve">
+    <value>LDDModder.BrickEditor.UI.Editors.VectorEditor, Brick Studio, Version=1.0.6.35634, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;CenterOfMassEditor.Parent" xml:space="preserve">
+    <value>tableLayoutPanel3</value>
+  </data>
+  <data name="&gt;&gt;CenterOfMassEditor.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;MassNumberBox.Name" xml:space="preserve">
+    <value>MassNumberBox</value>
+  </data>
+  <data name="&gt;&gt;MassNumberBox.Type" xml:space="preserve">
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.6.35634, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;MassNumberBox.Parent" xml:space="preserve">
+    <value>tableLayoutPanel3</value>
+  </data>
+  <data name="&gt;&gt;MassNumberBox.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="&gt;&gt;LabelFriction.Name" xml:space="preserve">
+    <value>LabelFriction</value>
+  </data>
+  <data name="&gt;&gt;LabelFriction.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;LabelFriction.Parent" xml:space="preserve">
+    <value>tableLayoutPanel3</value>
+  </data>
+  <data name="&gt;&gt;LabelFriction.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="&gt;&gt;FrictionCheckBox.Name" xml:space="preserve">
+    <value>FrictionCheckBox</value>
+  </data>
+  <data name="&gt;&gt;FrictionCheckBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;FrictionCheckBox.Parent" xml:space="preserve">
+    <value>tableLayoutPanel3</value>
+  </data>
+  <data name="&gt;&gt;FrictionCheckBox.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="tableLayoutPanel3.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Top</value>
+  </data>
+  <data name="tableLayoutPanel3.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 3</value>
+  </data>
+  <data name="tableLayoutPanel3.MaximumSize" type="System.Drawing.Size, System.Drawing">
+    <value>400, 0</value>
+  </data>
+  <data name="tableLayoutPanel3.RowCount" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="tableLayoutPanel3.Size" type="System.Drawing.Size, System.Drawing">
+    <value>300, 101</value>
+  </data>
+  <data name="tableLayoutPanel3.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel3.Name" xml:space="preserve">
+    <value>tableLayoutPanel3</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel3.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel3.Parent" xml:space="preserve">
+    <value>PhysicalPanel.ContentPanel</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel3.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="tableLayoutPanel3.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="LabelInertiaTensor" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="LabelCenterOfMass" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="InertiaTensorTextBox" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="LabelMass" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="CenterOfMassEditor" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="MassNumberBox" Row="2" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="LabelFriction" Row="3" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="FrictionCheckBox" Row="3" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,100,Percent,100" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0" /&gt;&lt;/TableLayoutSettings&gt;</value>
+  </data>
+  <data name="PhysicalPanel.ContentPanel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 23</value>
+  </data>
+  <data name="PhysicalPanel.ContentPanel.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>0, 3, 0, 3</value>
+  </data>
+  <data name="PhysicalPanel.ContentPanel.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;PhysicalPanel.ContentPanel.Name" xml:space="preserve">
+    <value>PhysicalPanel.ContentPanel</value>
+  </data>
+  <data name="&gt;&gt;PhysicalPanel.ContentPanel.Type" xml:space="preserve">
+    <value>LDDModder.BrickEditor.UI.Controls.CollapsiblePanel+CollapsiblePanelContainer, Brick Studio, Version=1.0.6.35743, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;PhysicalPanel.ContentPanel.Parent" xml:space="preserve">
+    <value>PhysicalPanel</value>
+  </data>
+  <data name="&gt;&gt;PhysicalPanel.ContentPanel.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="PhysicalPanel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 201</value>
+  </data>
+  <data name="PhysicalPanel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>300, 130</value>
+  </data>
+  <data name="PhysicalPanel.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="PhysicalPanel.Text" xml:space="preserve">
+    <value>Physical Properties</value>
+  </data>
+  <data name="&gt;&gt;PhysicalPanel.Name" xml:space="preserve">
+    <value>PhysicalPanel</value>
+  </data>
+  <data name="&gt;&gt;PhysicalPanel.Type" xml:space="preserve">
+    <value>LDDModder.BrickEditor.UI.Controls.CollapsiblePanel, Brick Studio, Version=1.0.6.35743, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;PhysicalPanel.Parent" xml:space="preserve">
+    <value>flowLayoutPanel1</value>
+  </data>
+  <data name="&gt;&gt;PhysicalPanel.ZOrder" xml:space="preserve">
+    <value>1</value>
   </data>
   <data name="LabelInertiaTensor.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Left</value>
@@ -895,7 +1069,7 @@
     <value>CenterOfMassEditor</value>
   </data>
   <data name="&gt;&gt;CenterOfMassEditor.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Editors.VectorEditor, Brick Studio, Version=1.0.5.30154, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Editors.VectorEditor, Brick Studio, Version=1.0.6.35743, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;CenterOfMassEditor.Parent" xml:space="preserve">
     <value>tableLayoutPanel3</value>
@@ -916,7 +1090,7 @@
     <value>MassNumberBox</value>
   </data>
   <data name="&gt;&gt;MassNumberBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.5.30154, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.NumberTextBox, Brick Studio, Version=1.0.6.35743, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;MassNumberBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel3</value>
@@ -984,84 +1158,6 @@
   <data name="&gt;&gt;FrictionCheckBox.ZOrder" xml:space="preserve">
     <value>7</value>
   </data>
-  <data name="tableLayoutPanel3.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Top</value>
-  </data>
-  <data name="tableLayoutPanel3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 3</value>
-  </data>
-  <data name="tableLayoutPanel3.MaximumSize" type="System.Drawing.Size, System.Drawing">
-    <value>400, 0</value>
-  </data>
-  <data name="tableLayoutPanel3.RowCount" type="System.Int32, mscorlib">
-    <value>4</value>
-  </data>
-  <data name="tableLayoutPanel3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>300, 101</value>
-  </data>
-  <data name="tableLayoutPanel3.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;tableLayoutPanel3.Name" xml:space="preserve">
-    <value>tableLayoutPanel3</value>
-  </data>
-  <data name="&gt;&gt;tableLayoutPanel3.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;tableLayoutPanel3.Parent" xml:space="preserve">
-    <value>PhysicalPanel.ContentPanel</value>
-  </data>
-  <data name="&gt;&gt;tableLayoutPanel3.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="tableLayoutPanel3.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="LabelInertiaTensor" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="LabelCenterOfMass" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="InertiaTensorTextBox" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="LabelMass" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="CenterOfMassEditor" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="MassNumberBox" Row="2" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="LabelFriction" Row="3" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="FrictionCheckBox" Row="3" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,100,Percent,100" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0" /&gt;&lt;/TableLayoutSettings&gt;</value>
-  </data>
-  <data name="PhysicalPanel.ContentPanel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 23</value>
-  </data>
-  <data name="PhysicalPanel.ContentPanel.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>0, 3, 0, 3</value>
-  </data>
-  <data name="PhysicalPanel.ContentPanel.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;PhysicalPanel.ContentPanel.Name" xml:space="preserve">
-    <value>PhysicalPanel.ContentPanel</value>
-  </data>
-  <data name="&gt;&gt;PhysicalPanel.ContentPanel.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.CollapsiblePanel+CollapsiblePanelContainer, Brick Studio, Version=1.0.5.30154, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;PhysicalPanel.ContentPanel.Parent" xml:space="preserve">
-    <value>PhysicalPanel</value>
-  </data>
-  <data name="&gt;&gt;PhysicalPanel.ContentPanel.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="PhysicalPanel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 201</value>
-  </data>
-  <data name="PhysicalPanel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>300, 130</value>
-  </data>
-  <data name="PhysicalPanel.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
-  </data>
-  <data name="PhysicalPanel.Text" xml:space="preserve">
-    <value>Physical Properties</value>
-  </data>
-  <data name="&gt;&gt;PhysicalPanel.Name" xml:space="preserve">
-    <value>PhysicalPanel</value>
-  </data>
-  <data name="&gt;&gt;PhysicalPanel.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.CollapsiblePanel, Brick Studio, Version=1.0.5.30154, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;PhysicalPanel.Parent" xml:space="preserve">
-    <value>flowLayoutPanel1</value>
-  </data>
-  <data name="&gt;&gt;PhysicalPanel.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
   <data name="flowLayoutPanel1.AutoScroll" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -1111,6 +1207,6 @@
     <value>PartPropertiesPanel</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Panels.ProjectDocumentPanel, Brick Studio, Version=1.0.5.30154, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Panels.ProjectDocumentPanel, Brick Studio, Version=1.0.6.35743, Culture=neutral, PublicKeyToken=null</value>
   </data>
 </root>

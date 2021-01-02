@@ -1,6 +1,7 @@
 ﻿using LDDModder.BrickEditor.Native;
 using LDDModder.BrickEditor.ProjectHandling;
 using LDDModder.BrickEditor.ProjectHandling.ViewInterfaces;
+using LDDModder.BrickEditor.Rendering;
 using LDDModder.BrickEditor.Resources;
 using LDDModder.BrickEditor.Settings;
 using LDDModder.BrickEditor.UI.Panels;
@@ -222,14 +223,16 @@ namespace LDDModder.BrickEditor.UI.Windows
 
             WaitPopup.UpdateProgress(10, 10);
 
-            if (PropertiesPanel.Pane == DetailPanel.Pane)
-            {
-                PropertiesPanel.Activate();
-            }
-            else
-            {
-                DetailPanel.Activate();
-            }
+            ViewportPanel.Activate();//must be visible to properly init GL resource
+
+            //if (PropertiesPanel.Pane == DetailPanel.Pane)
+            //{
+            //    PropertiesPanel.Activate();
+            //}
+            //else
+            //{
+            //    DetailPanel.Activate();
+            //}
 
             foreach (IDockContent dockPanel in DockPanelControl.Contents)
             {
@@ -333,6 +336,15 @@ namespace LDDModder.BrickEditor.UI.Windows
             foreach (var content in DockPanelControl.Contents.ToArray())
                 content.DockHandler.DockPanel = null;
 
+            try
+            {
+                var layoutStream = ResourceHelper.GetResourceStream("DefaultLayout.xml");
+                if (layoutStream != null)
+                    DockPanelControl.LoadFromXml(layoutStream, DockContentLoadingHandler);
+                return;
+            }
+            catch { }
+
             ViewportPanel.Show(DockPanelControl, DockState.Document);
 
             StudConnectionPanel.Show(DockPanelControl, DockState.Document);
@@ -404,7 +416,13 @@ namespace LDDModder.BrickEditor.UI.Windows
                 documentPanel.DefferedInitialization();
             }
 
-            
+            if (!UIRenderHelper.LoadFreetype6())
+            {
+                MessageBoxEX.Show(this, Messages.Message_CouldNotLoadFreetype6, 
+                    Messages.Caption_UnexpectedError, 
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+            }
 
             Task.Factory.StartNew(() =>
             {
@@ -574,6 +592,21 @@ namespace LDDModder.BrickEditor.UI.Windows
         {
             try
             {
+                
+                if (!string.IsNullOrWhiteSpace(SettingsManager.Current.EditorSettings.Username))
+                {
+                    string username = SettingsManager.Current.EditorSettings.Username;
+                    if (string.IsNullOrWhiteSpace(project.ProjectInfo.Authors)/* || 
+                        !project.ProjectInfo.Authors.Contains(username)*/)
+                    {
+                        //if (!string.IsNullOrWhiteSpace(project.ProjectInfo.Authors))
+                        //    username = ", " + username;
+
+                        //project.ProjectInfo.Authors += username;
+                        project.ProjectInfo.Authors = username;
+                    }
+                    
+                }
                 LoadPartProject(project);
             }
             catch (Exception ex)

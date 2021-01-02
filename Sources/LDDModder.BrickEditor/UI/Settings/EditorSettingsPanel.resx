@@ -403,7 +403,7 @@
     <value>Top, Left, Right</value>
   </data>
   <data name="BuildCfg_PathBox.ButtonText" xml:space="preserve">
-    <value>Browse</value>
+    <value>...</value>
   </data>
   <data name="BuildCfg_PathBox.Location" type="System.Drawing.Point, System.Drawing">
     <value>93, 29</value>
@@ -418,7 +418,7 @@
     <value>BuildCfg_PathBox</value>
   </data>
   <data name="&gt;&gt;BuildCfg_PathBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.BrowseTextBox, Brick Studio, Version=1.0.5.30684, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.BrowseTextBox, Brick Studio, Version=1.0.6.36006, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;BuildCfg_PathBox.Parent" xml:space="preserve">
     <value>tableLayoutPanel2</value>
@@ -508,7 +508,7 @@
     <value>13</value>
   </data>
   <data name="BuildCfgPathLabel.Text" xml:space="preserve">
-    <value>Output Path</value>
+    <value>Output Folder</value>
   </data>
   <data name="BuildCfgPathLabel.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
     <value>MiddleRight</value>
@@ -759,32 +759,32 @@
   <data name="&gt;&gt;UsernameLabel.ZOrder" xml:space="preserve">
     <value>4</value>
   </data>
-  <data name="textBox1.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="UsernameTextbox.Location" type="System.Drawing.Point, System.Drawing">
     <value>112, 17</value>
   </data>
-  <data name="textBox1.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="UsernameTextbox.Size" type="System.Drawing.Size, System.Drawing">
     <value>108, 20</value>
   </data>
-  <data name="textBox1.TabIndex" type="System.Int32, mscorlib">
+  <data name="UsernameTextbox.TabIndex" type="System.Int32, mscorlib">
     <value>5</value>
   </data>
-  <data name="&gt;&gt;textBox1.Name" xml:space="preserve">
-    <value>textBox1</value>
+  <data name="&gt;&gt;UsernameTextbox.Name" xml:space="preserve">
+    <value>UsernameTextbox</value>
   </data>
-  <data name="&gt;&gt;textBox1.Type" xml:space="preserve">
+  <data name="&gt;&gt;UsernameTextbox.Type" xml:space="preserve">
     <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;textBox1.Parent" xml:space="preserve">
+  <data name="&gt;&gt;UsernameTextbox.Parent" xml:space="preserve">
     <value>groupBox1</value>
   </data>
-  <data name="&gt;&gt;textBox1.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;UsernameTextbox.ZOrder" xml:space="preserve">
     <value>5</value>
   </data>
   <data name="WorkspaceBrowseBox.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
   </data>
   <data name="WorkspaceBrowseBox.ButtonText" xml:space="preserve">
-    <value>Browse</value>
+    <value>...</value>
   </data>
   <data name="WorkspaceBrowseBox.Location" type="System.Drawing.Point, System.Drawing">
     <value>112, 45</value>
@@ -799,7 +799,7 @@
     <value>WorkspaceBrowseBox</value>
   </data>
   <data name="&gt;&gt;WorkspaceBrowseBox.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Controls.BrowseTextBox, Brick Studio, Version=1.0.5.30684, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Controls.BrowseTextBox, Brick Studio, Version=1.0.6.36006, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;WorkspaceBrowseBox.Parent" xml:space="preserve">
     <value>groupBox1</value>
@@ -883,6 +883,6 @@
     <value>EditorSettingsPanel</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Settings.SettingsPanelBase, Brick Studio, Version=1.0.5.30684, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Settings.SettingsPanelBase, Brick Studio, Version=1.0.6.36006, Culture=neutral, PublicKeyToken=null</value>
   </data>
 </root>

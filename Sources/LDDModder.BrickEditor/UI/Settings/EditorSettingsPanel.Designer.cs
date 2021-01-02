@@ -51,7 +51,7 @@
             this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.label4 = new System.Windows.Forms.Label();
             this.UsernameLabel = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.UsernameTextbox = new System.Windows.Forms.TextBox();
             this.WorkspaceBrowseBox = new LDDModder.BrickEditor.UI.Controls.BrowseTextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.BuildConfigsGroupBox.SuspendLayout();
@@ -164,7 +164,6 @@
             // 
             // BuildCfg_OverwriteChk
             // 
-            this.BuildCfg_OverwriteChk.AutoEllipsis = true;
             resources.ApplyResources(this.BuildCfg_OverwriteChk, "BuildCfg_OverwriteChk");
             this.tableLayoutPanel2.SetColumnSpan(this.BuildCfg_OverwriteChk, 3);
             this.BuildCfg_OverwriteChk.Name = "BuildCfg_OverwriteChk";
@@ -175,7 +174,7 @@
             // 
             resources.ApplyResources(this.BuildCfg_PathBox, "BuildCfg_PathBox");
             this.BuildCfg_PathBox.AutoSizeButton = true;
-            this.BuildCfg_PathBox.ButtonWidth = 52;
+            this.BuildCfg_PathBox.ButtonWidth = 26;
             this.tableLayoutPanel2.SetColumnSpan(this.BuildCfg_PathBox, 2);
             this.BuildCfg_PathBox.Name = "BuildCfg_PathBox";
             this.BuildCfg_PathBox.ReadOnly = true;
@@ -190,7 +189,6 @@
             // 
             // BuildCfg_Lod0Chk
             // 
-            this.BuildCfg_Lod0Chk.AutoEllipsis = true;
             resources.ApplyResources(this.BuildCfg_Lod0Chk, "BuildCfg_Lod0Chk");
             this.tableLayoutPanel2.SetColumnSpan(this.BuildCfg_Lod0Chk, 3);
             this.BuildCfg_Lod0Chk.Name = "BuildCfg_Lod0Chk";
@@ -210,7 +208,7 @@
             this.groupBox1.Controls.Add(this.numericUpDown1);
             this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Controls.Add(this.UsernameLabel);
-            this.groupBox1.Controls.Add(this.textBox1);
+            this.groupBox1.Controls.Add(this.UsernameTextbox);
             this.groupBox1.Controls.Add(this.WorkspaceBrowseBox);
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Name = "groupBox1";
@@ -246,14 +244,16 @@
             resources.ApplyResources(this.UsernameLabel, "UsernameLabel");
             this.UsernameLabel.Name = "UsernameLabel";
             // 
-            // textBox1
+            // UsernameTextbox
             // 
-            resources.ApplyResources(this.textBox1, "textBox1");
-            this.textBox1.Name = "textBox1";
+            resources.ApplyResources(this.UsernameTextbox, "UsernameTextbox");
+            this.UsernameTextbox.Name = "UsernameTextbox";
             // 
             // WorkspaceBrowseBox
             // 
             resources.ApplyResources(this.WorkspaceBrowseBox, "WorkspaceBrowseBox");
+            this.WorkspaceBrowseBox.AutoSizeButton = true;
+            this.WorkspaceBrowseBox.ButtonWidth = 26;
             this.WorkspaceBrowseBox.Name = "WorkspaceBrowseBox";
             this.WorkspaceBrowseBox.Value = "";
             // 
@@ -307,7 +307,7 @@
         private System.Windows.Forms.NumericUpDown numericUpDown1;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label UsernameLabel;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox UsernameTextbox;
         private Controls.BrowseTextBox WorkspaceBrowseBox;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
