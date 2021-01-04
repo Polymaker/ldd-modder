@@ -260,8 +260,9 @@ namespace LDDModder.BrickEditor.ProjectHandling
                     string tempFile = Path.Combine(tempDir, PartProject.ProjectFileName);
                     TemporaryProjectPath = tempFile;
                 }
-                CurrentProject.ProjectPath = TemporaryProjectPath;
+                CurrentProject.ProjectPath = null;
                 CurrentProject.Save(TemporaryProjectPath);
+                CurrentProject.ProjectPath = TemporaryProjectPath;
             }
         }
 

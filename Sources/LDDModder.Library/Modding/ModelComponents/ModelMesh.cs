@@ -99,7 +99,7 @@ namespace LDDModder.Modding
             }
             else if (GeometrySaved)
             {
-                geomElem = GetGeometryElementFromProjectFile();
+                geomElem = GeomtryXml ?? GetGeometryElementFromProjectFile();
                 return geomElem;
             }
 
