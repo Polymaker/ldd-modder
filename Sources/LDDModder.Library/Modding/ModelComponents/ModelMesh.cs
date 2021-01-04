@@ -25,8 +25,6 @@ namespace LDDModder.Modding
             set => SetGeometry(value);
         }
 
-        public bool GeometrySaved { get; private set; }
-
         #region Geometry Attributes
 
         public bool IsTextured { get; set; }
@@ -45,8 +43,17 @@ namespace LDDModder.Modding
 
         public PartSurface Surface => (Parent as SurfaceComponent)?.Parent as PartSurface;
 
+        /// <summary>
+        /// TODO: Move loading/unloading to BrickEditor
+        /// </summary>
+        public bool GeometrySaved { get; private set; }
+        /// <summary>
+        /// TODO: Move loading/unloading to BrickEditor
+        /// </summary>
         public bool IsModelLoaded => Geometry != null;
-
+        /// <summary>
+        /// TODO: Move loading/unloading to BrickEditor
+        /// </summary>
         public bool CanUnloadModel => GeometrySaved;
 
         public ModelMesh()
@@ -150,26 +157,17 @@ namespace LDDModder.Modding
         {
             var geomElem = GeomtryXml;
             if (geomElem == null)
-                GetGeometryElementFromProjectFile();
+                geomElem = GetGeometryElementFromProjectFile();
 
             if (geomElem != null)
             {
                 _Geometry = GetGeometryFromElement(geomElem);
                 GeometrySaved = _Geometry != null;
             }
+
             if (GeomtryXml != null)
                 GeomtryXml = null;
-            //if (Project == null)
-            //    return false;
 
-            //var projectXml = Project.GetProjectXml();
-            //var meshElem = projectXml.Descendants(NODE_NAME)
-            //    .FirstOrDefault(e => e.ReadAttribute("ID", string.Empty) == ID);
-            //if (meshElem != null)
-            //    LoadGeometry(meshElem);
-
-            ////if (Geometry == null && Project != null)
-            ////    Project.LoadModelMesh(this);
             return Geometry != null;
         }
 
@@ -201,6 +199,7 @@ namespace LDDModder.Modding
                 _Geometry = null;
             }
         }
+
         internal void MarkSaved(bool value)
         {
             GeometrySaved = value;

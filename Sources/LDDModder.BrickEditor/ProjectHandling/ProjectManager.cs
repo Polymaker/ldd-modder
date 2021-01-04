@@ -281,67 +281,67 @@ namespace LDDModder.BrickEditor.ProjectHandling
         #region Project User Properties
 
 
-        private void LoadUserProperties()
-        {
-            if (CurrentProject.TryGetProperty("ShowModels", out bool showModels))
-                ShowPartModels = showModels;
+        //private void LoadUserProperties()
+        //{
+        //    if (CurrentProject.TryGetProperty("ShowModels", out bool showModels))
+        //        ShowPartModels = showModels;
 
-            if (CurrentProject.TryGetProperty("ShowCollisions", out showModels))
-                ShowCollisions = showModels;
+        //    if (CurrentProject.TryGetProperty("ShowCollisions", out showModels))
+        //        ShowCollisions = showModels;
 
-            if (CurrentProject.TryGetProperty("ShowConnections", out showModels))
-                ShowConnections = showModels;
+        //    if (CurrentProject.TryGetProperty("ShowConnections", out showModels))
+        //        ShowConnections = showModels;
 
-            if (CurrentProject.TryGetProperty("PartRenderMode", out MeshRenderMode renderMode))
-                PartRenderMode = renderMode;
+        //    if (CurrentProject.TryGetProperty("PartRenderMode", out MeshRenderMode renderMode))
+        //        PartRenderMode = renderMode;
 
-            foreach (var elem in CurrentProject.GetAllElements())
-            {
-                var elemExt = elem.GetExtension<ModelElementExtension>();
-                if (elemExt == null)
-                    continue;
+        //    foreach (var elem in CurrentProject.GetAllElements())
+        //    {
+        //        var elemExt = elem.GetExtension<ModelElementExtension>();
+        //        if (elemExt == null)
+        //            continue;
 
-                string elemCfg = string.Empty;
-                string elemKey = GetElemKey(elem);
+        //        string elemCfg = string.Empty;
+        //        string elemKey = GetElemKey(elem);
 
-                if (!string.IsNullOrEmpty(elemKey) && 
-                    CurrentProject.ProjectProperties.ContainsKey(elemKey))
-                {
-                    elemCfg = CurrentProject.ProjectProperties[elemKey];
-                }
+        //        if (!string.IsNullOrEmpty(elemKey) && 
+        //            CurrentProject.ProjectProperties.ContainsKey(elemKey))
+        //        {
+        //            elemCfg = CurrentProject.ProjectProperties[elemKey];
+        //        }
 
-                if (elemCfg.EqualsIC("Hidden"))
-                    elemExt.IsHidden = true;
-            }
-        }
+        //        if (elemCfg.EqualsIC("Hidden"))
+        //            elemExt.IsHidden = true;
+        //    }
+        //}
 
-        private void SaveUserProperties()
-        {
-            CurrentProject.ProjectProperties.Clear();
-            CurrentProject.ProjectProperties["ShowModels"] = ShowPartModels.ToString();
-            CurrentProject.ProjectProperties["ShowCollisions"] = ShowCollisions.ToString();
-            CurrentProject.ProjectProperties["ShowConnections"] = ShowConnections.ToString();
-            CurrentProject.ProjectProperties["PartRenderMode"] = PartRenderMode.ToString();
+        //private void SaveUserProperties()
+        //{
+        //    CurrentProject.ProjectProperties.Clear();
+        //    CurrentProject.ProjectProperties["ShowModels"] = ShowPartModels.ToString();
+        //    CurrentProject.ProjectProperties["ShowCollisions"] = ShowCollisions.ToString();
+        //    CurrentProject.ProjectProperties["ShowConnections"] = ShowConnections.ToString();
+        //    CurrentProject.ProjectProperties["PartRenderMode"] = PartRenderMode.ToString();
 
-            foreach (var elem in CurrentProject.GetAllElements())
-            {
-                var elemExt = elem.GetExtension<ModelElementExtension>();
+        //    foreach (var elem in CurrentProject.GetAllElements())
+        //    {
+        //        var elemExt = elem.GetExtension<ModelElementExtension>();
 
-                if (elemExt != null && elemExt.IsHidden)
-                {
-                    string elemKey = GetElemKey(elem);
-                    CurrentProject.ProjectProperties[elemKey] = "Hidden";
-                }
-            }
-        }
+        //        if (elemExt != null && elemExt.IsHidden)
+        //        {
+        //            string elemKey = GetElemKey(elem);
+        //            CurrentProject.ProjectProperties[elemKey] = "Hidden";
+        //        }
+        //    }
+        //}
 
-        private string GetElemKey(PartElement element)
-        {
-            if (element is PartSurface)
-                return element.Name;
-            else
-                return $"Elem_{element.ID}";
-        }
+        //private string GetElemKey(PartElement element)
+        //{
+        //    if (element is PartSurface)
+        //        return element.Name;
+        //    else
+        //        return $"Elem_{element.ID}";
+        //}
 
         #endregion
 
