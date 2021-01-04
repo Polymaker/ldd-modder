@@ -304,7 +304,10 @@ namespace LDDModder.Modding
 
         public static PartProject CreateEmptyProject()
         {
-            var project = new PartProject();
+            var project = new PartProject()
+            {
+                FileVersion = CURRENT_VERSION
+            };
             //project.IsLoading = true;
             project.Surfaces.Add(new PartSurface(0, 0));
             //project.IsLoading = false;
@@ -324,6 +327,8 @@ namespace LDDModder.Modding
         {
             var doc = new XDocument(new XElement(FILE_ROOT));
 
+            FileVersion = CURRENT_VERSION;
+
             doc.Root.Add(ProjectInfo.SerializeToXml());
 
             doc.Root.Add(Properties.SerializeToXml());
@@ -331,7 +336,7 @@ namespace LDDModder.Modding
             doc.Root.AddNumberAttribute("Version", FileVersion);
 
             var surfacesElem = doc.Root.AddElement("ModelSurfaces");
-            foreach (var surf in Surfaces)
+            foreach (var surf in Surfaces.OrderBy(x => x.SurfaceID))
                 surfacesElem.Add(surf.SerializeToXml());
 
             var collisionsElem = doc.Root.AddElement(nameof(Collisions));
@@ -396,6 +401,7 @@ namespace LDDModder.Modding
             {
                 foreach (var surfElem in surfacesElem.Elements(PartSurface.NODE_NAME))
                     Surfaces.Add(PartSurface.FromXml(surfElem));
+                Surfaces.Sort(s => s.SurfaceID);
             }
 
             if (rootElem.HasElement(nameof(Connections), out XElement connectionsElem))
@@ -452,6 +458,7 @@ namespace LDDModder.Modding
         public void CleanUpAndSave(string filename)
         {
             string directory = Path.GetDirectoryName(filename);
+
             if (!Directory.Exists(directory))
                 Directory.CreateDirectory(directory);
 
@@ -1494,16 +1501,11 @@ namespace LDDModder.Modding
             if (GeometryBounding is null)
                 GeometryBounding = Bounding;
 
-            var part = new LDD.Parts.PartWrapper()
-            {
-                PartID = PartID,
-                Primitive = GeneratePrimitive()
-            };
+            var part = new LDD.Parts.PartWrapper(GeneratePrimitive());
 
             foreach (var surface in Surfaces)
             {
                 var surfaceMesh = surface.GenerateMeshFile();
-                var test = surfaceMesh.Geometry.CheckHasRoundEdgeData();
                 part.AddSurfaceMesh(surface.SurfaceID, surfaceMesh);
             }
 
