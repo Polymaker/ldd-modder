@@ -4,7 +4,9 @@
   <Product Id="*" Name="$(var.ProductName)" Language="1033" Version="1.0.6.1" Manufacturer="Polymaker"
            UpgradeCode="0b4b59f2-f635-4904-b051-7873899bf21b">
     <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
-    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <MajorUpgrade 
+      DowngradeErrorMessage="A newer version of [ProductName] is already installed." 
+      AllowSameVersionUpgrades="yes" />
     <MediaTemplate EmbedCab="yes" />
     
     <Icon Id="InstallIcon.ico" SourceFile="$(var.LDDModder.BrickEditor.ProjectDir)Resources\BrickStudioIcon.ico" />
