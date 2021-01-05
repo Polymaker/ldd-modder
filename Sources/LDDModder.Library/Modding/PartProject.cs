@@ -304,7 +304,10 @@ namespace LDDModder.Modding
 
         public static PartProject CreateEmptyProject()
         {
-            var project = new PartProject();
+            var project = new PartProject()
+            {
+                FileVersion = CURRENT_VERSION
+            };
             //project.IsLoading = true;
             project.Surfaces.Add(new PartSurface(0, 0));
             //project.IsLoading = false;
@@ -324,6 +327,8 @@ namespace LDDModder.Modding
         {
             var doc = new XDocument(new XElement(FILE_ROOT));
 
+            FileVersion = CURRENT_VERSION;
+
             doc.Root.Add(ProjectInfo.SerializeToXml());
 
             doc.Root.Add(Properties.SerializeToXml());
@@ -331,7 +336,7 @@ namespace LDDModder.Modding
             doc.Root.AddNumberAttribute("Version", FileVersion);
 
             var surfacesElem = doc.Root.AddElement("ModelSurfaces");
-            foreach (var surf in Surfaces)
+            foreach (var surf in Surfaces.OrderBy(x => x.SurfaceID))
                 surfacesElem.Add(surf.SerializeToXml());
 
             var collisionsElem = doc.Root.AddElement(nameof(Collisions));
@@ -384,6 +389,11 @@ namespace LDDModder.Modding
             if (rootElem.TryGetIntAttribute("Version", out int fileVersion))
                 FileVersion = fileVersion;
 
+            if (fileVersion > CURRENT_VERSION)
+            {
+
+            }
+
             if (rootElem.HasElement(PartProperties.NODE_NAME, out XElement propsElem))
                 Properties.LoadFromXml(propsElem);
 
@@ -396,6 +406,7 @@ namespace LDDModder.Modding
             {
                 foreach (var surfElem in surfacesElem.Elements(PartSurface.NODE_NAME))
                     Surfaces.Add(PartSurface.FromXml(surfElem));
+                Surfaces.Sort(s => s.SurfaceID);
             }
 
             if (rootElem.HasElement(nameof(Connections), out XElement connectionsElem))
@@ -447,11 +458,18 @@ namespace LDDModder.Modding
 
             var projectXml = GenerateProjectXml();
             projectXml.Save(filename);
+
+            foreach (var mesh in Meshes)
+            {
+                if (mesh.Geometry != null)
+                    mesh.MarkSaved(true);
+            }
         }
 
         public void CleanUpAndSave(string filename)
         {
             string directory = Path.GetDirectoryName(filename);
+
             if (!Directory.Exists(directory))
                 Directory.CreateDirectory(directory);
 
@@ -467,6 +485,12 @@ namespace LDDModder.Modding
                 }
             }
             projectXml.Save(filename);
+
+            foreach (var mesh in Meshes)
+            {
+                if (mesh.Geometry != null)
+                    mesh.MarkSaved(true);
+            }
         }
 
 
@@ -488,10 +512,7 @@ namespace LDDModder.Modding
             if (project != null)
             {
                 project.ProjectPath = filepath;
-                project.FileVersion = CURRENT_VERSION;
-                foreach (var mesh in project.Meshes)
-                    if (mesh.Geometry != null)
-                        mesh.MarkSaved(true);
+                //project.FileVersion = CURRENT_VERSION;
             }
 
             return project;
@@ -1494,16 +1515,11 @@ namespace LDDModder.Modding
             if (GeometryBounding is null)
                 GeometryBounding = Bounding;
 
-            var part = new LDD.Parts.PartWrapper()
-            {
-                PartID = PartID,
-                Primitive = GeneratePrimitive()
-            };
+            var part = new LDD.Parts.PartWrapper(GeneratePrimitive());
 
             foreach (var surface in Surfaces)
             {
                 var surfaceMesh = surface.GenerateMeshFile();
-                var test = surfaceMesh.Geometry.CheckHasRoundEdgeData();
                 part.AddSurfaceMesh(surface.SurfaceID, surfaceMesh);
             }
 
@@ -1515,14 +1531,10 @@ namespace LDDModder.Modding
             var meshRefs = Surfaces.SelectMany(x => x.GetAllMeshReferences()).ToList();
             var unloadedMeshes = meshRefs.Select(x => x.ModelMesh).Where(x => !x.IsModelLoaded).Distinct().ToList();
 
-            //if (GetAllElements<FemaleStudModel>().Any())
-            //{
-
-            //}
-
             foreach (var layerGroup in meshRefs.GroupBy(x => x.RoundEdgeLayer))
             {
                 var meshesGeoms = layerGroup.Select(x => new Tuple<ModelMeshReference, MeshGeometry>(x, x.GetGeometry(true))).ToList();
+                meshesGeoms.RemoveAll(x => x.Item2 == null);
 
                 foreach (var mg in meshesGeoms)
                     mg.Item2.ClearRoundEdgeData();
@@ -1559,7 +1571,6 @@ namespace LDDModder.Modding
             
             var models = meshRefs.Select(x => x.ModelMesh).Distinct().ToList();
             SaveMeshesToXml();
-            //models.ForEach(x => x.SaveGeometry());
             unloadedMeshes.ForEach(x => x.UnloadModel());
 
         }
@@ -1572,13 +1583,9 @@ namespace LDDModder.Modding
 
             foreach (var model in meshModels)
             {
-                if (!model.IsModelLoaded)
-                {
-                    if (!model.ReloadModelFromXml())
-                        continue;
-                }
+                if (!model.IsModelLoaded && !model.ReloadModelFromXml())
+                    continue;
                 model.Geometry.ClearRoundEdgeData();
-                //model.SaveGeometry();
             }
             SaveMeshesToXml();
             unloadedMeshes.ForEach(x => x.UnloadModel());

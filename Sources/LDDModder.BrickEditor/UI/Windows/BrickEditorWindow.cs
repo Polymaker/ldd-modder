@@ -282,13 +282,6 @@ namespace LDDModder.BrickEditor.UI.Windows
                                 documentPanel.ApplyLayoutArgs(layoutArgs);
                             }));
                         });
-                        //EventHandler shownHandler = null;
-                        //shownHandler = (e, s) =>
-                        //{
-                        //    documentPanel.ApplyLayoutArgs(layoutArgs);
-                        //    documentPanel.Shown -= shownHandler;
-                        //};
-                        //documentPanel.Shown += shownHandler;
                     }
 
                     return panels[i];

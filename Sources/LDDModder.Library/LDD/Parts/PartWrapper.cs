@@ -39,11 +39,18 @@ namespace LDDModder.LDD.Parts
             Surfaces = new List<PartSurfaceMesh>();
         }
 
+        public PartWrapper(Primitive primitive)
+        {
+            PartID = primitive.ID;
+            Primitive = primitive;
+            Surfaces = new List<PartSurfaceMesh>();
+        }
+
         public PartWrapper(Primitive primitive, IEnumerable<PartSurfaceMesh> surfaces)
         {
             PartID = primitive.ID;
             Primitive = primitive;
-            Surfaces = new List<PartSurfaceMesh>(surfaces);
+            Surfaces = surfaces.OrderBy(s => s.SurfaceID).ToList();
         }
 
         public void AddSurfaceMesh(int surfaceID, MeshFile meshFile)

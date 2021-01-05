@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LDDModder.BrickEditor.ProjectHandling;
 using LDDModder.Modding;
 using OpenTK;
+using OpenTK.Graphics.OpenGL;
 
 namespace LDDModder.BrickEditor.Rendering
 {
@@ -16,6 +18,8 @@ namespace LDDModder.BrickEditor.Rendering
 
         private Matrix4 SphereTransform;
         private Matrix4 ConeTransform;
+        private Matrix4 ContourTransform;
+
         public float BoneLength { get; set; }
         public bool IsLengthDirty { get; set; }
 
@@ -27,6 +31,14 @@ namespace LDDModder.BrickEditor.Rendering
             BoneLength = 0.4f;
             UpdateModelTransforms();
             CalculateBoneLength();
+        }
+
+        protected override bool? VisibleOverride()
+        {
+            var extender = Element?.GetExtension<BoneElementExtension>();
+            if (extender != null)
+                return extender.IsVisible && extender.Manager.ShowBones;
+            return base.VisibleOverride();
         }
 
         private void UpdateBoundingBox()
@@ -56,6 +68,9 @@ namespace LDDModder.BrickEditor.Rendering
             ConeTransform = Matrix4.CreateScale(0.4f, coneScale, 0.4f) *
                 Matrix4.CreateTranslation(0, 0.05f + (coneScale /2f), 0) *
                 Matrix4.CreateRotationZ((float)Math.PI * -0.5f);
+            ContourTransform = Matrix4.CreateScale(0.4f, 1f, 0.4f) *
+                Matrix4.CreateTranslation(0, 0.05f, 0) *
+                Matrix4.CreateRotationZ((float)Math.PI * -0.5f);
         }
 
         public void CalculateBoneLength()
@@ -71,7 +86,11 @@ namespace LDDModder.BrickEditor.Rendering
                 BoneLength = newLength;
                 UpdateModelTransforms();
             }
-            BoundingBox = BBox.FromCenterSize(new Vector3(newLength / 2f, 0, 0), new Vector3(newLength, 0.4f, 0.4f));
+
+            BoundingBox = BBox.FromCenterSize(
+                new Vector3((newLength / 2f) - 0.1f, 0, 0), 
+                new Vector3(newLength + 0.2f, 0.4f, 0.4f)
+                );
             IsLengthDirty = false;
         }
 
@@ -103,13 +122,16 @@ namespace LDDModder.BrickEditor.Rendering
 
         public override void RenderModel(Camera camera, MeshRenderMode mode = MeshRenderMode.Solid)
         {
-            var modelColor = new Vector4(1f, 0.6f, 0.1f, 1f);
+            var modelColor = new Vector4(1f, 0.6f, 0.1f, 0.5f);
             var wireColor = IsSelected ? RenderHelper.SelectionOutlineColor : RenderHelper.WireframeColor;
             var wireThickness = IsSelected ? 4f : 2f;
-
+            GL.Disable(EnableCap.CullFace);
+            GL.Disable(EnableCap.DepthTest);
             ModelManager.SphereModel.DrawOutlined(SphereTransform * Transform, modelColor, wireColor, wireThickness);
             ModelManager.ConeModel.DrawOutlined(ConeTransform * Transform, modelColor, wireColor, wireThickness);
-
+            ModelManager.CircleModel.DrawColored(ContourTransform * Transform, wireColor);
+            GL.Enable(EnableCap.DepthTest);
+            GL.Enable(EnableCap.CullFace);
 
             if (!BoneBounding.IsEmpty && IsSelected)
             {

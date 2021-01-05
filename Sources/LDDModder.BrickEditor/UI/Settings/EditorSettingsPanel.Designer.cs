@@ -36,15 +36,14 @@
             this.AddBuildCfgBtn = new System.Windows.Forms.Button();
             this.BuildConfigListView = new System.Windows.Forms.ListView();
             this.BuildCfgNameColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.SaveBuildCfgBtn = new System.Windows.Forms.Button();
-            this.CancelBuildCfgBtn = new System.Windows.Forms.Button();
             this.BuildCfg_NameBox = new System.Windows.Forms.TextBox();
-            this.BuildCfg_OverwriteChk = new System.Windows.Forms.CheckBox();
-            this.BuildCfg_PathBox = new LDDModder.BrickEditor.UI.Controls.BrowseTextBox();
             this.BuildCfgNameLabel = new System.Windows.Forms.Label();
+            this.CancelBuildCfgBtn = new System.Windows.Forms.Button();
             this.BuildCfg_Lod0Chk = new System.Windows.Forms.CheckBox();
+            this.BuildCfg_PathBox = new LDDModder.BrickEditor.UI.Controls.BrowseTextBox();
             this.BuildCfgPathLabel = new System.Windows.Forms.Label();
+            this.BuildCfg_OverwriteChk = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label6 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
@@ -60,7 +59,6 @@
             this.BuildCfgSplitContainer.Panel2.SuspendLayout();
             this.BuildCfgSplitContainer.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
-            this.tableLayoutPanel2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.SuspendLayout();
@@ -84,7 +82,14 @@
             // 
             // BuildCfgSplitContainer.Panel2
             // 
-            this.BuildCfgSplitContainer.Panel2.Controls.Add(this.tableLayoutPanel2);
+            this.BuildCfgSplitContainer.Panel2.Controls.Add(this.SaveBuildCfgBtn);
+            this.BuildCfgSplitContainer.Panel2.Controls.Add(this.BuildCfg_NameBox);
+            this.BuildCfgSplitContainer.Panel2.Controls.Add(this.BuildCfgNameLabel);
+            this.BuildCfgSplitContainer.Panel2.Controls.Add(this.CancelBuildCfgBtn);
+            this.BuildCfgSplitContainer.Panel2.Controls.Add(this.BuildCfg_Lod0Chk);
+            this.BuildCfgSplitContainer.Panel2.Controls.Add(this.BuildCfg_PathBox);
+            this.BuildCfgSplitContainer.Panel2.Controls.Add(this.BuildCfgPathLabel);
+            this.BuildCfgSplitContainer.Panel2.Controls.Add(this.BuildCfg_OverwriteChk);
             // 
             // tableLayoutPanel1
             // 
@@ -127,26 +132,23 @@
             // 
             resources.ApplyResources(this.BuildCfgNameColumn, "BuildCfgNameColumn");
             // 
-            // tableLayoutPanel2
-            // 
-            resources.ApplyResources(this.tableLayoutPanel2, "tableLayoutPanel2");
-            this.tableLayoutPanel2.Controls.Add(this.SaveBuildCfgBtn, 0, 4);
-            this.tableLayoutPanel2.Controls.Add(this.CancelBuildCfgBtn, 2, 4);
-            this.tableLayoutPanel2.Controls.Add(this.BuildCfg_NameBox, 1, 0);
-            this.tableLayoutPanel2.Controls.Add(this.BuildCfg_OverwriteChk, 0, 3);
-            this.tableLayoutPanel2.Controls.Add(this.BuildCfg_PathBox, 1, 1);
-            this.tableLayoutPanel2.Controls.Add(this.BuildCfgNameLabel, 0, 0);
-            this.tableLayoutPanel2.Controls.Add(this.BuildCfg_Lod0Chk, 0, 2);
-            this.tableLayoutPanel2.Controls.Add(this.BuildCfgPathLabel, 0, 1);
-            this.tableLayoutPanel2.Name = "tableLayoutPanel2";
-            // 
             // SaveBuildCfgBtn
             // 
             resources.ApplyResources(this.SaveBuildCfgBtn, "SaveBuildCfgBtn");
-            this.tableLayoutPanel2.SetColumnSpan(this.SaveBuildCfgBtn, 2);
             this.SaveBuildCfgBtn.Name = "SaveBuildCfgBtn";
             this.SaveBuildCfgBtn.UseVisualStyleBackColor = true;
             this.SaveBuildCfgBtn.Click += new System.EventHandler(this.SaveBuildCfgBtn_Click);
+            // 
+            // BuildCfg_NameBox
+            // 
+            resources.ApplyResources(this.BuildCfg_NameBox, "BuildCfg_NameBox");
+            this.BuildCfg_NameBox.Name = "BuildCfg_NameBox";
+            this.BuildCfg_NameBox.TextChanged += new System.EventHandler(this.BuildCfgProperty_ValueChanged);
+            // 
+            // BuildCfgNameLabel
+            // 
+            resources.ApplyResources(this.BuildCfgNameLabel, "BuildCfgNameLabel");
+            this.BuildCfgNameLabel.Name = "BuildCfgNameLabel";
             // 
             // CancelBuildCfgBtn
             // 
@@ -155,50 +157,35 @@
             this.CancelBuildCfgBtn.UseVisualStyleBackColor = true;
             this.CancelBuildCfgBtn.Click += new System.EventHandler(this.CancelBuildCfgBtn_Click);
             // 
-            // BuildCfg_NameBox
+            // BuildCfg_Lod0Chk
             // 
-            this.tableLayoutPanel2.SetColumnSpan(this.BuildCfg_NameBox, 2);
-            resources.ApplyResources(this.BuildCfg_NameBox, "BuildCfg_NameBox");
-            this.BuildCfg_NameBox.Name = "BuildCfg_NameBox";
-            this.BuildCfg_NameBox.TextChanged += new System.EventHandler(this.BuildCfgProperty_ValueChanged);
-            // 
-            // BuildCfg_OverwriteChk
-            // 
-            resources.ApplyResources(this.BuildCfg_OverwriteChk, "BuildCfg_OverwriteChk");
-            this.tableLayoutPanel2.SetColumnSpan(this.BuildCfg_OverwriteChk, 3);
-            this.BuildCfg_OverwriteChk.Name = "BuildCfg_OverwriteChk";
-            this.BuildCfg_OverwriteChk.UseVisualStyleBackColor = true;
-            this.BuildCfg_OverwriteChk.CheckStateChanged += new System.EventHandler(this.BuildCfgProperty_ValueChanged);
+            resources.ApplyResources(this.BuildCfg_Lod0Chk, "BuildCfg_Lod0Chk");
+            this.BuildCfg_Lod0Chk.Name = "BuildCfg_Lod0Chk";
+            this.BuildCfg_Lod0Chk.UseVisualStyleBackColor = true;
+            this.BuildCfg_Lod0Chk.CheckedChanged += new System.EventHandler(this.BuildCfgProperty_ValueChanged);
             // 
             // BuildCfg_PathBox
             // 
             resources.ApplyResources(this.BuildCfg_PathBox, "BuildCfg_PathBox");
             this.BuildCfg_PathBox.AutoSizeButton = true;
             this.BuildCfg_PathBox.ButtonWidth = 26;
-            this.tableLayoutPanel2.SetColumnSpan(this.BuildCfg_PathBox, 2);
             this.BuildCfg_PathBox.Name = "BuildCfg_PathBox";
             this.BuildCfg_PathBox.ReadOnly = true;
             this.BuildCfg_PathBox.Value = "";
             this.BuildCfg_PathBox.BrowseButtonClicked += new System.EventHandler(this.BuildCfg_PathBox_BrowseButtonClicked);
             this.BuildCfg_PathBox.ValueChanged += new System.EventHandler(this.BuildCfgProperty_ValueChanged);
             // 
-            // BuildCfgNameLabel
-            // 
-            resources.ApplyResources(this.BuildCfgNameLabel, "BuildCfgNameLabel");
-            this.BuildCfgNameLabel.Name = "BuildCfgNameLabel";
-            // 
-            // BuildCfg_Lod0Chk
-            // 
-            resources.ApplyResources(this.BuildCfg_Lod0Chk, "BuildCfg_Lod0Chk");
-            this.tableLayoutPanel2.SetColumnSpan(this.BuildCfg_Lod0Chk, 3);
-            this.BuildCfg_Lod0Chk.Name = "BuildCfg_Lod0Chk";
-            this.BuildCfg_Lod0Chk.UseVisualStyleBackColor = true;
-            this.BuildCfg_Lod0Chk.CheckedChanged += new System.EventHandler(this.BuildCfgProperty_ValueChanged);
-            // 
             // BuildCfgPathLabel
             // 
             resources.ApplyResources(this.BuildCfgPathLabel, "BuildCfgPathLabel");
             this.BuildCfgPathLabel.Name = "BuildCfgPathLabel";
+            // 
+            // BuildCfg_OverwriteChk
+            // 
+            resources.ApplyResources(this.BuildCfg_OverwriteChk, "BuildCfg_OverwriteChk");
+            this.BuildCfg_OverwriteChk.Name = "BuildCfg_OverwriteChk";
+            this.BuildCfg_OverwriteChk.UseVisualStyleBackColor = true;
+            this.BuildCfg_OverwriteChk.CheckStateChanged += new System.EventHandler(this.BuildCfgProperty_ValueChanged);
             // 
             // groupBox1
             // 
@@ -272,11 +259,10 @@
             this.BuildConfigsGroupBox.ResumeLayout(false);
             this.BuildCfgSplitContainer.Panel1.ResumeLayout(false);
             this.BuildCfgSplitContainer.Panel2.ResumeLayout(false);
+            this.BuildCfgSplitContainer.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.BuildCfgSplitContainer)).EndInit();
             this.BuildCfgSplitContainer.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
-            this.tableLayoutPanel2.ResumeLayout(false);
-            this.tableLayoutPanel2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
@@ -310,6 +296,5 @@
         private System.Windows.Forms.TextBox UsernameTextbox;
         private Controls.BrowseTextBox WorkspaceBrowseBox;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
     }
 }

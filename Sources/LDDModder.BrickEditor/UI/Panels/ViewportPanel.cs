@@ -514,9 +514,6 @@ namespace LDDModder.BrickEditor.UI.Panels
                     if (!model.Visible)
                         continue;
 
-                    if (model is BoneModel && !ProjectManager.ShowBones)
-                        continue;
-
                     if (model is SurfaceModelMesh)
                         model.RenderModel(Camera, ProjectManager.PartRenderMode);
                     else
@@ -1421,8 +1418,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                 {
                     if (!model.IsSelectable)
                         continue;
-                    if (model is BoneModel && !ProjectManager.ShowBones)
-                        continue;
+
                     if (model.RayIntersectsBoundingBox(ray, out float boxDist))
                     {
                         if (model.RayIntersects(ray, out float triangleDist))
@@ -1438,12 +1434,6 @@ namespace LDDModder.BrickEditor.UI.Panels
                 var closestHit = intersectingModels
                     .Where(x=>x.Item1.RenderLayer == maxRenderLayer)
                     .OrderBy(x => x.Item2).FirstOrDefault();
-
-                //if (intersectingModels.Any(x => x.Item1 is BoneModel))
-                //{
-                //    closestHit = intersectingModels.Where(x => x.Item1 is BoneModel)
-                //        .OrderBy(x => x.Item2).FirstOrDefault();
-                //}
 
                 var closestModel = closestHit?.Item1;
                 var closestElement = (closestModel as PartElementModel)?.Element;
@@ -1500,39 +1490,33 @@ namespace LDDModder.BrickEditor.UI.Panels
             
         }
 
-        public BBox GetSceneBoundingBox()
+        public BBox GetSceneBoundingBox(bool onlyVisibleModel = false)
         {
             if (CurrentProject != null && LoadedModels.Any())
             {
-                var bbox = CalculateBoundingBox(LoadedModels);
-                if (!bbox.IsEmpty)
-                    return bbox;
-                //var modelMeshes = SurfaceModels.SelectMany(x => x.MeshModels);
-                //if (modelMeshes.Any())
-                //    return CalculateBoundingBox(modelMeshes);
-                
+                Vector3 minPos = new Vector3(float.MaxValue);
+                Vector3 maxPos = new Vector3(float.MinValue);
+
+                foreach (var model in LoadedModels.OfType<PartElementModel>())
+                {
+                    //if (!(model is SurfaceModelMesh))
+                    //    continue;
+                    if (onlyVisibleModel && !model.Visible)
+                        continue;
+
+                    var worldBounding = model.GetWorldBoundingBox();
+                    if (worldBounding.IsEmpty)
+                        continue;
+                    minPos = Vector3.ComponentMin(minPos, worldBounding.Min);
+                    maxPos = Vector3.ComponentMax(maxPos, worldBounding.Max);
+                }
+
+                if (minPos.X != float.MaxValue)
+                    return BBox.FromMinMax(minPos, maxPos);
+
             }
 
             return BBox.FromCenterSize(Vector3.Zero, new Vector3(2f));
-        }
-
-        private BBox CalculateBoundingBox(IEnumerable<ModelBase> modelMeshes)
-        {
-            Vector3 minPos = new Vector3(float.MaxValue);
-            Vector3 maxPos = new Vector3(float.MinValue);
-
-            foreach (var model in modelMeshes)
-            {
-                //if (!(model is SurfaceModelMesh))
-                //    continue;
-
-                var worldBounding = model.GetWorldBoundingBox();
-                
-                minPos = Vector3.ComponentMin(minPos, worldBounding.Min);
-                maxPos = Vector3.ComponentMax(maxPos, worldBounding.Max);
-            }
-
-            return BBox.FromMinMax(minPos, maxPos);
         }
 
         private void CalculateCameraDirection(CameraAlignment alignment, out Vector3 cameraDirection, out Vector3 upVector)
@@ -1577,7 +1561,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         private void RepositionCamera(Vector3 cameraDirection, Vector3 upVector)
         {
             var visibleModels = LoadedModels.OfType<SurfaceModelMesh>();
-            var bounding = GetSceneBoundingBox();
+            var bounding = GetSceneBoundingBox(true);
 
             float distanceToTarget = 3f;
             Vector2 targetSize = new Vector2(2f);

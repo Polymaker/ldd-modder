@@ -1,6 +1,5 @@
 ﻿using LDDModder.BrickEditor.ProjectHandling;
 using LDDModder.Modding;
-using LDDModder.Modding;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -93,7 +92,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
             return true;
         }
 
-        public bool IsHiddenByConfigs()
+        public virtual bool IsHiddenByConfigs()
         {
             if (Manager != null)
             {
