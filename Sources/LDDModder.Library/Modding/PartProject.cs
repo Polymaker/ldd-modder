@@ -465,10 +465,13 @@ namespace LDDModder.Modding
             var projectXml = GenerateProjectXml();
             projectXml.Save(filename);
 
-            foreach (var mesh in Meshes)
+            if (IsLoadedFromDisk && ProjectPath == filename)
             {
-                if (mesh.Geometry != null)
-                    mesh.MarkSaved(true);
+                foreach (var mesh in Meshes)
+                {
+                    if (mesh.Geometry != null)
+                        mesh.MarkSaved(true);
+                }
             }
         }
 

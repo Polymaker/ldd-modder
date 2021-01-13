@@ -265,9 +265,9 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
                 foreach (var mesh in CurrentProject.Meshes)
                     mesh.ReloadModelFromXml();
-                //CurrentProject.ProjectPath = null;
+                CurrentProject.ProjectPath = TemporaryProjectPath;
                 CurrentProject.Save(TemporaryProjectPath);
-                //CurrentProject.ProjectPath = TemporaryProjectPath;
+                
                 foreach (var mesh in CurrentProject.Meshes)
                     mesh.UnloadModel();
             }

@@ -63,8 +63,8 @@ namespace LDDModder.BrickEditor.Rendering
                     //}
 
                     var addedModel = AddMeshGeometry(meshRef, indices, vertices);
-
-                    if (!distinctMeshes.Contains(meshRef.ModelMesh))
+          
+                    if (addedModel != null && !distinctMeshes.Contains(meshRef.ModelMesh))
                         distinctMeshes.Add(meshRef.ModelMesh);
                 }
 
@@ -74,6 +74,8 @@ namespace LDDModder.BrickEditor.Rendering
                     {
 
                         var addedModel = AddMeshGeometry(meshRef, indices, vertices);
+                        if (addedModel == null)
+                            continue;
                         addedModel.IsReplacementModel = true;
 
                         if (!distinctMeshes.Contains(meshRef.ModelMesh))
@@ -98,6 +100,11 @@ namespace LDDModder.BrickEditor.Rendering
         private SurfaceModelMesh AddMeshGeometry(ModelMeshReference modelMesh, List<int> indexList, List<VertVNT> vertexList)
         {
             var geometry = modelMesh.GetGeometry();
+            if (geometry == null)
+            {
+                Trace.WriteLine("Could not load mesh geometry!");
+                return null;
+            }
             int indexOffset = indexList.Count;
             int vertexOffset = vertexList.Count;
             var triangleIndices = geometry.GetTriangleIndices();
