@@ -32,6 +32,10 @@ namespace LDDModder.BrickEditor.Models
 
         public static bool IsCacheEmpty => Bricks.Count == 0;
 
+        public static bool IsInitialized { get; private set; }
+
+        private static readonly object InitializationLock = new object();
+
         static BrickListCache()
         {
             ChangedParts = new HashSet<int>();
@@ -48,43 +52,98 @@ namespace LDDModder.BrickEditor.Models
 
         public static void Initialize()
         {
-            DisposeFolderWatcher();
+            if (Monitor.IsEntered(InitializationLock))
+                return;
 
-            Source = CacheSource.None;
 
-            LoadCachedList();
-            IsCacheDirty = false;
+            Monitor.Enter(InitializationLock);
+
+            try
+            {
+                DisposeFolderWatcher();
+
+                Source = CacheSource.None;
+                IsInitialized = false;
+
+                LoadCachedList();
+                IsCacheDirty = false;
+
+                if (LDD.LDDEnvironment.Current != null)
+                {
+                    string oldSource = SourcePath;
+                    SourcePath = string.Empty;
+
+                    if (LDD.LDDEnvironment.Current.IsLifExtracted(LDD.LddLif.DB))
+                    {
+                        Source = CacheSource.ExtractedContent;
+                        SourcePath = LDD.LDDEnvironment.Current.GetAppDataSubDir("db\\Primitives");
+                    }
+                    else if (LDD.LDDEnvironment.Current.IsLifPresent(LDD.LddLif.DB))
+                    {
+                        Source = CacheSource.LIF;
+                        SourcePath = LDD.LDDEnvironment.Current.GetLifFilePath(LDD.LddLif.DB);
+                    }
+                    else
+                    {
+                        Source = CacheSource.None;
+                        SourcePath = string.Empty;
+                    }
+
+                    if (string.IsNullOrEmpty(SourcePath) && Bricks.Count > 0)
+                    {
+                        Bricks.Clear();
+                    }
+                    else if (SourcePath != oldSource)
+                    {
+                        Bricks.ForEach(x => x.Validated = false);
+                        IsCacheDirty = true;
+                    }
+
+                    if (Bricks.Any() && !IsCacheDirty)
+                        CheckIfCacheIsOutdated();
+
+                    if (Source == CacheSource.ExtractedContent)
+                        InitializeFolderWatcher();
+
+                    IsInitialized = (Source != CacheSource.None);
+                }
+            }
+            finally
+            {
+                Monitor.Exit(InitializationLock);
+            }
+            
+        }
+
+
+        public static bool CheckIfConfigurationChanged()
+        {
+            if (!IsInitialized)
+                return false;
+
+            string newSourcePath = string.Empty;
+            var newSourceType = CacheSource.None;
 
             if (LDD.LDDEnvironment.Current != null)
             {
-                string oldSource = SourcePath;
-                SourcePath = string.Empty;
-                
+
                 if (LDD.LDDEnvironment.Current.IsLifExtracted(LDD.LddLif.DB))
                 {
-                    Source = CacheSource.ExtractedContent;
-                    SourcePath = LDD.LDDEnvironment.Current.GetAppDataSubDir("db\\Primitives");
+                    newSourceType = CacheSource.ExtractedContent;
+                    newSourcePath = LDD.LDDEnvironment.Current.GetAppDataSubDir("db\\Primitives");
                 }
                 else if (LDD.LDDEnvironment.Current.IsLifPresent(LDD.LddLif.DB))
                 {
-                    Source = CacheSource.LIF;
-                    SourcePath = LDD.LDDEnvironment.Current.GetLifFilePath(LDD.LddLif.DB);
+                    newSourceType = CacheSource.LIF;
+                    newSourcePath = LDD.LDDEnvironment.Current.GetLifFilePath(LDD.LddLif.DB);
                 }
 
-                if (SourcePath != oldSource)
-                {
-                    Bricks.ForEach(x => x.Validated = false);
-                    IsCacheDirty = true;
-                }
-
-                if (Bricks.Any() && !IsCacheDirty)
-                    CheckIfCacheIsOutdated();
-
-                if (Source == CacheSource.ExtractedContent)
-                    InitializeFolderWatcher();
+                if (SourcePath != newSourcePath || newSourceType != Source)
+                    return true;
             }
-        }
 
+            return false;
+        }
 
         public static void CheckIfCacheIsOutdated()
         {

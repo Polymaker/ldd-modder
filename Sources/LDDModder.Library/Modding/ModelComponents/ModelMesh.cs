@@ -111,7 +111,7 @@ namespace LDDModder.Modding
             }
             else
             {
-                Trace.WriteLine("ERROR Geometry not loaded!");
+                Project?.ErrorMessages.Add($"Could not save the model '{Name}' (ID: {ID}). The model was unloaded and could not be retrieved.");
             }
             return elem;
         }
@@ -194,10 +194,8 @@ namespace LDDModder.Modding
 
         public void UnloadModel()
         {
-            if (CanUnloadModel && GeometrySaved)
-            {
+            if (GeometrySaved)
                 _Geometry = null;
-            }
         }
 
         internal void MarkSaved(bool value)

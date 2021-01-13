@@ -284,6 +284,13 @@ namespace LDDModder.BrickEditor.UI.Windows
                 MessageBoxIcon.None, MessageBoxDefaultButton.Button1, FormStartPosition.CenterParent);
         }
 
+        public static DialogResult ShowDetails(
+            string text, string caption, string errorDetails)
+        {
+            return Show(null, text, caption, errorDetails, MessageBoxButtons.OK,
+                MessageBoxIcon.None, MessageBoxDefaultButton.Button1, FormStartPosition.CenterParent);
+        }
+
         #endregion
 
         #region ShowException Overloads

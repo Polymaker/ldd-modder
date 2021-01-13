@@ -155,6 +155,8 @@ namespace LDDModder.Modding
 
         public Dictionary<string, string> ProjectProperties { get; set; }
 
+        public List<string> ErrorMessages { get; set; }
+
         [XmlIgnore]
         public bool IsLoading { get; internal set; }
 
@@ -178,6 +180,8 @@ namespace LDDModder.Modding
             Properties = new PartProperties(this);
             ProjectInfo = new ProjectInfo(this);
             ProjectProperties = new Dictionary<string, string>();
+
+            ErrorMessages = new List<string>();
         }
 
         #region Creation From LDD
@@ -452,6 +456,8 @@ namespace LDDModder.Modding
 
         public void Save(string filename)
         {
+            ErrorMessages.Clear();
+
             string directory = Path.GetDirectoryName(filename);
             if (!Directory.Exists(directory))
                 Directory.CreateDirectory(directory);
@@ -468,10 +474,10 @@ namespace LDDModder.Modding
 
         public void CleanUpAndSave(string filename)
         {
-            string directory = Path.GetDirectoryName(filename);
+            //string directory = Path.GetDirectoryName(filename);
 
-            if (!Directory.Exists(directory))
-                Directory.CreateDirectory(directory);
+            //if (!Directory.Exists(directory))
+            //    Directory.CreateDirectory(directory);
 
             var projectXml = GenerateProjectXml();
             foreach(var mesh in Meshes)
@@ -484,13 +490,14 @@ namespace LDDModder.Modding
                         meshElem.Remove();
                 }
             }
-            projectXml.Save(filename);
+            Save(filename);
+            //projectXml.Save(filename);
 
-            foreach (var mesh in Meshes)
-            {
-                if (mesh.Geometry != null)
-                    mesh.MarkSaved(true);
-            }
+            //foreach (var mesh in Meshes)
+            //{
+            //    if (mesh.Geometry != null)
+            //        mesh.MarkSaved(true);
+            //}
         }
 
 
@@ -1371,8 +1378,6 @@ namespace LDDModder.Modding
         #endregion
 
         #region Project File/Directory Handling
-
-
 
         public XDocument GetProjectXml()
         {
