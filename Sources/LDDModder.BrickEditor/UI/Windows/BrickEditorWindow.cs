@@ -116,7 +116,8 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         private void LoadAndValidateSettings()
         {
-            SettingsManager.Initialize();
+            if (!SettingsManager.HasInitialized)
+                SettingsManager.Initialize();
 
             if (LDDEnvironment.Current == null || !LDDEnvironment.Current.IsValidInstall)
             {
@@ -127,16 +128,13 @@ namespace LDDModder.BrickEditor.UI.Windows
             }
             else
             {
-                Task.Factory.StartNew(() =>
+                if (!Models.BrickListCache.IsInitialized || Models.BrickListCache.CheckIfConfigurationChanged())
                 {
-                    Models.BrickListCache.Initialize();
-                });
+                    Task.Factory.StartNew(() => Models.BrickListCache.Initialize());
+                }
             }
 
-            if (!FlagManager.IsSet("OnLoadAsync"))
-            {
-                AutoSaveTimer.Interval = SettingsManager.Current.EditorSettings.BackupInterval * 1000;
-            }
+            AutoSaveTimer.Interval = SettingsManager.Current.EditorSettings.BackupInterval * 1000;
         }
 
         private void UpdateWindowTitle()
@@ -217,11 +215,13 @@ namespace LDDModder.BrickEditor.UI.Windows
             if (!(savedLayout != null && LoadCustomLayout(savedLayout)))
                 LoadDefaultLayout();
 
-            WaitPopup.UpdateProgress(9, 10);
+            if (WaitPopup != null && WaitPopup.Visible)
+                WaitPopup.UpdateProgress(9, 10);
 
             ValidateAllPanelsLoaded();
 
-            WaitPopup.UpdateProgress(10, 10);
+            if (WaitPopup != null && WaitPopup.Visible)
+                WaitPopup.UpdateProgress(10, 10);
 
             ViewportPanel.Activate();//must be visible to properly init GL resource
 
@@ -372,27 +372,28 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         private void OnInitializationPopupLoaded(object sender, EventArgs e)
         {
-            Task.Factory.StartNew(() =>
-            {
-                Thread.Sleep(100);
-                BeginInvoke((Action)(() =>
-                {
-                    FlagManager.Set("OnLoadAsync");
-                    AutoSaveTimer.Interval = 500;
-                    AutoSaveTimer.Start();
-                    DockPanelControl.Layout += DockPanelControl_Layout;
-                    WaitPopup.Shown -= OnInitializationPopupLoaded;
-                    InitializePanels();
-                    LayoutDockPanels();
-                }));
-            });
-        }
+            WaitPopup.Shown -= OnInitializationPopupLoaded;
 
-        private void DockPanelControl_Layout(object sender, LayoutEventArgs e)
-        {
-            //What was that for???
-            //AutoSaveTimer.Stop();
-            //AutoSaveTimer.Start();
+            this.InvokeWithDelay(100, ()=>
+            {
+                InitializePanels();
+                LayoutDockPanels();
+                InitializeAfterShown();
+            });
+            
+            //Task.Factory.StartNew(() =>
+            //{
+            //    Thread.Sleep(100);
+            //    BeginInvoke((Action)(() =>
+            //    {
+            //        FlagManager.Set("OnLoadAsync");
+            //        AutoSaveTimer.Interval = 500;
+            //        AutoSaveTimer.Start();
+            //        WaitPopup.Shown -= OnInitializationPopupLoaded;
+            //        InitializePanels();
+            //        LayoutDockPanels();
+            //    }));
+            //});
         }
 
         private void InitializeAfterShown()
@@ -835,27 +836,6 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         private void AutoSaveTimer_Tick(object sender, EventArgs e)
         {
-            //Re-use (pre-use) of the timer to initialize UI
-            if (FlagManager.IsSet("OnLoadAsync"))
-            {
-                FlagManager.Unset("OnLoadAsync");
-                DockPanelControl.Layout += DockPanelControl_Layout;
-                AutoSaveTimer.Stop();
-
-                if (SettingsManager.HasInitialized)
-                    AutoSaveTimer.Interval = SettingsManager.Current.EditorSettings.BackupInterval * 1000;
-                else
-                    AutoSaveTimer.Interval = 60 * 1000;
-
-                Task.Factory.StartNew(() =>
-                {
-                    Thread.Sleep(200);
-                    BeginInvoke(new MethodInvoker(InitializeAfterShown));
-                });
-
-                return;
-            }
-
             if (ProjectManager.IsProjectOpen)
                 ProjectManager.SaveWorkingProject();
         }

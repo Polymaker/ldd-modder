@@ -237,6 +237,8 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
                 //SaveUserProperties();
                 CurrentProject.CleanUpAndSave(targetPath);
+                if (CurrentProject.ErrorMessages.Any())
+                    MessageBoxEX.ShowDetails(Messages.Caption_UnexpectedError, Messages.Caption_UnexpectedError, string.Join(Environment.NewLine, CurrentProject));
 
                 CurrentProjectPath = targetPath;
                 
@@ -260,9 +262,14 @@ namespace LDDModder.BrickEditor.ProjectHandling
                     string tempFile = Path.Combine(tempDir, PartProject.ProjectFileName);
                     TemporaryProjectPath = tempFile;
                 }
-                CurrentProject.ProjectPath = null;
+
+                foreach (var mesh in CurrentProject.Meshes)
+                    mesh.ReloadModelFromXml();
+                //CurrentProject.ProjectPath = null;
                 CurrentProject.Save(TemporaryProjectPath);
-                CurrentProject.ProjectPath = TemporaryProjectPath;
+                //CurrentProject.ProjectPath = TemporaryProjectPath;
+                foreach (var mesh in CurrentProject.Meshes)
+                    mesh.UnloadModel();
             }
         }
 

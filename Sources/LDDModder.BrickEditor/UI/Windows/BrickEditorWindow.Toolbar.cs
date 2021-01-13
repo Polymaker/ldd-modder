@@ -255,6 +255,8 @@ namespace LDDModder.BrickEditor.UI.Windows
 
             UpdateMenuItemStates();
             RebuildLayoutMenu();
+
+            LoadAndValidateSettings();
         }
 
         private void ExportBrickMenuItem_Click(object sender, EventArgs e)
