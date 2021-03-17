@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace LDDModder.LDD.Models
 {
-    public class Bone : TransformableModelItem
+    public class Joint 
     {
-        public override string NodeName => "Bone";
+        public string Type { get; set; } 
     }
 }

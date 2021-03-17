@@ -1388,7 +1388,8 @@ namespace LDDModder.Modding
             {
                 try 
                 {
-                    return XDocument.Load(ProjectPath);
+                    if (ProjectPath.EndsWith(".xml"))
+                        return XDocument.Load(ProjectPath);
                 }
                 catch { }
             }
@@ -1581,6 +1582,42 @@ namespace LDDModder.Modding
             SaveMeshesToXml();
             unloadedMeshes.ForEach(x => x.UnloadModel());
 
+        }
+
+        public List<OutlinesGenerator.SimpleEdge> GetOutlineEdges(float breakAngle = 35f)
+        {
+            var meshRefs = Surfaces.SelectMany(x => x.GetAllMeshReferences()).ToList();
+            var unloadedMeshes = meshRefs.Select(x => x.ModelMesh).Where(x => !x.IsModelLoaded).Distinct().ToList();
+            var allEdges = new List<OutlinesGenerator.SimpleEdge>();
+
+            foreach (var layerGroup in meshRefs.GroupBy(x => x.RoundEdgeLayer))
+            {
+                var meshesGeoms = layerGroup.Select(x => new Tuple<ModelMeshReference, MeshGeometry>(x, x.GetGeometry(true))).ToList();
+                meshesGeoms.RemoveAll(x => x.Item2 == null);
+
+                if (meshesGeoms.Any(x => x.Item1.Parent is FemaleStudModel fsm && fsm.ReplacementMeshes.Any()))
+                {
+                    var nonFSM = meshesGeoms.Where(x => !(x.Item1.Parent is FemaleStudModel)).ToList();
+                    var baseFSM = meshesGeoms
+                        .Where(x => x.Item1.Parent is FemaleStudModel fsm && fsm.Meshes.Contains(x.Item1)).ToList();
+
+                    var altFSM = meshesGeoms
+                        .Where(x => x.Item1.Parent is FemaleStudModel fsm && fsm.ReplacementMeshes.Contains(x.Item1)).ToList();
+
+                    var triangles = nonFSM.Concat(baseFSM).SelectMany(x => x.Item2.Triangles);
+                    allEdges.AddRange(OutlinesGenerator.CalculateHardEdges(triangles, breakAngle));
+
+                    triangles = nonFSM.Concat(altFSM).SelectMany(x => x.Item2.Triangles);
+                    allEdges.AddRange(OutlinesGenerator.CalculateHardEdges(triangles, breakAngle));
+                }
+                else
+                {
+                    var triangles = meshesGeoms.SelectMany(x => x.Item2.Triangles);
+                    allEdges.AddRange(OutlinesGenerator.CalculateHardEdges(triangles, breakAngle));
+                }
+            }
+            allEdges = allEdges.Distinct().ToList();
+            return allEdges;
         }
 
         public void ClearEdgeOutlines()

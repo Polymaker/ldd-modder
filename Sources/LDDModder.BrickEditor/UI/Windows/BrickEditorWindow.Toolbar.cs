@@ -37,6 +37,7 @@ namespace LDDModder.BrickEditor.UI.Windows
                 Edit_ImportMeshMenu.Enabled = ProjectManager.IsProjectOpen;
                 Edit_ValidatePartMenu.Enabled = ProjectManager.IsProjectOpen;
                 Edit_GenerateFilesMenu.Enabled = ProjectManager.IsProjectOpen;
+                Tools_OpenPartMenu.Enabled = ProjectManager.IsProjectOpen;
             }
 
             UpdateUndoRedoMenus();
@@ -147,13 +148,13 @@ namespace LDDModder.BrickEditor.UI.Windows
         private void File_SaveMenu_Click(object sender, EventArgs e)
         {
             if (CurrentProject != null)
-                SaveProject(CurrentProject, false);
+                SaveProject(false);
         }
 
         private void File_SaveAsMenu_Click(object sender, EventArgs e)
         {
             if (CurrentProject != null)
-                SaveProject(CurrentProject, true);
+                SaveProject(true);
         }
 
         private void File_CloseProjectMenu_Click(object sender, EventArgs e)
@@ -290,6 +291,45 @@ namespace LDDModder.BrickEditor.UI.Windows
             }
         }
 
+        private void Tools_OpenPartMenu_Click(object sender, EventArgs e)
+        {
+            if (!ProjectManager.IsProjectOpen)
+                return;
+
+            var emptyModel = new LDDModder.LDD.Models.Model
+            {
+                FileVersion = new LDD.Data.VersionInfo(5, 0),
+                ApplicationVersion = new LDD.Data.VersionInfo(4, 3),
+                BrickSetVersion = 2670,
+                Brand = LDD.Data.Brand.LDDExtended,
+                ModelName = CurrentProject.PartDescription
+            };
+            emptyModel.Bricks.Add(new LDD.Models.Brick
+            {
+                DesignID = CurrentProject.PartID,
+                Part = new LDD.Models.Part
+                {
+                    DesignID = CurrentProject.PartID,
+                    Materials = CurrentProject.Surfaces.Select(s => 21).ToList(),
+                    Bone = new LDD.Models.Bone()
+                }
+            });
+            emptyModel.RigidSystems.Add(new LDD.Models.RigidSystem()
+            {
+                RigidItems = new List<LDD.Models.RigidItem>
+                {
+                    new LDD.Models.RigidItem
+                    {
+                        BoneRefs = new List<int> { 0 }
+                    }
+                }
+            });
+            string tmpDir = Path.GetTempPath();
+            string tmpFile = Path.Combine(tmpDir, Guid.NewGuid().ToString() + ".lxfml");
+            emptyModel.Save(tmpFile);
+            Process.Start(tmpFile);
+        }
+
         private Process GetRunningLDDProcess()
         {
             var lddProcs = Process.GetProcessesByName("LDD", Environment.MachineName);
@@ -308,6 +348,12 @@ namespace LDDModder.BrickEditor.UI.Windows
             }
             else
                 StartLddMenuItem.Enabled = false;
+        }
+
+        private void Tools_ConnectionsReportMenu_Click(object sender, EventArgs e)
+        {
+            using (var dlg = new ConnectionUsageWindow())
+                dlg.ShowDialog();
         }
 
         #endregion

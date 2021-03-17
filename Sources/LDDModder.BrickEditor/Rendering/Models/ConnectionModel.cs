@@ -92,6 +92,45 @@ namespace LDDModder.BrickEditor.Rendering
                 var studsSize = new Vector3(custom2DField.StudWidth * 0.8f, 0.2f, custom2DField.StudHeight * 0.8f);
                 BoundingBox = BBox.FromCenterSize(studsSize * new Vector3(0.5f,0,0.5f), studsSize);
             }
+            else if (Connection.Connector is BallConnector ball)
+            {
+                //var studsSize = new Vector3(custom2DField.StudWidth * 0.8f, 0.2f, custom2DField.StudHeight * 0.8f);
+                //BoundingBox = BBox.FromCenterSize(studsSize * new Vector3(0.5f, 0, 0.5f), studsSize);
+                float ballSize = 0f;
+                switch (ball.SubType)
+                {
+                    case 2:
+                    case 3:
+                        ballSize = 0.64f;
+                        break;
+                    case 4:
+                    case 5:
+                        ballSize = 1f;
+                        break;
+                    case 6:
+                    case 7:
+                        ballSize = 0.22f;
+                        break;
+                    case 14:
+                    case 15:
+                        ballSize = 1.96f;
+                        break;
+                    case 16:
+                    case 17:
+                        ballSize = 1.65f;
+                        break;
+                    case 18:
+                    case 19:
+                        ballSize = 2.35f;
+                        break;
+                }
+
+                if (ballSize != 0f)
+                {
+                    RenderingModel = ModelManager.SphereModel;
+                    ModelTransform = Matrix4.CreateScale(ballSize);
+                }
+            }
 
             if (RenderingModel != null)
             {
@@ -139,6 +178,11 @@ namespace LDDModder.BrickEditor.Rendering
                     case 7:
                         RenderingModel = ModelManager.CylinderModel;
                         ModelTransform = Matrix4.CreateScale(0.32f, axelConnector.Length, 0.32f);
+                        break;
+
+                    case 14:
+                        RenderingModel = ModelManager.BarFemaleModel;
+                        ModelTransform = Matrix4.CreateScale(0.46875f, axelConnector.Length, 0.46875f);
                         break;
 
                     case 15:

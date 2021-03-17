@@ -310,25 +310,37 @@
     <value>Edit</value>
   </data>
   <data name="ExportBrickMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>183, 22</value>
+    <value>209, 22</value>
   </data>
   <data name="ExportBrickMenuItem.Text" xml:space="preserve">
     <value>Export Brick Model...</value>
   </data>
+  <data name="Tools_ConnectionsReportMenu.Size" type="System.Drawing.Size, System.Drawing">
+    <value>209, 22</value>
+  </data>
+  <data name="Tools_ConnectionsReportMenu.Text" xml:space="preserve">
+    <value>Connection Usage Report</value>
+  </data>
   <data name="toolStripSeparator3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 6</value>
+    <value>206, 6</value>
   </data>
   <data name="StartLddMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>183, 22</value>
+    <value>209, 22</value>
   </data>
   <data name="StartLddMenuItem.Text" xml:space="preserve">
     <value>Start LDD...</value>
   </data>
+  <data name="Tools_OpenPartMenu.Size" type="System.Drawing.Size, System.Drawing">
+    <value>209, 22</value>
+  </data>
+  <data name="Tools_OpenPartMenu.Text" xml:space="preserve">
+    <value>Open part in LDD...</value>
+  </data>
   <data name="toolStripSeparator7.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 6</value>
+    <value>206, 6</value>
   </data>
   <data name="Tools_SettingsMenu.Size" type="System.Drawing.Size, System.Drawing">
-    <value>183, 22</value>
+    <value>209, 22</value>
   </data>
   <data name="Tools_SettingsMenu.Text" xml:space="preserve">
     <value>Settings</value>
@@ -370,7 +382,7 @@
     <value>Window</value>
   </data>
   <data name="HelpMenu_About.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>116, 22</value>
   </data>
   <data name="HelpMenu_About.Text" xml:space="preserve">
     <value>About...</value>
@@ -600,6 +612,12 @@
   <data name="&gt;&gt;ExportBrickMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;Tools_ConnectionsReportMenu.Name" xml:space="preserve">
+    <value>Tools_ConnectionsReportMenu</value>
+  </data>
+  <data name="&gt;&gt;Tools_ConnectionsReportMenu.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;toolStripSeparator3.Name" xml:space="preserve">
     <value>toolStripSeparator3</value>
   </data>
@@ -654,6 +672,18 @@
   <data name="&gt;&gt;WindowMenu_ResetLayout.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;HelpMenuItem.Name" xml:space="preserve">
+    <value>HelpMenuItem</value>
+  </data>
+  <data name="&gt;&gt;HelpMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;HelpMenu_About.Name" xml:space="preserve">
+    <value>HelpMenu_About</value>
+  </data>
+  <data name="&gt;&gt;HelpMenu_About.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;SelectedBuildLabel.Name" xml:space="preserve">
     <value>SelectedBuildLabel</value>
   </data>
@@ -676,36 +706,30 @@
     <value>localizableStringList1</value>
   </data>
   <data name="&gt;&gt;localizableStringList1.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableStringList, Brick Studio, Version=1.0.5.27586, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableStringList, Brick Studio, Version=1.0.6.20609, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;StartLddText.Name" xml:space="preserve">
     <value>StartLddText</value>
   </data>
   <data name="&gt;&gt;StartLddText.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.5.27586, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.6.20609, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;RestartLddText.Name" xml:space="preserve">
     <value>RestartLddText</value>
   </data>
   <data name="&gt;&gt;RestartLddText.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.5.27586, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.6.20609, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;WindowTitle.Name" xml:space="preserve">
     <value>WindowTitle</value>
   </data>
   <data name="&gt;&gt;WindowTitle.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.5.27586, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.6.20609, Culture=neutral, PublicKeyToken=null</value>
   </data>
-  <data name="&gt;&gt;HelpMenuItem.Name" xml:space="preserve">
-    <value>HelpMenuItem</value>
+  <data name="&gt;&gt;Tools_OpenPartMenu.Name" xml:space="preserve">
+    <value>Tools_OpenPartMenu</value>
   </data>
-  <data name="&gt;&gt;HelpMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;HelpMenu_About.Name" xml:space="preserve">
-    <value>HelpMenu_About</value>
-  </data>
-  <data name="&gt;&gt;HelpMenu_About.Type" xml:space="preserve">
+  <data name="&gt;&gt;Tools_OpenPartMenu.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">

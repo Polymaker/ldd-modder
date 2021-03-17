@@ -20,10 +20,10 @@ namespace LDDModder.BrickEditor
         static void Main(string[] args)
         {
             //Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("fr-CA");
-
+     
             if (args != null && args.Length > 0)
             {
-
+                
             }
 
             Application.EnableVisualStyles();

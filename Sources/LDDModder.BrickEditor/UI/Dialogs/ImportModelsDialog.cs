@@ -140,8 +140,6 @@ namespace LDDModder.BrickEditor.UI.Windows
                     if (existing.Project == null)
                         Project.Bones.Add(existing);
                 }
-
-
             }
 
             foreach (var model in SelectedModels)

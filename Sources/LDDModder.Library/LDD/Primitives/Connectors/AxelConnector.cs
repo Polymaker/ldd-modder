@@ -49,7 +49,6 @@ namespace LDDModder.LDD.Primitives.Connectors
 
         public AxelConnector()
         {
-            SubType = 5;
         }
 
         protected override void SerializeBeforeTransform(XElement element)

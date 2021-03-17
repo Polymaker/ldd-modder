@@ -107,7 +107,7 @@
       <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\packages\NLog.4.7.6\lib\net45\NLog.dll</HintPath>
+      <HintPath>..\packages\NLog.4.7.8\lib\net45\NLog.dll</HintPath>
     </Reference>
     <Reference Include="ObjectListView, Version=2.9.1.1072, Culture=neutral, PublicKeyToken=b1c5bf581481bcd4, processorArchitecture=MSIL">
       <HintPath>..\packages\ObjectListView.Official.2.9.1\lib\net20\ObjectListView.dll</HintPath>
@@ -182,6 +182,7 @@
     <Compile Include="Rendering\Models\ClonePatternModel.cs" />
     <Compile Include="Rendering\Models\CursorModel.cs" />
     <Compile Include="Rendering\Models\EditorGridModel.cs" />
+    <Compile Include="Rendering\Models\HardEdgesModel.cs" />
     <Compile Include="Rendering\Models\VertexArrayBuffer.cs" />
     <Compile Include="Rendering\BrickEditorScene.cs" />
     <Compile Include="Rendering\Shaders\SimpleTextureShaderProgram.cs" />
@@ -349,6 +350,12 @@
     </Compile>
     <Compile Include="UI\Dialogs\MessageBoxEX.Designer.cs">
       <DependentUpon>MessageBoxEX.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Windows\ConnectionUsageWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Windows\ConnectionUsageWindow.Designer.cs">
+      <DependentUpon>ConnectionUsageWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\Windows\SelectOutputLocationWindow.cs">
       <SubType>Form</SubType>
@@ -665,6 +672,9 @@
     <EmbeddedResource Include="UI\Dialogs\MessageBoxEX.resx">
       <DependentUpon>MessageBoxEX.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\Windows\ConnectionUsageWindow.resx">
+      <DependentUpon>ConnectionUsageWindow.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\Windows\ExportPartModelWindow.fr.resx">
       <DependentUpon>ExportPartModelWindow.cs</DependentUpon>
     </EmbeddedResource>
@@ -686,6 +696,9 @@
     <EmbeddedResource Include="UI\Windows\ProgressPopupWindow.resx">
       <DependentUpon>ProgressPopupWindow.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="NLog.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="OpenTK.dll.config" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">

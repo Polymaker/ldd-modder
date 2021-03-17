@@ -124,13 +124,17 @@
     <Compile Include="LDD\Models\Brick.cs" />
     <Compile Include="LDD\Models\Camera.cs" />
     <Compile Include="LDD\Models\GroupSystem.cs" />
+    <Compile Include="LDD\Models\Joint.cs" />
     <Compile Include="LDD\Models\Model.cs" />
     <Compile Include="LDD\Models\ModelGroup.cs" />
     <Compile Include="LDD\Models\ModelItem.cs" />
+    <Compile Include="LDD\Models\ModelTransform.cs" />
     <Compile Include="LDD\Models\Part.cs" />
     <Compile Include="LDD\Models\RigidItem.cs" />
+    <Compile Include="LDD\Models\RigidRef.cs" />
     <Compile Include="LDD\Models\RigidSystem.cs" />
     <Compile Include="LDD\Models\SceneModel.cs" />
+    <Compile Include="LDD\Models\TransformableModelItem.cs" />
     <Compile Include="LDD\Parts\PartSurfaceMesh.cs" />
     <Compile Include="LDD\Parts\PartWrapper.cs" />
     <Compile Include="LDD\Data\Platform.cs" />

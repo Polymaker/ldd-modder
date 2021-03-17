@@ -13,7 +13,7 @@ namespace LDDModder.LDD.Meshes
         public const float fPI = (float)Math.PI;
         public const float LineThickness = 0.013f;
 
-        struct SimpleEdge : IEquatable<SimpleEdge>
+        public struct SimpleEdge : IEquatable<SimpleEdge>
         {
             public Vector3 P1;
             public Vector3 P2;
@@ -612,8 +612,14 @@ namespace LDDModder.LDD.Meshes
 
             private void LinkEdges()
             {
+                var tp1 = new Vector3(1.48f, 3.50971f, -0.8f);
+                var tp2 = new Vector3(1.29029f, 3.32f, -0.8f);
                 foreach (var edge in HardEdges)
                 {
+                    if (edge.Contains(tp1) && edge.Contains(tp2))
+                    {
+
+                    }
                     //if (edge.P1.Equals(new Vector3(1.5f, 0.42f, 1.16f)) &&
                     //    edge.P2.Equals(new Vector3(1.5f, 0.42f, -0.4f)))
                     //{
@@ -672,6 +678,23 @@ namespace LDDModder.LDD.Meshes
             }
         }
 
+        //public class GenerationTracker
+        //{
+        //    public Triangle CurrentTriangle { get; set; }
+        //    public Vertex CurrentVertex { get; set; }
+        //}
+
+        public static IEnumerable<SimpleEdge> CalculateHardEdges(IEnumerable<Triangle> triangles, float breakAngle)
+        {
+            float breakAngleRad = breakAngle / 180f * fPI;
+            var triangleList = triangles.ToList();
+            var hardEdgeDict = new HardEdgeDictionary();
+            hardEdgeDict.Initialize(triangleList, breakAngle);
+            var simpleEdges = hardEdgeDict.HardEdges.Select(e => new SimpleEdge(e.P1, e.P2));
+            simpleEdges = simpleEdges.Distinct();
+            return simpleEdges;
+        }
+
         public static void GenerateOutlines(IEnumerable<Triangle> triangles, float breakAngle)
         {
             float breakAngleRad = breakAngle / 180f * fPI;
@@ -685,9 +708,9 @@ namespace LDDModder.LDD.Meshes
             Console.WriteLine($"Calculate Hard Edges => {sw.Elapsed}");
 
             sw.Restart();
-            //var tp1 = new Vector3(-0.254556f, 0.254556f, 0f);
-            //var tp2 = new Vector3(-0.332604f, 0.137772f, 0f);
-            //var tp3 = new Vector3(-0.295648f, 0.122464f, 0f);
+            //var tp1 = new Vector3(1.48f, 3.50971f, -0.8f);
+            //var tp2 = new Vector3(1.29029f, 3.32f, -0.8f);
+            //var tp3 = new Vector3(0f, 5.96f, -0.8f);
 
             foreach (var triangle in triangleList)
             {
@@ -719,16 +742,6 @@ namespace LDDModder.LDD.Meshes
 
                     var projections = edgesConnectedToVertex.Select(x => x.ProjectTriangle(triangle, vert.Position)).ToList();
 
-                    //if (vert.Position.Equals(new Vector3(-0.254556f, 0.254556f, 0f), 0.001f) ||
-                    //    vert.Position.Equals(new Vector3(3.85456f, 0.254556f, -2f), 0.001f)
-                    //    //&& triangle.Vertices.Any(v=>v.Position.Y == 2.07874f)
-                    //    //&& triangle.Normal.Equals(Vector3.UnitZ, 0.8f)
-                    //    )
-                    //{
-
-                    //}
-
-  
                     projections.RemoveAll(p => p.IsOutsideTriangle);
 
                     if (projections.Count(p => p.IsDeadEnd) >= 2)
@@ -904,8 +917,8 @@ namespace LDDModder.LDD.Meshes
                 line1.P1 = outlineInter;
                 line2.P1 = outlineInter;
 
-                bool isLine1Good = tri2d.IntersectsLine(line1);
-                bool isLine2Good = tri2d.IntersectsLine(line2);
+                bool isLine1Good = edgePair.Edge1.IsTriangleEdge || tri2d.IntersectsLine(line1);
+                bool isLine2Good = edgePair.Edge2.IsTriangleEdge || tri2d.IntersectsLine(line2);
 
                 if (!isLine1Good && !isLine2Good)
                 {
@@ -1014,9 +1027,14 @@ namespace LDDModder.LDD.Meshes
             }
 
             var hardEdges = new List<HardEdge>();
-
+            //var tp1 = new Vector3(1.48f, 3.50971f, -0.8f);
+            //var tp2 = new Vector3(1.29029f, 3.32f, -0.8f);
             foreach (var kv in sharedEdges)
             {
+                //if (kv.Key.Contains(tp1) && kv.Key.Contains(tp2))
+                //{
+
+                //}
                 if (kv.Value.Count == 1)
                 {
                     hardEdges.Add(new HardEdge(kv.Key, kv.Value[0]));

@@ -58,6 +58,7 @@
             this.Edit_BatchBuild = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ExportBrickMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.Tools_ConnectionsReportMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.StartLddMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
@@ -67,6 +68,8 @@
             this.WindowMenu_ApplyLayout = new System.Windows.Forms.ToolStripMenuItem();
             this.WindowMenu_ManageLayouts = new System.Windows.Forms.ToolStripMenuItem();
             this.WindowMenu_ResetLayout = new System.Windows.Forms.ToolStripMenuItem();
+            this.HelpMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.HelpMenu_About = new System.Windows.Forms.ToolStripMenuItem();
             this.SelectedBuildLabel = new System.Windows.Forms.ToolStripLabel();
             this.BuildConfigComboBox = new System.Windows.Forms.ToolStripComboBox();
             this.AutoSaveTimer = new System.Windows.Forms.Timer(this.components);
@@ -74,8 +77,7 @@
             this.StartLddText = new LDDModder.BrickEditor.Localization.LocalizableString();
             this.RestartLddText = new LDDModder.BrickEditor.Localization.LocalizableString();
             this.WindowTitle = new LDDModder.BrickEditor.Localization.LocalizableString();
-            this.HelpMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.HelpMenu_About = new System.Windows.Forms.ToolStripMenuItem();
+            this.Tools_OpenPartMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -249,8 +251,10 @@
             // 
             this.ToolsMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ExportBrickMenuItem,
+            this.Tools_ConnectionsReportMenu,
             this.toolStripSeparator3,
             this.StartLddMenuItem,
+            this.Tools_OpenPartMenu,
             this.toolStripSeparator7,
             this.Tools_SettingsMenu});
             this.ToolsMenuItem.Name = "ToolsMenuItem";
@@ -262,6 +266,12 @@
             this.ExportBrickMenuItem.Name = "ExportBrickMenuItem";
             resources.ApplyResources(this.ExportBrickMenuItem, "ExportBrickMenuItem");
             this.ExportBrickMenuItem.Click += new System.EventHandler(this.ExportBrickMenuItem_Click);
+            // 
+            // Tools_ConnectionsReportMenu
+            // 
+            this.Tools_ConnectionsReportMenu.Name = "Tools_ConnectionsReportMenu";
+            resources.ApplyResources(this.Tools_ConnectionsReportMenu, "Tools_ConnectionsReportMenu");
+            this.Tools_ConnectionsReportMenu.Click += new System.EventHandler(this.Tools_ConnectionsReportMenu_Click);
             // 
             // toolStripSeparator3
             // 
@@ -318,6 +328,19 @@
             resources.ApplyResources(this.WindowMenu_ResetLayout, "WindowMenu_ResetLayout");
             this.WindowMenu_ResetLayout.Click += new System.EventHandler(this.WindowMenu_ResetLayout_Click);
             // 
+            // HelpMenuItem
+            // 
+            this.HelpMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.HelpMenu_About});
+            this.HelpMenuItem.Name = "HelpMenuItem";
+            resources.ApplyResources(this.HelpMenuItem, "HelpMenuItem");
+            // 
+            // HelpMenu_About
+            // 
+            this.HelpMenu_About.Name = "HelpMenu_About";
+            resources.ApplyResources(this.HelpMenu_About, "HelpMenu_About");
+            this.HelpMenu_About.Click += new System.EventHandler(this.HelpMenu_About_Click);
+            // 
             // SelectedBuildLabel
             // 
             this.SelectedBuildLabel.Margin = new System.Windows.Forms.Padding(40, 1, 0, 2);
@@ -355,18 +378,11 @@
             // 
             resources.ApplyResources(this.WindowTitle, "WindowTitle");
             // 
-            // HelpMenuItem
+            // Tools_OpenPartMenu
             // 
-            this.HelpMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.HelpMenu_About});
-            this.HelpMenuItem.Name = "HelpMenuItem";
-            resources.ApplyResources(this.HelpMenuItem, "HelpMenuItem");
-            // 
-            // HelpMenu_About
-            // 
-            this.HelpMenu_About.Name = "HelpMenu_About";
-            resources.ApplyResources(this.HelpMenu_About, "HelpMenu_About");
-            this.HelpMenu_About.Click += new System.EventHandler(this.HelpMenu_About_Click);
+            this.Tools_OpenPartMenu.Name = "Tools_OpenPartMenu";
+            resources.ApplyResources(this.Tools_OpenPartMenu, "Tools_OpenPartMenu");
+            this.Tools_OpenPartMenu.Click += new System.EventHandler(this.Tools_OpenPartMenu_Click);
             // 
             // BrickEditorWindow
             // 
@@ -432,5 +448,7 @@
         private System.Windows.Forms.ToolStripMenuItem WindowMenu_ManageLayouts;
         private System.Windows.Forms.ToolStripMenuItem HelpMenuItem;
         private System.Windows.Forms.ToolStripMenuItem HelpMenu_About;
+        private System.Windows.Forms.ToolStripMenuItem Tools_ConnectionsReportMenu;
+        private System.Windows.Forms.ToolStripMenuItem Tools_OpenPartMenu;
     }
 }

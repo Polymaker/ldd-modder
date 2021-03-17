@@ -28,6 +28,7 @@ namespace LDDModder.BrickEditor.UI.Windows
 {
     public partial class BrickEditorWindow : Form, IMainWindow
     {
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetLogger("Main Window");
 
         public ProjectManager ProjectManager { get; private set; }
 
@@ -53,6 +54,7 @@ namespace LDDModder.BrickEditor.UI.Windows
             FlagManager = new FlagManager();
 
             Icon = Properties.Resources.BrickStudioIcon;
+
         }
 
         protected override void OnHandleCreated(EventArgs e)
@@ -74,22 +76,15 @@ namespace LDDModder.BrickEditor.UI.Windows
         protected override void OnShown(EventArgs e)
         {
             base.OnShown(e);
+            Logger.Info("Main window shown");
 
             IsInitializing = true;
-
-            Task.Factory.StartNew(() =>
-            {
-                ResourceHelper.LoadResources();
-            });
             
             UpdateMenuItemStates();
             UpdateWindowTitle();
 
-            Task.Factory.StartNew(() =>
-            {
-                Thread.Sleep(200);
-                BeginInvoke(new MethodInvoker(BeginLoadingUI));
-            });
+            this.InvokeWithDelay(200, BeginLoadingUI);
+
         }
 
         private void RestoreSavedPosition()
@@ -181,6 +176,8 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         private void InitializePanels()
         {
+            Logger.Info("Initializing Panels");
+
             WaitPopup.UpdateProgress(0, 10);
 
             NavigationPanel = new NavigationPanel(ProjectManager);
@@ -211,6 +208,8 @@ namespace LDDModder.BrickEditor.UI.Windows
 
         private void LayoutDockPanels()
         {
+            Logger.Info("Loading Panels");
+
             var savedLayout = SettingsManager.GetSavedUserLayout();
             if (!(savedLayout != null && LoadCustomLayout(savedLayout)))
                 LoadDefaultLayout();
@@ -244,12 +243,26 @@ namespace LDDModder.BrickEditor.UI.Windows
         private void ValidateAllPanelsLoaded()
         {
             var panels = DockPanels;
-            var loadedPanel = DockPanelControl.Contents.OfType<ProjectDocumentPanel>().ToList();
+            var loadedPanels = DockPanelControl.Contents.OfType<ProjectDocumentPanel>().ToList();
+
+            var pane = PropertiesPanel?.Pane;
+            if (pane == null)
+            {
+                Logger.Warn("PropertiesPanel.Pane is NULL!");
+                pane = loadedPanels.FirstOrDefault()?.Pane;
+            }
+
+            if (pane == null)
+            {
+                Logger.Error("Could not find DockPane!");
+                return;
+            }
+
             for (int i = 0; i < panels.Length; i++)
             {
-                if (!loadedPanel.Contains(panels[i]))
+                if (!loadedPanels.Contains(panels[i]))
                 {
-                    (panels[i] as DockContent).Show(PropertiesPanel.Pane, null);
+                    (panels[i] as DockContent).Show(pane, null);
                 }
             }
         }
@@ -295,6 +308,8 @@ namespace LDDModder.BrickEditor.UI.Windows
             if (!File.Exists(layout.Path))
                 return false;
 
+            Logger.Info("Loading custom layout");
+
             MemoryStream tmpMs = null;
 
             if (DockPanelControl.Contents.Count > 0)
@@ -313,7 +328,7 @@ namespace LDDModder.BrickEditor.UI.Windows
             }
             catch (Exception ex)
             {
-
+                Logger.Error(ex, "Error while loading custom layout xml");
             }
 
             if (tmpMs != null)
@@ -373,12 +388,22 @@ namespace LDDModder.BrickEditor.UI.Windows
         private void OnInitializationPopupLoaded(object sender, EventArgs e)
         {
             WaitPopup.Shown -= OnInitializationPopupLoaded;
+            
 
             this.InvokeWithDelay(100, ()=>
             {
-                InitializePanels();
-                LayoutDockPanels();
-                InitializeAfterShown();
+                try
+                {
+                    InitializePanels();
+                    LayoutDockPanels();
+                    InitializeAfterShown();
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex, "Error while initializing UI");
+                    MessageBoxEX.ShowException(this, Messages.Caption_UnexpectedError, Messages.Caption_UnexpectedError, ex);
+                }
+                
             });
             
             //Task.Factory.StartNew(() =>
@@ -400,7 +425,10 @@ namespace LDDModder.BrickEditor.UI.Windows
         {
             WaitPopup.Message = Messages.Message_InitializingResources;
             WaitPopup.UpdateProgress(0, 0);
+            
             Application.DoEvents();
+
+            ResourceHelper.LoadResources();
 
             var documentPanels = DockPanelControl.Contents.OfType<ProjectDocumentPanel>().ToList();
 
@@ -616,6 +644,11 @@ namespace LDDModder.BrickEditor.UI.Windows
             if (!CloseCurrentProject())
                 return false;
 
+            if (string.IsNullOrEmpty(project.ProjectPath))
+                Logger.Info($"Loading project new empty project");
+            else
+                Logger.Info($"Loading project {project.ProjectPath}");
+
             ViewportPanel.ForceRender();
             ProjectManager.SetCurrentProject(project, tempPath);
 
@@ -637,6 +670,7 @@ namespace LDDModder.BrickEditor.UI.Windows
         {
             if (ProjectManager.IsProjectOpen)
             {
+                Logger.Info("Closing current project");
                 AutoSaveTimer.Stop();
 
                 if (ProjectManager.IsModified || ProjectManager.IsNewProject)
@@ -648,7 +682,7 @@ namespace LDDModder.BrickEditor.UI.Windows
                     var result = MessageBox.Show(messageText, Messages.Caption_SaveBeforeClose, MessageBoxButtons.YesNoCancel);
 
                     if (result == DialogResult.Yes)
-                        SaveProject(CurrentProject);
+                        SaveProject();
                     else if (result == DialogResult.Cancel)
                     {
                         AutoSaveTimer.Start();
@@ -663,9 +697,11 @@ namespace LDDModder.BrickEditor.UI.Windows
             return true;
         }
 
-        public void SaveProject(PartProject project, bool selectPath = false)
+        public void SaveProject(bool selectPath = false)
         {
+            var project = ProjectManager.CurrentProject;
             string targetPath = ProjectManager.CurrentProjectPath;
+            Logger.Info($"Saving current project");
 
             if (selectPath || ProjectManager.IsNewProject)
             {
@@ -785,6 +821,7 @@ namespace LDDModder.BrickEditor.UI.Windows
                 return;
             }
 
+            Logger.Info("Exiting Brick Studio");
 
             SaveCurrentUILayout();
 

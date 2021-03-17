@@ -30,6 +30,9 @@
       <Component Id="cmp8E14AD3CE4A5E5832DD48B150913F9D0" Guid="{72BD6034-7234-4CCD-8815-0860F339ECB2}">
         <File Id="fil68EE88D45B5A68BAE9EF1EC271D1B45C" Source="$(var.BrickEditor.TargetDir)Brick Studio.exe.config" />
       </Component>
+      <Component Id="cmp0F7669FE689B4949908236076F2901D4" Guid="{30B1ED5C-0C29-42C8-8640-907652E9E7DB}">
+        <File Id="filE8FD0240DBB14D94AF7DDA5EF3922AF6" Source="$(var.BrickEditor.TargetDir)NLog.config" />
+      </Component>
       <Component Id="cmp6C5691A5D54A1F499B4ECA08C2550334" Guid="{4F047745-31C0-4482-A5D8-B4F8786667C0}">
         <File Id="filB7C4477B145C376548AE4A1307AE29BB" Source="$(var.BrickEditor.TargetDir)LDDModder.Library.dll" />
       </Component>

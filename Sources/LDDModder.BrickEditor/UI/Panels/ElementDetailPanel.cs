@@ -285,10 +285,24 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void NameTextBox_Validated(object sender, EventArgs e)
         {
+            if (SelectedElement == null)
+                return;
             var newName = CurrentProject.RenameElement(ProjectManager.SelectedElement, NameTextBox.Text);
             NameTextBox.Text = newName;
         }
 
+
+        private void SubMaterialIndexBox_ValueChanged(object sender, EventArgs e)
+        {
+            if (FlagManager.IsSet("FillSelectionDetails") ||
+                FlagManager.IsSet("UpdatePropertyValue"))
+                return;
+
+            if (SelectedElement is PartSurface surface)
+            {
+                surface.SubMaterialIndex = (int)SubMaterialIndexBox.Value;
+            }
+        }
 
         #endregion
 
@@ -422,6 +436,8 @@ namespace LDDModder.BrickEditor.UI.Panels
             }
             return base.ProcessCmdKey(ref msg, keyData);
         }
+
+        
 
         //private void TestClonePatterns()
         //{

@@ -25,11 +25,14 @@ using LDDModder.BrickEditor.ProjectHandling.ViewInterfaces;
 using System.Threading.Tasks;
 using OpenTK.Platform;
 using LDDModder.BrickEditor.Rendering.Models;
+using System.Runtime.InteropServices;
 
 namespace LDDModder.BrickEditor.UI.Panels
 {
     public partial class ViewportPanel : ProjectDocumentPanel, IViewportWindow
     {
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetLogger("Viewport");
+
         private bool ViewInitialized;
         private bool IsClosing;
 
@@ -93,8 +96,63 @@ namespace LDDModder.BrickEditor.UI.Panels
             var mainForm = DockPanel.FindForm();
             mainForm.Activated += MainForm_Activated;
             mainForm.Deactivate += MainForm_Deactivate;
+
+#if DEBUG
+            var dbgMenu = new ToolStripMenuItem
+            {
+                Text = "Debug"
+            };
+            toolStrip1.Items.Insert(toolStrip1.Items.IndexOf(BonesDropDownMenu) + 1, dbgMenu);
+            void AddDebugMenu(string title, Action action)
+            {
+
+                var menu = new ToolStripMenuItem(title);
+                menu.Click += (s, ea) =>
+                {
+                    action();
+                    
+                };
+                dbgMenu.DropDownItems.Add(menu);
+            }
+
+            AddDebugMenu("Show outline edges", () =>
+            {
+                if (ProjectManager.IsProjectOpen)
+                {
+                    LoadedModels.RemoveAll(m => m is HardEdgesModel);
+                    var edges = CurrentProject.GetOutlineEdges();
+                    var edgeModel = new HardEdgesModel();
+                    foreach (var edge in edges)
+                    {
+                        edgeModel.EdgePoints.Add(edge.P1.ToGL());
+                        edgeModel.EdgePoints.Add(edge.P2.ToGL());
+                    }
+                    LoadedModels.Add(edgeModel);
+                }
+            });
+            AddDebugMenu("Start render loop", () =>
+            {
+                LoopController.Start();
+            });
+            AddDebugMenu("Stop render loop", () =>
+            {
+                LoopController.Stop();
+            });
+#endif
         }
 
+
+        protected override void OnVisibleChanged(EventArgs e)
+        {
+            base.OnVisibleChanged(e);
+            Logger.Debug($"VisibleChanged. Visible: {Visible}");
+
+            if (ViewInitialized && LoopController != null)
+            {
+                if (Visible)
+                    LoopController.Start();
+            }
+        }
 
         #region Initialization
 
@@ -110,7 +168,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
                 GlWindowInfo = OpenTKHelper.GetWindowInfo(Handle, false);
              
-                ResourceContext = new GraphicsContext(new GraphicsMode(32, 24, 2, 8), GlWindowInfo);
+                ResourceContext = new GraphicsContext(new GraphicsMode(32, 24, 2, 8), GlWindowInfo, 2, 1, GraphicsContextFlags.Default);
                 ResourceContext.MakeCurrent(null);
                 GlContextCreated = true;
             }
@@ -120,11 +178,11 @@ namespace LDDModder.BrickEditor.UI.Panels
             }
         }
 
-
         private void CreateGLControl()
         {
 
-            glControl1 = new GLControl(new GraphicsMode(32, 24, 2, 8));
+            glControl1 = new GLControl(new GraphicsMode(32, 24, 2, 8), 2, 1, GraphicsContextFlags.Default);
+
             glControl1.BackColor = Color.FromArgb(204, 204, 204);
             Controls.Add(glControl1);
             glControl1.Dock = DockStyle.Fill;
@@ -143,7 +201,6 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             SelectionInfoPanel.BringToFront();
         }
-
 
         public void InitGlResourcesAsync()
         {
@@ -609,7 +666,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             else
                 AvgRenderFPS = (AvgRenderFPS + LoopController.RenderFrequency) / 2d;
 
-            //UIRenderHelper.DrawText($"Render FPS: {AvgRenderFPS:0}", UIRenderHelper.NormalFont, Color.White, new Vector2(10, 10));
+            UIRenderHelper.DrawText($"Render FPS: {AvgRenderFPS:0}", UIRenderHelper.NormalFont, Color.White, new Vector2(10, 10));
 
             if (SelectionGizmo.IsEditing)
                 DrawGizmoStatus();
@@ -665,8 +722,14 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void LoopController_RenderFrame()
         {
-            if (IsDisposed || IsClosing)
+            if (IsDisposed || IsClosing || !Visible)
                 return;
+
+            if (!LoopController.IsRunning)
+            {
+                Logger.Warn("Render Call while loop is not running!!!");
+                return;
+            }
 
             glControl1.MakeCurrent();
 
@@ -843,13 +906,29 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         protected override void WndProc(ref Message m)
         {
+            bool wasVisible = Visible;
             base.WndProc(ref m);
-            if (m.Msg == 0x0005 || m.Msg == 0x0214 || m.Msg == 0x0046 || m.Msg == 0x0047)
+
+            //if (m.Msg == 0x0046) // WM_WINDOWPOSCHANGING 
+            //{
+            //    var pos = Marshal.PtrToStructure<Native.User32.WINDOWPOS>(m.LParam);
+            //    if (pos.flags.HasFlag(Native.User32.SetWindowPosFlags.HideWindow))
+            //    {
+            //        LoopController.Stop();
+            //    }
+            //}
+
+            if(wasVisible && !Visible)
+            {
+                LoopController.Stop();
+            }
+
+            if (m.Msg == 0x0005 || m.Msg == 0x0214/* || m.Msg == 0x0046*/ || m.Msg == 0x0047)
             {
                 if (ViewInitialized && !Disposing && !IsClosing)
                 {
                     UpdateGLViewport();
-                    LoopController.ForceRender();
+                    //LoopController.ForceRender();
                 }
             }
         }
@@ -1675,7 +1754,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void MainForm_Activated(object sender, EventArgs e)
         {
-            if (ViewInitialized && !IsClosing)
+            if (ViewInitialized && !IsClosing && Visible)
                 LoopController.Start();
         }
 
@@ -1848,7 +1927,16 @@ namespace LDDModder.BrickEditor.UI.Panels
         private void MeshesMenu_CalculateOutlines_Click(object sender, EventArgs e)
         {
             if (ProjectManager.IsProjectOpen)
-                CurrentProject.ComputeEdgeOutlines();
+            {
+                try
+                {
+                    CurrentProject.ComputeEdgeOutlines();
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex, "Error while calculating outlines");
+                }
+            }
         }
 
         private void MeshesMenu_RemoveOutlines_Click(object sender, EventArgs e)
@@ -2044,8 +2132,10 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         public bool Is3DViewFocused => InputManager.ContainsFocus;
 
+
         #endregion
 
-        
+
+
     }
 }

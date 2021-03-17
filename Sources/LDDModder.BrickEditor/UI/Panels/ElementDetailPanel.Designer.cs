@@ -117,6 +117,7 @@
             // 
             resources.ApplyResources(this.SubMaterialIndexBox, "SubMaterialIndexBox");
             this.SubMaterialIndexBox.Name = "SubMaterialIndexBox";
+            this.SubMaterialIndexBox.ValueChanged += new System.EventHandler(this.SubMaterialIndexBox_ValueChanged);
             // 
             // CollisionSizeEditor
             // 

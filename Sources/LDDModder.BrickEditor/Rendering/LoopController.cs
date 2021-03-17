@@ -19,6 +19,9 @@ namespace LDDModder.BrickEditor.Rendering
 
     public class LoopController
     {
+
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetLogger("LoopController");
+
         public GLControl Control { get; private set; }
 
         public IntPtr WindowHandle { get; set; }
@@ -44,12 +47,32 @@ namespace LDDModder.BrickEditor.Rendering
         private Stopwatch RenderWatch;
         private Stopwatch UpdateWatch;
 
-        private System.Windows.Forms.Timer RenderTimer;
-        private System.Threading.Timer RenderTimer2;
+        private System.Windows.Forms.Timer RT1;
+        private System.Threading.Timer RT2;
+        private System.Timers.Timer RT3;
 
         public event UpdateFrameDelegate UpdateFrame;
 
         public event RenderFrameDelegate RenderFrame;
+
+        public enum TimerType
+        {
+            Winform,
+            Threading,
+            Timer
+        }
+
+        private TimerType _RenderTimerType;
+
+        public TimerType RenderTimerType
+        {
+            get => _RenderTimerType;
+            set
+            {
+                if (!IsRunning)
+                    _RenderTimerType = value;
+            }
+        }
 
         public LoopController(GLControl control)
         {
@@ -60,12 +83,10 @@ namespace LDDModder.BrickEditor.Rendering
             UpdateWatch = new Stopwatch();
             WindowHandle = control.FindForm().Handle;
 
-            RenderTimer2 = new System.Threading.Timer(OnRenderTick, null, 
-                System.Threading.Timeout.Infinite, System.Threading.Timeout.Infinite);
-
-            RenderTimer = new System.Windows.Forms.Timer();
-            RenderTimer.Tick += RenderTimer_Tick;
+            RenderTimerType = TimerType.Winform;
         }
+
+        
 
         public void ForceRender()
         {
@@ -91,29 +112,62 @@ namespace LDDModder.BrickEditor.Rendering
         {
             if (!IsRunning)
             {
+                Logger.Debug("Starting GL loop");
                 IsRunning = true;
                 RenderWatch.Restart();
                 UpdateWatch.Restart();
                 LastRender = 0;
                 LastUpdate = 0;
-                RenderTimer.Interval = (int)(TargetRenderPeriod * 1000.0);
-                RenderTimer.Start();
-                //RenderTimer2.Change(0, (int)(TargetRenderPeriod * 1000.0));
-                //Application.Idle += Application_Idle;
+
+                StartRenderTimer();
                 UpdateThread = new Thread(UpdateLoop);
                 UpdateThread.Start();
             }
             
         }
 
+        private void StartRenderTimer()
+        {
+            switch (RenderTimerType)
+            {
+                case TimerType.Winform:
+                    {
+                        RT1 = new System.Windows.Forms.Timer
+                        {
+                            Interval = (int)(TargetRenderPeriod * 1000.0)
+                        };
+                        RT1.Tick += RT1_Tick;
+                        RT1.Start();
+                        break;
+                    }
+                case TimerType.Threading:
+                    {
+                        RT2 = new System.Threading.Timer(RT2_Tick, null,  0, (int)(TargetRenderPeriod * 1000.0));
+
+                        break;
+                    }
+                case TimerType.Timer:
+                    {
+                        RT3 = new System.Timers.Timer
+                        {
+                            AutoReset = true,
+                            SynchronizingObject = Control,
+                            Interval = (int)(TargetRenderPeriod * 1000.0)
+                        };
+                        RT3.Elapsed += RT3_Tick;
+                        RT3.Start();
+                        break;
+                    }
+            }
+        }
+
         public void Stop()
         {
             if (IsRunning)
             {
+                Logger.Debug("Stoping GL loop");
                 IsRunning = false;
-                RenderTimer.Stop();
-                //RenderTimer2.Change(System.Threading.Timeout.Infinite, System.Threading.Timeout.Infinite);
-                //Application.Idle -= Application_Idle;
+                StopRenderTimer();
                 if (UpdateThread != null)
                 {
                     UpdateThread.Join();
@@ -121,6 +175,36 @@ namespace LDDModder.BrickEditor.Rendering
                 }
                 RenderWatch.Stop();
                 UpdateWatch.Stop();
+            }
+        }
+
+        private void StopRenderTimer()
+        {
+            switch (RenderTimerType)
+            {
+                case TimerType.Winform:
+                    {
+                        RT1.Tick -= RT1_Tick;
+                        RT1.Stop();
+                        RT1.Dispose();
+                        RT1 = null;
+                        break;
+                    }
+                case TimerType.Threading:
+                    {
+                        RT2.Change(Timeout.Infinite, Timeout.Infinite);
+                        RT2.Dispose();
+                        RT2 = null;
+                        break;
+                    }
+                case TimerType.Timer:
+                    {
+                        RT3.Elapsed -= RT3_Tick;
+                        RT3.Stop();
+                        RT3.Dispose();
+                        RT3 = null;
+                        break;
+                    }
             }
         }
 
@@ -133,18 +217,25 @@ namespace LDDModder.BrickEditor.Rendering
         //    }
         //}
 
-        private void OnRenderTick(object state)
+        private void RT1_Tick(object sender, EventArgs e)
         {
-            DispatchRenderFrame(true);
+            DispatchRenderFrame();
         }
 
-        private void RenderTimer_Tick(object sender, EventArgs e)
+        private void RT2_Tick(object state)
         {
-            DispatchRenderFrame(true);
+            DispatchRenderFrame();
+        }
+
+        private void RT3_Tick(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            DispatchRenderFrame();
         }
 
         private void DispatchRenderFrame(bool force = false)
         {
+            if (!IsRunning)
+                return;
             double timestamp = RenderWatch.Elapsed.TotalSeconds;
             double elapsed = ClampElapsed(timestamp - LastRender);
             if (elapsed > 0.0 && (force || elapsed >= TargetRenderPeriod))
@@ -157,12 +248,22 @@ namespace LDDModder.BrickEditor.Rendering
 
         private void RaiseRenderFrame()
         {
-            foreach (Delegate del in RenderFrame.GetInvocationList())
+            try
             {
-                if (del.Target is ISynchronizeInvoke sync)
-                    sync.BeginInvoke(del, null);
+                foreach (Delegate del in RenderFrame.GetInvocationList())
+                {
+                    if (del.Target is ISynchronizeInvoke sync)
+                    {
+                        //var test = sync.BeginInvoke(del, null);
+                        //sync.EndInvoke(test);
+                        sync.Invoke(del, null);
+                    }
+                }
             }
-            //RenderFrame?.Invoke();
+            catch
+            {
+                Logger.Warn("Error while render frame");
+            }
         }
 
         private void DispatchUpdateFrame()
@@ -185,6 +286,7 @@ namespace LDDModder.BrickEditor.Rendering
 
         private void UpdateLoop()
         {
+            //TODO: Maybe change for Threading.Timer
             while (IsRunning)
             {
                 DispatchUpdateFrame();

@@ -9,10 +9,9 @@ namespace LDDModder.LDD.Models
 {
     public class Part : ModelItem
     {
-        public string DesignID { get; set; }
+        public int DesignID { get; set; }
 
-        public string Decoration { get; set; }
-
+        public List<int> Decorations { get; set; }
         public List<int> Materials { get; set; }
 
         //public List<Bone> Bones { get; set; }
@@ -23,14 +22,15 @@ namespace LDDModder.LDD.Models
         {
             //Bones = new List<Bone>();
             Materials = new List<int>();
+            Decorations = new List<int>();
         }
 
         public override void LoadFromXml(XElement element)
         {
             base.LoadFromXml(element);
-            DesignID = element.ReadAttribute("designID", string.Empty);
-
+            DesignID = element.ReadAttribute("designID", 0);
             Materials.Clear();
+            Decorations.Clear();
 
             if (element.HasAttribute("materials", out XAttribute matAttr))
             {
@@ -42,12 +42,34 @@ namespace LDDModder.LDD.Models
                 }
             }
 
+            if (element.HasAttribute("decoration", out XAttribute decAttr))
+            {
+                var decorations = decAttr.Value.Split(',');
+                for (int i = 0; i < decorations.Length; i++)
+                {
+                    if (int.TryParse(decorations[i], out int decID))
+                        Decorations.Add(decID);
+                }
+            }
+
             Bone = null;
             if (element.HasElement("Bone", out XElement boneElem))
             {
                 Bone = new Bone();
                 Bone.LoadFromXml(boneElem);
             }
+        }
+
+        protected override void SerializeElement(XElement element)
+        {
+            base.SerializeElement(element);
+            element.WriteAttribute("designID", DesignID);
+            if (Materials.Count > 0)
+                element.WriteAttribute("materials", string.Join(",", Materials));
+            if (Decorations.Count > 0)
+                element.WriteAttribute("decoration", string.Join(",", Decorations));
+            if (Bone != null)
+                element.Add(Bone.SerializeToXml());
         }
     }
 }

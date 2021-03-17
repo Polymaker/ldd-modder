@@ -58,18 +58,18 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             base.OnLoad(e);
 
-            if (ResourceHelper.IsResourceDataInitialized)
-            {
-                PlatformComboBox.DataSource = ResourceHelper.Platforms.ToList();
-                PlatformComboBox.ValueMember = "ID";
-                PlatformComboBox.DisplayMember = "Display";
-                Categories = ResourceHelper.Categories.ToList();
-                UpdateCategoriesCombobox();
-            }
-            else
-            {
-                ResourceHelper.ResourceDataInitialized += ResourceHelper_ResourceDataInitialized;
-            }
+            //if (ResourceHelper.IsResourceDataInitialized)
+            //{
+            //    PlatformComboBox.DataSource = ResourceHelper.Platforms.ToList();
+            //    PlatformComboBox.ValueMember = "ID";
+            //    PlatformComboBox.DisplayMember = "Display";
+            //    Categories = ResourceHelper.Categories.ToList();
+            //    UpdateCategoriesCombobox();
+            //}
+            //else
+            //{
+            //    ResourceHelper.ResourceDataInitialized += ResourceHelper_ResourceDataInitialized;
+            //}
 
             PlatformComboBox.MouseWheel += ComboBox_MouseWheel;
             CategoryComboBox.MouseWheel += ComboBox_MouseWheel;
@@ -85,19 +85,42 @@ namespace LDDModder.BrickEditor.UI.Panels
             flowLayoutPanel1.ScrollControlIntoView(DescriptionPanel);
         }
 
-        private void ResourceHelper_ResourceDataInitialized(object sender, EventArgs e)
-        {
-            ExecuteOnThread(() =>
-            {
-                PlatformComboBox.DataSource = ResourceHelper.Platforms.ToList();
-                PlatformComboBox.ValueMember = "ID";
-                PlatformComboBox.DisplayMember = "Display";
+        //private void ResourceHelper_ResourceDataInitialized(object sender, EventArgs e)
+        //{
+        //    ExecuteOnThread(() =>
+        //    {
+        //        PlatformComboBox.DataSource = ResourceHelper.Platforms.ToList();
+        //        PlatformComboBox.ValueMember = "ID";
+        //        PlatformComboBox.DisplayMember = "Display";
 
-                Categories = ResourceHelper.Categories.ToList();
-                UpdateCategoriesCombobox();
-            });
+        //        Categories = ResourceHelper.Categories.ToList();
+        //        UpdateCategoriesCombobox();
+        //    });
             
-            ResourceHelper.ResourceDataInitialized -= ResourceHelper_ResourceDataInitialized;
+        //    ResourceHelper.ResourceDataInitialized -= ResourceHelper_ResourceDataInitialized;
+        //}
+
+        public override void DefferedInitialization()
+        {
+            if (ResourceHelper.IsResourceDataInitialized)
+                LoadPlatformsComboBox();
+            else
+            {
+                ResourceHelper.ResourceDataInitialized += (object o, EventArgs e) =>
+                {
+                    ExecuteOnThread(LoadPlatformsComboBox);
+                };
+            }
+        }
+
+        private void LoadPlatformsComboBox()
+        {
+            PlatformComboBox.DataSource = ResourceHelper.Platforms.ToList();
+            PlatformComboBox.ValueMember = "ID";
+            PlatformComboBox.DisplayMember = "Display";
+
+            Categories = ResourceHelper.Categories.ToList();
+            UpdateCategoriesCombobox();
         }
 
         private void UpdateCategoriesCombobox()
@@ -194,8 +217,16 @@ namespace LDDModder.BrickEditor.UI.Panels
                 DescriptionTextBox.Text = string.Empty;
                 AliasesButtonBox.Value = string.Empty;
                 AliasEdit.PartProperties = null;
-                PlatformComboBox.SelectedIndex = 0;
-                CategoryComboBox.SelectedIndex = 0;
+                if (PlatformComboBox.Items.Count > 0)
+                {
+                    PlatformComboBox.SelectedIndex = 0;
+                    CategoryComboBox.SelectedIndex = 0;
+                }
+                else
+                {
+                    PlatformComboBox.SelectedIndex = -1;
+                    CategoryComboBox.SelectedIndex = -1;
+                }
                 BoundingEditor.Value = new LDD.Primitives.BoundingBox();
                 GeomBoundingEditor.Value = new LDD.Primitives.BoundingBox();
                 CenterOfMassEditor.Value = Simple3D.Vector3d.Zero;

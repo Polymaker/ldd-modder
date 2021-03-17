@@ -127,39 +127,47 @@ namespace LDDModder.BrickEditor.Meshes
                 }
             }
 
-            if (exportOptions.IncludeCollisions && part.Primitive.Collisions.Any())
+            if (exportOptions.IncludeCollisions)
             {
-                var collisionsNode = new Node("Collisions");
-                scene.RootNode.Children.Add(collisionsNode);
-
-                var sphereMesh = ResourceHelper.GetResourceModel("Models.Sphere.obj", "obj").Meshes[0];
-                var boxMesh = ResourceHelper.GetResourceModel("Models.Cube.obj", "obj").Meshes[0];
-
-                foreach (var collGroup in part.Primitive.Collisions.GroupBy(x => x.CollisionType))
+                if (part.Primitive.Collisions.Any())
                 {
-                    int collisionIdx = 0;
+                    var collisionsNode = new Node("Collisions");
+                    scene.RootNode.Children.Add(collisionsNode);
 
-                    foreach (var collision in collGroup)
+                    var sphereMesh = ResourceHelper.GetResourceModel("Models.Sphere.obj", "obj").Meshes[0];
+                    var boxMesh = ResourceHelper.GetResourceModel("Models.Cube.obj", "obj").Meshes[0];
+
+                    foreach (var collGroup in part.Primitive.Collisions.GroupBy(x => x.CollisionType))
                     {
-                        var collNode = new Node($"{collGroup.Key.ToString()}{collisionIdx++}");
-                        var meshTransform = 
-                            Simple3D.Matrix4d.FromScale(collision.GetSize() * 2f) * collision.Transform.ToMatrix4d();
+                        int collisionIdx = 0;
 
-                        if (collision.CollisionType == LDD.Primitives.Collisions.CollisionType.Box)
+                        foreach (var collision in collGroup)
                         {
-                            collNode.MeshIndices.Add(scene.MeshCount);
-                            scene.Meshes.Add(boxMesh.Clone());
+                            var collNode = new Node($"{collGroup.Key.ToString()}{collisionIdx++}");
+                            var meshTransform =
+                                Simple3D.Matrix4d.FromScale(collision.GetSize() * 2f) * collision.Transform.ToMatrix4d();
+
+                            if (collision.CollisionType == LDD.Primitives.Collisions.CollisionType.Box)
+                            {
+                                collNode.MeshIndices.Add(scene.MeshCount);
+                                scene.Meshes.Add(boxMesh.Clone());
+                            }
+                            else
+                            {
+                                collNode.MeshIndices.Add(scene.MeshCount);
+                                scene.Meshes.Add(sphereMesh.Clone());
+                            }
+                            //connNode.Metadata.Add("Type", new Assimp.Metadata.Entry(Assimp.MetaDataType.String, conn.Type.ToString()));
+                            collNode.Transform = ((Simple3D.Matrix4)meshTransform).ToAssimp();
+                            collisionsNode.Children.Add(collNode);
                         }
-                        else
-                        {
-                            collNode.MeshIndices.Add(scene.MeshCount);
-                            scene.Meshes.Add(sphereMesh.Clone());
-                        }
-                        //connNode.Metadata.Add("Type", new Assimp.Metadata.Entry(Assimp.MetaDataType.String, conn.Type.ToString()));
-                        collNode.Transform = ((Simple3D.Matrix4)meshTransform).ToAssimp();
-                        collisionsNode.Children.Add(collNode);
                     }
                 }
+                else if (part.IsFlexible && part.Primitive.FlexBones.SelectMany(b => b.Collisions).Any())
+                {
+
+                }
+
             }
 
             //if (exportOptions.IncludeRoundEdgeData)

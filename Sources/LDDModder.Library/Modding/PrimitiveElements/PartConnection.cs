@@ -155,7 +155,18 @@ namespace LDDModder.Modding
 
         public static PartConnection Create(ConnectorType connectorType)
         {
-            return new PartConnection(Connector.CreateFromType(connectorType));
+            var conn = new PartConnection(Connector.CreateFromType(connectorType));
+            conn.SetDefaultValues();
+            return conn;
+        }
+
+        public void SetDefaultValues()
+        {
+            if (ConnectorType == ConnectorType.Axel)
+            {
+                Connector.SubType = 5;
+                GetConnector<AxelConnector>().Length = 0.8f;
+            }
         }
 
         public T GetConnector<T>() where T : Connector
