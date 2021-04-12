@@ -186,5 +186,13 @@ namespace LDDModder.BrickEditor.Rendering
 
             return FromMinMax(minPos, maxPos);
         }
+
+        public static BBox Transform(Matrix4 transform, BBox box)
+        {
+            var corners = box.GetCorners();
+            for (int i = 0; i < 8; i++)
+                corners[i] = Vector3.TransformPosition(corners[i], transform);
+            return FromVertices(corners);
+        }
     }
 }

@@ -111,9 +111,9 @@ namespace LDDModder.BrickEditor.UI.Panels
             AddConnectionDropDown.Enabled = CurrentProject != null;
         }
 
-        protected override void OnElementCollectionChanged(ElementCollectionChangedEventArgs e)
+        protected override void OnProjectCollectionChanged(CollectionChangedEventArgs e)
         {
-            base.OnElementCollectionChanged(e);
+            base.OnProjectCollectionChanged(e);
 
             if (e.ElementType == typeof(PartConnection))
                 UpdateElementList(false);
@@ -310,7 +310,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             {
                 if (SelectedElement != null)
                 {
-                    SelectedElement.PropertyChanged -= SelectedElement_PropertyChanged;
+                    SelectedElement.PropertyValueChanged -= SelectedElement_PropertyChanged;
                     SelectedElement = null;
                 }
 
@@ -475,7 +475,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                     FillSubTypeComboBox(SelectedElement.ConnectorType);
                     SetSubTypeComboValue(SelectedElement.SubType);
 
-                    SelectedElement.PropertyChanged += SelectedElement_PropertyChanged;
+                    SelectedElement.PropertyValueChanged += SelectedElement_PropertyChanged;
 
                     if (SyncSelectionCheckBox.Checked && fromComboBox
                         && !FlagManager.IsSet(nameof(SyncToCurrentSelection)))
@@ -503,7 +503,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             }
         }
 
-        private void SelectedElement_PropertyChanged(object sender, ElementValueChangedEventArgs e)
+        private void SelectedElement_PropertyChanged(object sender, System.ComponentModel.PropertyValueChangedEventArgs e)
         {
             if (InvokeRequired)
             {
@@ -526,7 +526,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                 {
                     var binding = ctrl.DataBindings[0];
 
-                    if (binding.DataSource == e.Element &&
+                    if (binding.DataSource == sender &&
                         binding.BindingMemberInfo.BindingMember == e.PropertyName)
                     {
                         binding.ReadValue();
@@ -654,8 +654,8 @@ namespace LDDModder.BrickEditor.UI.Panels
                 FlexTextBox.Text = string.Empty;
                 if (SelectedElement?.Connector is BallConnector ballConnector)
                 {
-                    if (!string.IsNullOrEmpty(ballConnector.FlexAttributes))
-                        FlexTextBox.Text = string.Join("; ", ballConnector.GetFlexValues());
+                    if (ballConnector.FlexAttributes != null)
+                        FlexTextBox.Text = string.Join("; ", ballConnector.FlexAttributes);
                 }
             }
 
@@ -672,7 +672,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
                 if (matValues.Length != 5)
                 {
-                    MessageBox.Show("Invalid number of values");
+                    MessageBox.Show("Invalid number of values. Must have 5 numbers.");
                     e.Cancel = true;
                     return;
                 }
@@ -698,18 +698,22 @@ namespace LDDModder.BrickEditor.UI.Panels
             if (FlagManager.IsSet(nameof(FillFlexValues)))
                 return;
 
-            if (!string.IsNullOrEmpty(FlexTextBox.Text))
-            {
-                var matValues = FlexTextBox.Text.Split(';', ',');
-                var values = new double[5];
-                for (int i = 0; i < matValues.Length; i++)
-                {
-                    if (Utilities.NumberHelper.SmartTryParse(matValues[i].Trim(), out double fV))
-                        values[i] = fV;
-                }
 
-                (SelectedElement.Connector as BallConnector).SetFlexValues(values);
+            if (!string.IsNullOrEmpty(FlexTextBox.Text) && 
+                BallConnector.TryParseFlexAttributes(FlexTextBox.Text.Replace(";", ","), out double[] values))
+            {
+                //var matValues = FlexTextBox.Text.Split(';', ',');
+                //var values = new double[5];
+                //for (int i = 0; i < matValues.Length; i++)
+                //{
+                //    if (Utilities.NumberHelper.SmartTryParse(matValues[i].Trim(), out double fV))
+                //        values[i] = fV;
+                //}
+                (SelectedElement.Connector as BallConnector).FlexAttributes = values;
+                //(SelectedElement.Connector as BallConnector).SetFlexValues(values);
             }
+            else if (string.IsNullOrEmpty(FlexTextBox.Text))
+                (SelectedElement.Connector as BallConnector).FlexAttributes = null;
         }
 
         private void flowLayoutPanel1_Layout(object sender, LayoutEventArgs e)

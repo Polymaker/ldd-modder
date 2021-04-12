@@ -9,11 +9,24 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using System.Reflection;
+using LDDModder.Utilities;
 
 namespace LDDModder.Serialization
 {
     public static class XmlHelper
     {
+        #region Vector Serialization
+
+        public static XAttribute ToXmlAttribute(this Vector3 vector, string name)
+        {
+            return new XAttribute(name, string.Format(CultureInfo.InvariantCulture, "{0},{1},{2}", vector.X, vector.Y, vector.Z));
+        }
+
+        public static XAttribute ToXmlAttribute(this Vector3d vector, string name)
+        {
+            return new XAttribute(name, string.Format(CultureInfo.InvariantCulture, "{0},{1},{2}", vector.X, vector.Y, vector.Z));
+        }
+
         public static XAttribute[] ToXmlAttributes(this Vector3 vector)
         {
             return ToXmlAttributes(vector, "X", "Y", "Z");
@@ -43,6 +56,46 @@ namespace LDDModder.Serialization
                 new XAttribute(name3, vector.Z.ToString(NumberFormatInfo.InvariantInfo))
             };
         }
+
+        public static Vector3 ReadVector3Attributes(XElement element, string xName = "X", string yName = "Y", string zName = "Z")
+        {
+            return new Vector3(
+                    element.ReadAttribute(xName, 0f),
+                    element.ReadAttribute(yName, 0f),
+                    element.ReadAttribute(zName, 0f)
+                );
+        }
+
+        public static Vector3d ReadVector3dAttributes(XElement element, string xName = "X", string yName = "Y", string zName = "Z")
+        {
+            return new Vector3d(
+                    element.ReadAttribute(xName, 0d),
+                    element.ReadAttribute(yName, 0d),
+                    element.ReadAttribute(zName, 0d)
+                );
+        }
+
+        public static Vector3 ParseVector3Attribute(XAttribute attribute)
+        {
+            string[] values = attribute.Value.Split(',');
+            StringUtils.TryParse(values[0], out float x);
+            StringUtils.TryParse(values[1], out float y);
+            StringUtils.TryParse(values[2], out float z);
+            return new Vector3(x, y, z);
+        }
+
+        public static Vector3d ParseVector3dAttribute(XAttribute attribute)
+        {
+            string[] values = attribute.Value.Split(',');
+            StringUtils.TryParse(values[0], out double x);
+            StringUtils.TryParse(values[1], out double y);
+            StringUtils.TryParse(values[2], out double z);
+            return new Vector3d(x, y, z);
+        }
+
+        #endregion
+
+
 
         internal static string GetTypeXmlRootName(Type xmlObjType)
         {

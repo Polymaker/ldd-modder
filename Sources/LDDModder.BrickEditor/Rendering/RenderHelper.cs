@@ -253,10 +253,15 @@ namespace LDDModder.BrickEditor.Rendering
             {
                 Colour = textColor
             });
-            var rotAdj = Matrix4.CreateRotationX(-((float)Math.PI / 2f));
-            dp.ModelViewMatrix = Matrix4.CreateScale(new Vector3(textScale)) * rotAdj * transform * TextViewMatrix;
+            dp.ModelViewMatrix = Get3dTextMatrix(transform, textScale);
             UIRenderHelper.TextRenderer.DrawingPrimitives.Add(dp);
             return dp;
+        }
+
+        public static Matrix4 Get3dTextMatrix(Matrix4 transform, float textScale)
+        {
+            var rotAdj = Matrix4.CreateRotationX(-((float)Math.PI / 2f));
+            return Matrix4.CreateScale(new Vector3(textScale)) * rotAdj * transform * TextViewMatrix;
         }
 
         #endregion

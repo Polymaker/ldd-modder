@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -365,5 +365,17 @@
   </data>
   <data name="BONE_MULTIPLE_LINKS" xml:space="preserve">
     <value>L'os "{nom}" est référencé par plusieurs os.</value>
+  </data>
+  <data name="Label_ClonePatterns" xml:space="preserve">
+    <value>Modèles de clonage</value>
+  </data>
+  <data name="ClonePatternType_Mirror" xml:space="preserve">
+    <value>Miroir</value>
+  </data>
+  <data name="ClonePatternType_Linear" xml:space="preserve">
+    <value>Répétition linéaire</value>
+  </data>
+  <data name="ClonePatternType_Circular" xml:space="preserve">
+    <value>Répétition circulaire</value>
   </data>
 </root>

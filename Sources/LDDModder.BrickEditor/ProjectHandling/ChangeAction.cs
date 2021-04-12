@@ -1,6 +1,7 @@
 ﻿using LDDModder.Modding;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -25,64 +26,80 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
     public class CollectionChangeAction : ChangeAction
     {
-        public ElementCollectionChangedEventArgs Data { get; }
+        public CollectionChangedEventArgs Data { get; }
 
-        public CollectionChangeAction(ElementCollectionChangedEventArgs data)
+        public CollectionChangeAction(CollectionChangedEventArgs data)
         {
             Data = data;
         }
 
         public override void Redo()
         {
-            if (Data.Action == System.ComponentModel.CollectionChangeAction.Remove)
+            var collection = Data.Collection as System.Collections.IList;
+            foreach (var change in Data.ChangedItems)
             {
-                foreach (var item in Data.RemovedElements)
-                    Data.Collection.Remove(item);
-            }
-            else if (Data.Action == System.ComponentModel.CollectionChangeAction.Add)
-            {
-                foreach (var item in Data.ChangedItems)
-                    Data.Collection.Insert(item.NewIndex, item.Element);
-            }
-            else if (Data.Action == System.ComponentModel.CollectionChangeAction.Refresh)
-            {
-                foreach (var item in Data.ChangedItems)
-                    Data.Collection.SetIndex(item.NewIndex, item.Element);
+                switch (change.Action)
+                {
+                    case CollectionChangeActions.Add:
+                        {
+                            collection.Insert(change.NewIndex, change.Item);
+                            break;
+                        }
+                    case CollectionChangeActions.Remove:
+                        {
+                            collection.Remove(change.Item);
+                            break;
+                        }
+                    case CollectionChangeActions.Move:
+                        {
+                            collection.RemoveAt(change.OldIndex);
+                            collection.Insert(change.NewIndex, change.Item);
+                            break;
+                        }
+                }
             }
         }
 
         public override void Undo()
         {
-            if (Data.Action == System.ComponentModel.CollectionChangeAction.Remove)
+            var collection = Data.Collection as System.Collections.IList;
+            foreach (var change in Data.ChangedItems.Reverse())
             {
-                foreach (var item in Data.ChangedItems.Reverse())
-                    Data.Collection.Insert(item.OldIndex, item.Element);
-            }
-            else if (Data.Action == System.ComponentModel.CollectionChangeAction.Add)
-            {
-                foreach (var item in Data.AddedElements)
-                    Data.Collection.Remove(item);
-            }
-            else if (Data.Action == System.ComponentModel.CollectionChangeAction.Refresh)
-            {
-                foreach (var item in Data.ChangedItems)
-                    Data.Collection.SetIndex(item.OldIndex, item.Element);
+                switch (change.Action)
+                {
+                    case CollectionChangeActions.Add:
+                        {
+                            collection.Remove(change.Item);
+                            
+                            break;
+                        }
+                    case CollectionChangeActions.Remove:
+                        {
+                            collection.Insert(change.OldIndex, change.Item);
+                            break;
+                        }
+                    case CollectionChangeActions.Move:
+                        {
+                            collection.RemoveAt(change.NewIndex);
+                            collection.Insert(change.OldIndex, change.Item);
+                            break;
+                        }
+                }
             }
         }
     }
-
     public class PropertyChangeAction : ChangeAction
     {
-        public ElementValueChangedEventArgs Data { get; }
+        public ObjectPropertyChangedEventArgs Data { get; }
 
-        public PropertyChangeAction(ElementValueChangedEventArgs data)
+        public PropertyChangeAction(ObjectPropertyChangedEventArgs data)
         {
             Data = data;
         }
 
         private void AssignPropertyValue(object value)
         {
-            object objToAssign = Data.ChildProperty ?? Data.Element;
+            object objToAssign = Data.Object;
             var propInfo = objToAssign.GetType().GetProperty(Data.PropertyName);
 
             if (propInfo != null)
@@ -90,7 +107,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
                 if (Data.Index != null)
                 {
                     //TODO: find a way to remove this hard-coded case
-                    if (Data.Index.Length == 2 && 
+                    if (Data.Index.Length == 2 &&
                         objToAssign is LDD.Primitives.Connectors.Custom2DFieldConnector connector)
                     {
                         connector.SetValue(Data.Index[0], Data.Index[1], (LDD.Primitives.Connectors.Custom2DFieldValue)value);

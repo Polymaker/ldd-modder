@@ -7,6 +7,7 @@ using LDDModder.Serialization;
 using LDDModder.Utilities;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -162,9 +163,8 @@ namespace LDDModder.Modding
 
         #region Events
 
-        public event EventHandler<ElementValueChangedEventArgs> ElementPropertyChanged;
-
-        public event EventHandler<ElementCollectionChangedEventArgs> ElementCollectionChanged;
+        public event CollectionChangedEventHandler ProjectCollectionChanged;
+        public event EventHandler<ObjectPropertyChangedEventArgs> ProjectObjectChanged;
 
         #endregion
 
@@ -358,6 +358,10 @@ namespace LDDModder.Modding
                     bonesElem.Add(bone.SerializeToXml());
             }
 
+            var patternsElem = doc.Root.AddElement(nameof(ClonePatterns));
+            foreach (var pattern in ClonePatterns)
+                patternsElem.Add(pattern.SerializeToXml());
+
             var meshesElem = doc.Root.AddElement(nameof(Meshes));
 
             foreach(var mesh in Meshes)
@@ -386,7 +390,8 @@ namespace LDDModder.Modding
             Collisions.Clear();
             Bones.Clear();
             Aliases.Clear();
-            
+            ClonePatterns.Clear();
+
             var rootElem = doc.Root;
 
             FileVersion = 1;
@@ -432,6 +437,12 @@ namespace LDDModder.Modding
             }
 
             Properties.Flexible = Bones.Any() || Properties.Flexible;
+
+            if (rootElem.HasElement(nameof(ClonePatterns), out XElement cloneElem))
+            {
+                foreach (var patternElem in cloneElem.Elements(ClonePattern.NODE_NAME))
+                    ClonePatterns.Add(ClonePattern.FromXml(patternElem));
+            }
 
             if (rootElem.HasElement(nameof(Meshes), out XElement meshesElem))
             {
@@ -593,6 +604,11 @@ namespace LDDModder.Modding
         #endregion
 
         #region Elements methods
+
+        public PartElement GetElementByID(string elementID)
+        {
+            return GetAllElements().FirstOrDefault(x => x.ID == elementID);
+        }
 
         public IEnumerable<PartElement> GetAllElements()
         {
@@ -1196,82 +1212,82 @@ namespace LDDModder.Modding
             }
         }
 
-        public void RebuildBoneConnections(float flexAmount = 0.06f)
-        {
-            if (Bones.Count == 0)
-                return;
+        //public void RebuildBoneConnections(float flexAmount = 0.06f)
+        //{
+        //    if (Bones.Count == 0)
+        //        return;
 
-            foreach (var bone in Bones)
-            {
-                bone.Connections.RemoveAll(x => x.SubType >= 999000);
-                bone.TargetConnectionID = string.Empty;
-                bone.TargetConnectionIndex = -1;
-                bone.SourceConnectionID = string.Empty;
-                bone.SourceConnectionIndex = -1;
-            }
+        //    foreach (var bone in Bones)
+        //    {
+        //        bone.Connections.RemoveAll(x => x.SubType >= 999000);
+        //        bone.TargetConnectionID = string.Empty;
+        //        bone.TargetConnectionIndex = -1;
+        //        bone.SourceConnectionID = string.Empty;
+        //        bone.SourceConnectionIndex = -1;
+        //    }
 
-            int lastBoneId = Bones.Max(x => x.BoneID);
+        //    int lastBoneId = Bones.Max(x => x.BoneID);
 
-            int curConnType = 0;
-            int totalConnection = 0;
-            string flexAttributes = string.Format(CultureInfo.InvariantCulture, "-{0},{0},20,10,10", flexAmount);
+        //    int curConnType = 0;
+        //    int totalConnection = 0;
+        //    string flexAttributes = string.Format(CultureInfo.InvariantCulture, "-{0},{0},20,10,10", flexAmount);
 
-            foreach (var bone in Bones.OrderBy(x => x.BoneID))
-            {
-                foreach (var linkedBone in Bones.Where(x => x.TargetBoneID == bone.BoneID))
-                {
-                    PartConnection targetConn = PartConnection.Create(ConnectorType.Ball);
+        //    foreach (var bone in Bones.OrderBy(x => x.BoneID))
+        //    {
+        //        foreach (var linkedBone in Bones.Where(x => x.TargetBoneID == bone.BoneID))
+        //        {
+        //            PartConnection targetConn = PartConnection.Create(ConnectorType.Ball);
 
-                    if (linkedBone.BoneID == lastBoneId)
-                    {
-                        targetConn = PartConnection.Create(ConnectorType.Fixed);
-                        var fixConn = targetConn.GetConnector<FixedConnector>();
-                        fixConn.SubType = 999000 + curConnType;
-                    }
-                    else
-                    {
-                        targetConn = PartConnection.Create(ConnectorType.Ball);
-                        var ballConn = targetConn.GetConnector<BallConnector>();
-                        ballConn.SubType = 999000 + curConnType;
-                    }
+        //            if (linkedBone.BoneID == lastBoneId)
+        //            {
+        //                targetConn = PartConnection.Create(ConnectorType.Fixed);
+        //                var fixConn = targetConn.GetConnector<FixedConnector>();
+        //                fixConn.SubType = 999000 + curConnType;
+        //            }
+        //            else
+        //            {
+        //                targetConn = PartConnection.Create(ConnectorType.Ball);
+        //                var ballConn = targetConn.GetConnector<BallConnector>();
+        //                ballConn.SubType = 999000 + curConnType;
+        //            }
 
-                    curConnType = (++curConnType) % 4;
+        //            curConnType = (++curConnType) % 4;
 
-                    var posOffset = linkedBone.Transform.Position - bone.Transform.Position;
-                    posOffset = bone.Transform.ToMatrixD().Inverted().TransformVector(posOffset);
-                    targetConn.Transform.Position = posOffset;
+        //            var posOffset = linkedBone.Transform.Position - bone.Transform.Position;
+        //            posOffset = bone.Transform.ToMatrixD().Inverted().TransformVector(posOffset);
+        //            targetConn.Transform.Position = posOffset;
                     
 
-                    bone.Connections.Add(targetConn);
-                    RenameElement(targetConn, $"FlexConn{totalConnection++}");
+        //            bone.Connections.Add(targetConn);
+        //            RenameElement(targetConn, $"FlexConn{totalConnection++}");
 
-                    PartConnection sourceConn = null;
-                    if (linkedBone.BoneID == lastBoneId)
-                    {
-                        sourceConn = PartConnection.Create(ConnectorType.Fixed);
-                        var fixConn = sourceConn.GetConnector<FixedConnector>();
-                        fixConn.SubType = 999000 + curConnType;
-                    }
-                    else
-                    {
-                        sourceConn = PartConnection.Create(ConnectorType.Ball);
-                        var ballConn = sourceConn.GetConnector<BallConnector>();
-                        ballConn.SubType = 999000 + curConnType;
-                        ballConn.FlexAttributes = flexAttributes;
-                    }
+        //            PartConnection sourceConn = null;
+        //            if (linkedBone.BoneID == lastBoneId)
+        //            {
+        //                sourceConn = PartConnection.Create(ConnectorType.Fixed);
+        //                var fixConn = sourceConn.GetConnector<FixedConnector>();
+        //                fixConn.SubType = 999000 + curConnType;
+        //            }
+        //            else
+        //            {
+        //                sourceConn = PartConnection.Create(ConnectorType.Ball);
+        //                var ballConn = sourceConn.GetConnector<BallConnector>();
+        //                ballConn.SubType = 999000 + curConnType;
+        //                ballConn.SetFlexValues(flexAttributes);
+        //            }
 
-                    curConnType = (++curConnType) % 4;
-                    linkedBone.Connections.Add(sourceConn);
-                    RenameElement(sourceConn, $"FlexConn{totalConnection++}");
+        //            curConnType = (++curConnType) % 4;
+        //            linkedBone.Connections.Add(sourceConn);
+        //            RenameElement(sourceConn, $"FlexConn{totalConnection++}");
 
-                    linkedBone.TargetConnectionID = targetConn.ID;
-                    linkedBone.SourceConnectionID = sourceConn.ID;
+        //            linkedBone.TargetConnectionID = targetConn.ID;
+        //            linkedBone.SourceConnectionID = sourceConn.ID;
 
-                }
-            }
+        //        }
+        //    }
 
-            UpdateBoneReferencesIndices();
-        }
+        //    UpdateBoneReferencesIndices();
+        //}
 
         public void CalculateBoneBoundingBoxes()
         {
@@ -1319,52 +1335,74 @@ namespace LDDModder.Modding
 
         #region Change tracking 
 
-        internal void OnElementCollectionChanged(ElementCollectionChangedEventArgs ccea)
+        public void AttachCollection(IChangeTrackingCollection collection)
         {
-            if (ccea.Action == System.ComponentModel.CollectionChangeAction.Add)
-            {
-                if (!IsLoading)
-                {
-                    var elementHierarchy = ccea.AddedElements
-                        .Concat(ccea.AddedElements.SelectMany(x => x.GetChildsHierarchy()));
+            collection.CollectionChanged += OnCollectionChanged;
+        }
 
-                    GenerateElementIDs(elementHierarchy);
-                    GenerateElementsNames(elementHierarchy);
-                }
+        public void DettachCollection(IChangeTrackingCollection collection)
+        {
+            collection.CollectionChanged -= OnCollectionChanged;
+        }
+
+        public void AttachObject(ChangeTrackingObject trackingObject)
+        {
+            trackingObject.PropertyValueChanged += OnOjectPropertyChanged;
+        }
+
+        public void DettachObject(ChangeTrackingObject trackingObject)
+        {
+            trackingObject.PropertyValueChanged -= OnOjectPropertyChanged;
+        }
+
+        internal void OnCollectionChanged(object sender, CollectionChangedEventArgs ccea)
+        {
+
+            if (!IsLoading && ccea.AddedElements<PartElement>().Any())
+            {
+                var elementHierarchy = ccea.AddedElements<PartElement>().SelectMany(x => x.GetChildsHierarchy(true));
+
+                GenerateElementIDs(elementHierarchy);
+                GenerateElementsNames(elementHierarchy);
             }
 
             if (!IsLoading)
             {
-                if (ccea.Collection.ElementType == typeof(PartConnection) &&
-                    ccea.ChangedElements.OfType<PartConnection>()
+                if (ccea.ElementType == typeof(PartConnection) &&
+                    ccea.ChangedElements<PartConnection>()
                         .Any(x => x.ConnectorType == ConnectorType.Custom2DField))
                 {
                     UpdateStudReferencesIndices();
                 }
 
-                if (ccea.Collection.ElementType == typeof(PartBone))
+                if (ccea.ElementType == typeof(PartBone))
                 {
                     UpdateBoneReferencesIndices();
                 }
 
-                if (ccea.Collection.ElementType == typeof(PartSurface))
+                if (ccea.ElementType == typeof(PartSurface))
                 {
                     RenumberSurfaces();
                 }
 
-                if (ccea.GetElementHierarchy().OfType<ModelMeshReference>().Any())
+                var elementHierarchy = ccea.ChangedElements<PartElement>().SelectMany(x => x.GetChildsHierarchy(true));
+                if (elementHierarchy.OfType<ModelMeshReference>().Any())
                     UpdateModelStatistics();
+
+                var removedElement = ccea.ChangedElements<PartElement>().Where(x => !(x is ElementReference));
+
             }
 
             if (!IsLoading)
-                ElementCollectionChanged?.Invoke(this, ccea);
+                ProjectCollectionChanged?.Invoke(this, ccea);
         }
 
-        internal void OnElementPropertyChanged(ElementValueChangedEventArgs pcea)
+        internal void OnOjectPropertyChanged(object sender, PropertyValueChangedEventArgs pvcea)
         {
             if (!IsLoading)
-                ElementPropertyChanged?.Invoke(this, pcea);
+                ProjectObjectChanged?.Invoke(this, new ObjectPropertyChangedEventArgs(sender, pvcea));
         }
+
 
         //internal void UpdateDeletedStatus(PartElement element)
         //{
@@ -1511,10 +1549,59 @@ namespace LDDModder.Modding
             foreach (var bone in Bones)
                 primitive.FlexBones.Add(bone.GenerateLDD());
 
+            foreach (var pattern in ClonePatterns)
+            {
+                foreach (var elemRef in pattern.Elements)
+                {
+                    var elemToClone = elemRef.Element;
+                    var parentBone = primitive.FlexBones.FirstOrDefault(b => b.ID == ((elemToClone.Parent as PartBone)?.BoneID ?? -1));
+
+                    var elemClones = pattern.GetElementClones(elemToClone);
+
+                    if (elemToClone is PartConnection)
+                    {
+                        var clonedConnectors = elemClones.OfType<PartConnection>().Select(c => c.GenerateLDD()).ToList();
+                        if (parentBone != null)
+                            parentBone.Connectors.AddRange(clonedConnectors);
+                        else
+                            primitive.Connectors.AddRange(clonedConnectors);
+                    }
+                    else if (elemToClone is PartCollision)
+                    {
+                        var clonedCollisions = elemClones.OfType<PartCollision>().Select(c => c.GenerateLDD()).ToList();
+                        if (parentBone != null)
+                            parentBone.Collisions.AddRange(clonedCollisions);
+                        else
+                            primitive.Collisions.AddRange(clonedCollisions);
+                    }
+
+                    //for (int r = 0; r < pattern.Repetitions; r++)
+                    //{
+                    //    var clonedElem = pattern.GetClonedElement(elemToClone, r + 1);
+                    //    if (clonedElem is PartConnection conn)
+                    //    {
+                    //        if (parentBone != null)
+                    //            parentBone.Connectors.Add(conn.GenerateLDD());
+                    //        else
+                    //            primitive.Connectors.Add(conn.GenerateLDD());
+                    //    }
+                    //    else if (clonedElem is PartCollision coll)
+                    //    {
+                    //        if (parentBone != null)
+                    //            parentBone.Collisions.Add(coll.GenerateLDD());
+                    //        else
+                    //            primitive.Collisions.Add(coll.GenerateLDD());
+                    //    }
+                    //}
+                }
+            }
+
             primitive.Comments = ProjectInfo.GenerateXmlComments();
 
             return primitive;
         }
+
+
 
         public LDD.Parts.PartWrapper GenerateLddPart()
         {

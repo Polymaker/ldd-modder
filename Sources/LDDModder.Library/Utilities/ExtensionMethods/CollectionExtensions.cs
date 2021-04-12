@@ -59,8 +59,15 @@ namespace System.Collections.Generic
                 return type.GetElementType();
 
             var genericArgs = type.GetGenericArguments();
+            if (genericArgs.Length > 0)
+                return genericArgs[0];
 
-            return genericArgs.Length > 0 ? genericArgs[0] : null;
+            var interfaces = type.GetInterfaces();
+            var ilist = interfaces.FirstOrDefault(i => i.Name.Contains("IList") && i.GenericTypeArguments.Length == 1);
+            if (ilist != null)
+                return ilist.GenericTypeArguments[0];
+
+            return  null;
         }
 
     }

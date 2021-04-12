@@ -22,7 +22,7 @@ namespace System.ComponentModel
         {
             
         }
-
+         
         public ChangeTrackingCollection(ChangeTrackingObject trackingObject)
         {
             trackingObject.AttachCollection(this);
@@ -30,51 +30,97 @@ namespace System.ComponentModel
 
         protected override void ClearItems()
         {
-            StartBatch();
+            BeginCollectionChanges();
 
             for (int i = 0; i < Count; i++)
+            {
                 AddChange(base[i], i, -1);
+                BeforeRemoveItem(base[i]);
+            }
+
+            var tmp = this.ToArray();
 
             base.ClearItems();
 
-            RaiseBatch();
+            for (int i = 0; i < tmp.Length; i++)
+                AfterRemoveItem(tmp[i]);
+
+            RaiseCollectionChanges();
         }
 
         protected override void InsertItem(int index, T item)
         {
-            bool fireEvent = StartBatch();
+            bool fireEvent = BeginCollectionChanges();
             AddChange(item, -1, index);
 
+            BeforeAddItem(item);
             base.InsertItem(index, item);
+            AfterAddItem(item);
 
             if (fireEvent)
-                RaiseBatch();
+                RaiseCollectionChanges();
+        }
+
+        protected virtual void BeforeAddItem(T item)
+        {
+
+        }
+
+        protected virtual void AfterAddItem(T item)
+        {
+
         }
 
         protected override void SetItem(int index, T item)
         {
-            bool fireEvent = StartBatch();
+            bool fireEvent = BeginCollectionChanges();
             AddChange(base[index], index, -1);
             AddChange(item, -1, index);
 
             base.SetItem(index, item);
 
             if (fireEvent)
-                RaiseBatch();
+                RaiseCollectionChanges();
         }
 
         protected override void RemoveItem(int index)
         {
-            bool fireEvent = StartBatch();
-            AddChange(base[index], index, -1);
-
+            bool fireEvent = BeginCollectionChanges();
+            var item = base[index];
+            AddChange(item, index, -1);
+            BeforeRemoveItem(item);
             base.RemoveItem(index);
-
+            AfterRemoveItem(item);
             if (fireEvent)
-                RaiseBatch();
+                RaiseCollectionChanges();
         }
 
-        private bool StartBatch()
+        protected virtual void BeforeRemoveItem(T item)
+        {
+
+        }
+
+        protected virtual void AfterRemoveItem(T item)
+        {
+
+        }
+
+        public void ReorderItem(T item, int newIndex)
+        {
+            int curIndex = IndexOf(item);
+            if (curIndex >= 0 && curIndex != newIndex)
+            {
+                BeginCollectionChanges();
+                RemoveAt(curIndex);
+                if (newIndex > curIndex)
+                    Insert(newIndex - 1, item);
+                else
+                    Insert(newIndex, item);
+
+                RaiseCollectionChanges();
+            }
+        }
+        protected bool BeginCollectionChanges()
         {
             if (ChangeBatch != null)
                 return false;
@@ -82,14 +128,17 @@ namespace System.ComponentModel
             return true;
         }
 
-        private void RaiseBatch()
+        protected void RaiseCollectionChanges()
         {
             if (ChangeBatch != null && ChangeBatch.Any())
-            {
-                CollectionChanged?.Invoke(this, new CollectionChangedEventArgs(this, ChangeBatch));
-            }
+                OnCollectionChanged(new CollectionChangedEventArgs(this, ChangeBatch));
 
             ChangeBatch = null;
+        }
+
+        protected virtual void OnCollectionChanged(CollectionChangedEventArgs ccea)
+        {
+            CollectionChanged?.Invoke(this, ccea);
         }
 
         private void AddChange(T item, int oldIndex, int newIndex)
@@ -102,7 +151,7 @@ namespace System.ComponentModel
 
         public void RemoveAll(Func<T, bool> predicate)
         {
-            StartBatch();
+            BeginCollectionChanges();
             int indexOffset = 0;
             for (int i = 0; i < Count; i++)
             {
@@ -112,9 +161,42 @@ namespace System.ComponentModel
                     RemoveItem(i);
                 }
             }
-            RaiseBatch();
+            RaiseCollectionChanges();
+        }
+
+        public void AddRange(IEnumerable<T> items)
+        {
+            BeginCollectionChanges();
+            foreach (var item in items)
+                Add(item);
+            RaiseCollectionChanges();
         }
 
         #endregion
+
+        class SortHelper
+        {
+            public int OldIndex { get; set; }
+            public T Item { get; set; }
+        }
+
+        public void Sort<TKey>(Func<T, TKey> keySelector)
+        {
+            var test = new List<SortHelper>();
+            for (int i = 0; i < Count; i++)
+                test.Add(new SortHelper { OldIndex = i, Item = this[i] });
+            //var sortedList = this.OrderBy(keySelector).ToList();
+            var sortedList = test.OrderBy(t => keySelector(t.Item)).ToList();
+
+            BeginCollectionChanges();
+
+            for (int i = 0; i < sortedList.Count; i++)
+            {
+                AddChange(sortedList[i].Item, sortedList[i].OldIndex, i);
+                base.SetItem(i, sortedList[i].Item);
+            }
+
+            RaiseCollectionChanges();
+        }
     }
 }

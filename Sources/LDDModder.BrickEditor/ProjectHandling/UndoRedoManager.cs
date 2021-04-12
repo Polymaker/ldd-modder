@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -62,7 +63,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
             CurrentChangeID = 0;
         }
 
-        internal void ProcessProjectElementsChanged(Modding.ElementCollectionChangedEventArgs e)
+        internal void ProcessProjectCollectionChanged(CollectionChangedEventArgs e)
         {
             if (ExecutingUndoRedo)
                 return;
@@ -71,7 +72,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
             AddActionCore(action);
         }
 
-        internal void ProcessElementPropertyChanged(Modding.ElementValueChangedEventArgs e)
+        internal void ProcessElementPropertyChanged(ObjectPropertyChangedEventArgs e)
         {
             if (ExecutingUndoRedo)
                 return;
@@ -79,7 +80,6 @@ namespace LDDModder.BrickEditor.ProjectHandling
             var action = new PropertyChangeAction(e);
             AddActionCore(action);
         }
-
 
         public void StartBatchChanges()
         {
@@ -113,15 +113,12 @@ namespace LDDModder.BrickEditor.ProjectHandling
                 {
                     if (prevColChange != null)
                     {
-                        if (colChange.Data.Collection == prevColChange.Data.Collection &&
-                            colChange.Data.Action == prevColChange.Data.Action)
+                        if (colChange.Data.Collection == prevColChange.Data.Collection/* &&
+                            colChange.Data.Action == prevColChange.Data.Action*/)
                         {
-                            //var prevElements = prevColChange.Data.AddedElements.Concat(prevColChange.Data.RemovedElements);
-                            //var currElements = colChange.Data.AddedElements.Concat(colChange.Data.RemovedElements);
-                            
                             prevColChange = new CollectionChangeAction(
-                                new Modding.ElementCollectionChangedEventArgs(
-                                    colChange.Data.Collection, colChange.Data.Action,
+                                new CollectionChangedEventArgs(
+                                    colChange.Data.Collection,
                                     prevColChange.Data.ChangedItems.Concat(colChange.Data.ChangedItems)
                                     ));
                         }

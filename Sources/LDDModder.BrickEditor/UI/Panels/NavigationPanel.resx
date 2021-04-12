@@ -132,7 +132,7 @@
   </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="ContextMenu_AddSurface.Size" type="System.Drawing.Size, System.Drawing">
-    <value>179, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="ContextMenu_AddSurface.Text" xml:space="preserve">
     <value>Add Surface</value>
@@ -162,7 +162,7 @@
     <value>Brick Tube</value>
   </data>
   <data name="ContextMenu_AddElement.Size" type="System.Drawing.Size, System.Drawing">
-    <value>179, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="ContextMenu_AddElement.Text" xml:space="preserve">
     <value>Add Model Element</value>
@@ -180,7 +180,7 @@
     <value>Sphere</value>
   </data>
   <data name="ContextMenu_AddCollision.Size" type="System.Drawing.Size, System.Drawing">
-    <value>179, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="ContextMenu_AddCollision.Text" xml:space="preserve">
     <value>Add Collision</value>
@@ -234,34 +234,64 @@
     <value>Slider</value>
   </data>
   <data name="ContextMenu_AddConnection.Size" type="System.Drawing.Size, System.Drawing">
-    <value>179, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="ContextMenu_AddConnection.Text" xml:space="preserve">
     <value>Add Connection</value>
   </data>
+  <data name="AddClonePatternMenu_Mirror.Size" type="System.Drawing.Size, System.Drawing">
+    <value>172, 22</value>
+  </data>
+  <data name="AddClonePatternMenu_Mirror.Text" xml:space="preserve">
+    <value>Mirror</value>
+  </data>
+  <data name="AddClonePatternMenu_Linear.Size" type="System.Drawing.Size, System.Drawing">
+    <value>172, 22</value>
+  </data>
+  <data name="AddClonePatternMenu_Linear.Text" xml:space="preserve">
+    <value>Linear Repetition</value>
+  </data>
+  <data name="AddClonePatternMenu_Circular.Size" type="System.Drawing.Size, System.Drawing">
+    <value>172, 22</value>
+  </data>
+  <data name="AddClonePatternMenu_Circular.Text" xml:space="preserve">
+    <value>Circular Repetition</value>
+  </data>
+  <data name="ContextMenu_AddClonePattern.Size" type="System.Drawing.Size, System.Drawing">
+    <value>180, 22</value>
+  </data>
+  <data name="ContextMenu_AddClonePattern.Text" xml:space="preserve">
+    <value>Add Clone Pattern</value>
+  </data>
   <data name="toolStripSeparator1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>176, 6</value>
+    <value>177, 6</value>
   </data>
   <data name="ContextMenu_Duplicate.Size" type="System.Drawing.Size, System.Drawing">
-    <value>179, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="ContextMenu_Duplicate.Text" xml:space="preserve">
     <value>Duplicate</value>
   </data>
   <data name="ContextMenu_Rename.Size" type="System.Drawing.Size, System.Drawing">
-    <value>179, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="ContextMenu_Rename.Text" xml:space="preserve">
     <value>Rename</value>
   </data>
   <data name="ContextMenu_Delete.Size" type="System.Drawing.Size, System.Drawing">
-    <value>179, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="ContextMenu_Delete.Text" xml:space="preserve">
     <value>Delete</value>
   </data>
+  <data name="ContextMenu_DisolvePattern.Size" type="System.Drawing.Size, System.Drawing">
+    <value>180, 22</value>
+  </data>
+  <data name="ContextMenu_DisolvePattern.Text" xml:space="preserve">
+    <value>Disolve Pattern</value>
+  </data>
   <data name="ElementsContextMenu.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 164</value>
+    <value>181, 230</value>
   </data>
   <data name="&gt;&gt;ElementsContextMenu.Name" xml:space="preserve">
     <value>ElementsContextMenu</value>
@@ -537,6 +567,30 @@
   <data name="&gt;&gt;AddConnectionMenu_Slider.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;ContextMenu_AddClonePattern.Name" xml:space="preserve">
+    <value>ContextMenu_AddClonePattern</value>
+  </data>
+  <data name="&gt;&gt;ContextMenu_AddClonePattern.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;AddClonePatternMenu_Mirror.Name" xml:space="preserve">
+    <value>AddClonePatternMenu_Mirror</value>
+  </data>
+  <data name="&gt;&gt;AddClonePatternMenu_Mirror.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;AddClonePatternMenu_Linear.Name" xml:space="preserve">
+    <value>AddClonePatternMenu_Linear</value>
+  </data>
+  <data name="&gt;&gt;AddClonePatternMenu_Linear.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;AddClonePatternMenu_Circular.Name" xml:space="preserve">
+    <value>AddClonePatternMenu_Circular</value>
+  </data>
+  <data name="&gt;&gt;AddClonePatternMenu_Circular.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;toolStripSeparator1.Name" xml:space="preserve">
     <value>toolStripSeparator1</value>
   </data>
@@ -561,6 +615,12 @@
   <data name="&gt;&gt;ContextMenu_Delete.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;ContextMenu_DisolvePattern.Name" xml:space="preserve">
+    <value>ContextMenu_DisolvePattern</value>
+  </data>
+  <data name="&gt;&gt;ContextMenu_DisolvePattern.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;NavigationImageList.Name" xml:space="preserve">
     <value>NavigationImageList</value>
   </data>
@@ -571,42 +631,42 @@
     <value>LocalizedStrings</value>
   </data>
   <data name="&gt;&gt;LocalizedStrings.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableStringList, Brick Studio, Version=1.0.5.31946, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableStringList, Brick Studio, Version=1.0.7.24240, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;ViewModeAll.Name" xml:space="preserve">
     <value>ViewModeAll</value>
   </data>
   <data name="&gt;&gt;ViewModeAll.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.5.31946, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.7.24240, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;ViewModeBones.Name" xml:space="preserve">
     <value>ViewModeBones</value>
   </data>
   <data name="&gt;&gt;ViewModeBones.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.5.31946, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.7.24240, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;ViewModeCollisions.Name" xml:space="preserve">
     <value>ViewModeCollisions</value>
   </data>
   <data name="&gt;&gt;ViewModeCollisions.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.5.31946, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.7.24240, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;ViewModeConnections.Name" xml:space="preserve">
     <value>ViewModeConnections</value>
   </data>
   <data name="&gt;&gt;ViewModeConnections.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.5.31946, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.7.24240, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;ViewModeSurfaces.Name" xml:space="preserve">
     <value>ViewModeSurfaces</value>
   </data>
   <data name="&gt;&gt;ViewModeSurfaces.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.5.31946, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.Localization.LocalizableString, Brick Studio, Version=1.0.7.24240, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>NavigationPanel</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>LDDModder.BrickEditor.UI.Panels.ProjectDocumentPanel, Brick Studio, Version=1.0.5.31946, Culture=neutral, PublicKeyToken=null</value>
+    <value>LDDModder.BrickEditor.UI.Panels.ProjectDocumentPanel, Brick Studio, Version=1.0.7.24240, Culture=neutral, PublicKeyToken=null</value>
   </data>
 </root>

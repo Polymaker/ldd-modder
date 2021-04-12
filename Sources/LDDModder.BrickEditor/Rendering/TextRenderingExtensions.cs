@@ -103,6 +103,7 @@ namespace QuickFont
                     break;
             }
             dp.Print(text, new Vector3(textPos.X, textPos.Y, zDepth), bounds.Size, QFontAlignment.Left);
+            
         }
 
         

@@ -52,10 +52,15 @@
             this.AddConnectionMenu_Hinge = new System.Windows.Forms.ToolStripMenuItem();
             this.AddConnectionMenu_Rail = new System.Windows.Forms.ToolStripMenuItem();
             this.AddConnectionMenu_Slider = new System.Windows.Forms.ToolStripMenuItem();
+            this.ContextMenu_AddClonePattern = new System.Windows.Forms.ToolStripMenuItem();
+            this.AddClonePatternMenu_Mirror = new System.Windows.Forms.ToolStripMenuItem();
+            this.AddClonePatternMenu_Linear = new System.Windows.Forms.ToolStripMenuItem();
+            this.AddClonePatternMenu_Circular = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.ContextMenu_Duplicate = new System.Windows.Forms.ToolStripMenuItem();
             this.ContextMenu_Rename = new System.Windows.Forms.ToolStripMenuItem();
             this.ContextMenu_Delete = new System.Windows.Forms.ToolStripMenuItem();
+            this.ContextMenu_DisolvePattern = new System.Windows.Forms.ToolStripMenuItem();
             this.NavigationImageList = new System.Windows.Forms.ImageList(this.components);
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.ViewModeLabel = new System.Windows.Forms.Label();
@@ -136,10 +141,12 @@
             this.ContextMenu_AddElement,
             this.ContextMenu_AddCollision,
             this.ContextMenu_AddConnection,
+            this.ContextMenu_AddClonePattern,
             this.toolStripSeparator1,
             this.ContextMenu_Duplicate,
             this.ContextMenu_Rename,
-            this.ContextMenu_Delete});
+            this.ContextMenu_Delete,
+            this.ContextMenu_DisolvePattern});
             this.ElementsContextMenu.Name = "contextMenuStrip1";
             resources.ApplyResources(this.ElementsContextMenu, "ElementsContextMenu");
             this.ElementsContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.ElementsContextMenu_Opening);
@@ -266,6 +273,33 @@
             resources.ApplyResources(this.AddConnectionMenu_Slider, "AddConnectionMenu_Slider");
             this.AddConnectionMenu_Slider.Tag = "Slider";
             // 
+            // ContextMenu_AddClonePattern
+            // 
+            this.ContextMenu_AddClonePattern.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.AddClonePatternMenu_Mirror,
+            this.AddClonePatternMenu_Linear,
+            this.AddClonePatternMenu_Circular});
+            this.ContextMenu_AddClonePattern.Name = "ContextMenu_AddClonePattern";
+            resources.ApplyResources(this.ContextMenu_AddClonePattern, "ContextMenu_AddClonePattern");
+            // 
+            // AddClonePatternMenu_Mirror
+            // 
+            this.AddClonePatternMenu_Mirror.Name = "AddClonePatternMenu_Mirror";
+            resources.ApplyResources(this.AddClonePatternMenu_Mirror, "AddClonePatternMenu_Mirror");
+            this.AddClonePatternMenu_Mirror.Tag = "Mirror";
+            // 
+            // AddClonePatternMenu_Linear
+            // 
+            this.AddClonePatternMenu_Linear.Name = "AddClonePatternMenu_Linear";
+            resources.ApplyResources(this.AddClonePatternMenu_Linear, "AddClonePatternMenu_Linear");
+            this.AddClonePatternMenu_Linear.Tag = "Linear";
+            // 
+            // AddClonePatternMenu_Circular
+            // 
+            this.AddClonePatternMenu_Circular.Name = "AddClonePatternMenu_Circular";
+            resources.ApplyResources(this.AddClonePatternMenu_Circular, "AddClonePatternMenu_Circular");
+            this.AddClonePatternMenu_Circular.Tag = "Circular";
+            // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
@@ -288,6 +322,12 @@
             this.ContextMenu_Delete.Name = "ContextMenu_Delete";
             resources.ApplyResources(this.ContextMenu_Delete, "ContextMenu_Delete");
             this.ContextMenu_Delete.Click += new System.EventHandler(this.ContextMenu_Delete_Click);
+            // 
+            // ContextMenu_DisolvePattern
+            // 
+            this.ContextMenu_DisolvePattern.Name = "ContextMenu_DisolvePattern";
+            resources.ApplyResources(this.ContextMenu_DisolvePattern, "ContextMenu_DisolvePattern");
+            this.ContextMenu_DisolvePattern.Click += new System.EventHandler(this.ContextMenu_DisolvePattern_Click);
             // 
             // NavigationImageList
             // 
@@ -397,5 +437,10 @@
         private BrightIdeasSoftware.OLVColumn olvColumnVisible;
         private System.Windows.Forms.ToolStripMenuItem ContextMenu_Rename;
         private System.Windows.Forms.ToolStripMenuItem ContextMenu_Duplicate;
+        private System.Windows.Forms.ToolStripMenuItem ContextMenu_AddClonePattern;
+        private System.Windows.Forms.ToolStripMenuItem AddClonePatternMenu_Mirror;
+        private System.Windows.Forms.ToolStripMenuItem AddClonePatternMenu_Linear;
+        private System.Windows.Forms.ToolStripMenuItem AddClonePatternMenu_Circular;
+        private System.Windows.Forms.ToolStripMenuItem ContextMenu_DisolvePattern;
     }
 }

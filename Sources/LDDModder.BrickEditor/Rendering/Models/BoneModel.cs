@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -94,7 +96,7 @@ namespace LDDModder.BrickEditor.Rendering
             IsLengthDirty = false;
         }
 
-        protected override void OnElementPropertyChanged(ElementValueChangedEventArgs e)
+        protected override void OnElementPropertyChanged(PropertyValueChangedEventArgs e)
         {
             base.OnElementPropertyChanged(e);
             if (e.PropertyName == nameof(PartBone.Bounding))
@@ -138,6 +140,22 @@ namespace LDDModder.BrickEditor.Rendering
                 RenderHelper.DrawBoundingBox(Transform, BoneBounding,
                         new Vector4(0f, 1f, 1f, 1f), IsSelected ? 1.5f : 1f);
             }
+        }
+
+        public override void RenderUI(Camera camera)
+        {
+            if (ModelExtension?.Manager.ShowBones != true)
+                return;
+
+            var rootPos = Transform.ExtractTranslation();
+            var tipPos = rootPos + Vector3.TransformVector(new Vector3(BoneLength, 0, 0), Transform);
+            var boneCenter = (rootPos + tipPos) / 2f;
+            var screenPos = camera.WorldPointToScreen(boneCenter);
+            var boneBounds = new Vector4(screenPos.X - 30, screenPos.Y - 20, 60, 40);
+
+            UIRenderHelper.DrawShadowText(Element.Name,
+                UIRenderHelper.NormalFont, Color.White, boneBounds,
+                StringAlignment.Center, StringAlignment.Center);
         }
     }
 }

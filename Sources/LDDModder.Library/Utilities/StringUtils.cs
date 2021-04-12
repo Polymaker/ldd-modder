@@ -104,6 +104,19 @@ namespace LDDModder.Utilities
             return false;
         }
 
+        public static List<T> ParseStringList<T>(string value, string separator = ",")
+        {
+            string[] values = value.Split(new string[] { separator }, StringSplitOptions.RemoveEmptyEntries);
+
+            var list = new List<T>();
+            foreach(string strVal in values)
+            {
+                if (TryParse<T>(strVal, out T res))
+                    list.Add(res);
+            }
+            return list;
+        }
+
         public static bool EqualsIC(string text, string other)
         {
             return text.Equals(other, StringComparison.InvariantCultureIgnoreCase);

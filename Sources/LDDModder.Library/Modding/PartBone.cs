@@ -3,6 +3,7 @@ using LDDModder.Serialization;
 using LDDModder.Utilities;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -95,9 +96,16 @@ namespace LDDModder.Modding
             InternalSetName($"Bone{boneID}");
         }
 
-        protected override void OnPropertyChanged(ElementValueChangedEventArgs args)
+        //protected override void OnPropertyChanged(ElementValueChangedEventArgs args)
+        //{
+        //    base.OnPropertyChanged(args);
+        //    if (args.PropertyName == nameof(Transform))
+        //        TranformChanged?.Invoke(this, EventArgs.Empty);
+        //}
+
+        protected override void OnPropertyValueChanged(PropertyValueChangedEventArgs args)
         {
-            base.OnPropertyChanged(args);
+            base.OnPropertyValueChanged(args);
             if (args.PropertyName == nameof(Transform))
                 TranformChanged?.Invoke(this, EventArgs.Empty);
         }

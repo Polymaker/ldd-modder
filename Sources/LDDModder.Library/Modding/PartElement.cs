@@ -11,7 +11,7 @@ using System.Xml.Serialization;
 
 namespace LDDModder.Modding
 {
-    public abstract class PartElement
+    public abstract class PartElement : ChangeTrackingObject
     {
         //private string _Comments;
         private string _Name;
@@ -56,7 +56,7 @@ namespace LDDModder.Modding
 
         //public bool IsDeleted { get; internal set; }
 
-        public event EventHandler<ElementValueChangedEventArgs> PropertyChanged;
+        //public event EventHandler<ElementValueChangedEventArgs> PropertyChanged;
 
         public event PropertyValueChangedEventHandler ExtendedPropertyChanged;
 
@@ -85,11 +85,13 @@ namespace LDDModder.Modding
 
         private bool RemovingParent;
 
-
         internal void BeginChangeParent(PartElement newParent)
         {
             if (Parent == newParent || RemovingParent)
                 return;
+
+            if (Parent != null && newParent != null)
+                System.Diagnostics.Trace.WriteLine("Element is swapping parents");
 
             ParentChanging?.Invoke(this, EventArgs.Empty);
 
@@ -155,32 +157,45 @@ namespace LDDModder.Modding
 
         #region Property Assignation Handling
 
-        protected bool SetPropertyValue<T>(ref T property, T value, [CallerMemberName] string propertyName = null)
+        //protected bool SetPropertyValue<T>(ref T property, T value, [CallerMemberName] string propertyName = null)
+        //{
+        //    if (!ChangeTrackingObject.AreEquals(property, value))
+        //    {
+        //        if (property is PartElement oldElem)
+        //        {
+        //            oldElem.AssignParent(null);
+        //            OwnedElements.Remove(oldElem);
+        //        }
+        //        if (value is PartElement newElem)
+        //        {
+        //            newElem.AssignParent(this);
+        //            OwnedElements.Add(newElem);
+        //        }
+
+        //        object oldValue = property;
+        //        property = value;
+
+        //        var args = new ElementValueChangedEventArgs(this, propertyName, oldValue, value);
+        //        RaisePropertyValueChanged(args);
+
+        //        return true;
+        //    }
+        //    return false;
+        //}
+
+        protected override void OnChildObjectAssigned(ChangeTrackingObject childObject)
         {
-            if (!ChangeTrackingObject.AreEquals(property, value))
-            {
-                if (property is PartElement oldElem)
-                {
-                    oldElem.AssignParent(null);
-                    OwnedElements.Remove(oldElem);
-                }
-                if (value is PartElement newElem)
-                {
-                    newElem.AssignParent(this);
-                    OwnedElements.Add(newElem);
-                }
-
-                object oldValue = property;
-                property = value;
-
-                var args = new ElementValueChangedEventArgs(this, propertyName, oldValue, value);
-                RaisePropertyValueChanged(args);
-
-                return true;
-            }
-            return false;
+            base.OnChildObjectAssigned(childObject);
+            if (childObject is PartElement newElem)
+                newElem.AssignParent(this);
         }
 
+        protected override void OnChildObjectRemoved(ChangeTrackingObject childObject)
+        {
+            base.OnChildObjectRemoved(childObject);
+            if (childObject is PartElement oldElem)
+                oldElem.AssignParent(null);
+        }
         internal void InternalSetName(string name, bool raiseValueChange = false)
         {
             if (raiseValueChange && !IsInitializing)
@@ -200,28 +215,23 @@ namespace LDDModder.Modding
             _Name = name;
         }
 
-        protected void AttachCollection<T>(T collection) where T : INotifyCollectionChanged
+        protected override void OnCollectionChanged(object sender, CollectionChangedEventArgs ccea)
         {
-            collection.CollectionChanged += Collection_CollectionChanged;
+            base.OnCollectionChanged(sender, ccea);
+            if (Project != null && !IsLoading)
+                Project.OnCollectionChanged(sender, ccea);
         }
 
-        private void Collection_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        protected override void OnPropertyValueChanged(PropertyValueChangedEventArgs args)
         {
-
+            base.OnPropertyValueChanged(args);
+            RaisePropertyValueChanged(this, args);
         }
 
-        protected virtual void OnPropertyChanged(ElementValueChangedEventArgs args)
-        {
-            PropertyChanged?.Invoke(this, args);
-        }
-
-        protected void RaisePropertyValueChanged(ElementValueChangedEventArgs args)
+        protected void RaisePropertyValueChanged(object sender, PropertyValueChangedEventArgs args)
         {
             if (Project != null && !IsLoading)
-            {
-                OnPropertyChanged(args);
-                Project.OnElementPropertyChanged(args);
-            }
+                Project.OnOjectPropertyChanged(sender, args);
         }
 
         #endregion
@@ -282,7 +292,6 @@ namespace LDDModder.Modding
                     yield return subChild;
             }
         }
-
 
         public IElementCollection GetParentCollection()
         {
@@ -346,6 +355,11 @@ namespace LDDModder.Modding
                 else if (Project.Bones.Contains(this))
                 {
                     Project.Bones.Remove(this);
+                    return true;
+                }
+                else if (Project.ClonePatterns.Contains(this))
+                {
+                    Project.ClonePatterns.Remove(this);
                     return true;
                 }
             }

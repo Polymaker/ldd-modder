@@ -230,7 +230,11 @@ namespace LDDModder.LDD.Primitives
                     foreach (var annotationElem in element.Elements("Annotation"))
                     {
                         try { ReadAnnotation(annotationElem); }
-                        catch { }
+                        catch
+                        {
+                            Console.WriteLine($"Error while reading annotation: '{annotationElem.Name.LocalName}'");
+                        }
+
                     }
                     break;
 

@@ -287,11 +287,11 @@ namespace LDDModder.BrickEditor.UI.Panels
                 CurrentProject.MainGroup = CategoryComboBox.SelectedItem as MainGroup;
         }
 
-        protected override void OnElementPropertyChanged(Modding.ElementValueChangedEventArgs e)
+        protected override void OnElementPropertyChanged(ObjectPropertyChangedEventArgs e)
         {
             base.OnElementPropertyChanged(e);
 
-            if (e.Element == CurrentProject?.Properties)
+            if (e.Object == CurrentProject?.Properties)
             {
                 BeginInvokeOnce(UpdateControlBindings, nameof(UpdateControlBindings));
                 //UpdateControlBindings();

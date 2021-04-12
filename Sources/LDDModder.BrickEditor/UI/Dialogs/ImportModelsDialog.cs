@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Assimp;
 using LDDModder.Simple3D;
+using LDDModder.BrickEditor.Settings;
 
 namespace LDDModder.BrickEditor.UI.Windows
 {
@@ -168,7 +169,7 @@ namespace LDDModder.BrickEditor.UI.Windows
             }
 
             if (bonesToImport.Any())
-                ProjectManager.RebuildBoneConnections();
+                ProjectManager.RebuildBoneConnections(SettingsManager.Current.EditorSettings.DefaultFlexAttributes);
 
             ProjectManager.EndBatchChanges();
         }

@@ -168,6 +168,8 @@ namespace LDDModder.Modding
             if (GeomtryXml != null)
                 GeomtryXml = null;
 
+            UpdateMeshProperties();
+
             return Geometry != null;
         }
 

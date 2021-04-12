@@ -2,6 +2,7 @@
 using LDDModder.Simple3D;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,7 +12,7 @@ using System.Xml.Serialization;
 namespace LDDModder.Modding
 {
     [XmlInclude(typeof(PartBoxCollision)), XmlInclude(typeof(PartSphereCollision))]
-    public abstract class PartCollision : PartElement, IPhysicalElement
+    public abstract class PartCollision : PartElement, IPhysicalElement, IClonableElement
     {
         public const string NODE_NAME = "Collision";
 
@@ -32,9 +33,16 @@ namespace LDDModder.Modding
             Transform = new ItemTransform();
         }
 
-        protected override void OnPropertyChanged(ElementValueChangedEventArgs args)
+        //protected override void OnPropertyChanged(ElementValueChangedEventArgs args)
+        //{
+        //    base.OnPropertyChanged(args);
+        //    if (args.PropertyName == nameof(Transform))
+        //        TranformChanged?.Invoke(this, EventArgs.Empty);
+        //}
+
+        protected override void OnPropertyValueChanged(PropertyValueChangedEventArgs args)
         {
-            base.OnPropertyChanged(args);
+            base.OnPropertyValueChanged(args);
             if (args.PropertyName == nameof(Transform))
                 TranformChanged?.Invoke(this, EventArgs.Empty);
         }
@@ -116,6 +124,11 @@ namespace LDDModder.Modding
             if (this is PartSphereCollision sphereCollision)
                 return new PartSphereCollision(sphereCollision.Radius) { Transform = Transform.Clone() };
             return null;
+        }
+
+        PartElement IClonableElement.Clone()
+        {
+            return Clone();
         }
     }
 }

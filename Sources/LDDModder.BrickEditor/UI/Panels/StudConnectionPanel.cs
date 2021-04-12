@@ -68,13 +68,13 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private bool HasConnectionChanged;
 
-        protected override void OnElementCollectionChanged(ElementCollectionChangedEventArgs e)
+        protected override void OnProjectCollectionChanged(CollectionChangedEventArgs e)
         {
-            base.OnElementCollectionChanged(e);
+            base.OnProjectCollectionChanged(e);
 
             if (!HasConnectionChanged &&
                 e.ElementType == typeof(PartConnection) &&
-                e.ChangedElements.OfType<PartConnection>().Any(x => x.ConnectorType == LDD.Primitives.Connectors.ConnectorType.Custom2DField))
+                e.ChangedElements<PartConnection>().Any(x => x.ConnectorType == LDD.Primitives.Connectors.ConnectorType.Custom2DField))
             {
                 HasConnectionChanged = true;
                 //UpdateConnectorList(false);

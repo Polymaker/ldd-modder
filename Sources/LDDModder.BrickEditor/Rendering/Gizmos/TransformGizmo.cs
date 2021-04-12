@@ -776,9 +776,12 @@ namespace LDDModder.BrickEditor.Rendering.Gizmos
 
             if (DisplayStyle == GizmoStyle.Scaling)
                 transformPosition = ActiveElements.Last().Origin;
+            var firstElement = ActiveElements.FirstOrDefault();
 
-            if (ActiveElements.Count() == 1 && ActiveElements.First() is BoneModel bone)
-                transformPosition = bone.Origin;
+            if (ActiveElements.Count() == 1 && 
+                (firstElement is BoneModel || firstElement is ClonePatternModel))
+                transformPosition = ActiveElements.First().Origin;
+
 
             _Position = Matrix4.CreateTranslation(transformPosition);
             _Orientation = Matrix4.Identity;

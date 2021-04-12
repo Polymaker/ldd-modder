@@ -26,6 +26,7 @@ using System.Threading.Tasks;
 using OpenTK.Platform;
 using LDDModder.BrickEditor.Rendering.Models;
 using System.Runtime.InteropServices;
+using LDDModder.BrickEditor.Settings;
 
 namespace LDDModder.BrickEditor.UI.Panels
 {
@@ -137,6 +138,13 @@ namespace LDDModder.BrickEditor.UI.Panels
             AddDebugMenu("Stop render loop", () =>
             {
                 LoopController.Stop();
+            });
+
+            AddDebugMenu("Test Clone Pattern", () =>
+            {
+                var pattern = ProjectManager.AddClonePattern(ClonePatternType.Linear);
+                PartElement elemToClone = CurrentProject.Collisions.FirstOrDefault() as PartElement ?? CurrentProject.Connections.FirstOrDefault() as PartElement;
+                pattern.Elements.Add(elemToClone);
             });
 #endif
         }
@@ -557,7 +565,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             int lastLayer = 0;
 
-            foreach(var renderLayer in LoadedModels
+            foreach (var renderLayer in LoadedModels
                 .GroupBy(x => x.RenderLayer).OrderBy(g => g.Key))
             {
                 if (renderLayer.Key != lastLayer)
@@ -582,7 +590,7 @@ namespace LDDModder.BrickEditor.UI.Panels
                 if (renderLayer.Key == 0 && ProjectManager.ShowGrid)
                     DrawGrid(); //Draw grid as second time 
             }
-            
+
 
             RenderHelper.UnbindModelTexture();
             TextureManager.Checkerboard.Bind(TextureUnit.Texture0);
@@ -657,8 +665,16 @@ namespace LDDModder.BrickEditor.UI.Panels
             foreach (var elem in UIElements)
                 elem.Draw();
 
-            if (CurrentProject != null && CurrentProject.Flexible && ProjectManager.ShowBones)
-                DrawBoneNames();
+            //if (CurrentProject != null && CurrentProject.Flexible && ProjectManager.ShowBones)
+            //    DrawBoneNames();
+
+            foreach (var model in LoadedModels.OrderBy(x => x.ZDepth))
+            {
+                if (!model.Visible)
+                    continue;
+
+                model.RenderUI(Camera);
+            }
 
 
             if (AvgRenderFPS == 0)
@@ -996,8 +1012,10 @@ namespace LDDModder.BrickEditor.UI.Panels
             RebuildCollisionModels();
             RebuildConnectionModels();
             RebuildBoneModels();
+            RebuildPatternModels();
             SetupDefaultCamera();
             LoadedModels.Add(CursorModel);
+            project.UpdateModelStatistics();
         }
 
         private void ProjectManager_ProjectModified(object sender, EventArgs e)
@@ -1054,9 +1072,9 @@ namespace LDDModder.BrickEditor.UI.Panels
         private bool PatternsChanged;
         private bool ModelsMoved;
 
-        protected override void OnElementCollectionChanged(ElementCollectionChangedEventArgs e)
+        protected override void OnProjectCollectionChanged(CollectionChangedEventArgs e)
         {
-            base.OnElementCollectionChanged(e);
+            base.OnProjectCollectionChanged(e);
             
             if (e.ElementType == typeof(PartSurface) || 
                 e.ElementType == typeof(SurfaceComponent) || 
@@ -1076,7 +1094,9 @@ namespace LDDModder.BrickEditor.UI.Panels
             {
                 BonesChanged = true;
             }
-            else if (e.ElementType == typeof(ClonePattern))
+            else if (e.ElementType == typeof(ClonePattern) ||
+                e.ElementType == typeof(ElementReference)//TODO: improve
+                )
             {
                 PatternsChanged = true;
             }
@@ -1088,11 +1108,11 @@ namespace LDDModder.BrickEditor.UI.Panels
             ConnectionsChanged = true;
         }
 
-        protected override void OnElementPropertyChanged(ElementValueChangedEventArgs e)
+        protected override void OnElementPropertyChanged(ObjectPropertyChangedEventArgs e)
         {
             base.OnElementPropertyChanged(e);
 
-            if (e.Element is PartProperties)
+            if (e.Object is PartProperties)
             {
                 if (e.PropertyName == nameof(PartProperties.ID) ||
                     e.PropertyName == nameof(PartProperties.Description))
@@ -1962,7 +1982,12 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void Bones_RebuildConnections_Click(object sender, EventArgs e)
         {
-            ProjectManager.RebuildBoneConnections();
+            using (var dlg = new FlexAttributesDialog())
+            {
+                dlg.FlexAttributes = SettingsManager.Current.EditorSettings.DefaultFlexAttributes;
+                if (dlg.ShowDialog() == DialogResult.OK)
+                    ProjectManager.RebuildBoneConnections(dlg.FlexAttributes);
+            }
         }
 
         private void Bones_CopyData_Click(object sender, EventArgs e)

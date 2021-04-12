@@ -1,9 +1,9 @@
 ﻿using LDDModder.BrickEditor.ProjectHandling;
 using LDDModder.Modding;
-using LDDModder.Modding;
 using OpenTK;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -26,7 +26,7 @@ namespace LDDModder.BrickEditor.Rendering
         protected PartElementModel(PartElement element)
         {
             Element = element;
-            Element.PropertyChanged += Element_PropertyChanged;
+            Element.PropertyValueChanged += Element_PropertyValueChanged;
 
             ModelExtension = element.GetExtension<ModelElementExtension>();
 
@@ -141,7 +141,7 @@ namespace LDDModder.BrickEditor.Rendering
             return Matrix4.Identity;
         }
 
-        private void Element_PropertyChanged(object sender, ElementValueChangedEventArgs e)
+        private void Element_PropertyValueChanged(object sender, PropertyValueChangedEventArgs e)
         {
             if (e.PropertyName == nameof(IPhysicalElement.Transform))
             {
@@ -152,7 +152,7 @@ namespace LDDModder.BrickEditor.Rendering
             OnElementPropertyChanged(e);
         }
 
-        protected virtual void OnElementPropertyChanged(ElementValueChangedEventArgs e)
+        protected virtual void OnElementPropertyChanged(PropertyValueChangedEventArgs e)
         {
 
         }

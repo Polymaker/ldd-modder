@@ -219,7 +219,7 @@ namespace LDDModder.BrickEditor.Rendering
 
         private void RT1_Tick(object sender, EventArgs e)
         {
-            DispatchRenderFrame();
+            DispatchRenderFrame(true);
         }
 
         private void RT2_Tick(object state)

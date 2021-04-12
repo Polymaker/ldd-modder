@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -12,12 +13,12 @@ namespace LDDModder.LDD.Primitives.Connectors
     {
         public override ConnectorType Type => ConnectorType.Ball;
 
-        private string _FlexAttributes;
+        private double[] _FlexAttributes;
 
         /// <summary>
         /// Only used when the node is a descendant of Flex
         /// </summary>
-        public string FlexAttributes
+        public double[] FlexAttributes
         {
             get => _FlexAttributes;
             set => SetPropertyValue(ref _FlexAttributes, value);
@@ -26,36 +27,55 @@ namespace LDDModder.LDD.Primitives.Connectors
         public override void LoadFromXml(XElement element)
         {
             base.LoadFromXml(element);
-            FlexAttributes = element.ReadAttribute("flexAttributes", string.Empty);
+
+            string flexAttrs = element.ReadAttribute("flexAttributes", string.Empty);
+
+            _FlexAttributes = null;
+            if (!string.IsNullOrEmpty(flexAttrs))
+            {
+                if (TryParseFlexAttributes(flexAttrs, out double[] result))
+                    FlexAttributes = result;
+                else
+                    Trace.WriteLine("Error parsing FlexAttributes");
+            }
         }
 
         protected override void SerializeBeforeTransform(XElement element)
         {
-            if (!string.IsNullOrEmpty(FlexAttributes))
-                element.Add(new XAttribute("flexAttributes", FlexAttributes));
+            if (FlexAttributes != null)
+            {
+                string flexAttrStr = string.Join(",", FlexAttributes.Select(x => string.Format(CultureInfo.InvariantCulture, "{0}", x)));
+                element.Add(new XAttribute("flexAttributes", flexAttrStr));
+            }
         }
 
-        public double[] GetFlexValues()
+        public static bool TryParseFlexAttributes(string flexAttributes, out double[] result)
         {
-            var values = new double[5];
-            if (!string.IsNullOrWhiteSpace(FlexAttributes))
+            result = null;
+
+            if (!string.IsNullOrWhiteSpace(flexAttributes))
             {
-                var strValues = FlexAttributes.Split(',');
+                var strValues = flexAttributes.Trim().Split(',');
+                if (strValues.Length != 5)
+                    return false;
+                result = new double[5];
                 for (int i = 0; i < strValues.Length; i++)
                 {
                     if (double.TryParse(strValues[i].Trim(), out double fV))
-                        values[i] = fV;
+                        result[i] = fV;
+                    else
+                        return false;
                 }
+
+                return true;
             }
-            return values;
+            return false;
         }
 
-        public void SetFlexValues(double[] values)
+        public void SetFlexValues(string values)
         {
-            if (values.Length == 0)
-                FlexAttributes = string.Empty;
-            else if (values.Length == 5)
-                FlexAttributes = string.Join(",", values.Select(x => string.Format(CultureInfo.InvariantCulture, "{0}", x)));
+            if (TryParseFlexAttributes(values, out double[] result))
+                FlexAttributes = result;
         }
 
         public override Connector Clone()

@@ -1,12 +1,12 @@
 ﻿using LDDModder.BrickEditor.Rendering.Models;
 using LDDModder.LDD.Primitives.Connectors;
 using LDDModder.Modding;
-using LDDModder.Modding;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using QuickFont;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -24,9 +24,8 @@ namespace LDDModder.BrickEditor.Rendering
 
         public Matrix4 ParentTransform { get; set; }
 
-        private MaterialInfo ModelMaterial;
-
         private bool _DisplayInvertedGender;
+
 
         public bool DisplayInvertedGender
         {
@@ -48,9 +47,23 @@ namespace LDDModder.BrickEditor.Rendering
             SetTransformFromElement();
 
             UpdateRenderingModel();
+
+            if (connection.Connector is Custom2DFieldConnector studConn)
+            {
+                studConn.SizeChanged += StudConn_SizeChanged;
+            }
+            connection.Connector.PropertyChanged += Connector_PropertyChanged;
         }
 
-        protected override void OnElementPropertyChanged(ElementValueChangedEventArgs e)
+        
+
+        private void StudConn_SizeChanged(object sender, EventArgs e)
+        {
+            StudTextDirty = true;
+            UpdateRenderingModel();
+        }
+
+        protected override void OnElementPropertyChanged(PropertyValueChangedEventArgs e)
         {
             base.OnElementPropertyChanged(e);
 
@@ -61,10 +74,20 @@ namespace LDDModder.BrickEditor.Rendering
                 case nameof(PartConnection.Transform):
                     break;
 
+
                 default:
                     UpdateRenderingModel();
                     break;
             }
+        }
+
+        private void Connector_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(Connector.Transform))
+                return;
+
+            if (!Connection.IsAssigningConnectorProperties)
+                UpdateRenderingModel();
         }
 
         private void UpdateRenderingModel()
@@ -81,7 +104,6 @@ namespace LDDModder.BrickEditor.Rendering
                 else
                     ModelMaterial = RenderHelper.FemaleConnectorMaterial;
             }
-            
 
             if (Connection.Connector is AxelConnector axelConnector)
             {
@@ -258,6 +280,9 @@ namespace LDDModder.BrickEditor.Rendering
             }
         }
 
+        private QFontDrawingPrimitive StudText;
+        private bool StudTextDirty;
+
         private void RenderCustom2DField(Custom2DFieldConnector connector)
         {
             RenderHelper.DrawStudConnectorGrid(Transform, connector);
@@ -269,34 +294,51 @@ namespace LDDModder.BrickEditor.Rendering
             
             using (OpenTKHelper.TempEnable(EnableCap.Texture2D))
             {
-                float textScale = 0.007f;
-                float depthOffset = connector.SubType == 23 ? 0.0005f : -0.0005f;
-                depthOffset /= textScale;
-                var dp = RenderHelper.Create3DTextPrimitive(UIRenderHelper.MonoFont, Transform, Color.Black, textScale);
+                RebuildStudText(connector);
 
-                for (int y = 0; y < connector.ArrayHeight; y++)
-                {
-                    for (int x = 0; x < connector.ArrayWidth; x++)
-                    {
-                        float curPosX = 0.4f * x;
-                        float curPosY = (0.4f * y) * -1f;
-                        var hAling = StringAlignment.Center;
-                        var vAling = StringAlignment.Center;
- 
-                        if (x == 0)
-                            curPosX += 0.08f;
-                        else if (x == connector.ArrayWidth - 1)
-                            curPosX -= 0.08f;
-                        if (y == 0)
-                            curPosY -= 0.08f;
-                        else if (y == connector.ArrayHeight - 1)
-                            curPosY += 0.08f;
-                        dp.AddText($"{x},{y}", new Vector2(curPosX / textScale, curPosY / textScale),
-                            vAling, hAling, depthOffset);
-                    }
-                }
+                if (!UIRenderHelper.TextRenderer.DrawingPrimitives.Contains(StudText))
+                    UIRenderHelper.TextRenderer.DrawingPrimitives.Add(StudText);
             }
         }
+
+        private void RebuildStudText(Custom2DFieldConnector connector)
+        {
+            float textScale = 0.007f;
+            float depthOffset = connector.SubType == 23 ? 0.0005f : -0.0005f;
+            depthOffset /= textScale;
+
+            if (StudText == null || StudTextDirty)
+                StudText = RenderHelper.Create3DTextPrimitive(UIRenderHelper.MonoFont, Transform, Color.Black, textScale);
+            else
+            {
+                StudText.ModelViewMatrix = RenderHelper.Get3dTextMatrix(Transform, textScale);
+                return;
+            }
+            
+            for (int y = 0; y < connector.ArrayHeight; y++)
+            {
+                for (int x = 0; x < connector.ArrayWidth; x++)
+                {
+                    float curPosX = 0.4f * x;
+                    float curPosY = (0.4f * y) * -1f;
+                    var hAling = StringAlignment.Center;
+                    var vAling = StringAlignment.Center;
+
+                    if (x == 0)
+                        curPosX += 0.08f;
+                    else if (x == connector.ArrayWidth - 1)
+                        curPosX -= 0.08f;
+                    if (y == 0)
+                        curPosY -= 0.08f;
+                    else if (y == connector.ArrayHeight - 1)
+                        curPosY += 0.08f;
+                    StudText.AddText($"{x},{y}", new Vector2(curPosX / textScale, curPosY / textScale),
+                        vAling, hAling, depthOffset);
+                }
+            }
+
+            StudTextDirty = false;
+        }   
 
         private void RenderTechnicAxle(AxelConnector axel)
         {

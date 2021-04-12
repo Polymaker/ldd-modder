@@ -124,21 +124,21 @@ namespace LDDModder.BrickEditor.Rendering
                 {
                     ShadowConfig =
                 {
-                    BlurRadius = 2,
+                    BlurRadius = 1,
                     BlurPasses = 1,
-                    Type = ShadowType.Blurred
+                    Type = ShadowType.Expanded
                 },
                     TextGenerationRenderHint = TextGenerationRenderHint.ClearTypeGridFit,
                     Characters = CharacterSet.General | CharacterSet.Japanese | CharacterSet.Thai | CharacterSet.Cyrillic
                 };
 
-                NormalFont = new QFont("C:\\Windows\\Fonts\\segoeui.ttf", 10,
+                NormalFont = new QFont("C:\\Windows\\Fonts\\segoeui.ttf", 12,
                     builderConfig);
 
                 SmallFont = new QFont("C:\\Windows\\Fonts\\segoeui.ttf", 8,
                     builderConfig);
 
-                MonoFont = new QFont("C:\\Windows\\Fonts\\consola.ttf", 10,
+                MonoFont = new QFont("C:\\Windows\\Fonts\\consola.ttf", 12,
                     builderConfig);
 
                 TextRenderer = new QFontDrawing();
@@ -282,7 +282,7 @@ namespace LDDModder.BrickEditor.Rendering
 
         public static void DrawShadowText(string text, QFont font, Color color, Vector2 position)
         {
-            var dpOpt = new QFontRenderOptions() { Colour = color, LockToPixel = false, DropShadowActive = true };
+            var dpOpt = new QFontRenderOptions() { Colour = color, LockToPixel = true, LockToPixelRatio = 0.5f, DropShadowActive = true };
             DrawText(text, font, new RectangleF(position.X, position.Y, 9999, 9999), 
                 StringAlignment.Near, StringAlignment.Near, dpOpt);
         }
@@ -291,7 +291,7 @@ namespace LDDModder.BrickEditor.Rendering
             StringAlignment vAlign = StringAlignment.Near,
             StringAlignment hAlign = StringAlignment.Near)
         {
-            var dpOpt = new QFontRenderOptions() { Colour = color, LockToPixel = false, DropShadowActive = true };
+            var dpOpt = new QFontRenderOptions() { Colour = color, LockToPixel = true, LockToPixelRatio = 0.5f, DropShadowActive = true };
             DrawText(text, font, new RectangleF(bounds.X, bounds.Y, bounds.Z, bounds.W),
                 vAlign, hAlign, dpOpt);
         }

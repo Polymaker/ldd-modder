@@ -12,6 +12,7 @@ using LDDModder.Modding;
 using LDDModder.Utilities;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -25,6 +26,8 @@ namespace LDDModder.BrickEditor.ProjectHandling
 {
     public class ProjectManager : IProjectManager
     {
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetLogger("Project Manager");
+
         private List<PartElement> _SelectedElements;
         private List<ValidationMessage> _ValidationMessages;
         private long LastValidation;
@@ -83,13 +86,13 @@ namespace LDDModder.BrickEditor.ProjectHandling
         /// <summary>
         /// Raised when a collection in the project has changed.
         /// </summary>
-        public event EventHandler<ElementCollectionChangedEventArgs> ElementCollectionChanged;
+        public event CollectionChangedEventHandler ProjectCollectionChanged;
 
-        public event EventHandler<ElementValueChangedEventArgs> ElementPropertyChanged;
+        public event EventHandler<ObjectPropertyChangedEventArgs> ObjectPropertyChanged;
 
         /// <summary>
         /// Raised when one or more collections in the project has changed. <br/>
-        /// Raised only after a all changes are applied
+        /// Raised only after all changes are applied
         /// </summary>
         public event EventHandler ProjectElementsChanged;
 
@@ -111,6 +114,8 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
             ElementExtenderFactory.RegisterExtension(typeof(PartCollision), typeof(ModelElementExtension));
             ElementExtenderFactory.RegisterExtension(typeof(PartConnection), typeof(ModelElementExtension));
+
+            ElementExtenderFactory.RegisterExtension(typeof(ClonePattern), typeof(ModelElementExtension));
         }
 
         public ProjectManager()
@@ -200,8 +205,10 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
         private void AttachPartProject(PartProject project)
         {
-            project.ElementCollectionChanged += Project_ElementCollectionChanged;
-            project.ElementPropertyChanged += Project_ElementPropertyChanged;
+            project.ProjectCollectionChanged += Project_ProjectCollectionChanged;
+            project.ProjectObjectChanged += Project_ProjectObjectChanged;
+            //project.ElementCollectionChanged += Project_ElementCollectionChanged;
+            //project.ElementPropertyChanged += Project_ElementPropertyChanged;
             project.UpdateModelStatistics();
 
             //LoadUserProperties();
@@ -212,10 +219,14 @@ namespace LDDModder.BrickEditor.ProjectHandling
             InitializeElementExtensions();
         }
 
+        
+
         private void DettachPartProject(PartProject project)
         {
-            project.ElementCollectionChanged -= Project_ElementCollectionChanged;
-            project.ElementPropertyChanged -= Project_ElementPropertyChanged;
+            //project.ElementCollectionChanged -= Project_ElementCollectionChanged;
+            //project.ElementPropertyChanged -= Project_ElementPropertyChanged;
+            project.ProjectCollectionChanged -= Project_ProjectCollectionChanged;
+            project.ProjectObjectChanged -= Project_ProjectObjectChanged;
 
             NavigationTreeNodes.Clear();
             _SelectedElements.Clear();
@@ -358,37 +369,65 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
         #region Project Events
 
-        private void Project_ElementCollectionChanged(object sender, ElementCollectionChangedEventArgs e)
+        //private void Project_ElementCollectionChanged(object sender, ElementCollectionChangedEventArgs e)
+        //{
+        //    if (e.Action == System.ComponentModel.CollectionChangeAction.Remove)
+        //    {
+        //        int count = _SelectedElements.RemoveAll(x => e.RemovedElements.Contains(x));
+        //        if (count > 0)
+        //            SelectionChanged?.Invoke(this, EventArgs.Empty);
+        //    }
+        //    else
+        //    {
+        //        if (IsProjectAttached)
+        //            InitializeElementExtensions();
+        //    }
+
+        //    if (!PreventCollectionEvents)
+        //        ElementCollectionChanged?.Invoke(this, e);
+
+        //    UndoRedoManager.ProcessProjectElementsChanged(e);
+
+        //    if (IsExecutingUndoRedo || IsExecutingBatchChanges)
+        //        ElementsChanged = true;
+        //    else
+        //        ProjectElementsChanged?.Invoke(this, EventArgs.Empty);
+        //}
+
+        //private void Project_ElementPropertyChanged(object sender, ElementValueChangedEventArgs e)
+        //{
+        //    if (!PreventCollectionEvents)
+        //        ElementPropertyChanged?.Invoke(this, e);
+
+        //    UndoRedoManager.ProcessElementPropertyChanged(e);
+        //}
+
+        private void Project_ProjectObjectChanged(object sender, ObjectPropertyChangedEventArgs e)
         {
-            if (e.Action == System.ComponentModel.CollectionChangeAction.Remove)
-            {
-                int count = _SelectedElements.RemoveAll(x => e.RemovedElements.Contains(x));
-                if (count > 0)
-                    SelectionChanged?.Invoke(this, EventArgs.Empty);
-            }
-            else
-            {
-                if (IsProjectAttached)
-                    InitializeElementExtensions();
-            }
+            if (!PreventCollectionEvents)
+                ObjectPropertyChanged?.Invoke(this, e);
+
+            UndoRedoManager.ProcessElementPropertyChanged(e);
+        }
+        private void Project_ProjectCollectionChanged(object sender, System.ComponentModel.CollectionChangedEventArgs ccea)
+        {
+            var removedElements = ccea.RemovedElements<PartElement>();
+            int count = _SelectedElements.RemoveAll(x => removedElements.Contains(x));
+            if (count > 0)
+                SelectionChanged?.Invoke(this, EventArgs.Empty);
+
+            if (ccea.AddedElements<PartElement>().Any() && IsProjectAttached)
+                InitializeElementExtensions();
 
             if (!PreventCollectionEvents)
-                ElementCollectionChanged?.Invoke(this, e);
+                ProjectCollectionChanged?.Invoke(this, ccea);
 
-            UndoRedoManager.ProcessProjectElementsChanged(e);
+            UndoRedoManager.ProcessProjectCollectionChanged(ccea);
 
             if (IsExecutingUndoRedo || IsExecutingBatchChanges)
                 ElementsChanged = true;
             else
                 ProjectElementsChanged?.Invoke(this, EventArgs.Empty);
-        }
-
-        private void Project_ElementPropertyChanged(object sender, ElementValueChangedEventArgs e)
-        {
-            if (!PreventCollectionEvents)
-                ElementPropertyChanged?.Invoke(this, e);
-
-            UndoRedoManager.ProcessElementPropertyChanged(e);
         }
 
         #endregion
@@ -627,6 +666,8 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
         public void SelectElement(PartElement element)
         {
+            Logger.Trace($"SelectElement (element: {element?.ID ?? "null"})");
+
             if (element == null)
             {
                 ClearSelection();
@@ -641,6 +682,8 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
         public void SetSelected(PartElement element, bool selected)
         {
+            Logger.Trace($"Set Selected (element: {element.ID}, selected: {selected})");
+
             bool isSelected = SelectedElements.Contains(element);
             if (selected != isSelected)
             {
@@ -1011,6 +1054,10 @@ namespace LDDModder.BrickEditor.ProjectHandling
                     CurrentProject.Connections,
                     ModelLocalizations.Label_Connections));
             }
+
+            NavigationTreeNodes.Add(new ProjectCollectionNode(
+                   CurrentProject.ClonePatterns,
+                   ModelLocalizations.Label_ClonePatterns));
         }
 
         public void RefreshNavigationNode(ProjectTreeNode node)
@@ -1085,6 +1132,92 @@ namespace LDDModder.BrickEditor.ProjectHandling
             SelectElement(newCollision);
 
             return newCollision;
+        }
+
+        public ClonePattern AddClonePattern(ClonePatternType patternType, IEnumerable<PartElement> elements = null)
+        {
+            if (CurrentProject == null)
+                return null;
+
+            StartBatchChanges($"{nameof(AddClonePattern)}( type => {patternType}");
+
+            ClonePattern pattern = null;
+            switch (patternType)
+            {
+                case ClonePatternType.Mirror:
+                    pattern = new MirrorPattern();
+                    break;
+                case ClonePatternType.Linear:
+                    pattern = new LinearPattern();
+                    break;
+                case ClonePatternType.Circular:
+                    pattern = new CircularPattern();
+                    break;
+            }
+
+            if (elements != null && elements.Any())
+                pattern.Elements.AddRange(elements);
+
+            CurrentProject.ClonePatterns.Add(pattern);
+            EndBatchChanges();
+            SelectElement(pattern);
+
+            return pattern;
+        }
+
+        public void DisolvePattern(ClonePattern pattern)
+        {
+            if (CurrentProject == null)
+                return;
+
+            StartBatchChanges($"{nameof(DisolvePattern)}( pattern => {pattern.Name}");
+
+            foreach (var elemRef in pattern.Elements)
+            {
+                var elemToClone = elemRef.Element;
+                var parentBone = elemToClone.Parent as PartBone;
+                var elemClones = pattern.GetElementClones(elemToClone);
+
+                if (elemToClone is PartConnection)
+                {
+                    var clonedConnectors = elemClones.OfType<PartConnection>();
+                    if (parentBone != null)
+                        parentBone.Connections.AddRange(clonedConnectors);
+                    else
+                        CurrentProject.Connections.AddRange(clonedConnectors);
+                }
+                else if (elemToClone is PartCollision)
+                {
+                    var clonedCollisions = elemClones.OfType<PartCollision>();
+                    if (parentBone != null)
+                        parentBone.Collisions.AddRange(clonedCollisions);
+                    else
+                        CurrentProject.Collisions.AddRange(clonedCollisions);
+                }
+
+                //for (int r = 0; r < pattern.Repetitions; r++)
+                //{
+                //    var clonedElem = pattern.GetClonedElement(elemToClone, r + 1);
+                //    if (clonedElem is PartConnection conn)
+                //    {
+                //        if (parentBone != null)
+                //            parentBone.Connections.Add(conn);
+                //        else
+                //            CurrentProject.Connections.Add(conn);
+                //    }
+                //    else if (clonedElem is PartCollision coll)
+                //    {
+                //        if (parentBone != null)
+                //            parentBone.Collisions.Add(coll);
+                //        else
+                //            CurrentProject.Collisions.Add(coll);
+                //    }
+                //}
+            }
+
+            CurrentProject.ClonePatterns.Remove(pattern);
+
+            EndBatchChanges();
         }
 
         public PartElement DuplicateElement(PartElement element)
@@ -1312,7 +1445,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
             EndBatchChanges();
         }
 
-        public void RebuildBoneConnections(float flexAmount = 0.06f)
+        public void RebuildBoneConnections(double[] flexAttributes)
         {
             if (CurrentProject == null || !CurrentProject.Flexible)
                 return;
@@ -1335,7 +1468,6 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
             int curConnType = 0;
             int totalConnection = 0;
-            string flexAttributes = string.Format(CultureInfo.InvariantCulture, "-{0},{0},20,10,10", flexAmount);
 
             foreach (var bone in CurrentProject.Bones.OrderBy(x => x.BoneID))
             {

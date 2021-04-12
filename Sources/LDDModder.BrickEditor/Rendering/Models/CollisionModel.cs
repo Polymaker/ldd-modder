@@ -3,6 +3,7 @@ using LDDModder.Modding;
 using OpenTK;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -28,6 +29,8 @@ namespace LDDModder.BrickEditor.Rendering
             SetTransformFromElement();
 
             UpdateScaleTransform();
+
+            ModelMaterial = RenderHelper.CollisionMaterial;
         }
 
         private void UpdateScaleTransform()
@@ -73,7 +76,7 @@ namespace LDDModder.BrickEditor.Rendering
                 base.ApplyTransformToElement(transform);
         }
 
-        protected override void OnElementPropertyChanged(ElementValueChangedEventArgs e)
+        protected override void OnElementPropertyChanged(PropertyValueChangedEventArgs e)
         {
             base.OnElementPropertyChanged(e);
 
@@ -99,7 +102,7 @@ namespace LDDModder.BrickEditor.Rendering
             RenderHelper.RenderWithStencil(IsSelected, 
                () =>
                {
-                   RenderHelper.BeginDrawModel(ModelManager.CubeModel, ScaleTransform * Transform, RenderHelper.CollisionMaterial);
+                   RenderHelper.BeginDrawModel(ModelManager.CubeModel, ScaleTransform * Transform, ModelMaterial);
                    RenderHelper.ModelShader.IsSelected.Set(IsSelected);
 
                    ModelManager.CubeModel.DrawElements();
@@ -119,7 +122,7 @@ namespace LDDModder.BrickEditor.Rendering
             RenderHelper.RenderWithStencil(
                 () =>
                 {
-                    RenderHelper.BeginDrawModel(ModelManager.SphereModel, ScaleTransform * Transform, RenderHelper.CollisionMaterial);
+                    RenderHelper.BeginDrawModel(ModelManager.SphereModel, ScaleTransform * Transform, ModelMaterial);
                     RenderHelper.ModelShader.IsSelected.Set(IsSelected);
                     ModelManager.SphereModel.DrawElements();
                     RenderHelper.EndDrawModel(ModelManager.SphereModel);

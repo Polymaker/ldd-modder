@@ -249,11 +249,12 @@ namespace LDDModder.Modding
 
         private void PhysicsAttributes_PropertyValueChanged(object sender, System.ComponentModel.PropertyValueChangedEventArgs e)
         {
-            var changeArgs = new ElementValueChangedEventArgs(this, PhysicsAttributes, e.PropertyName, e.OldValue, e.NewValue)
-            {
-                Index = e.Index
-            };
-            RaisePropertyValueChanged(changeArgs);
+            //var changeArgs = new ElementValueChangedEventArgs(this, PhysicsAttributes, e.PropertyName, e.OldValue, e.NewValue)
+            //{
+            //    Index = e.Index
+            //};
+            //RaisePropertyValueChanged(changeArgs);
+            RaisePropertyValueChanged(sender, e);
         }
 
         public override XElement SerializeToXml()

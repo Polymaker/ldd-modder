@@ -196,10 +196,10 @@ namespace LDDModder.PaletteMaker.DB
 
                         //skip decomposed assemblies
                         if (assemInfo.Bricks.Count == 1 &&
-                            assemInfo.ID.ToString() == assemInfo.Bricks[0].DesignID)
+                            assemInfo.ID == assemInfo.Bricks[0].DesignID)
                             continue;
 
-                        if (assemInfo.Bricks.Any(x => x.DesignID == assemInfo.ID.ToString()))
+                        if (assemInfo.Bricks.Any(x => x.DesignID == assemInfo.ID))
                         {
                             if (Path.GetFileNameWithoutExtension(assemFile) != assemID)
                             {

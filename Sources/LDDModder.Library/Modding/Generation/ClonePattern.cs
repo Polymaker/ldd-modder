@@ -1,66 +1,111 @@
-﻿using System;
+﻿using LDDModder.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace LDDModder.Modding
 {
     public abstract class ClonePattern : PartElement
     {
-        private int _Repetitions;
+        public const string NODE_NAME = "ClonePattern";
+
+        public abstract ClonePatternType Type { get; }
+        public ElementReferenceCollection Elements { get; set; }
+
+        public virtual int NumberOfInstances => 1;
         
-        public ObservableCollection<PartElement> Elements { get; set; }
-        public ObservableCollection<int> SkippedInstances { get; set; }
-
-        public int Repetitions
-        {
-            get => _Repetitions;
-            set => SetPropertyValue(ref _Repetitions, value);
-        }
-
         protected ClonePattern()
         {
-            Elements = new ObservableCollection<PartElement>();
-            SkippedInstances = new ObservableCollection<int>();
+            Elements = new ElementReferenceCollection(this);
+            TrackCollectionChanges(Elements);
+        }
+
+        public IEnumerable<PartElement> GetElements()
+        {
+            return Elements.Select(r => r.Element);
         }
 
         public abstract ItemTransform ApplyTransform(ItemTransform transform, int instance);
+
+        public abstract Simple3D.Matrix4d GetPatternMatrix();
 
         public PartElement GetClonedElement(PartElement element, int instance)
         {
             if (instance == 0)
                 return element;
 
+            if (!(element is IClonableElement))
+                return null;
+
             var trans = ApplyTransform((element as IPhysicalElement).Transform, instance);
             var newElem = (element as IClonableElement).Clone();
-            (newElem as IPhysicalElement).Transform = trans;
-            return null;
+            if (newElem is IPhysicalElement physElem)
+                physElem.Transform = trans;
+            return newElem;
         }
 
-        public IEnumerable<ItemTransform> GetClonedTransforms(ItemTransform baseTransform)
+        public virtual IEnumerable<PartElement> GetAllClonedElements()
         {
-            for (int i = 1; i < Repetitions; i++)
+            foreach (var elemRef in Elements)
             {
-                if (SkippedInstances.Contains(i))
-                    break;
-
-                foreach (var elem in Elements)
-                    yield return ApplyTransform(baseTransform, i);
+                foreach (var clone in GetElementClones(elemRef.Element))
+                    yield return clone;
             }
         }
 
-        public IEnumerable<PartElement> GenerateClones()
+        public virtual IEnumerable<PartElement> GetElementClones(PartElement element)
         {
-            for (int i = 1; i < Repetitions; i++)
-            {
-                if (SkippedInstances.Contains(i))
-                    break;
+            for (int i = 0; i < NumberOfInstances; i++)
+                yield return GetClonedElement(element, i + 1);
+        }
 
-                foreach(var elem in Elements)
-                    yield return GetClonedElement(elem, i);
+        public override XElement SerializeToXml()
+        {
+            var elem = SerializeToXmlBase(NODE_NAME);
+
+            elem.WriteAttribute(nameof(Type), Type);
+
+            elem.Add(Elements.Serialize(nameof(Elements)));
+
+            return elem;
+        }
+
+        protected internal override void LoadFromXml(XElement element)
+        {
+            base.LoadFromXml(element);
+            
+
+            Elements.Clear();
+            if (element.HasElement(nameof(Elements), out XElement elemsElem))
+                Elements.LoadFromXml(elemsElem);
+        }
+
+        public static ClonePattern FromXml(XElement element)
+        {
+            ClonePattern patttern = null;
+            var patternType = element.ReadAttribute<ClonePatternType>("Type");
+            switch (patternType)
+            {
+                case ClonePatternType.Mirror:
+                    patttern = new MirrorPattern();
+                    break;
+                case ClonePatternType.Linear:
+                    patttern = new LinearPattern();
+                    break;
+                case ClonePatternType.Circular:
+                    patttern = new CircularPattern();
+                    break;
             }
+
+            if (patttern != null)
+                patttern.LoadFromXml(element);
+
+            return patttern;
         }
     }
 }

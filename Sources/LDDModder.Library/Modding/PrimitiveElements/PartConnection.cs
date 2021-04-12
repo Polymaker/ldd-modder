@@ -30,13 +30,14 @@ namespace LDDModder.Modding
         }
 
         //public dynamic ConnectorProxy { get; private set; }
-        private bool IsAssigningConnectorProperties;
+        public bool IsAssigningConnectorProperties { get; private set; }
 
         [XmlIgnore]
         public Connector Connector
         {
             get => _Connector/* != null ? _ConnectorProxy : null*/;
-            set => SetConnector(value);
+            //set => SetConnector(value);
+            set => SetPropertyValue(ref _Connector, value);
         }
 
         [XmlAttribute]
@@ -67,76 +68,94 @@ namespace LDDModder.Modding
         public PartConnection(Connector connector)
         {
             ConnectorType = connector.Type;
-            SetConnector(connector);
+            //SetConnector(connector);
+            _Connector = connector;
             Transform = ItemTransform.FromLDD(connector.Transform);
         }
 
-        protected override void OnPropertyChanged(ElementValueChangedEventArgs args)
+        protected override void OnPropertyValueChanged(PropertyValueChangedEventArgs args)
         {
-            base.OnPropertyChanged(args);
+            base.OnPropertyValueChanged(args);
             if (args.PropertyName == nameof(Transform))
-            {
-                //if (args.OldValue is ItemTransform oldTransform)
-                //{
-                //    oldTransform.
-                //}
-                //Trace.WriteLine("PartConnection.OnPropertyChanged: Transform");
                 TranformChanged?.Invoke(this, EventArgs.Empty);
-            }
         }
+
+
+        //protected override void OnPropertyChanged(ElementValueChangedEventArgs args)
+        //{
+        //    base.OnPropertyChanged(args);
+        //    if (args.PropertyName == nameof(Transform))
+        //    {
+        //        //if (args.OldValue is ItemTransform oldTransform)
+        //        //{
+        //        //    oldTransform.
+        //        //}
+        //        //Trace.WriteLine("PartConnection.OnPropertyChanged: Transform");
+        //        TranformChanged?.Invoke(this, EventArgs.Empty);
+        //    }
+        //}
 
         #region Connector Handling
 
-        private void SetConnector(Connector connector)
+        //private void SetConnector(Connector connector)
+        //{
+        //    if (_Connector != null)
+        //    {
+        //        _Connector.PropertyValueChanged -= PartConnection_PropertyValueChanged;
+        //        _Connector.ChildEventForwarded -= Connector_ChildEventForwarded;
+        //    }
+
+        //    _Connector = connector;
+
+        //    if (_Connector != null)
+        //    {
+        //        _Connector.PropertyValueChanged += PartConnection_PropertyValueChanged;
+        //        _Connector.ChildEventForwarded += Connector_ChildEventForwarded;
+        //    }
+        //}
+
+
+        protected override void OnChildPropertyValueChanged(string propertyName, object childObject, PropertyValueChangedEventArgs args)
         {
-            if (_Connector != null)
-            {
-                _Connector.PropertyValueChanged -= PartConnection_PropertyValueChanged;
-                _Connector.ChildEventForwarded -= Connector_ChildEventForwarded;
-            }
-
-            _Connector = connector;
-
-            if (_Connector != null)
-            {
-                _Connector.PropertyValueChanged += PartConnection_PropertyValueChanged;
-                _Connector.ChildEventForwarded += Connector_ChildEventForwarded;
-            }
-        }
-
-        private void Connector_ChildEventForwarded(object sender, ForwardedEventArgs e)
-        {
+            base.OnChildPropertyValueChanged(propertyName, childObject, args);
             if (IsAssigningConnectorProperties)
                 return;
-
-            if (e.ForwardedEvent is PropertyValueChangedEventArgs eventArgs)
-            {
-                if (e.ChildObject is LDDModder.LDD.Primitives.Transform)
-                {
-                    return;
-                }
-
-                var changeArgs = new ElementValueChangedEventArgs(this,
-                    e.ChildObject, eventArgs.PropertyName,
-                    eventArgs.OldValue, eventArgs.NewValue)
-                {
-                    Index = eventArgs.Index
-                };
-                RaisePropertyValueChanged(changeArgs);
-            }
+            RaisePropertyValueChanged(childObject, args);
         }
+        //private void Connector_ChildEventForwarded(object sender, ForwardedEventArgs e)
+        //{
+        //    if (IsAssigningConnectorProperties)
+        //        return;
 
-        private void PartConnection_PropertyValueChanged(object sender, PropertyValueChangedEventArgs e)
-        {
-            if (IsAssigningConnectorProperties)
-                return;
+        //    if (e.ForwardedEvent is PropertyValueChangedEventArgs eventArgs)
+        //    {
+        //        if (e.ChildObject is LDDModder.LDD.Primitives.Transform)
+        //        {
+        //            return;
+        //        }
 
-            var changeArgs = new ElementValueChangedEventArgs(this, Connector, e.PropertyName, e.OldValue, e.NewValue)
-            {
-                Index = e.Index
-            };
-            RaisePropertyValueChanged(changeArgs);
-        }
+        //        //var changeArgs = new ElementValueChangedEventArgs(this,
+        //        //    e.ChildObject, eventArgs.PropertyName,
+        //        //    eventArgs.OldValue, eventArgs.NewValue)
+        //        //{
+        //        //    Index = eventArgs.Index
+        //        //};
+        //        RaisePropertyValueChanged(e.ChildObject, eventArgs);
+        //    }
+        //}
+
+        //private void PartConnection_PropertyValueChanged(object sender, PropertyValueChangedEventArgs e)
+        //{
+        //    if (IsAssigningConnectorProperties)
+        //        return;
+
+        //    //var changeArgs = new ElementValueChangedEventArgs(this, Connector, e.PropertyName, e.OldValue, e.NewValue)
+        //    //{
+        //    //    Index = e.Index
+        //    //};
+        //    RaisePropertyValueChanged(Connector, e);
+        //    //RaisePropertyValueChanged(changeArgs);
+        //}
 
         #endregion
 

@@ -24,7 +24,7 @@ namespace System.ComponentModel
 
         public event CollectionChangedEventHandler CollectionChanged;
 
-        //private List<INotifyCollectionChanged> _Collections;
+        private List<IChangeTrackingCollection> _Collections;
 
         private HashSet<ChildEventHook> HookedObjects;
 
@@ -107,6 +107,7 @@ namespace System.ComponentModel
         public ChangeTrackingObject()
         {
             HookedObjects = new HashSet<ChildEventHook>();
+            _Collections = new List<IChangeTrackingCollection>();
         }
 
         protected bool SetPropertyValue<T>(ref T property, T value, [CallerMemberName] string propertyName = null)
@@ -272,12 +273,19 @@ namespace System.ComponentModel
         private void AttachChildEvents(ChangeTrackingObject trackingObject, string propertyName = null)
         {
             var childHook = new ChildEventHook(propertyName, trackingObject);
-
+            
             if (!HookedObjects.Contains(childHook))
             {
                 HookedObjects.Add(childHook);
                 childHook.Attach(OnChildEventRaised);
             }
+
+            OnChildObjectAssigned(trackingObject);
+        }
+
+        protected virtual void OnChildObjectAssigned(ChangeTrackingObject childObject)
+        {
+
         }
 
         private void OnChildEventRaised(ChildEventHook hook, string eventName, EventArgs args)
@@ -304,6 +312,13 @@ namespace System.ComponentModel
                 childHook.Dettach();
                 HookedObjects.Remove(childHook);
             }
+
+            OnChildObjectRemoved(trackingObject);
+        }
+
+        protected virtual void OnChildObjectRemoved(ChangeTrackingObject childObject)
+        {
+
         }
 
         protected virtual void OnChildPropertyValueChanging(string propertyName, object childObject, PropertyValueChangingEventArgs args)
@@ -318,22 +333,28 @@ namespace System.ComponentModel
 
         #endregion
 
-        //protected void AttachCollection(INotifyCollectionChanged collection)
-        //{
-        //    collection.CollectionChanged += Collection_CollectionChanged;
-        //}
-
-        //private void Collection_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        //{
-
-        //}
-
+        protected void TrackCollectionChanges(IChangeTrackingCollection collection)
+        {
+            if (!_Collections.Contains(collection))
+            {
+                _Collections.Add(collection);
+                collection.CollectionChanged += OnCollectionChanged;
+            }
+        }
+        protected void UntrackCollectionChanges(IChangeTrackingCollection collection)
+        {
+            if (_Collections.Contains(collection))
+            {
+                _Collections.Remove(collection);
+                collection.CollectionChanged -= OnCollectionChanged;
+            }
+        }
         internal void AttachCollection(IChangeTrackingCollection collection)
         {
-            collection.CollectionChanged += ChangeTrackingCollectionChanged;
+            TrackCollectionChanges(collection);
         }
 
-        private void ChangeTrackingCollectionChanged(object sender, CollectionChangedEventArgs ccea)
+        protected virtual void OnCollectionChanged(object sender, CollectionChangedEventArgs ccea)
         {
             CollectionChanged?.Invoke(this, ccea);
         }

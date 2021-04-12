@@ -85,11 +85,11 @@ namespace LDDModder.BrickEditor.UI.Panels
             }
         }
 
-        protected override void OnElementPropertyChanged(Modding.ElementValueChangedEventArgs e)
+        protected override void OnElementPropertyChanged(ObjectPropertyChangedEventArgs e)
         {
             base.OnElementPropertyChanged(e);
 
-            if (e.Element == CurrentProject?.ProjectInfo)
+            if (e.Object == CurrentProject?.ProjectInfo)
             {
                 BeginInvokeOnce(UpdateControlBindings, nameof(UpdateControlBindings));
             }

@@ -12,6 +12,20 @@ namespace System.ComponentModel
         public int OldIndex { get; }
         public int NewIndex { get; }
 
+        public CollectionChangeActions Action
+        {
+            get
+            {
+                if (OldIndex == -1 && NewIndex >= 0)
+                    return CollectionChangeActions.Add;
+                else if (NewIndex == -1 && OldIndex >= 0)
+                    return CollectionChangeActions.Remove;
+                else if (NewIndex >= 0 && OldIndex >= 0 && OldIndex != NewIndex)
+                    return CollectionChangeActions.Move;
+                return CollectionChangeActions.None;
+            }
+        }
+
         public CollectionItemChange(object item, int oldIndex, int newIndex)
         {
             Item = item;

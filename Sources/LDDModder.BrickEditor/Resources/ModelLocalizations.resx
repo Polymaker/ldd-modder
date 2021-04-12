@@ -346,4 +346,16 @@
   <data name="BONE_MULTIPLE_LINKS" xml:space="preserve">
     <value>Bone "{name}" is referenced by multiple bones.</value>
   </data>
+  <data name="Label_ClonePatterns" xml:space="preserve">
+    <value>Clone patterns</value>
+  </data>
+  <data name="ClonePatternType_Linear" xml:space="preserve">
+    <value>Linear repetition</value>
+  </data>
+  <data name="ClonePatternType_Circular" xml:space="preserve">
+    <value>Circular repetition</value>
+  </data>
+  <data name="ClonePatternType_Mirror" xml:space="preserve">
+    <value>Mirror</value>
+  </data>
 </root>

@@ -1,7 +1,6 @@
 ﻿using LDDModder.BrickEditor.ProjectHandling;
 using LDDModder.BrickEditor.Resources;
 using LDDModder.Modding;
-using LDDModder.Modding;
 using System;
 using System.Linq;
 
@@ -24,6 +23,15 @@ namespace LDDModder.BrickEditor.Models.Navigation
             var modelExtension = GetElementExtension<ModelElementExtension>();
             if (modelExtension != null)
                 modelExtension.VisibilityChanged += ModelExtension_VisibilityChanged;
+
+            if (element is PartBone bone)
+                bone.CollectionChanged += Bone_CollectionChanged;
+        }
+
+        private void Bone_CollectionChanged(object sender, System.ComponentModel.CollectionChangedEventArgs ccea)
+        {
+            InvalidateChildrens();
+            Manager?.RefreshNavigationNode(this);
         }
 
         private void ModelExtension_VisibilityChanged(object sender, EventArgs e)
@@ -103,6 +111,11 @@ namespace LDDModder.BrickEditor.Models.Navigation
                     Nodes.Add(new ElementCollectionNode(partBone, partBone.Connections, 
                         ModelLocalizations.Label_Connections));
             }
+            else if (Element is ClonePattern pattern)
+            {
+                //Nodes.Add(new ElementCollectionNode(pattern, pattern.Elements,
+                //        "Elements"));
+            }
             else
             {
 
@@ -140,6 +153,10 @@ namespace LDDModder.BrickEditor.Models.Navigation
                     node.Text = string.Format(ModelLocalizations.Label_DecorationSurfaceNumber, surface.SurfaceID);
                     node.ImageKey = "Surface_Decoration";
                 }
+            }
+            else if(element is ElementReference elemRef)
+            {
+                node.Text = elemRef.Element?.Name;
             }
             else
             {

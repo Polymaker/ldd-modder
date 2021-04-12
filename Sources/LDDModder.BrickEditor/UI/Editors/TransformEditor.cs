@@ -97,6 +97,13 @@ namespace LDDModder.BrickEditor.UI.Controls
             if (FlagManager.IsSet("OnValueChanged"))
                 return;
 
+            if (InvokeRequired)
+            {
+                Invoke((Action)(() => {
+                    SetCurrentValue(value);
+                }));
+                return;
+            }
             var notNullValue = value ?? new ItemTransform();
 
             if (_Value != notNullValue)

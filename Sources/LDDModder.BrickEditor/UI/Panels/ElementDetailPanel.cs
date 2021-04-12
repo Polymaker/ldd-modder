@@ -66,9 +66,9 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private bool PartConnectionChanged;
 
-        protected override void OnElementCollectionChanged(ElementCollectionChangedEventArgs e)
+        protected override void OnProjectCollectionChanged(CollectionChangedEventArgs e)
         {
-            base.OnElementCollectionChanged(e);
+            base.OnProjectCollectionChanged(e);
 
             if (e.ElementType == typeof(PartConnection))
                 PartConnectionChanged = true;
@@ -90,7 +90,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             if (SelectedElement != null)
             {
-                SelectedElement.PropertyChanged -= SelectedElement_PropertyChanged;
+                SelectedElement.PropertyValueChanged -= SelectedElement_PropertyChanged;
                 SelectedElement = null;
             }
 
@@ -109,21 +109,22 @@ namespace LDDModder.BrickEditor.UI.Panels
 
                 SelectedElement = selection;
                 if (SelectedElement != null)
-                    SelectedElement.PropertyChanged += SelectedElement_PropertyChanged;
+                    SelectedElement.PropertyValueChanged += SelectedElement_PropertyChanged;
             }
         }
 
-        private void SelectedElement_PropertyChanged(object sender, ElementValueChangedEventArgs e)
+        private void SelectedElement_PropertyChanged(object sender, System.ComponentModel.PropertyValueChangedEventArgs e)
         {
             ExecuteOnThread(() =>
                 {
+                    var element = sender as PartElement;
                     using (FlagManager.UseFlag("UpdatePropertyValue"))
                     {
                         if (e.PropertyName == nameof(PartElement.Name))
-                            NameTextBox.Text = e.Element.Name;
+                            NameTextBox.Text = element.Name;
                         if (e.PropertyName == nameof(PartSphereCollision.Radius))
-                            CollisionRadiusBox.Value = (e.Element as PartSphereCollision).Radius;
-                        else if (e.PropertyName == nameof(PartBoxCollision.Size) && e.Element is PartBoxCollision boxColl)
+                            CollisionRadiusBox.Value = (element as PartSphereCollision).Radius;
+                        else if (e.PropertyName == nameof(PartBoxCollision.Size) && element is PartBoxCollision boxColl)
                             CollisionSizeEditor.Value = boxColl.Size * 2d;
                     }
                 });

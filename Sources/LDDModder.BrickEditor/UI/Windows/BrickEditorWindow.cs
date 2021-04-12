@@ -457,6 +457,7 @@ namespace LDDModder.BrickEditor.UI.Windows
         {
             menuStrip1.Enabled = true;
             WaitPopup.Hide();
+            WaitPopup.Close();
 
             LoadAndValidateSettings();
             UpdateMenuItemStates();
@@ -489,7 +490,7 @@ namespace LDDModder.BrickEditor.UI.Windows
             ProjectManager.UndoHistoryChanged += ProjectManager_UndoHistoryChanged;
             ProjectManager.ValidationFinished += ProjectManager_ValidationFinished;
             ProjectManager.GenerationFinished += ProjectManager_GenerationFinished;
-            ProjectManager.ElementPropertyChanged += ProjectManager_ElementPropertyChanged;
+            ProjectManager.ObjectPropertyChanged += ProjectManager_ObjectPropertyChanged;
         }
 
         private void ProjectManager_ProjectChanged(object sender, EventArgs e)
@@ -499,9 +500,9 @@ namespace LDDModder.BrickEditor.UI.Windows
             UpdateWindowTitle();
         }
 
-        private void ProjectManager_ElementPropertyChanged(object sender, ElementValueChangedEventArgs e)
+        private void ProjectManager_ObjectPropertyChanged(object sender, ObjectPropertyChangedEventArgs e)
         {
-            if (e.Element is PartProperties && 
+            if (e.Object is PartProperties && 
                 (e.PropertyName == nameof(PartProperties.ID) || e.PropertyName == nameof(PartProperties.Description))
                 )
             {

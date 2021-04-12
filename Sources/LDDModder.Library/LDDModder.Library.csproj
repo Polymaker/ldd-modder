@@ -101,6 +101,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data\ChangeTrackingCollection.cs" />
+    <Compile Include="Data\CollectionChangeActions.cs" />
     <Compile Include="Data\CollectionChangedEventArgs.cs" />
     <Compile Include="Data\CollectionItemChange.cs" />
     <Compile Include="IO\BinaryReaderEx.cs" />
@@ -202,16 +203,17 @@
     <Compile Include="LDD\Primitives\Primitive.cs" />
     <Compile Include="LDD\Primitives\Transform.cs" />
     <Compile Include="Maths\Line.cs" />
-    <Compile Include="Modding\ChangeTracking\CollectionChangeItemInfo.cs" />
-    <Compile Include="Modding\ChangeTracking\ElementCollectionChangedEventArgs.cs" />
     <Compile Include="Modding\ChangeTracking\ElementCollection.cs" />
+    <Compile Include="Data\ObjectPropertyChangedEventArgs.cs" />
+    <Compile Include="Modding\ChangeTracking\ElementReferenceCollection.cs" />
+    <Compile Include="Modding\ElementReference.cs" />
     <Compile Include="Modding\Extensions\ElementExtenderFactory.cs" />
     <Compile Include="Modding\Extensions\IElementExtender.cs" />
     <Compile Include="Modding\Generation\ClonePattern.cs" />
+    <Compile Include="Modding\Generation\ClonePatternType.cs" />
     <Compile Include="Modding\Generation\MirrorPattern.cs" />
     <Compile Include="Modding\Generation\RepetitionPattern.cs" />
     <Compile Include="Modding\ProjectInfo.cs" />
-    <Compile Include="Modding\ProjectItem.cs" />
     <Compile Include="Modding\Serializers\ProjectSerializerBase.cs" />
     <Compile Include="Modding\Serializers\ProjectSerializerV1.cs" />
     <Compile Include="Modding\ValidationMessage.cs" />
@@ -237,7 +239,6 @@
     <Compile Include="Modding\PartProject.cs" />
     <Compile Include="Modding\PrimitiveElements\PartSphereCollision.cs" />
     <Compile Include="Modding\PartSurface.cs" />
-    <Compile Include="Modding\ChangeTracking\ElementValueChangedEventArgs.cs" />
     <Compile Include="Modding\PrimitiveElements\StudReference.cs" />
     <Compile Include="Modding\ModelComponents\SurfaceComponent.cs" />
     <Compile Include="Modding\ModelComponents\FemaleStudModel.cs" />

@@ -4,7 +4,6 @@ using LDDModder.BrickEditor.ProjectHandling;
 using LDDModder.BrickEditor.ProjectHandling.ViewInterfaces;
 using LDDModder.BrickEditor.Resources;
 using LDDModder.Modding;
-using LDDModder.Modding;
 using LDDModder.Utilities;
 using System;
 using System.Collections;
@@ -25,6 +24,8 @@ namespace LDDModder.BrickEditor.UI.Panels
 {
     public partial class NavigationPanel : ProjectDocumentPanel, INavigationWindow
     {
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetLogger("Navigation");
+
         public enum NavigationViewMode
         {
             All,
@@ -229,7 +230,6 @@ namespace LDDModder.BrickEditor.UI.Panels
                         }
                     }
 
-
                     //ProjectTreeView.TreeModel.
                     ExpandNodes(ProjectTreeView.Roots, expandedNodeIDs);
 
@@ -292,8 +292,6 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private bool IsNodeVisible(ProjectTreeNode projectNode)
         {
-            if (SelectedView == NavigationViewMode.All)
-                return true;
 
             var rootNode = projectNode.RootNode ?? projectNode;
             var collectionNode = rootNode as ProjectCollectionNode;
@@ -301,7 +299,9 @@ namespace LDDModder.BrickEditor.UI.Panels
             switch (SelectedView)
             {
                 case NavigationViewMode.All:
-                    break;
+                    if (collectionNode?.Collection == CurrentProject.ClonePatterns)
+                        return CurrentProject.ClonePatterns.Any();
+                    return true;
                 case NavigationViewMode.Surfaces:
                     return collectionNode != null && collectionNode.Collection == CurrentProject.Surfaces;
                 case NavigationViewMode.Collisions:
@@ -350,6 +350,8 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void ProjectTreeView_SelectionChanged(object sender, EventArgs e)
         {
+            Logger.Trace("ProjectTreeView_SelectionChanged");
+
             if (!(FlagManager.IsSet("BuildingNavTree") ||
                 FlagManager.IsSet("ManualSelect") ||
                 FlagManager.IsSet("DragDropping") ||
@@ -390,6 +392,7 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void ProjectTreeView_SelectedIndexChanged(object sender, EventArgs e)
         {
+            Logger.Trace("ProjectTreeView_SelectedIndexChanged");
             if (FlagManager.IsSet("PreventSelection") &&
                 !FlagManager.IsSet("ItemSelectionChanged"))
             {
@@ -452,6 +455,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             InitializeComponentContextMenu();
             InitializeCollisionContextMenu();
             InitializeConnectionContextMenu();
+            InitializeClonePatternContextMenu();
         }
 
         private void InitializeComponentContextMenu()
@@ -492,12 +496,33 @@ namespace LDDModder.BrickEditor.UI.Panels
             {
                 string connectionTypeStr = item.Tag as string;
                 if (!string.IsNullOrEmpty(connectionTypeStr) && 
-                    Enum.TryParse(connectionTypeStr, out LDD.Primitives.Connectors.ConnectorType connectorType))
+                    Enum.TryParse(connectionTypeStr, out LDD.Primitives.Connectors.ConnectorType _))
                 {
                     string menuText = ModelLocalizations.ResourceManager.GetString($"ConnectorType_{connectionTypeStr}");
                     menuText = menuText.Replace("&", "&&");
                     item.Text = menuText;
                     item.Click += AddConnectionMenuItem_Click;
+                }
+            }
+        }
+
+        private void InitializeClonePatternContextMenu()
+        {
+
+#if !DEBUG
+            ContextMenu_AddClonePattern.Visible = false;
+#endif
+
+            foreach (ToolStripMenuItem item in ContextMenu_AddClonePattern.DropDownItems)
+            {
+                string cloneType = item.Tag as string;
+                if (!string.IsNullOrEmpty(cloneType) &&
+                    Enum.TryParse(cloneType, out ClonePatternType _))
+                {
+                    string menuText = ModelLocalizations.ResourceManager.GetString($"ClonePatternType_{cloneType}");
+                    menuText = menuText.Replace("&", "&&");
+                    item.Text = menuText;
+                    item.Click += AddClonePatternMenuItem_Click;
                 }
             }
         }
@@ -557,6 +582,22 @@ namespace LDDModder.BrickEditor.UI.Panels
             }
         }
 
+        private void AddClonePatternMenuItem_Click(object sender, EventArgs e)
+        {
+            string patternTypeStr = (sender as ToolStripMenuItem).Tag as string;
+
+
+            if (!string.IsNullOrEmpty(patternTypeStr) &&
+                Enum.TryParse(patternTypeStr, out ClonePatternType patternType))
+            {
+                var seletedElems = GetSelectedElements().Where(x => x is IClonableElement);
+                var newPattern = ProjectManager.AddClonePattern(patternType, seletedElems);
+
+                //if (newCollision != null)
+                //    SelectElementNodeDelayed(newCollision);
+            }
+        }
+
         private void ContextMenu_AddSurface_Click(object sender, EventArgs e)
         {
             if (CurrentProject != null)
@@ -610,6 +651,8 @@ namespace LDDModder.BrickEditor.UI.Panels
             var anyPojectElem = GetSelectedElements().Any();
             ContextMenu_Delete.Enabled = anyPojectElem;
             ContextMenu_Duplicate.Enabled = anyPojectElem;
+
+            ContextMenu_DisolvePattern.Visible = GetSelectedElements().OfType<ClonePattern>().Any();
         }
 
         private void ContextMenu_Duplicate_Click(object sender, EventArgs e)
@@ -634,13 +677,19 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             var elements = GetSelectedElements().ToList();
 
-
-
             //if (elements.Count > 1)
             //{
             //    //TODO: show confirmation message when deleting more than one
             //}
+
             ProjectManager.DeleteElements(elements);
+        }
+
+        private void ContextMenu_DisolvePattern_Click(object sender, EventArgs e)
+        {
+            var selectedPatterns = GetSelectedElements().OfType<ClonePattern>().ToList();
+
+            ProjectManager.DisolvePattern(selectedPatterns.First());
         }
 
         #endregion
@@ -671,22 +720,25 @@ namespace LDDModder.BrickEditor.UI.Panels
             //ExecuteOnThread(() => RebuildNavigation(false));
         }
 
-        protected override void OnElementPropertyChanged(ElementValueChangedEventArgs e)
+        protected override void OnElementPropertyChanged(ObjectPropertyChangedEventArgs e)
         {
             base.OnElementPropertyChanged(e);
-
-            if (e.PropertyName == nameof(PartElement.Name))
+            if (e.Object is PartElement partElement)
             {
-                if (ProjectManager.IsExecutingBatchChanges)
-                    return;
-                BeginInvokeOnce(() => RefreshElementName(e.Element), nameof(RefreshElementName));
-                //ExecuteOnThread(() => RefreshElementName(e.Element));
+                if (e.PropertyName == nameof(PartElement.Name))
+                {
+                    if (ProjectManager.IsExecutingBatchChanges)
+                        return;
+                    BeginInvokeOnce(() => RefreshElementName(partElement), nameof(RefreshElementName));
+                    //ExecuteOnThread(() => RefreshElementName(e.Element));
+                }
+                else if (e.PropertyName == nameof(PartProperties.Flexible) && partElement is PartProperties)
+                {
+                    BeginInvokeOnce(() => RebuildNavigation(true), nameof(RebuildNavigation));
+                    //ExecuteOnThread(() => RebuildNavigation(true));
+                }
             }
-            else if (e.PropertyName == nameof(PartProperties.Flexible) && e.Element is PartProperties)
-            {
-                BeginInvokeOnce(() => RebuildNavigation(true), nameof(RebuildNavigation));
-                //ExecuteOnThread(() => RebuildNavigation(true));
-            }
+            
         }
 
         private void RefreshElementName(PartElement element)
@@ -748,6 +800,8 @@ namespace LDDModder.BrickEditor.UI.Panels
             BeginInvoke((Action)(() =>
             {
                 var elementNode = FindElementNode(element);
+                if (elementNode == null)
+                    return;
                 if (elementNode.Parent != null)
                     ProjectTreeView.Expand(elementNode.Parent);
                 using (FlagManager.UseFlag("ManualSelect"))
@@ -773,6 +827,9 @@ namespace LDDModder.BrickEditor.UI.Panels
         private ProjectElementNode GetFocusedParentElement<T>() where T : PartElement
         {
             var focusedNode = ProjectTreeView.FocusedObject as ProjectTreeNode;
+            if (focusedNode == null)
+                return null;
+
             return focusedNode.GetParents(true)
                 .OfType<ProjectElementNode>()
                 .FirstOrDefault(x => x.Element.GetType() == typeof(T));
@@ -780,6 +837,8 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         protected override void OnElementSelectionChanged()
         {
+            Logger.Trace("OnElementSelectionChanged");
+
             base.OnElementSelectionChanged();
 
             if (FlagManager.IsSet("SelectElements"))
@@ -814,6 +873,8 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         private void SyncProjectSelection()
         {
+            Logger.Trace("SyncProjectSelection");
+
             if (ProjectManager.SelectedElements.Any())
             {
                 var elementNodes = GetAllTreeNodes().OfType<ProjectElementNode>();
@@ -1115,6 +1176,7 @@ namespace LDDModder.BrickEditor.UI.Panels
             return base.ProcessDialogKey(keyData);
         }
 
+        
     }
 
 }

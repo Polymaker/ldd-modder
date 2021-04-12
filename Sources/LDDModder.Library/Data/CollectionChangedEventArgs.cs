@@ -18,30 +18,49 @@ namespace System.ComponentModel
 
         public ICollection Collection { get; }
 
+        public Type ElementType { get; }
+
         public IList<CollectionItemChange> ChangedItems { get; }
 
         public IEnumerable<CollectionItemChange> AddedItems => 
-            ChangedItems.Where(x => x.NewIndex >= 0 && x.OldIndex < 0);
+            ChangedItems.Where(x => x.Action == CollectionChangeActions.Add);
 
         public IEnumerable<CollectionItemChange> RemovedItems => 
-            ChangedItems.Where(x => x.OldIndex >= 0 && x.NewIndex < 0);
+            ChangedItems.Where(x => x.Action == CollectionChangeActions.Remove);
 
         public IEnumerable<CollectionItemChange> MovedItems => 
-            ChangedItems.Where(x => x.OldIndex != x.NewIndex && x.OldIndex >= 0 && x.NewIndex >= 0);
+            ChangedItems.Where(x => x.Action == CollectionChangeActions.Move);
 
         public bool HasAdded => AddedItems.Any();
         public bool HasRemoved => RemovedItems.Any();
         public bool HasMoved => MovedItems.Any();
 
-        public CollectionChangedEventArgs(IEnumerable<CollectionItemChange> changedItems)
-        {
-            ChangedItems = changedItems.ToList().AsReadOnly();
-        }
+        //public CollectionChangedEventArgs(IEnumerable<CollectionItemChange> changedItems)
+        //{
+        //    ChangedItems = changedItems.ToList().AsReadOnly();
+
+        //}
 
         public CollectionChangedEventArgs(ICollection collection, IEnumerable<CollectionItemChange> changedItems)
         {
             Collection = collection;
+            ElementType = CollectionExtensions.GetCollectionType(collection.GetType());
             ChangedItems = changedItems.ToList().AsReadOnly();
+        }
+
+        public IEnumerable<T> ChangedElements<T>()
+        {
+            return ChangedItems.Select(i => i.Item).OfType<T>();
+        }
+
+        public IEnumerable<T> AddedElements<T>()
+        {
+            return AddedItems.Select(i => i.Item).OfType<T>();
+        }
+
+        public IEnumerable<T> RemovedElements<T>()
+        {
+            return RemovedItems.Select(i => i.Item).OfType<T>();
         }
 
         //public static void FromObservableCollection(ICollection collection, NotifyCollectionChangedEventArgs args)

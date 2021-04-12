@@ -27,6 +27,8 @@ namespace LDDModder.BrickEditor.Rendering
             }
         }
 
+        public MaterialInfo ModelMaterial { get; set; }
+
         public BBox BoundingBox { get; set; }
 
         private Matrix4 _Transform;
@@ -55,7 +57,6 @@ namespace LDDModder.BrickEditor.Rendering
                 }
             }
         }
-
 
 
         public bool IsEditingTransform { get; private set; }
@@ -137,6 +138,11 @@ namespace LDDModder.BrickEditor.Rendering
         }
 
         public virtual void RenderModel(Camera camera, MeshRenderMode mode = MeshRenderMode.Solid)
+        {
+
+        }
+
+        public virtual void RenderUI(Camera camera)
         {
 
         }

@@ -56,13 +56,12 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             ProjectManager.ProjectClosed += ProjectManager_ProjectClosed;
             ProjectManager.ProjectChanged += ProjectManager_ProjectChanged;
-            ProjectManager.ElementCollectionChanged += ProjectManager_ElementCollectionChanged;
+            ProjectManager.ProjectCollectionChanged += ProjectManager_ProjectCollectionChanged;
             ProjectManager.ProjectElementsChanged += ProjectManager_ProjectElementsChanged;
-            ProjectManager.ElementPropertyChanged += ProjectManager_ElementPropertyChanged;
+            ProjectManager.ObjectPropertyChanged += ProjectManager_ObjectPropertyChanged;
             ProjectManager.SelectionChanged += ProjectManager_SelectionChanged;
             ProjectManager.UndoHistoryChanged += ProjectManager_UndoHistoryChanged;
         }
-
         private void DettachProjectManager()
         {
             if (ProjectManager == null)
@@ -70,9 +69,9 @@ namespace LDDModder.BrickEditor.UI.Panels
 
             ProjectManager.ProjectClosed -= ProjectManager_ProjectClosed;
             ProjectManager.ProjectChanged -= ProjectManager_ProjectChanged;
-            ProjectManager.ElementCollectionChanged -= ProjectManager_ElementCollectionChanged;
+            ProjectManager.ProjectCollectionChanged -= ProjectManager_ProjectCollectionChanged;
             ProjectManager.ProjectElementsChanged -= ProjectManager_ProjectElementsChanged;
-            ProjectManager.ElementPropertyChanged -= ProjectManager_ElementPropertyChanged;
+            ProjectManager.ObjectPropertyChanged -= ProjectManager_ObjectPropertyChanged;
             ProjectManager.SelectionChanged -= ProjectManager_SelectionChanged;
             ProjectManager.UndoHistoryChanged -= ProjectManager_UndoHistoryChanged;
 
@@ -121,9 +120,14 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         }
 
-        private void ProjectManager_ElementCollectionChanged(object sender, ElementCollectionChangedEventArgs e)
+        //private void ProjectManager_ElementCollectionChanged(object sender, ElementCollectionChangedEventArgs e)
+        //{
+        //    OnElementCollectionChanged(e);
+        //}
+
+        private void ProjectManager_ProjectCollectionChanged(object sender, CollectionChangedEventArgs ccea)
         {
-            OnElementCollectionChanged(e);
+            OnProjectCollectionChanged(ccea);
         }
 
         /// <summary>
@@ -131,7 +135,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         /// </summary>
         /// <remarks>Not always invoked on main thread</remarks>
         /// <param name="e"></param>
-        protected virtual void OnElementCollectionChanged(ElementCollectionChangedEventArgs e)
+        protected virtual void OnProjectCollectionChanged(CollectionChangedEventArgs e)
         {
 
         }
@@ -151,7 +155,12 @@ namespace LDDModder.BrickEditor.UI.Panels
 
         }
 
-        private void ProjectManager_ElementPropertyChanged(object sender, ElementValueChangedEventArgs e)
+        //private void ProjectManager_ElementPropertyChanged(object sender, ElementValueChangedEventArgs e)
+        //{
+        //    OnElementPropertyChanged(e);
+        //}
+
+        private void ProjectManager_ObjectPropertyChanged(object sender, ObjectPropertyChangedEventArgs e)
         {
             OnElementPropertyChanged(e);
         }
@@ -160,7 +169,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         /// Raised when a property of a project element has changed. <br/>
         /// </summary>
         /// <remarks>Not always invoked on main thread</remarks>
-        protected virtual void OnElementPropertyChanged(ElementValueChangedEventArgs e)
+        protected virtual void OnElementPropertyChanged(ObjectPropertyChangedEventArgs e)
         {
 
         }
