@@ -334,7 +334,6 @@ namespace LDDModder.Modding
                     }
                 }
             }
-
             else if (Project != null)
             {
                 if (Project.Collisions.Contains(this))
@@ -361,7 +360,7 @@ namespace LDDModder.Modding
                 {
                     Project.ClonePatterns.Remove(this);
                     return true;
-                }
+                };
             }
             return false;
         }

@@ -7,6 +7,8 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OpenTK.Graphics;
+using OpenTK.Graphics.OpenGL;
 
 namespace LDDModder.BrickEditor.Rendering.Models
 {
@@ -212,14 +214,25 @@ namespace LDDModder.BrickEditor.Rendering.Models
 
                     var modelMat = elemModel.ModelMaterial;
                     modelMat.Diffuse = Vector4.ComponentMin((modelMat.Diffuse * 1.2f) + new Vector4(0.05f), Vector4.One);
-                    if (!elemModel.Visible)
-                        modelMat.Diffuse = new Vector4(modelMat.Diffuse.Xyz, 0.6f);
                     //modelMat.Diffuse = AltColors[(i - 1) % 16];
+
+                    bool renderTransparent = !elemModel.Visible;
+                    if (renderTransparent)
+                    {
+                        modelMat.Diffuse = new Vector4(modelMat.Diffuse.Xyz, 0.6f);
+                        GL.DepthMask(false);
+                    }
+                    
                     elemModel.ModelMaterial = modelMat;
                     elemModel.IsSelected = IsSelected;
                     elemModel.SetTemporaryTransform(trans);
                     elemModel.RenderModel(camera, mode);
                     elemModel.SetTemporaryTransform(null);
+
+                    if (renderTransparent)
+                    {
+                        GL.DepthMask(true);
+                    }
                 }
 
                 elemModel.IsSelected = isSelected;

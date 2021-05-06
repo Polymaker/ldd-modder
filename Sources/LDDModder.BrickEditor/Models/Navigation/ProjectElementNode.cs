@@ -142,17 +142,11 @@ namespace LDDModder.BrickEditor.Models.Navigation
 
             if (element is PartSurface surface)
             {
+                node.Text = ProjectManager.GetSurfaceName(surface);
                 if (surface.SurfaceID == 0)
-                {
-                    node.Text = ModelLocalizations.Label_MainSurface;
-
                     node.ImageKey = "Surface_Main";
-                }
                 else
-                {
-                    node.Text = string.Format(ModelLocalizations.Label_DecorationSurfaceNumber, surface.SurfaceID);
                     node.ImageKey = "Surface_Decoration";
-                }
             }
             else if(element is ElementReference elemRef)
             {

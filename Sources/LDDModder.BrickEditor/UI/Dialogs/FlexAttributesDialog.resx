@@ -346,7 +346,7 @@
     <value>CenterParent</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
-    <value> Recalculate flex bones</value>
+    <value>Recalculate flex bones</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>FlexAttributesDialog</value>

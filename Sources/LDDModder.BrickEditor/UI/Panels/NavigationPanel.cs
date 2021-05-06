@@ -83,6 +83,10 @@ namespace LDDModder.BrickEditor.UI.Panels
             InitializeContextMenus();
             InitializeNavigationTreeView();
             InitializeViewComboBox();
+
+#if !DEBUG
+            AddClonePatternMenu_Mirror.Enabled = false;
+#endif
         }
 
         private void InitializeViewComboBox()

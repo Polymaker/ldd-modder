@@ -1798,6 +1798,7 @@ namespace LDDModder.BrickEditor.UI.Panels
         {
             BonesDropDownMenu.Visible = CurrentProject?.Flexible ?? false;
             DisplayMenu_Bones.Visible = CurrentProject?.Flexible ?? false;
+            MeshesMenu_ConfigureOutlines.Enabled = ProjectManager.IsProjectOpen;
             MeshesMenu_CalculateOutlines.Enabled = ProjectManager.IsProjectOpen;
             MeshesMenu_RemoveOutlines.Enabled = ProjectManager.IsProjectOpen;
         }
@@ -1942,6 +1943,11 @@ namespace LDDModder.BrickEditor.UI.Panels
                 ProjectManager.CurrentProject.SaveMeshesToXml();
                 ProjectManager.EndBatchChanges();
             }
+        }
+
+        private void MeshesMenu_ConfigureOutlines_Click(object sender, EventArgs e)
+        {
+            ProjectManager.ShowOutlinesConfigDialog();
         }
 
         private void MeshesMenu_CalculateOutlines_Click(object sender, EventArgs e)
@@ -2158,9 +2164,10 @@ namespace LDDModder.BrickEditor.UI.Panels
         public bool Is3DViewFocused => InputManager.ContainsFocus;
 
 
+
+
         #endregion
 
-
-
+        
     }
 }

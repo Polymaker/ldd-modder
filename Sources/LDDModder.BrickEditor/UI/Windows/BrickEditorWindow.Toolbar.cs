@@ -275,9 +275,11 @@ namespace LDDModder.BrickEditor.UI.Windows
             {
                 try
                 {
+                    Logger.Info("Starting LDD...");
                     var currentProc = GetRunningLDDProcess();
                     if (currentProc != null)
                     {
+                        Logger.Info("LDD is already running. Restarting process.");
                         currentProc.Kill();
                         currentProc.WaitForExit(5000);
                     }
@@ -324,9 +326,12 @@ namespace LDDModder.BrickEditor.UI.Windows
                     }
                 }
             });
+            Logger.Info("Creating temporary LDD model for part");
             string tmpDir = Path.GetTempPath();
             string tmpFile = Path.Combine(tmpDir, Guid.NewGuid().ToString() + ".lxfml");
+            Logger.Debug($"Model path: {tmpFile}");
             emptyModel.Save(tmpFile);
+            Logger.Info("Launching LDD...");
             Process.Start(tmpFile);
         }
 

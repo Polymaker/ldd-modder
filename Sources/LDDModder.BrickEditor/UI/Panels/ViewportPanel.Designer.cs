@@ -49,6 +49,7 @@
             this.DisplayMenu_3dCursor = new System.Windows.Forms.ToolStripMenuItem();
             this.DisplayMenu_Bones = new System.Windows.Forms.ToolStripMenuItem();
             this.MeshesDropDownMenu = new System.Windows.Forms.ToolStripDropDownButton();
+            this.MeshesMenu_ConfigureOutlines = new System.Windows.Forms.ToolStripMenuItem();
             this.MeshesMenu_CalculateOutlines = new System.Windows.Forms.ToolStripMenuItem();
             this.MeshesMenu_RemoveOutlines = new System.Windows.Forms.ToolStripMenuItem();
             this.MeshesMenu_Separator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -233,6 +234,7 @@
             // 
             this.MeshesDropDownMenu.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.MeshesDropDownMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.MeshesMenu_ConfigureOutlines,
             this.MeshesMenu_CalculateOutlines,
             this.MeshesMenu_RemoveOutlines,
             this.MeshesMenu_Separator1,
@@ -241,6 +243,12 @@
             resources.ApplyResources(this.MeshesDropDownMenu, "MeshesDropDownMenu");
             this.MeshesDropDownMenu.Name = "MeshesDropDownMenu";
             this.MeshesDropDownMenu.DropDownOpening += new System.EventHandler(this.MeshesDropDownMenu_DropDownOpening);
+            // 
+            // MeshesMenu_ConfigureOutlines
+            // 
+            this.MeshesMenu_ConfigureOutlines.Name = "MeshesMenu_ConfigureOutlines";
+            resources.ApplyResources(this.MeshesMenu_ConfigureOutlines, "MeshesMenu_ConfigureOutlines");
+            this.MeshesMenu_ConfigureOutlines.Click += new System.EventHandler(this.MeshesMenu_ConfigureOutlines_Click);
             // 
             // MeshesMenu_CalculateOutlines
             // 
@@ -492,5 +500,6 @@
         private System.Windows.Forms.ToolStripButton ToggleGridButton;
         private System.Windows.Forms.ToolStripMenuItem DisplayMenu_3dCursor;
         private System.Windows.Forms.ToolStripMenuItem DisplayMenu_Bones;
+        private System.Windows.Forms.ToolStripMenuItem MeshesMenu_ConfigureOutlines;
     }
 }

@@ -213,6 +213,7 @@
     <Compile Include="Modding\Generation\ClonePatternType.cs" />
     <Compile Include="Modding\Generation\MirrorPattern.cs" />
     <Compile Include="Modding\Generation\RepetitionPattern.cs" />
+    <Compile Include="Modding\Generation\OutlinesGroupConfig.cs" />
     <Compile Include="Modding\ProjectInfo.cs" />
     <Compile Include="Modding\Serializers\ProjectSerializerBase.cs" />
     <Compile Include="Modding\Serializers\ProjectSerializerV1.cs" />

@@ -12,13 +12,23 @@ namespace LDDModder.Modding
     {
         public PartElement Owner { get; }
 
+        public List<Type> SupportedTypes { get; set; }
+
         public ElementReferenceCollection(PartElement owner)
         {
             Owner = owner;
+            SupportedTypes = new List<Type>();
         }
 
         public void Add(PartElement element)
         {
+            if (SupportedTypes.Count > 0)
+            {
+                var elemType = element.GetType();
+                if (!SupportedTypes.Any(t => t.IsAssignableFrom(elemType)))
+                    throw new NotSupportedException($"The element type {elemType.Name} is not supported in this collection");
+            }
+
             if (element is ElementReference elemRef)
                 base.Add(elemRef);
             else if (!Contains(element))
@@ -92,6 +102,11 @@ namespace LDDModder.Modding
                 elemRef.LoadFromXml(refElem);
                 Add(elemRef);
             }
+        }
+
+        public IEnumerable<T> OfType<T>() where T : PartElement
+        {
+            return this.Select(x => x.Element).OfType<T>();
         }
     }
 }

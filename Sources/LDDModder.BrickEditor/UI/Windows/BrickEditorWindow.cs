@@ -144,7 +144,7 @@ namespace LDDModder.BrickEditor.UI.Windows
             {
                 string projectDesc = ProjectManager.GetProjectDisplayName();
                 
-                Text = $"{projectDesc}";
+                Text = $"{WindowTitle.Text} - {projectDesc}";
             }
             else
                 Text = WindowTitle.Text;
@@ -645,10 +645,12 @@ namespace LDDModder.BrickEditor.UI.Windows
             if (!CloseCurrentProject())
                 return false;
 
-            if (string.IsNullOrEmpty(project.ProjectPath))
-                Logger.Info($"Loading project new empty project");
-            else
+            if (!string.IsNullOrEmpty(project.ProjectPath))
                 Logger.Info($"Loading project {project.ProjectPath}");
+            else if(project.PartID != 0)
+                Logger.Info($"Loading project from brick {project.PartID}");
+            else
+                Logger.Info($"Loading new empty project");
 
             ViewportPanel.ForceRender();
             ProjectManager.SetCurrentProject(project, tempPath);
@@ -822,8 +824,6 @@ namespace LDDModder.BrickEditor.UI.Windows
                 return;
             }
 
-            Logger.Info("Exiting Brick Studio");
-
             SaveCurrentUILayout();
 
             if (CurrentProject != null)
@@ -833,11 +833,12 @@ namespace LDDModder.BrickEditor.UI.Windows
                 return;
             }
 
-            Debug.WriteLine($"FormClosing started at {DateTime.Now:HH:mm:ss.ff}");
+            Logger.Info("Closing Brick Studio");
+            Logger.Debug($"FormClosing started at {DateTime.Now:HH:mm:ss.ff}");
 
             foreach (var form in DockPanelControl.Documents.OfType<DockContent>().ToList())
             {
-                Debug.WriteLine($"Closing Form '{form.Text}' at {DateTime.Now:HH:mm:ss.ff}");
+                Logger.Debug($"Closing Form '{form.Text}' at {DateTime.Now:HH:mm:ss.ff}");
                 form.Close();
                 if (!form.IsDisposed)
                 {
@@ -846,12 +847,12 @@ namespace LDDModder.BrickEditor.UI.Windows
                 }
             }
 
-            Debug.WriteLine($"FormClosing finished at {DateTime.Now:HH:mm:ss.ff}");
+            Logger.Debug($"FormClosing finished at {DateTime.Now:HH:mm:ss.ff}");
         }
 
         private void TryCloseProjectAndExit()
         {
-            Debug.WriteLine($"TryCloseProjectAndExit at {DateTime.Now:HH:mm:ss.ff}");
+            Logger.Debug($"TryCloseProjectAndExit at {DateTime.Now:HH:mm:ss.ff}");
             if (CloseCurrentProject())
             {
                 ViewportPanel.StopRenderingLoop();
@@ -861,15 +862,17 @@ namespace LDDModder.BrickEditor.UI.Windows
                 Task.Factory.StartNew(() =>
                 {
                     Thread.Sleep(100);
-                    Debug.WriteLine($"Invoke Close at {DateTime.Now:HH:mm:ss.ff}");
+                    Logger.Debug($"Invoke Close at {DateTime.Now:HH:mm:ss.ff}");
                     BeginInvoke(new MethodInvoker(Close));
                 });
             }
+            else
+                Logger.Info("User canceled closing");
         }
 
         private void BrickEditorWindow_FormClosed(object sender, FormClosedEventArgs e)
         {
-            Debug.WriteLine($"FormClosed at {DateTime.Now:HH:mm:ss.ff}");
+            Logger.Debug($"FormClosed at {DateTime.Now:HH:mm:ss.ff}");
         }
 
         private void AutoSaveTimer_Tick(object sender, EventArgs e)

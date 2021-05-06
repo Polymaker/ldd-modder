@@ -432,22 +432,62 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
         #endregion
 
+        #region Localizations and Display
+
+
         public string GetProjectDisplayName()
         {
             if (CurrentProject != null)
             {
-                if (CurrentProject.PartID > 0 && !string.IsNullOrEmpty(CurrentProject.PartDescription))
-                    return $"{CurrentProject.PartID} - {CurrentProject.PartDescription}";
-                else if (CurrentProject.PartID > 0)
-                    return $"{ModelLocalizations.Label_Part} {CurrentProject.PartID}";
-                else if (!string.IsNullOrEmpty(CurrentProject.PartDescription))
-                    return $"{CurrentProject.PartDescription}";
-                else
+                bool isNewProject = string.IsNullOrEmpty(CurrentProjectPath);
+                bool hasPartId = CurrentProject.PartID > 0;
+                bool hasDescription = !string.IsNullOrEmpty(CurrentProject.PartDescription);
+
+                if (isNewProject)
+                {
+                    if (hasPartId)
+                        return $"{ModelLocalizations.Label_NewPartProject} - {CurrentProject.PartID}";
                     return ModelLocalizations.Label_NewPartProject;
+                }
+                else
+                {
+                    string fileName = Path.GetFileName(CurrentProjectPath);
+
+                    if (Path.GetFileNameWithoutExtension(CurrentProjectPath) != CurrentProject.PartID.ToString())
+                    {
+                        string extraInfo = string.Empty;
+                        if (hasPartId && !fileName.Contains(CurrentProject.PartID.ToString()))
+                            extraInfo = CurrentProject.PartID.ToString();
+
+                        if (hasDescription)
+                            extraInfo += " " + CurrentProject.PartDescription;
+
+                        if (!string.IsNullOrEmpty(extraInfo))
+                            fileName += $" - {extraInfo.Trim()}";
+                        return fileName;
+                    }
+                    else if (hasPartId && hasDescription)
+                        return $"{CurrentProject.PartID} - {CurrentProject.PartDescription}";
+                    else if (hasPartId)
+                        return $"{ModelLocalizations.Label_Part} {CurrentProject.PartID}";
+                    else
+                        return ModelLocalizations.Label_NewPartProject;
+                }
             }
 
             return ModelLocalizations.Label_NoActiveProject;
         }
+
+
+        public static string GetSurfaceName(PartSurface surface)
+        {
+            if (surface.SurfaceID == 0)
+                return ModelLocalizations.Label_MainSurface;
+
+            return string.Format(ModelLocalizations.Label_DecorationSurfaceNumber, surface.SurfaceID);
+        }
+
+        #endregion
 
         #region Viewport Display Handling
 
@@ -1257,10 +1297,11 @@ namespace LDDModder.BrickEditor.ProjectHandling
         public void DeleteElements(IEnumerable<PartElement> elements)
         {
             var elemsToDelete = new List<PartElement>();
+            int elemCount = elements.Count();
 
             foreach (var elem in elements)
             {
-                var dlgResult = ConfirmCanDelete(elem);
+                var dlgResult = ConfirmCanDelete(elem, elemCount == 1);
 
                 if (dlgResult == DialogResult.Cancel)
                 {
@@ -1275,10 +1316,12 @@ namespace LDDModder.BrickEditor.ProjectHandling
             if (elemsToDelete.Any())
             {
                 StartBatchChanges(nameof(DeleteElements));
+
                 ClearSelection();
 
                 var removedElements = elemsToDelete.Where(x => x.TryRemove()).ToList();
-
+                foreach (var elem in removedElements)
+                    CurrentProject.RemoveReferences(elem);
                 //if (removedElements.OfType<ModelMeshReference>().Any())
                 //    CurrentProject.RemoveUnreferencedMeshes();
 
@@ -1286,8 +1329,10 @@ namespace LDDModder.BrickEditor.ProjectHandling
             }
         }
 
-        private DialogResult ConfirmCanDelete(PartElement element)
+        private DialogResult ConfirmCanDelete(PartElement element, bool onlyOneElement = true)
         {
+            var msgButtons = onlyOneElement ? MessageBoxButtons.YesNo : MessageBoxButtons.YesNoCancel;
+
             if (element is PartConnection conn)
             {
                 if (conn.ConnectorType == ConnectorType.Custom2DField)
@@ -1297,8 +1342,8 @@ namespace LDDModder.BrickEditor.ProjectHandling
                     {
                         return MessageBox.Show(
                             string.Format(Messages.Message_ConfirmDeleteStudConnection, conn.Name), 
-                            Messages.Caption_DeleteConfirmation, 
-                            MessageBoxButtons.YesNoCancel);
+                            Messages.Caption_DeleteConfirmation,
+                            msgButtons);
                     }
                 }
                 else if (conn.ConnectorType == ConnectorType.Ball || 
@@ -1310,17 +1355,20 @@ namespace LDDModder.BrickEditor.ProjectHandling
                     {
                         return MessageBox.Show(
                             string.Format(Messages.Message_ConfirmDeleteBoneConnection, conn.Name), 
-                            Messages.Caption_DeleteConfirmation, 
-                            MessageBoxButtons.YesNoCancel);
+                            Messages.Caption_DeleteConfirmation,
+                            msgButtons);
                     }
                 }
             }
-            if (element is PartBone bone)
+
+            if (CurrentProject.ClonePatterns.Any(p => p.Elements.Contains(element)))
             {
-
-
-
+                return MessageBox.Show(
+                            string.Format(Messages.Message_ConfirmDeleteReferencedElement, element.Name),
+                            Messages.Caption_DeleteConfirmation,
+                            msgButtons);
             }
+            
             return DialogResult.Yes;
         }
 
@@ -1705,7 +1753,7 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
             using (var dlg = new BoneDataCopyDialog(this))
             {
-                StartBatchChanges(nameof(BoneDataCopyDialog));
+                StartBatchChanges(nameof(ShowCopyBoneDataDialog));
                 dlg.ShowDialog();
                 EndBatchChanges();
             }
@@ -1720,7 +1768,22 @@ namespace LDDModder.BrickEditor.ProjectHandling
 
             using (var dlg = new BoneLinkDialog(this))
             {
-                StartBatchChanges(nameof(BoneLinkDialog));
+                StartBatchChanges(nameof(ShowLinkBonesDialog));
+                dlg.ShowDialog();
+                EndBatchChanges();
+            }
+        }
+
+        public void ShowOutlinesConfigDialog()
+        {
+            if (CurrentProject == null)
+                return;
+
+            Trace.WriteLine($"Executing: {nameof(ShowOutlinesConfigDialog)}");
+
+            using (var dlg = new ConfigureOutlinesDialog(this))
+            {
+                StartBatchChanges(nameof(ShowOutlinesConfigDialog));
                 dlg.ShowDialog();
                 EndBatchChanges();
             }

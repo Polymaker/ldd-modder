@@ -65,7 +65,7 @@ namespace LDDModder.Modding
         {
             base.BeforeRemoveItem(item);
             if (Owner != null)
-                item.BeginChangeParent(Owner);
+                item.BeginChangeParent(null);
             else
                 item.AssignProject(null);
         }
@@ -113,6 +113,7 @@ namespace LDDModder.Modding
             }
             RaiseCollectionChanges();
         }
+
         public void SetIndex(int index, PartElement element)
         {
             ReorderItem(element as T, index);

@@ -243,6 +243,16 @@ namespace LDDModder.BrickEditor.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The element &quot;{0}&quot; is referenced by other elements of the project.
+        ///Do you want to delete anyway?.
+        /// </summary>
+        internal static string Message_ConfirmDeleteReferencedElement {
+            get {
+                return ResourceManager.GetString("Message_ConfirmDeleteReferencedElement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The connection &quot;{0}&quot; is referenced by elements of the model.
         ///Do you want to delete anyway?.
         /// </summary>
@@ -364,6 +374,16 @@ namespace LDDModder.BrickEditor.Resources {
         internal static string Message_SaveWindowLayout {
             get {
                 return ResourceManager.GetString("Message_SaveWindowLayout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An unexpected error occurred.
+        ///For more details, check the log file..
+        /// </summary>
+        internal static string Message_UnhandledException {
+            get {
+                return ResourceManager.GetString("Message_UnhandledException", resourceCulture);
             }
         }
     }

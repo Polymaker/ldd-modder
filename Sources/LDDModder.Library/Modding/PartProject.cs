@@ -130,6 +130,8 @@ namespace LDDModder.Modding
 
         public ElementCollection<ClonePattern> ClonePatterns { get; }
 
+        public ElementCollection<OutlinesGroupConfig> OutlinesConfigs { get; }
+
         //private List<PartElement> _DeletedElements;
 
         //public IList<PartElement> DeletedElements => _DeletedElements.AsReadOnly();
@@ -177,6 +179,7 @@ namespace LDDModder.Modding
             Meshes = new ElementCollection<ModelMesh>(this);
             ClonePatterns = new ElementCollection<ClonePattern>(this);
             //_DeletedElements = new List<PartElement>();
+            OutlinesConfigs = new ElementCollection<OutlinesGroupConfig>(this);
             Properties = new PartProperties(this);
             ProjectInfo = new ProjectInfo(this);
             ProjectProperties = new Dictionary<string, string>();
@@ -362,6 +365,13 @@ namespace LDDModder.Modding
             foreach (var pattern in ClonePatterns)
                 patternsElem.Add(pattern.SerializeToXml());
 
+            if (OutlinesConfigs.Any())
+            {
+                var outlinesElem = doc.Root.AddElement(nameof(OutlinesConfigs));
+                foreach (var config in OutlinesConfigs)
+                    outlinesElem.Add(config.SerializeToXml());
+            }
+
             var meshesElem = doc.Root.AddElement(nameof(Meshes));
 
             foreach(var mesh in Meshes)
@@ -373,7 +383,7 @@ namespace LDDModder.Modding
 
             if (ProjectProperties.Any())
             {
-                var elem = doc.Root.AddElement("ProjectProperties");
+                var elem = doc.Root.AddElement(nameof(ProjectProperties));
                 foreach (var kv in ProjectProperties)
                     elem.Add(new XElement(kv.Key, kv.Value));
             }
@@ -444,13 +454,19 @@ namespace LDDModder.Modding
                     ClonePatterns.Add(ClonePattern.FromXml(patternElem));
             }
 
+            if (rootElem.HasElement(nameof(OutlinesConfigs), out XElement outlinesElem))
+            {
+                foreach (var configElem in outlinesElem.Elements(OutlinesGroupConfig.NODE_NAME))
+                    OutlinesConfigs.Add(OutlinesGroupConfig.FromXml(configElem));
+            }
+
             if (rootElem.HasElement(nameof(Meshes), out XElement meshesElem))
             {
                 foreach (var meshElem in meshesElem.Elements(ModelMesh.NODE_NAME))
                     Meshes.Add(ModelMesh.FromXml(meshElem));
             }
 
-            if (rootElem.HasElement("ProjectProperties", out XElement pojectProps))
+            if (rootElem.HasElement(nameof(ProjectProperties), out XElement pojectProps))
             {
                 foreach (var propElem in pojectProps.Elements())
                     ProjectProperties.Add(propElem.Name.LocalName, propElem.Value);
@@ -687,6 +703,23 @@ namespace LDDModder.Modding
                 Surfaces.Any() ? Surfaces.Max(x=>x.SubMaterialIndex) + 1 : 0);
             Surfaces.Add(newSurface);
             return newSurface;
+        }
+
+        public bool IsElementReferenced(PartElement element)
+        {
+            if (ClonePatterns.Any(p => p.Elements.Contains(element)))
+                return true;
+            if (OutlinesConfigs.Any(p => p.Elements.Contains(element)))
+                return true;
+            return false;
+        }
+
+        public void RemoveReferences(PartElement element)
+        {
+            foreach (var pattern in ClonePatterns)
+                pattern.Elements.Remove(element);
+            foreach (var config in OutlinesConfigs)
+                config.Elements.Remove(element);
         }
 
         #endregion
@@ -1601,8 +1634,6 @@ namespace LDDModder.Modding
             return primitive;
         }
 
-
-
         public LDD.Parts.PartWrapper GenerateLddPart()
         {
             if (Bounding is null)
@@ -1622,14 +1653,38 @@ namespace LDDModder.Modding
             return part;
         }
 
-        public void ComputeEdgeOutlines(float breakAngle = 35f)
+        public OutlinesGroupConfig CreateDefaultOutlinesConfig()
         {
-            var meshRefs = Surfaces.SelectMany(x => x.GetAllMeshReferences()).ToList();
+            var defaultConfig = new OutlinesGroupConfig
+            {
+                BreakAngle = 35
+            };
+            defaultConfig.Elements.AddRange(GetAllMeshReferences());
+            return defaultConfig;
+        }
+
+        public void ComputeEdgeOutlines()
+        {
+            var meshRefs = GetAllMeshReferences().ToList();
             var unloadedMeshes = meshRefs.Select(x => x.ModelMesh).Where(x => !x.IsModelLoaded).Distinct().ToList();
 
-            foreach (var layerGroup in meshRefs.GroupBy(x => x.RoundEdgeLayer))
+            var outlinesGroups = OutlinesConfigs.ToList();
+
+            if (outlinesGroups.Count == 0)
             {
-                var meshesGeoms = layerGroup.Select(x => new Tuple<ModelMeshReference, MeshGeometry>(x, x.GetGeometry(true))).ToList();
+                var defaultConfig = new OutlinesGroupConfig
+                {
+                    BreakAngle = 35
+                };
+                defaultConfig.Elements.AddRange(meshRefs);
+                outlinesGroups.Add(defaultConfig);
+            }
+
+            foreach (var layerGroup in outlinesGroups)
+            {
+                var meshesGeoms = layerGroup.Elements.OfType<ModelMeshReference>()
+                    .Select(x => new Tuple<ModelMeshReference, MeshGeometry>(x, x.GetGeometry(true))).ToList();
+
                 meshesGeoms.RemoveAll(x => x.Item2 == null);
 
                 foreach (var mg in meshesGeoms)
@@ -1645,12 +1700,12 @@ namespace LDDModder.Modding
                         .Where(x => x.Item1.Parent is FemaleStudModel fsm && fsm.ReplacementMeshes.Contains(x.Item1)).ToList();
 
                     var triangles = nonFSM.Concat(baseFSM).SelectMany(x => x.Item2.Triangles);
-                    OutlinesGenerator.GenerateOutlines(triangles, breakAngle);
+                    OutlinesGenerator.GenerateOutlines(triangles, (float)layerGroup.BreakAngle);
                     foreach (var mg in nonFSM.Concat(baseFSM))
                         mg.Item1.UpdateMeshOutlines(mg.Item2);
 
                     triangles = nonFSM.Concat(altFSM).SelectMany(x => x.Item2.Triangles);
-                    OutlinesGenerator.GenerateOutlines(triangles, breakAngle);
+                    OutlinesGenerator.GenerateOutlines(triangles, (float)layerGroup.BreakAngle);
                     foreach (var mg in altFSM)
                         mg.Item1.UpdateMeshOutlines(mg.Item2);
                 }
@@ -1658,14 +1713,14 @@ namespace LDDModder.Modding
                 {
                     var triangles = meshesGeoms.SelectMany(x => x.Item2.Triangles);
                     //ShaderDataGenerator.ComputeEdgeOutlines(triangles, breakAngle);
-                    OutlinesGenerator.GenerateOutlines(triangles, breakAngle);
+                    OutlinesGenerator.GenerateOutlines(triangles, (float)layerGroup.BreakAngle);
 
                     foreach (var mg in meshesGeoms)
                         mg.Item1.UpdateMeshOutlines(mg.Item2);
                 }
             }
-            
-            var models = meshRefs.Select(x => x.ModelMesh).Distinct().ToList();
+
+            //var models = meshRefs.Select(x => x.ModelMesh).Distinct().ToList();
             SaveMeshesToXml();
             unloadedMeshes.ForEach(x => x.UnloadModel());
 
@@ -1723,6 +1778,10 @@ namespace LDDModder.Modding
             unloadedMeshes.ForEach(x => x.UnloadModel());
         }
 
+        public IEnumerable<ModelMeshReference> GetAllMeshReferences()
+        {
+            return Surfaces.SelectMany(s => s.GetAllMeshReferences());
+        }
 
         #endregion
     }

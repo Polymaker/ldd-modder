@@ -27,11 +27,12 @@ namespace LDDModder.BrickEditor.UI.Controls
 
         private Rectangle LabelBounds;
         private Rectangle ChildControlBounds;
-        private bool BoundsInitialized;
 
         private int _LabelWidth;
+        private int _MaxLabelWidth;
         private bool _AutoSizeHeight;
         private bool _AutoSizeWidth;
+        private bool _MatchSiblingLabels;
 
         private ContentAlignment _LabelAlignment;
 
@@ -41,15 +42,44 @@ namespace LDDModder.BrickEditor.UI.Controls
             get => _LabelWidth;
             set
             {
-                if ((value > 0 || value == -1) && _LabelWidth != value)
+                if ((value >= 20 || value == -1) && _LabelWidth != value)
                 {
                     AdjustSize(value, false, false, AdjustSpecified.LabelWidth);
                 }
             }
         }
 
+        [DefaultValue(0), RefreshProperties(RefreshProperties.Repaint)]
+        public int MaxLabelWidth
+        {
+            get => _MaxLabelWidth;
+            set
+            {
+                if ((value >= 20 || value == 0) && _MaxLabelWidth != value)
+                {
+                    _MaxLabelWidth = value;
+                    AdjustSize(0, false, false, AdjustSpecified.LabelDisplay);
+                }
+            }
+        }
+
         [Browsable(false)]
         public bool AutoSizeLabel => LabelWidth == -1;
+
+        [DefaultValue(false), RefreshProperties(RefreshProperties.Repaint)]
+        public bool MatchSiblingLabels
+        {
+            get => _MatchSiblingLabels;
+            set
+            {
+                if (_MatchSiblingLabels != value)
+                {
+                    _MatchSiblingLabels = value;
+                    if (AutoSizeLabel)
+                        AdjustSize(0, false, false, AdjustSpecified.LabelDisplay);
+                }
+            }
+        }
 
         [DefaultValue(ContentAlignment.MiddleLeft), RefreshProperties(RefreshProperties.Repaint)]
         public ContentAlignment LabelAlignment
@@ -146,21 +176,36 @@ namespace LDDModder.BrickEditor.UI.Controls
             }
         }
 
-        private void CalculateLabelSize()
+        protected void CalculateLabelSize()
         {
             string textToMeasure = string.IsNullOrEmpty(Text) ? DefaultText : Text;
-            var testSize = new Size(LabelWidth > 0 ? LabelWidth : 999999, Height);
+            int maxWidth = MaxLabelWidth == 0 ? 99999 : MaxLabelWidth;
+            var testSize = new Size(LabelWidth > 0 ? LabelWidth : maxWidth, Height - Padding.Vertical);
             testSize.Width -= Padding.Left;
 
             LabelMinSize = TextRenderer.MeasureText(textToMeasure, Font, testSize, GetLabelFormatFlags());
             if (LabelWidth > 0)
                 LabelMinSize.Width = LabelWidth;
+
+            if (Parent != null && MatchSiblingLabels && AutoSizeLabel)
+            {
+                int minWidth = LabelMinSize.Width;
+                foreach (var otherLabel in Parent.Controls.OfType<ControlLabel>())
+                {
+                    if (otherLabel != this)
+                    {
+                        minWidth = Math.Max(minWidth, otherLabel.CalculateLabelWidth());
+                    }
+                }
+                LabelMinSize.Width = minWidth;
+            }
         }
 
         public int CalculateLabelWidth()
         {
             string textToMeasure = string.IsNullOrEmpty(Text) ? DefaultText : Text;
-            var testSize = new Size(999999, Height);
+            int maxWidth = MaxLabelWidth == 0 ? 99999 : MaxLabelWidth;
+            var testSize = new Size(maxWidth, Height - Padding.Vertical);
             testSize.Width -= Padding.Left;
 
             var labelSize = TextRenderer.MeasureText(textToMeasure, Font, testSize, GetLabelFormatFlags());
@@ -215,6 +260,7 @@ namespace LDDModder.BrickEditor.UI.Controls
         private void UpdateChildControlBounds()
         {
             var oldPos = ChildControlBounds.Location;
+
             ChildControlBounds = new Rectangle(
                 LabelMinSize.Width + Padding.Left,
                 Padding.Top, Width - LabelMinSize.Width - Padding.Horizontal,
@@ -223,7 +269,6 @@ namespace LDDModder.BrickEditor.UI.Controls
             if (oldPos != ChildControlBounds.Location)
                 PositionChildControl();
         }
-
 
         private Rectangle GetChildControlBounds()
         {
@@ -263,8 +308,6 @@ namespace LDDModder.BrickEditor.UI.Controls
             return flags | TextFormatFlags.WordBreak | TextFormatFlags.EndEllipsis;
         }
 
-        
-
         protected override void OnControlAdded(ControlEventArgs e)
         {
             base.OnControlAdded(e);
@@ -295,6 +338,20 @@ namespace LDDModder.BrickEditor.UI.Controls
             AdjustSize(0, false, false, AdjustSpecified.ControlSize);
         }
 
+        #region Test
+
+        private void NotifyLabelWidthChanged()
+        {
+            if (Parent == null)
+                return;
+            foreach (var otherLabel in Parent.Controls.OfType<ControlLabel>())
+            {
+                if (otherLabel != this && otherLabel.MatchSiblingLabels && otherLabel.AutoSizeLabel)
+                    otherLabel.AdjustSize(-1, false, false, AdjustSpecified.LabelWidth);
+            }
+        }
+
+        #endregion
 
         private enum AdjustSpecified
         {
@@ -322,21 +379,8 @@ namespace LDDModder.BrickEditor.UI.Controls
 
                 CalculateLabelSize();
                 UpdateLabelBounds();
-                UpdateChildControlBounds();
-
-                if (AutoSizeAll)
-                {
-                    SetBounds(0, 0, 0, 0, BoundsSpecified.Size);
-                }
-                else
-                {
-                    ResizeIfNeeded();
-                    //var sizeDiff = LabelMinSize - oldSize;
-                    //int newW = Width + sizeDiff.Width;
-                    //int newH = Height + sizeDiff.Height;
-                    //SetBounds(0, 0, newW, newH, BoundsSpecified.Size);
-                }
-                Invalidate();
+                if (oldSize.Width != LabelMinSize.Width)
+                    NotifyLabelWidthChanged();
             }
 
             if (autoWChanged)
@@ -350,6 +394,18 @@ namespace LDDModder.BrickEditor.UI.Controls
                 CalculateChildControlMinSize();
             }
 
+            if (AutoSizeAll)
+                SetBounds(0, 0, 0, 0, BoundsSpecified.Size);
+            else if (AutoSizeHeight)
+                SetBounds(0, 0, 0, 0, BoundsSpecified.Height);
+            else if (AutoSizeWidth)
+                SetBounds(0, 0, 0, 0, BoundsSpecified.Width);
+            else
+                ResizeIfNeeded();
+
+            UpdateChildControlBounds();
+
+            Invalidate();
         }
 
         protected void OnControlAssigned()
@@ -389,7 +445,6 @@ namespace LDDModder.BrickEditor.UI.Controls
             if (Control == null)
                 return;
 
-
             Control.Location = new Point(
                 ChildControlBounds.Left + Control.Margin.Left, 
                 ChildControlBounds.Top + Control.Margin.Top);
@@ -412,14 +467,14 @@ namespace LDDModder.BrickEditor.UI.Controls
                 specified.HasFlag(BoundsSpecified.Height))
             {
                 sizeAssigned = true;
-
-                var minSize = GetMinimumSize();
-
-                if (width < minSize.Width || AutoSizeWidth)
-                    width = minSize.Width;
-                if (height < minSize.Height || AutoSizeHeight)
-                    height = minSize.Height;
             }
+
+            var minSize = GetMinimumSize();
+
+            if (width < minSize.Width || AutoSizeWidth)
+                width = minSize.Width;
+            if (height < minSize.Height || AutoSizeHeight)
+                height = minSize.Height;
 
             base.SetBoundsCore(x, y, width, height, specified);
 

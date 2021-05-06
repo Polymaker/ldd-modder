@@ -357,6 +357,12 @@
     <Compile Include="UI\Dialogs\MessageBoxEX.Designer.cs">
       <DependentUpon>MessageBoxEX.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\Dialogs\ConfigureOutlinesDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Dialogs\ConfigureOutlinesDialog.Designer.cs">
+      <DependentUpon>ConfigureOutlinesDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\Windows\ConnectionUsageWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -551,6 +557,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ModelLocalizations.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\Dialogs\FlexAttributesDialog.fr.resx">
+      <DependentUpon>FlexAttributesDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\Dialogs\FlexAttributesDialog.resx">
       <DependentUpon>FlexAttributesDialog.cs</DependentUpon>
     </EmbeddedResource>
@@ -681,6 +690,9 @@
     <EmbeddedResource Include="UI\Dialogs\MessageBoxEX.resx">
       <DependentUpon>MessageBoxEX.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\Dialogs\ConfigureOutlinesDialog.resx">
+      <DependentUpon>ConfigureOutlinesDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\Windows\ConnectionUsageWindow.resx">
       <DependentUpon>ConnectionUsageWindow.cs</DependentUpon>
     </EmbeddedResource>
@@ -705,9 +717,7 @@
     <EmbeddedResource Include="UI\Windows\ProgressPopupWindow.resx">
       <DependentUpon>ProgressPopupWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <None Include="NLog.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <None Include="NLog.config" />
     <None Include="OpenTK.dll.config" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">

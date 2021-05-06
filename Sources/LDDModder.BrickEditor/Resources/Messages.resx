@@ -206,4 +206,12 @@ Are-you sure you want to overwrite  them?
 This library is used to draw text in OpenGL.
 The application can still work but no text will be displayed in the viewport.</value>
   </data>
+  <data name="Message_ConfirmDeleteReferencedElement" xml:space="preserve">
+    <value>The element "{0}" is referenced by other elements of the project.
+Do you want to delete anyway?</value>
+  </data>
+  <data name="Message_UnhandledException" xml:space="preserve">
+    <value>An unexpected error occurred.
+For more details, check the log file.</value>
+  </data>
 </root>
