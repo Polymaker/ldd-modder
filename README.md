@@ -1,3 +1,5 @@
-# LDD Modding Tool
-![image](Resources/Images/Brick%20Editor%20Preview%201.png)
-![image](Resources/Images/Brick%20Editor%20Preview%202.png)
+I have restructured this project and the code for Brick Studio as been moved [here](https://github.com/Polymaker/ldd-brick-editor)
+
+You can find the latest release of Brick Studio [here](https://github.com/Polymaker/ldd-brick-editor/releases/latest)
+
+This repositroy is now archived.
